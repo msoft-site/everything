@@ -87,6 +87,9 @@ cat << EOF > "$BUILD_DIR/package.json"
     "productName": "$DISPLAY_TITLE",
     "mac": {
       "category": "public.app-category.productivity",
+      "identity": null,
+      "gatekeeperAssess": false,
+      "hardenedRuntime": false,
       "target": [
         {
           "target": "dmg",

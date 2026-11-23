@@ -68,7 +68,7 @@ jobs:
 
   build-macos:
     name: Build macOS DMG (arm64)
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -77,9 +77,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
-
-      - name: Install genisoimage
-        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends genisoimage
 
       - name: Build macOS DMG
         run: |

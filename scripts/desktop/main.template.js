@@ -10,12 +10,14 @@ const PORT = 38241;
 // 启动极简内嵌 HTTP 本地服务器，用于提供静态资源，确保 WASM、Web Worker 及 ESM 模块正常加载
 function startLocalServer(callback) {
   const mimeTypes = {
-    '.html': 'text/html',
-    '.js': 'text/javascript',
-    '.css': 'text/css',
+    '.html': 'text/html; charset=utf-8',
+    '.js': 'text/javascript; charset=utf-8',
+    '.mjs': 'text/javascript; charset=utf-8',
+    '.css': 'text/css; charset=utf-8',
     '.json': 'application/json',
     '.png': 'image/png',
     '.jpg': 'image/jpeg',
+    '.jpeg': 'image/jpeg',
     '.gif': 'image/gif',
     '.svg': 'image/svg+xml',
     '.wasm': 'application/wasm',
@@ -29,35 +31,47 @@ function startLocalServer(callback) {
   server = http.createServer((req, res) => {
     let reqPath = decodeURI(req.url.split('?')[0]);
     if (reqPath === '/' || reqPath === '') reqPath = '/index.html';
-    let filePath = path.join(appDistDir, reqPath);
+    let targetPath = path.join(appDistDir, reqPath);
 
-    fs.stat(filePath, (err, stats) => {
-      if (err || !stats.isFile()) {
-        // SPA Fallback
-        filePath = path.join(appDistDir, 'index.html');
+    fs.stat(targetPath, (err, stats) => {
+      let finalFile = targetPath;
+      if (!err && stats.isDirectory()) {
+        finalFile = path.join(targetPath, 'index.html');
       }
 
-      const ext = path.extname(filePath).toLowerCase();
-      const contentType = mimeTypes[ext] || 'application/octet-stream';
-
-      fs.readFile(filePath, (readErr, content) => {
-        if (readErr) {
-          res.writeHead(500);
-          res.end('Error reading file: ' + readErr.code);
-        } else {
-          res.writeHead(200, {
-            'Content-Type': contentType,
-            'Cross-Origin-Opener-Policy': 'same-origin',
-            'Cross-Origin-Embedder-Policy': 'require-corp'
-          });
-          res.end(content, 'utf-8');
+      fs.stat(finalFile, (statErr, finalStats) => {
+        if (statErr || !finalStats.isFile()) {
+          finalFile = path.join(appDistDir, 'index.html');
         }
+
+        const ext = path.extname(finalFile).toLowerCase();
+        const contentType = mimeTypes[ext] || 'application/octet-stream';
+
+        fs.readFile(finalFile, (readErr, content) => {
+          if (readErr) {
+            res.writeHead(500);
+            res.end('Error reading file: ' + readErr.code);
+          } else {
+            res.writeHead(200, {
+              'Content-Type': contentType,
+              'Cross-Origin-Opener-Policy': 'same-origin',
+              'Cross-Origin-Embedder-Policy': 'require-corp'
+            });
+            res.end(content);
+          }
+        });
       });
     });
   });
 
-  server.listen(PORT, '127.0.0.1', () => {
-    callback(`http://127.0.0.1:${PORT}`);
+  server.on('error', (e) => {
+    console.error('Server error:', e);
+  });
+
+  // 使用端口 0 让系统动态分配可用端口，杜绝端口占用冲突
+  server.listen(0, '127.0.0.1', () => {
+    const assignedPort = server.address().port;
+    callback(`http://127.0.0.1:${assignedPort}`);
   });
 }
 
