@@ -75,6 +75,20 @@ fi
 echo "==> [2/4] 配置 Electron 打包环境..."
 cp scripts/desktop/main.template.js "$BUILD_DIR/main.js"
 
+# 检测签名证书: 优先使用入参，其次在 macOS 环境下自动读取 Xcode 证书
+SIGN_IDENTITY="$2"
+if [ -z "$SIGN_IDENTITY" ] && [[ "$OSTYPE" == "darwin"* ]]; then
+  SIGN_IDENTITY=$(security find-identity -v -p codesigning 2>/dev/null | grep -E 'Apple Development|Developer ID Application|Mac Developer' | head -n 1 | sed -E 's/.*"([^"]+)".*/\1/' || true)
+fi
+
+if [ -n "$SIGN_IDENTITY" ]; then
+  echo "==> [签名] 检测到 Xcode 开发者签名: $SIGN_IDENTITY"
+  MAC_IDENTITY_CONFIG="\"identity\": \"$SIGN_IDENTITY\", \"hardenedRuntime\": true,"
+else
+  echo "==> [签名] 未指定证书，使用 Ad-hoc 本地免证书签名"
+  MAC_IDENTITY_CONFIG="\"identity\": null, \"hardenedRuntime\": false,"
+fi
+
 # 生成临时 package.json
 cat << EOF > "$BUILD_DIR/package.json"
 {
@@ -87,9 +101,8 @@ cat << EOF > "$BUILD_DIR/package.json"
     "productName": "$DISPLAY_TITLE",
     "mac": {
       "category": "public.app-category.productivity",
-      "identity": null,
+      $MAC_IDENTITY_CONFIG
       "gatekeeperAssess": false,
-      "hardenedRuntime": false,
       "target": [
         {
           "target": "dmg",
