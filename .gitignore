@@ -62,4 +62,6 @@ __pycache__/
 .desktop-build/
 release-dmg/
 release-exe/
+release-final/
+release-assets/
 .cf-deploy-dist/
