@@ -20,12 +20,13 @@ echo -e "================================================================${NC}"
 echo "请选择您要执行的构建任务："
 echo ""
 echo -e "  ${BOLD}1)${NC} 构建 Docker 镜像 (部署到 NAS / 私有服务器直接访问)"
-echo -e "  ${BOLD}2)${NC} 构建 macOS DMG 安装包 (仅适配 Apple Silicon ARM64 架构)"
+echo -e "  ${BOLD}2)${NC} 构建 macOS DMG 安装包 (Apple Silicon ARM64，自动匹配本机 Xcode 证书)"
 echo -e "  ${BOLD}3)${NC} 构建 Windows EXE 安装程序 (仅适配 64位 x64 架构)"
 echo -e "  ${BOLD}4)${NC} 交互式部署到 Cloudflare Pages (引导授权并在全球 CDN 上线)"
+echo -e "  ${BOLD}5)${NC} [Mac 本地推荐] 一键打包、Xcode 开发者签名、安装至 /Applications 并打开验证"
 echo -e "  ${BOLD}q)${NC} 退出"
 echo ""
-read -p "请输入选项 [1-4]: " OPTION
+read -p "请输入选项 [1-5]: " OPTION
 
 case "$OPTION" in
   1)
@@ -45,6 +46,10 @@ case "$OPTION" in
   4)
     echo -e "${GREEN}==> 启动 Cloudflare 部署向导...${NC}"
     ./scripts/deploy/deploy-cloudflare.sh
+    ;;
+  5)
+    echo -e "${GREEN}==> 启动 Mac 本地一键打包与签名验证向导...${NC}"
+    ./scripts/desktop/build-and-run-mac.sh all-in-one
     ;;
   q|Q)
     echo "退出。"

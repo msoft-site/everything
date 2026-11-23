@@ -49,7 +49,7 @@ if [ "$APP_NAME" = "all-in-one" ]; then
     fi
   done
   rm -rf "$BUILD_DIR/dist/app/whiteboard/tmp" 2>/dev/null || true
-  find "$BUILD_DIR/dist" -xtype l -delete 2>/dev/null || true
+  find -L "$BUILD_DIR/dist" -type l -exec rm -f {} + 2>/dev/null || true
   DISPLAY_TITLE="Everything"
 else
   APP_SRC="$DIR/src/$APP_NAME"
@@ -137,7 +137,13 @@ npm install electron electron-builder --save-dev --prefer-offline --no-audit
 
 echo "==> [4/4] 正在针对 Apple Silicon (arm64) 架构生成 DMG 安装包..."
 if [[ "$OSTYPE" == "darwin"* ]]; then
-  npx electron-builder --mac dmg --arm64 --config.directories.output="$OUTPUT_DIR"
+  if [ -n "$SIGN_IDENTITY" ]; then
+    echo "正在使用证书 \"$SIGN_IDENTITY\" 打包并签名..."
+    npx electron-builder --mac dmg --arm64 --config.mac.identity="$SIGN_IDENTITY" --config.directories.output="$OUTPUT_DIR"
+  else
+    echo "正在执行本地 Ad-hoc 免证书打包签名..."
+    npx electron-builder --mac dmg --arm64 --config.directories.output="$OUTPUT_DIR"
+  fi
 else
   # 在 Linux 环境下生成 macOS arm64 应用包并制成 DMG
   npx electron-builder --mac dir --arm64 --config.directories.output="$OUTPUT_DIR"
