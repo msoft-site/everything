@@ -38,16 +38,27 @@ echo "==> [1/4] 准备构建前端静态产物..."
 if [ "$APP_NAME" = "all-in-one" ]; then
   echo "正在打包聚合中心..."
   mkdir -p "$BUILD_DIR/dist/app"
-  cp scripts/docker/portal.html "$BUILD_DIR/dist/index.html"
-  for d in src/*/; do
-    app=$(basename "$d")
-    mkdir -p "$BUILD_DIR/dist/app/$app"
-    if [ -d "$d/dist" ]; then
-      cp -r "$d/dist/"* "$BUILD_DIR/dist/app/$app/" 2>/dev/null || true
-    else
-      cp -r "$d/"* "$BUILD_DIR/dist/app/$app/" 2>/dev/null || true
-    fi
-  done
+  if [ -d "$DIR/.cf-deploy-dist" ]; then
+    echo "使用已编译的高性能生产产物 (.cf-deploy-dist)..."
+    cp -r "$DIR/.cf-deploy-dist/"* "$BUILD_DIR/dist/"
+  else
+    cp scripts/docker/portal.html "$BUILD_DIR/dist/index.html"
+    for d in src/*/; do
+      app=$(basename "$d")
+      mkdir -p "$BUILD_DIR/dist/app/$app"
+      if [ -d "$d/dist" ]; then
+        cp -r "$d/dist/"* "$BUILD_DIR/dist/app/$app/" 2>/dev/null || true
+      else
+        echo "警告: 应用 $app 尚未编译 dist，正在执行即时编译..."
+        (cd "$d" && npx vite build --base=/app/$app/ 2>/dev/null || true)
+        if [ -d "$d/dist" ]; then
+          cp -r "$d/dist/"* "$BUILD_DIR/dist/app/$app/" 2>/dev/null || true
+        else
+          cp -r "$d/"* "$BUILD_DIR/dist/app/$app/" 2>/dev/null || true
+        fi
+      fi
+    done
+  fi
   rm -rf "$BUILD_DIR/dist/app/whiteboard/tmp" 2>/dev/null || true
   find -L "$BUILD_DIR/dist" -type l -exec rm -f {} + 2>/dev/null || true
   DISPLAY_TITLE="Everything"
