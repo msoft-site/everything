@@ -91,7 +91,7 @@ export function mountShell(appRoot) {
   const sidebar = el('nav.sidebar', { 'aria-label': 'Main navigation' },
     el('div.brand', {},
       el('span.brand-mark', { html: appIcon(32), 'aria-hidden': 'true' }),
-      'Signatures'),
+      '电子签名'),
     sidebarNav,
     el('div.sidebar-spacer'),
     el('button.btn.btn-primary.sidebar-new', {
@@ -105,7 +105,7 @@ export function mountShell(appRoot) {
       // Inside the Puter desktop the platform owns the session; no sign-out.
       !inPuterApp && el('button.icon-btn', {
         type: 'button', html: icon('logout', 18, 2),
-        'aria-label': 'Sign out', title: 'Sign out',
+        'aria-label': '退出登录', title: '退出登录',
         onclick: confirmSignOut,
       }))
   );
@@ -114,8 +114,8 @@ export function mountShell(appRoot) {
   const tabbar = el('nav.tabbar', { 'aria-label': 'Main navigation' });
 
   const NAV = [
-    { hash: '#/', label: 'Documents', icon: 'home', match: (r) => r.name !== 'settings' },
-    { hash: '#/settings', label: 'Settings', icon: 'gear', match: (r) => r.name === 'settings' },
+    { hash: '#/', label: '文档', icon: 'home', match: (r) => r.name !== 'settings' },
+    { hash: '#/settings', label: '设置', icon: 'gear', match: (r) => r.name === 'settings' },
   ];
 
   function renderNav() {

@@ -28,7 +28,7 @@ export async function startInstant({ media, name }) {
   // the directory being out of reach — or, once in a lifetime, a collision.
   console.warn('[start] could not publish the meeting under a room code', first.error ?? first.room);
   lease.stop();
-  toast('Could not set up a reusable link, so this meeting uses a one-time link.', { icon: 'info' });
+  toast('无法设置可重复使用的链接，因此本次会议使用一次性链接。', { icon: 'info' });
   return { session, roomCode: null, lease: null };
 }
 

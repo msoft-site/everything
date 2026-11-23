@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <title>Calendar — local demo (mock Puter)</title>
+    <title>日历 — 本地演示（模拟 Puter）</title>
     <script>
       // ---- Mock Puter SDK (local preview only — DELETE THIS FILE before shipping).
       // Backed by localStorage so seeded data survives reloads.
@@ -36,7 +36,7 @@
             request: async (perm) => {
               if (emailGranted) return true;
               emailGranted = window.confirm(
-                `[mock Puter permission prompt]\n\nCalendar wants: ${perm}\n(read your email address). Allow?`,
+                `[模拟 Puter 权限提示]\n\n日历请求权限：${perm}\n（读取您的电子邮箱地址）。是否允许？`,
               );
               return emailGranted;
             },
@@ -74,13 +74,13 @@
           // 1. An invitation TO you → the details card shows the "Going?" chips.
           setOne('cal:evt:demo-invite', {
             id: 'demo-invite',
-            title: 'Q3 kickoff (invite to me)',
+            title: '第三季度启动会（收到的邀请）',
             start: at(10, 0),
             end: at(11, 0),
             allDay: false,
             color: 'blue',
-            location: 'Conf room 4',
-            description: 'Try the Yes / No / Maybe chips on this one.',
+            location: '4号会议室',
+            description: '可以在此日程上体验“参加 / 不参加 / 待定”选项。',
             organizer: { email: 'jane@corp.com', name: 'Jane Boss' },
             guests: [
               { email: 'jane@corp.com', name: 'Jane Boss', status: 'accepted' },
@@ -92,7 +92,7 @@
           // 2. Your own event with guests → organizer view: list + summary, no chips.
           setOne('cal:evt:demo-own', {
             id: 'demo-own',
-            title: 'Design review (my event)',
+            title: '设计评审（我的日程）',
             start: at(14, 0),
             end: at(15, 0),
             allDay: false,
@@ -107,7 +107,7 @@
           // 3. A recurring invite → RSVP from any occurrence applies series-wide.
           setOne('cal:evt:demo-weekly', {
             id: 'demo-weekly',
-            title: 'Team standup (recurring invite)',
+            title: '团队站会（周期性邀请）',
             start: at(9, 0),
             end: at(9, 30),
             allDay: false,

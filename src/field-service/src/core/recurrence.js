@@ -81,25 +81,25 @@ export function generateVisitDates(schedule) {
   return [schedule.start];
 }
 
-const ORDINAL = ['first', 'second', 'third', 'fourth', 'fifth'];
-const DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+const ORDINAL = ['第1个', '第2个', '第3个', '第4个', '第5个'];
+const DAY_NAMES = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
 
 /** Human description: "Every 2 weeks on Monday, Thursday, 12 visits" (without the count when `end` is false). */
 export function describeSchedule(schedule, { end: withEnd = true } = {}) {
-  if (!schedule || !schedule.repeat || schedule.repeat === 'none') return 'One-off';
+  if (!schedule || !schedule.repeat || schedule.repeat === 'none') return '单次服务';
   const n = Math.max(1, Number(schedule.interval) || 1);
-  const unit = { daily: 'day', weekly: 'week', monthly: 'month', yearly: 'year' }[schedule.repeat];
-  let text = n === 1 ? `Every ${unit}` : `Every ${n} ${unit}s`;
+  const unit = { daily: '天', weekly: '周', monthly: '月', yearly: '年' }[schedule.repeat];
+  let text = n === 1 ? `每${unit}` : `每 ${n} ${unit}`;
   if (schedule.repeat === 'weekly') {
     const days = schedule.weekdays?.length ? schedule.weekdays : [weekday(schedule.start)];
-    text += ` on ${[...days].sort((a, b) => a - b).map((d) => DAY_NAMES[d]).join(', ')}`;
+    text += `的${[...days].sort((a, b) => a - b).map((d) => DAY_NAMES[d]).join('、')}`;
   } else if (schedule.repeat === 'monthly' && schedule.start) {
     const d = parseISODate(schedule.start);
     text += schedule.monthlyBy === 'weekday'
-      ? ` on the ${ORDINAL[Math.floor((d.getDate() - 1) / 7)]} ${DAY_NAMES[d.getDay()]}`
-      : ` on day ${d.getDate()}`;
+      ? `的${ORDINAL[Math.floor((d.getDate() - 1) / 7)]}${DAY_NAMES[d.getDay()]}`
+      : `的 ${d.getDate()} 日`;
   }
   const end = schedule.end;
-  if (withEnd && end?.type === 'count') text += `, ${end.count} visit${end.count === 1 ? '' : 's'}`;
+  if (withEnd && end?.type === 'count') text += `，共 ${end.count} 次上门`;
   return text;
 }

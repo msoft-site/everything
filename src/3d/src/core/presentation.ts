@@ -71,7 +71,7 @@ export function validateLight(v: unknown): LightSettings {
     !number(v.softness, 0, 1) ||
     typeof v.shadows !== 'boolean'
   )
-    throw new Error('Invalid light settings.');
+    throw new Error('无效的灯光设置。');
   return {
     type: v.type as LightSettings['type'],
     color: [...v.color],
@@ -91,7 +91,7 @@ export function validateCamera(v: unknown): CameraSettings {
     v.far <= v.near
   )
     throw new Error(
-      'Camera needs a focal length of 8 to 300 mm and a far clip greater than its near clip.',
+      '摄像机焦距需在 8 到 300 毫米之间，且远裁剪面需大于近裁剪面。',
     );
   return { focalLength: v.focalLength, near: v.near, far: v.far };
 }
@@ -105,7 +105,7 @@ export function validateEnvironment(v: unknown): EnvironmentSettings {
     typeof v.shadows !== 'boolean' ||
     (v.background !== null && !color(v.background))
   )
-    throw new Error('Invalid environment settings.');
+    throw new Error('无效的环境设置。');
   return {
     ambientColor: [...v.ambientColor],
     ambientIntensity: v.ambientIntensity,
@@ -124,7 +124,7 @@ export function validateOutput(v: unknown): OutputSettings {
     !Number.isInteger(v.height) ||
     typeof v.transparent !== 'boolean'
   )
-    throw new Error('Choose whole-number image dimensions from 64 to 4096 pixels.');
+    throw new Error('请选择 64 到 4096 像素之间的整数图像尺寸。');
   return { width: v.width, height: v.height, transparent: v.transparent };
 }
 export function inheritedFlag(state: SceneState, object: SceneObject, key: 'hidden' | 'locked') {

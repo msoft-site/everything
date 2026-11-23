@@ -82,7 +82,7 @@ export class UndoStack {
     }
   }
 
-  reset(doc: DocumentData, label = 'Original') {
+  reset(doc: DocumentData, label = '原始状态') {
     this.refs.clear();
     this.bytes = 0;
     this.steps = [this.make(label, doc)];

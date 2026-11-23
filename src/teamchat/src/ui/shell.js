@@ -138,9 +138,9 @@ function mountSidebarResizer(sidebarEl) {
       width = clamp(sidebarEl.getBoundingClientRect().width + (e.key === 'ArrowRight' ? 16 : -16));
       apply(width);
       save(width);
-    } else if (e.key === 'Home' || e.key === 'End') {
+    } else if (e.key === '首页' || e.key === 'End') {
       e.preventDefault();
-      width = e.key === 'Home' ? SIDEBAR_W_MIN : SIDEBAR_W_MAX;
+      width = e.key === '首页' ? SIDEBAR_W_MIN : SIDEBAR_W_MAX;
       apply(width);
       save(width);
     } else if (e.key === 'Enter') {

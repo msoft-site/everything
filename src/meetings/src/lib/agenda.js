@@ -129,7 +129,7 @@ export function toMeeting(raw, { ownOrigin = '' } = {}) {
   const title = typeof raw.title === 'string' ? raw.title.trim() : '';
   return {
     id: typeof raw.id === 'string' && raw.id ? raw.id : `${start}:${url}`,
-    title: title || 'Untitled meeting',
+    title: title || '无标题会议',
     start,
     end: Math.max(end, start),
     allDay: Boolean(raw.allDay),
@@ -335,7 +335,7 @@ export function clearAgendaCaches() {
 
 /** "8:00 – 8:30 AM"; "All day"; a meeting running past midnight names its end day. */
 export function formatRange(m, locale = undefined) {
-  if (m.allDay) return 'All day';
+  if (m.allDay) return '全天';
   const s = new Date(m.start);
   const e = new Date(m.end);
   if (!isSameDay(m.start, m.end)) return `${formatClock(s, locale)} – ${formatDay(e, locale)}, ${formatClock(e, locale)}`;
@@ -351,14 +351,14 @@ export function formatRange(m, locale = undefined) {
 /** "Today", "Tomorrow", "Yesterday", else "Tue, Aug 25". */
 export function dayLabel(dayStart, todayStart, locale = undefined) {
   const diff = Math.round((startOfDay(dayStart) - startOfDay(todayStart)) / DAY_MS);
-  if (diff === 0) return 'Today';
-  if (diff === 1) return 'Tomorrow';
-  if (diff === -1) return 'Yesterday';
+  if (diff === 0) return '今天';
+  if (diff === 1) return '明天';
+  if (diff === -1) return '昨天';
   return formatDay(new Date(dayStart), locale);
 }
 
 /** "2 guests", "1 guest", or '' for none. */
 export function guestsLabel(n) {
   if (!n) return '';
-  return n === 1 ? '1 guest' : `${n} guests`;
+  return `${n} 位受邀者`;
 }

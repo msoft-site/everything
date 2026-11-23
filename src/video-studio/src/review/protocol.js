@@ -13,7 +13,7 @@ export const COMMENT_DELIVERY_PENDING = 'comment_delivery_pending';
 export const ROLES = ['owner', 'commenter', 'viewer'];
 /** Roles an invite link or the owner can hand out. */
 export const GUEST_ROLES = ['commenter', 'viewer'];
-export const ROLE_LABELS = { owner: 'Owner', commenter: 'Can comment', viewer: 'Can view' };
+export const ROLE_LABELS = { owner: '所有者', commenter: '可评论', viewer: '仅查看' };
 export const canComment = (role) => role === 'owner' || role === 'commenter';
 export const canResolve = canComment;
 export const canManage = (role) => role === 'owner';
@@ -133,10 +133,10 @@ export function workerURL(value) {
   try {
     url = new URL(String(value || '').includes('://') ? value : `https://${value}`);
   } catch {
-    throw new Error('This review link points to an unknown server.');
+    throw new Error('此审阅链接指向未知的服务器。');
   }
   if (url.protocol !== 'https:' || !/^[a-z0-9-]{1,63}\.puter\.work$/.test(url.hostname) || url.port || url.username || url.password || (url.pathname !== '/' && url.pathname !== '') || url.search || url.hash) {
-    throw new Error('This review link points to an unknown server.');
+    throw new Error('此审阅链接指向未知的服务器。');
   }
   return url.origin;
 }
@@ -169,10 +169,10 @@ export function parseReviewHash(hashText) {
   if (!/(^|&)review=/.test(raw)) return null;
   const p = new URLSearchParams(raw);
   const review = p.get('review');
-  if (!review || !ID.test(review)) throw new Error('This review link is not complete. Ask for a new link.');
+  if (!review || !ID.test(review)) throw new Error('此审阅链接不完整，请索取新的链接。');
   const server = workerURL(p.get('server'));
   const token = p.get('invite');
-  if (token !== null && !TOKEN.test(token)) throw new Error('This invite link is not complete. Ask for a new link.');
+  if (token !== null && !TOKEN.test(token)) throw new Error('此邀请链接不完整，请索取新的链接。');
   return { review, server, token: token || null };
 }
 
@@ -217,7 +217,7 @@ export function cleanText(text) {
 }
 
 /** Title as stored: one line, at most LIMITS.title characters. */
-export function cleanTitle(text, fallback = 'Untitled') {
+export function cleanTitle(text, fallback = '未命名') {
   // eslint-disable-next-line no-control-regex
   const s = String(text ?? '').replace(/[\u0000-\u001f\u007f]+/g, ' ').replace(/\s+/g, ' ').trim().slice(0, LIMITS.title);
   return s || fallback;
@@ -226,8 +226,8 @@ export function cleanTitle(text, fallback = 'Untitled') {
 /** Problem with comment text, or null when it is fine. */
 export function textProblem(text) {
   const t = cleanText(text);
-  if (!t) return 'Write something first.';
-  if (t.length > LIMITS.text) return `Comments can be at most ${LIMITS.text} characters.`;
+  if (!t) return '请先输入评论内容。';
+  if (t.length > LIMITS.text) return `评论最多只能包含 ${LIMITS.text} 个字符。`;
   return null;
 }
 
@@ -238,23 +238,23 @@ export function textProblem(text) {
  */
 export function validateComment(input, version) {
   const fail = (error) => ({ ok: false, error });
-  if (!input || typeof input !== 'object') return fail('Invalid comment.');
-  if (typeof input.id !== 'string' || !ID.test(input.id)) return fail('Invalid comment id.');
+  if (!input || typeof input !== 'object') return fail('无效的评论。');
+  if (typeof input.id !== 'string' || !ID.test(input.id)) return fail('无效的评论 ID。');
   const problem = textProblem(input.text);
   if (problem) return fail(problem);
   const text = cleanText(input.text);
   const parent = input.parent ?? null;
-  if (parent !== null && (typeof parent !== 'string' || !ID.test(parent))) return fail('Invalid reply.');
-  if (!version) return fail('That version does not exist.');
+  if (parent !== null && (typeof parent !== 'string' || !ID.test(parent))) return fail('无效的回复。');
+  if (!version) return fail('该版本不存在。');
   if (parent) return { ok: true, value: { id: input.id, version: version.n, parent, text, t: null, end: null } };
   const duration = Math.max(0, Math.round(Number(version.duration) || 0));
   const t = Number(input.t);
-  if (!Number.isInteger(t) || t < 0 || t > duration) return fail('The comment time is outside the video.');
+  if (!Number.isInteger(t) || t < 0 || t > duration) return fail('评论时间超出了视频范围。');
   let end = input.end ?? null;
   if (end !== null) {
     end = Number(end);
-    if (!Number.isInteger(end) || end <= t || end > duration) return fail('The comment range is outside the video.');
-    if (end - t > LIMITS.rangeUs) return fail('A comment range can be at most 10 minutes.');
+    if (!Number.isInteger(end) || end <= t || end > duration) return fail('评论区间超出了视频范围。');
+    if (end - t > LIMITS.rangeUs) return fail('评论区间最长不能超过 10 分钟。');
   }
   return { ok: true, value: { id: input.id, version: version.n, parent: null, text, t, end } };
 }

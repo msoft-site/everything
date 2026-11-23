@@ -7,31 +7,31 @@ export function authView({ onSignedIn }) {
     type: 'button',
     onclick: async () => {
       cta.disabled = true;
-      cta.textContent = 'Waiting for Puter';
+      cta.textContent = '正在等待 Puter…';
       try {
         await puter.auth.signIn();
         onSignedIn();
       } catch {
         cta.disabled = false;
-        cta.textContent = 'Continue with Puter';
+        cta.textContent = '使用 Puter 继续';
       }
     },
-  }, 'Continue with Puter');
+  }, '使用 Puter 继续');
 
   return el('div.auth-view', {},
     el('div.auth-card', {},
-      el('img.auth-logo', { src: './icons/icon-192.png', width: 72, height: 72, alt: 'Expenses logo' }),
-      el('h1.auth-title', {}, 'Expenses'),
-      el('p.auth-sub', {}, 'Snap a receipt, let AI read it, file it in a report, and reconcile it against your card statement. Private, fast, on every device.'),
+      el('img.auth-logo', { src: './icons/icon-192.png', width: 72, height: 72, alt: '费用报销标志' }),
+      el('h1.auth-title', {}, '费用报销'),
+      el('p.auth-sub', {}, '拍照识别票据、AI 自动提取信息、汇总提交报销单，并与银行卡账单自动对账。私密、快捷，跨设备同步。'),
       el('ul.auth-features', {},
-        feature('scan', 'Receipt capture with AI OCR', 'Merchant, date, total, tax and category are read for you. You confirm, it saves.'),
-        feature('folder', 'Expense reports', 'Group expenses into reports and move them from draft to submitted, approved and reimbursed.'),
-        feature('scale', 'Reconciliation', 'Import a card or bank statement and match every line to an expense, automatically where it can.'),
-        feature('cloud', 'Your data, your cloud', 'Everything lives in your own Puter account. Nothing is sent anywhere else.')
+        feature('scan', 'AI 智能识别票据', '自动读取商家、日期、总额、税额与分类，核对确认即可保存。'),
+        feature('folder', '费用报销单', '将多笔费用归集到报销单，全程跟踪草稿、已提交、已批准与已报销状态。'),
+        feature('scale', '账单对账', '导入信用卡或银行账单，自动将每条账单记录与费用匹配。'),
+        feature('cloud', '您的数据，您的云端', '所有数据均保存在您自己的 Puter 账户中，绝不外传。')
       ),
       cta,
-      el('p.auth-note', {}, 'Free. No ads. Powered by ',
-        el('a', { href: 'https://developer.puter.com', target: '_blank', rel: 'noopener' }, 'Puter'))
+      el('p.auth-note', {}, '免费 · 无广告 · 由 ',
+        el('a', { href: 'https://developer.puter.com', target: '_blank', rel: 'noopener' }, 'Puter'), ' 提供支持')
     )
   );
 

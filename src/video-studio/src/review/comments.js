@@ -78,8 +78,8 @@ export function canDeleteComment(comment, me, role) {
 /** "just now", "5 min ago", "3 h ago", else a date. */
 export function relativeTime(ts, now = Date.now()) {
   const d = Math.max(0, now - ts);
-  if (d < 45_000) return 'just now';
-  if (d < 3_600_000) return `${Math.round(d / 60_000)} min ago`;
-  if (d < 86_400_000) return `${Math.round(d / 3_600_000)} h ago`;
-  return new Date(ts).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: new Date(ts).getFullYear() === new Date(now).getFullYear() ? undefined : 'numeric' });
+  if (d < 45_000) return '刚刚';
+  if (d < 3_600_000) return `${Math.round(d / 60_000)} 分钟前`;
+  if (d < 86_400_000) return `${Math.round(d / 3_600_000)} 小时前`;
+  return new Date(ts).toLocaleDateString('zh-CN', { month: 'short', day: 'numeric', year: new Date(ts).getFullYear() === new Date(now).getFullYear() ? undefined : 'numeric' });
 }

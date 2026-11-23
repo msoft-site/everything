@@ -21,180 +21,180 @@ export function registerCommands(app) {
 
   c.registerAll([
     // ---- File ----
-    { id: 'file.new', label: 'New project', menuLabel: '&Project...', icon: 'new', run: () => app.newProject() },
-    { id: 'file.open', label: 'Open project', menuLabel: '&Open...', icon: 'open', shortcut: 'Mod+O', anywhere: true, run: () => app.openProjectDialog() },
-    { id: 'file.openExample', label: 'Open example project', menuLabel: 'Open e&xample', icon: 'chip', run: () => app.openExample() },
-    { id: 'file.save', label: 'Save', menuLabel: '&Save', icon: 'save', shortcut: 'Mod+S', anywhere: true, enabled: hasProject, run: () => (ed()?.kind === 'lib' ? ed().save() : app.save()) },
-    { id: 'file.saveAs', label: 'Save as', menuLabel: 'Save &as...', shortcut: 'Mod+Shift+S', anywhere: true, enabled: hasProject, run: () => app.saveAs() },
-    { id: 'file.download', label: 'Download project file', menuLabel: '&Download project file', icon: 'download', enabled: hasProject, run: () => app.downloadProject() },
-    { id: 'file.import', label: 'Open a project file from this device', menuLabel: 'Open from this &device...', icon: 'upload', run: () => app.importFromDevice() },
-    { id: 'file.importKicad', label: 'Import KiCad files', menuLabel: '&KiCad schematic and board files...', icon: 'upload', run: () => app.importKicad() },
-    { id: 'file.share', label: 'Share project', menuLabel: 'S&hare...', icon: 'share', enabled: hasProject, run: () => app.share() },
-    { id: 'file.history', label: 'Version history', menuLabel: '&Version history...', icon: 'history', enabled: hasProject, run: () => app.history() },
-    { id: 'file.print', label: 'Print', menuLabel: '&Print...', icon: 'print', shortcut: 'Mod+P', anywhere: true, enabled: hasDrawing, run: () => app.print() },
-    { id: 'file.close', label: 'Close project', menuLabel: '&Close project', enabled: hasProject, run: () => app.closeProject() },
+    { id: 'file.new', label: '新建项目', menuLabel: '项目(&P)...', icon: 'new', run: () => app.newProject() },
+    { id: 'file.open', label: '打开项目', menuLabel: '打开(&O)...', icon: 'open', shortcut: 'Mod+O', anywhere: true, run: () => app.openProjectDialog() },
+    { id: 'file.openExample', label: '打开示例项目', menuLabel: '打开示例(&X)', icon: 'chip', run: () => app.openExample() },
+    { id: 'file.save', label: '保存', menuLabel: '保存(&S)', icon: 'save', shortcut: 'Mod+S', anywhere: true, enabled: hasProject, run: () => (ed()?.kind === 'lib' ? ed().save() : app.save()) },
+    { id: 'file.saveAs', label: '另存为', menuLabel: '另存为(&A)...', shortcut: 'Mod+Shift+S', anywhere: true, enabled: hasProject, run: () => app.saveAs() },
+    { id: 'file.download', label: '下载项目文件', menuLabel: '下载项目文件(&D)', icon: 'download', enabled: hasProject, run: () => app.downloadProject() },
+    { id: 'file.import', label: '从本机打开项目文件', menuLabel: '从本机打开(&D)...', icon: 'upload', run: () => app.importFromDevice() },
+    { id: 'file.importKicad', label: '导入 KiCad 文件', menuLabel: 'KiCad 原理图与电路板文件(&K)...', icon: 'upload', run: () => app.importKicad() },
+    { id: 'file.share', label: '共享项目', menuLabel: '共享(&H)...', icon: 'share', enabled: hasProject, run: () => app.share() },
+    { id: 'file.history', label: '版本历史', menuLabel: '版本历史(&V)...', icon: 'history', enabled: hasProject, run: () => app.history() },
+    { id: 'file.print', label: '打印', menuLabel: '打印(&P)...', icon: 'print', shortcut: 'Mod+P', anywhere: true, enabled: hasDrawing, run: () => app.print() },
+    { id: 'file.close', label: '关闭项目', menuLabel: '关闭项目(&C)', enabled: hasProject, run: () => app.closeProject() },
 
     // ---- Export ----
-    { id: 'export.fabrication', label: 'Export fabrication package', menuLabel: '&Fabrication package (Gerber, drill, BOM)...', icon: 'gerber', enabled: () => !!app.project?.boards.length, run: () => app.exportFabrication() },
-    { id: 'export.gerber', label: 'Export Gerber files', menuLabel: '&Gerber files', enabled: () => !!app.project?.boards.length, run: () => app.exportGerbers() },
-    { id: 'export.drill', label: 'Export drill files', menuLabel: '&Drill files', enabled: () => !!app.project?.boards.length, run: () => app.exportDrill() },
-    { id: 'export.bom', label: 'Bill of materials', menuLabel: '&Bill of materials (CSV)', icon: 'bom', enabled: hasProject, run: () => app.exportBom() },
-    { id: 'export.pnp', label: 'Pick and place file', menuLabel: '&Pick and place (CSV)', enabled: () => !!app.project?.boards.length, run: () => app.exportPnp() },
-    { id: 'export.netlist', label: 'Netlist', menuLabel: '&Netlist', icon: 'network', enabled: hasProject, run: () => app.exportNetlist() },
-    { id: 'export.svg', label: 'Export current document as SVG', menuLabel: '&SVG image of this document', icon: 'image', enabled: hasDrawing, run: () => app.exportSvg() },
+    { id: 'export.fabrication', label: '导出生产文件包', menuLabel: '生产文件包 (Gerber、钻孔、BOM)(&F)...', icon: 'gerber', enabled: () => !!app.project?.boards.length, run: () => app.exportFabrication() },
+    { id: 'export.gerber', label: '导出 Gerber 文件', menuLabel: 'Gerber 文件(&G)', enabled: () => !!app.project?.boards.length, run: () => app.exportGerbers() },
+    { id: 'export.drill', label: '导出钻孔文件', menuLabel: '钻孔文件(&D)', enabled: () => !!app.project?.boards.length, run: () => app.exportDrill() },
+    { id: 'export.bom', label: '物料清单 (BOM)', menuLabel: '物料清单 (CSV)(&B)', icon: 'bom', enabled: hasProject, run: () => app.exportBom() },
+    { id: 'export.pnp', label: '贴片坐标文件', menuLabel: '贴片坐标 (CSV)(&P)', enabled: () => !!app.project?.boards.length, run: () => app.exportPnp() },
+    { id: 'export.netlist', label: '网表', menuLabel: '网表(&N)', icon: 'network', enabled: hasProject, run: () => app.exportNetlist() },
+    { id: 'export.svg', label: '导出当前文档为 SVG', menuLabel: '当前文档的 SVG 图像(&S)', icon: 'image', enabled: hasDrawing, run: () => app.exportSvg() },
 
     // ---- Edit ----
-    { id: 'edit.undo', label: 'Undo', menuLabel: '&Undo', icon: 'undo', shortcut: 'Mod+Z', enabled: () => !!ed()?.doc?.store.canUndo, run: () => app.undo() },
-    { id: 'edit.redo', label: 'Redo', menuLabel: '&Redo', icon: 'redo', shortcut: ['Mod+Y', 'Mod+Shift+Z'], enabled: () => !!ed()?.doc?.store.canRedo, run: () => app.redo() },
-    { id: 'edit.cut', label: 'Cut', menuLabel: 'Cu&t', icon: 'cut', shortcut: 'Mod+X', enabled: hasSel, run: () => app.cut() },
-    { id: 'edit.copy', label: 'Copy', menuLabel: '&Copy', icon: 'copy', shortcut: 'Mod+C', enabled: hasSel, run: () => app.copy() },
-    { id: 'edit.paste', label: 'Paste', menuLabel: '&Paste', icon: 'paste', shortcut: 'Mod+V', enabled: hasEditor, run: () => app.paste() },
-    { id: 'edit.duplicate', label: 'Duplicate', menuLabel: 'Dupl&icate', shortcut: 'Mod+D', enabled: hasSel, run: () => app.duplicate() },
-    { id: 'edit.delete', label: 'Delete', menuLabel: '&Delete', icon: 'trash', shortcut: ['Delete', 'Backspace'], enabled: hasSel, run: () => ed().deleteSelection() },
-    { id: 'edit.selectAll', label: 'Select all', menuLabel: 'Select &all', shortcut: 'Mod+A', enabled: hasEditor, run: () => ed().selectAll() },
-    { id: 'edit.find', label: 'Find', menuLabel: '&Find...', icon: 'search', shortcut: 'Mod+F', anywhere: true, enabled: hasEditor, run: () => app.find() },
-    { id: 'edit.properties', label: 'Properties', menuLabel: 'P&roperties', icon: 'settings', run: () => app.showPanel('properties', true) },
-    { id: 'edit.alignLeft', label: 'Align left', menuLabel: 'Align &left', enabled: () => (ed()?.selection?.size || 0) > 1, run: () => align('left') },
-    { id: 'edit.alignRight', label: 'Align right', menuLabel: 'Align &right', enabled: () => (ed()?.selection?.size || 0) > 1, run: () => align('right') },
-    { id: 'edit.alignTop', label: 'Align top', menuLabel: 'Align &top', enabled: () => (ed()?.selection?.size || 0) > 1, run: () => align('top') },
-    { id: 'edit.alignBottom', label: 'Align bottom', menuLabel: 'Align &bottom', enabled: () => (ed()?.selection?.size || 0) > 1, run: () => align('bottom') },
-    { id: 'edit.distributeH', label: 'Distribute horizontally', menuLabel: 'Distribute &horizontally', enabled: () => (ed()?.selection?.size || 0) > 2, run: () => distribute('x') },
-    { id: 'edit.distributeV', label: 'Distribute vertically', menuLabel: 'Distribute &vertically', enabled: () => (ed()?.selection?.size || 0) > 2, run: () => distribute('y') },
-    { id: 'app.preferences', label: 'Preferences', menuLabel: 'Pr&eferences...', icon: 'settings', shortcut: 'Mod+,', anywhere: true, run: () => app.preferences() },
+    { id: 'edit.undo', label: '撤销', menuLabel: '撤销(&U)', icon: 'undo', shortcut: 'Mod+Z', enabled: () => !!ed()?.doc?.store.canUndo, run: () => app.undo() },
+    { id: 'edit.redo', label: '重做', menuLabel: '重做(&R)', icon: 'redo', shortcut: ['Mod+Y', 'Mod+Shift+Z'], enabled: () => !!ed()?.doc?.store.canRedo, run: () => app.redo() },
+    { id: 'edit.cut', label: '剪切', menuLabel: '剪切(&T)', icon: 'cut', shortcut: 'Mod+X', enabled: hasSel, run: () => app.cut() },
+    { id: 'edit.copy', label: '复制', menuLabel: '复制(&C)', icon: 'copy', shortcut: 'Mod+C', enabled: hasSel, run: () => app.copy() },
+    { id: 'edit.paste', label: '粘贴', menuLabel: '粘贴(&P)', icon: 'paste', shortcut: 'Mod+V', enabled: hasEditor, run: () => app.paste() },
+    { id: 'edit.duplicate', label: '复制副本', menuLabel: '复制副本(&I)', shortcut: 'Mod+D', enabled: hasSel, run: () => app.duplicate() },
+    { id: 'edit.delete', label: '删除', menuLabel: '删除(&D)', icon: 'trash', shortcut: ['Delete', 'Backspace'], enabled: hasSel, run: () => ed().deleteSelection() },
+    { id: 'edit.selectAll', label: '全选', menuLabel: '全选(&A)', shortcut: 'Mod+A', enabled: hasEditor, run: () => ed().selectAll() },
+    { id: 'edit.find', label: '查找', menuLabel: '查找(&F)...', icon: 'search', shortcut: 'Mod+F', anywhere: true, enabled: hasEditor, run: () => app.find() },
+    { id: 'edit.properties', label: '属性', menuLabel: '属性(&R)', icon: 'settings', run: () => app.showPanel('properties', true) },
+    { id: 'edit.alignLeft', label: '左对齐', menuLabel: '左对齐(&L)', enabled: () => (ed()?.selection?.size || 0) > 1, run: () => align('left') },
+    { id: 'edit.alignRight', label: '右对齐', menuLabel: '右对齐(&R)', enabled: () => (ed()?.selection?.size || 0) > 1, run: () => align('right') },
+    { id: 'edit.alignTop', label: '顶对齐', menuLabel: '顶对齐(&T)', enabled: () => (ed()?.selection?.size || 0) > 1, run: () => align('top') },
+    { id: 'edit.alignBottom', label: '底对齐', menuLabel: '底对齐(&B)', enabled: () => (ed()?.selection?.size || 0) > 1, run: () => align('bottom') },
+    { id: 'edit.distributeH', label: '水平均匀分布', menuLabel: '水平均匀分布(&H)', enabled: () => (ed()?.selection?.size || 0) > 2, run: () => distribute('x') },
+    { id: 'edit.distributeV', label: '垂直均匀分布', menuLabel: '垂直均匀分布(&V)', enabled: () => (ed()?.selection?.size || 0) > 2, run: () => distribute('y') },
+    { id: 'app.preferences', label: '首选项', menuLabel: '首选项(&E)...', icon: 'settings', shortcut: 'Mod+,', anywhere: true, run: () => app.preferences() },
 
     // ---- View ----
-    { id: 'view.fit', label: 'Fit document', menuLabel: 'Fit &document', icon: 'fit', shortcut: ['Mod+PageDown', 'Home'], enabled: hasEditor, run: () => ed().fitAll() },
-    { id: 'view.fitContent', label: 'Fit all objects', menuLabel: 'Fit all &objects', enabled: hasEditor, run: () => ed().fitContent() },
-    { id: 'view.fitSelection', label: 'Fit selection', menuLabel: 'Fit &selection', shortcut: 'Mod+Shift+PageDown', enabled: hasSel, run: () => ed().fitSelection() },
-    { id: 'view.zoomIn', label: 'Zoom in', menuLabel: 'Zoom &in', icon: 'zoom-in', shortcut: ['PageUp', 'Mod+='], enabled: hasEditor, run: () => ed().zoomBy(1.4) },
-    { id: 'view.zoomOut', label: 'Zoom out', menuLabel: 'Zoom &out', icon: 'zoom-out', shortcut: ['PageDown', 'Mod+-'], enabled: hasEditor, run: () => ed().zoomBy(1 / 1.4) },
-    { id: 'view.cycleGrid', label: 'Next grid size', menuLabel: '&Next grid size', icon: 'grid', shortcut: 'G', enabled: hasEditor, run: () => cycleGrid(1) },
-    { id: 'view.cycleGridBack', label: 'Previous grid size', shortcut: 'Shift+G', enabled: hasEditor, run: () => cycleGrid(-1) },
-    { id: 'view.setGrid', label: 'Set grid', menuLabel: 'Set &grid...', shortcut: 'Mod+G', enabled: hasEditor, run: () => setGrid() },
-    { id: 'view.toggleUnits', label: 'Toggle units (mm / mil)', menuLabel: 'Toggle &units', shortcut: 'Q', run: () => { app.settings.set('units', app.settings.get('units') === 'mm' ? 'mil' : 'mm'); app.toast(`Units: ${app.settings.get('units')}`, { timeout: 1500 }); } },
-    { id: 'view.hud', label: 'Heads-up display', menuLabel: '&Heads-up display', shortcut: 'Shift+H', checked: () => app.settings.get('showHud'), run: () => { app.settings.set('showHud', !app.settings.get('showHud')); ed()?._updateHud?.(); } },
-    { id: 'panel.projects', label: 'Projects panel', menuLabel: '&Projects', checked: () => app.isPanelVisible('projects'), run: () => app.togglePanel('projects') },
-    { id: 'panel.navigator', label: 'Navigator panel', menuLabel: '&Navigator', checked: () => app.isPanelVisible('navigator'), run: () => app.togglePanel('navigator') },
-    { id: 'panel.properties', label: 'Properties panel', menuLabel: 'P&roperties', checked: () => app.isPanelVisible('properties'), run: () => app.togglePanel('properties') },
-    { id: 'panel.components', label: 'Components panel', menuLabel: '&Components', checked: () => app.isPanelVisible('components'), run: () => app.togglePanel('components') },
-    { id: 'panel.layers', label: 'Layers panel', menuLabel: '&Layers', checked: () => app.isPanelVisible('layers'), run: () => app.togglePanel('layers') },
-    { id: 'panel.messages', label: 'Messages panel', menuLabel: '&Messages', checked: () => app.bottomOpen, run: () => app.setBottomDock(!app.bottomOpen) },
-    { id: 'theme.system', label: 'Theme: match system', menuLabel: '&System', checked: () => currentTheme() === 'system', run: () => setTheme('system') },
-    { id: 'theme.light', label: 'Theme: light', menuLabel: '&Light', checked: () => currentTheme() === 'light', run: () => setTheme('light') },
-    { id: 'theme.dark', label: 'Theme: dark', menuLabel: '&Dark', checked: () => currentTheme() === 'dark', run: () => setTheme('dark') },
+    { id: 'view.fit', label: '适应文档', menuLabel: '适应文档(&D)', icon: 'fit', shortcut: ['Mod+PageDown', 'Home'], enabled: hasEditor, run: () => ed().fitAll() },
+    { id: 'view.fitContent', label: '适应所有对象', menuLabel: '适应所有对象(&O)', enabled: hasEditor, run: () => ed().fitContent() },
+    { id: 'view.fitSelection', label: '适应选中项', menuLabel: '适应选中项(&S)', shortcut: 'Mod+Shift+PageDown', enabled: hasSel, run: () => ed().fitSelection() },
+    { id: 'view.zoomIn', label: '放大', menuLabel: '放大(&I)', icon: 'zoom-in', shortcut: ['PageUp', 'Mod+='], enabled: hasEditor, run: () => ed().zoomBy(1.4) },
+    { id: 'view.zoomOut', label: '缩小', menuLabel: '缩小(&O)', icon: 'zoom-out', shortcut: ['PageDown', 'Mod+-'], enabled: hasEditor, run: () => ed().zoomBy(1 / 1.4) },
+    { id: 'view.cycleGrid', label: '下一个栅格尺寸', menuLabel: '下一个栅格尺寸(&N)', icon: 'grid', shortcut: 'G', enabled: hasEditor, run: () => cycleGrid(1) },
+    { id: 'view.cycleGridBack', label: '上一个栅格尺寸', shortcut: 'Shift+G', enabled: hasEditor, run: () => cycleGrid(-1) },
+    { id: 'view.setGrid', label: '设置栅格', menuLabel: '设置栅格(&G)...', shortcut: 'Mod+G', enabled: hasEditor, run: () => setGrid() },
+    { id: 'view.toggleUnits', label: '切换单位 (mm / mil)', menuLabel: '切换单位(&U)', shortcut: 'Q', run: () => { app.settings.set('units', app.settings.get('units') === 'mm' ? 'mil' : 'mm'); app.toast(`单位：${app.settings.get('units')}`, { timeout: 1500 }); } },
+    { id: 'view.hud', label: '平视坐标显示 (HUD)', menuLabel: '平视坐标显示(&H)', shortcut: 'Shift+H', checked: () => app.settings.get('showHud'), run: () => { app.settings.set('showHud', !app.settings.get('showHud')); ed()?._updateHud?.(); } },
+    { id: 'panel.projects', label: '项目面板', menuLabel: '项目(&P)', checked: () => app.isPanelVisible('projects'), run: () => app.togglePanel('projects') },
+    { id: 'panel.navigator', label: '导航器面板', menuLabel: '导航器(&N)', checked: () => app.isPanelVisible('navigator'), run: () => app.togglePanel('navigator') },
+    { id: 'panel.properties', label: '属性面板', menuLabel: '属性(&R)', checked: () => app.isPanelVisible('properties'), run: () => app.togglePanel('properties') },
+    { id: 'panel.components', label: '元器件面板', menuLabel: '元器件(&C)', checked: () => app.isPanelVisible('components'), run: () => app.togglePanel('components') },
+    { id: 'panel.layers', label: '板层面板', menuLabel: '板层(&L)', checked: () => app.isPanelVisible('layers'), run: () => app.togglePanel('layers') },
+    { id: 'panel.messages', label: '消息面板', menuLabel: '消息(&M)', checked: () => app.bottomOpen, run: () => app.setBottomDock(!app.bottomOpen) },
+    { id: 'theme.system', label: '主题：跟随系统', menuLabel: '跟随系统(&S)', checked: () => currentTheme() === 'system', run: () => setTheme('system') },
+    { id: 'theme.light', label: '主题：浅色', menuLabel: '浅色(&L)', checked: () => currentTheme() === 'light', run: () => setTheme('light') },
+    { id: 'theme.dark', label: '主题：深色', menuLabel: '深色(&D)', checked: () => currentTheme() === 'dark', run: () => setTheme('dark') },
 
     // ---- Project ----
-    { id: 'project.compile', label: 'Compile and check the schematic', menuLabel: 'C&ompile (electrical rules check)', icon: 'erc', enabled: hasProject, run: () => app.compile() },
-    { id: 'project.updateBoard', label: 'Update board from schematic', menuLabel: '&Update board from schematic...', icon: 'sync', enabled: hasProject, run: () => app.updateBoard() },
-    { id: 'project.addSheet', label: 'Add schematic sheet', menuLabel: '&Schematic sheet', icon: 'symbol', enabled: hasProject, run: () => app.addDoc('sch') },
-    { id: 'project.addBoard', label: 'Add board', menuLabel: '&Board', icon: 'board', enabled: hasProject, run: () => app.addDoc('pcb') },
-    { id: 'project.rename', label: 'Rename project', menuLabel: '&Rename project...', icon: 'pencil', enabled: hasProject, run: () => app.renameProject() },
-    { id: 'lib.manage', label: 'Project component library', menuLabel: 'Component &library...', icon: 'library', enabled: hasProject, run: () => app.manageLibrary() },
-    { id: 'lib.newComponent', label: 'New component', menuLabel: 'New &component...', icon: 'package', enabled: hasProject, run: () => app.newComponent() },
-    { id: 'lib.footprintWizard', label: 'Footprint wizard', menuLabel: '&Footprint wizard...', icon: 'wand', enabled: hasProject, run: () => app.newComponent({ start: 'footprint' }) },
-    { id: 'lib.blankComponent', label: 'New blank component in the editor', menuLabel: 'New component in the &editor', icon: 'pencil', enabled: hasProject, run: () => app.newComponentInEditor() },
+    { id: 'project.compile', label: '编译并检查原理图', menuLabel: '编译 (电气规则检查)(&O)', icon: 'erc', enabled: hasProject, run: () => app.compile() },
+    { id: 'project.updateBoard', label: '从原理图更新电路板', menuLabel: '从原理图更新电路板(&U)...', icon: 'sync', enabled: hasProject, run: () => app.updateBoard() },
+    { id: 'project.addSheet', label: '添加原理图页', menuLabel: '原理图页(&S)', icon: 'symbol', enabled: hasProject, run: () => app.addDoc('sch') },
+    { id: 'project.addBoard', label: '添加电路板', menuLabel: '电路板(&B)', icon: 'board', enabled: hasProject, run: () => app.addDoc('pcb') },
+    { id: 'project.rename', label: '重命名项目', menuLabel: '重命名项目(&R)...', icon: 'pencil', enabled: hasProject, run: () => app.renameProject() },
+    { id: 'lib.manage', label: '项目元器件库', menuLabel: '元器件库(&L)...', icon: 'library', enabled: hasProject, run: () => app.manageLibrary() },
+    { id: 'lib.newComponent', label: '新建元器件', menuLabel: '新建元器件(&C)...', icon: 'package', enabled: hasProject, run: () => app.newComponent() },
+    { id: 'lib.footprintWizard', label: '封装向导', menuLabel: '封装向导(&F)...', icon: 'wand', enabled: hasProject, run: () => app.newComponent({ start: 'footprint' }) },
+    { id: 'lib.blankComponent', label: '在编辑器中新建空白元器件', menuLabel: '在编辑器中新建元器件(&E)', icon: 'pencil', enabled: hasProject, run: () => app.newComponentInEditor() },
 
     // ---- Component editor ----
-    { id: 'libed.place.pin', context: 'lib', label: 'Place pin', menuLabel: '&Pin', icon: 'pin', run: () => ed().startTool('pin') },
-    { id: 'libed.place.pad', context: 'lib', label: 'Place pad', menuLabel: 'Pa&d', icon: 'pad', run: () => ed().startTool('pad') },
-    { id: 'libed.padArray', context: 'lib', label: 'Pad array', menuLabel: 'Pad arra&y...', icon: 'layout-grid', run: () => ed().padArrayDialog() },
-    { id: 'libed.place.line', context: 'lib', label: 'Draw line', menuLabel: '&Line', icon: 'line-tool', run: () => ed().startTool('line') },
-    { id: 'libed.place.rect', context: 'lib', label: 'Draw rectangle', menuLabel: '&Rectangle', icon: 'square', run: () => ed().startTool('rect') },
-    { id: 'libed.place.circle', context: 'lib', label: 'Draw circle', menuLabel: '&Circle', icon: 'circle', run: () => ed().startTool('circle') },
-    { id: 'libed.place.arc', context: 'lib', label: 'Draw arc', menuLabel: '&Arc', icon: 'arc-tool', run: () => ed().startTool('arc') },
-    { id: 'libed.place.poly', context: 'lib', label: 'Draw polygon', menuLabel: 'P&olygon', icon: 'region', run: () => ed().startTool('poly') },
-    { id: 'libed.place.text', context: 'lib', label: 'Place text', menuLabel: '&Text', icon: 'text', run: () => ed().startTool('text') },
-    { id: 'libed.rotate', context: 'lib', label: 'Rotate selection', menuLabel: '&Rotate', icon: 'rotate-ccw', shortcut: 'Space', enabled: hasSel, run: () => ed().rotateSelection(90) },
-    { id: 'libed.rotateCw', context: 'lib', label: 'Rotate selection clockwise', shortcut: 'Shift+Space', enabled: hasSel, run: () => ed().rotateSelection(270) },
-    { id: 'libed.mirrorX', context: 'lib', label: 'Mirror horizontally', menuLabel: 'Mirror &horizontally', icon: 'flip-h', shortcut: 'X', enabled: hasSel, run: () => ed().mirrorSelection('x') },
-    { id: 'libed.mirrorY', context: 'lib', label: 'Mirror vertically', menuLabel: 'Mirror &vertically', icon: 'flip-v', shortcut: 'Y', enabled: hasSel, run: () => ed().mirrorSelection('y') },
-    { id: 'libed.mode.symbol', context: 'lib', label: 'Edit the symbol', menuLabel: '&Symbol', icon: 'symbol', checked: () => ed()?.mode === 'symbol', run: () => ed().setMode('symbol') },
-    { id: 'libed.mode.footprint', context: 'lib', label: 'Edit the footprint', menuLabel: '&Footprint', icon: 'footprint', checked: () => ed()?.mode === 'footprint', run: () => ed().setMode('footprint') },
-    { id: 'libed.pinTable', context: 'lib', label: 'Pin table', menuLabel: 'Pin &table...', icon: 'table', run: () => ed().pinTableDialog() },
-    { id: 'libed.courtyard', context: 'lib', label: 'Fit courtyard to pads', menuLabel: 'Fit &courtyard', icon: 'select-rect', run: () => ed().fitCourtyard() },
-    { id: 'libed.save', context: 'lib', label: 'Save component to the project', menuLabel: '&Save to project', icon: 'save', run: () => ed().save() },
-    { id: 'libed.validate', context: 'lib', label: 'Check the component', menuLabel: 'C&heck component', icon: 'list-checks', run: () => {
+    { id: 'libed.place.pin', context: 'lib', label: '放置引脚', menuLabel: '引脚(&P)', icon: 'pin', run: () => ed().startTool('pin') },
+    { id: 'libed.place.pad', context: 'lib', label: '放置焊盘', menuLabel: '焊盘(&D)', icon: 'pad', run: () => ed().startTool('pad') },
+    { id: 'libed.padArray', context: 'lib', label: '焊盘阵列', menuLabel: '焊盘阵列(&Y)...', icon: 'layout-grid', run: () => ed().padArrayDialog() },
+    { id: 'libed.place.line', context: 'lib', label: '绘制线条', menuLabel: '线条(&L)', icon: 'line-tool', run: () => ed().startTool('line') },
+    { id: 'libed.place.rect', context: 'lib', label: '绘制矩形', menuLabel: '矩形(&R)', icon: 'square', run: () => ed().startTool('rect') },
+    { id: 'libed.place.circle', context: 'lib', label: '绘制圆形', menuLabel: '圆形(&C)', icon: 'circle', run: () => ed().startTool('circle') },
+    { id: 'libed.place.arc', context: 'lib', label: '绘制圆弧', menuLabel: '圆弧(&A)', icon: 'arc-tool', run: () => ed().startTool('arc') },
+    { id: 'libed.place.poly', context: 'lib', label: '绘制多边形', menuLabel: '多边形(&O)', icon: 'region', run: () => ed().startTool('poly') },
+    { id: 'libed.place.text', context: 'lib', label: '放置文本', menuLabel: '文本(&T)', icon: 'text', run: () => ed().startTool('text') },
+    { id: 'libed.rotate', context: 'lib', label: '旋转选中项', menuLabel: '旋转(&R)', icon: 'rotate-ccw', shortcut: 'Space', enabled: hasSel, run: () => ed().rotateSelection(90) },
+    { id: 'libed.rotateCw', context: 'lib', label: '顺时针旋转选中项', shortcut: 'Shift+Space', enabled: hasSel, run: () => ed().rotateSelection(270) },
+    { id: 'libed.mirrorX', context: 'lib', label: '水平镜像', menuLabel: '水平镜像(&H)', icon: 'flip-h', shortcut: 'X', enabled: hasSel, run: () => ed().mirrorSelection('x') },
+    { id: 'libed.mirrorY', context: 'lib', label: '垂直镜像', menuLabel: '垂直镜像(&V)', icon: 'flip-v', shortcut: 'Y', enabled: hasSel, run: () => ed().mirrorSelection('y') },
+    { id: 'libed.mode.symbol', context: 'lib', label: '编辑符号', menuLabel: '符号(&S)', icon: 'symbol', checked: () => ed()?.mode === 'symbol', run: () => ed().setMode('symbol') },
+    { id: 'libed.mode.footprint', context: 'lib', label: '编辑封装', menuLabel: '封装(&F)', icon: 'footprint', checked: () => ed()?.mode === 'footprint', run: () => ed().setMode('footprint') },
+    { id: 'libed.pinTable', context: 'lib', label: '引脚表', menuLabel: '引脚表(&T)...', icon: 'table', run: () => ed().pinTableDialog() },
+    { id: 'libed.courtyard', context: 'lib', label: '按焊盘适配占位边界', menuLabel: '适配占位边界(&C)', icon: 'select-rect', run: () => ed().fitCourtyard() },
+    { id: 'libed.save', context: 'lib', label: '保存元器件到项目', menuLabel: '保存到项目(&S)', icon: 'save', run: () => ed().save() },
+    { id: 'libed.validate', context: 'lib', label: '检查元器件', menuLabel: '检查元器件(&H)', icon: 'list-checks', run: () => {
       const e = ed();
       const list = e.validate().map((m) => ({ ...m, severity: m.severity === 'info' ? 'warning' : m.severity, docId: e.doc.id }));
-      app.panels.messages.set(list, `Component check: ${e.doc.name}`);
+      app.panels.messages.set(list, `元器件检查：${e.doc.name}`);
       app.setBottomDock(true);
       app.updateStatus();
     } },
 
     // ---- Schematic ----
-    { id: 'sch.place.part', context: 'sch', label: 'Place part', menuLabel: '&Part...', icon: 'part', run: () => app.showPanel('components', true, true) },
-    { id: 'sch.place.wire', context: 'sch', label: 'Place wire', menuLabel: '&Wire', icon: 'wire', shortcut: 'Shift+W', run: () => ed().startTool('wire') },
-    { id: 'sch.place.bus', context: 'sch', label: 'Place bus', menuLabel: '&Bus', icon: 'bus', run: () => ed().startTool('bus') },
-    { id: 'sch.place.label', context: 'sch', label: 'Place net label', menuLabel: 'Net &label', icon: 'net-label', run: () => ed().startTool('label') },
-    { id: 'sch.place.power', context: 'sch', label: 'Place power port', menuLabel: 'P&ower port', icon: 'power', run: () => ed().startTool('power') },
-    { id: 'sch.place.ground', context: 'sch', label: 'Place ground', menuLabel: '&Ground', icon: 'ground', run: () => ed().startTool('ground') },
-    { id: 'sch.place.port', context: 'sch', label: 'Place port', menuLabel: 'Po&rt', icon: 'port', run: () => ed().startTool('port') },
-    { id: 'sch.place.junction', context: 'sch', label: 'Place junction', menuLabel: '&Junction', icon: 'junction', run: () => ed().startTool('junction') },
-    { id: 'sch.place.noerc', context: 'sch', label: 'Place no ERC marker', menuLabel: '&No ERC marker', icon: 'no-erc', run: () => ed().startTool('noerc') },
-    { id: 'sch.place.text', context: 'sch', label: 'Place text', menuLabel: '&Text', icon: 'text', run: () => ed().startTool('text') },
-    { id: 'sch.place.line', context: 'sch', label: 'Draw line', menuLabel: '&Line', icon: 'line-tool', run: () => ed().startTool('line') },
-    { id: 'sch.place.rect', context: 'sch', label: 'Draw rectangle', menuLabel: '&Rectangle', icon: 'square', run: () => ed().startTool('rect') },
-    { id: 'sch.place.circle', context: 'sch', label: 'Draw circle', menuLabel: '&Circle', icon: 'circle', run: () => ed().startTool('circle') },
-    { id: 'sch.rotate', context: 'sch', label: 'Rotate selection', menuLabel: '&Rotate', icon: 'rotate-ccw', shortcut: 'Space', enabled: hasSel, run: () => ed().rotateSelection(90) },
-    { id: 'sch.rotateCw', context: 'sch', label: 'Rotate selection clockwise', shortcut: 'Shift+Space', enabled: hasSel, run: () => ed().rotateSelection(270) },
-    { id: 'sch.mirrorX', context: 'sch', label: 'Mirror horizontally', menuLabel: 'Mirror &horizontally', icon: 'flip-h', shortcut: 'X', enabled: hasSel, run: () => ed().mirrorSelection('x') },
-    { id: 'sch.mirrorY', context: 'sch', label: 'Mirror vertically', menuLabel: 'Mirror &vertically', icon: 'flip-v', shortcut: 'Y', enabled: hasSel, run: () => ed().mirrorSelection('y') },
-    { id: 'sch.annotate', label: 'Annotate schematics', menuLabel: '&Annotate schematics...', icon: 'annotate', enabled: () => !!app.project?.sheets.length, run: () => app.annotate() },
-    { id: 'sch.sheetOptions', context: 'sch', label: 'Sheet options', menuLabel: '&Sheet options', icon: 'settings', run: () => { ed().setSelection([]); app.showPanel('properties', true); } },
-    { id: 'sch.clearHighlight', context: 'sch', label: 'Clear net highlight', menuLabel: '&Clear highlight', shortcut: 'Shift+C', run: () => ed().clearHighlight() },
+    { id: 'sch.place.part', context: 'sch', label: '放置器件', menuLabel: '器件(&P)...', icon: 'part', run: () => app.showPanel('components', true, true) },
+    { id: 'sch.place.wire', context: 'sch', label: '放置导线', menuLabel: '导线(&W)', icon: 'wire', shortcut: 'Shift+W', run: () => ed().startTool('wire') },
+    { id: 'sch.place.bus', context: 'sch', label: '放置总线', menuLabel: '总线(&B)', icon: 'bus', run: () => ed().startTool('bus') },
+    { id: 'sch.place.label', context: 'sch', label: '放置网络标号', menuLabel: '网络标号(&L)', icon: 'net-label', run: () => ed().startTool('label') },
+    { id: 'sch.place.power', context: 'sch', label: '放置电源端口', menuLabel: '电源端口(&O)', icon: 'power', run: () => ed().startTool('power') },
+    { id: 'sch.place.ground', context: 'sch', label: '放置接地', menuLabel: '接地(&G)', icon: 'ground', run: () => ed().startTool('ground') },
+    { id: 'sch.place.port', context: 'sch', label: '放置图纸端口', menuLabel: '图纸端口(&R)', icon: 'port', run: () => ed().startTool('port') },
+    { id: 'sch.place.junction', context: 'sch', label: '放置连接点', menuLabel: '连接点(&J)', icon: 'junction', run: () => ed().startTool('junction') },
+    { id: 'sch.place.noerc', context: 'sch', label: '放置忽略 ERC 标记', menuLabel: '忽略 ERC 标记(&N)', icon: 'no-erc', run: () => ed().startTool('noerc') },
+    { id: 'sch.place.text', context: 'sch', label: '放置文本', menuLabel: '文本(&T)', icon: 'text', run: () => ed().startTool('text') },
+    { id: 'sch.place.line', context: 'sch', label: '绘制线条', menuLabel: '线条(&L)', icon: 'line-tool', run: () => ed().startTool('line') },
+    { id: 'sch.place.rect', context: 'sch', label: '绘制矩形', menuLabel: '矩形(&R)', icon: 'square', run: () => ed().startTool('rect') },
+    { id: 'sch.place.circle', context: 'sch', label: '绘制圆形', menuLabel: '圆形(&C)', icon: 'circle', run: () => ed().startTool('circle') },
+    { id: 'sch.rotate', context: 'sch', label: '旋转选中项', menuLabel: '旋转(&R)', icon: 'rotate-ccw', shortcut: 'Space', enabled: hasSel, run: () => ed().rotateSelection(90) },
+    { id: 'sch.rotateCw', context: 'sch', label: '顺时针旋转选中项', shortcut: 'Shift+Space', enabled: hasSel, run: () => ed().rotateSelection(270) },
+    { id: 'sch.mirrorX', context: 'sch', label: '水平镜像', menuLabel: '水平镜像(&H)', icon: 'flip-h', shortcut: 'X', enabled: hasSel, run: () => ed().mirrorSelection('x') },
+    { id: 'sch.mirrorY', context: 'sch', label: '垂直镜像', menuLabel: '垂直镜像(&V)', icon: 'flip-v', shortcut: 'Y', enabled: hasSel, run: () => ed().mirrorSelection('y') },
+    { id: 'sch.annotate', label: '原理图自动编号', menuLabel: '原理图自动编号(&A)...', icon: 'annotate', enabled: () => !!app.project?.sheets.length, run: () => app.annotate() },
+    { id: 'sch.sheetOptions', context: 'sch', label: '图纸选项', menuLabel: '图纸选项(&S)', icon: 'settings', run: () => { ed().setSelection([]); app.showPanel('properties', true); } },
+    { id: 'sch.clearHighlight', context: 'sch', label: '清除网络高亮', menuLabel: '清除高亮(&C)', shortcut: 'Shift+C', run: () => ed().clearHighlight() },
 
     // ---- Board ----
-    { id: 'pcb.place.component', context: 'pcb', label: 'Place component', menuLabel: '&Component...', icon: 'component', run: () => app.showPanel('components', true, true) },
-    { id: 'pcb.route', context: 'pcb', label: 'Interactive routing', menuLabel: '&Interactive routing', icon: 'route', shortcut: 'Shift+W', run: () => ed().startTool('route') },
-    { id: 'pcb.place.via', context: 'pcb', label: 'Place via', menuLabel: '&Via', icon: 'via', run: () => ed().startTool('via') },
-    { id: 'pcb.place.pad', context: 'pcb', label: 'Place pad', menuLabel: 'P&ad', icon: 'pad', run: () => ed().startTool('pad') },
-    { id: 'pcb.place.pour', context: 'pcb', label: 'Place polygon pour', menuLabel: 'Polygon &pour', icon: 'pour', run: () => ed().startTool('pour') },
-    { id: 'pcb.place.fill', context: 'pcb', label: 'Place fill', menuLabel: '&Fill', icon: 'fill', run: () => ed().startTool('fill') },
-    { id: 'pcb.place.region', context: 'pcb', label: 'Place solid region', menuLabel: 'Solid &region', icon: 'region', run: () => ed().startTool('region') },
-    { id: 'pcb.place.keepout', context: 'pcb', label: 'Place keep-out region', menuLabel: '&Keep-out region', icon: 'keepout', run: () => ed().startTool('keepout') },
-    { id: 'pcb.place.line', context: 'pcb', label: 'Draw line on current layer', menuLabel: '&Line', icon: 'line-tool', run: () => ed().startTool('line') },
-    { id: 'pcb.place.text', context: 'pcb', label: 'Place text', menuLabel: '&Text', icon: 'text', run: () => ed().startTool('text') },
-    { id: 'pcb.place.dimension', context: 'pcb', label: 'Place dimension', menuLabel: '&Dimension', icon: 'dimension', run: () => ed().startTool('dim') },
-    { id: 'pcb.measure', context: 'pcb', label: 'Measure distance', menuLabel: '&Measure distance', icon: 'measure', shortcut: 'Mod+M', run: () => ed().startTool('measure') },
-    { id: 'pcb.rotate', context: 'pcb', label: 'Rotate selection', menuLabel: '&Rotate 90 degrees', icon: 'rotate-ccw', shortcut: 'Space', enabled: hasSel, run: () => ed().rotateSelection(90) },
-    { id: 'pcb.rotateCw', context: 'pcb', label: 'Rotate selection clockwise', shortcut: 'Shift+Space', enabled: hasSel, run: () => ed().rotateSelection(270) },
-    { id: 'pcb.flip', context: 'pcb', label: 'Flip to other side', menuLabel: '&Flip to other side', icon: 'flip', shortcut: 'L', enabled: () => ed()?.selectedObjects?.().some((o) => o.t === 'comp'), run: () => ed().flipSelection() },
-    { id: 'pcb.nextLayer', context: 'pcb', label: 'Next layer', menuLabel: '&Next layer', icon: 'layer-up', shortcut: ['+', 'Num+'], run: () => ed().stepLayer(1) },
-    { id: 'pcb.prevLayer', context: 'pcb', label: 'Previous layer', menuLabel: '&Previous layer', shortcut: ['-', 'Num-'], run: () => ed().stepLayer(-1) },
-    { id: 'pcb.nextCopper', context: 'pcb', label: 'Next copper layer', shortcut: ['*', 'Num*'], run: () => ed().stepLayer(1, true) },
-    { id: 'pcb.singleLayer', context: 'pcb', label: 'Single layer mode', menuLabel: 'Single &layer mode', icon: 'single-layer', shortcut: 'Shift+S', run: () => ed().cycleSingleLayer() },
-    { id: 'pcb.view2d', context: 'pcb', label: '2D view', menuLabel: '&2D view', icon: 'view-2d', shortcut: '2', run: () => app.set3d(false) },
-    { id: 'pcb.toggle3d', context: 'pcb', label: '3D view', menuLabel: '&3D view', icon: 'cube', shortcut: '3', checked: () => !!app.view3dOpen, run: () => app.set3d(!app.view3dOpen) },
-    { id: 'pcb.fitBoard', context: 'pcb', label: 'Fit board', menuLabel: 'Fit &board', run: () => ed().fitBoard() },
-    { id: 'pcb.clearHighlight', context: 'pcb', label: 'Clear net highlight', menuLabel: '&Clear highlight', shortcut: 'Shift+C', run: () => ed().clearHighlight() },
-    { id: 'pcb.drc', context: 'pcb', label: 'Design rule check', menuLabel: '&Design rule check', icon: 'drc', run: () => app.runDrc() },
-    { id: 'pcb.repour', context: 'pcb', label: 'Repour all polygons', menuLabel: '&Repour polygons', icon: 'pour', run: () => ed().repour() },
-    { id: 'pcb.rules', context: 'pcb', label: 'Design rules', menuLabel: '&Rules...', icon: 'ruler', run: () => app.editRules() },
-    { id: 'pcb.layerStack', context: 'pcb', label: 'Layer stack', menuLabel: 'Layer &stack...', icon: 'layers', run: () => app.editLayerStack() },
-    { id: 'pcb.boardSize', context: 'pcb', label: 'Set board size', menuLabel: 'Set &rectangular size...', icon: 'board', run: () => app.boardSize() },
-    { id: 'pcb.redefineBoard', context: 'pcb', label: 'Redraw board shape', menuLabel: '&Draw board shape', run: () => ed().startTool('board') },
-    { id: 'pcb.addCutout', context: 'pcb', label: 'Add board cutout', menuLabel: 'Add &cutout', run: () => ed().startTool('cutout') },
-    { id: 'pcb.setOrigin', context: 'pcb', label: 'Set origin', menuLabel: 'Set &origin at cursor', run: () => app.setOriginAtCursor() },
-    { id: 'pcb.boardOptions', context: 'pcb', label: 'Board options', menuLabel: '&Board options', icon: 'settings', run: () => { ed().setSelection([]); app.showPanel('properties', true); } },
-    { id: 'pcb.setCopper', context: 'pcb', label: 'Set copper layer count', visible: () => false, run: (n) => app.setCopperLayers(n) },
-    { id: 'pcb.autorouteAll', context: 'pcb', label: 'Autoroute all nets', menuLabel: 'Auto&route all', icon: 'autoroute', run: () => app.autoroute() },
-    { id: 'pcb.autorouteNet', context: 'pcb', label: 'Autoroute highlighted net', menuLabel: 'Autoroute &net', enabled: () => !!ed()?.highlight, run: () => app.autoroute([ed().highlight.net]) },
-    { id: 'pcb.unrouteAll', context: 'pcb', label: 'Remove all tracks and vias', menuLabel: '&Unroute all', run: () => app.unroute(null) },
-    { id: 'pcb.unrouteNet', context: 'pcb', label: 'Unroute highlighted net', menuLabel: 'Unroute &highlighted net', enabled: () => !!ed()?.highlight, run: () => app.unroute(ed().highlight.net) },
-    { id: 'pcb.routingMode', context: 'pcb', label: 'Stop routing at obstacles', menuLabel: '&Stop at obstacles', shortcut: 'Shift+R', checked: () => app.settings.get('routingMode') === 'stop', run: () => app.settings.set('routingMode', app.settings.get('routingMode') === 'stop' ? 'ignore' : 'stop') },
-    { id: 'report.boardInfo', label: 'Board information', menuLabel: 'Board &information', icon: 'info', enabled: () => !!app.project?.boards.length, run: () => app.boardInfo() },
+    { id: 'pcb.place.component', context: 'pcb', label: '放置元器件', menuLabel: '元器件(&C)...', icon: 'component', run: () => app.showPanel('components', true, true) },
+    { id: 'pcb.route', context: 'pcb', label: '交互式布线', menuLabel: '交互式布线(&I)', icon: 'route', shortcut: 'Shift+W', run: () => ed().startTool('route') },
+    { id: 'pcb.place.via', context: 'pcb', label: '放置过孔', menuLabel: '过孔(&V)', icon: 'via', run: () => ed().startTool('via') },
+    { id: 'pcb.place.pad', context: 'pcb', label: '放置焊盘', menuLabel: '焊盘(&A)', icon: 'pad', run: () => ed().startTool('pad') },
+    { id: 'pcb.place.pour', context: 'pcb', label: '放置多边形覆铜', menuLabel: '多边形覆铜(&P)', icon: 'pour', run: () => ed().startTool('pour') },
+    { id: 'pcb.place.fill', context: 'pcb', label: '放置填充区', menuLabel: '填充区(&F)', icon: 'fill', run: () => ed().startTool('fill') },
+    { id: 'pcb.place.region', context: 'pcb', label: '放置实心区域', menuLabel: '实心区域(&R)', icon: 'region', run: () => ed().startTool('region') },
+    { id: 'pcb.place.keepout', context: 'pcb', label: '放置禁止布线区', menuLabel: '禁止布线区(&K)', icon: 'keepout', run: () => ed().startTool('keepout') },
+    { id: 'pcb.place.line', context: 'pcb', label: '在当前层绘制线条', menuLabel: '线条(&L)', icon: 'line-tool', run: () => ed().startTool('line') },
+    { id: 'pcb.place.text', context: 'pcb', label: '放置文本', menuLabel: '文本(&T)', icon: 'text', run: () => ed().startTool('text') },
+    { id: 'pcb.place.dimension', context: 'pcb', label: '放置尺寸标注', menuLabel: '尺寸标注(&D)', icon: 'dimension', run: () => ed().startTool('dim') },
+    { id: 'pcb.measure', context: 'pcb', label: '测量距离', menuLabel: '测量距离(&M)', icon: 'measure', shortcut: 'Mod+M', run: () => ed().startTool('measure') },
+    { id: 'pcb.rotate', context: 'pcb', label: '旋转选中项', menuLabel: '旋转 90 度(&R)', icon: 'rotate-ccw', shortcut: 'Space', enabled: hasSel, run: () => ed().rotateSelection(90) },
+    { id: 'pcb.rotateCw', context: 'pcb', label: '顺时针旋转选中项', shortcut: 'Shift+Space', enabled: hasSel, run: () => ed().rotateSelection(270) },
+    { id: 'pcb.flip', context: 'pcb', label: '翻转到另一面', menuLabel: '翻转到另一面(&F)', icon: 'flip', shortcut: 'L', enabled: () => ed()?.selectedObjects?.().some((o) => o.t === 'comp'), run: () => ed().flipSelection() },
+    { id: 'pcb.nextLayer', context: 'pcb', label: '下一层', menuLabel: '下一层(&N)', icon: 'layer-up', shortcut: ['+', 'Num+'], run: () => ed().stepLayer(1) },
+    { id: 'pcb.prevLayer', context: 'pcb', label: '上一层', menuLabel: '上一层(&P)', icon: 'layer-up', shortcut: ['-', 'Num-'], run: () => ed().stepLayer(-1) },
+    { id: 'pcb.nextCopper', context: 'pcb', label: '下一铜皮层', shortcut: ['*', 'Num*'], run: () => ed().stepLayer(1, true) },
+    { id: 'pcb.singleLayer', context: 'pcb', label: '单层模式', menuLabel: '单层模式(&L)', icon: 'single-layer', shortcut: 'Shift+S', run: () => ed().cycleSingleLayer() },
+    { id: 'pcb.view2d', context: 'pcb', label: '2D 视图', menuLabel: '2D 视图(&2)', icon: 'view-2d', shortcut: '2', run: () => app.set3d(false) },
+    { id: 'pcb.toggle3d', context: 'pcb', label: '3D 视图', menuLabel: '3D 视图(&3)', icon: 'cube', shortcut: '3', checked: () => !!app.view3dOpen, run: () => app.set3d(!app.view3dOpen) },
+    { id: 'pcb.fitBoard', context: 'pcb', label: '适应板框', menuLabel: '适应板框(&B)', run: () => ed().fitBoard() },
+    { id: 'pcb.clearHighlight', context: 'pcb', label: '清除网络高亮', menuLabel: '清除高亮(&C)', shortcut: 'Shift+C', run: () => ed().clearHighlight() },
+    { id: 'pcb.drc', context: 'pcb', label: '设计规则检查 (DRC)', menuLabel: '设计规则检查(&D)', icon: 'drc', run: () => app.runDrc() },
+    { id: 'pcb.repour', context: 'pcb', label: '重新覆铜所有多边形', menuLabel: '重新覆铜(&R)', icon: 'pour', run: () => ed().repour() },
+    { id: 'pcb.rules', context: 'pcb', label: '设计规则', menuLabel: '规则(&R)...', icon: 'ruler', run: () => app.editRules() },
+    { id: 'pcb.layerStack', context: 'pcb', label: '层叠结构', menuLabel: '层叠结构(&S)...', icon: 'layers', run: () => app.editLayerStack() },
+    { id: 'pcb.boardSize', context: 'pcb', label: '设置电路板尺寸', menuLabel: '设置矩形尺寸(&R)...', icon: 'board', run: () => app.boardSize() },
+    { id: 'pcb.redefineBoard', context: 'pcb', label: '重绘板框形状', menuLabel: '绘制板框形状(&D)', run: () => ed().startTool('board') },
+    { id: 'pcb.addCutout', context: 'pcb', label: '添加板内挖空', menuLabel: '添加板内挖空(&C)', run: () => ed().startTool('cutout') },
+    { id: 'pcb.setOrigin', context: 'pcb', label: '设置原点', menuLabel: '在光标处设置原点(&O)', run: () => app.setOriginAtCursor() },
+    { id: 'pcb.boardOptions', context: 'pcb', label: '电路板选项', menuLabel: '电路板选项(&B)', icon: 'settings', run: () => { ed().setSelection([]); app.showPanel('properties', true); } },
+    { id: 'pcb.setCopper', context: 'pcb', label: '设置铜皮层数', visible: () => false, run: (n) => app.setCopperLayers(n) },
+    { id: 'pcb.autorouteAll', context: 'pcb', label: '自动布线全部网络', menuLabel: '全部自动布线(&R)', icon: 'autoroute', run: () => app.autoroute() },
+    { id: 'pcb.autorouteNet', context: 'pcb', label: '自动布线高亮网络', menuLabel: '自动布线当前网络(&N)', enabled: () => !!ed()?.highlight, run: () => app.autoroute([ed().highlight.net]) },
+    { id: 'pcb.unrouteAll', context: 'pcb', label: '移除所有走线和过孔', menuLabel: '拆除全部布线(&U)', run: () => app.unroute(null) },
+    { id: 'pcb.unrouteNet', context: 'pcb', label: '拆除高亮网络布线', menuLabel: '拆除高亮网络布线(&H)', enabled: () => !!ed()?.highlight, run: () => app.unroute(ed().highlight.net) },
+    { id: 'pcb.routingMode', context: 'pcb', label: '遇到障碍物停止布线', menuLabel: '遇到障碍物停止(&S)', shortcut: 'Shift+R', checked: () => app.settings.get('routingMode') === 'stop', run: () => app.settings.set('routingMode', app.settings.get('routingMode') === 'stop' ? 'ignore' : 'stop') },
+    { id: 'report.boardInfo', label: '电路板信息', menuLabel: '电路板信息(&I)', icon: 'info', enabled: () => !!app.project?.boards.length, run: () => app.boardInfo() },
 
     // ---- Window and help ----
-    { id: 'window.nextTab', label: 'Next document', menuLabel: '&Next document', shortcut: 'Alt+PageDown', anywhere: true, run: () => app.cycleTab(1) },
-    { id: 'window.prevTab', label: 'Previous document', shortcut: 'Alt+PageUp', anywhere: true, run: () => app.cycleTab(-1) },
-    { id: 'window.closeTab', label: 'Close document', menuLabel: '&Close document', shortcut: 'Alt+W', anywhere: true, enabled: () => !!app.activeDocId, run: () => app.closeTab(app.activeDocId) },
-    { id: 'window.closeAll', label: 'Close all documents', menuLabel: 'Close &all documents', run: () => app.closeAllTabs() },
-    { id: 'window.resetLayout', label: 'Reset panel layout', menuLabel: '&Reset layout', run: () => app.resetLayout() },
-    { id: 'help.gettingStarted', label: 'Getting started', menuLabel: '&Getting started', icon: 'help', run: () => app.gettingStarted() },
-    { id: 'help.shortcuts', label: 'Keyboard shortcuts', menuLabel: '&Keyboard shortcuts', icon: 'keyboard', shortcut: ['?', 'F1'], anywhere: true, run: () => app.showShortcuts() },
-    { id: 'help.commands', label: 'Search commands', menuLabel: '&Search commands...', icon: 'command', shortcut: ['Mod+K', 'Mod+Shift+P'], anywhere: true, run: () => app.commandPalette() },
-    { id: 'help.github', label: 'Source code on GitHub', menuLabel: 'Source code on &GitHub', icon: 'github', run: () => window.open('https://github.com/heyputer/everything', '_blank', 'noopener,noreferrer') },
-    { id: 'help.about', label: 'About Circuits', menuLabel: '&About Circuits', icon: 'info', run: () => app.about() },
+    { id: 'window.nextTab', label: '下一个文档', menuLabel: '下一个文档(&N)', shortcut: 'Alt+PageDown', anywhere: true, run: () => app.cycleTab(1) },
+    { id: 'window.prevTab', label: '上一个文档', shortcut: 'Alt+PageUp', anywhere: true, run: () => app.cycleTab(-1) },
+    { id: 'window.closeTab', label: '关闭文档', menuLabel: '关闭文档(&C)', shortcut: 'Alt+W', anywhere: true, enabled: () => !!app.activeDocId, run: () => app.closeTab(app.activeDocId) },
+    { id: 'window.closeAll', label: '关闭所有文档', menuLabel: '关闭所有文档(&A)', run: () => app.closeAllTabs() },
+    { id: 'window.resetLayout', label: '重置面板布局', menuLabel: '重置布局(&R)', run: () => app.resetLayout() },
+    { id: 'help.gettingStarted', label: '快速入门', menuLabel: '快速入门(&G)', icon: 'help', run: () => app.gettingStarted() },
+    { id: 'help.shortcuts', label: '键盘快捷键', menuLabel: '键盘快捷键(&K)', icon: 'keyboard', shortcut: ['?', 'F1'], anywhere: true, run: () => app.showShortcuts() },
+    { id: 'help.commands', label: '搜索命令', menuLabel: '搜索命令(&S)...', icon: 'command', shortcut: ['Mod+K', 'Mod+Shift+P'], anywhere: true, run: () => app.commandPalette() },
+    { id: 'help.github', label: 'GitHub 源代码', menuLabel: 'GitHub 源代码(&G)', icon: 'github', run: () => window.open('https://github.com/heyputer/everything', '_blank', 'noopener,noreferrer') },
+    { id: 'help.about', label: '关于 Circuits', menuLabel: '关于 Circuits(&A)', icon: 'info', run: () => app.about() },
   ]);
 
   function setTheme(t) { app.settings.set('theme', t); applyTheme(t); }
@@ -206,7 +206,7 @@ export function registerCommands(app) {
       const list = SCH_GRID_PRESETS, cur = app.settings.get('schGrid');
       const next = list[(list.indexOf(cur) + dir + list.length) % list.length] || mil(100);
       app.settings.set('schGrid', next);
-      app.toast(`Grid ${formatLength(next, 'mil')}`, { timeout: 1200 });
+      app.toast(`栅格 ${formatLength(next, 'mil')}`, { timeout: 1200 });
     } else {
       const u = app.settings.get('units');
       const list = GRID_PRESETS[u];
@@ -215,7 +215,7 @@ export function registerCommands(app) {
       if (i < 0) i = list.findIndex((g) => g > cur) - 1;
       const next = list[(i + dir + list.length) % list.length];
       app.settings.set('pcbGrid', next);
-      app.toast(`Grid ${formatLength(next, u)}`, { timeout: 1200 });
+      app.toast(`栅格 ${formatLength(next, u)}`, { timeout: 1200 });
     }
     e.requestRender(true);
     app.updateStatus();
@@ -226,7 +226,7 @@ export function registerCommands(app) {
     const schLike = e.kind === 'sch' || e.mode === 'symbol';
     const u = schLike ? 'mil' : app.settings.get('units');
     const key = schLike ? 'schGrid' : 'pcbGrid';
-    const v = await promptDialog({ title: 'Snap grid', label: `Grid (${u})`, value: formatLength(app.settings.get(key), u, { suffix: false }), validate: (s) => { const n = parseLength(s, u); return n > 0 ? null : 'Enter a positive size'; } });
+    const v = await promptDialog({ title: '吸附栅格', label: `栅格 (${u})`, value: formatLength(app.settings.get(key), u, { suffix: false }), validate: (s) => { const n = parseLength(s, u); return n > 0 ? null : '请输入大于零的尺寸'; } });
     if (v) { app.settings.set(key, parseLength(v, u)); e.requestRender(true); app.updateStatus(); }
   }
 
@@ -238,7 +238,7 @@ export function registerCommands(app) {
     const objs = e.selectedObjects();
     const boxes = objs.map(boundsOf);
     const all = boxes.reduce(bboxUnion, bboxEmpty());
-    e.doc.store.transact('Align', (s) => {
+    e.doc.store.transact('对齐', (s) => {
       objs.forEach((o, i) => {
         const b = boxes[i];
         const dx = side === 'left' ? all.minX - b.minX : side === 'right' ? all.maxX - b.maxX : 0;
@@ -257,7 +257,7 @@ export function registerCommands(app) {
     const first = objs[0].b[key], last = objs[objs.length - 1].b[key];
     const step = (last - first) / (objs.length - 1);
     const g = e.grid || 1;
-    e.doc.store.transact('Distribute', (s) => {
+    e.doc.store.transact('均匀分布', (s) => {
       objs.forEach(({ o, b }, i) => {
         const target = Math.round((first + step * i) / g) * g;
         const d = target - b[key];

@@ -49,7 +49,7 @@ export async function call(puter, server, input) {
     server = workerURL(server);
     const bodyText = JSON.stringify(input);
     let headers = await authorize(puter, server, bodyText);
-    const unreachable = () => new RequestError('Could not reach the shared space. Check your connection and try again.', 0);
+    const unreachable = () => new RequestError('无法连接到共享空间。请检查您的网络连接后重试。', 0);
     const send = async () => {
       try {
         controller.signal.throwIfAborted();
@@ -72,7 +72,7 @@ export async function call(puter, server, input) {
     }
     const body = await res.json().catch(() => null);
     if (res.ok && !body) throw unreachable();
-    if (!res.ok) throw new RequestError(body?.message || 'Could not synchronize this space.', res.status);
+    if (!res.ok) throw new RequestError(body?.message || '无法同步此空间。', res.status);
     return body;
   } finally {
     clearTimeout(timer);
@@ -83,11 +83,11 @@ export async function call(puter, server, input) {
 async function bundle() {
   const url = new URL('worker/wiki-worker.js', document.baseURI);
   const response = await fetch(url, { cache: 'no-cache' });
-  if (!response.ok) throw new Error('The collaboration server bundle could not load.');
+  if (!response.ok) throw new Error('无法加载协作服务器程序包。');
   const source = await response.text();
   const build = /wiki-worker build=([a-f0-9]+)/.exec(source)?.[1];
   const builtAt = Number(/ at=(\d+)/.exec(source.slice(0, 150))?.[1]) || 0;
-  if (!build) throw new Error('Invalid collaboration server bundle.');
+  if (!build) throw new Error('无效的协作服务器程序包。');
   return { source, build, builtAt };
 }
 
@@ -99,12 +99,12 @@ async function bundle() {
 export async function deploy(puter, progress = () => {}, expectedServer) {
   const account = puter.authToken;
   const checkAccount = () => {
-    if (puter.authToken !== account) throw new Error('Your Puter account changed. Reopen the shared space.');
+    if (puter.authToken !== account) throw new Error('您的 Puter 账户已更改。请重新打开共享空间。');
   };
   let config = await puter.kv.get(WORKER_KEY);
   checkAccount();
   if (expectedServer && (!config || workerURL(config.server) !== expectedServer)) return null;
-  progress('Preparing sharing...');
+  progress('正在准备共享...');
   const { source, build, builtAt } = await bundle();
   checkAccount();
   if (!config) {
@@ -123,7 +123,7 @@ export async function deploy(puter, progress = () => {}, expectedServer) {
     await puter.kv.set(WORKER_KEY, config);
   }
   checkAccount();
-  progress('Starting the sharing server...');
+  progress('正在启动共享服务器...');
   for (let attempt = 0; attempt < 20; attempt++) {
     try {
       const res = await puter.workers.exec(`${workerURL(config.server)}/health`, { headers: { 'x-puter-no-auth': '1' }, redirect: 'error' });
@@ -138,7 +138,7 @@ export async function deploy(puter, progress = () => {}, expectedServer) {
     checkAccount();
     await new Promise((r) => setTimeout(r, 1000));
   }
-  throw new Error('The sharing server is still starting. Try again shortly.');
+  throw new Error('共享服务器仍在启动中，请稍后重试。');
 }
 
 /** This account's own worker address, if it has one. */

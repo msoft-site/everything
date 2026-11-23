@@ -1,28 +1,28 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh-Hans">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content" />
-  <title>Spreadsheet</title>
-  <meta name="description" content="A fast, private AI spreadsheet. Formulas, formatting, and real .xlsx files saved to your own Puter cloud." />
+  <title>电子表格</title>
+  <meta name="description" content="快速、私密的 AI 电子表格。支持公式、格式设置，并将真实的 .xlsx 文件保存在您自己的 Puter 云端。" />
   <link rel="canonical" href="https://spreadsheet.puter.com/" />
   <!-- Link previews. Crawlers need an absolute image URL. Alternate designs live beside it in public/og/
        (sources in dev/og/). -->
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Puter" />
   <meta property="og:url" content="https://spreadsheet.puter.com/" />
-  <meta property="og:title" content="Spreadsheet" />
-  <meta property="og:description" content="A fast, private AI spreadsheet. Formulas, formatting, and real .xlsx files saved to your own Puter cloud." />
+  <meta property="og:title" content="电子表格" />
+  <meta property="og:description" content="快速、私密的 AI 电子表格。支持公式、格式设置，并将真实的 .xlsx 文件保存在您自己的 Puter 云端。" />
   <meta property="og:image" content="https://spreadsheet.puter.com/og/og-image-a.png" />
   <meta property="og:image:type" content="image/png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
-  <meta property="og:image:alt" content="Spreadsheet app icon on a green background. Fast, private, and AI powered. Real .xlsx files in your own cloud." />
+  <meta property="og:image:alt" content="绿色背景上的电子表格应用图标。快速、私密且由 AI 驱动。在您自己的云端保存真实的 .xlsx 文件。" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Spreadsheet" />
-  <meta name="twitter:description" content="A fast, private AI spreadsheet. Formulas, formatting, and real .xlsx files saved to your own Puter cloud." />
+  <meta name="twitter:title" content="电子表格" />
+  <meta name="twitter:description" content="快速、私密的 AI 电子表格。支持公式、格式设置，并将真实的 .xlsx 文件保存在您自己的 Puter 云端。" />
   <meta name="twitter:image" content="https://spreadsheet.puter.com/og/og-image-a.png" />
-  <meta name="twitter:image:alt" content="Spreadsheet app icon on a green background. Fast, private, and AI powered. Real .xlsx files in your own cloud." />
+  <meta name="twitter:image:alt" content="绿色背景上的电子表格应用图标。快速、私密且由 AI 驱动。在您自己的云端保存真实的 .xlsx 文件。" />
   <meta name="theme-color" content="#356d49" media="(prefers-color-scheme: light)" />
   <meta name="theme-color" content="#28593a" media="(prefers-color-scheme: dark)" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -31,7 +31,7 @@
        battery white, over the app's own top bar, which is --surface (#ffffff) in the default light theme.
        "default" leaves the status bar to the system, which picks a style that reads on its own backdrop. -->
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-  <meta name="apple-mobile-web-app-title" content="Spreadsheet" />
+  <meta name="apple-mobile-web-app-title" content="电子表格" />
   <link rel="manifest" href="./manifest.json" />
   <link rel="icon" href="./favicon.ico" sizes="16x16 32x32 48x48" />
   <link rel="icon" href="./favicon-16x16.png" type="image/png" sizes="16x16" />
@@ -44,8 +44,7 @@
     (() => {
       try {
         const asked = new URLSearchParams(location.search).get('lang') || localStorage.getItem('spreadsheet:language');
-        const best = (navigator.languages || [navigator.language]).find((l) => /^(en\b|zh(-(hans|cn|sg|my)\b|$))/i.test(l || ''));
-        const lang = asked || (/^zh/i.test(best || '') ? 'zh-Hans' : 'en');
+        const lang = asked || 'zh-Hans';
         if (/^(en|zh-Hans|en-XA)$/.test(lang)) document.documentElement.lang = lang;
       } catch {}
     })();
@@ -90,7 +89,7 @@
       <linearGradient id="ico-g-purple-solid" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--ico-purple-top)"/><stop offset="1" style="stop-color:var(--ico-purple-deep)"/></linearGradient>
     </defs>
   </svg>
-  <noscript>Please enable JavaScript to use Spreadsheet.</noscript>
+  <noscript>请启用 JavaScript 以使用电子表格。</noscript>
   <div id="app" class="app">
     <div class="boot-splash" id="boot-splash" aria-hidden="true">
       <div class="boot-mark">

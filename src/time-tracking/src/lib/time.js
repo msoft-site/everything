@@ -264,11 +264,11 @@ export function fmtDay(iso, { year = 'auto' } = {}) {
   return (withYear ? DAY_YEAR_FMT : DAY_FMT).format(d);
 }
 
-/** "Today", "Yesterday", or "Tuesday, Aug 4". */
+/** "今天", "昨天", or "Tuesday, Aug 4". */
 export function fmtDayHeading(iso) {
   const today = todayISO();
-  if (iso === today) return 'Today';
-  if (iso === addDays(today, -1)) return 'Yesterday';
+  if (iso === today) return '今天';
+  if (iso === addDays(today, -1)) return '昨天';
   return `${WD_LONG_FMT.format(dateOf(iso))}, ${fmtDay(iso)}`;
 }
 

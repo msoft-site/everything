@@ -9,14 +9,14 @@ let current = 'system';
 
 /** Brightness levels, darkest first, with their light/dark family. */
 export const BRIGHTNESS_LEVELS = [
-  { value: 'dark', label: 'Dark', family: 'dark' },
-  { value: 'medium-dark', label: 'Medium Dark', family: 'dark' },
-  { value: 'medium-light', label: 'Medium Light', family: 'light' },
-  { value: 'light', label: 'Light', family: 'light' },
+  { value: 'dark', label: '深色', family: 'dark' },
+  { value: 'medium-dark', label: '中深色', family: 'dark' },
+  { value: 'medium-light', label: '中浅色', family: 'light' },
+  { value: 'light', label: '浅色', family: 'light' },
 ];
 
 /** Theme preference values with menu labels ('system' first). */
-export const THEME_OPTIONS = [{ value: 'system', label: 'Use System Setting' }, ...BRIGHTNESS_LEVELS.map(({ value, label }) => ({ value, label }))];
+export const THEME_OPTIONS = [{ value: 'system', label: '跟随系统设置' }, ...BRIGHTNESS_LEVELS.map(({ value, label }) => ({ value, label }))];
 
 function resolve() {
   const level = BRIGHTNESS_LEVELS.find((l) => l.value === current);

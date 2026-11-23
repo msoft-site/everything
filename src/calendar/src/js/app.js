@@ -52,12 +52,12 @@ import {
 } from './date-utils.js';
 
 const VIEWS = [
-  { key: 'year', label: 'Year' },
-  { key: 'month', label: 'Month' },
-  { key: 'week', label: 'Week' },
-  { key: '4day', label: '4 Day' },
-  { key: 'day', label: 'Day' },
-  { key: 'agenda', label: 'List' },
+  { key: 'year', label: '年' },
+  { key: 'month', label: '月' },
+  { key: 'week', label: '周' },
+  { key: '4day', label: '4日' },
+  { key: 'day', label: '日' },
+  { key: 'agenda', label: '列表' },
 ];
 
 export function createApp(root, { store, user, rsvp = null, contacts = null, invites = null, booking = null, meetings = null, mail = null, storedReminders = null }) {
@@ -134,7 +134,7 @@ export function createApp(root, { store, user, rsvp = null, contacts = null, inv
   /** Flip one of the sidebar's fold settings. */
   function foldSection(key) {
     Promise.resolve(store.saveSettings({ [key]: !store.getSettings()[key] })).catch(
-      reportWriteFailure('Could not save the sidebar layout.'),
+      reportWriteFailure('无法保存侧边栏布局。'),
     );
   }
 
@@ -185,7 +185,7 @@ export function createApp(root, { store, user, rsvp = null, contacts = null, inv
     // place where the filter can be mistaken for an empty calendar.
     showAllCategories: () => {
       Promise.resolve(store.saveSettings({ hiddenColors: [] })).catch(
-        reportWriteFailure('Could not update the category filter.'),
+        reportWriteFailure('无法更新分类筛选。'),
       );
     },
     // Rename a sidebar category. The palette key is untouched — every event
@@ -211,13 +211,13 @@ export function createApp(root, { store, user, rsvp = null, contacts = null, inv
           // that same merge, a key that simply isn't there has nothing to
           // overrule the cloud's older name with (see saveSettings).
           Promise.resolve(store.saveSettings({ categoryNames: { [key]: name } })).catch(
-            reportWriteFailure('Could not rename the category.'),
+            reportWriteFailure('无法重命名分类。'),
           );
         },
       });
     },
-    moveEvent: (ev, start, end) => applyTimeChange(ev, start, end, 'Event rescheduled'),
-    resizeEvent: (ev, start, end) => applyTimeChange(ev, start, end, 'Event updated'),
+    moveEvent: (ev, start, end) => applyTimeChange(ev, start, end, '日程已改期'),
+    resizeEvent: (ev, start, end) => applyTimeChange(ev, start, end, '日程已更新'),
     // Advance the period mid-drag when an event is held against a calendar edge,
     // so it can be dropped on a date outside the current viewport. `dir` is -1
     // (previous) or +1 (next). shiftCursor re-renders; the in-flight drag reads
@@ -225,29 +225,29 @@ export function createApp(root, { store, user, rsvp = null, contacts = null, inv
     edgePage: (dir) => shiftCursor(dir),
     eventContextMenu: (evt, ev) =>
       openContextMenu(evt, [
-        { label: 'Edit', action: () => modal.openEdit(ev) },
-        { label: 'Duplicate', action: () => duplicateEvent(ev) },
+        { label: '编辑', action: () => modal.openEdit(ev) },
+        { label: '复制日程', action: () => duplicateEvent(ev) },
         // A plain event dimmed by an out-of-office block can be un-declined here.
         ...(ev.declined && !ev.seriesId
           ? [
               {
-                label: 'Restore (accept)',
+                label: '恢复（参加）',
                 action: () =>
                   Promise.resolve(store.setDeclined(ev.id, false)).catch(
-                    reportWriteFailure('Could not restore event.'),
+                    reportWriteFailure('无法恢复日程。'),
                   ),
               },
             ]
           : []),
         '-',
-        { label: 'Delete', danger: true, action: () => deleteWithUndo(ev) },
+        { label: '删除', danger: true, action: () => deleteWithUndo(ev) },
       ]),
     slotContextMenu: (evt, startMs) =>
       openContextMenu(evt, [
-        { label: 'New event', action: () => modal.openNew({ start: startMs }) },
-        { label: 'New all-day event', action: () => modal.openNew({ start: startMs, allDay: true }) },
-        { label: 'New task', action: () => modal.openNew({ mode: 'task', due: startMs }) },
-        { label: 'New out of office', action: () => modal.openNew({ start: startMs, ooo: true, allDay: true }) },
+        { label: '新建日程', action: () => modal.openNew({ start: startMs }) },
+        { label: '新建全天日程', action: () => modal.openNew({ start: startMs, allDay: true }) },
+        { label: '新建任务', action: () => modal.openNew({ mode: 'task', due: startMs }) },
+        { label: '新建休假/外出', action: () => modal.openNew({ start: startMs, ooo: true, allDay: true }) },
       ]),
     createTask: (defaults) => {
       closeSidebar();
@@ -255,7 +255,7 @@ export function createApp(root, { store, user, rsvp = null, contacts = null, inv
     },
     openTask: (task) => modal.openView(task),
     toggleTask: (task) =>
-      Promise.resolve(store.toggleTask(task.id)).catch(reportWriteFailure('Could not update task.')),
+      Promise.resolve(store.toggleTask(task.id)).catch(reportWriteFailure('无法更新任务。')),
     // Drag-to-reschedule a task (month: new day, timegrid: new time). Mirrors
     // moveEvent: optimistic + an Undo that reverts only the due date onto the
     // task's current state (so an edit made while the toast was up isn't lost).
@@ -263,27 +263,27 @@ export function createApp(root, { store, user, rsvp = null, contacts = null, inv
       const prev = { due: task.due, allDay: task.allDay };
       Promise.resolve(store.saveTask({ ...task, due })).then(
         () =>
-          toast('Task rescheduled', {
+          toast('任务已改期', {
             action: {
-              label: 'Undo',
+              label: '撤销',
               onClick: () =>
                 Promise.resolve(store.saveTask({ ...(store.getTask(task.id) || task), ...prev })).catch(
-                  reportWriteFailure('Could not undo — please try again.'),
+                  reportWriteFailure('无法撤销 — 请重试。'),
                 ),
             },
           }),
-        reportWriteFailure('Could not reschedule task.'),
+        reportWriteFailure('无法改期任务。'),
       );
     },
     taskContextMenu: (evt, task) =>
       openContextMenu(evt, [
         {
-          label: task.done ? 'Mark as not done' : 'Mark as done',
+          label: task.done ? '标记为未完成' : '标记为已完成',
           action: () => actions.toggleTask(task),
         },
-        { label: 'Edit', action: () => modal.openEdit(task) },
+        { label: '编辑', action: () => modal.openEdit(task) },
         '-',
-        { label: 'Delete', danger: true, action: () => deleteTaskWithUndo(task) },
+        { label: '删除', danger: true, action: () => deleteTaskWithUndo(task) },
       ]),
     // Booking links (sidebar section → editor dialog; see booking-dialog.js).
     newBookingPage: () => {
@@ -297,7 +297,7 @@ export function createApp(root, { store, user, rsvp = null, contacts = null, inv
     copyBookingLink: (page) => {
       const url = booking && booking.linkFor(page.id);
       if (!url) {
-        toast('Your booking link is still being prepared. Try again in a moment.');
+        toast('您的预约链接仍在准备中，请稍后再试。');
         return;
       }
       const write =
@@ -305,8 +305,8 @@ export function createApp(root, { store, user, rsvp = null, contacts = null, inv
           ? navigator.clipboard.writeText(url)
           : Promise.reject(new Error('clipboard unavailable'));
       write
-        .then(() => toast('Booking link copied', { variant: 'success' }))
-        .catch(() => toast('Could not copy — clipboard access was blocked.', { variant: 'danger' }));
+        .then(() => toast('预约链接已复制', { variant: 'success' }))
+        .catch(() => toast('无法复制 — 剪贴板访问被阻止。', { variant: 'danger' }));
     },
     // Mail-detected invitations (sidebar "Invitations" section; see
     // mail-intake.js). Fold state persists like the other sidebar sections;
@@ -314,11 +314,11 @@ export function createApp(root, { store, user, rsvp = null, contacts = null, inv
     // re-renders through its own onChange subscription below.
     toggleMailInvites: () => foldSection('mailInvitesCollapsed'),
     addMailInvite: (id) =>
-      mail && Promise.resolve(mail.intake.accept(id)).catch(reportWriteFailure('Could not add the invitation.')),
+      mail && Promise.resolve(mail.intake.accept(id)).catch(reportWriteFailure('无法添加该邀请。')),
     ignoreMailInvite: (id) =>
-      mail && Promise.resolve(mail.intake.ignore(id)).catch(reportWriteFailure('Could not ignore the invitation.')),
+      mail && Promise.resolve(mail.intake.ignore(id)).catch(reportWriteFailure('无法忽略该邀请。')),
     blockMailSender: (id) =>
-      mail && Promise.resolve(mail.intake.blockSender(id)).catch(reportWriteFailure('Could not block the sender.')),
+      mail && Promise.resolve(mail.intake.blockSender(id)).catch(reportWriteFailure('无法屏蔽该发件人。')),
     openMailInvites: () => {
       if (!mail) return;
       closeSidebar();
@@ -329,7 +329,7 @@ export function createApp(root, { store, user, rsvp = null, contacts = null, inv
     showMailInvites: () => {
       if (store.getSettings().mailInvitesCollapsed) {
         Promise.resolve(store.saveSettings({ mailInvitesCollapsed: false })).catch(
-          reportWriteFailure('Could not open the invitations list.'),
+          reportWriteFailure('无法打开邀请列表。'),
         );
       }
       render();
@@ -342,16 +342,16 @@ export function createApp(root, { store, user, rsvp = null, contacts = null, inv
   function deleteTaskWithUndo(task) {
     Promise.resolve(store.deleteTask(task.id)).then(
       () =>
-        toast('Task deleted', {
+        toast('任务已删除', {
           action: {
-            label: 'Undo',
+            label: '撤销',
             onClick: () =>
               Promise.resolve(store.saveTask(task)).catch(
-                reportWriteFailure('Could not undo — please try again.'),
+                reportWriteFailure('无法撤销 — 请重试。'),
               ),
           },
         }),
-      reportWriteFailure('Could not delete task.'),
+      reportWriteFailure('无法删除任务。'),
     );
   }
 
@@ -362,8 +362,8 @@ export function createApp(root, { store, user, rsvp = null, contacts = null, inv
     // doesn't inherit the original's dimmed/declined rendering. `booking` is
     // dropped too: the copy is a new event, not the guest's booking.
     Promise.resolve(store.saveEvent({ ...ev, id: undefined, declined: false, booking: null })).then(
-      () => toast('Event duplicated', { variant: 'success' }),
-      reportWriteFailure('Could not duplicate event.'),
+      () => toast('日程已复制', { variant: 'success' }),
+      reportWriteFailure('无法复制日程。'),
     );
   }
 
@@ -373,10 +373,10 @@ export function createApp(root, { store, user, rsvp = null, contacts = null, inv
   function undoAction(undo) {
     if (typeof undo !== 'function') return undefined;
     return {
-      label: 'Undo',
+      label: '撤销',
       onClick: () => {
-        if (isBlocked()) return void toast("You're offline — reconnect to make changes");
-        Promise.resolve(undo()).catch(reportWriteFailure('Could not undo — please try again.'));
+        if (isBlocked()) return void toast('您当前处于离线状态 — 请重新连接网络后再进行修改');
+        Promise.resolve(undo()).catch(reportWriteFailure('无法撤销 — 请重试。'));
       },
     };
   }
@@ -391,17 +391,17 @@ export function createApp(root, { store, user, rsvp = null, contacts = null, inv
     // from a snapshot taken while the event still exists.
     const cancel = invites ? invites.cancellationFor(ev) : null;
     Promise.resolve(store.deleteEvent(ev.id)).then(() => {
-      toast('Event deleted', {
+      toast('日程已删除', {
         action: {
-          label: 'Undo',
+          label: '撤销',
           onClick: () =>
             Promise.resolve(store.saveEvent(ev)).catch(
-              reportWriteFailure('Could not undo — please try again.'),
+              reportWriteFailure('无法撤销 — 请重试。'),
             ),
         },
       });
       if (cancel) offerCancellation({ invites, store, cancel, toast });
-    }, reportWriteFailure('Could not delete event.'));
+    }, reportWriteFailure('无法删除日程。'));
   }
 
   function applyScopedDelete(ev, scope) {
@@ -422,9 +422,9 @@ export function createApp(root, { store, user, rsvp = null, contacts = null, inv
       });
     }
     Promise.resolve(op).then((res) => {
-      toast('Event deleted', { action: undoAction(res && res.undo ? res.undo : fallbackUndo) });
+      toast('日程已删除', { action: undoAction(res && res.undo ? res.undo : fallbackUndo) });
       if (cancel && (scope === 'all' || res)) offerCancellation({ invites, store, cancel, toast });
-    }, reportWriteFailure('Could not delete event.'));
+    }, reportWriteFailure('无法删除日程。'));
   }
 
   // Persist a drag-to-reschedule or edge-resize, keeping the old span for
@@ -448,8 +448,8 @@ export function createApp(root, { store, user, rsvp = null, contacts = null, inv
       });
     };
     if (ev.booking && (start !== ev.start || end !== ev.end)) {
-      const who = ev.booking.name || ev.booking.email || 'the guest';
-      message = `${message} — ${who} won't be notified of the change`;
+      const who = ev.booking.name || ev.booking.email || '参与者';
+      message = `${message} — 不会向 ${who} 发送变更通知`;
     }
     if (ev.seriesId) {
       Promise.resolve(store.updateOccurrence(ev.seriesId, ev.recurrenceId, { start, end })).then(
@@ -461,7 +461,7 @@ export function createApp(root, { store, user, rsvp = null, contacts = null, inv
           })) });
           offerUpdate();
         },
-        reportWriteFailure('Could not save the new time.'),
+        reportWriteFailure('无法保存新时间。'),
       );
       return;
     }
@@ -470,21 +470,21 @@ export function createApp(root, { store, user, rsvp = null, contacts = null, inv
       () => {
         toast(message, {
           action: {
-            label: 'Undo',
+            label: '撤销',
             // Revert only the time, onto the event's CURRENT state, so an edit to
             // another field made while the toast was up isn't clobbered. Falls
             // back to the pre-drag snapshot if the event was since deleted.
             onClick: () => {
               undone = true;
               return Promise.resolve(store.saveEvent({ ...(store.getEvent(ev.id) || ev), ...prev })).catch(
-                reportWriteFailure('Could not undo — please try again.'),
+                reportWriteFailure('无法撤销 — 请重试。'),
               );
             },
           },
         });
         offerUpdate();
       },
-      reportWriteFailure('Could not save the new time.'),
+      reportWriteFailure('无法保存新时间。'),
     );
   }
 
@@ -521,7 +521,7 @@ export function createApp(root, { store, user, rsvp = null, contacts = null, inv
     if (state.view === 'week') return { main: formatWeekRange(state.cursor, s.weekStartsOn) };
     if (state.view === '4day') return { main: formatDateRange(state.cursor, addDays(state.cursor, 3)) };
     if (state.view === 'day') return { main: formatDayTitle(state.cursor) };
-    return { main: formatMonthYear(state.cursor), muted: 'and beyond' };
+    return { main: formatMonthYear(state.cursor), muted: '及之后' };
   }
 
   function closeSidebar() {
@@ -550,14 +550,14 @@ export function createApp(root, { store, user, rsvp = null, contacts = null, inv
   const sidebarSlot = el('div', { style: { display: 'contents' } });
   let scrimEl = null;
 
-  const segmented = el('div', { class: 'segmented', role: 'group', 'aria-label': 'Calendar view' });
-  const tabbar = el('nav', { class: 'tabbar', 'aria-label': 'Calendar view' });
+  const segmented = el('div', { class: 'segmented', role: 'group', 'aria-label': '日历视图' });
+  const tabbar = el('nav', { class: 'tabbar', 'aria-label': '日历视图' });
   VIEWS.forEach((v) => {
     segmented.append(
       el('button', {
         type: 'button',
         text: v.label,
-        title: `${v.label} view`,
+        title: `${v.label}视图`,
         dataset: { view: v.key },
         on: { click: () => setView(v.key) },
       }),
@@ -577,8 +577,8 @@ export function createApp(root, { store, user, rsvp = null, contacts = null, inv
   const searchBtn = el('button', {
     class: 'icon-btn',
     type: 'button',
-    'aria-label': 'Search events and tasks',
-    title: 'Search events and tasks',
+    'aria-label': '搜索日程和任务',
+    title: '搜索日程和任务',
     html: icon('search'),
     on: { click: () => search.open() },
   });
@@ -592,8 +592,8 @@ export function createApp(root, { store, user, rsvp = null, contacts = null, inv
     ? el('button', {
         class: 'icon-btn',
         type: 'button',
-        'aria-label': 'Settings',
-        title: 'Settings',
+        'aria-label': '设置',
+        title: '设置',
         'aria-haspopup': 'dialog',
         html: icon('settings'),
         on: { click: (e) => toggleUserMenu(e) },
@@ -601,7 +601,7 @@ export function createApp(root, { store, user, rsvp = null, contacts = null, inv
     : el('button', {
         class: 'avatar',
         type: 'button',
-        'aria-label': 'Account and settings',
+        'aria-label': '账号与设置',
         'aria-haspopup': 'dialog',
         text: userInitial(user),
         on: { click: (e) => toggleUserMenu(e) },
@@ -614,7 +614,7 @@ export function createApp(root, { store, user, rsvp = null, contacts = null, inv
   const menuBtn = el('button', {
     class: 'icon-btn menu-toggle',
     type: 'button',
-    'aria-label': 'Toggle menu',
+    'aria-label': '切换菜单',
     'aria-expanded': 'false',
     html: icon('menu'),
     on: { click: toggleSidebar },
@@ -626,22 +626,22 @@ export function createApp(root, { store, user, rsvp = null, contacts = null, inv
       el('span', { class: 'brand-mark' }, [
         el('img', { src: '/icon-192.png', alt: '', width: '30', height: '30' }),
       ]),
-      el('span', { class: 'brand-name', text: 'Calendar' }),
+      el('span', { class: 'brand-name', text: '日历' }),
     ]),
     el('div', { class: 'header__nav' }, [
-      el('button', { class: 'btn hide-xs', type: 'button', text: 'Today', on: { click: goToday } }),
+      el('button', { class: 'btn hide-xs', type: 'button', text: '今天', on: { click: goToday } }),
       el('div', { class: 'nav-arrows' }, [
         el('button', {
           class: 'icon-btn',
           type: 'button',
-          'aria-label': 'Previous',
+          'aria-label': '上一个',
           html: icon('chevron-left'),
           on: { click: () => shiftCursor(-1) },
         }),
         el('button', {
           class: 'icon-btn',
           type: 'button',
-          'aria-label': 'Next',
+          'aria-label': '下一个',
           html: icon('chevron-right'),
           on: { click: () => shiftCursor(1) },
         }),
@@ -796,11 +796,11 @@ export function createApp(root, { store, user, rsvp = null, contacts = null, inv
     if (popover) closeUserMenu();
     const s = store.getSettings();
 
-    const themeSeg = el('div', { class: 'segmented', style: { width: '100%' }, role: 'group', 'aria-label': 'Theme' });
+    const themeSeg = el('div', { class: 'segmented', style: { width: '100%' }, role: 'group', 'aria-label': '主题' });
     [
-      ['system', 'monitor', 'Auto'],
-      ['light', 'sun', 'Light'],
-      ['dark', 'moon', 'Dark'],
+      ['system', 'monitor', '自动'],
+      ['light', 'sun', '浅色'],
+      ['dark', 'moon', '深色'],
     ].forEach(([key, ic, label]) => {
       themeSeg.append(
         el('button', {
@@ -824,7 +824,7 @@ export function createApp(root, { store, user, rsvp = null, contacts = null, inv
       // Not a menu: it holds a segmented control, toggles and a button. Expose
       // it as a labelled dialog and make it programmatically focusable.
       role: 'dialog',
-      'aria-label': accountMenu ? 'Settings' : 'Account and settings',
+      'aria-label': accountMenu ? '设置' : '账号与设置',
       tabindex: '-1',
       style: { minWidth: '284px' },
     }, [
@@ -833,26 +833,26 @@ export function createApp(root, { store, user, rsvp = null, contacts = null, inv
       accountMenu
         ? null
         : el('div', { class: 'popover__header' }, [
-            el('span', { class: 'popover__name', text: (user && user.username) || 'Signed in' }),
+            el('span', { class: 'popover__name', text: (user && user.username) || '已登录' }),
             user && user.email
               ? el('span', { class: 'popover__meta', text: user.email })
               : null,
           ]),
       el('div', { style: { padding: '4px 8px 8px' } }, [
-        el('span', { class: 'field__label', style: { display: 'block', marginBottom: '6px' }, text: 'Appearance' }),
+        el('span', { class: 'field__label', style: { display: 'block', marginBottom: '6px' }, text: '外观' }),
         themeSeg,
       ]),
-      settingToggle('Start week on Monday', s.weekStartsOn === 1, (on) => {
+      settingToggle('每周从周一开始', s.weekStartsOn === 1, (on) => {
         store.saveSettings({ weekStartsOn: on ? 1 : 0 });
       }),
-      settingToggle('24-hour time', !s.hour12, (on) => {
+      settingToggle('24 小时制', !s.hour12, (on) => {
         store.saveSettings({ hour12: !on });
       }),
       el('div', { style: { padding: '4px 8px 8px' } }, [
         el('span', {
           class: 'field__label',
           style: { display: 'block', marginBottom: '6px' },
-          text: 'Secondary time zone',
+          text: '第二时区',
         }),
         buildTzSelect(s.secondaryTz),
       ]),
@@ -860,11 +860,11 @@ export function createApp(root, { store, user, rsvp = null, contacts = null, inv
         el('span', {
           class: 'field__label',
           style: { display: 'block', marginBottom: '6px' },
-          text: 'Public holidays',
+          text: '公共节假日',
         }),
         buildHolidaySelect(s.holidayCountry),
       ]),
-      settingToggle('Clock changes (daylight saving)', s.clockChanges !== false, (on) => {
+      settingToggle('时制变更（夏令时）', s.clockChanges !== false, (on) => {
         store.saveSettings({ clockChanges: on });
       }, { name: 'clockChanges' }),
       buildPushSetting(),
@@ -875,7 +875,7 @@ export function createApp(root, { store, user, rsvp = null, contacts = null, inv
             type: 'button',
             html:
               icon('mail', { size: 'sm' }) +
-              `<span>Mailbox invitations…${mailPendingSuffix(mail)}</span>`,
+              `<span>邮箱邀请…${mailPendingSuffix(mail)}</span>`,
             on: {
               click: () => {
                 closeUserMenu();
@@ -887,7 +887,7 @@ export function createApp(root, { store, user, rsvp = null, contacts = null, inv
       el('button', {
         class: 'menu-item',
         type: 'button',
-        html: icon('swap-vertical', { size: 'sm' }) + '<span>Import &amp; export</span>',
+        html: icon('swap-vertical', { size: 'sm' }) + '<span>导入与导出</span>',
         on: {
           click: () => {
             closeUserMenu();
@@ -901,7 +901,7 @@ export function createApp(root, { store, user, rsvp = null, contacts = null, inv
         : el('button', {
             class: 'menu-item',
             type: 'button',
-            html: icon('logout', { size: 'sm' }) + '<span>Sign out</span>',
+            html: icon('logout', { size: 'sm' }) + '<span>退出登录</span>',
             on: { click: handleSignOut },
           }),
     ]);
@@ -914,7 +914,7 @@ export function createApp(root, { store, user, rsvp = null, contacts = null, inv
     // (it's appended at the end of <body>, far from the avatar in tab order).
     const target =
       focus === 'holidays'
-        ? box.querySelector('select[aria-label="Public holidays"]')
+        ? box.querySelector('select[aria-label="公共节假日"]')
         : focus === 'clock-changes'
           ? box.querySelector('input[data-setting="clockChanges"]')
           : null;
@@ -947,9 +947,9 @@ export function createApp(root, { store, user, rsvp = null, contacts = null, inv
     const select = el('select', {
       class: 'select',
       style: { width: '100%' },
-      'aria-label': 'Secondary time zone',
+      'aria-label': '第二时区',
     });
-    select.append(el('option', { value: '', text: 'None' }));
+    select.append(el('option', { value: '', text: '无' }));
     select.append(el('option', { value: 'UTC', text: 'UTC', selected: current === 'UTC' }));
     tzPickerGroups(current).forEach(({ label, zones }) => {
       select.append(el('optgroup', { label }, zones.map((z) => el('option', {
@@ -977,15 +977,15 @@ export function createApp(root, { store, user, rsvp = null, contacts = null, inv
     const select = el('select', {
       class: 'select',
       style: { width: '100%' },
-      'aria-label': 'Public holidays',
+      'aria-label': '公共节假日',
     });
     select.append(
       el('option', {
         value: 'auto',
-        text: detected ? `Automatic (${countryName(detected)})` : 'Automatic (none detected)',
+        text: detected ? `自动 (${countryName(detected)})` : '自动（未检测到）',
         selected: current === 'auto' || current == null,
       }),
-      el('option', { value: '', text: 'None', selected: current === '' }),
+      el('option', { value: '', text: '无', selected: current === '' }),
     );
     HOLIDAY_COUNTRIES.forEach((c) => {
       select.append(el('option', { value: c.id, text: c.name, selected: c.id === current }));
@@ -1008,10 +1008,10 @@ export function createApp(root, { store, user, rsvp = null, contacts = null, inv
       return el('p', {
         class: 'popover__meta',
         style: { padding: '4px 12px 8px', margin: '0' },
-        text: 'For notifications on iPhone or iPad, tap Share, then Add to Home Screen, and open Calendar from there.',
+        text: '如需在 iPhone 或 iPad 上接收通知，请轻点“共享”，选择“添加到主屏幕”，然后从主屏幕打开日历。',
       });
     }
-    const row = settingToggle('Push notifications', false, (on) => {
+    const row = settingToggle('推送通知', false, (on) => {
       // Synchronously, so enable() still has this click for the browser's prompt.
       const change = on ? turnPushOn(p, store) : turnPushOff(p, store);
       input.disabled = true;
@@ -1019,12 +1019,12 @@ export function createApp(root, { store, user, rsvp = null, contacts = null, inv
         .then(async (done) => {
           if (done) return;
           if (await pushStatus(p) === 'blocked') {
-            toast('Notifications are blocked for this site. Allow them in your browser’s site settings.');
-          } else toast('Notifications were not turned on.');
+            toast('此网站的通知已被阻止。请在浏览器的网站设置中允许通知。');
+          } else toast('未开启通知。');
         })
         .catch(async () => {
-          if (await pushStatus(p) === 'blocked') toast('Notifications are blocked for this site. Allow them in your browser’s site settings.');
-          else toast('Could not change notifications. Please try again.', { variant: 'danger' });
+          if (await pushStatus(p) === 'blocked') toast('此网站的通知已被阻止。请在浏览器的网站设置中允许通知。');
+          else toast('无法更改通知设置，请重试。', { variant: 'danger' });
         })
         .finally(refresh);
     }, { name: 'push' });
@@ -1361,8 +1361,8 @@ export function createApp(root, { store, user, rsvp = null, contacts = null, inv
     notifyMailDetected(count) {
       const n = Number(count) || 0;
       if (n <= 0) return;
-      toast(`${n} invitation${n === 1 ? '' : 's'} detected`, {
-        action: { label: 'Show', onClick: () => actions.showMailInvites() },
+      toast(`检测到 ${n} 个新邀请`, {
+        action: { label: '查看', onClick: () => actions.showMailInvites() },
       });
     },
     destroy() {

@@ -1,10 +1,10 @@
 /** Display helpers for records. Pure functions, safe to unit test. */
 
 export function clientName(c) {
-  if (!c) return 'Unknown client';
+  if (!c) return '未知客户';
   const person = [c.title, c.firstName, c.lastName].filter(Boolean).join(' ').trim();
   if (c.useCompanyName && c.company) return c.company;
-  return person || c.company || 'Unnamed client';
+  return person || c.company || '未命名客户';
 }
 
 export function clientSecondary(c) {
@@ -62,7 +62,7 @@ export function telHref(number) {
   return digits ? `tel:${digits}${ext ? `,${ext}` : ''}` : null;
 }
 
-export const DOC_PREFIX = { quotes: 'Quote', jobs: 'Job', invoices: 'Invoice', requests: 'Request' };
+export const DOC_PREFIX = { quotes: '报价单', jobs: '工单', invoices: '账单', requests: '服务请求' };
 
 export function docLabel(coll, rec) {
   if (!rec) return '';

@@ -222,7 +222,7 @@ export class PersonalSpace extends Space {
 
   async versionState(id, version) {
     const file = await this.backend.read(`history/${id}/${version.at}.ywk`);
-    if (!file) throw new Error('This version is no longer available.');
+    if (!file) throw new Error('此版本已不可用。');
     return file.bytes;
   }
 
@@ -290,7 +290,7 @@ export class PersonalSpace extends Space {
   /** Saves everything, and fails if something could not be saved. */
   async ensureSaved() {
     await this.flushAll();
-    if (this.hasUnsaved()) throw new Error('Some changes could not be saved yet. Check your connection and try again.');
+    if (this.hasUnsaved()) throw new Error('部分更改尚无法保存。请检查您的网络连接后重试。');
   }
 
   async deleteDocs(ids) {

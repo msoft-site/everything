@@ -70,9 +70,9 @@ export function errorBody(e) {
     if (e.current) body.current = e.current;
     return { status: e.status, body };
   }
-  if (e && e.code === 'too_many_requests') return { status: 429, body: { error: 'rate_limited', message: 'Too many requests. Try again in a moment.' } };
-  if (e && e.code === 'insufficient_funds') return { status: 402, body: { error: 'insufficient_funds', message: 'The help desk owner has run out of Puter usage credit.' } };
-  return { status: 500, body: { error: 'server_error', message: 'Something went wrong on the help desk server.' } };
+  if (e && e.code === 'too_many_requests') return { status: 429, body: { error: 'rate_limited', message: '请求过于频繁，请稍后再试。' } };
+  if (e && e.code === 'insufficient_funds') return { status: 402, body: { error: 'insufficient_funds', message: '服务台所有者的 Puter 使用额度已用尽。' } };
+  return { status: 500, body: { error: 'server_error', message: '服务台服务器发生错误。' } };
 }
 
 /**

@@ -107,30 +107,30 @@ function promptIdleGap(t, gapStart, now) {
       if (mode === 'split') {
         await store.startTimer({ projectId: t.projectId, task: t.task, notes: t.notes, billable: t.billable });
       }
-      toast(`Logged ${fmtClock(entry.seconds)}${mode === 'split' ? ', timer restarted' : ''}`, { icon: 'check' });
+      toast(`已记录 ${fmtClock(entry.seconds)}${mode === 'split' ? '，计时器已重新启动' : ''}`, { icon: 'check' });
       modal.close();
     } catch (err) {
       console.error(err);
-      toast('Could not update the timer, check your connection', { icon: 'wifiOff' });
+      toast('无法更新计时器，请检查网络连接', { icon: 'wifiOff' });
     }
   };
 
   const modal = openModal({
-    title: 'Were you away?',
+    title: '您刚才离开了吗？',
     content: el('div', {},
       el('p.confirm-message', {},
-        `The timer on ${project?.name || 'your work'} kept counting through a ${fmtDuration((now - gapStart) / 1000)} gap since ${gapStartText}, while this device was asleep or the app was closed. Before the gap it had tracked ${fmtDuration(preGapSeconds)}.`),
+        `当此设备休眠或应用关闭时，“${project?.name || '您的工作'}”的计时器自 ${gapStartText} 起持续运行了 ${fmtDuration((now - gapStart) / 1000)}。在此间隔前已追踪 ${fmtDuration(preGapSeconds)}。`),
       el('button.btn.btn-primary.btn-block', {
         onclick: () => finish('split', modal),
-      }, 'Remove the gap and keep going'),
+      }, '扣除离开时间并继续计时'),
       el('button.btn.btn-ghost.btn-block', {
         style: { marginTop: '10px' },
         onclick: () => finish('trim', modal),
-      }, `Stop at the gap start (${fmtDuration(preGapSeconds)})`),
+      }, `在离开时停止（${fmtDuration(preGapSeconds)}）`),
       el('button.btn.btn-ghost.btn-block', {
         style: { marginTop: '10px' },
         onclick: () => modal.close(),
-      }, 'Keep the full time')
+      }, '保留全部时长')
     ),
     onClose: () => { prompting = false; },
   });
@@ -152,26 +152,26 @@ async function checkLongTimer() {
     return;
   }
 
-  notifyNative('Timer still running', `Your Hourly timer passed ${hours}h. Still working?`);
+  notifyNative('计时器仍在运行', `您的 Hourly 计时器已超过 ${hours} 小时。还在工作吗？`);
 
   const project = store.project(store.timer?.projectId);
   const running = fmtDuration(store.elapsedSeconds());
   const modal = openModal({
-    title: 'Still working?',
+    title: '还在工作吗？',
     content: el('div', {},
       el('p.confirm-message', {},
-        `The timer on ${project?.name || 'your work'} has been running for ${running}. If it was left on by mistake, stop it at a duration that reflects real work.`),
+        `“${project?.name || '您的工作'}”的计时器已持续运行 ${running}。如果是忘记关闭，请将其停止在符合实际工作的时长。`),
       el('button.btn.btn-primary.btn-block', {
         onclick: () => stopWith(cap, modal),
-      }, `Stop and keep ${hours}h`),
+      }, `停止并保留 ${hours} 小时`),
       el('button.btn.btn-ghost.btn-block', {
         style: { marginTop: '10px' },
         onclick: () => stopWith(null, modal),
-      }, `Stop with the full ${running}`),
+      }, `按完整时长停止（${running}）`),
       el('button.btn.btn-ghost.btn-block', {
         style: { marginTop: '10px' },
         onclick: () => modal.close(),
-      }, 'Keep running')
+      }, '继续运行')
     ),
     onClose: () => { prompting = false; },
   });
@@ -180,11 +180,11 @@ async function checkLongTimer() {
 async function stopWith(capSeconds, modal) {
   try {
     const entry = await store.stopTimer({ capSeconds });
-    toast(`Logged ${fmtClock(entry.seconds)}`, { icon: 'check' });
+    toast(`已记录 ${fmtClock(entry.seconds)}`, { icon: 'check' });
     modal.close();
   } catch (err) {
     console.error(err);
-    toast('Could not stop, check your connection', { icon: 'wifiOff' });
+    toast('无法停止，请检查网络连接', { icon: 'wifiOff' });
   }
 }
 
@@ -205,8 +205,8 @@ async function checkDailyNudge() {
   const entries = await store.entriesBetween(today, today);
   if (entries.length) return;
   try { localStorage.setItem(NUDGE_LS, today); } catch {}
-  toast('Nothing tracked yet today. Start a timer?', { icon: 'timer', duration: 6000 });
-  notifyNative('Nothing tracked today', 'Your Hourly timesheet is still empty for today.');
+  toast('今天还没有记录工时。要启动计时器吗？', { icon: 'timer', duration: 6000 });
+  notifyNative('今天尚未记录工时', '您今天的 Hourly 工时表还是空的。');
 }
 
 /**
@@ -239,19 +239,19 @@ async function checkUnbilledReminder() {
 
   const oldest = ready[0];
   const message = ready.length === 1
-    ? `${oldest.client.name} has ${fmtDuration(oldest.seconds)} unbilled, oldest ${oldest.ageDays} days`
-    : `${ready.length} clients hold unbilled time older than ${minAgeDays} days`;
+    ? `${oldest.client.name} 有 ${fmtDuration(oldest.seconds)} 未开票工时，最早距今 ${oldest.ageDays} 天`
+    : `有 ${ready.length} 位客户存在超过 ${minAgeDays} 天的未开票工时`;
   toast(message, {
     icon: 'receipt',
     duration: 8000,
     action: {
-      label: 'Review',
+      label: '查看',
       // Straight to the surface that lists it, with the tab named in the
       // URL so the view opens on the right one.
       onClick: () => { location.hash = '#/reports?view=invoices'; },
     },
   });
-  notifyNative('Unbilled time is aging', message);
+  notifyNative('未开票工时待处理', message);
 }
 
 function notifyNative(title, body) {

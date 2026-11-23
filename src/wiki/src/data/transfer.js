@@ -76,7 +76,7 @@ export async function copyAssets(from, to, assets) {
 /** Adds a bundle's pages to a space under a parent (or at the top). */
 export async function importSubtree(from, to, bundle, parent = null, { after = null } = {}) {
   const failed = await copyAssets(from, to, bundle.assets);
-  if (failed.length) throw new Error(`${failed.length} image${failed.length === 1 ? '' : 's'} could not be copied. Nothing was moved; try again.`);
+  if (failed.length) throw new Error(`${failed.length} 张图片无法复制。未移动任何内容，请重试。`);
   for (const [docId, state] of Object.entries(bundle.docs)) await to.putDoc(docId, state);
   const sibs = childrenOf(to.tree, parent);
   const i = after ? sibs.findIndex((p) => p.id === after) : sibs.length - 1;
@@ -120,7 +120,7 @@ export function cloneDocContent(src, dst, idMap) {
  * Copies a page and everything under it inside one space, next to the
  * original. Returns the new root id.
  */
-export async function cloneSubtree(space, rootId, { titleSuffix = ' (copy)', parent, by = null } = {}) {
+export async function cloneSubtree(space, rootId, { titleSuffix = '（副本）', parent, by = null } = {}) {
   const ids = descendants(space.tree, rootId);
   const idMap = new Map(ids.map((id) => [id, uid()]));
   const root = getPage(space.tree, rootId);
@@ -146,7 +146,7 @@ export async function cloneSubtree(space, rootId, { titleSuffix = ' (copy)', par
       m.set('parent', id === rootId ? targetParent : idMap.get(p.parent) || p.parent);
       if (id === rootId) {
         m.set('order', order);
-        m.set('title', `${p.title || 'Untitled'}${titleSuffix}`);
+        m.set('title', `${p.title || '无标题'}${titleSuffix}`);
       }
       m.set('created', now);
       m.set('updated', now);

@@ -13,7 +13,7 @@ import { openFiles } from './storage/files.js';
 const app = new App();
 for (const install of FEATURES) install(app);
 createShell(app, document.getElementById('app'));
-app.setStatus(`Launched in ${(performance.now() / 1000).toFixed(2)} seconds`);
+app.setStatus(`启动耗时 ${(performance.now() / 1000).toFixed(2)} 秒`);
 
 // Files handed to the app by the Puter desktop ("Open with").
 const p = typeof window !== 'undefined' ? window.puter : null;

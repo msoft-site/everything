@@ -37,7 +37,7 @@ const root = document.getElementById('app');
 // so a boot after signing in still knows its caller.
 let launch = { callerApp: '', serviceMode: false, inPuterApp: false };
 
-function showLoading(message = 'Loading your calendar…') {
+function showLoading(message = '正在加载您的日历…') {
   clear(root);
   root.append(
     el('div', { class: 'screen loading-screen' }, [
@@ -54,13 +54,13 @@ function showError(message) {
   root.append(
     el('div', { class: 'screen' }, [
       el('div', { class: 'auth-card' }, [
-        el('img', { class: 'auth-card__logo', src: '/icon-192.png', alt: 'Calendar', width: '56', height: '56' }),
-        el('h1', { class: 'auth-card__title', text: 'Something went wrong' }),
+        el('img', { class: 'auth-card__logo', src: '/icon-192.png', alt: '日历', width: '56', height: '56' }),
+        el('h1', { class: 'auth-card__title', text: '出错了' }),
         el('p', { class: 'auth-card__sub', text: message }),
         el('button', {
           class: 'btn btn--primary btn--block',
           type: 'button',
-          text: 'Reload',
+          text: '重新加载',
           on: { click: () => window.location.reload() },
         }),
       ]),
@@ -75,7 +75,7 @@ function showSignIn() {
   const btn = el('button', {
     class: 'btn btn--primary btn--block',
     type: 'button',
-    html: icon('calendar', { size: 'sm' }) + '<span>Sign in</span>',
+    html: icon('calendar', { size: 'sm' }) + '<span>登录</span>',
   });
   btn.addEventListener('click', async () => {
     btn.disabled = true;
@@ -89,11 +89,11 @@ function showSignIn() {
   root.append(
     el('div', { class: 'screen' }, [
       el('div', { class: 'auth-card' }, [
-        el('img', { class: 'auth-card__logo', src: '/icon-192.png', alt: 'Calendar', width: '56', height: '56' }),
-        el('h1', { class: 'auth-card__title', text: 'Calendar' }),
+        el('img', { class: 'auth-card__logo', src: '/icon-192.png', alt: '日历', width: '56', height: '56' }),
+        el('h1', { class: 'auth-card__title', text: '日历' }),
         el('p', {
           class: 'auth-card__sub',
-          text: 'Sign in with your free Puter account to keep your events synced across every device. Your data stays in your own storage.',
+          text: '使用免费的 Puter 账号登录，在所有设备间同步您的日程。您的数据始终保存在您自己的存储空间中。',
         }),
         btn,
       ]),
@@ -173,7 +173,7 @@ async function bootInner() {
     // Offline with no SDK cached (e.g. first-ever visit offline): a friendly
     // offline screen beats a generic "check your connection" error.
     if (navigator.onLine === false) renderOfflineScreen(root, { onRetry: boot });
-    else showError('Could not load Puter.js. Please check your connection and reload.');
+    else showError('无法加载 Puter.js。请检查网络连接后重新加载。');
     return;
   }
 
@@ -339,7 +339,7 @@ async function bootInner() {
     // network drop mid-boot.
     if (navigator.onLine === false) renderOfflineScreen(root, { onRetry: boot });
     else if (!isSignedIn()) showSignIn();
-    else showError('We could not load your calendar. Please try again.');
+    else showError('无法加载您的日历，请重试。');
   }
 }
 
@@ -452,11 +452,11 @@ async function bootService() {
 
 const SERVICE_PANEL_COPY = {
   serving: (app) =>
-    `${app} is using your calendar. Nothing leaves your Puter account, and you can close this window at any time.`,
-  denied: (app) => `${app} asked to use your calendar and was not allowed to. You can close this window.`,
+    `${app} 正在使用您的日历。任何数据都不会离开您的 Puter 账号，您可以随时关闭此窗口。`,
+  denied: (app) => `${app} 请求使用您的日历但未被允许。您可以关闭此窗口。`,
   'signed-out': (app) =>
-    `${app} asked to use your calendar, but nobody is signed in to Puter. You can close this window.`,
-  idle: (app) => `${app} finished using your calendar. You can close this window.`,
+    `${app} 请求使用您的日历，但当前未登录 Puter。您可以关闭此窗口。`,
+  idle: (app) => `${app} 已完成对您日历的使用。您可以关闭此窗口。`,
 };
 
 /** What the user would see if hiding the window failed, or if they un-hide it
@@ -466,18 +466,18 @@ function renderServicePanel(callerApp, mode) {
   root.removeAttribute('aria-busy');
   // The caller's name comes from the launch URL, so it goes in as text, never
   // as markup.
-  const app = callerApp ? callerApp[0].toUpperCase() + callerApp.slice(1) : 'Another app';
+  const app = callerApp ? callerApp[0].toUpperCase() + callerApp.slice(1) : '另一个应用';
   root.append(
     el('div', { class: 'screen' }, [
       el('div', { class: 'auth-card' }, [
         el('img', {
           class: 'auth-card__logo',
           src: '/icon-192.png',
-          alt: 'Calendar',
+          alt: '日历',
           width: '56',
           height: '56',
         }),
-        el('h1', { class: 'auth-card__title', text: 'Calendar' }),
+        el('h1', { class: 'auth-card__title', text: '日历' }),
         el('p', {
           class: 'auth-card__sub',
           text: (SERVICE_PANEL_COPY[mode] || SERVICE_PANEL_COPY.serving)(app),

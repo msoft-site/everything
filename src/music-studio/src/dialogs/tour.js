@@ -9,49 +9,49 @@ import { formatKeys } from '../commands/registry.js';
 const STEPS = [
   {
     anchor: '.mode-seg',
-    title: 'Pattern and song mode',
-    text: 'PAT plays the selected pattern on a loop while you build it. SONG plays the arrangement in the playlist.',
-    keys: [['Space', 'Play or stop'], ['L', 'Switch mode']],
+    title: '样式模式与歌曲模式',
+    text: '“样式 (PAT)”模式会在您编写时循环播放当前选中的样式。“歌曲 (SONG)”模式则播放播放列表中的编排内容。',
+    keys: [['Space', '播放或停止'], ['L', '切换模式']],
   },
   {
     anchor: '.panel-rack',
     panel: 'rack',
-    title: 'Channel rack',
-    text: 'Each row is an instrument. Click the steps to program a beat; the pattern loops while you edit.',
-    keys: [['F6', 'Show the channel rack']],
+    title: '通道机架',
+    text: '每一行代表一件乐器。点击步进格即可编写节拍；编辑时样式会自动循环播放。',
+    keys: [['F6', '显示通道机架']],
   },
   {
     anchor: '.panel-pianoRoll',
     panel: 'pianoRoll',
-    title: 'Piano roll',
-    text: 'Draw melodies and chords for the selected channel. Notes have length, velocity and pan.',
-    keys: [['F7', 'Show the piano roll']],
+    title: '钢琴卷帘',
+    text: '为选中的通道绘制旋律与和弦。音符具有长度、力度和声像属性。',
+    keys: [['F7', '显示钢琴卷帘']],
   },
   {
     anchor: '.panel-playlist',
     panel: 'playlist',
-    title: 'Playlist',
-    text: 'Arrange patterns, audio and automation clips into a song. Drag patterns in from the browser.',
-    keys: [['F5', 'Show the playlist']],
+    title: '播放列表',
+    text: '将样式、音频和自动化片段编排成完整歌曲。可从浏览器中直接拖入样式。',
+    keys: [['F5', '显示播放列表']],
   },
   {
     anchor: '.panel-mixer',
     panel: 'mixer',
-    title: 'Mixer',
-    text: 'Every channel plays into a mixer insert. Set levels, add effects and route sends here.',
-    keys: [['F9', 'Show the mixer']],
+    title: '混音器',
+    text: '每个通道都会输出到一个混音器轨道。在此调节电平、添加效果器并配置发送路由。',
+    keys: [['F9', '显示混音器']],
   },
   {
     anchor: '.panel-browser',
     panel: 'browser',
-    title: 'Browser',
-    text: 'Instruments, presets, effects, the parts of your project and your files. Click to preview, double-click or drag to add.',
-    keys: [['Alt+F8', 'Show the browser']],
+    title: '浏览器',
+    text: '汇集乐器、预设、效果器、工程各组成部分及您的文件。单击可试听，双击或拖拽即可添加。',
+    keys: [['Alt+F8', '显示浏览器']],
   },
   {
-    title: 'Essential shortcuts',
-    text: 'Hover any button to see its shortcut. The full list is under Help > Keyboard shortcuts.',
-    keys: [['Mod+S', 'Save'], ['Mod+Z', 'Undo'], ['Mod+Shift+Z', 'Redo'], ['Mod+R', 'Export audio'], ['?', 'All shortcuts']],
+    title: '常用快捷键',
+    text: '将鼠标悬停在任意按钮上即可查看其快捷键。完整列表位于“帮助 > 键盘快捷键”。',
+    keys: [['Mod+S', '保存'], ['Mod+Z', '撤销'], ['Mod+Shift+Z', '重做'], ['Mod+R', '导出音频'], ['?', '所有快捷键']],
   },
 ];
 
@@ -69,9 +69,9 @@ export function startTour(app) {
   const text = h('p.tour-text');
   const keys = h('dl.tour-keys');
   const counter = h('span.tour-count');
-  const back = h('button.btn.sm', { type: 'button', onclick: () => go(index - 1) }, 'Back');
-  const next = h('button.btn.sm.primary', { type: 'button', onclick: () => (index === STEPS.length - 1 ? end() : go(index + 1)) }, 'Next');
-  const skip = h('button.btn.sm.ghost', { type: 'button', onclick: () => end() }, 'Skip tour');
+  const back = h('button.btn.sm', { type: 'button', onclick: () => go(index - 1) }, '上一步');
+  const next = h('button.btn.sm.primary', { type: 'button', onclick: () => (index === STEPS.length - 1 ? end() : go(index + 1)) }, '下一步');
+  const skip = h('button.btn.sm.ghost', { type: 'button', onclick: () => end() }, '跳过导览');
   const pop = h(
     'div.tour',
     { role: 'dialog', 'aria-modal': 'false', 'aria-labelledby': titleId, tabindex: '-1' },
@@ -133,13 +133,13 @@ export function startTour(app) {
     title.textContent = step.title;
     text.textContent = step.text;
     keys.replaceChildren(...step.keys.flatMap(([k, label]) => [h('dt', h('kbd.kbd', k === '?' ? '?' : formatKeys(k))), h('dd', label)]));
-    counter.textContent = `${index + 1} of ${STEPS.length}`;
+    counter.textContent = `${index + 1} / ${STEPS.length}`;
     back.disabled = index === 0;
-    next.textContent = index === STEPS.length - 1 ? 'Done' : 'Next';
+    next.textContent = index === STEPS.length - 1 ? '完成' : '下一步';
     requestAnimationFrame(place);
     place();
     pop.focus({ preventScroll: true });
-    announce(`${step.title}. ${step.text}`);
+    announce(`${step.title}。${step.text}`);
   }
 
   const onKey = (e) => {
@@ -188,7 +188,7 @@ export function offerTourFromAlphaNotice(app) {
           startTour(app);
         },
       },
-      'Take the tour',
+      '开始导览',
     ),
   );
 }

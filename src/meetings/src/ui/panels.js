@@ -15,7 +15,7 @@ function panelShell(title, onClose, ...content) {
       'div',
       { class: 'panel-header' },
       el('h2', {}, title),
-      el('button', { class: 'icon-btn', 'aria-label': 'Close panel', onclick: onClose }, icon('close'))
+      el('button', { class: 'icon-btn', 'aria-label': '关闭面板', onclick: onClose }, icon('close'))
     ),
     el('div', { class: 'panel-content' }, ...content)
   );
@@ -34,7 +34,7 @@ export function buildInfoPanel({ code, persistent = false, health = null, onClos
   const statusText = el('span', {}, '');
   const statusLine = el('div', { class: 'info-link-status', role: 'status' }, statusDot, statusText);
   const statusDetail = el('p', {});
-  const statusSection = el('div', { class: 'info-link-health', hidden: true }, el('h3', {}, 'Link'), statusLine, statusDetail);
+  const statusSection = el('div', { class: 'info-link-health', hidden: true }, el('h3', {}, '链接状态'), statusLine, statusDetail);
   const renderHealth = (snapshot) => {
     statusSection.hidden = !snapshot;
     if (!snapshot) return;
@@ -46,41 +46,41 @@ export function buildInfoPanel({ code, persistent = false, health = null, onClos
   if (health) renderHealth(health.snapshot());
 
   const node = panelShell(
-    'Meeting details',
+    '会议详情',
     onClose,
     el(
       'div',
       { class: 'info-panel-body' },
-      el('h3', {}, 'Joining info'),
+      el('h3', {}, '加入信息'),
       el('div', { class: 'info-link-box' }, url),
       el(
         'button',
         {
           class: 'btn btn-text',
           style: { alignSelf: 'flex-start' },
-          onclick: () => copyText(url, 'Meeting link copied'),
+          onclick: () => copyText(url, '已复制会议链接'),
         },
         icon('copy'),
-        'Copy joining link'
+        '复制加入链接'
       ),
-      el('h3', {}, 'Meeting code'),
+      el('h3', {}, '会议代码'),
       el('div', { class: 'info-link-box' }, code),
       el(
         'button',
         {
           class: 'btn btn-text',
           style: { alignSelf: 'flex-start' },
-          onclick: () => copyText(code, 'Meeting code copied'),
+          onclick: () => copyText(code, '已复制会议代码'),
         },
         icon('copy'),
-        'Copy meeting code'
+        '复制会议代码'
       ),
       el(
         'p',
         {},
         persistent
-          ? 'Share this link with people you want in the meeting. It never changes, so anyone with it can join whenever this meeting is running, today or next week.'
-          : 'Share this link with people you want in the meeting. Anyone with the link can ask to join while the meeting is running.'
+          ? '将此链接分享给您想邀请参加会议的人。该链接固定不变，因此无论今天还是下周，只要会议正在进行，持有链接的任何人都可以加入。'
+          : '将此链接分享给您想邀请参加会议的人。会议进行期间，持有链接的任何人都可以加入。'
       ),
       health ? statusSection : null
     )
@@ -91,7 +91,7 @@ export function buildInfoPanel({ code, persistent = false, health = null, onClos
 /** Participants list; call refresh(roster) to re-render. */
 export function buildPeoplePanel({ onClose }) {
   const list = el('div', { class: 'people-list scroll' });
-  const node = panelShell('People', onClose, list);
+  const node = panelShell('参会者', onClose, list);
 
   function refresh(roster) {
     // The list is rebuilt wholesale on every roster change — and someone
@@ -104,10 +104,10 @@ export function buildPeoplePanel({ onClose }) {
     const raised = roster.raisedHands();
 
     if (raised.length) {
-      list.append(el('div', { class: 'people-section-title' }, `Raised hands (${raised.length})`));
+      list.append(el('div', { class: 'people-section-title' }, `已举手 (${raised.length})`));
       for (const p of raised) list.append(personRow(p, true));
     }
-    list.append(el('div', { class: 'people-section-title' }, `In call (${everyone.length})`));
+    list.append(el('div', { class: 'people-section-title' }, `通话中 (${everyone.length})`));
     for (const p of everyone) list.append(personRow(p, false));
     // Clamped by the browser if the list got shorter (someone left).
     if (scrollTop) list.scrollTop = scrollTop;
@@ -119,14 +119,14 @@ export function buildPeoplePanel({ onClose }) {
     const state = (label, iconName, className) =>
       el('span', { class: className, title: label, role: 'img', 'aria-label': label }, icon(iconName));
     const icons = [];
-    if (p.hand && !inHandSection) icons.push(state('Hand raised', 'hand', 'hand-ic'));
-    if (p.presenting) icons.push(state('Presenting', 'present'));
+    if (p.hand && !inHandSection) icons.push(state('已举手', 'hand', 'hand-ic'));
+    if (p.presenting) icons.push(state('正在共享屏幕', 'present'));
     icons.push(
       p.mic
         ? p.speaking
-          ? state('Speaking', 'mic', 'speaking-ic')
-          : state('Microphone on', 'mic')
-        : state('Muted', 'micOff', 'muted-ic')
+          ? state('正在发言', 'mic', 'speaking-ic')
+          : state('麦克风已开启', 'mic')
+        : state('已静音', 'micOff', 'muted-ic')
     );
 
     return el(
@@ -136,11 +136,11 @@ export function buildPeoplePanel({ onClose }) {
       el(
         'div',
         { class: 'person-name' },
-        el('div', { class: 'primary' }, p.name, p.isSelf ? ' (You)' : ''),
+        el('div', { class: 'primary' }, p.name, p.isSelf ? '（您）' : ''),
         p.reconnecting
-          ? el('div', { class: 'secondary' }, 'Reconnecting…')
+          ? el('div', { class: 'secondary' }, '正在重新连接…')
           : p.presenting
-            ? el('div', { class: 'secondary' }, 'Presenting')
+            ? el('div', { class: 'secondary' }, '正在共享屏幕')
             : null
       ),
       el('div', { class: 'person-icons' }, ...icons)
@@ -160,8 +160,8 @@ export function buildChatPanel({ messages, onSend, onClose }) {
     'div',
     { class: 'chat-empty' },
     icon('chat'),
-    el('span', {}, 'No messages yet'),
-    el('span', {}, 'Messages can only be seen by people in the call and are deleted when the call ends.')
+    el('span', {}, '暂无消息'),
+    el('span', {}, '消息仅对当前通话中的人员可见，并在通话结束时删除。')
   );
   // Shown when a message lands while the reader is scrolled up in the
   // history — jumping them to the bottom would steal their place.
@@ -169,7 +169,7 @@ export function buildChatPanel({ messages, onSend, onClose }) {
     'button',
     { class: 'chat-jump', hidden: true, onclick: () => scrollToEnd() },
     icon('arrowDown'),
-    'New messages'
+    '新消息'
   );
   scroller.addEventListener('scroll', () => {
     if (nearBottom()) jumpBtn.hidden = true;
@@ -186,8 +186,8 @@ export function buildChatPanel({ messages, onSend, onClose }) {
 
   const input = el('input', {
     type: 'text',
-    placeholder: 'Send a message to everyone',
-    'aria-label': 'Chat message',
+    placeholder: '向所有人发送消息',
+    'aria-label': '聊天消息',
     maxlength: '4000',
     onkeydown: (e) => {
       // An IME's Enter commits the composition (CJK input); it isn't a send.
@@ -199,14 +199,14 @@ export function buildChatPanel({ messages, onSend, onClose }) {
   });
   const sendBtn = el(
     'button',
-    { class: 'icon-btn chat-send', 'aria-label': 'Send message', disabled: true, onclick: submit },
+    { class: 'icon-btn chat-send', 'aria-label': '发送消息', disabled: true, onclick: submit },
     icon('send')
   );
 
   const node = panelShell(
-    'In-call messages',
+    '通话内消息',
     onClose,
-    el('div', { class: 'chat-notice' }, 'Messages are only visible to people in the call right now and are deleted when the call ends.'),
+    el('div', { class: 'chat-notice' }, '消息仅对当前在通话中的人员可见，并在通话结束时自动删除。'),
     messages.length ? scroller : empty,
     jumpBtn,
     el('div', { class: 'chat-input-row' }, input, sendBtn)
@@ -244,7 +244,7 @@ export function buildChatPanel({ messages, onSend, onClose }) {
         el(
           'div',
           { class: 'chat-msg-head' },
-          el('b', {}, m.self ? 'You' : m.name),
+          el('b', {}, m.self ? '您' : m.name),
           el('time', {}, formatChatTime(m.ts))
         )
       );
@@ -296,6 +296,6 @@ export async function copyText(text, message) {
     await navigator.clipboard.writeText(text);
     toast(message, { icon: 'check' });
   } catch {
-    toast('Copy failed. Select the text manually.', { icon: 'info' });
+    toast('复制失败。请手动选择文本进行复制。', { icon: 'info' });
   }
 }

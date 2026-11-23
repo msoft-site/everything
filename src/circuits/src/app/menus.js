@@ -8,23 +8,23 @@ export function buildMenus(app) {
   const sch = kind === 'sch', pcb = kind === 'pcb', lib = kind === 'lib';
   const recent = () => {
     const list = recentProjects();
-    if (!list.length) return [{ label: 'No recent projects', disabled: true, run: () => {} }];
+    if (!list.length) return [{ label: '无最近打开的项目', disabled: true, run: () => {} }];
     return list.slice(0, 8).map((r) => ({ label: `${r.name}`, shortcut: locationLabel(r.location), run: () => app.openLocation(r.location) }));
   };
   const file = {
-    label: '&File',
+    label: '文件(&F)',
     items: () => [
-      { label: '&New', icon: 'new', items: [{ command: 'file.new' }, { command: 'project.addSheet' }, { command: 'project.addBoard' }, { command: 'lib.newComponent' }] },
+      { label: '新建(&N)', icon: 'new', items: [{ command: 'file.new' }, { command: 'project.addSheet' }, { command: 'project.addBoard' }, { command: 'lib.newComponent' }] },
       { command: 'file.open' },
-      { label: 'Open &recent', icon: 'history', items: recent },
+      { label: '打开最近项目(&R)', icon: 'history', items: recent },
       { command: 'file.openExample' },
       { separator: true },
       { command: 'file.save' }, { command: 'file.saveAs' }, { command: 'file.download' },
       { command: 'file.history' }, { command: 'file.share' },
       { separator: true },
       { command: 'file.import' },
-      { label: '&Import', icon: 'upload', items: [{ command: 'file.importKicad' }] },
-      { label: '&Export', icon: 'download', items: [
+      { label: '导入(&I)', icon: 'upload', items: [{ command: 'file.importKicad' }] },
+      { label: '导出(&E)', icon: 'download', items: [
         { command: 'export.fabrication' }, { command: 'export.gerber' }, { command: 'export.drill' },
         { separator: true },
         { command: 'export.bom' }, { command: 'export.pnp' }, { command: 'export.netlist' },
@@ -37,7 +37,7 @@ export function buildMenus(app) {
     ],
   };
   const edit = {
-    label: '&Edit',
+    label: '编辑(&E)',
     items: () => [
       { command: 'edit.undo' }, { command: 'edit.redo' },
       { separator: true },
@@ -48,7 +48,7 @@ export function buildMenus(app) {
       sch ? { command: 'sch.rotate' } : pcb ? { command: 'pcb.rotate' } : null,
       sch ? { command: 'sch.mirrorX' } : null, sch ? { command: 'sch.mirrorY' } : null,
       pcb ? { command: 'pcb.flip' } : null,
-      { label: '&Align', icon: 'align', items: [
+      { label: '对齐(&A)', icon: 'align', items: [
         { command: 'edit.alignLeft' }, { command: 'edit.alignRight' }, { command: 'edit.alignTop' }, { command: 'edit.alignBottom' },
         { separator: true }, { command: 'edit.distributeH' }, { command: 'edit.distributeV' },
       ] },
@@ -58,7 +58,7 @@ export function buildMenus(app) {
     ].filter(Boolean),
   };
   const view = {
-    label: '&View',
+    label: '视图(&V)',
     items: () => [
       { command: 'view.fit' }, { command: 'view.fitContent' }, { command: 'view.fitSelection' },
       pcb ? { command: 'pcb.fitBoard' } : null,
@@ -71,12 +71,12 @@ export function buildMenus(app) {
       { command: 'view.cycleGrid' }, { command: 'view.setGrid' }, { command: 'view.toggleUnits' },
       pcb ? { command: 'view.hud' } : null,
       { separator: true },
-      { label: '&Panels', icon: 'panel-right', items: [{ command: 'panel.projects' }, { command: 'panel.navigator' }, { command: 'panel.properties' }, { command: 'panel.components' }, pcb ? { command: 'panel.layers' } : null, { command: 'panel.messages' }].filter(Boolean) },
-      { label: '&Theme', icon: 'sun', items: [{ command: 'theme.system' }, { command: 'theme.light' }, { command: 'theme.dark' }] },
+      { label: '面板(&P)', icon: 'panel-right', items: [{ command: 'panel.projects' }, { command: 'panel.navigator' }, { command: 'panel.properties' }, { command: 'panel.components' }, pcb ? { command: 'panel.layers' } : null, { command: 'panel.messages' }].filter(Boolean) },
+      { label: '主题(&T)', icon: 'sun', items: [{ command: 'theme.system' }, { command: 'theme.light' }, { command: 'theme.dark' }] },
     ].filter(Boolean),
   };
   const project = {
-    label: 'Proje&ct',
+    label: '项目(&C)',
     items: () => [
       { command: 'project.compile' }, { command: 'sch.annotate' }, { command: 'project.updateBoard' },
       { separator: true },
@@ -88,18 +88,18 @@ export function buildMenus(app) {
     ],
   };
   const placeSch = {
-    label: '&Place',
+    label: '放置(&P)',
     items: () => [
       { command: 'sch.place.part' }, { command: 'sch.place.wire' }, { command: 'sch.place.bus' },
       { command: 'sch.place.label' }, { command: 'sch.place.power' }, { command: 'sch.place.ground' }, { command: 'sch.place.port' },
       { command: 'sch.place.junction' }, { command: 'sch.place.noerc' },
       { separator: true },
-      { label: '&Drawing tools', icon: 'pencil', items: [{ command: 'sch.place.line' }, { command: 'sch.place.rect' }, { command: 'sch.place.circle' }] },
+      { label: '绘图工具(&D)', icon: 'pencil', items: [{ command: 'sch.place.line' }, { command: 'sch.place.rect' }, { command: 'sch.place.circle' }] },
       { command: 'sch.place.text' },
     ],
   };
   const placePcb = {
-    label: '&Place',
+    label: '放置(&P)',
     items: () => [
       { command: 'pcb.place.component' }, { command: 'pcb.place.via' }, { command: 'pcb.place.pad' },
       { separator: true },
@@ -109,25 +109,25 @@ export function buildMenus(app) {
     ],
   };
   const designSch = {
-    label: '&Design',
+    label: '设计(&D)',
     items: () => [{ command: 'project.updateBoard' }, { separator: true }, { command: 'sch.sheetOptions' }, { command: 'lib.newComponent' }],
   };
   const designPcb = {
-    label: '&Design',
+    label: '设计(&D)',
     items: () => [
       { command: 'project.updateBoard' },
       { separator: true },
       { command: 'pcb.rules' }, { command: 'pcb.layerStack' },
-      { label: '&Board shape', icon: 'board', items: [{ command: 'pcb.boardSize' }, { command: 'pcb.redefineBoard' }, { command: 'pcb.addCutout' }, { command: 'pcb.setOrigin' }] },
+      { label: '板框形状(&B)', icon: 'board', items: [{ command: 'pcb.boardSize' }, { command: 'pcb.redefineBoard' }, { command: 'pcb.addCutout' }, { command: 'pcb.setOrigin' }] },
       { command: 'pcb.boardOptions' },
     ],
   };
   const toolsSch = {
-    label: '&Tools',
+    label: '工具(&T)',
     items: () => [{ command: 'sch.annotate' }, { command: 'project.compile' }, { separator: true }, { command: 'sch.clearHighlight' }, { command: 'app.preferences' }],
   };
   const toolsPcb = {
-    label: '&Tools',
+    label: '工具(&T)',
     items: () => [
       { command: 'pcb.drc' }, { command: 'pcb.repour' },
       { separator: true },
@@ -137,7 +137,7 @@ export function buildMenus(app) {
     ],
   };
   const route = {
-    label: 'Ro&ute',
+    label: '布线(&U)',
     items: () => [
       { command: 'pcb.route' },
       { separator: true },
@@ -149,11 +149,11 @@ export function buildMenus(app) {
     ],
   };
   const reports = {
-    label: '&Reports',
+    label: '报告(&R)',
     items: () => [{ command: 'export.bom' }, { command: 'report.boardInfo' }, { command: 'export.netlist' }],
   };
   const windowMenu = {
-    label: '&Window',
+    label: '窗口(&W)',
     items: () => [
       ...app.openTabs.map((id, i) => {
         const d = app.project?.getDoc(id);
@@ -166,7 +166,7 @@ export function buildMenus(app) {
     ],
   };
   const help = {
-    label: '&Help',
+    label: '帮助(&H)',
     items: () => [{ command: 'help.gettingStarted' }, { command: 'help.shortcuts' }, { command: 'help.commands' }, { separator: true }, { command: 'help.github' }, { command: 'help.about' }],
   };
   const menus = [file, edit, view, project];
@@ -175,14 +175,14 @@ export function buildMenus(app) {
   if (lib) {
     // Component editor: placing pins, pads and drawing, and component tools.
     menus.push({
-      label: '&Place',
+      label: '放置(&P)',
       items: () => [
         { command: 'libed.place.pin' }, { command: 'libed.place.pad' }, { command: 'libed.padArray' },
         { separator: true },
         { command: 'libed.place.line' }, { command: 'libed.place.rect' }, { command: 'libed.place.circle' }, { command: 'libed.place.arc' }, { command: 'libed.place.poly' }, { command: 'libed.place.text' },
       ],
     }, {
-      label: '&Tools',
+      label: '工具(&T)',
       items: () => [
         { command: 'libed.mode.symbol' }, { command: 'libed.mode.footprint' },
         { separator: true },

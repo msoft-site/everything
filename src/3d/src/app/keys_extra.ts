@@ -36,9 +36,9 @@ const SPACE_KEYS: Record<string, EditorTypeId[]> = {
 registerOperators([
   {
     idname: 'screen.space_type_set_or_cycle',
-    label: 'Cycle Space Type Set',
-    description: 'Set the editor type of the area under the mouse, or cycle through related editors',
-    props: [{ id: 'key', label: 'Key', type: 'string', default: 'F5' }],
+    label: '循环切换空间类型',
+    description: '设置鼠标下方区域的编辑器类型，或在相关编辑器之间循环切换',
+    props: [{ id: 'key', label: '按键', type: 'string', default: 'F5' }],
     poll: () => !!(app.hoverArea ?? app.activeArea),
     exec: (_ctx, p) => {
       const area = (app.hoverArea ?? app.activeArea) as unknown as { type: EditorTypeId; setType(t: EditorTypeId): void };
@@ -51,11 +51,11 @@ registerOperators([
   },
   {
     idname: 'object.subdivision_set',
-    label: 'Subdivision Set',
-    description: 'Sets a Subdivision Surface level (1 to 5)',
+    label: '设置细分级别',
+    description: '设置表面细分级别（1 到 5）',
     props: [
-      { id: 'level', label: 'Level', type: 'int', default: 1, min: -100, max: 100 },
-      { id: 'relative', label: 'Relative', type: 'bool', default: false },
+      { id: 'level', label: '级别', type: 'int', default: 1, min: -100, max: 100 },
+      { id: 'relative', label: '相对', type: 'bool', default: false },
     ],
     poll: () => app.selectedObjects().some((o) => o.type === 'MESH'),
     exec: (_ctx, p) => {
@@ -75,8 +75,8 @@ registerOperators([
   },
   {
     idname: 'view3d.localview_remove_from',
-    label: 'Remove from Local View',
-    description: 'Move selected objects out of local view',
+    label: '从局部视图移除',
+    description: '将选中物体移出局部视图',
     poll: () => !!activeView3D()?.localView,
     exec: () => {
       const v = activeView3D()!;
@@ -88,8 +88,8 @@ registerOperators([
   },
   {
     idname: 'wm.toolbar',
-    label: 'Toolbar',
-    description: 'Show the toolbar tools of the current mode in a popup',
+    label: '工具栏',
+    description: '在弹出菜单中显示当前模式的工具栏工具',
     poll: () => !!activeView3D(),
     invoke: () => {
       const tools = toolsFor(app.doc.mode).filter(Boolean) as { id: string; label: string; icon: string; shortcut?: string }[];
@@ -102,7 +102,7 @@ registerOperators([
         }),
         { x: app.pointer.x, y: app.pointer.y },
         {
-          title: 'Toolbar',
+          title: '工具栏',
           typeSpace: true,
           onType: (ch) => {
             const key = ch === ' ' ? 'SPACE' : ch.toUpperCase();
@@ -119,19 +119,19 @@ registerOperators([
   },
   {
     idname: 'wm.batch_rename',
-    label: 'Batch Rename',
-    description: 'Rename selected objects: find and replace text in their names',
+    label: '批量重命名',
+    description: '重命名选中物体：在名称中查找并替换文本',
     poll: () => app.selectedObjects().length > 0,
     invoke: () => {
-      promptText('Find', '', (find) => {
+      promptText('查找', '', (find) => {
         if (!find) return;
-        promptText('Replace', '', (rep) => app.run('wm.batch_rename', { find, replace: rep ?? '' }, { invoke: false }));
+        promptText('替换', '', (rep) => app.run('wm.batch_rename', { find, replace: rep ?? '' }, { invoke: false }));
       });
       return 'CANCELLED';
     },
     props: [
-      { id: 'find', label: 'Find', type: 'string', default: '' },
-      { id: 'replace', label: 'Replace', type: 'string', default: '' },
+      { id: 'find', label: '查找', type: 'string', default: '' },
+      { id: 'replace', label: '替换', type: 'string', default: '' },
     ],
     exec: (ctx, p) => {
       const find = p.find as string;
@@ -146,14 +146,14 @@ registerOperators([
         ob.name = name;
         n++;
       }
-      app.report('INFO', `Renamed ${n} of ${app.selectedObjects().length} object(s)`);
+      app.report('INFO', `已重命名 ${n} / ${app.selectedObjects().length} 个物体`);
     },
   },
   {
     idname: 'screen.time_jump',
-    label: 'Jump Time by Delta',
-    description: 'Jump forward or backward by the scene’s time jump step (one second by default)',
-    props: [{ id: 'backward', label: 'Backwards', type: 'bool', default: false }],
+    label: '按步长跳转时间',
+    description: '按场景的时间跳转步长向前或向后跳转（默认为 1 秒）',
+    props: [{ id: 'backward', label: '向后', type: 'bool', default: false }],
     exec: (ctx, p) => {
       const sc = ctx.doc.scene;
       const delta = sc.time_jump_delta ?? 1;
@@ -164,8 +164,8 @@ registerOperators([
   },
   {
     idname: 'object.transfer_mode',
-    label: 'Transfer Mode',
-    description: 'Switch the current mode to the object under the mouse',
+    label: '传递模式',
+    description: '将当前模式切换到鼠标下方的物体',
     poll: () => app.doc.mode !== 'OBJECT' && !!activeView3D(),
     invoke: () => {
       const v = activeView3D()!;
@@ -184,8 +184,8 @@ registerOperators([
   },
   {
     idname: 'pose.constraints_clear',
-    label: 'Clear Pose Constraints',
-    description: 'Clear all constraints from the selected bones',
+    label: '清除姿态约束',
+    description: '清除选中骨骼的所有约束',
     poll: () => app.doc.mode === 'POSE',
     exec: () => {
       for (const pb of Object.values(app.activeObject?.pose ?? {})) if (pb.select) pb.constraints = [];
@@ -193,8 +193,8 @@ registerOperators([
   },
   {
     idname: 'curve.tilt_clear',
-    label: 'Clear Tilt',
-    description: 'Clear the tilt of the selected control points',
+    label: '清除倾斜',
+    description: '清除选中控制点的倾斜角',
     poll: () => app.doc.mode === 'EDIT' && app.activeObject?.type === 'CURVE',
     exec: () => {
       const cu = app.doc.curves[app.activeObject!.data!];
@@ -206,8 +206,8 @@ registerOperators([
   },
   {
     idname: 'armature.align',
-    label: 'Align Bones',
-    description: 'Align the selected bones to the active bone (or to their parent)',
+    label: '对齐骨骼',
+    description: '将选中骨骼对齐到活动骨骼（或其父骨骼）',
     poll: () => app.doc.mode === 'EDIT' && app.activeObject?.type === 'ARMATURE',
     exec: () => {
       const arm = app.doc.armatures[app.activeObject!.data!];
@@ -224,8 +224,8 @@ registerOperators([
   },
   {
     idname: 'view3d.gizmo_toggle',
-    label: 'Toggle Gizmos',
-    description: 'Show or hide the viewport gizmos',
+    label: '切换操控器',
+    description: '显示或隐藏视口操控器',
     poll: () => !!activeView3D(),
     exec: () => {
       const v = activeView3D()!;
@@ -243,21 +243,31 @@ export function orientationPie() {
   const items: (PieItem | null)[] = BUILTIN_ORIENTATIONS.map(([o, label, ic]) => ({ label, icon: ic, active: cur === o, action: () => setOrientation(o) }));
   const custom = customOrientations()[0];
   items.push(custom ? { label: custom.name, icon: 'orientation_local', active: cur === custom.name, action: () => setOrientation(custom.name) } : null);
-  openPie('Transform Orientation', items, app.pointer.x, app.pointer.y, 'COMMA');
+  openPie('变换坐标系', items, app.pointer.x, app.pointer.y, 'COMMA');
 }
 
 export function falloffPie() {
   const ts = app.doc.scene.tool_settings;
+  const FALLOFF_LABELS: Record<string, string> = {
+    SMOOTH: '平滑',
+    SPHERE: '球状',
+    ROOT: '根号',
+    INVERSE_SQUARE: '平方反比',
+    SHARP: '尖锐',
+    LINEAR: '线性',
+    CONSTANT: '恒定',
+    RANDOM: '随机',
+  };
   const items = (['SMOOTH', 'SPHERE', 'ROOT', 'INVERSE_SQUARE', 'SHARP', 'LINEAR', 'CONSTANT', 'RANDOM'] as const).map((f) => ({
-    label: f === 'INVERSE_SQUARE' ? 'Inverse Square' : f[0] + f.slice(1).toLowerCase(),
+    label: FALLOFF_LABELS[f],
     active: ts.proportional_edit_falloff === f,
     action: () => {
       ts.proportional_edit_falloff = f;
-      app.pushUndo('Proportional Falloff');
+      app.pushUndo('衰减编辑曲线');
       app.changed('ui', 'doc');
     },
   }));
-  openPie('Proportional Editing Falloff', items, app.pointer.x, app.pointer.y, 'O');
+  openPie('衰减编辑曲线', items, app.pointer.x, app.pointer.y, 'O');
 }
 
 
@@ -330,15 +340,15 @@ addKeys('Armature', [{ key: 'T', alt: true, op: 'curve.tilt_clear', when: () => 
 function toggleOrigins() {
   const ts = app.doc.scene.tool_settings;
   ts.use_transform_data_origin = !ts.use_transform_data_origin;
-  app.report('INFO', `Affect Only Origins: ${ts.use_transform_data_origin ? 'on' : 'off'}`);
+  app.report('INFO', `仅影响原点: ${ts.use_transform_data_origin ? '开启' : '关闭'}`);
   app.changed('ui', 'doc');
 }
 
 registerOperators([
   {
     idname: 'collection.objects_add_active',
-    label: 'Add Selected to Active Object Collection',
-    description: "Add selected objects to one of the active object's collections",
+    label: '将选中项添加到活动物体集合',
+    description: '将选中物体添加到活动物体所在的集合中',
     poll: () => objectMode() && !!app.activeObject && app.selectedObjects().length > 1,
     exec: (ctx) => {
       const act = app.activeObject!;
@@ -349,8 +359,8 @@ registerOperators([
   },
   {
     idname: 'collection.objects_remove_active',
-    label: 'Remove Selected from Active Collection',
-    description: "Remove selected objects from the active object's collections (objects stay linked somewhere)",
+    label: '从活动集合移除选中项',
+    description: '从活动物体所在的集合中移除选中物体（物体仍会保留在其他集合链接中）',
     poll: () => objectMode() && !!app.activeObject,
     exec: (ctx) => {
       const act = app.activeObject!;

@@ -46,15 +46,15 @@ import {
  * hardest technique it forces you to use.
  */
 export const TECHNIQUES = {
-  fullHouse: { label: 'Last cell', tier: 1, cost: 1 },
-  nakedSingle: { label: 'Naked single', tier: 1, cost: 2 },
-  hiddenSingle: { label: 'Hidden single', tier: 1, cost: 3 },
-  pointing: { label: 'Pointing pair', tier: 2, cost: 5 },
-  claiming: { label: 'Box/line reduction', tier: 2, cost: 5 },
-  nakedPair: { label: 'Naked pair', tier: 2, cost: 6 },
-  hiddenPair: { label: 'Hidden pair', tier: 3, cost: 9 },
-  nakedTriple: { label: 'Naked triple', tier: 3, cost: 10 },
-  hiddenTriple: { label: 'Hidden triple', tier: 3, cost: 13 },
+  fullHouse: { label: '唯一余数', tier: 1, cost: 1 },
+  nakedSingle: { label: '显性唯一数', tier: 1, cost: 2 },
+  hiddenSingle: { label: '隐性唯一数', tier: 1, cost: 3 },
+  pointing: { label: '宫内区块摒除', tier: 2, cost: 5 },
+  claiming: { label: '行列区块缩减', tier: 2, cost: 5 },
+  nakedPair: { label: '显性数对', tier: 2, cost: 6 },
+  hiddenPair: { label: '隐性数对', tier: 3, cost: 9 },
+  nakedTriple: { label: '显性三数组', tier: 3, cost: 10 },
+  hiddenTriple: { label: '隐性三数组', tier: 3, cost: 13 },
   xWing: { label: 'X-Wing', tier: 4, cost: 16 },
   yWing: { label: 'Y-Wing', tier: 4, cost: 18 },
 };
@@ -231,11 +231,11 @@ const placesFor = (analysis, cells, digit) =>
 function listCells(cells) {
   const names = cells.map(cellName);
   if (names.length <= 1) return names.join('');
-  return `${names.slice(0, -1).join(', ')} and ${names.at(-1)}`;
+  return `${names.slice(0, -1).join('、')} 和 ${names.at(-1)}`;
 }
 
 const listDigits = (digits) =>
-  digits.length <= 1 ? String(digits[0] ?? '') : `${digits.slice(0, -1).join(', ')} and ${digits.at(-1)}`;
+  digits.length <= 1 ? String(digits[0] ?? '') : `${digits.slice(0, -1).join('、')} 和 ${digits.at(-1)}`;
 
 /** Every k-sized combination of `items`, as arrays. */
 function combinations(items, k) {
@@ -273,7 +273,7 @@ function fullHouse({ board, cands }) {
       cell,
       digit,
       unit.cells,
-      `${unit.label} has one empty cell left, so ${cellName(cell)} must be ${digit}.`,
+      `${unit.label}只剩一个空格，因此 ${cellName(cell)} 必定是 ${digit}。`,
     );
   }
   return null;
@@ -290,7 +290,7 @@ function nakedSingle({ board, cands }) {
       i,
       digit,
       [i, ...PEERS[i].filter((p) => board[p])],
-      `${digit} is the only digit left for ${cellName(i)}: its row, column and box account for the other eight.`,
+      `${cellName(i)} 只能填 ${digit}：它所在的行、列和宫已包含其余八个数字。`,
     );
   }
   return null;
@@ -312,7 +312,7 @@ function hiddenSingle(analysis) {
         places[0],
         d,
         unit.cells,
-        `In ${unit.label}, ${cellName(places[0])} is the only cell that can still take ${d}.`,
+        `在${unit.label}中，${cellName(places[0])} 是唯一还能填入 ${d} 的单元格。`,
       );
     }
   }
@@ -349,8 +349,8 @@ function nakedSubset(analysis, k, technique) {
         technique,
         eliminations,
         group,
-        `${listCells(group)} in ${unit.label} hold only ${listDigits(digits)} between them, ` +
-          `so those ${k} digits fill those ${k} cells and can be removed from the rest of ${unit.label}.`,
+        `${unit.label}中的 ${listCells(group)} 仅包含候选数 ${listDigits(digits)}，` +
+          `因此这 ${k} 个数字必填入这 ${k} 个单元格，可从${unit.label}的其余单元格中排除。`,
       );
     }
   }
@@ -399,8 +399,8 @@ function hiddenSubset(analysis, k, technique) {
         technique,
         eliminations,
         [...cellSet],
-        `In ${unit.label}, ${listDigits(digits)} can only go in ${listCells([...cellSet].sort((x, y) => x - y))}. ` +
-          `Those ${k} cells are taken by those ${k} digits, so nothing else fits in them.`,
+        `在${unit.label}中，${listDigits(digits)} 只能填入 ${listCells([...cellSet].sort((x, y) => x - y))}。` +
+          `这 ${k} 个单元格已被这 ${k} 个数字占据，不能再填入其他数字。`,
       );
     }
   }
@@ -427,8 +427,8 @@ function pointing(analysis) {
       if (places.length < 2) continue;
 
       for (const [axis, of, units, name] of [
-        ['row', rowOf, ROW_UNITS, 'row'],
-        ['col', colOf, COL_UNITS, 'column'],
+        ['row', rowOf, ROW_UNITS, '行'],
+        ['col', colOf, COL_UNITS, '列'],
       ]) {
         const line = of(places[0]);
         if (!places.every((c) => of(c) === line)) continue;
@@ -442,8 +442,8 @@ function pointing(analysis) {
           'pointing',
           eliminations,
           places,
-          `In box ${b + 1}, ${d} can only go in ${listCells(places)}, all in ${name} ${line + 1}. ` +
-            `So ${d} is somewhere in that box, and can be removed from the rest of ${name} ${line + 1}.`,
+          `在第 ${b + 1} 宫中，${d} 只能填入 ${listCells(places)}，且全部位于第 ${line + 1} ${name}。` +
+            `因此 ${d} 必在该宫内，可从第 ${line + 1} ${name}的其余单元格中排除。`,
           d,
         );
       }
@@ -458,8 +458,8 @@ function pointing(analysis) {
  */
 function claiming(analysis) {
   for (const [units, name] of [
-    [ROW_UNITS, 'row'],
-    [COL_UNITS, 'column'],
+    [ROW_UNITS, '行'],
+    [COL_UNITS, '列'],
   ]) {
     for (let l = 0; l < 9; l++) {
       for (let d = 1; d <= 9; d++) {
@@ -478,8 +478,8 @@ function claiming(analysis) {
           'claiming',
           eliminations,
           places,
-          `In ${name} ${l + 1}, ${d} can only go in ${listCells(places)}, all inside box ${box + 1}. ` +
-            `So that box's ${d} lies on this ${name}, and can be removed from the box's other cells.`,
+          `在第 ${l + 1} ${name}中，${d} 只能填入 ${listCells(places)}，且全部位于第 ${box + 1} 宫内。` +
+            `因此该宫的 ${d} 必在此${name}上，可从该宫的其余单元格中排除。`,
           d,
         );
       }
@@ -500,8 +500,8 @@ function claiming(analysis) {
  */
 function xWing(analysis) {
   for (const [lines, cross, crossOf, lineName, crossName] of [
-    [ROW_UNITS, COL_UNITS, colOf, 'rows', 'column'],
-    [COL_UNITS, ROW_UNITS, rowOf, 'columns', 'row'],
+    [ROW_UNITS, COL_UNITS, colOf, '行', '列'],
+    [COL_UNITS, ROW_UNITS, rowOf, '列', '行'],
   ]) {
     for (let d = 1; d <= 9; d++) {
       const pairs = [];
@@ -530,9 +530,9 @@ function xWing(analysis) {
           'xWing',
           eliminations,
           corners,
-          `${d} has just two homes in each of ${lineName} ${a.line + 1} and ${b.line + 1}, ` +
-            `and they share ${crossName}s ${ca[0] + 1} and ${ca[1] + 1}. ` +
-            `Whichever way round it goes, both ${crossName}s are used, so ${d} goes nowhere else in them.`,
+          `${d} 在第 ${a.line + 1} ${lineName}和第 ${b.line + 1} ${lineName}中各只有两个可填位置，` +
+            `且都位于第 ${ca[0] + 1} ${crossName}和第 ${ca[1] + 1} ${crossName}。` +
+            `无论如何填入，这两${crossName}中的 ${d} 都已被占据，因此这两${crossName}的其余位置不能再填 ${d}。`,
           d,
         );
       }
@@ -580,8 +580,8 @@ function yWing(analysis) {
           'yWing',
           eliminations,
           [pivot, w1, w2],
-          `${cellName(pivot)} is ${a} or ${b}. Either way it forces ${c1} into ${cellName(w1)} or ` +
-            `${cellName(w2)}, so ${c1} can be removed from every cell both of those see.`,
+          `${cellName(pivot)} 只能是 ${a} 或 ${b}。无论哪种情况，都会使 ${cellName(w1)} 或 ` +
+            `${cellName(w2)} 填入 ${c1}，因此这两格共同影响的所有单元格中都可以排除 ${c1}。`,
           c1,
         );
       }

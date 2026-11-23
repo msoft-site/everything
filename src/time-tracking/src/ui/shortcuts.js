@@ -36,9 +36,9 @@ export function initShortcuts() {
       e.preventDefault();
       openHelp();
     } else if (k === 'ArrowLeft') {
-      if (clickTimesheet('[aria-label^="Previous"]')) e.preventDefault();
+      if (clickTimesheet('[aria-label^="上一"]')) e.preventDefault();
     } else if (k === 'ArrowRight') {
-      if (clickTimesheet('[aria-label^="Next"]')) e.preventDefault();
+      if (clickTimesheet('[aria-label^="下一"]')) e.preventDefault();
     } else if (k === 't' || k === 'T') {
       if (clickToday()) e.preventDefault();
     } else if (VIEW_KEYS[k]) {
@@ -79,10 +79,10 @@ async function toggleTimer() {
   if (store.running) {
     try {
       const entry = await store.stopTimer();
-      toast(`Logged ${fmtClock(entry.seconds)}`, { icon: 'check' });
+      toast(`已记录 ${fmtClock(entry.seconds)}`, { icon: 'check' });
     } catch (err) {
       console.error(err);
-      toast('Could not stop, check your connection', { icon: 'wifiOff' });
+      toast('无法停止，请检查网络连接', { icon: 'wifiOff' });
     }
     return;
   }
@@ -94,7 +94,7 @@ async function toggleTimer() {
 /** /: open (or refocus) search on the Timesheet. */
 function openSearch() {
   afterRoute('#/timesheet', () => {
-    const btn = document.querySelector('button[aria-label="Search entries"]');
+    const btn = document.querySelector('button[aria-label="搜索记录"]');
     if (btn?.getAttribute('aria-pressed') === 'false') btn.click();
     else document.querySelector('.search-input')?.focus();
   });
@@ -112,7 +112,7 @@ function clickTimesheet(selector) {
 function clickToday() {
   if (currentRoute() !== '#/timesheet') return false;
   const btn = [...document.querySelectorAll('.week-nav button')]
-    .find((b) => b.textContent.trim() === 'Today');
+    .find((b) => b.textContent.trim() === '今天');
   if (!btn || btn.hidden) return false;
   btn.click();
   return true;
@@ -120,17 +120,17 @@ function clickToday() {
 
 function openHelp() {
   const rows = [
-    [['S'], 'Start or stop the timer'],
-    [['N'], 'Log time manually'],
-    [['/'], 'Search the timesheet'],
-    [['←', '→'], 'Previous or next week / month'],
-    [['T'], 'Jump to today'],
-    [['1', '4'], 'Timer, Timesheet, Reports, Projects', ' to '],
-    [['Esc'], 'Close dialogs'],
-    [['?'], 'Show this reference'],
+    [['S'], '启动或停止计时器'],
+    [['N'], '手动记录工时'],
+    [['/'], '搜索工时表'],
+    [['←', '→'], '上一周 / 月或下一周 / 月'],
+    [['T'], '跳转到今天'],
+    [['1', '4'], '计时器、工时表、报表、项目', ' 至 '],
+    [['Esc'], '关闭对话框'],
+    [['?'], '显示此快捷键说明'],
   ];
   openModal({
-    title: 'Keyboard shortcuts',
+    title: '键盘快捷键',
     content: el('div.shortcut-list', {}, rows.map(([keys, what, sep]) =>
       el('div.shortcut-row', {},
         el('span.shortcut-what', {}, what),

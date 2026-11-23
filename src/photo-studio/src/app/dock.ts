@@ -26,13 +26,13 @@ const storageKey = 'photo-studio-dock';
 // Icon strip sections, in order: panels of one kind sit together (until the
 // user drags them elsewhere) and each section is a labelled group.
 const stripSections: [string, string[]][] = [
-  ['Assist', ['assistant', 'generations']],
-  ['History', ['history', 'actions', 'versions']],
-  ['Inspect', ['navigator', 'info', 'histogram', 'measurement-log', 'notes', 'comments']],
-  ['Painting', ['brushes', 'brush-settings', 'tool-presets', 'clone-source']],
-  ['Type', ['character', 'paragraph', 'glyphs', 'character-styles', 'paragraph-styles']],
-  ['Layers', ['styles', 'shapes', 'layer-comps']],
-  ['Assets', ['libraries', 'provenance']],
+  ['辅助', ['assistant', 'generations']],
+  ['历史记录', ['history', 'actions', 'versions']],
+  ['检查', ['navigator', 'info', 'histogram', 'measurement-log', 'notes', 'comments']],
+  ['绘画', ['brushes', 'brush-settings', 'tool-presets', 'clone-source']],
+  ['文字', ['character', 'paragraph', 'glyphs', 'character-styles', 'paragraph-styles']],
+  ['图层', ['styles', 'shapes', 'layer-comps']],
+  ['资源', ['libraries', 'provenance']],
 ];
 const stripSection = (id: string) => {
   const i = stripSections.findIndex(([, ids]) => ids.includes(id));
@@ -249,7 +249,7 @@ export class Dock {
     registerCommand(
       {
         id: 'window.panel.menu-close',
-        label: 'Close',
+        label: '关闭',
         recordable: false,
         enabled: () => !!target() && !this.locked,
         run: () => {
@@ -260,7 +260,7 @@ export class Dock {
       },
       {
         id: 'window.panel.menu-close-group',
-        label: 'Close Tab Group',
+        label: '关闭选项卡组',
         recordable: false,
         enabled: () => !this.locked && !!where()?.startsWith('dock-'),
         run: () => {
@@ -272,7 +272,7 @@ export class Dock {
       },
       {
         id: 'window.panel.menu-minimize',
-        label: 'Minimize Tab Group',
+        label: '最小化选项卡组',
         recordable: false,
         checked: () => this.layout.collapsed.includes(where() ?? ''),
         enabled: () => !this.locked && !!where()?.startsWith('dock-'),
@@ -287,7 +287,7 @@ export class Dock {
       },
       {
         id: 'window.panel.menu-to-strip',
-        label: 'Collapse to Icon',
+        label: '折叠为图标',
         recordable: false,
         enabled: () => !this.locked && !!where()?.startsWith('dock-'),
         run: () => {
@@ -297,7 +297,7 @@ export class Dock {
       },
       {
         id: 'window.panel.menu-to-group',
-        label: 'Dock as Tab',
+        label: '停靠为选项卡',
         recordable: false,
         enabled: () => !this.locked && where() === 'strip',
         run: () => {
@@ -454,11 +454,11 @@ export class Dock {
     column.innerHTML = groupLocations
       .map((loc) => {
         const list = this.group(loc);
-        if (!list.length) return `<section class="panel-group empty" data-location="${loc}"><div class="panel-tabs" data-drop-location="${loc}"><span class="drop-hint">Drop a panel here</span></div></section>`;
+        if (!list.length) return `<section class="panel-group empty" data-location="${loc}"><div class="panel-tabs" data-drop-location="${loc}"><span class="drop-hint">将面板拖放到此处</span></div></section>`;
         const active = this.activeIn(loc)!;
         const collapsed = this.layout.collapsed.includes(loc);
         const size = this.layout.sizes[loc] ?? fallback;
-        return `<section class="panel-group ${collapsed ? 'collapsed' : ''}" data-location="${loc}" ${size && !collapsed ? `style="flex:${size} 1 0"` : ''}><div class="panel-tabs" role="tablist" aria-label="Panels" data-drop-location="${loc}">${list
+        return `<section class="panel-group ${collapsed ? 'collapsed' : ''}" data-location="${loc}" ${size && !collapsed ? `style="flex:${size} 1 0"` : ''}><div class="panel-tabs" role="tablist" aria-label="面板" data-drop-location="${loc}">${list
           .map((p) => `<button role="tab" data-panel-tab="${p.id}" draggable="${draggable}" aria-selected="${p.id === active.id}" tabindex="${p.id === active.id ? 0 : -1}" aria-controls="panel-${p.id}">${escapeXML(p.title)}</button>`)
           .join('')}<span class="panel-tabs-spacer"></span>${menuButton(active, 'data-panel-menu')}</div><div class="panel-slot"></div><div class="group-resizer" data-resize="${loc}" aria-hidden="true"></div></section>`;
       })
@@ -480,7 +480,7 @@ export class Dock {
         const section = stripSection(p.id);
         const start = i === 0 || stripSection(stripPanels[i - 1].id) !== section;
         const end = i === stripPanels.length - 1 || stripSection(stripPanels[i + 1].id) !== section;
-        const label = stripSections[section]?.[0] ?? 'More panels';
+        const label = stripSections[section]?.[0] ?? '更多面板';
         return `${start ? `<div class="strip-section" role="group" aria-label="${label}">` : ''}<button data-strip-panel="${p.id}" draggable="${draggable}" aria-label="${escapeXML(p.title)}" title="${escapeXML(p.title)}" aria-pressed="${this.drawer === p.id}" tabindex="${p.id === stop ? 0 : -1}">${svg(p.icon)}</button>${end ? '</div>' : ''}`;
       })
       .join('');
@@ -489,7 +489,7 @@ export class Dock {
     const open = this.drawer && this.inDock(this.drawer) ? panels.get(this.drawer) : undefined;
     drawer.hidden = !open;
     if (open) {
-      drawer.innerHTML = `<div class="panel-tabs"><span class="drawer-title">${svg(open.icon, 14)}${escapeXML(open.title)}</span><span class="panel-tabs-spacer"></span>${menuButton(open, 'data-panel-menu')}<button class="panel-menu-button" data-drawer-close aria-label="Close ${escapeXML(open.title)}" title="Close">${svg('x', 15)}</button></div>`;
+      drawer.innerHTML = `<div class="panel-tabs"><span class="drawer-title">${svg(open.icon, 14)}${escapeXML(open.title)}</span><span class="panel-tabs-spacer"></span>${menuButton(open, 'data-panel-menu')}<button class="panel-menu-button" data-drawer-close aria-label="关闭 ${escapeXML(open.title)}" title="关闭">${svg('x', 15)}</button></div>`;
       const body = this.body(open);
       drawer.append(body);
       updatePanel(this.e, open, body);
@@ -615,4 +615,4 @@ export function updatePanel(e: Editor, p: Panel | undefined, body: HTMLElement) 
 }
 /** The flyout menu button every panel header carries. */
 export const menuButton = (p: Panel, attr: string) =>
-  `<button class="panel-menu-button" ${attr}="${p.id}" aria-label="${escapeXML(p.title)} panel menu" aria-haspopup="menu" aria-expanded="false" title="Panel menu">${svg('menu', 15)}</button>`;
+  `<button class="panel-menu-button" ${attr}="${p.id}" aria-label="${escapeXML(p.title)} 面板菜单" aria-haspopup="menu" aria-expanded="false" title="面板菜单">${svg('menu', 15)}</button>`;

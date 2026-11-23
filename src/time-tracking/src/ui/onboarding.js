@@ -27,12 +27,12 @@ export function openOnboarding() {
       store.updateSettings({ onboarded: true }).catch(() => {});
     }
   };
-  const modal = openModal({ title: 'Welcome', content: body, onClose: markDone });
+  const modal = openModal({ title: '欢迎使用', content: body, onClose: markDone });
 
   const skipBtn = () => el('button.btn.btn-ghost.btn-block', {
     type: 'button', style: { marginTop: '10px' },
     onclick: () => { markDone(); modal.close(); },
-  }, 'Skip for now');
+  }, '暂时跳过');
 
   /* Step 0: welcome */
   function renderWelcome() {
@@ -40,18 +40,18 @@ export function openOnboarding() {
     append(body, [
       el('div.onboard-hero', {},
         el('img', { src: './icons/icon-192.png', width: 64, height: 64, alt: '' }),
-        el('h3.onboard-title', {}, 'Every hour, accounted for'),
-        el('p.onboard-sub', {}, 'Track billable hours by client, project, or task. Stored in your own Puter account, never sold or shared.')
+        el('h3.onboard-title', {}, '每一小时，都清晰可查'),
+        el('p.onboard-sub', {}, '按客户、项目或任务追踪可计费工时。数据存储在您自己的 Puter 账户中，绝不出售或共享。')
       ),
       el('button.btn.btn-primary.btn-block.btn-tall', {
         type: 'button',
         onclick: renderSetup,
-      }, 'Set up tracking'),
+      }, '开始设置'),
       el('button.btn.btn-ghost.btn-block.btn-dashed', {
         type: 'button', style: { marginTop: '10px' },
         html: icon('sparkle', 15, 2),
         onclick: useSampleData,
-      }, ' Explore with sample data'),
+      }, ' 使用示例数据体验'),
       skipBtn(),
     ]);
   }
@@ -65,32 +65,32 @@ export function openOnboarding() {
       await store.importAll(sampleDataset(store));
     } catch (err) {
       console.error(err);
-      toast('Could not load the sample data, check your connection', { icon: 'wifiOff' });
+      toast('无法加载示例数据，请检查网络连接', { icon: 'wifiOff' });
       btn.disabled = false;
       return;
     }
     modal.close();
-    toast('Sample data loaded, wipe it anytime from the banner', { icon: 'sparkle' });
+    toast('已加载示例数据，您可以随时从顶部横幅清除', { icon: 'sparkle' });
   }
 
   /* Step 1: currency + default rate, then the Projects view takes over */
   function renderSetup() {
     clear(body);
-    const currency = el('select.select', { 'aria-label': 'Currency' },
+    const currency = el('select.select', { 'aria-label': '币种' },
       CURRENCIES.map((c) => el('option', { value: c, selected: c === store.settings.currency }, c)));
     const rate = el('input.input', {
-      type: 'text', inputmode: 'decimal', placeholder: 'e.g. 100',
+      type: 'text', inputmode: 'decimal', placeholder: '例如：100',
       // The default rate can be an effective-dated list (kept across a
       // sample-data wipe); show the rate in effect today, not the list.
       value: rateAt(store.settings.defaultRate, todayISO()) || '', autocomplete: 'off',
     });
     const rateErr = fieldError(rate);
     append(body, [
-      el('h3.onboard-h', {}, 'How do you bill?'),
-      el('p.onboard-p', {}, 'The default rate applies when a client or project has no rate of its own. You can change both anytime in Settings.'),
+      el('h3.onboard-h', {}, '您的计费方式是什么？'),
+      el('p.onboard-p', {}, '当客户或项目没有单独设置费率时，将适用默认费率。您可以随时在“设置”中修改这两项。'),
       el('div.form-grid', {},
-        field('Currency', currency),
-        el('div', {}, field('Default hourly rate', rate), rateErr)
+        field('币种', currency),
+        el('div', {}, field('默认时薪费率', rate), rateErr)
       ),
       el('button.btn.btn-primary.btn-block.btn-tall', {
         type: 'button',
@@ -106,9 +106,9 @@ export function openOnboarding() {
           await store.updateSettings({ currency: currency.value, defaultRate: n, onboarded: true }).catch(() => {});
           modal.close();
           location.hash = '#/projects';
-          toast('Now add your first client and project', { icon: 'folders' });
+          toast('现在请添加您的第一个客户和项目', { icon: 'folders' });
         },
-      }, 'Start tracking'),
+      }, '开始追踪'),
       skipBtn(),
     ]);
   }

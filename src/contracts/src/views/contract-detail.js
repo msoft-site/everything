@@ -80,8 +80,8 @@ export function contractDetailView({ param }) {
           onclick: () => openContractForm({ contract }),
         }, ' Edit'),
         el('button.icon-btn.danger', {
-          html: icon('trash', 18, 2), 'aria-label': 'Delete contract',
-          title: 'Delete contract',
+          html: icon('trash', 18, 2), 'aria-label': '删除合同',
+          title: '删除合同',
           onclick: async () => {
             const docCount = liveDocuments(contract).length;
             const ok = await confirmDialog({
@@ -89,7 +89,7 @@ export function contractDetailView({ param }) {
               message: docCount
                 ? `"${contract.title}" and its ${docCount} attached document${docCount === 1 ? '' : 's'} move to the trash. You can restore them there for ${TRASH_DAYS} days.`
                 : `"${contract.title}" moves to the trash. You can restore it there for ${TRASH_DAYS} days.`,
-              confirmLabel: 'Delete',
+              confirmLabel: '删除',
             });
             if (!ok) return;
             try {

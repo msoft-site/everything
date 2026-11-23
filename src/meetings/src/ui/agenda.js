@@ -80,16 +80,16 @@ export function mountAgenda(host, { calendar, ctx, userKey = '', now = () => Dat
   const todayBtn = el(
     'button',
     { class: 'btn btn-text agenda-today', type: 'button', onclick: () => select(startOfDay(now())) },
-    'Today'
+    '今天'
   );
   const prevBtn = el(
     'button',
-    { class: 'icon-btn', type: 'button', 'aria-label': 'Previous week', title: 'Previous week', onclick: () => shiftWeek(-1) },
+    { class: 'icon-btn', type: 'button', 'aria-label': '上一周', title: '上一周', onclick: () => shiftWeek(-1) },
     icon('chevronLeft')
   );
   const nextBtn = el(
     'button',
-    { class: 'icon-btn', type: 'button', 'aria-label': 'Next week', title: 'Next week', onclick: () => shiftWeek(1) },
+    { class: 'icon-btn', type: 'button', 'aria-label': '下一周', title: '下一周', onclick: () => shiftWeek(1) },
     icon('chevronRight')
   );
   const strip = el('div', { class: 'agenda-strip', role: 'group', onkeydown: onStripKeydown });
@@ -97,7 +97,7 @@ export function mountAgenda(host, { calendar, ctx, userKey = '', now = () => Dat
   const status = el('span', { class: 'agenda-status', role: 'status' });
   const refreshBtn = el(
     'button',
-    { class: 'icon-btn agenda-refresh', type: 'button', 'aria-label': 'Refresh', title: 'Refresh', onclick: () => refresh({ manual: true }) },
+    { class: 'icon-btn agenda-refresh', type: 'button', 'aria-label': '刷新', title: '刷新', onclick: () => refresh({ manual: true }) },
     icon('refresh')
   );
 
@@ -115,7 +115,7 @@ export function mountAgenda(host, { calendar, ctx, userKey = '', now = () => Dat
     el(
       'div',
       { class: 'agenda-foot' },
-      el('span', { class: 'agenda-source' }, icon('calendar'), 'From Calendar'),
+      el('span', { class: 'agenda-source' }, icon('calendar'), '来自日历'),
       status,
       refreshBtn
     )
@@ -136,7 +136,7 @@ export function mountAgenda(host, { calendar, ctx, userKey = '', now = () => Dat
       ? formatDay(new Date(selected), locale)
       : '';
     todayBtn.disabled = isSameDay(selected, todayStart);
-    strip.setAttribute('aria-label', `Week of ${formatDay(new Date(weekStart), locale)}`);
+    strip.setAttribute('aria-label', `${formatDay(new Date(weekStart), locale)}所在周`);
   }
 
   function renderStrip() {
@@ -159,7 +159,7 @@ export function mountAgenda(host, { calendar, ctx, userKey = '', now = () => Dat
           class: `agenda-day${isSelected ? ' is-selected' : ''}${isToday ? ' is-today' : ''}${count ? ' has-meetings' : ''}`,
           type: 'button',
           'aria-pressed': String(isSelected),
-          'aria-label': count ? `${label}, ${count === 1 ? '1 meeting' : `${count} meetings`}` : label,
+          'aria-label': count ? `${label}，${count} 场会议` : label,
           tabindex: isSelected ? '0' : '-1',
           dataset: { day: String(day), focusKey: `day:${day}` },
           onclick: () => select(day),
@@ -208,8 +208,8 @@ export function mountAgenda(host, { calendar, ctx, userKey = '', now = () => Dat
     if (day.length) {
       const { ahead, past } = splitPast(day, t);
       const isToday = isSameDay(selected, todayStart);
-      if (ahead.length) body.append(section(isToday && past.length ? 'Upcoming' : null, ahead, t));
-      if (past.length) body.append(section(isToday ? 'Earlier today' : ahead.length ? 'Earlier' : null, past, t));
+      if (ahead.length) body.append(section(isToday && past.length ? '即将开始' : null, ahead, t));
+      if (past.length) body.append(section(isToday ? '今日早些时候' : ahead.length ? '早些时候' : null, past, t));
       return;
     }
 
@@ -225,18 +225,18 @@ export function mountAgenda(host, { calendar, ctx, userKey = '', now = () => Dat
     const next = nextUp(all, t, selected);
     const empty = el('div', { class: 'agenda-empty' });
     const when = isSameDay(selected, todayStart)
-      ? 'today'
+      ? '今天'
       : selected > todayStart
-        ? `on ${formatDay(new Date(selected), locale)}`
-        : `on ${formatDay(new Date(selected), locale)}`;
-    empty.append(el('p', { class: 'agenda-empty-title' }, `No meetings ${when}`));
+        ? formatDay(new Date(selected), locale)
+        : formatDay(new Date(selected), locale);
+    empty.append(el('p', { class: 'agenda-empty-title' }, `${when}没有会议`));
     if (next) {
       const nextDay = startOfDay(next.start);
       empty.append(
         el(
           'button',
           { class: 'agenda-next', type: 'button', dataset: { focusKey: 'next' }, onclick: () => select(nextDay) },
-          el('span', { class: 'agenda-next-label' }, 'Next up'),
+          el('span', { class: 'agenda-next-label' }, '下一场'),
           el(
             'span',
             { class: 'agenda-next-body' },
@@ -251,7 +251,7 @@ export function mountAgenda(host, { calendar, ctx, userKey = '', now = () => Dat
         el(
           'p',
           { class: 'agenda-empty-hint' },
-          'Meetings from your calendar show up here. Add a Puter Meetings link to an event in Calendar, and it is one click away.'
+          '您日历中的会议会显示在这里。在“日历”应用中为日程添加 Puter 视频会议链接，即可一键加入。'
         )
       );
       if (openCalendar) {
@@ -260,7 +260,7 @@ export function mountAgenda(host, { calendar, ctx, userKey = '', now = () => Dat
             'button',
             { class: 'btn btn-outline agenda-open-calendar', type: 'button', dataset: { focusKey: 'open-calendar' }, onclick: openCalendar },
             icon('calendar'),
-            'Open Calendar'
+            '打开日历'
           )
         );
       }
@@ -276,12 +276,12 @@ export function mountAgenda(host, { calendar, ctx, userKey = '', now = () => Dat
 
   function row(m, t) {
     const state = statusOf(m, t);
-    const meta = [guestsLabel(m.guests), m.recurring ? 'Repeats' : ''].filter(Boolean).join(' · ');
+    const meta = [guestsLabel(m.guests), m.recurring ? '重复' : ''].filter(Boolean).join(' · ');
     const badge =
       state === 'now'
-        ? el('span', { class: 'agenda-badge is-now' }, 'Now')
+        ? el('span', { class: 'agenda-badge is-now' }, '进行中')
         : state === 'soon'
-          ? el('span', { class: 'agenda-badge' }, 'Starting soon')
+          ? el('span', { class: 'agenda-badge' }, '即将开始')
           : null;
     const action = m.code
       ? el(
@@ -289,12 +289,12 @@ export function mountAgenda(host, { calendar, ctx, userKey = '', now = () => Dat
           {
             class: `btn agenda-join ${state === 'now' || state === 'soon' ? 'btn-primary' : 'btn-tonal'}`,
             type: 'button',
-            'aria-label': `Join ${m.title}`,
+            'aria-label': `加入 ${m.title}`,
             dataset: { focusKey: `join:${m.id}` },
             onclick: () => ctx.openPrejoin({ mode: 'join', code: m.code }),
           },
           icon('videoCall'),
-          'Join'
+          '加入'
         )
       : el(
           'a',
@@ -303,11 +303,11 @@ export function mountAgenda(host, { calendar, ctx, userKey = '', now = () => Dat
             href: m.url,
             target: '_blank',
             rel: 'noopener noreferrer',
-            'aria-label': `Open the link for ${m.title} in a new tab`,
+            'aria-label': `在新标签页中打开 ${m.title} 的链接`,
             dataset: { focusKey: `join:${m.id}` },
           },
           icon('openInNew'),
-          'Open link'
+          '打开链接'
         );
     return el(
       'li',
@@ -331,20 +331,20 @@ export function mountAgenda(host, { calendar, ctx, userKey = '', now = () => Dat
         el('div', { class: 'agenda-item-main' }, el('div', { class: 'agenda-item-time' }), el('div', { class: 'agenda-item-title' })),
         el('div', { class: 'agenda-join' })
       );
-    return el('ul', { class: 'agenda-list', 'aria-busy': 'true', 'aria-label': 'Loading your meetings' }, ghost(), ghost());
+    return el('ul', { class: 'agenda-list', 'aria-busy': 'true', 'aria-label': '正在加载您的会议' }, ghost(), ghost());
   }
 
   function errorState() {
     return el(
       'div',
       { class: 'agenda-empty' },
-      el('p', { class: 'agenda-empty-title' }, 'Couldn’t reach Calendar'),
-      el('p', { class: 'agenda-empty-hint' }, 'Your meetings will show here once the Calendar app answers.'),
+      el('p', { class: 'agenda-empty-title' }, '无法连接到日历'),
+      el('p', { class: 'agenda-empty-hint' }, '日历应用响应后，您的会议将显示在这里。'),
       el(
         'button',
         { class: 'btn btn-outline', type: 'button', dataset: { focusKey: 'retry' }, onclick: () => refresh({ manual: true }) },
         icon('refresh'),
-        'Try again'
+        '重试'
       )
     );
   }
@@ -352,9 +352,9 @@ export function mountAgenda(host, { calendar, ctx, userKey = '', now = () => Dat
   function renderFoot() {
     refreshBtn.disabled = loading;
     refreshBtn.classList.toggle('is-spinning', loading);
-    if (loading) status.textContent = hasData() ? 'Updating…' : 'Loading…';
-    else if (error && hasData()) status.textContent = 'Couldn’t update from Calendar';
-    else if (fromSnapshot && hasData()) status.textContent = 'Last known';
+    if (loading) status.textContent = hasData() ? '正在更新…' : '正在加载…';
+    else if (error && hasData()) status.textContent = '无法从日历更新';
+    else if (fromSnapshot && hasData()) status.textContent = '上次已知状态';
     else status.textContent = '';
   }
 

@@ -69,7 +69,7 @@ export class TileGrid {
     for (const [tileId, tile] of this.#tiles) {
       const pinned = tileId === this.pinnedId;
       tile.pinBtn.classList.toggle('active', pinned);
-      tile.pinBtn.title = pinned ? 'Unpin' : 'Pin to screen';
+      tile.pinBtn.title = pinned ? '取消固定' : '固定到屏幕';
       // The accessible name overrides the title — keep it in step.
       tile.pinBtn.setAttribute('aria-label', tile.pinBtn.title);
       tile.pinBtn.setAttribute('aria-pressed', pinned ? 'true' : 'false');
@@ -154,8 +154,8 @@ export class TileGrid {
       'div',
       { class: 'tile-sharing-placeholder', style: { display: 'none' } },
       icon('present'),
-      el('strong', {}, 'You’re sharing your screen'),
-      el('span', {}, 'Your preview is hidden to prevent mirroring.')
+      el('strong', {}, '您正在共享屏幕'),
+      el('span', {}, '已隐藏您的预览画面以防止镜像。')
     );
     const nameMic = el('span', { class: 'tile-name-mic' });
     const nameSpan = el('span', {});
@@ -164,8 +164,8 @@ export class TileGrid {
       'button',
       {
         class: 'tile-action',
-        title: 'Pin to screen',
-        'aria-label': 'Pin to screen',
+        title: '固定到屏幕',
+        'aria-label': '固定到屏幕',
         onclick: () => this.#onPin?.(data.id),
       },
       icon('pin')
@@ -230,13 +230,13 @@ export class TileGrid {
       // rather than a still participant.
       tile.node.classList.toggle('reconnecting', !!data.reconnecting);
       if (data.reconnecting) {
-        tile.badges.append(el('span', { class: 'tile-badge reconnecting', role: 'status' }, 'Reconnecting…'));
+        tile.badges.append(el('span', { class: 'tile-badge reconnecting', role: 'status' }, '正在重新连接…'));
       }
       // The icon itself is aria-hidden, and a title on a span is not read
       // out — the badge has to name itself.
       if (data.hand) {
         tile.badges.append(
-          el('span', { class: 'tile-badge hand', title: 'Hand raised', role: 'img', 'aria-label': 'Hand raised' }, icon('hand'))
+          el('span', { class: 'tile-badge hand', title: '已举手', role: 'img', 'aria-label': '已举手' }, icon('hand'))
         );
       }
     }
@@ -247,5 +247,5 @@ function muteGlyph() {
   const node = icon('micOff');
   node.style.color = '#f28b82';
   // The name label reads "<name>" alone otherwise; the mute is part of it.
-  return el('span', { role: 'img', 'aria-label': 'Muted', title: 'Muted', style: { display: 'inline-flex' } }, node);
+  return el('span', { role: 'img', 'aria-label': '已静音', title: '已静音', style: { display: 'inline-flex' } }, node);
 }

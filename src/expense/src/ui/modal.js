@@ -29,7 +29,7 @@ export function openModal({ title, content, onClose, wide = false, headerActions
     el('div.modal-head', {},
       el('h2.modal-title', {}, title),
       headerActions,
-      el('button.icon-btn', { type: 'button', html: icon('x', 20), 'aria-label': 'Close', onclick: () => close() })
+      el('button.icon-btn', { type: 'button', html: icon('x', 20), 'aria-label': '关闭', onclick: () => close() })
     ),
     el('div.modal-body', {}, content)
   );
@@ -75,12 +75,12 @@ export function openModal({ title, content, onClose, wide = false, headerActions
 }
 
 /** Confirm dialog. Resolves true/false (false on Escape, scrim, or close). */
-export function confirmDialog({ title, message, confirmLabel = 'Delete', danger = true }) {
+export function confirmDialog({ title, message, confirmLabel = '删除', danger = true }) {
   return new Promise((resolve) => {
     const content = el('div', {},
       el('p.modal-text', {}, message),
       el('div.row.end', {},
-        el('button.btn.btn-ghost', { type: 'button', onclick: () => modal.close() }, 'Cancel'),
+        el('button.btn.btn-ghost', { type: 'button', onclick: () => modal.close() }, '取消'),
         el(`button.btn.${danger ? 'btn-danger' : 'btn-primary'}`, {
           type: 'button',
           onclick: () => { resolve(true); modal.close(); },

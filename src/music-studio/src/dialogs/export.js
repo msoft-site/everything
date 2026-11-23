@@ -17,9 +17,9 @@ export const EXPORT_RATES = [44100, 48000, 88200, 96000];
 /** Longest effect tail rendered after the end, in seconds (long reverbs decay up to 20 s). */
 export const TAIL_MAX = 30;
 export const EXPORT_BITS = [
-  { bits: 16, label: '16-bit (dithered)' },
-  { bits: 24, label: '24-bit' },
-  { bits: 32, label: '32-bit float' },
+  { bits: 16, label: '16 位（抖动）' },
+  { bits: 24, label: '24 位' },
+  { bits: 32, label: '32 位浮点' },
 ];
 
 /** Mixer inserts that carry sound: a channel plays into them, or another insert sends to them. */
@@ -39,7 +39,7 @@ export function stemInserts(project) {
       }
     }
   }
-  return [...used].sort((a, b) => a - b).map((index) => ({ index, name: project.mixer[index]?.name || `Insert ${index}` }));
+  return [...used].sort((a, b) => a - b).map((index) => ({ index, name: project.mixer[index]?.name || `轨道 ${index}` }));
 }
 
 let seq = 0;
@@ -51,7 +51,7 @@ export async function openExportDialog(app, { stems = false } = {}) {
   const hasSong = songLength(p) > 0;
   const inserts = stems ? stemInserts(p) : [];
   if (stems && !inserts.length) {
-    app.notify('No channels play into mixer inserts, so there are no stems to export. Route channels to inserts in the channel rack.', { error: true });
+    app.notify('没有通道输出到混音器轨道，因此没有可导出的分轨。请在通道机架中将通道路由至混音器轨道。', { error: true });
     return;
   }
 
@@ -64,9 +64,9 @@ export async function openExportDialog(app, { stems = false } = {}) {
   const groupName = id('range');
   const range = h(
     'fieldset.exp-field',
-    h('legend', 'Range'),
-    radio(groupName, 'song', 'Song', hasSong, hasSong ? lenText(songLength(p)) : 'empty'),
-    radio(groupName, 'pattern', `Pattern: ${store.pattern.name}`, !hasSong, lenText(patternLength(store.pattern, p.sig), 'pattern')),
+    h('legend', '导出范围'),
+    radio(groupName, 'song', '整首歌曲', hasSong, hasSong ? lenText(songLength(p)) : '空'),
+    radio(groupName, 'pattern', `样式：${store.pattern.name}`, !hasSong, lenText(patternLength(store.pattern, p.sig), 'pattern')),
   );
   if (!hasSong) range.querySelector('input[value="song"]').disabled = true;
 
@@ -82,7 +82,7 @@ export async function openExportDialog(app, { stems = false } = {}) {
 
   const bar = h('div.exp-bar', h('div.exp-fill'));
   const status = h('div.exp-status', { role: 'status', 'aria-live': 'polite' });
-  const progress = h('div.exp-progress', { role: 'progressbar', 'aria-label': 'Export progress', 'aria-valuemin': '0', 'aria-valuemax': '100', 'aria-valuenow': '0', hidden: true }, bar);
+  const progress = h('div.exp-progress', { role: 'progressbar', 'aria-label': '导出进度', 'aria-valuemin': '0', 'aria-valuemax': '100', 'aria-valuenow': '0', hidden: true }, bar);
   const setProgress = (f) => {
     const pct = Math.round(Math.max(0, Math.min(1, f)) * 100);
     bar.firstChild.style.width = `${pct}%`;
@@ -94,9 +94,9 @@ export async function openExportDialog(app, { stems = false } = {}) {
     'div.export',
     stemSummary,
     range,
-    h('div.form-grid', h('label', { for: rateId }, 'Sample rate'), rate, h('label', { for: bitsId }, 'Format'), bits),
-    h('label.check', { for: tailId }, tail, h('span', 'Include effect tails (reverb and delay ring out)')),
-    signedIn ? h('label.check', { for: cloudId }, cloud, h('span', 'Also save a copy to Exports in your Puter cloud')) : null,
+    h('div.form-grid', h('label', { for: rateId }, '采样率'), rate, h('label', { for: bitsId }, '格式'), bits),
+    h('label.check', { for: tailId }, tail, h('span', '包含效果尾音（保留混响与延迟余音）')),
+    signedIn ? h('label.check', { for: cloudId }, cloud, h('span', '同时在您的 Puter 云端 Exports 文件夹中保存副本')) : null,
     progress,
     status,
   );
@@ -108,15 +108,15 @@ export async function openExportDialog(app, { stems = false } = {}) {
   const closeReplaced = () => {
     if (!body.isConnected) return;
     closeDialog(null);
-    app.notify('Export closed because a different project was opened.');
+    app.notify('由于打开了其他工程，导出已关闭。');
   };
   const dialogDone = openDialog({
-    title: stems ? 'Export stems' : 'Export audio',
+    title: stems ? '导出分轨' : '导出音频',
     className: 'dlg-export',
     body: (close) => { closeDialog = close; return body; },
     buttons: [
-      { label: 'Cancel', value: null },
-      { label: 'Export', value: 'export', primary: true },
+      { label: '取消', value: null },
+      { label: '导出', value: 'export', primary: true },
     ],
     onSubmit: async () => {
       if (busy) return false;
@@ -160,14 +160,14 @@ export async function openExportDialog(app, { stems = false } = {}) {
     const patternInput = range.querySelector('input[value="pattern"]');
     songInput.disabled = songTicks <= 0;
     if (songInput.disabled && songInput.checked) patternInput.checked = true;
-    songInput.closest('label').querySelector('.faint').textContent = songTicks > 0 ? lenText(songTicks) : 'empty';
-    patternInput.nextElementSibling.textContent = `Pattern: ${pattern.name}`;
+    songInput.closest('label').querySelector('.faint').textContent = songTicks > 0 ? lenText(songTicks) : '空';
+    patternInput.nextElementSibling.textContent = `样式：${pattern.name}`;
     patternInput.closest('label').querySelector('.faint').textContent = lenText(patternLength(pattern, project.sig), 'pattern');
     if (stems) {
       const currentInserts = stemInserts(project);
       stemSummary.textContent = currentInserts.length
-        ? `One WAV file per mixer insert (${currentInserts.length}): ${currentInserts.map((i) => i.name).join(', ')}. Each stem includes its insert's effects and sends.`
-        : 'No channels play into mixer inserts. Route channels to inserts before exporting stems.';
+        ? `每个混音器轨道导出一个 WAV 文件（共 ${currentInserts.length} 个）：${currentInserts.map((i) => i.name).join('、')}。每个分轨均包含该轨道的效果器与发送。`
+        : '没有通道输出到混音器轨道。导出分轨前请先将通道路由至混音器轨道。';
       const exportBtn = body.closest('.dialog')?.querySelector('.btn.primary');
       if (exportBtn) exportBtn.disabled = !currentInserts.length;
     }
@@ -190,8 +190,8 @@ export async function openExportDialog(app, { stems = false } = {}) {
 
 function renderError(err) {
   const msg = err?.message || String(err);
-  if (/not available/i.test(msg)) return 'Audio export needs the audio engine, which is not available yet in this version. Try again after an update.';
-  return `The export failed: ${msg}`;
+  if (/not available/i.test(msg)) return '音频导出需要音频引擎支持，当前版本暂不可用，请更新后重试。';
+  return `导出失败：${msg}`;
 }
 
 async function runExport(app, { mode, rate, bits, tail, stems, signal, cloudCopy, setProgress, setStatus }) {
@@ -214,40 +214,40 @@ async function runExport(app, { mode, rate, bits, tail, stems, signal, cloudCopy
   let blob;
   let filename;
   if (!stems) {
-    setStatus('Rendering...');
+    setStatus('正在渲染...');
     const audio = await render(undefined, 0, 1);
     if (signal.aborted) return true;
-    setStatus('Writing the file...');
+    setStatus('正在写入文件...');
     blob = new Blob([encodeWav(audio, { bits })], { type: 'audio/wav' });
     filename = `${base}.wav`;
   } else {
     const files = [];
     for (let i = 0; i < inserts.length; i++) {
       const ins = inserts[i];
-      setStatus(`Rendering stem ${i + 1} of ${inserts.length}: ${ins.name}`);
+      setStatus(`正在渲染分轨 ${i + 1} / ${inserts.length}：${ins.name}`);
       const audio = await render(ins.index, i, inserts.length);
       if (signal.aborted) return true;
       files.push({ name: `${String(ins.index).padStart(2, '0')} ${safeFileName(ins.name)}.wav`, data: new Uint8Array(encodeWav(audio, { bits })) });
     }
-    setStatus('Writing the ZIP file...');
+    setStatus('正在写入 ZIP 文件...');
     blob = zipBlob(files);
     filename = `${base} stems.zip`;
   }
   setProgress(1);
   downloadBlob(blob, filename);
   if (cloudCopy && puter.isSignedIn()) {
-    setStatus('Saving a copy to Puter...');
+    setStatus('正在保存副本到 Puter...');
     try {
       const directory = await puter.appSubdir('Exports');
       if (signal.aborted) return true;
       const item = await puter.writeNew(puter.joinPath(directory, filename), blob);
-      app.notify(`Exported ${filename} (a copy is in Exports in your Puter cloud as ${item?.name || filename})`);
+      app.notify(`已导出 ${filename}（副本已保存至 Puter 云端 Exports 文件夹，文件名为 ${item?.name || filename}）`);
     } catch (err) {
       if (signal.aborted) return true;
-      app.notify(`Downloaded ${filename}, but the Puter copy failed: ${puter.errorMessage(err)}`, { error: true });
+      app.notify(`已下载 ${filename}，但保存到 Puter 失败：${puter.errorMessage(err)}`, { error: true });
     }
   } else {
-    app.notify(`Exported ${filename}`);
+    app.notify(`已导出 ${filename}`);
   }
   return true;
 }

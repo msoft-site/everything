@@ -51,20 +51,20 @@ export function expenseRow(exp, { onClick = null, trail = null, showDate = true,
   const cat = store.category(exp.categoryId);
   const report = exp.reportId ? store.report(exp.reportId) : null;
   const sub = el('div.sub', {},
-    el('span', {}, cat?.name || 'Uncategorised'),
+    el('span', {}, cat?.name || '未分类'),
     showDate && el('span.sep', {}, formatDate(exp.date, { year: undefined })),
     showReport && report && el('span.sep.truncate', {}, report.title),
-    exp.receiptPath && el('span.flag', { html: icon('receipt', 12, 2.2), title: 'Has receipt', 'aria-label': 'Has receipt' }),
-    exp.reconciled && el('span.flag.ok', { html: icon('circleCheck', 12, 2.2), title: 'Reconciled', 'aria-label': 'Reconciled' })
+    exp.receiptPath && el('span.flag', { html: icon('receipt', 12, 2.2), title: '含票据', 'aria-label': '含票据' }),
+    exp.reconciled && el('span.flag.ok', { html: icon('circleCheck', 12, 2.2), title: '已对账', 'aria-label': '已对账' })
   );
   const children = [
     onToggle && el('input.check', {
-      type: 'checkbox', checked: !!selected, 'aria-label': `Select ${exp.merchant || 'expense'}`,
+      type: 'checkbox', checked: !!selected, 'aria-label': `选择 ${exp.merchant || '费用'}`,
       onclick: (e) => { e.stopPropagation(); onToggle(e.target.checked); },
     }),
     expenseThumb(exp),
     el('div.grow', {},
-      el('div.title.truncate', {}, exp.merchant || 'Unknown merchant'),
+      el('div.title.truncate', {}, exp.merchant || '未知商家'),
       sub
     ),
     trail || el('div.amount', {}, formatMoney(exp.amount, exp.currency)),
@@ -116,6 +116,6 @@ export function sectionHead(title, action = null) {
 }
 
 /** Small loader line for async panels. */
-export function loadingLine(text = 'Loading') {
+export function loadingLine(text = '正在加载…') {
   return el('div.loading-line', { html: icon('spinner', 16, 2.2) }, el('span', {}, text));
 }

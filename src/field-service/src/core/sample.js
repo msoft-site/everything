@@ -45,18 +45,18 @@ export function buildSampleData(today) {
   const crew = team.slice(1, 3);
 
   const products = [
-    { name: 'Lawn mowing', kind: 'service', description: 'Mow, trim, and edge all lawn areas. Clippings blown off hard surfaces.', unitPrice: 6500, unitCost: 1800, taxable: true },
-    { name: 'Spring cleanup', kind: 'service', description: 'Remove leaves and debris, cut back perennials, refresh bed edges.', unitPrice: 32500, unitCost: 9000, taxable: true },
-    { name: 'Fall cleanup', kind: 'service', description: 'Leaf removal from lawn and beds, gutter check, final mow.', unitPrice: 29500, unitCost: 8500, taxable: true },
-    { name: 'Hedge trimming', kind: 'service', description: 'Shape and trim hedges and shrubs up to 8 ft.', unitPrice: 18000, unitCost: 5000, taxable: true },
-    { name: 'Mulch installation', kind: 'service', description: 'Supply and spread premium bark mulch, per cubic yard.', unitPrice: 9500, unitCost: 4200, taxable: true },
-    { name: 'Gutter cleaning', kind: 'service', description: 'Clear gutters and downspouts, flush and check flow.', unitPrice: 17500, unitCost: 4000, taxable: true },
-    { name: 'Irrigation tune-up', kind: 'service', description: 'Inspect zones, adjust heads, set controller schedule.', unitPrice: 12500, unitCost: 2500, taxable: true },
-    { name: 'Sprinkler head', kind: 'product', description: 'Pop-up rotor sprinkler head, installed.', unitPrice: 2400, unitCost: 900, taxable: true },
-    { name: 'Aeration and overseeding', kind: 'service', description: 'Core aeration with premium seed blend.', unitPrice: 21000, unitCost: 7000, taxable: true },
-    { name: 'Labor (per hour)', kind: 'service', description: 'General labor, billed hourly.', unitPrice: 6500, unitCost: 3000, taxable: false },
-    { name: 'Snow removal visit', kind: 'service', description: 'Plow driveway and shovel walkways.', unitPrice: 8500, unitCost: 2500, taxable: true },
-    { name: 'Disposal fee', kind: 'product', description: 'Green waste disposal, per load.', unitPrice: 4500, unitCost: 3000, taxable: false },
+    { name: '草坪修剪', kind: 'service', description: '修剪并齐边所有草坪区域，吹净硬化路面的草屑。', unitPrice: 6500, unitCost: 1800, taxable: true },
+    { name: '春季大扫除', kind: 'service', description: '清理落叶和杂物，修剪多年生植物，翻新花坛边缘。', unitPrice: 32500, unitCost: 9000, taxable: true },
+    { name: '秋季大扫除', kind: 'service', description: '清理草坪和花坛落叶，检查天沟，完成季末最后一次修剪。', unitPrice: 29500, unitCost: 8500, taxable: true },
+    { name: '绿篱修剪', kind: 'service', description: '修剪并塑形 8 英尺以下的绿篱与灌木。', unitPrice: 18000, unitCost: 5000, taxable: true },
+    { name: '铺设护根物', kind: 'service', description: '供应并铺设优质树皮护根物，按立方码计费。', unitPrice: 9500, unitCost: 4200, taxable: true },
+    { name: '天沟清理', kind: 'service', description: '清理天沟与落水管，冲洗并检查排水畅通情况。', unitPrice: 17500, unitCost: 4000, taxable: true },
+    { name: '灌溉系统检修', kind: 'service', description: '检查各分区、调整喷头并设置控制器定时计划。', unitPrice: 12500, unitCost: 2500, taxable: true },
+    { name: '喷淋喷头', kind: 'product', description: '弹出式旋转喷头（含安装）。', unitPrice: 2400, unitCost: 900, taxable: true },
+    { name: '草坪打孔与补播', kind: 'service', description: '草坪核心打孔透气并播撒优质混合草籽。', unitPrice: 21000, unitCost: 7000, taxable: true },
+    { name: '人工费（按小时）', kind: 'service', description: '常规作业人工，按小时计费。', unitPrice: 6500, unitCost: 3000, taxable: false },
+    { name: '上门除雪服务', kind: 'service', description: '清理车道与人行步道积雪。', unitPrice: 8500, unitCost: 2500, taxable: true },
+    { name: '清运处置费', kind: 'product', description: '园林废弃物清运处置，按车次计费。', unitPrice: 4500, unitCost: 3000, taxable: false },
   ].map((p) => ({ id: newId(), active: true, ...p }));
   const product = (name) => products.find((p) => p.name === name);
   const item = (name, qty = 1) => {
@@ -77,8 +77,8 @@ export function buildSampleData(today) {
       lastName: last,
       company: isCompany ? COMPANIES[(i / 6) | 0] : '',
       useCompanyName: isCompany,
-      phones: [{ label: 'Mobile', number: `(541) 555-${String(1200 + i * 37).slice(-4)}` }],
-      emails: [{ label: 'Main', address: `${first}.${last}@example.com`.toLowerCase() }],
+      phones: [{ label: '手机', number: `(541) 555-${String(1200 + i * 37).slice(-4)}` }],
+      emails: [{ label: '主要', address: `${first}.${last}@example.com`.toLowerCase() }],
       properties: [
         {
           id: newId(),
@@ -91,9 +91,9 @@ export function buildSampleData(today) {
         },
       ],
       billingSame: true,
-      leadSource: pick(['Referral', 'Google', 'Website', 'Repeat client', 'Flyer']),
-      tags: i % 4 === 0 ? ['Recurring'] : i % 5 === 0 ? ['Commercial'] : [],
-      notes: i === 0 ? 'Gate code 4412. Dog in backyard, friendly.' : '',
+      leadSource: pick(['转介绍', 'Google', '网站', '老客户', '传单']),
+      tags: i % 4 === 0 ? ['定期客户'] : i % 5 === 0 ? ['商业客户'] : [],
+      notes: i === 0 ? '大门密码 4412。后院有狗，很温顺。' : '',
       createdAt: ts(created),
       updatedAt: ts(created),
     });
@@ -130,11 +130,11 @@ export function buildSampleData(today) {
       number: jobNo++,
       clientId: c.id,
       propertyId: c.properties[0].id,
-      title: 'Weekly lawn maintenance',
-      instructions: 'Mow front and back, edge driveway and sidewalk. Blow off patio.',
+      title: '每周草坪养护',
+      instructions: '修剪前后院草坪，车道与人行道齐边，吹净露台。',
       schedule: { start, repeat: 'weekly', interval: 1, end: { type: 'count', count: 16 }, startTime: `${String(hour).padStart(2, '0')}:00`, endTime: `${String(hour + 1).padStart(2, '0')}:00` },
       assignees: [crew[i % 2].id],
-      items: [item('Lawn mowing', 1)],
+      items: [item('草坪修剪', 1)],
       billing: 'per_visit',
       visits,
       createdAt: ts(addDays(start, -7)),
@@ -143,17 +143,17 @@ export function buildSampleData(today) {
 
   // One-off jobs in all states.
   const oneOffs = [
-    { title: 'Spring cleanup and mulch', items: [item('Spring cleanup'), item('Mulch installation', 6)], offset: -18, done: true, invoiced: 'paid' },
-    { title: 'Gutter cleaning', items: [item('Gutter cleaning')], offset: -12, done: true, invoiced: 'past_due' },
-    { title: 'Hedge trimming, front yard', items: [item('Hedge trimming'), item('Disposal fee')], offset: -9, done: true, invoiced: 'awaiting' },
-    { title: 'Irrigation repair', items: [item('Irrigation tune-up'), item('Sprinkler head', 4)], offset: -4, done: true, invoiced: null },
-    { title: 'Aeration and overseeding', items: [item('Aeration and overseeding')], offset: -2, done: false, invoiced: null },
-    { title: 'Fall cleanup', items: [item('Fall cleanup'), item('Disposal fee', 2)], offset: 0, done: false, invoiced: null },
-    { title: 'Backyard regrade', items: [item('Labor (per hour)', 6), item('Disposal fee')], offset: 1, done: false, invoiced: null },
-    { title: 'Hedge trimming and cleanup', items: [item('Hedge trimming'), item('Labor (per hour)', 2)], offset: 3, done: false, invoiced: null },
-    { title: 'Gutter cleaning', items: [item('Gutter cleaning')], offset: 6, done: false, invoiced: null },
-    { title: 'Mulch refresh', items: [item('Mulch installation', 4)], offset: 9, done: false, invoiced: null },
-    { title: 'Commercial grounds walkthrough', items: [item('Labor (per hour)', 3)], offset: null, done: false, invoiced: null },
+    { title: '春季大扫除及铺设护根物', items: [item('春季大扫除'), item('铺设护根物', 6)], offset: -18, done: true, invoiced: 'paid' },
+    { title: '天沟清理', items: [item('天沟清理')], offset: -12, done: true, invoiced: 'past_due' },
+    { title: '前院绿篱修剪', items: [item('绿篱修剪'), item('清运处置费')], offset: -9, done: true, invoiced: 'awaiting' },
+    { title: '灌溉系统维修', items: [item('灌溉系统检修'), item('喷淋喷头', 4)], offset: -4, done: true, invoiced: null },
+    { title: '草坪打孔与补播', items: [item('草坪打孔与补播')], offset: -2, done: false, invoiced: null },
+    { title: '秋季大扫除', items: [item('秋季大扫除'), item('清运处置费', 2)], offset: 0, done: false, invoiced: null },
+    { title: '后院地面平整', items: [item('人工费（按小时）', 6), item('清运处置费')], offset: 1, done: false, invoiced: null },
+    { title: '绿篱修剪与清理', items: [item('绿篱修剪'), item('人工费（按小时）', 2)], offset: 3, done: false, invoiced: null },
+    { title: '天沟清理', items: [item('天沟清理')], offset: 6, done: false, invoiced: null },
+    { title: '护根物换新', items: [item('铺设护根物', 4)], offset: 9, done: false, invoiced: null },
+    { title: '商业园区巡检', items: [item('人工费（按小时）', 3)], offset: null, done: false, invoiced: null },
   ];
   oneOffs.forEach((o, i) => {
     const c = clients[(i * 5 + 1) % clients.length];
@@ -199,7 +199,7 @@ export function buildSampleData(today) {
         clientId: c.id,
         propertyId: c.properties[0].id,
         jobIds: [job.id],
-        subject: `For services rendered: ${o.title}`,
+        subject: `已完成服务：${o.title}`,
         items: o.items.map((x) => ({ ...x, id: newId() })),
         taxRate: 0,
         issueDate: issue,
@@ -228,7 +228,7 @@ export function buildSampleData(today) {
         propertyId: job.propertyId,
         jobIds: [job.id],
         visitIds: [v.id],
-        subject: `Lawn maintenance, ${issue}`,
+        subject: `草坪养护，${issue}`,
         items: job.items.map((x) => ({ ...x, id: newId() })),
         taxRate: 0,
         issueDate: issue,
@@ -255,7 +255,7 @@ export function buildSampleData(today) {
     for (let k = 0; k < count; k++) {
       const c = pick(clients);
       const issue = addDays(addMonths(today, -m), Math.floor(rand() * 25) - 12);
-      const its = [item(pick(['Spring cleanup', 'Hedge trimming', 'Gutter cleaning', 'Irrigation tune-up', 'Aeration and overseeding', 'Fall cleanup']))];
+      const its = [item(pick(['春季大扫除', '绿篱修剪', '天沟清理', '灌溉系统检修', '草坪打孔与补播', '秋季大扫除']))];
       const inv = {
         id: newId(),
         number: invoiceNo++,
@@ -278,11 +278,11 @@ export function buildSampleData(today) {
 
   // Quotes waiting on the client, a draft, and one with changes requested.
   const openQuotes = [
-    { title: 'Full yard renovation', items: [item('Spring cleanup'), item('Mulch installation', 10), item('Labor (per hour)', 8)], status: 'awaiting_response', sent: -5 },
-    { title: 'Seasonal maintenance package', items: [item('Spring cleanup'), item('Fall cleanup'), { ...item('Aeration and overseeding'), optional: true }], status: 'awaiting_response', sent: -2 },
-    { title: 'Irrigation system upgrade', items: [item('Irrigation tune-up'), item('Sprinkler head', 12)], status: 'changes_requested', sent: -8 },
-    { title: 'Snow removal, winter season', items: [item('Snow removal visit', 10)], status: 'draft', sent: null },
-    { title: 'Hedge and tree trimming', items: [item('Hedge trimming', 2), item('Disposal fee')], status: 'approved', sent: -3 },
+    { title: '庭院整体翻新', items: [item('春季大扫除'), item('铺设护根物', 10), item('人工费（按小时）', 8)], status: 'awaiting_response', sent: -5 },
+    { title: '季节性养护套餐', items: [item('春季大扫除'), item('秋季大扫除'), { ...item('草坪打孔与补播'), optional: true }], status: 'awaiting_response', sent: -2 },
+    { title: '灌溉系统升级', items: [item('灌溉系统检修'), item('喷淋喷头', 12)], status: 'changes_requested', sent: -8 },
+    { title: '冬季除雪服务', items: [item('上门除雪服务', 10)], status: 'draft', sent: null },
+    { title: '绿篱与树木修剪', items: [item('绿篱修剪', 2), item('清运处置费')], status: 'approved', sent: -3 },
   ];
   openQuotes.forEach((q, i) => {
     const c = clients[(i * 3 + 2) % clients.length];
@@ -304,11 +304,11 @@ export function buildSampleData(today) {
 
   // Incoming requests.
   const reqs = [
-    { title: 'Leaves everywhere, need a cleanup', details: 'Large maple tree out front. Would like leaves cleared from lawn and gutters before the rain.', assess: null, offset: 0 },
-    { title: 'Quote for weekly mowing', details: 'About a quarter acre, front and back. Looking to start next spring.', assess: null, offset: -1 },
-    { title: 'Drainage issue in backyard', details: 'Water pools by the fence after heavy rain. Need someone to look at grading.', assess: 2, offset: -3 },
-    { title: 'Commercial landscape contract', details: 'Three buildings, monthly service. Please send a proposal.', assess: -1, offset: -6 },
-    { title: 'Sprinkler not turning on', details: 'Zone 3 stopped working last week.', assess: -4, done: true, offset: -8 },
+    { title: '到处是落叶，需要清理', details: '前院有一棵大枫树。希望在下雨前清理草坪和天沟里的落叶。', assess: null, offset: 0 },
+    { title: '咨询每周草坪修剪报价', details: '前后院大约四分之一英亩，计划明年春天开始。', assess: null, offset: -1 },
+    { title: '后院排水问题', details: '大雨过后围栏旁会积水，需要有人来看看地面坡度平整。', assess: 2, offset: -3 },
+    { title: '商业园区绿化养护合同', details: '三栋建筑，按月养护。请发送方案报价。', assess: -1, offset: -6 },
+    { title: '喷淋头无法启动', details: '3 号分区上周停止工作了。', assess: -4, done: true, offset: -8 },
   ];
   reqs.forEach((r, i) => {
     const c = clients[(i * 5 + 3) % clients.length];
@@ -319,7 +319,7 @@ export function buildSampleData(today) {
       propertyId: c.properties[0].id,
       title: r.title,
       details: r.details,
-      source: pick(['Website', 'Phone', 'Email']),
+      source: pick(['网站', '电话', '邮件']),
       availability: { dates: [addDays(today, 3), addDays(today, 5)], times: ['morning'] },
       assessment: r.assess === null ? null : { date: addDays(today, r.assess), start: '10:00', end: '11:00', assignees: [team[0].id], completedAt: r.done ? ts(addDays(today, r.assess), 11) : null },
       createdAt: ts(addDays(today, r.offset), 9 + i),
@@ -328,7 +328,7 @@ export function buildSampleData(today) {
 
   // Expenses and time entries.
   const expenses = [];
-  const cats = ['Materials', 'Fuel', 'Equipment', 'Disposal'];
+  const cats = ['材料', '燃油', '设备', '清运'];
   for (let i = 0; i < 14; i++) {
     const date = addDays(today, -Math.floor(rand() * 40));
     const cat = pick(cats);
@@ -336,8 +336,8 @@ export function buildSampleData(today) {
     expenses.push({
       id: newId(),
       date,
-      title: { Materials: 'Bark mulch, 6 yards', Fuel: 'Truck fuel', Equipment: 'Trimmer line and blades', Disposal: 'Green waste dump fee' }[cat],
-      category: cat === 'Disposal' ? 'Other' : cat,
+      title: { 材料: '树皮护根物，6 立方码', 燃油: '卡车燃油', 设备: '打草机绳与刀片', 清运: '园林废弃物倾倒费' }[cat],
+      category: cat === '清运' ? '其他' : cat,
       amount: Math.round((20 + rand() * 180) * 100),
       jobId: job?.id || null,
       paidBy: pick(team).id,
@@ -373,21 +373,21 @@ export function buildSampleData(today) {
   }
 
   const events = [
-    { id: newId(), kind: 'task', title: 'Order mulch for next week', date: addDays(today, 1), start: '', end: '', assignees: [team[3].id], completedAt: null, notes: '' },
-    { id: newId(), kind: 'event', title: 'Equipment service at dealer', date: addDays(today, 2), start: '13:00', end: '15:00', assignees: [team[0].id], completedAt: null, notes: '' },
-    { id: newId(), kind: 'task', title: 'Follow up on irrigation quote', date: today, start: '', end: '', assignees: [team[0].id], completedAt: null, notes: '' },
+    { id: newId(), kind: 'task', title: '预订下周所需的护根物', date: addDays(today, 1), start: '', end: '', assignees: [team[3].id], completedAt: null, notes: '' },
+    { id: newId(), kind: 'event', title: '前往经销商处保养设备', date: addDays(today, 2), start: '13:00', end: '15:00', assignees: [team[0].id], completedAt: null, notes: '' },
+    { id: newId(), kind: 'task', title: '跟进灌溉系统报价单', date: today, start: '', end: '', assignees: [team[0].id], completedAt: null, notes: '' },
   ];
 
   const settings = {
     company: {
-      name: 'Greenline Outdoor Services',
+      name: 'Greenline 户外服务',
       phone: '(541) 555-0199',
       email: 'hello@greenline.example',
       website: 'greenline.example',
       address: '410 Mill St, Springfield, OR 97477',
       taxId: '',
     },
-    taxes: [{ id: 'tax-state', name: 'Sales tax', rate: 0 }],
+    taxes: [{ id: 'tax-state', name: '销售税', rate: 0 }],
     defaultTaxId: null,
     onboarded: true,
   };

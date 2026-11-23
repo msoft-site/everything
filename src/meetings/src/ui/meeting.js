@@ -62,33 +62,33 @@ export function mountMeeting(root, call, ctx) {
   const durationEl = el('span', {}, '00:00');
   const codeEl = el(
     'button',
-    { class: 'code-chip', title: 'Copy meeting link', 'aria-label': 'Copy meeting link', onclick: copyMeetingLink },
+    { class: 'code-chip', title: '复制会议链接', 'aria-label': '复制会议链接', onclick: copyMeetingLink },
     el('span', { class: 'meeting-code' }, displayCode(meetingCode ?? '')),
     icon('copy')
   );
   const codeText = codeEl.firstChild;
 
-  const micBtn = barToggle('mic', 'Turn off microphone (⌘/Ctrl+D)', () => media.setMicOn(!media.micOn));
-  const camBtn = barToggle('cam', 'Turn off camera (⌘/Ctrl+E)', () => media.setCamOn(!media.camOn));
-  const presentBtn = barToggle('present', 'Present now', togglePresent);
-  const handBtn = barToggle('hand', 'Raise hand', () => {
+  const micBtn = barToggle('mic', '关闭麦克风 (⌘/Ctrl+D)', () => media.setMicOn(!media.micOn));
+  const camBtn = barToggle('cam', '关闭摄像头 (⌘/Ctrl+E)', () => media.setCamOn(!media.camOn));
+  const presentBtn = barToggle('present', '立即共享屏幕', togglePresent);
+  const handBtn = barToggle('hand', '举手', () => {
     session.setHand(!session.hand);
     renderControls();
   });
-  const reactBtn = barToggle('emoji', 'Send a reaction', toggleReactions);
+  const reactBtn = barToggle('emoji', '发送表情回应', toggleReactions);
   reactBtn.setAttribute('aria-haspopup', 'true');
-  const moreBtn = barToggle('more', 'More options', toggleMoreMenu);
+  const moreBtn = barToggle('more', '更多选项', toggleMoreMenu);
   moreBtn.setAttribute('aria-haspopup', 'menu');
   moreBtn.setAttribute('aria-expanded', 'false');
   const leaveBtn = el(
     'button',
-    { class: 'leave-btn', 'aria-label': 'Leave call', title: 'Leave call', onclick: leaveCall },
+    { class: 'leave-btn', 'aria-label': '离开通话', title: '离开通话', onclick: leaveCall },
     icon('callEnd')
   );
 
-  const infoBtn = sideBtn('info', 'Meeting details', () => togglePanel('info'));
-  const peopleBtn = sideBtn('people', 'People', () => togglePanel('people'));
-  const chatBtn = sideBtn('chat', 'In-call messages', () => togglePanel('chat'));
+  const infoBtn = sideBtn('info', '会议详情', () => togglePanel('info'));
+  const peopleBtn = sideBtn('people', '参会者', () => togglePanel('people'));
+  const chatBtn = sideBtn('chat', '通话内消息', () => togglePanel('chat'));
   const peopleBadge = el('span', { class: 'badge badge-count' }, '1');
   const chatBadge = el('span', { class: 'badge', style: { display: 'none' } }, '0');
   peopleBtn.append(peopleBadge);
@@ -141,20 +141,20 @@ export function mountMeeting(root, call, ctx) {
     }),
 
     session.on('peer-joined', ({ participant }) => {
-      toast(`${participant.name} joined`, { icon: 'people' });
+      toast(`${participant.name} 已加入`, { icon: 'people' });
       sounds.join();
     }),
 
     session.on('host-migrating', () => {
       // The successor may take up to the claim deadline to appear — say why
       // the meeting suddenly went quiet instead of looking hung.
-      toast('The host left the meeting. Finding a new host…', { icon: 'people' });
+      toast('主持人已离开会议。正在寻找新主持人…', { icon: 'people' });
     }),
 
     session.on('host-changed', ({ name, self }) => {
       // Becoming host yourself needs no announcement — nothing changes for
       // you. When it's someone else, say so: it explains where control went.
-      if (!self) toast(`${name} is hosting this meeting now.`, { icon: 'people' });
+      if (!self) toast(`现在由 ${name} 主持本次会议。`, { icon: 'people' });
     }),
 
     session.on('code-changed', () => {
@@ -169,7 +169,7 @@ export function mountMeeting(root, call, ctx) {
     }),
 
     session.on('peer-left', ({ participant }) => {
-      toast(`${participant.name} left the meeting`, { icon: 'people' });
+      toast(`${participant.name} 离开了会议`, { icon: 'people' });
       sounds.leave();
       monitor.unwatch(participant.id);
     }),
@@ -215,13 +215,13 @@ export function mountMeeting(root, call, ctx) {
     }),
 
     session.on('status', ({ phase }) => {
-      if (phase === 'failed') toast('Connection lost', { icon: 'info' });
+      if (phase === 'failed') toast('连接已断开', { icon: 'info' });
     }),
 
     session.on('peer-link', ({ peerId, state }) => {
-      const name = roster.get(peerId)?.name ?? 'Someone';
-      if (state === 'lost') toast(`Connection to ${name} lost — reconnecting…`, { icon: 'info' });
-      else toast(`Reconnected to ${name}`, { icon: 'info' });
+      const name = roster.get(peerId)?.name ?? '某位参会者';
+      if (state === 'lost') toast(`与 ${name} 的连接已断开 —— 正在重新连接…`, { icon: 'info' });
+      else toast(`已重新连接到 ${name}`, { icon: 'info' });
     }),
 
     session.on('error', ({ message }) => toast(message, { icon: 'info' })),
@@ -267,7 +267,7 @@ export function mountMeeting(root, call, ctx) {
   renderPeopleBadge();
 
   if (session.isHost) {
-    toast('Your meeting is ready. Share the link to invite others.', { icon: 'check' });
+    toast('您的会议已就绪。分享链接以邀请他人。', { icon: 'check' });
     // On phones the info panel is a near-fullscreen sheet — don't cover
     // the freshly joined call with it.
     if (window.matchMedia('(min-width: 821px)').matches) togglePanel('info');
@@ -296,7 +296,7 @@ export function mountMeeting(root, call, ctx) {
       const stream = isSelf ? media.stream : session.getStream(p.id, 'camera');
       tiles.push({
         id: p.id,
-        title: isSelf ? `${p.name} (You)` : p.name,
+        title: isSelf ? `${p.name}（您）` : p.name,
         colorSeed: p.name,
         stream,
         showVideo: isSelf ? media.camOn : !!(p.cam && stream),
@@ -315,7 +315,7 @@ export function mountMeeting(root, call, ctx) {
       if (presenting && screenStream) {
         tiles.push({
           id: `${p.id}:screen`,
-          title: isSelf ? 'Your presentation' : `${p.name} is presenting`,
+          title: isSelf ? '您的屏幕共享' : `${p.name} 正在共享屏幕`,
           colorSeed: p.name,
           // Never play our capture back into the surface being captured.
           // These tiles also feed PiP; the outgoing stream stays in LocalMedia.
@@ -364,7 +364,7 @@ export function mountMeeting(root, call, ctx) {
     if (p.hand && !handsUp.has(p.id)) {
       handsUp.add(p.id);
       if (!p.isSelf) {
-        toast(`${p.name} raised their hand`, { icon: 'hand' });
+        toast(`${p.name} 举手了`, { icon: 'hand' });
         sounds.hand();
       }
     } else if (!p.hand) {
@@ -373,17 +373,17 @@ export function mountMeeting(root, call, ctx) {
   }
 
   function renderControls() {
-    setToggle(micBtn, 'mic', media.micOn, 'microphone (⌘/Ctrl+D)');
-    setToggle(camBtn, 'cam', media.camOn, 'camera (⌘/Ctrl+E)');
+    setToggle(micBtn, 'mic', media.micOn, '麦克风 (⌘/Ctrl+D)');
+    setToggle(camBtn, 'cam', media.camOn, '摄像头 (⌘/Ctrl+E)');
 
     clear(presentBtn).append(icon(media.presenting ? 'stopPresent' : 'present'));
     presentBtn.classList.toggle('active', media.presenting);
-    setLabel(presentBtn, media.presenting ? 'Stop presenting' : 'Present now');
+    setLabel(presentBtn, media.presenting ? '停止共享屏幕' : '立即共享屏幕');
     presentBtn.setAttribute('aria-pressed', media.presenting ? 'true' : 'false');
 
     clear(handBtn).append(icon('hand'));
     handBtn.classList.toggle('active', session.hand);
-    setLabel(handBtn, session.hand ? 'Lower hand' : 'Raise hand');
+    setLabel(handBtn, session.hand ? '放下手' : '举手');
     handBtn.setAttribute('aria-pressed', session.hand ? 'true' : 'false');
 
     reactBtn.classList.toggle('active', reactionsOpen);
@@ -393,7 +393,7 @@ export function mountMeeting(root, call, ctx) {
   function setToggle(btn, kind, on, label) {
     clear(btn).append(icon(on ? kind : `${kind}Off`));
     btn.classList.toggle('off', !on);
-    setLabel(btn, `Turn ${on ? 'off' : 'on'} ${label}`);
+    setLabel(btn, `${on ? '关闭' : '开启'}${label}`);
     btn.setAttribute('aria-pressed', on ? 'true' : 'false');
   }
 
@@ -408,7 +408,7 @@ export function mountMeeting(root, call, ctx) {
     const count = roster.size;
     peopleBadge.textContent = String(count);
     // aria-label wins over the badge text, so the count has to be in it.
-    peopleBtn.setAttribute('aria-label', `People, ${count} in call`);
+    peopleBtn.setAttribute('aria-label', `参会者，通话中有 ${count} 人`);
   }
 
   function renderChatBadge() {
@@ -416,7 +416,7 @@ export function mountMeeting(root, call, ctx) {
     chatBadge.style.display = unreadChat > 0 ? '' : 'none';
     chatBtn.setAttribute(
       'aria-label',
-      unreadChat > 0 ? `In-call messages, ${unreadChat} unread` : 'In-call messages'
+      unreadChat > 0 ? `通话内消息，${unreadChat} 条未读` : '通话内消息'
     );
   }
 
@@ -425,7 +425,7 @@ export function mountMeeting(root, call, ctx) {
       if (media.presenting) media.stopScreenShare();
       else await media.startScreenShare();
     } catch (err) {
-      if (err?.name !== 'NotAllowedError') toast('Screen sharing failed.', { icon: 'info' });
+      if (err?.name !== 'NotAllowedError') toast('屏幕共享失败。', { icon: 'info' });
     }
   }
 
@@ -442,7 +442,7 @@ export function mountMeeting(root, call, ctx) {
       // reason through rather than replacing it with a shrug.
       if (err instanceof PipUnavailableError) toast(err.message, { icon: 'info' });
       else if (err?.name !== 'NotAllowedError' && err?.name !== 'AbortError') {
-        toast('Picture-in-picture isn’t available right now.', { icon: 'info' });
+        toast('画中画目前不可用。', { icon: 'info' });
       }
     }
   }
@@ -457,12 +457,12 @@ export function mountMeeting(root, call, ctx) {
     reactionsOpen = true;
     const barEl = el(
       'div',
-      { class: 'reactions-bar', role: 'toolbar', 'aria-label': 'Reactions' },
+      { class: 'reactions-bar', role: 'toolbar', 'aria-label': '表情回应' },
       REACTIONS.map((emoji, i) =>
         el(
           'button',
           {
-            'aria-label': `React with ${emoji}`,
+            'aria-label': `使用 ${emoji} 回应`,
             // A toolbar is one tab stop that moves focus with the arrow
             // keys, so only the entry point is tabbable.
             tabindex: i === 0 ? '0' : '-1',
@@ -580,14 +580,14 @@ export function mountMeeting(root, call, ctx) {
     moreMenu = el(
       'div',
       { class: 'menu menu-above-bar', role: 'menu' },
-      menuItem('sparkle', 'Change background', () => {
+      menuItem('sparkle', '更改背景', () => {
         closeMoreMenu();
         // Focus the trigger so the dialog's focus trap knows where to
         // return focus when it closes (the menu item is gone by then).
         moreBtn.focus();
         openBackgroundDialog({ media });
       }),
-      menuItem('settings', 'Settings', () => {
+      menuItem('settings', '设置', () => {
         closeMoreMenu();
         moreBtn.focus();
         openSettings();
@@ -597,7 +597,7 @@ export function mountMeeting(root, call, ctx) {
       document.fullscreenEnabled || document.fullscreenElement
         ? menuItem(
             document.fullscreenElement ? 'fullscreenExit' : 'fullscreen',
-            document.fullscreenElement ? 'Exit full screen' : 'Full screen',
+            document.fullscreenElement ? '退出全屏' : '全屏',
             () => {
               closeMoreMenu();
               if (document.fullscreenElement) document.exitFullscreen?.()?.catch?.(() => {});
@@ -608,7 +608,7 @@ export function mountMeeting(root, call, ctx) {
       pip.supported
         ? menuItem(
             pip.active ? 'pipExit' : 'pip',
-            pip.active ? 'Exit picture-in-picture' : 'Picture-in-picture',
+            pip.active ? '退出画中画' : '画中画',
             () => {
               closeMoreMenu();
               moreBtn.focus();
@@ -616,12 +616,12 @@ export function mountMeeting(root, call, ctx) {
             }
           )
         : null,
-      menuItem(dark ? 'sun' : 'moon', dark ? 'Switch to light theme' : 'Switch to dark theme', () => {
+      menuItem(dark ? 'sun' : 'moon', dark ? '切换到浅色主题' : '切换到深色主题', () => {
         closeMoreMenu();
         toggleTheme();
       }),
       el('hr', { class: 'menu-sep' }),
-      menuItem('link', 'Copy meeting link', () => {
+      menuItem('link', '复制会议链接', () => {
         closeMoreMenu();
         copyMeetingLink();
       })
@@ -695,13 +695,13 @@ export function mountMeeting(root, call, ctx) {
   async function copyMeetingLink() {
     try {
       await navigator.clipboard.writeText(buildMeetingURL(meetingCode));
-      toast('Meeting link copied', { icon: 'check' });
+      toast('已复制会议链接', { icon: 'check' });
     } catch {
       // Clipboard blocked (an embedding page may not grant it) — make sure
       // the link is on screen to copy by hand, and say so: with the panel
       // already open the chip otherwise did nothing visible at all.
       if (openPanelName !== 'info') togglePanel('info');
-      toast('Copy failed. Select the link in Meeting details to copy it.', { icon: 'info' });
+      toast('复制失败。请在“会议详情”中选择链接进行复制。', { icon: 'info' });
     }
   }
 
@@ -723,9 +723,9 @@ export function mountMeeting(root, call, ctx) {
   }
 
   async function openSettings() {
-    const micSelect = el('select', { 'aria-label': 'Microphone' });
-    const camSelect = el('select', { 'aria-label': 'Camera' });
-    const spkSelect = el('select', { 'aria-label': 'Speakers' });
+    const micSelect = el('select', { 'aria-label': '麦克风' });
+    const camSelect = el('select', { 'aria-label': '摄像头' });
+    const spkSelect = el('select', { 'aria-label': '扬声器' });
 
     const nsToggle = el('input', { type: 'checkbox', class: 'switch', role: 'switch' });
     nsToggle.checked = media.noiseSuppression;
@@ -749,44 +749,44 @@ export function mountMeeting(root, call, ctx) {
       },
       el(
         'div',
-        { class: 'dialog', role: 'dialog', 'aria-modal': 'true', 'aria-label': 'Settings', tabindex: '-1' },
+        { class: 'dialog', role: 'dialog', 'aria-modal': 'true', 'aria-label': '设置', tabindex: '-1' },
         el(
           'div',
           { class: 'dialog-header' },
-          el('h2', {}, 'Settings'),
-          el('button', { class: 'icon-btn', 'aria-label': 'Close', onclick: () => backdrop.remove() }, icon('close'))
+          el('h2', {}, '设置'),
+          el('button', { class: 'icon-btn', 'aria-label': '关闭', onclick: () => backdrop.remove() }, icon('close'))
         ),
         el(
           'div',
           { class: 'dialog-body' },
           nicknameField({ ctx, session }),
-          el('div', {}, el('label', { class: 'field-label' }, 'Microphone'), el('div', { class: 'select-field' }, icon('mic'), micSelect)),
-          el('div', {}, el('label', { class: 'field-label' }, 'Camera'), el('div', { class: 'select-field' }, icon('cam'), camSelect)),
-          el('div', {}, el('label', { class: 'field-label' }, 'Speakers'), el('div', { class: 'select-field' }, icon('volume'), spkSelect)),
+          el('div', {}, el('label', { class: 'field-label' }, '麦克风'), el('div', { class: 'select-field' }, icon('mic'), micSelect)),
+          el('div', {}, el('label', { class: 'field-label' }, '摄像头'), el('div', { class: 'select-field' }, icon('cam'), camSelect)),
+          el('div', {}, el('label', { class: 'field-label' }, '扬声器'), el('div', { class: 'select-field' }, icon('volume'), spkSelect)),
           el(
             'label',
             { class: 'toggle-field' },
             el(
               'span',
               { class: 'toggle-text' },
-              el('span', { class: 'toggle-title' }, 'Noise suppression'),
-              el('span', { class: 'toggle-sub' }, 'Filters out background noise like typing, fans, and traffic')
+              el('span', { class: 'toggle-title' }, '噪音抑制'),
+              el('span', { class: 'toggle-sub' }, '过滤打字声、风扇声和交通噪音等背景噪音')
             ),
             nsToggle
           ),
           el(
             'div',
             {},
-            el('label', { class: 'field-label' }, 'Keyboard shortcuts'),
+            el('label', { class: 'field-label' }, '键盘快捷键'),
             el(
               'div',
               { class: 'shortcut-list' },
               el('kbd', {}, '⌘/Ctrl + D'),
-              el('span', {}, 'Toggle microphone'),
+              el('span', {}, '切换麦克风'),
               el('kbd', {}, '⌘/Ctrl + E'),
-              el('span', {}, 'Toggle camera'),
+              el('span', {}, '切换摄像头'),
               el('kbd', {}, 'Esc'),
-              el('span', {}, 'Close panels and menus')
+              el('span', {}, '关闭面板和菜单')
             )
           )
         )
@@ -822,11 +822,11 @@ export function mountMeeting(root, call, ctx) {
     function fill(select, devices, currentId) {
       clear(select);
       if (!devices.length) {
-        select.append(el('option', { value: '' }, 'Not available'));
+        select.append(el('option', { value: '' }, '不可用'));
         select.disabled = true;
         return;
       }
-      devices.forEach((d, i) => select.append(el('option', { value: d.deviceId }, d.label || `Device ${i + 1}`)));
+      devices.forEach((d, i) => select.append(el('option', { value: d.deviceId }, d.label || `设备 ${i + 1}`)));
       if (currentId && devices.some((d) => d.deviceId === currentId)) select.value = currentId;
     }
   }

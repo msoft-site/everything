@@ -98,12 +98,12 @@ export class App {
       this.renderer.onWarning = (w) => {
         if (w !== 'hatch-dense') return;
         this.cmdline?.log(
-          'A hatch pattern is too dense to draw line by line, so it is shown as a tint. Increase its pattern scale to see the lines.',
+          '图案填充过密，无法逐线绘制，已显示为着色。请增大图案比例以查看线条。',
           'muted',
         );
       };
     } catch (err) {
-      this.fatal('This app needs WebGL2, which this browser or device does not provide. Try a current version of Chrome, Edge, Firefox or Safari.', err);
+      this.fatal('此应用需要 WebGL2，但当前浏览器或设备不支持。请尝试使用最新版本的 Chrome、Edge、Firefox 或 Safari。', err);
       return;
     }
     this.overlay = new Overlay(shell.overlay);
@@ -168,8 +168,8 @@ export class App {
     });
     // Phones have the tool bar instead of the ribbon, and usually no F1 key.
     const phone = matchMedia('(max-width: 599px)').matches;
-    this.cmdline.log(phone ? 'Ready. Pick a tool below, or type a command.' : 'Ready. Type a command, or pick a tool from the ribbon. Press F1 for help.', 'muted');
-    if (!this.ownsSession) toast('The app is also open in another tab. Drawings in this tab are not kept for recovery, so save your work.', { timeout: 9000 });
+    this.cmdline.log(phone ? '就绪。请在下方选择工具，或输入命令。' : '就绪。请输入命令，或从功能区选择工具。按 F1 查看帮助。', 'muted');
+    if (!this.ownsSession) toast('此应用已在另一个标签页中打开。当前标签页中的图形不会保留用于恢复，请及时保存您的工作。', { timeout: 9000 });
   }
 
   fatal(message, err) {
@@ -323,7 +323,7 @@ export class App {
       return;
     }
     clear(this.shell.title).append(h('span.title-name', d.name));
-    if (d.drawing.modified) this.shell.title.append(h('span.title-mod', 'Edited'));
+    if (d.drawing.modified) this.shell.title.append(h('span.title-mod', '已编辑'));
     document.title = `${d.drawing.modified ? '* ' : ''}${d.name} - CAD`;
     try {
       if (platform.puterEnv() === 'app') puter.ui.setWindowTitle?.(`${d.name} - CAD`);
@@ -338,8 +338,8 @@ export class App {
       r = this.shell.redoBtn;
     u.disabled = !d?.canUndo;
     r.disabled = !d?.canRedo;
-    u.dataset.tip = d?.undoLabel ? `Undo ${d.undoLabel}` : 'Undo';
-    r.dataset.tip = d?.redoLabel ? `Redo ${d.redoLabel}` : 'Redo';
+    u.dataset.tip = d?.undoLabel ? `撤销 ${d.undoLabel}` : '撤销';
+    r.dataset.tip = d?.redoLabel ? `重做 ${d.redoLabel}` : '重做';
   }
 
   selectionChanged() {
@@ -412,12 +412,12 @@ export class App {
     clear(es).append(
       h(
         'div.start',
-        h('h2', 'No drawing open'),
+        h('h2', '未打开任何图形'),
         h(
           'div.start-actions',
-          h('button.btn.primary', { type: 'button', onClick: () => this.newDrawing() }, icon('file-plus', 16), 'New drawing'),
-          h('button.btn', { type: 'button', onClick: () => this.open() }, icon('folder-open', 16), 'Open'),
-          h('button.btn', { type: 'button', onClick: () => this.openSample() }, icon('file-text', 16), 'Sample drawing'),
+          h('button.btn.primary', { type: 'button', onClick: () => this.newDrawing() }, icon('file-plus', 16), '新建图形'),
+          h('button.btn', { type: 'button', onClick: () => this.open() }, icon('folder-open', 16), '打开'),
+          h('button.btn', { type: 'button', onClick: () => this.openSample() }, icon('file-text', 16), '示例图形'),
         ),
       ),
     );
@@ -426,7 +426,7 @@ export class App {
 
   /** Open the built-in sample drawing in a new tab. */
   openSample() {
-    const doc = this.addDoc(sampleDrawing(), 'Sample plate');
+    const doc = this.addDoc(sampleDrawing(), '示例板件');
     this.zoomExtentsSoon(doc);
     return doc;
   }
@@ -498,7 +498,7 @@ export class App {
       if (modified && !doc.drawing.modified && !this._autosaveTimers.has(doc.id)) this.scheduleAutosave(doc);
     } catch (err) {
       console.warn('Autosave failed', err);
-      if (!this.recoveryFailed) toast('Drawings cannot be kept in this browser for recovery (storage is unavailable or full). Save your work to a file.', { kind: 'error', timeout: 9000 });
+      if (!this.recoveryFailed) toast('无法在此浏览器中保留图形以供恢复（存储空间不可用或已满）。请将您的工作保存到文件。', { kind: 'error', timeout: 9000 });
       this.recoveryFailed = true;
     }
   }
@@ -547,7 +547,7 @@ export class App {
     if (all === null) {
       this._sessionUnread = true;
       // Without a session it is not known whether there were any (storage may just be off).
-      if (session) toast('The drawings of your last visit could not be read from this browser. They are kept: reload the page to try again.', { kind: 'error', timeout: 9000 });
+      if (session) toast('无法从此浏览器读取您上次访问时的图形。它们已被保留：请刷新页面重试。', { kind: 'error', timeout: 9000 });
       return;
     }
     if (!session || !session.docs?.length) return;
@@ -571,12 +571,12 @@ export class App {
         if (id === session.active) active = doc;
       } catch (err) {
         console.warn('Could not restore a drawing', err);
-        damaged.push(r.file?.name || r.name || 'Untitled');
+        damaged.push(r.file?.name || r.name || '未命名');
       }
     }
     if (damaged.length) {
-      const what = damaged.length === 1 ? `"${damaged[0]}"` : `${damaged.length} drawings`;
-      toast(`${what} could not be recovered because the copy kept in this browser is damaged.`, { kind: 'error', timeout: 9000 });
+      const what = damaged.length === 1 ? `"${damaged[0]}"` : `${damaged.length} 个图形`;
+      toast(`由于此浏览器中保留的副本已损坏，无法恢复 ${what}。`, { kind: 'error', timeout: 9000 });
     }
     // Clean up recovery records that no longer belong to a tab.
     for (const r of all) if (!session.docs.includes(r.id)) storage.recovery.delete(r.id);
@@ -630,7 +630,7 @@ export class App {
   async _openBuffer(buffer, name, file) {
     const kind = fileKind(name);
     if (!kind) {
-      toast('Choose a .dwg or .dxf file.', { kind: 'error' });
+      toast('请选择 .dwg 或 .dxf 文件。', { kind: 'error' });
       return null;
     }
     const existing = file.path
@@ -640,7 +640,7 @@ export class App {
       this.activate(existing);
       return existing;
     }
-    const busy = toast(`Opening ${name}...`, { timeout: 0 });
+    const busy = toast(`正在打开 ${name}...`, { timeout: 0 });
     try {
       let drawing;
       let dropped;
@@ -649,8 +649,8 @@ export class App {
         drawing = new Drawing(data);
         if (data.version > NATIVE_VERSION) {
           // What this version does not know is not kept; Save writes a new DWG file and leaves this one as it is.
-          dropped = 'content from a newer version of the app';
-          this.cmdline.log(`${name} was saved with a newer version of the app. Parts of it may be missing here.`, 'muted');
+          dropped = '来自较新版本应用的内容';
+          this.cmdline.log(`${name} 是由较新版本的应用保存的，部分内容在此处可能缺失。`, 'muted');
         }
       } else {
         const res = await importDxf(buffer);
@@ -658,11 +658,11 @@ export class App {
         const skipped = Object.entries(res.stats?.skipped || {});
         if (skipped.length) {
           // Saving over the original file would remove these.
-          dropped = skipped.map(([t, n]) => `${n} ${t}`).join(', ');
-          this.cmdline.log(`Some objects were not imported: ${dropped}.`, 'muted');
+          dropped = skipped.map(([t, n]) => `${n} 个 ${t}`).join('、');
+          this.cmdline.log(`部分对象未能导入：${dropped}。`, 'muted');
         }
         for (const w of (res.warnings || []).slice(0, 5)) this.cmdline.log(w, 'muted');
-        if (res.release) this.cmdline.log(`${name} is an AutoCAD ${res.release} drawing (${res.version}).`, 'muted');
+        if (res.release) this.cmdline.log(`${name} 是 AutoCAD ${res.release} 图形 (${res.version})。`, 'muted');
       }
       busy.remove();
       const doc = this.addDoc(drawing, baseName(name), { ...file, kind, name, dropped });
@@ -671,7 +671,7 @@ export class App {
       if (blank) this.closeDrawing(blank);
       this.zoomExtentsSoon(doc);
       if (file.path) storage.addRecent({ name, path: file.path, source: file.source });
-      this.cmdline.log(`Opened ${name} (${drawing.entities.size.toLocaleString()} objects)`, 'muted');
+      this.cmdline.log(`已打开 ${name}（${drawing.entities.size.toLocaleString()} 个对象）`, 'muted');
       return doc;
     } catch (err) {
       busy.remove();
@@ -696,7 +696,9 @@ export class App {
   fileError(what, err) {
     console.error(err);
     const msg = storage.errorText(err);
-    toast(`Could not ${what} the file.${msg ? ` ${msg}` : ' Please try again.'}`, {
+    const verbs = { open: '打开', save: '保存', export: '导出', import: '导入' };
+    const action = verbs[what] || what;
+    toast(`无法${action}文件。${msg ? ` ${msg}` : '请重试。'}`, {
       kind: 'error',
       timeout: 7000,
     });
@@ -744,13 +746,13 @@ export class App {
   async askDropped(doc) {
     const name = doc.file.name || doc.name;
     const choice = await openDialog({
-      title: `Save over ${name}?`,
+      title: `覆盖保存 ${name}？`,
       size: 'sm',
-      body: h('p.dialog-text', `The original file has objects this app could not open (${doc.file.dropped}). Saving over it removes them. Save a copy to keep the original as it is.`),
+      body: h('p.dialog-text', `原始文件包含此应用无法打开的对象（${doc.file.dropped}）。覆盖保存将移除这些对象。建议另存为副本以保留原始文件不变。`),
       actions: [
-        { label: 'Cancel' },
-        { label: 'Replace', danger: true, value: 'replace' },
-        { label: 'Save a copy...', primary: true, value: 'copy' },
+        { label: '取消' },
+        { label: '替换', danger: true, value: 'replace' },
+        { label: '另存为副本...', primary: true, value: 'copy' },
       ],
     });
     // Asked once: after replacing, the file no longer has them.
@@ -782,7 +784,7 @@ export class App {
       const blob = await this.encode(doc, kind);
       let downloaded = false;
       if (doc.file.source === 'cloud') {
-        if (!(await this.ensureSignedIn('save to your Puter drive'))) return false;
+        if (!(await this.ensureSignedIn('保存到您的 Puter 云盘'))) return false;
         await this.cloudWrite(doc.file.path, blob, true, doc.file.name || doc.name);
       } else {
         const r = await storage.deviceSave(blob, doc.file.name || `${doc.name}${kindExt(kind)}`, doc.file.handle);
@@ -803,7 +805,7 @@ export class App {
     doc.drawing.markSaved(rev);
     this.refreshAll();
     this.autosave(doc);
-    toast(downloaded ? `Downloaded ${name}. Find it in your downloads folder.` : `Saved ${name}`, { kind: 'success' });
+    toast(downloaded ? `已下载 ${name}。请在下载文件夹中查看。` : `已保存 ${name}`, { kind: 'success' });
   }
 
   async saveAs(arg) {
@@ -842,7 +844,7 @@ export class App {
       const fileName = `${target.name}${kindExt(target.kind)}`;
       let downloaded = false;
       if (target.source === 'cloud') {
-        if (!(await this.ensureSignedIn('save to your Puter drive'))) return false;
+        if (!(await this.ensureSignedIn('保存到您的 Puter 云盘'))) return false;
         const path = `${storage.CLOUD_DIR}/${fileName}`;
         const same = !!doc.file?.path && (doc.file.path === path || doc.file.path.endsWith(`/${path}`));
         let item;
@@ -850,7 +852,7 @@ export class App {
           item = await this.cloudWrite(path, blob, same, fileName);
         } catch (err) {
           if (!storage.isExistsError(err)) throw err;
-          const ok = await confirmDialog('Replace file?', `"${fileName}" already exists in your drive. Replace it?`, { confirm: 'Replace', danger: true });
+          const ok = await confirmDialog('替换文件？', `"${fileName}" 已存在于您的云盘中。是否替换？`, { confirm: '替换', danger: true });
           if (!ok) return false;
           item = await this.cloudWrite(path, blob, true, fileName);
         }
@@ -891,7 +893,7 @@ export class App {
       if (!storage.isAuthError(err)) throw err;
       this.signedIn = false;
       this.renderAccount();
-      const ok = await confirmDialog('Sign in again', `Your Puter session has expired. Sign in again to save "${name}" to your Puter drive.`, { confirm: 'Sign in' });
+      const ok = await confirmDialog('重新登录', `您的 Puter 会话已过期。请重新登录以将 "${name}" 保存到您的 Puter 云盘。`, { confirm: '登录' });
       if (!ok || !(await this.signIn())) throw new DOMException('Sign-in declined', 'AbortError');
       return storage.cloudWrite(path, blob, overwrite);
     }
@@ -970,12 +972,12 @@ export class App {
     const all = (Array.isArray(given) ? given : [given]).filter((it) => it && typeof it === 'object');
     const isDir = (it) => !!(it.is_dir || it.isDir || it.isDirectory || it.fsentry_is_dir);
     const files = all.filter((it) => typeof it.path === 'string' && it.path && !isDir(it));
-    if (!files.length && all.some(isDir)) toast('Folders cannot be opened. Open the drawings inside instead.');
+    if (!files.length && all.some(isDir)) toast('无法直接打开文件夹。请打开其中的图形文件。');
     for (const it of files) {
       const path = it.path;
       const name = it.name || path.replace(/\/+$/, '').split('/').pop();
       if (!fileKind(name)) {
-        toast(`${name} is not a drawing. Choose a .dwg or .dxf file.`, { kind: 'error' });
+        toast(`${name} 不是图形文件。请选择 .dwg 或 .dxf 文件。`, { kind: 'error' });
         continue;
       }
       const open = this.docs.find((d) => d.file?.path === path);
@@ -1041,7 +1043,7 @@ export class App {
         await this.flushAutosave();
         const unsaved = this.docs.filter((d) => d.drawing.modified);
         if (unsaved.length && (!this.ownsSession || this.recoveryFailed)) {
-          const ok = await confirmDialog('Close with unsaved drawings?', `${unsaved.length} drawing${unsaved.length === 1 ? ' has' : 's have'} changes that are not saved and will be lost.`, { confirm: 'Close anyway', danger: true });
+          const ok = await confirmDialog('有未保存的图形，确定关闭？', `${unsaved.length} 个图形有未保存的更改，关闭后将会丢失。`, { confirm: '仍然关闭', danger: true });
           if (!ok) return;
         }
         puter.exit();
@@ -1103,39 +1105,39 @@ export class App {
           'button.btn.sm.signin',
           {
             type: 'button',
-            'aria-label': 'Sign in with Puter',
-            'data-tip': 'Sign in with Puter',
-            'data-tip-desc': 'Save drawings to your Puter drive and sync settings. Drawing works without an account.',
+            'aria-label': '使用 Puter 登录',
+            'data-tip': '使用 Puter 登录',
+            'data-tip-desc': '将图形保存到您的 Puter 云盘并同步设置。无需账户也可正常绘图。',
             onClick: () => this.signIn(),
           },
           icon('log-in', 15),
-          h('span', 'Sign in'),
+          h('span', '登录'),
         ),
       );
       return;
     }
-    const name = this.user?.username || 'Account';
+    const name = this.user?.username || '账户';
     const pic = this.profilePic || platform.cachedProfilePicture(name);
     el.append(
       h(
         'button.avatar-btn',
-        { type: 'button', 'aria-label': `Account: ${name}`, 'aria-haspopup': 'menu', 'data-tip': name, onClick: (e) => this.accountMenu(e.currentTarget) },
+        { type: 'button', 'aria-label': `账户：${name}`, 'aria-haspopup': 'menu', 'data-tip': name, onClick: (e) => this.accountMenu(e.currentTarget) },
         pic ? h('img.avatar', { src: pic, alt: '' }) : h('span.avatar.initials', name.slice(0, 1).toUpperCase()),
       ),
     );
   }
 
   accountMenu(anchor) {
-    const items = [{ header: `Signed in as ${this.user?.username ?? ''}` }];
-    if (platform.canSignOut()) items.push({ label: 'Sign out', icon: 'log-out', action: () => this.signOut() });
-    else items.push({ label: 'Signed in through Puter', disabled: true });
-    showMenu(anchor, items, { alignRight: true, label: 'Account' });
+    const items = [{ header: `已登录为 ${this.user?.username ?? ''}` }];
+    if (platform.canSignOut()) items.push({ label: '退出登录', icon: 'log-out', action: () => this.signOut() });
+    else items.push({ label: '已通过 Puter 登录', disabled: true });
+    showMenu(anchor, items, { alignRight: true, label: '账户' });
   }
 
   async signIn() {
     // Offline, or the SDK is blocked or still loading: there is nothing to sign in with yet.
     if (!platform.puterAvailable()) {
-      toast('Puter could not be reached, so signing in is not possible right now. Check your connection and try again.', { kind: 'error', timeout: 7000 });
+      toast('无法连接到 Puter，目前无法登录。请检查网络连接后重试。', { kind: 'error', timeout: 7000 });
       return false;
     }
     try {
@@ -1146,7 +1148,7 @@ export class App {
       const code = err?.error ?? err?.code ?? '';
       if (code !== 'auth_window_closed') {
         console.warn(err);
-        toast(code === 'popup_blocked' ? 'The sign-in window was blocked. Allow pop-ups for this site and try again.' : 'Could not sign in. Please try again.', { kind: 'error', timeout: 7000 });
+        toast(code === 'popup_blocked' ? '登录窗口被拦截。请允许此网站的弹出窗口后重试。' : '无法登录，请重试。', { kind: 'error', timeout: 7000 });
       }
     }
     this.renderAccount();
@@ -1158,7 +1160,7 @@ export class App {
     this.signedIn = await platform.isSignedIn();
     if (!this.signedIn) return;
     await this.onSignedIn();
-    toast('Signed in. You can now save drawings to your Puter drive.', { kind: 'success' });
+    toast('已登录。您现在可以将图形保存到 Puter 云盘。', { kind: 'success' });
   }
 
   async signOut() {
@@ -1176,12 +1178,12 @@ export class App {
     this.user = null;
     this.profilePic = null;
     this.renderAccount();
-    toast('Signed out. Open drawings stay on this device.');
+    toast('已退出登录。已打开的图形仍保留在此设备上。');
   }
 
   async ensureSignedIn(reason) {
     if (this.signedIn) return true;
-    const ok = await confirmDialog('Sign in to continue', `Sign in with Puter to ${reason}. Your drawings stay private to your account.`, { confirm: 'Sign in' });
+    const ok = await confirmDialog('登录以继续', `请使用 Puter 登录以${reason}。您的图形在您的账户中保持私密。`, { confirm: '登录' });
     if (!ok) return false;
     return this.signIn();
   }
@@ -1200,8 +1202,8 @@ export class App {
 
   toggleSetting(key) {
     this.setSetting(key, !this.settings[key]);
-    const labels = { grid: 'Grid', snap: 'Snap', ortho: 'Ortho', polar: 'Polar tracking', osnap: 'Object snap', otrack: 'Object snap tracking', dyn: 'Dynamic input', lwDisplay: 'Lineweight display' };
-    if (labels[key]) this.cmdline.log(`${labels[key]} ${this.settings[key] ? 'on' : 'off'}`, 'muted');
+    const labels = { grid: '栅格', snap: '捕捉', ortho: '正交', polar: '极轴追踪', osnap: '对象捕捉', otrack: '对象捕捉追踪', dyn: '动态输入', lwDisplay: '线宽显示' };
+    if (labels[key]) this.cmdline.log(`${labels[key]}已${this.settings[key] ? '开启' : '关闭'}`, 'muted');
   }
 
   applySettings() {
@@ -1292,14 +1294,15 @@ export class App {
     if (this.ribbon?.contextual) this.ribbon.renderBody();
     if (this.shell) {
       clear(this.shell.themeBtn).append(icon(this.themePref === 'light' ? 'sun' : this.themePref === 'dark' ? 'moon' : 'monitor', 17));
-      this.shell.themeBtn.dataset.tip = `Theme: ${this.themePref[0].toUpperCase()}${this.themePref.slice(1)}`;
+      const themeNames = { system: '跟随系统', light: '浅色', dark: '深色' };
+      this.shell.themeBtn.dataset.tip = `主题：${themeNames[this.themePref] || this.themePref}`;
     }
     this.ribbon?.refresh();
   }
 
   themeMenu(anchor) {
     const item = (v, label, ic) => ({ label, icon: ic, checked: this.themePref === v, radio: true, action: () => this.setTheme(v) });
-    showMenu(anchor, [item('system', 'System', 'monitor'), item('light', 'Light', 'sun'), item('dark', 'Dark', 'moon')], { label: 'Theme', alignRight: true });
+    showMenu(anchor, [item('system', '跟随系统', 'monitor'), item('light', '浅色', 'sun'), item('dark', '深色', 'moon')], { label: '主题', alignRight: true });
   }
 
   // Layout -----------------------------------------------------------------------------------
@@ -1372,7 +1375,7 @@ export class App {
   toggleCleanScreen() {
     const on = !document.body.classList.contains('clean-screen');
     document.body.classList.toggle('clean-screen', on);
-    this.cmdline.log(on ? `Clean screen on. Press ${MOD}+0 to restore the interface.` : 'Clean screen off', 'muted');
+    this.cmdline.log(on ? `全屏清洁模式已开启。按 ${MOD}+0 恢复界面。` : '全屏清洁模式已关闭', 'muted');
   }
 
   // Dock (palettes) ---------------------------------------------------------------------------
@@ -1412,9 +1415,9 @@ export class App {
       s.dock.style.width = `${w}px`;
     });
     this.dockPanels = [
-      { id: 'properties', label: 'Properties', comp: this.properties },
-      { id: 'layers', label: 'Layers', comp: this.layers },
-      { id: 'blocks', label: 'Blocks', comp: this.blocks },
+      { id: 'properties', label: '特性', comp: this.properties },
+      { id: 'layers', label: '图层', comp: this.layers },
+      { id: 'blocks', label: '图块', comp: this.blocks },
     ];
     // Only palettes this version has: a stored name it does not know would stop the app from starting.
     const known = new Set(this.dockPanels.map((p) => p.id));
@@ -1442,7 +1445,7 @@ export class App {
             role: 'tab',
             'aria-selected': String(selected),
             tabindex: selected ? '0' : '-1',
-            title: `${p.label} (Delete closes it)`,
+            title: `${p.label}（按 Delete 关闭）`,
             onClick: () => this.showDock(p.id),
             onKeydown: (e) => {
               if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
@@ -1537,8 +1540,8 @@ export class App {
       );
     }
     bar.append(
-      h('button.pb-btn.pb-cmd', { type: 'button', onClick: () => this.cmdline.submit() }, icon('check', 20), h('span', 'Enter')),
-      h('button.pb-btn.pb-cmd', { type: 'button', onClick: () => this.editor.cancel() }, icon('x', 20), h('span', 'Cancel')),
+      h('button.pb-btn.pb-cmd', { type: 'button', onClick: () => this.cmdline.submit() }, icon('check', 20), h('span', '确定')),
+      h('button.pb-btn.pb-cmd', { type: 'button', onClick: () => this.editor.cancel() }, icon('x', 20), h('span', '取消')),
     );
   }
 
@@ -1565,14 +1568,14 @@ export class App {
     if (this.editor.busy) await this.editor._stopActive();
     if (this.doc?.drawing !== d) return;
     const label = d.undo();
-    this.cmdline.log(label ? `Undo ${label}` : 'Nothing to undo', 'muted');
+    this.cmdline.log(label ? `撤销 ${label}` : '无可撤销的操作', 'muted');
   }
 
   redo() {
     const d = this.doc?.drawing;
     if (!d) return;
     const label = d.redo();
-    this.cmdline.log(label ? `Redo ${label}` : 'Nothing to redo', 'muted');
+    this.cmdline.log(label ? `重做 ${label}` : '无可重做的操作', 'muted');
   }
 
   pushView() {
@@ -1583,7 +1586,7 @@ export class App {
 
   zoomPrevious() {
     const v = this.doc?.viewStack.pop();
-    if (!v) return this.cmdline.log('No previous view.', 'muted');
+    if (!v) return this.cmdline.log('没有上一个视图。', 'muted');
     this.camera.state = v;
     this.editor.viewChanged();
   }
@@ -1593,13 +1596,15 @@ export class App {
     const doc = this.doc;
     if (!doc) return;
     const d = doc.drawing;
+    const propLabels = { color: '颜色', linetype: '线型', lineweight: '线宽', layer: '图层' };
+    const propLabel = propLabels[key] || key;
     if (doc.selection.size) {
-      d.transaction(`Change ${key}`, () => {
+      d.transaction(`更改${propLabel}`, () => {
         for (const id of doc.selection) if (d.get(id)) d.update(id, { [key]: value });
       });
     } else {
       const map = { color: 'ccolor', linetype: 'cltype', lineweight: 'clweight', layer: 'clayer' };
-      d.transaction(`Current ${key}`, () => d.setHeader({ [map[key]]: value }));
+      d.transaction(`当前${propLabel}`, () => d.setHeader({ [map[key]]: value }));
     }
     this.focusCanvas();
   }
@@ -1608,7 +1613,7 @@ export class App {
     const doc = this.doc;
     const d = doc.drawing;
     const ent = kind === 'dimStyle' ? 'dimension' : 'text';
-    d.transaction('Change style', () => {
+    d.transaction('更改样式', () => {
       d.setHeader({ [kind]: value });
       if (doc.selection.size) {
         for (const id of doc.selection) {
@@ -1623,8 +1628,8 @@ export class App {
   }
 
   async promptTextHeight() {
-    const v = await promptDialog('Text height', 'Height in drawing units', String(this.doc.drawing.header.textHeight), {
-      validate: (s) => (Number(s) > 0 ? null : 'Enter a number greater than zero.'),
+    const v = await promptDialog('文字高度', '以图形单位表示的高度', String(this.doc.drawing.header.textHeight), {
+      validate: (s) => (Number(s) > 0 ? null : '请输入大于零的数字。'),
     });
     if (v) this.applyStyle('textHeight', Number(v));
   }
@@ -1633,7 +1638,7 @@ export class App {
     const d = this.doc.drawing;
     const l = d.layers.get(name);
     if (!l) return;
-    d.transaction('Set current layer', () => {
+    d.transaction('设置当前图层', () => {
       if (l.frozen) d.setTable('layers', name, { ...l, frozen: false });
       d.setHeader({ clayer: name });
     });
@@ -1644,21 +1649,21 @@ export class App {
     const l = d.layers.get(name);
     if (!l) return;
     if (patch.frozen && name === d.header.clayer) {
-      toast('The current layer cannot be frozen.', { kind: 'error' });
+      toast('当前图层无法冻结。', { kind: 'error' });
       return;
     }
-    d.transaction('Layer properties', () => d.setTable('layers', name, { ...l, ...patch }));
+    d.transaction('图层特性', () => d.setTable('layers', name, { ...l, ...patch }));
   }
 
   /** Rename a layer everywhere. Returns an error message or null. */
   renameLayer(from, to) {
     const d = this.doc.drawing;
-    if (!/^[^<>/\\":;?*|=`]{1,255}$/.test(to)) return 'Layer names cannot contain < > / \\ " : ; ? * | = or `.';
+    if (!/^[^<>/\\":;?*|=`]{1,255}$/.test(to)) return '图层名称不能包含 < > / \\ " : ; ? * | = 或 `。';
     // Names ignore letter case in DWG and DXF; changing only the case is a rename.
     const same = tableKey(d.layers, to);
-    if (same && same !== from) return `A layer named "${same}" already exists.`;
+    if (same && same !== from) return `名为 "${same}" 的图层已存在。`;
     const l = d.layers.get(from);
-    d.transaction('Rename layer', () => {
+    d.transaction('重命名图层', () => {
       d.setTable('layers', to, { ...l, name: to });
       for (const [id, e] of d.entities) if (e.layer === from) d.update(id, { layer: to });
       for (const b of d.blocks.values()) if (b.entities.some((e) => e.layer === from)) d.setBlock(b.name, { ...b, entities: b.entities.map((e) => (e.layer === from ? { ...e, layer: to } : e)) });
@@ -1678,7 +1683,7 @@ export class App {
     if (e.type === 'text' || e.type === 'mtext' || (e.type === 'leader' && e.text !== undefined)) {
       this.editor.run({
         name: 'TEXTEDIT',
-        label: 'Edit text',
+        label: '编辑文字',
         noRepeat: true,
         run: async (ed) => {
           const key = e.type === 'leader' ? 'text' : 'value';
@@ -1688,7 +1693,7 @@ export class App {
           const pos = e.type === 'leader' ? { x: e.pts.at(-2), y: e.pts.at(-1) } : { x: e.x, y: e.y };
           const v = await ed.editText({ anchor: pos, height: e.h, rot: e.rot || 0, multiline: e.type === 'mtext', width: e.width, initial: e[key], onChange: (val) => ed.renderer.setPreview([{ ...e, [key]: val }]) });
           ed.renderer.setHidden(new Set());
-          if (v !== null && v !== e[key]) ed.commit('Edit text', () => (v ? ed.drawing.update(id, { [key]: v }) : ed.drawing.remove(id)));
+          if (v !== null && v !== e[key]) ed.commit('编辑文字', () => (v ? ed.drawing.update(id, { [key]: v }) : ed.drawing.remove(id)));
         },
       });
       return;
@@ -1704,7 +1709,7 @@ export class App {
       let handle;
       const req = {
         kind: 'text',
-        prompt: opts.multiline ? 'Type the text. Press Ctrl+Enter to finish.' : 'Type the text. Press Enter to finish.',
+        prompt: opts.multiline ? '输入文字。按 Ctrl+Enter 完成。' : '输入文字。按 Enter 完成。',
         opts: {},
         options: [],
         resolve,
@@ -1735,7 +1740,7 @@ export class App {
   }
 
   contextMenu(x, y, items) {
-    if (items) return showMenu({ x, y }, items, { label: 'Context menu' });
+    if (items) return showMenu({ x, y }, items, { label: '上下文菜单' });
     const sel = this.doc?.selection.size;
     const last = this.editor.lastCommand ? this.commands.get(this.editor.lastCommand) : null;
     const c = (name, extra = {}) => {
@@ -1743,73 +1748,73 @@ export class App {
       return { label: d.label, icon: d.icon, action: () => this.run(name), ...extra };
     };
     const list = [];
-    if (last) list.push({ label: `Repeat ${last.label}`, icon: last.icon, shortcut: 'Enter', action: () => this.run(last.name) });
+    if (last) list.push({ label: `重复 ${last.label}`, icon: last.icon, shortcut: 'Enter', action: () => this.run(last.name) });
     if (sel) {
       list.push({ separator: true }, c('ERASE', { shortcut: 'Del' }), c('MOVE'), c('COPY'), c('SCALE'), c('ROTATE'), c('MIRROR'));
       list.push({ separator: true }, c('CUTCLIP', { shortcut: `${MOD}+X` }), c('COPYCLIP', { shortcut: `${MOD}+C` }), c('COPYBASE'));
       list.push(
         { separator: true },
-        { label: 'Draw order', icon: 'draw-order', submenu: [{ label: 'Bring to front', action: () => this.run('DRAWORDER', { where: 'front' }) }, { label: 'Send to back', action: () => this.run('DRAWORDER', { where: 'back' }) }] },
+        { label: '绘图次序', icon: 'draw-order', submenu: [{ label: '置于顶层', action: () => this.run('DRAWORDER', { where: 'front' }) }, { label: '置于底层', action: () => this.run('DRAWORDER', { where: 'back' }) }] },
         c('SELECTSIMILAR'),
-        { label: 'Deselect all', action: () => this.editor.clearSelection(), shortcut: 'Esc' },
+        { label: '全部取消选择', action: () => this.editor.clearSelection(), shortcut: 'Esc' },
         { separator: true },
-        { label: 'Properties', icon: 'sliders', shortcut: `${MOD}+1`, action: () => this.showDock('properties') },
+        { label: '特性', icon: 'sliders', shortcut: `${MOD}+1`, action: () => this.showDock('properties') },
       );
     } else {
       list.push(
         { separator: true },
-        { label: 'Undo', icon: 'undo', shortcut: `${MOD}+Z`, disabled: !this.doc?.drawing.canUndo, action: () => this.undo() },
-        { label: 'Redo', icon: 'redo', shortcut: `${MOD}+Y`, disabled: !this.doc?.drawing.canRedo, action: () => this.redo() },
+        { label: '撤销', icon: 'undo', shortcut: `${MOD}+Z`, disabled: !this.doc?.drawing.canUndo, action: () => this.undo() },
+        { label: '重做', icon: 'redo', shortcut: `${MOD}+Y`, disabled: !this.doc?.drawing.canRedo, action: () => this.redo() },
         { separator: true },
         c('PASTECLIP', { shortcut: `${MOD}+V` }),
         c('SELECTALL', { shortcut: `${MOD}+A` }),
         c('QSELECT'),
         { separator: true },
-        { label: 'Pan', icon: 'pan', action: () => this.run('PAN') },
-        { label: 'Zoom extents', icon: 'zoom-extents', action: () => this.editor.zoomExtents() },
+        { label: '平移', icon: 'pan', action: () => this.run('PAN') },
+        { label: '缩放至范围', icon: 'zoom-extents', action: () => this.editor.zoomExtents() },
         { separator: true },
-        { label: 'Settings', icon: 'settings', action: () => this.run('OPTIONS') },
+        { label: '设置', icon: 'settings', action: () => this.run('OPTIONS') },
       );
     }
-    showMenu({ x, y }, list, { label: 'Context menu' });
+    showMenu({ x, y }, list, { label: '上下文菜单' });
   }
 
   appMenu(anchor) {
     const recent = storage.recentFiles();
     const items = [
-      { label: 'New', icon: 'file-plus', shortcut: `${MOD}+N`, action: () => this.run('NEW') },
-      { label: 'Open...', icon: 'folder-open', shortcut: `${MOD}+O`, action: () => this.run('OPEN') },
-      { label: 'Open sample drawing', icon: 'file-text', action: () => this.openSample() },
+      { label: '新建', icon: 'file-plus', shortcut: `${MOD}+N`, action: () => this.run('NEW') },
+      { label: '打开...', icon: 'folder-open', shortcut: `${MOD}+O`, action: () => this.run('OPEN') },
+      { label: '打开示例图形', icon: 'file-text', action: () => this.openSample() },
       recent.length
         ? {
-            label: 'Recent',
+            label: '最近使用',
             icon: 'history',
             submenu: recent.map((r) => ({ label: r.name, icon: r.source === 'cloud' ? 'cloud' : 'file', action: () => this.openRecent(r) })),
           }
         : null,
-      { label: 'Save', icon: 'save', shortcut: `${MOD}+S`, action: () => this.run('SAVE') },
-      { label: 'Save as...', icon: 'save-all', shortcut: `${MOD}+Shift+S`, action: () => this.run('SAVEAS') },
+      { label: '保存', icon: 'save', shortcut: `${MOD}+S`, action: () => this.run('SAVE') },
+      { label: '另存为...', icon: 'save-all', shortcut: `${MOD}+Shift+S`, action: () => this.run('SAVEAS') },
       { separator: true },
-      { label: 'Import DXF or DWG...', icon: 'upload', action: () => this.run('IMPORT') },
-      { label: 'Export...', icon: 'download', action: () => this.run('EXPORT') },
-      { label: 'Plot...', icon: 'printer', shortcut: `${MOD}+P`, action: () => this.run('PLOT') },
+      { label: '导入 DXF 或 DWG...', icon: 'upload', action: () => this.run('IMPORT') },
+      { label: '导出...', icon: 'download', action: () => this.run('EXPORT') },
+      { label: '打印...', icon: 'printer', shortcut: `${MOD}+P`, action: () => this.run('PLOT') },
       { separator: true },
-      { label: 'Drawing units...', icon: 'units', action: () => this.run('UNITS') },
-      { label: 'Purge unused...', icon: 'trash', action: () => this.run('PURGE') },
-      { label: 'Settings...', icon: 'settings', action: () => this.run('OPTIONS') },
+      { label: '图形单位...', icon: 'units', action: () => this.run('UNITS') },
+      { label: '清理未使用项...', icon: 'trash', action: () => this.run('PURGE') },
+      { label: '设置...', icon: 'settings', action: () => this.run('OPTIONS') },
       { separator: true },
-      { label: 'Keyboard shortcuts', icon: 'keyboard', action: () => this.shortcuts() },
-      { label: 'Help', icon: 'help', shortcut: 'F1', action: () => this.help() },
-      { label: 'Source code on GitHub', icon: 'github', action: () => window.open(REPO_URL, '_blank', 'noopener') },
+      { label: '键盘快捷键', icon: 'keyboard', action: () => this.shortcuts() },
+      { label: '帮助', icon: 'help', shortcut: 'F1', action: () => this.help() },
+      { label: 'GitHub 源代码', icon: 'github', action: () => window.open(REPO_URL, '_blank', 'noopener') },
       { separator: true },
-      { label: 'Close drawing', icon: 'x', action: () => this.closeDrawing() },
+      { label: '关闭图形', icon: 'x', action: () => this.closeDrawing() },
     ];
-    showMenu(anchor, items, { label: 'Application menu' });
+    showMenu(anchor, items, { label: '应用程序菜单' });
   }
 
   async openRecent(r) {
     if (r.source === 'cloud') {
-      if (!(await this.ensureSignedIn('open files from your Puter drive'))) return;
+      if (!(await this.ensureSignedIn('从您的 Puter 云盘打开文件'))) return;
       try {
         await this.openBuffer(await storage.cloudRead(r.path), r.name, { source: 'cloud', path: r.path });
       } catch (err) {
@@ -1858,8 +1863,8 @@ export class App {
   }
   async ltscalePrompt() {
     const d = this.doc.drawing;
-    const v = await this.editor.getNumber('Global linetype scale', { default: d.header.ltscale, min: 1e-6 });
-    if (Number.isFinite(v) && v > 0) d.transaction('Linetype scale', () => d.setHeader({ ltscale: v }));
+    const v = await this.editor.getNumber('全局线型比例', { default: d.header.ltscale, min: 1e-6 });
+    if (Number.isFinite(v) && v > 0) d.transaction('线型比例', () => d.setHeader({ ltscale: v }));
   }
 
   // Keyboard ------------------------------------------------------------------------------

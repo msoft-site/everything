@@ -9,7 +9,7 @@
  */
 import { Emitter } from '../lib/emitter.js';
 
-export const ROLE_LABELS = { owner: 'Owner', editor: 'Can edit', commenter: 'Can comment', viewer: 'Can view' };
+export const ROLE_LABELS = { owner: '所有者', editor: '可编辑', commenter: '可评论', viewer: '可查看' };
 export const canEdit = (role) => role === 'owner' || role === 'editor';
 export const canComment = (role) => canEdit(role) || role === 'commenter';
 export const canManage = (role) => role === 'owner';

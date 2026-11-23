@@ -250,7 +250,7 @@ async function deleteContact(contact) {
   const ok = await confirmDialog({
     title: `Delete ${displayName(contact)}?`,
     message: 'This permanently removes the contact from your cloud.',
-    confirmLabel: 'Delete',
+    confirmLabel: '删除',
     danger: true,
   })
   if (!ok) return
@@ -282,7 +282,7 @@ function openContactMenu(contact, event, triggerBtn = null) {
     ...(contact.birthday && calendarSupported()
       ? [{ label: 'Add birthday to Calendar', action: () => addBirthdayToCalendar(contact) }]
       : []),
-    { label: 'Export vCard', action: () => exportOne(contact) },
+    { label: '导出 vCard', action: () => exportOne(contact) },
     {
       label: 'Copy email',
       disabled: !(contact.emails && contact.emails.length),
@@ -294,7 +294,7 @@ function openContactMenu(contact, event, triggerBtn = null) {
       action: () => contact.phones[0] && copyText(contact.phones[0].value, 'phone'),
     },
     '-',
-    { label: 'Delete', danger: true, action: () => deleteContact(contact) },
+    { label: '删除', danger: true, action: () => deleteContact(contact) },
   ]
   // Highlight the contact's sidebar row — and, when the menu was opened from the
   // detail page's "More" button, that button too — so it's clear which contact
@@ -439,7 +439,7 @@ async function deleteTagFlow(name) {
   const ok = await confirmDialog({
     title: `Delete tag “${name}”?`,
     message: `This removes the tag from ${n} contact${n === 1 ? '' : 's'}. The contacts themselves are kept.`,
-    confirmLabel: 'Delete',
+    confirmLabel: '删除',
     danger: true,
   })
   if (!ok) return
@@ -606,7 +606,7 @@ async function bulkDelete() {
   const ok = await confirmDialog({
     title: `Delete ${ids.length} contact${ids.length === 1 ? '' : 's'}?`,
     message: 'This permanently removes them from your cloud.',
-    confirmLabel: 'Delete',
+    confirmLabel: '删除',
     danger: true,
   })
   if (!ok) return

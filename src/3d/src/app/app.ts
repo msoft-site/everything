@@ -286,7 +286,7 @@ export class App {
   run(idname: string, props: Record<string, unknown> = {}, opts: { invoke?: boolean; area?: AreaLike | null; event?: PointerInfo } = {}): OpResult {
     const op = operators.get(idname);
     if (!op) {
-      this.report('ERROR', `Unknown operator: ${idname}`);
+      this.report('ERROR', `未知操作: ${idname}`);
       return 'CANCELLED';
     }
     if (this.modal) return 'CANCELLED';
@@ -399,7 +399,7 @@ export class App {
     if (d) {
       this.restoreUndo(d);
       this.lastOp = null;
-      this.report('INFO', `Undo`);
+      this.report('INFO', `撤销`);
     }
   }
 

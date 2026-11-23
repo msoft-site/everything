@@ -12,19 +12,31 @@ import { Popover } from '../ui/popover.js';
 import { INSERTABLE, TEXT_TYPES } from './commands.js';
 
 const MARKS = [
-  ['bold', 'bold', 'Bold', 'B'],
-  ['italic', 'italic', 'Italic', 'I'],
-  ['underline', 'underline', 'Underline', 'U'],
-  ['strike', 'strike', 'Strikethrough', 'Shift+S'],
-  ['code', 'code', 'Inline code', 'E'],
+  ['bold', 'bold', '粗体', 'B'],
+  ['italic', 'italic', '斜体', 'I'],
+  ['underline', 'underline', '下划线', 'U'],
+  ['strike', 'strike', '删除线', 'Shift+S'],
+  ['code', 'code', '行内代码', 'E'],
 ];
+
+const COLOR_NAMES = {
+  gray: '灰色',
+  brown: '棕色',
+  orange: '橙色',
+  yellow: '黄色',
+  green: '绿色',
+  blue: '蓝色',
+  purple: '紫色',
+  pink: '粉色',
+  red: '红色',
+};
 
 export class InlineToolbar {
   constructor(editor) {
     this.editor = editor;
     this.target = null;
     this.buttons = {};
-    this.turn = h('button.tb-btn.tb-turn', { type: 'button', 'aria-haspopup': 'menu', 'aria-expanded': 'false' }, h('span.tb-turn-label', 'Text'), icon('chevronDown', 13));
+    this.turn = h('button.tb-btn.tb-turn', { type: 'button', 'aria-haspopup': 'menu', 'aria-expanded': 'false' }, h('span.tb-turn-label', '文本'), icon('chevronDown', 13));
     this.turn.addEventListener('click', () => this.openTurnInto());
     const marks = MARKS.map(([mark, ic, label, key]) => {
       const b = h('button.tb-btn', { type: 'button', 'aria-label': label, 'aria-pressed': 'false', 'data-tip': label, 'data-shortcut': `${modLabel}${key}` }, icon(ic, 16));
@@ -32,12 +44,12 @@ export class InlineToolbar {
       this.buttons[mark] = b;
       return b;
     });
-    this.linkBtn = h('button.tb-btn', { type: 'button', 'aria-label': 'Link', 'aria-pressed': 'false', 'data-tip': 'Link', 'data-shortcut': `${modLabel}K` }, icon('link', 16));
+    this.linkBtn = h('button.tb-btn', { type: 'button', 'aria-label': '链接', 'aria-pressed': 'false', 'data-tip': '链接', 'data-shortcut': `${modLabel}K` }, icon('link', 16));
     this.linkBtn.addEventListener('click', () => this.editLink());
-    this.colorBtn = h('button.tb-btn.tb-color', { type: 'button', 'aria-label': 'Text color', 'aria-haspopup': 'menu', 'data-tip': 'Color' }, h('span.tb-a', 'A'), icon('chevronDown', 12));
+    this.colorBtn = h('button.tb-btn.tb-color', { type: 'button', 'aria-label': '文字颜色', 'aria-haspopup': 'menu', 'data-tip': '颜色' }, h('span.tb-a', 'A'), icon('chevronDown', 12));
     this.colorBtn.addEventListener('click', () => this.openColors());
     this.extra = h('span.tb-extra');
-    this.el = h('div.inline-toolbar', { role: 'toolbar', 'aria-label': 'Text formatting', hidden: true }, this.turn, h('span.tb-sep'), ...marks, this.linkBtn, this.colorBtn, this.extra);
+    this.el = h('div.inline-toolbar', { role: 'toolbar', 'aria-label': '文本格式', hidden: true }, this.turn, h('span.tb-sep'), ...marks, this.linkBtn, this.colorBtn, this.extra);
     // Keep the text selection while using the toolbar with a mouse.
     this.el.addEventListener('pointerdown', (e) => e.preventDefault());
     this.el.addEventListener('keydown', (e) => this.onKey(e));
@@ -66,7 +78,7 @@ export class InlineToolbar {
     const fmt = formatAt(yt, target.start, target.end);
     for (const [mark] of MARKS) this.buttons[mark].setAttribute('aria-pressed', String(!!fmt[mark]));
     this.linkBtn.setAttribute('aria-pressed', String(!!(fmt.link || fmt.page)));
-    this.turn.querySelector('.tb-turn-label').textContent = P.BLOCK_TYPES[b.type]?.label || 'Text';
+    this.turn.querySelector('.tb-turn-label').textContent = P.BLOCK_TYPES[b.type]?.label || '文本';
     this.colorBtn.dataset.color = fmt.color || '';
     const extras = this.editor.ctx.toolbarExtras?.(target) || [];
     this.extra.replaceChildren(...extras);
@@ -118,7 +130,7 @@ export class InlineToolbar {
     openMenu(
       this.turn,
       INSERTABLE.filter((c) => TEXT_TYPES.has(c.type)).map((c) => ({ label: c.label, icon: c.icon, checked: c.type === cur, radio: true, run: () => this.editor.turnInto([t.id], c.type) })),
-      { label: 'Turn into' },
+      { label: '转换为' },
     );
   }
 
@@ -127,19 +139,19 @@ export class InlineToolbar {
     if (!t) return;
     const yt = P.textOf(this.editor.doc, t.id);
     const fmt = formatAt(yt, t.start, t.end);
-    const name = (c) => c[0].toUpperCase() + c.slice(1);
+    const name = (c) => COLOR_NAMES[c] || c[0].toUpperCase() + c.slice(1);
     const apply = (attrs) => this.editor.applyFormat(t.id, { start: t.start, end: t.end }, attrs);
     openMenu(
       this.colorBtn,
       [
-        { type: 'header', label: 'Text color' },
-        { label: 'Default', icon: h('span.swatch.fg', 'A'), checked: !fmt.color, run: () => apply({ color: null }) },
+        { type: 'header', label: '文字颜色' },
+        { label: '默认', icon: h('span.swatch.fg', 'A'), checked: !fmt.color, run: () => apply({ color: null }) },
         ...COLORS.map((c) => ({ label: name(c), icon: h('span.swatch.fg', { 'data-c': c }, 'A'), checked: fmt.color === c, run: () => apply({ color: c }) })),
-        { type: 'header', label: 'Highlight' },
-        { label: 'None', icon: h('span.swatch.bg'), checked: !fmt.bg, run: () => apply({ bg: null }) },
-        ...COLORS.map((c) => ({ label: `${name(c)} highlight`, icon: h('span.swatch.bg', { 'data-c': c }), checked: fmt.bg === c, run: () => apply({ bg: c }) })),
+        { type: 'header', label: '背景高亮' },
+        { label: '无', icon: h('span.swatch.bg'), checked: !fmt.bg, run: () => apply({ bg: null }) },
+        ...COLORS.map((c) => ({ label: `${name(c)}高亮`, icon: h('span.swatch.bg', { 'data-c': c }), checked: fmt.bg === c, run: () => apply({ bg: c }) })),
       ],
-      { label: 'Colors' },
+      { label: '颜色' },
     );
   }
 
@@ -154,12 +166,12 @@ export class InlineToolbar {
     if (range.end <= range.start) return;
     const yt = P.textOf(ed.doc, id);
     const current = formatAt(yt, range.start, range.end).link || '';
-    const input = h('input.field', { type: 'url', value: current, placeholder: 'Paste a link', 'aria-label': 'Link address' });
+    const input = h('input.field', { type: 'url', value: current, placeholder: '粘贴链接', 'aria-label': '链接地址' });
     const form = h(
       'form.link-form',
       input,
-      h('button.btn.primary.small', { type: 'submit' }, 'Apply'),
-      current ? h('button.btn.small.ghost', { type: 'button', onclick: () => finish(null) }, 'Remove') : null,
+      h('button.btn.primary.small', { type: 'submit' }, '应用'),
+      current ? h('button.btn.small.ghost', { type: 'button', onclick: () => finish(null) }, '移除') : null,
     );
     const finish = (url) => {
       this.linkPop.close({ focus: false });
@@ -170,7 +182,7 @@ export class InlineToolbar {
       const url = safeUrl(input.value);
       if (!input.value.trim()) return finish(null);
       if (!url) {
-        input.setCustomValidity('Enter a web address, like https://example.com');
+        input.setCustomValidity('请输入有效的网址，例如 https://example.com');
         input.reportValidity();
         return;
       }
@@ -179,7 +191,7 @@ export class InlineToolbar {
     input.addEventListener('input', () => input.setCustomValidity(''));
     const r = window.getSelection().rangeCount ? window.getSelection().getRangeAt(0).getBoundingClientRect() : el.getBoundingClientRect();
     this.el.hidden = true;
-    this.linkPop = new Popover({ anchor: r, content: form, className: 'link-pop', label: 'Edit link', returnFocus: false, onClose: () => ed.textEl(id)?.focus() });
+    this.linkPop = new Popover({ anchor: r, content: form, className: 'link-pop', label: '编辑链接', returnFocus: false, onClose: () => ed.textEl(id)?.focus() });
     input.focus();
     input.select();
   }

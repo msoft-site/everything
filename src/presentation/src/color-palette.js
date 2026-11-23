@@ -6,28 +6,28 @@
 import { el, closeMenu } from "./ui.js";
 
 const THEME_SLOTS = [
-  ["bg1", "light1", "Background 1"],
-  ["tx1", "dark1", "Text 1"],
-  ["bg2", "light2", "Background 2"],
-  ["tx2", "dark2", "Text 2"],
-  ["accent1", "accent1", "Accent 1"],
-  ["accent2", "accent2", "Accent 2"],
-  ["accent3", "accent3", "Accent 3"],
-  ["accent4", "accent4", "Accent 4"],
-  ["accent5", "accent5", "Accent 5"],
-  ["accent6", "accent6", "Accent 6"],
+  ["bg1", "light1", "背景 1"],
+  ["tx1", "dark1", "文本 1"],
+  ["bg2", "light2", "背景 2"],
+  ["tx2", "dark2", "文本 2"],
+  ["accent1", "accent1", "强调文字颜色 1"],
+  ["accent2", "accent2", "强调文字颜色 2"],
+  ["accent3", "accent3", "强调文字颜色 3"],
+  ["accent4", "accent4", "强调文字颜色 4"],
+  ["accent5", "accent5", "强调文字颜色 5"],
+  ["accent6", "accent6", "强调文字颜色 6"],
 ];
 export const STANDARD_COLORS = [
-  ["#C00000", "Dark Red"],
-  ["#FF0000", "Red"],
-  ["#FFC000", "Orange"],
-  ["#FFFF00", "Yellow"],
-  ["#92D050", "Light Green"],
-  ["#00B050", "Green"],
-  ["#00B0F0", "Light Blue"],
-  ["#0070C0", "Blue"],
-  ["#002060", "Dark Blue"],
-  ["#7030A0", "Purple"],
+  ["#C00000", "深红"],
+  ["#FF0000", "红色"],
+  ["#FFC000", "橙色"],
+  ["#FFFF00", "黄色"],
+  ["#92D050", "浅绿"],
+  ["#00B050", "绿色"],
+  ["#00B0F0", "浅蓝"],
+  ["#0070C0", "蓝色"],
+  ["#002060", "深蓝"],
+  ["#7030A0", "紫色"],
 ];
 
 const hexToRgb = (hex) => {
@@ -88,26 +88,26 @@ function steps(hex) {
   const l = rgbToHsl(hexToRgb(hex))[2];
   if (l < 0.2)
     return [
-      ["Lighter 90%", 10000, 90000],
-      ["Lighter 75%", 25000, 75000],
-      ["Lighter 50%", 50000, 50000],
-      ["Lighter 25%", 75000, 25000],
-      ["Lighter 10%", 90000, 10000],
+      ["淡色 90%", 10000, 90000],
+      ["淡色 75%", 25000, 75000],
+      ["淡色 50%", 50000, 50000],
+      ["淡色 25%", 75000, 25000],
+      ["淡色 10%", 90000, 10000],
     ];
   if (l > 0.8)
     return [
-      ["Darker 5%", 95000, 0],
-      ["Darker 15%", 85000, 0],
-      ["Darker 25%", 75000, 0],
-      ["Darker 35%", 65000, 0],
-      ["Darker 50%", 50000, 0],
+      ["深色 5%", 95000, 0],
+      ["深色 15%", 85000, 0],
+      ["深色 25%", 75000, 0],
+      ["深色 35%", 65000, 0],
+      ["深色 50%", 50000, 0],
     ];
   return [
-    ["Lighter 80%", 20000, 80000],
-    ["Lighter 60%", 40000, 60000],
-    ["Lighter 40%", 60000, 40000],
-    ["Darker 25%", 75000, 0],
-    ["Darker 50%", 50000, 0],
+    ["淡色 80%", 20000, 80000],
+    ["淡色 60%", 40000, 60000],
+    ["淡色 40%", 60000, 40000],
+    ["深色 25%", 75000, 0],
+    ["深色 50%", 50000, 0],
   ];
 }
 const recent = [];
@@ -148,11 +148,11 @@ export function colorMenuItems({
   const grid = el("div", {
     class: "palette",
     role: "group",
-    "aria-label": "Colors",
+    "aria-label": "颜色",
     "data-arrow-keys": "",
   });
   if (theme) {
-    grid.append(el("div", { class: "palette-heading" }, "Theme Colors"));
+    grid.append(el("div", { class: "palette-heading" }, "主题颜色"));
     const base = el("div", { class: "palette-row" });
     const shades = el("div", { class: "palette-columns" });
     for (const [token, key, name] of THEME_SLOTS) {
@@ -164,14 +164,14 @@ export function colorMenuItems({
       for (const [step, mod, off] of steps(hex)) {
         const value = `scheme:${token}/lumMod=${mod}${off ? `/lumOff=${off}` : ""}`;
         column.append(
-          swatch(value, modulate(hex, mod, off), `${name}, ${step}`),
+          swatch(value, modulate(hex, mod, off), `${name}，${step}`),
         );
       }
       shades.append(column);
     }
     grid.append(base, shades);
   }
-  grid.append(el("div", { class: "palette-heading" }, "Standard Colors"));
+  grid.append(el("div", { class: "palette-heading" }, "标准色"));
   grid.append(
     el(
       "div",
@@ -180,7 +180,7 @@ export function colorMenuItems({
     ),
   );
   if (recent.length) {
-    grid.append(el("div", { class: "palette-heading" }, "Recent Colors"));
+    grid.append(el("div", { class: "palette-heading" }, "最近使用的颜色"));
     grid.append(
       el(
         "div",
@@ -246,11 +246,11 @@ export function colorMenuItems({
     { custom: grid },
     { separator: true },
     ...(none ? [{ ...none }] : []),
-    { label: "More Colors…", icon: "o:colors", onSelect: picker },
+    { label: "其他颜色…", icon: "o:colors", onSelect: picker },
     ...(window.EyeDropper
       ? [
           {
-            label: "Eyedropper",
+            label: "取色器",
             icon: "Pipette",
             onSelect: async () => {
               try {

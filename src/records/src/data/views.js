@@ -6,13 +6,13 @@
 import { newId } from '../lib/ids.js';
 
 export const VIEW_TYPES = {
-  grid: { label: 'Grid', icon: 'vGrid' },
-  kanban: { label: 'Kanban', icon: 'vKanban' },
-  calendar: { label: 'Calendar', icon: 'vCalendar' },
-  gallery: { label: 'Gallery', icon: 'vGallery' },
-  timeline: { label: 'Timeline', icon: 'vTimeline' },
-  list: { label: 'List', icon: 'vList' },
-  form: { label: 'Form', icon: 'vForm' },
+  grid: { label: '表格', icon: 'vGrid' },
+  kanban: { label: '看板', icon: 'vKanban' },
+  calendar: { label: '日历', icon: 'vCalendar' },
+  gallery: { label: '画廊', icon: 'vGallery' },
+  timeline: { label: '时间线', icon: 'vTimeline' },
+  list: { label: '列表', icon: 'vList' },
+  form: { label: '表单', icon: 'vForm' },
 };
 
 /** Whether a kanban board can stack by a field: one stack per record. */
@@ -23,10 +23,10 @@ export function canStack(f) {
 export const VIEW_ORDER = ['grid', 'calendar', 'gallery', 'kanban', 'timeline', 'list', 'form'];
 
 export const ROW_HEIGHTS = {
-  short: { label: 'Short', px: 32 },
-  medium: { label: 'Medium', px: 56 },
-  tall: { label: 'Tall', px: 88 },
-  xtall: { label: 'Extra tall', px: 136 },
+  short: { label: '紧凑', px: 32 },
+  medium: { label: '中等', px: 56 },
+  tall: { label: '宽松', px: 88 },
+  xtall: { label: '超宽', px: 136 },
 };
 
 export function emptyFilter() {
@@ -37,7 +37,7 @@ export function createView(table, type = 'grid', name) {
   const fields = table.fields;
   const view = {
     id: newId('viw'),
-    name: name || `${VIEW_TYPES[type]?.label || 'Grid'} view`,
+    name: name || `${VIEW_TYPES[type]?.label || '表格'}视图`,
     type,
     filters: emptyFilter(),
     sorts: [],
@@ -78,8 +78,8 @@ export function createView(table, type = 'grid', name) {
       fields: fields
         .filter((f) => !['formula', 'lookup', 'rollup', 'count', 'autonumber', 'createdTime', 'lastModifiedTime', 'createdBy', 'lastModifiedBy', 'button'].includes(f.type))
         .map((f) => ({ id: f.id, required: f.id === table.schema.primaryFieldId, label: '', help: '' })),
-      submitLabel: 'Submit',
-      message: 'Thanks for submitting the form.',
+      submitLabel: '提交',
+      message: '感谢您提交表单。',
       another: true,
     };
   }

@@ -21,9 +21,9 @@ export function todayView() {
   const root = el('section.view.today-view', {},
     el('header.view-head', {},
       menuButton(),
-      el('a.icon-btn.back-btn', { href: '#/', 'aria-label': 'All projects', html: icon('arrowL', 20, 2) }),
+      el('a.icon-btn.back-btn', { href: '#/', 'aria-label': '所有项目', html: icon('arrowL', 20, 2) }),
       el('div.grow', {},
-        el('h1.view-title', {}, 'Today'),
+        el('h1.view-title', {}, '今天'),
         el('p.form-hint.today-date', {}, fmtLong(todayISO()))
       )
     ),
@@ -44,11 +44,11 @@ export function todayView() {
     const { spawned } = spawnedBy(row.projectId, () => store.moveTask(
       row.projectId, row.task.id, doneCol.id, columnTasks(doc.tasks, doneCol.id).length,
     ));
-    toast(`Done: ${row.task.title}`, {
+    toast(`已完成：${row.task.title}`, {
       icon: 'taskDone',
       duration: 6000,
       action: {
-        label: 'Undo',
+        label: '撤销',
         onClick: () => {
           store.moveTask(row.projectId, row.task.id, from.columnId, Math.max(0, from.index));
           dropSpawned(row.projectId, spawned);
@@ -61,14 +61,14 @@ export function todayView() {
     const { task } = row;
     const box = el('input.agenda-check', {
       type: 'checkbox',
-      'aria-label': `Mark "${task.title}" done`,
+      'aria-label': `将“${task.title}”标记为已完成`,
       onchange: () => { if (box.checked) markDone(row); },
     });
 
     return el('div.agenda-row', {},
       box,
       el('a.agenda-main', { href: taskHash(row.projectId, task.id) },
-        el('span.agenda-title', {}, task.title || 'Untitled task'),
+        el('span.agenda-title', {}, task.title || '无标题任务'),
         el('span.agenda-meta', {},
           el('span.dot', { style: { background: row.projectColor }, 'aria-hidden': 'true' }),
           el('span.agenda-project', {}, row.projectName),
@@ -77,7 +77,7 @@ export function todayView() {
       ),
       el('span.agenda-badges', {},
         isRecurring(task) && el('span.card-count', {
-          html: icon('repeat', 12, 2), title: 'Repeats when done',
+          html: icon('repeat', 12, 2), title: '完成后重复',
         }),
         priorityBadge(task.priority),
         el('span.agenda-due', {}, fmtShort(task.dueDate))
@@ -88,7 +88,7 @@ export function todayView() {
   function render() {
     clear(list);
     if (loading) {
-      list.append(el('div.view-loading', { role: 'status', 'aria-label': 'Loading your projects' },
+      list.append(el('div.view-loading', { role: 'status', 'aria-label': '正在加载您的项目' },
         el('span.spinner')));
       return;
     }
@@ -101,10 +101,10 @@ export function todayView() {
     if (!counts.total) {
       list.append(emptyState({
         icon: 'calendarClock',
-        title: store.projects.length ? 'Nothing scheduled' : 'No projects yet',
+        title: store.projects.length ? '暂无计划任务' : '暂无项目',
         sub: store.projects.length
-          ? 'Give a task a due date and it shows up here, across every project.'
-          : 'Create a project and the work you date lands on this page.',
+          ? '为任务设置截止日期后，它会跨越所有项目显示在这里。'
+          : '创建项目并为工作设置日期后，它们将显示在此页面。',
       }));
       return;
     }

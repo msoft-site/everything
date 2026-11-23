@@ -104,7 +104,7 @@ export class App extends Emitter {
     this.engine.mode = mode;
   }
 
-  setTempo(bpm, label = 'Change tempo') {
+  setTempo(bpm, label = '修改速度') {
     this.store.apply(label, (p) => E.setProjectProps(p, { bpm }));
   }
 
@@ -113,21 +113,21 @@ export class App extends Emitter {
     const p = this.store.project;
     const insert = freeInsert(p);
     const ch = createChannel({ type, name, params, sample, color: colorAt(p.channels.length), mixer: insert });
-    const added = this.store.apply(`Add ${name || 'channel'}`, (proj) => {
+    const added = this.store.apply(`添加 ${name || '通道'}`, (proj) => {
       const result = E.addChannel(proj, ch, index ?? proj.channels.length);
       let next = result.project;
       if (insert > 0) next = E.updateMixerTrack(next, insert, { name: ch.name, color: ch.color });
       return { project: next, id: result.id };
     });
     if (select) this.store.selectChannels([added.id]);
-    this.notify(`Added ${ch.name}`);
+    this.notify(`已添加 ${ch.name}`);
     return added.id;
   }
 
   /** Replaces the project after asking about unsaved changes. `make` builds the new project. */
   async newProject(make) {
     const before = this.store.project;
-    if ((this.store.dirty || this.library?.hasTemporarySamples?.(before)) && !(await confirmDialog({ title: 'New project', message: 'Discard the changes to the current project?', confirm: 'Discard', danger: true }))) return false;
+    if ((this.store.dirty || this.library?.hasTemporarySamples?.(before)) && !(await confirmDialog({ title: '新建工程', message: '要放弃对当前工程所做的更改吗？', confirm: '放弃', danger: true }))) return false;
     if (this.store.project !== before) return false;
     const project = make();
     this.engine.stop();
@@ -167,12 +167,12 @@ export class App extends Emitter {
     const cloud = h('span.status-cloud');
     const syncCloud = () => {
       const signedIn = Boolean(window.puter?.auth?.isSignedIn?.());
-      cloud.replaceChildren(icon(signedIn ? 'cloud' : 'hard-drive', 12), h('span', signedIn ? 'Cloud storage on' : 'Working on this device'));
-      cloud.title = signedIn ? 'Projects save to your Puter cloud' : 'Sign in to save projects to your Puter cloud';
+      cloud.replaceChildren(icon(signedIn ? 'cloud' : 'hard-drive', 12), h('span', signedIn ? '云端存储已开启' : '在当前设备上工作'));
+      cloud.title = signedIn ? '工程将保存到您的 Puter 云端' : '登录以将工程保存到您的 Puter 云端';
     };
     this.on('account', syncCloud);
     syncCloud();
-    this.shell.statusbar.append(this.hintEl, h('span.status-spacer'), cloud, h('a.status-link', { href: REPO_URL, target: '_blank', rel: 'noopener', title: 'Music Studio is open source' }, icon('github', 12), h('span', 'Source on GitHub')), h('span.status-badge', { title: 'This app is an early alpha' }, 'Alpha'));
+    this.shell.statusbar.append(this.hintEl, h('span.status-spacer'), cloud, h('a.status-link', { href: REPO_URL, target: '_blank', rel: 'noopener', title: '音乐工作室是开源软件' }, icon('github', 12), h('span', 'GitHub 源码')), h('span.status-badge', { title: '此应用处于早期内测阶段' }, '内测版'));
   }
 
   installHints() {

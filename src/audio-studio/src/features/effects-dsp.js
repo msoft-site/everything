@@ -28,7 +28,7 @@ export function installEffectsDsp(app) {
   });
   app.commands.register({
     id: 'fx.captureNoisePrint',
-    label: 'Capture Noise Print',
+    label: '捕捉噪声样本',
     shortcut: 'Shift+P',
     enabled: (a) => Boolean(audioDoc(a)),
     // args.values: the Sound Remover settings to learn for (its window passes its own).
@@ -39,14 +39,14 @@ export function installEffectsDsp(app) {
       const end = Math.min(full, start + Math.round(MAX_SECONDS * doc.sampleRate));
       const channels = doc.state.channels.map((c) => c.toArray(start, end));
       try {
-        a.setStatus?.('Capturing noise print...');
+        a.setStatus?.('正在捕捉噪声样本...');
         const print = await captureNoisePrint(await dsp(), channels, doc.sampleRate);
         doc.noisePrint = print;
         doc.emit('change', { kind: 'noisePrint' });
         const secs = print.seconds.toFixed(print.seconds < 10 ? 2 : 1);
-        a.notify(`Noise print captured from ${secs} s of audio.${full > end ? ` Only the first ${MAX_SECONDS} s were used.` : ''}`);
+        a.notify(`已从 ${secs} 秒音频中捕捉噪声样本。${full > end ? `仅使用了前 ${MAX_SECONDS} 秒。` : ''}`);
       } catch (err) {
-        a.notify(err?.message || 'Could not capture a noise print.', { error: true });
+        a.notify(err?.message || '无法捕捉噪声样本。', { error: true });
       } finally {
         a.setStatus?.('');
       }
@@ -54,7 +54,7 @@ export function installEffectsDsp(app) {
   });
   app.commands.register({
     id: 'fx.learnSoundModel',
-    label: 'Learn Sound Model',
+    label: '学习声音模型',
     enabled: (a) => Boolean(audioDoc(a)),
     // args.values: the Sound Remover settings to learn for (its window passes its own).
     run: async (a, args) => {
@@ -70,20 +70,20 @@ export function installEffectsDsp(app) {
       const open = removerWindow?.doc === doc ? removerWindow.values : null;
       const values = normalizeValues(def, args?.values || open || lastValues(a.prefs, def));
       try {
-        const model = await withProgress(a, 'Learning Sound Model', (signal) => learnSoundModel(channels, doc.sampleRate, values, { signal }), { indeterminate: true });
+        const model = await withProgress(a, '正在学习声音模型', (signal) => learnSoundModel(channels, doc.sampleRate, values, { signal }), { indeterminate: true });
         doc.soundModel = model;
         doc.emit('change', { kind: 'soundModel' });
         const secs = model.seconds.toFixed(model.seconds < 10 ? 2 : 1);
-        a.notify(`Sound model learned from ${secs} s of audio (${model.bases.k} components).${full > end ? ` Only the first ${MAX_SOUND_SECONDS} s were used.` : ''}`);
+        a.notify(`已从 ${secs} 秒音频中学习声音模型（${model.bases.k} 个分量）。${full > end ? `仅使用了前 ${MAX_SOUND_SECONDS} 秒。` : ''}`);
       } catch (err) {
-        if (!isAbort(err)) a.notify(err?.message || 'Could not learn a sound model.', { error: true });
+        if (!isAbort(err)) a.notify(err?.message || '无法学习声音模型。', { error: true });
       }
     },
   });
   // Replaces the generic effect command (dialog, then apply) for this effect.
   app.commands.register({
     id: 'fx.clickPopEliminator',
-    label: 'Click/Pop Eliminator (process)...',
+    label: '咔嗒声/爆音消除器（处理）...',
     repeatable: true,
     enabled: (a) => Boolean(audioDoc(a)) && Boolean(getEffect('clickPopEliminator')),
     run: (a, args) => (args?.values ? a.runEffect('clickPopEliminator', args) : import('../diagnostics/click-pop.js').then((m) => m.openClickPopDialog(a, audioDoc(a)))),

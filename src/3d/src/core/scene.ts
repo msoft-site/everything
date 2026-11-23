@@ -79,7 +79,7 @@ export class Scene {
     objects: [],
     selected: null,
     selection: [],
-    name: 'Untitled scene',
+    name: '未命名场景',
     meshes: {},
     textures: {},
   };
@@ -88,7 +88,7 @@ export class Scene {
   private future: Entry[] = [];
   private pending: { label: string; before: SceneState } | null = null;
   private listeners = new Set<() => void>();
-  message = 'Ready';
+  message = '就绪';
   isolation: string[] = [];
   constructor(
     withDefault = true,
@@ -97,7 +97,7 @@ export class Scene {
     if (withDefault) {
       this.create('cube');
       this.past = [];
-      this.message = 'Ready';
+      this.message = '就绪';
     }
   }
   subscribe(fn: () => void) {
@@ -151,7 +151,7 @@ export class Scene {
   setFlag(id: string, key: 'hidden' | 'locked', value: boolean) {
     const o = this.state.objects.find((o) => o.id === id);
     if (!o) return;
-    this.edit(key === 'hidden' ? 'Changed visibility' : 'Changed lock', () => {
+    this.edit(key === 'hidden' ? '已更改可见性' : '已更改锁定状态', () => {
       if (value) o[key] = true;
       else delete o[key];
     });
@@ -162,9 +162,9 @@ export class Scene {
   }
   createCollection() {
     if (this.state.objects.length >= 5000)
-      throw new Error('A scene can contain at most 5,000 objects.');
+      throw new Error('一个场景最多可包含 5,000 个物体。');
     let result!: SceneObject;
-    this.edit('Created collection', () => {
+    this.edit('已创建集合', () => {
       const movable = this.canEditSelection ? this.selectedObjects : [];
       const ids = descendants(
         this.state,
@@ -178,7 +178,7 @@ export class Scene {
           depth++;
           current = this.state.objects.find((o) => o.id === current.parentId)!;
         }
-        if (depth > 63) throw new Error('Collection nesting is limited to 64 levels.');
+        if (depth > 63) throw new Error('集合嵌套深度最多为 64 层。');
       }
       let name = 'Collection',
         n = 2;
@@ -202,13 +202,13 @@ export class Scene {
   reparent(ids: string[], parentId?: string) {
     const parent = this.state.objects.find((o) => o.id === parentId);
     if (parentId && (!parent || parent.kind !== 'group' || this.locked(parent)))
-      throw new Error('Choose an unlocked collection.');
+      throw new Error('请选择一个未锁定的集合。');
     const selected = this.state.objects.filter((o) => ids.includes(o.id));
     if (!selected.length || selected.some((o) => this.locked(o)))
-      throw new Error('Unlock the selected objects before moving them.');
+      throw new Error('移动前请先解锁选中的物体。');
     const children = descendants(this.state, ids);
     if (parentId && children.has(parentId))
-      throw new Error('A collection cannot be moved inside itself or its descendants.');
+      throw new Error('集合不能移动到其自身或其子级内部。');
     // Keep only selected roots; their descendants follow without changing world transforms.
     const roots = selected.filter((o) => !o.parentId || !children.has(o.parentId));
     for (const root of roots) {
@@ -224,9 +224,9 @@ export class Scene {
           ...this.state.objects.filter((o) => o.parentId === id).map((o) => 1 + below(o.id)),
         );
       if (depth + below(root.id) > 63)
-        throw new Error('Collection nesting is limited to 64 levels.');
+        throw new Error('集合嵌套深度最多为 64 层。');
     }
-    this.edit('Moved to collection', () => {
+    this.edit('已移动到集合', () => {
       for (const o of roots) {
         if (parentId) o.parentId = parentId;
         else delete o.parentId;
@@ -235,7 +235,7 @@ export class Scene {
   }
   addLight(type: LightSettings['type']) {
     if (this.state.objects.filter((o) => o.kind === 'light').length >= 8)
-      throw new Error('A scene supports up to eight lights.');
+      throw new Error('一个场景最多支持 8 个灯光。');
     return this.addPresentation('light', {
       light: defaultLight(type),
       position: [3, 5, 4],
@@ -244,7 +244,7 @@ export class Scene {
   }
   addCamera(position: Vec3, rotation: Vec3, focalLength = 50) {
     if ([...position, ...rotation].some((v) => !Number.isFinite(v) || Math.abs(v) > 10000))
-      throw new Error('Camera position must be within 10,000 meters of the origin.');
+      throw new Error('摄像机位置必须在距离原点 10,000 米以内。');
     return this.addPresentation('camera', {
       camera: validateCamera({ ...defaultCamera(), focalLength }),
       position,
@@ -253,9 +253,9 @@ export class Scene {
   }
   private addPresentation(kind: 'light' | 'camera', fields: Partial<SceneObject>) {
     if (this.state.objects.length >= 5000)
-      throw new Error('A scene can contain at most 5,000 objects.');
+      throw new Error('一个场景最多可包含 5,000 个物体。');
     let object!: SceneObject;
-    this.edit(`Added ${kind}`, () => {
+    this.edit(kind === 'camera' ? '已添加摄像机' : '已添加灯光', () => {
       const base =
         kind === 'camera'
           ? 'Camera'
@@ -285,40 +285,40 @@ export class Scene {
     const o = this.selected;
     if (o?.light && this.canEditSelection) {
       const value = validateLight({ ...o.light, ...patch });
-      this.edit('Changed light', () => (o.light = value));
+      this.edit('已更改灯光', () => (o.light = value));
     }
   }
   setCamera(patch: Partial<CameraSettings>) {
     const o = this.selected;
     if (o?.camera && this.canEditSelection) {
       const value = validateCamera({ ...o.camera, ...patch });
-      this.edit('Changed camera', () => (o.camera = value));
+      this.edit('已更改摄像机', () => (o.camera = value));
     }
   }
   updateCameraPose(id: string, position: Vec3, rotation: Vec3) {
     if ([...position, ...rotation].some((v) => !Number.isFinite(v) || Math.abs(v) > 10000))
-      throw new Error('Camera position must be within 10,000 meters of the origin.');
+      throw new Error('摄像机位置必须在距离原点 10,000 米以内。');
     const o = this.state.objects.find((o) => o.id === id);
     if (o?.camera && !this.locked(o))
-      this.edit('Camera from view', () => {
+      this.edit('从视图设置摄像机', () => {
         o.position = [...position];
         o.rotation = [...rotation];
       });
   }
   setActiveCamera(id?: string) {
     if (id && !this.state.objects.some((o) => o.id === id && o.kind === 'camera')) return;
-    this.edit('Changed render camera', () => {
+    this.edit('已更改渲染摄像机', () => {
       if (id) this.state.activeCamera = id;
       else delete this.state.activeCamera;
     });
   }
   setEnvironment(patch: Partial<EnvironmentSettings>) {
     const value = validateEnvironment({ ...this.environment, ...patch });
-    this.edit('Changed environment', () => (this.state.environment = value));
+    this.edit('已更改环境', () => (this.state.environment = value));
   }
   setOutput(patch: Partial<OutputSettings>) {
     const value = validateOutput({ ...this.output, ...patch });
-    this.edit('Changed output', () => (this.state.output = value));
+    this.edit('已更改输出', () => (this.state.output = value));
   }
   get selected() {
     return this.state.objects.find((o) => o.id === this.state.selected) ?? null;
@@ -346,7 +346,7 @@ export class Scene {
   enterEdit(mesh: MeshAsset) {
     const object = this.selected;
     if (!object || !isMesh(object) || !this.canEditSelection) return;
-    this.edit('Convert to editable mesh', () => {
+    this.edit('转换为可编辑网格', () => {
       object.kind = 'mesh';
       object.meshId = mesh.id;
       this.state.meshes = { ...this.state.meshes, [mesh.id]: mesh };
@@ -365,7 +365,7 @@ export class Scene {
       [evaluated.id]: evaluated,
     };
     if (Object.values(assets).reduce((n, m) => n + m.count, 0) > 1_000_000)
-      throw new Error('The edit would exceed the scene mesh budget.');
+      throw new Error('此编辑操作将超出场景网格顶点数上限。');
     object.kind = 'mesh';
     object.meshId = evaluated.id;
     if (modifiers.length) {
@@ -384,7 +384,7 @@ export class Scene {
       object = this.selected;
     if (!edit || !object) return;
     const own = !this.pending;
-    if (own) this.begin('Edited mesh');
+    if (own) this.begin('已编辑网格');
     this.replaceGeometry(mesh, evaluated, object.modifiers ?? []);
     if (ids) edit.ids = [...ids];
     if (mode) edit.mode = mode;
@@ -394,7 +394,7 @@ export class Scene {
   rotateAxis(axis: Vec3, degrees: number) {
     if (!this.selected || !this.canEditSelection || !Number.isFinite(degrees)) return;
     const own = !this.pending;
-    if (own) this.begin('Rotated selection');
+    if (own) this.begin('已旋转选中项');
     const before = this.pending!.before,
       ids = descendants(before, before.selection),
       objects = before.objects.filter((o) => ids.has(o.id)),
@@ -423,10 +423,10 @@ export class Scene {
     textures: Record<string, TextureAsset>,
   ) {
     if (this.state.objects.length + objects.length > 5000)
-      throw new Error('A scene can contain at most 5,000 objects.');
+      throw new Error('一个场景最多可包含 5,000 个物体。');
     if ([...this.state.objects, ...objects].filter((o) => o.kind === 'light').length > 8)
-      throw new Error('A scene supports up to eight lights.');
-    this.edit('Imported GLB', () => {
+      throw new Error('一个场景最多支持 8 个灯光。');
+    this.edit('已导入 GLB', () => {
       delete this.state.edit;
       this.state.objects.push(...structuredClone(objects));
       this.state.meshes = { ...this.state.meshes, ...meshes };
@@ -438,7 +438,7 @@ export class Scene {
   setMaterial(patch: Partial<Material>, texture?: TextureAsset, channels?: 'rgb' | 'alpha') {
     const objects = this.affectedObjects.filter(isMesh);
     if (!objects.length || !this.canEditSelection) return;
-    this.edit('Changed material', () => {
+    this.edit('已更改材质', () => {
       if (texture) this.state.textures = { ...this.state.textures, [texture.id]: texture };
       for (const o of objects) {
         const old = o.material ?? defaultMaterial();
@@ -469,7 +469,7 @@ export class Scene {
     if (!objects.length) return null;
     return {
       ...objects[0],
-      name: objects.length === 1 ? objects[0].name : `${objects.length} objects selected`,
+      name: objects.length === 1 ? objects[0].name : `已选择 ${objects.length} 个物体`,
       position: this.center(objects),
       rotation: this.pending ? this.groupValues.rotation : [0, 0, 0],
       scale: this.pending ? this.groupValues.scale : [1, 1, 1],
@@ -536,7 +536,7 @@ export class Scene {
     if (this.pending) {
       this.state = this.pending.before;
       this.pending = null;
-      this.message = 'Change cancelled';
+      this.message = '已取消更改';
       this.emit();
     }
   }
@@ -552,9 +552,10 @@ export class Scene {
   }
   create(kind: Primitive) {
     if (this.state.objects.length >= 5000)
-      throw new Error('A scene can contain at most 5,000 objects.');
+      throw new Error('一个场景最多可包含 5,000 个物体。');
     let result!: SceneObject;
-    this.edit(`Added ${kind}`, () => {
+    const KIND_LABELS: Record<Primitive, string> = { cube: '立方体', sphere: '球体', plane: '平面' };
+    this.edit(`已添加${KIND_LABELS[kind] ?? kind}`, () => {
       const base = kind[0].toUpperCase() + kind.slice(1);
       let name = base,
         n = 2;
@@ -602,14 +603,14 @@ export class Scene {
       this.past = [];
       this.future = [];
       this.pending = null;
-      this.message = 'Recovered scene';
+      this.message = '已恢复场景';
       this.emit();
-    } else this.edit('Opened scene', () => (this.state = snapshot(state)));
+    } else this.edit('已打开场景', () => (this.state = snapshot(state)));
   }
   duplicateSelected() {
     if (!this.selected || !this.canEditSelection) return;
     if (this.state.objects.length + this.affectedObjects.length > 5000) {
-      this.message = 'Cannot duplicate: a scene can contain at most 5,000 objects.';
+      this.message = '无法复制：一个场景最多可包含 5,000 个物体。';
       this.emit();
       return;
     }
@@ -618,11 +619,11 @@ export class Scene {
         this.affectedObjects.filter((o) => o.kind === 'light').length >
       8
     ) {
-      this.message = 'Cannot duplicate: a scene supports up to eight lights.';
+      this.message = '无法复制：一个场景最多支持 8 个灯光。';
       this.emit();
       return;
     }
-    this.edit('Duplicated selection', () => {
+    this.edit('已复制选中项', () => {
       delete this.state.edit;
       const originals = this.affectedObjects,
         copies: SceneObject[] = [];
@@ -652,17 +653,17 @@ export class Scene {
     const o = this.state.objects.find((o) => o.id === id);
     const value = name.trim().slice(0, 80);
     if (o && !this.locked(o) && value && o.name !== value)
-      this.edit('Renamed object', () => (o.name = value));
+      this.edit('已重命名物体', () => (o.name = value));
   }
   renameScene(name: string) {
     const value = name.trim().slice(0, 80);
     if (value && value !== this.state.name)
-      this.edit('Renamed scene', () => (this.state.name = value));
+      this.edit('已重命名场景', () => (this.state.name = value));
   }
   deleteSelected() {
     if (!this.selected || !this.canEditSelection) return;
     const ids = descendants(this.state, this.state.selection);
-    this.edit('Deleted object', () => {
+    this.edit('已删除物体', () => {
       this.state.objects = this.state.objects.filter((o) => !ids.has(o.id));
       this.state.selected = null;
       this.state.selection = [];
@@ -676,9 +677,10 @@ export class Scene {
     const valid = value.map((v) =>
       key === 'scale' ? Math.max(0.01, Math.min(100, v)) : Math.max(-10000, Math.min(10000, v)),
     ) as Vec3;
+    const KEY_LABELS: Record<TransformKey, string> = { position: '位置', rotation: '旋转', scale: '缩放' };
     if (this.batchTransform) {
       const own = !this.pending;
-      if (own) this.begin(`Changed selection ${key}`);
+      if (own) this.begin(`已更改选中项${KEY_LABELS[key]}`);
       const affected = descendants(this.pending!.before, this.state.selection);
       const baseline = this.pending!.before.objects.filter((o) => affected.has(o.id));
       const pivot = this.center(baseline.filter((o) => this.isSelected(o.id)));
@@ -720,7 +722,7 @@ export class Scene {
     } else if (this.pending) {
       o[key] = valid;
       this.emit();
-    } else this.edit(`Changed ${key}`, () => (o[key] = valid));
+    } else this.edit(`已更改${KEY_LABELS[key]}`, () => (o[key] = valid));
   }
   undo() {
     if (this.pending) this.cancel();
@@ -728,7 +730,7 @@ export class Scene {
     if (!e) return;
     this.future.push(e);
     this.state = snapshot(e.before);
-    this.message = `Undo: ${e.label.toLowerCase()}`;
+    this.message = `撤销: ${e.label}`;
     this.emit();
   }
   redo() {
@@ -737,7 +739,7 @@ export class Scene {
     if (!e) return;
     this.past.push(e);
     this.state = snapshot(e.after);
-    this.message = `Redo: ${e.label.toLowerCase()}`;
+    this.message = `重做: ${e.label}`;
     this.emit();
   }
 }

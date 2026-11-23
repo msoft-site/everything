@@ -54,9 +54,9 @@ setApp(new App(startupDocument()));
 
 registerEditor({
   id: 'VIEW_3D',
-  label: '3D Viewport',
+  label: '3D 视口',
   icon: 'view3d',
-  group: 'General',
+  group: '通用',
   create: (area, state) => {
     const v = new View3D(area, state);
     setLastView3D(v);
@@ -81,7 +81,7 @@ try {
     ctx.engine.restoreCallbacks.add(restored);
   };
 } catch (e) {
-  showFatal(`WebGL 2 is required to display the 3D viewport. ${e instanceof Error ? e.message : ''}`);
+  showFatal(`显示 3D 视口需要 WebGL 2 支持。${e instanceof Error ? e.message : ''}`);
 }
 onImageReady(() => {
   ctx?.forceSync();
@@ -139,9 +139,9 @@ const recovered = claimRecovery(!factoryStartup, untouched)
       // re-enter the saved mode through its handler so mode state is initialised
       if (mode !== 'OBJECT' && app.activeObject && setMode(app.doc, mode)) app.changed('mode');
       app.dirty = true;
-      app.report('INFO', 'Recovered the last autosaved session');
+      app.report('INFO', '已恢复上次自动保存的会话');
     } catch {
-      app.report('WARNING', 'The autosaved session could not be recovered');
+      app.report('WARNING', '无法恢复自动保存的会话');
     }
   })
   .catch(() => {});

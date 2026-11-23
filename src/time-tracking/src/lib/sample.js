@@ -11,18 +11,18 @@ import { monthKeyOf, addDays, todayISO } from './time.js';
 export function sampleDataset(store) {
   const now = Date.now();
   const clients = [
-    { id: uid(), name: 'Acme Studio', slot: 1, rate: 95, archived: false, createdAt: now },
-    { id: uid(), name: 'Northwind Labs', slot: 3, rate: 120, archived: false, createdAt: now },
-    { id: uid(), name: 'Internal', slot: 7, rate: null, archived: false, createdAt: now },
+    { id: uid(), name: '艾克米工作室', slot: 1, rate: 95, archived: false, createdAt: now },
+    { id: uid(), name: '北风实验室', slot: 3, rate: 120, archived: false, createdAt: now },
+    { id: uid(), name: '内部事务', slot: 7, rate: null, archived: false, createdAt: now },
   ];
   const [acme, northwind, internal] = clients;
 
   const projects = [
-    { id: uid(), clientId: acme.id, name: 'Website redesign', rate: null, billable: true, archived: false, createdAt: now },
-    { id: uid(), clientId: acme.id, name: 'Brand guidelines', rate: 110, billable: true, archived: false, createdAt: now },
-    { id: uid(), clientId: northwind.id, name: 'Mobile app', rate: null, billable: true, archived: false, createdAt: now },
-    { id: uid(), clientId: northwind.id, name: 'API integration', rate: 140, billable: true, archived: false, createdAt: now },
-    { id: uid(), clientId: internal.id, name: 'Admin and email', rate: null, billable: false, archived: false, createdAt: now },
+    { id: uid(), clientId: acme.id, name: '网站改版', rate: null, billable: true, archived: false, createdAt: now },
+    { id: uid(), clientId: acme.id, name: '品牌视觉规范', rate: 110, billable: true, archived: false, createdAt: now },
+    { id: uid(), clientId: northwind.id, name: '移动应用', rate: null, billable: true, archived: false, createdAt: now },
+    { id: uid(), clientId: northwind.id, name: 'API 集成', rate: 140, billable: true, archived: false, createdAt: now },
+    { id: uid(), clientId: internal.id, name: '行政与邮件', rate: null, billable: false, archived: false, createdAt: now },
   ];
   const [website, brand, mobile, api, admin] = projects;
 
@@ -34,30 +34,30 @@ export function sampleDataset(store) {
      Weekdays only; hours land between 4.5h and 7.5h a day. */
   const patterns = [
     [ // Monday
-      { p: website, task: 'Design review', h: 1.5 },
-      { p: mobile, task: 'Sprint planning', h: 1 },
-      { p: website, task: 'Homepage build', h: 3 },
-      { p: admin, task: 'Email and invoicing', h: 0.75 },
+      { p: website, task: '设计评审', h: 1.5 },
+      { p: mobile, task: '迭代规划', h: 1 },
+      { p: website, task: '首页开发', h: 3 },
+      { p: admin, task: '邮件与开票', h: 0.75 },
     ],
     [ // Tuesday
-      { p: mobile, task: 'Onboarding flow', h: 3.5 },
-      { p: api, task: 'Webhook endpoints', h: 2 },
-      { p: admin, task: 'Email and invoicing', h: 0.5 },
+      { p: mobile, task: '引导流程', h: 3.5 },
+      { p: api, task: 'Webhook 接口', h: 2 },
+      { p: admin, task: '邮件与开票', h: 0.5 },
     ],
     [ // Wednesday
-      { p: website, task: 'Homepage build', h: 2.5 },
-      { p: brand, task: 'Logo refinements', h: 2 },
-      { p: mobile, task: 'Client call', h: 1 },
+      { p: website, task: '首页开发', h: 2.5 },
+      { p: brand, task: '标志优化', h: 2 },
+      { p: mobile, task: '客户会议', h: 1 },
     ],
     [ // Thursday
-      { p: api, task: 'Webhook endpoints', h: 3 },
-      { p: mobile, task: 'Onboarding flow', h: 2.5 },
-      { p: admin, task: 'Bookkeeping', h: 1 },
+      { p: api, task: 'Webhook 接口', h: 3 },
+      { p: mobile, task: '引导流程', h: 2.5 },
+      { p: admin, task: '账务整理', h: 1 },
     ],
     [ // Friday
-      { p: website, task: 'QA and fixes', h: 2 },
-      { p: brand, task: 'Typography specs', h: 1.5 },
-      { p: mobile, task: 'Sprint review', h: 1 },
+      { p: website, task: '测试与修复', h: 2 },
+      { p: brand, task: '排版规范', h: 1.5 },
+      { p: mobile, task: '迭代回顾', h: 1 },
     ],
   ];
 

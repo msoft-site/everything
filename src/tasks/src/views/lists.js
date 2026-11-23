@@ -215,7 +215,7 @@ export function listDetailView(listId, { navigate }) {
 
   if (done.length) {
     root.append(
-      el('div.section-label', {}, 'Completed', el('span.count', {}, plural(done.length, 'task'))),
+      el('div.section-label', {}, '已完成', el('span.count', {}, plural(done.length, 'task'))),
       taskCard(done)
     );
   }

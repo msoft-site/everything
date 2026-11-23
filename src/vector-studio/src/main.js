@@ -64,7 +64,7 @@ async function boot() {
             const p = await profile(puter);
             app.setUser(p.user, p.picture);
           } catch {
-            app.notify('Sign in was cancelled.');
+            app.notify('登录已取消。');
           }
         }
       : null,

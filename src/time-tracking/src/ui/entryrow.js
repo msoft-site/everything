@@ -21,7 +21,7 @@ export function entryRow(entry, { onResume = null, select = null } = {}) {
   const client = store.client(project?.clientId);
   const amount = store.entryAmount(entry);
 
-  const title = [project?.name || 'No project', entry.task].filter(Boolean).join(' · ');
+  const title = [project?.name || '无项目', entry.task].filter(Boolean).join(' · ');
   // When the entry knows its clock times, they belong in the row: a day
   // nobody can reconstruct is unauditable even to the person who worked it.
   const times = fmtTimeRange(entry.startedAt, entry.endedAt);
@@ -34,7 +34,7 @@ export function entryRow(entry, { onResume = null, select = null } = {}) {
     type: 'checkbox',
     checked: !!select.checked,
     disabled: !!select.disabled,
-    'aria-label': locked ? `Invoiced, cannot select: ${what}` : `Select entry: ${what}`,
+    'aria-label': locked ? `已开票，无法选择：${what}` : `选择记录：${what}`,
     onchange: () => select.onToggle(checkbox.checked),
   });
 
@@ -42,8 +42,8 @@ export function entryRow(entry, { onResume = null, select = null } = {}) {
     checkbox,
     el('button.entry-main', {
       type: 'button',
-      'aria-label': !select ? `Edit entry: ${what}`
-        : locked ? `Invoiced and locked: ${what}` : `Toggle selection: ${what}`,
+      'aria-label': !select ? `编辑记录：${what}`
+        : locked ? `已开票且已锁定：${what}` : `切换选择：${what}`,
       onclick: () => {
         // A locked row opens read-only, which explains the lock and links
         // to the invoice, rather than swallowing the tap.
@@ -58,15 +58,15 @@ export function entryRow(entry, { onResume = null, select = null } = {}) {
       colorDot(client?.slot),
       el('div.entry-text', {},
         el('div.entry-title', {},
-          project?.name || 'No project',
+          project?.name || '无项目',
           entry.task && el('span.entry-task', {}, ` · ${entry.task}`)
         ),
         el('div.entry-sub', {},
-          client?.name || 'No client',
+          client?.name || '无客户',
           times && el('span.entry-times', {}, ` · ${times}`),
           entry.notes && ` · ${entry.notes}`,
-          !entry.billable && el('span.chip.chip-plain', {}, 'Non-billable'),
-          entry.invoicedAt && el('span.chip.chip-plain.chip-invoiced', {}, 'Invoiced')
+          !entry.billable && el('span.chip.chip-plain', {}, '不可计费'),
+          entry.invoicedAt && el('span.chip.chip-plain.chip-invoiced', {}, '已开票')
         )
       ),
       el('div.entry-nums', {},
@@ -76,8 +76,8 @@ export function entryRow(entry, { onResume = null, select = null } = {}) {
     ),
     onResume && el('button.icon-btn.entry-resume', {
       html: icon('play', 17, 2),
-      'aria-label': `Start timer for ${title}`,
-      title: 'Start timer for this work',
+      'aria-label': `为 ${title} 启动计时器`,
+      title: '为此项工作启动计时器',
       onclick: () => onResume(entry),
     })
   );

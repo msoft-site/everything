@@ -210,9 +210,9 @@ const els = {
 const SETTINGS_KEY = 'backgammon-settings';
 const MODES = ['computer', 'local', 'online'];
 const MODE_NOTES = {
-  computer: 'Player vs. Computer',
-  local: 'Pass & Play',
-  online: 'Online Match',
+  computer: '人机对战',
+  local: '同屏对战',
+  online: '在线对战',
 };
 /** Clock repaint rate. Tenths are shown when the time is low; this reads them. */
 const CLOCK_TICK_MS = 100;
@@ -352,7 +352,7 @@ function gameFinished() {
 }
 
 function opponentLabel() {
-  return opponentName || 'Your friend';
+  return opponentName || '您的好友';
 }
 
 /** The colour the person at this device is playing right now, or null. */
@@ -776,9 +776,9 @@ function goToPly(target) {
 function announceReview() {
   const count = viewEntries();
   if (!reviewing()) {
-    announce('Back to the current position.');
+    announce('已返回当前局面。');
   } else if (count === 0) {
-    announce('Starting position.');
+    announce('初始局面。');
   } else {
     announce(`${entryNotation(game.history()[count - 1]).trim()}. Reviewing.`);
   }
@@ -870,7 +870,7 @@ function restoreGame() {
       : `Game restored. You play ${nameOf(myColor)}.`,
   );
   renderAll();
-  showToast('Picked up where you left off.');
+  showToast('已恢复上次未完成的对局。');
   resumeTurn();
   return true;
 }
@@ -2579,7 +2579,7 @@ function readInviteFromUrl() {
 async function copyInviteCode() {
   if (!session?.inviteCode) return;
   if (await copyToClipboard(session.inviteCode)) {
-    showToast('Invite code copied.');
+    showToast('邀请码已复制。');
     const copyIcon = els.copyCodeBtn.querySelector('.icon-copy');
     const checkIcon = els.copyCodeBtn.querySelector('.icon-check');
     copyIcon?.classList.add('hidden');

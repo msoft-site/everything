@@ -34,7 +34,7 @@ export function monthKey(input = new Date()) {
 export function monthLabel(key, { short = false } = {}) {
   const [y, m] = key.split('-').map(Number);
   const d = new Date(y, m - 1, 1);
-  return d.toLocaleDateString(undefined, { month: short ? 'short' : 'long', year: 'numeric' });
+  return d.toLocaleDateString('zh-CN', { month: short ? 'short' : 'long', year: 'numeric' });
 }
 
 export function shiftMonth(key, delta) {
@@ -70,19 +70,19 @@ export function daysBetween(a, b) {
 export function formatDate(iso, opts = {}) {
   const d = parseISO(iso);
   if (!d) return iso || '';
-  return d.toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric', ...opts });
+  return d.toLocaleDateString('zh-CN', { day: 'numeric', month: 'short', year: 'numeric', ...opts });
 }
 
 /** Today / Yesterday / weekday for the current week / short date otherwise. */
 export function friendlyDay(iso, now = new Date()) {
   const diff = daysBetween(iso, todayISO(now));
-  if (diff === 0) return 'Today';
-  if (diff === 1) return 'Yesterday';
+  if (diff === 0) return '今天';
+  if (diff === 1) return '昨天';
   const d = parseISO(iso);
   if (!d) return iso;
-  if (diff > 1 && diff < 7) return d.toLocaleDateString(undefined, { weekday: 'long' });
+  if (diff > 1 && diff < 7) return d.toLocaleDateString('zh-CN', { weekday: 'long' });
   const sameYear = d.getFullYear() === now.getFullYear();
-  return d.toLocaleDateString(undefined, { weekday: 'short', day: 'numeric', month: 'short', year: sameYear ? undefined : 'numeric' });
+  return d.toLocaleDateString('zh-CN', { weekday: 'short', day: 'numeric', month: 'short', year: sameYear ? undefined : 'numeric' });
 }
 
 const MONTHS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];

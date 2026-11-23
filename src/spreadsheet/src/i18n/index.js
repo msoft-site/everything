@@ -200,11 +200,12 @@ export function setLanguagePreference(pref) {
  * The language to show: ?lang= in the address (for a link, or for testing), then the person's
  * choice, then the best match for the browser's languages.
  */
-export function resolveLanguage({ search = globalThis.location?.search || '', preference = languagePreference(), requested = browserLanguages() } = {}) {
+export function resolveLanguage({ search = globalThis.location?.search || '', preference = languagePreference(), requested } = {}) {
   const asked = new URLSearchParams(search).get('lang');
   if (asked && isLanguage(asked)) return asked;
   if (preference !== 'auto' && isLanguage(preference)) return preference;
-  return negotiateLanguage(requested);
+  if (requested !== undefined) return negotiateLanguage(requested);
+  return 'zh-Hans';
 }
 
 /** The catalogs of `id`, flattened. */

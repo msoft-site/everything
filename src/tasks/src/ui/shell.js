@@ -26,12 +26,12 @@ import { tagView } from '../views/tag.js';
    tab: false live in the More sheet there. The desktop sidebar shows
    everything. */
 const ROUTES = [
-  { hash: '#/', label: 'Today', icon: 'checkBig', view: todayView },
-  { hash: '#/upcoming', label: 'Upcoming', icon: 'calendarClock', view: upcomingView },
-  { hash: '#/lists', label: 'Lists', icon: 'grid', view: listsView },
-  { hash: '#/calendar', label: 'Calendar', icon: 'calendar', view: calendarView },
-  { hash: '#/logbook', label: 'Logbook', icon: 'history', view: logbookView, tab: false },
-  { hash: '#/settings', label: 'Settings', icon: 'gear', view: settingsView, tab: false },
+  { hash: '#/', label: '今天', icon: 'checkBig', view: todayView },
+  { hash: '#/upcoming', label: '即将到来', icon: 'calendarClock', view: upcomingView },
+  { hash: '#/lists', label: '清单', icon: 'grid', view: listsView },
+  { hash: '#/calendar', label: '日历', icon: 'calendar', view: calendarView },
+  { hash: '#/logbook', label: '已完成', icon: 'history', view: logbookView, tab: false },
+  { hash: '#/settings', label: '设置', icon: 'gear', view: settingsView, tab: false },
 ];
 
 const MORE_SUBS = {
@@ -48,7 +48,7 @@ export function mountShell(appRoot) {
   const sidebar = el('aside.sidebar', {},
     el('div.brand', {},
       el('img.brand-mark', { src: iconUrl, width: 28, height: 28, alt: '' }),
-      'Tasks'
+      '待办事项'
     ),
     el('button.btn.btn-primary.btn-block.sidebar-new', {
       html: icon('plus', 16, 2.4),
@@ -65,7 +65,7 @@ export function mountShell(appRoot) {
 
   const tabbar = el('nav.tabbar', { 'aria-label': 'Main' });
   const fab = el('button.fab', {
-    html: icon('plus', 24, 2.4), 'aria-label': 'New task',
+    html: icon('plus', 24, 2.4), 'aria-label': '新建任务',
     onclick: () => openTaskForm({}),
   });
 
@@ -79,7 +79,7 @@ export function mountShell(appRoot) {
         main.setAttribute('tabindex', '-1');
         main.focus();
       },
-    }, 'Skip to content'),
+    }, '跳转到主要内容'),
     el('div.shell', {}, sidebar, main),
     tabbar,
     fab
@@ -92,13 +92,13 @@ export function mountShell(appRoot) {
     if (!store.settings.sampleData) return;
     sampleBanner.append(el('div.sample-banner', {},
       el('span', { html: icon('sparkle', 14, 2.2), style: { color: 'var(--accent)', display: 'inline-flex' } }),
-      el('span.grow', {}, 'Sample data: explore freely, nothing here is yours'),
+      el('span.grow', {}, '示例数据：欢迎随意体验，此处并非您的真实数据'),
       el('button', {
         onclick: async () => {
           const ok = await confirmDialog({
-            title: 'Start fresh?',
+            title: '重新开始？',
             message: 'All sample data is removed and you start with a clean slate.',
-            confirmLabel: 'Wipe sample data',
+            confirmLabel: '清除示例数据',
           });
           if (!ok) return;
           try {
@@ -111,7 +111,7 @@ export function mountShell(appRoot) {
           location.hash = '#/';
           openOnboarding();
         },
-      }, 'Start fresh')
+      }, '重新开始')
     ));
   }
 
@@ -198,9 +198,9 @@ export function mountShell(appRoot) {
       html: icon('more', 21),
       'aria-haspopup': 'dialog',
       onclick: openMoreSheet,
-    }, el('span', {}, 'More')));
+    }, el('span', {}, '更多')));
 
-    document.title = n > 0 ? `(${n}) Tasks` : 'Tasks';
+    document.title = n > 0 ? `(${n}) Tasks` : '待办事项';
   }
 
   function openMoreSheet() {
@@ -222,7 +222,7 @@ export function mountShell(appRoot) {
       el('div', {}, el('div.s-label', {}, 'Search'), el('div.s-sub', {}, 'Find any task by name or notes')),
       el('span.s-end', { html: icon('chevR', 17) })
     ));
-    const modal = openModal({ title: 'More', content: body });
+    const modal = openModal({ title: '更多', content: body });
   }
 
   /* ---------- view rendering ---------- */

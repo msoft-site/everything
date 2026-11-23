@@ -9,7 +9,7 @@ let idSeq = 0;
 const nextId = (prefix) => `${prefix}-${++idSeq}`;
 
 /* One wording for an unparseable hourly rate, wherever one is typed. */
-export const RATE_ERROR = 'Enter the rate as a number, like 120';
+export const RATE_ERROR = '请输入数字格式的费率，例如 120';
 
 /** Label + control, wired together for a11y. */
 export function field(label, control, { hint = null } = {}) {
@@ -96,10 +96,10 @@ export function rateHistoryLine(value, currency) {
   const periods = ratePeriods(value);
   if (!periods.length || (periods.length === 1 && periods[0].from == null)) return null;
   const parts = periods.map((p) => {
-    const rate = p.rate == null ? 'inherited rate' : `${fmtMoney(p.rate, currency)}/h`;
-    return p.from ? `${rate} from ${fmtDay(p.from, { year: true })}` : `${rate} before`;
+    const rate = p.rate == null ? '继承费率' : `${fmtMoney(p.rate, currency)}/h`;
+    return p.from ? `自 ${fmtDay(p.from, { year: true })} 起 ${rate}` : `此前 ${rate}`;
   });
-  return el('p.field-hint', {}, `Rate history: ${parts.join(' · ')}`);
+  return el('p.field-hint', {}, `费率历史：${parts.join(' · ')}`);
 }
 
 /** Small colored dot identifying a client (color slot 1..8). */
@@ -117,7 +117,7 @@ export function colorDot(slot, size = 10) {
 export function projectSelect(store, selectedId = null, { allowEmpty = true } = {}) {
   const select = el('select.select', { required: true });
   if (allowEmpty) {
-    select.append(el('option', { value: '', selected: !selectedId, disabled: true }, 'Select a project'));
+    select.append(el('option', { value: '', selected: !selectedId, disabled: true }, '选择项目'));
   }
   for (const client of store.activeClients()) {
     const projects = store.projectsOf(client.id);
@@ -131,7 +131,7 @@ export function projectSelect(store, selectedId = null, { allowEmpty = true } = 
   // An archived project on an old entry still needs to show as itself.
   if (selectedId && !store.activeProjects().some((p) => p.id === selectedId)) {
     const p = store.project(selectedId);
-    if (p) select.append(el('option', { value: p.id, selected: true }, `${p.name} (archived)`));
+    if (p) select.append(el('option', { value: p.id, selected: true }, `${p.name}（已归档）`));
   }
   return select;
 }

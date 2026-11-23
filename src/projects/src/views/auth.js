@@ -7,29 +7,29 @@ export function authView({ onSignedIn }) {
   const cta = el('button.btn.btn-primary.auth-cta', {
     onclick: async () => {
       cta.disabled = true;
-      cta.textContent = 'Waiting for Puter…';
+      cta.textContent = '正在等待 Puter…';
       try {
         await puter.auth.signIn();
         onSignedIn();
       } catch {
         cta.disabled = false;
-        cta.textContent = 'Sign in';
+        cta.textContent = '登录';
       }
     },
-  }, 'Sign in');
+  }, '登录');
 
   return el('div.auth-view', {},
     appIcon(84, 'auth-logo'),
-    el('h1.auth-title', {}, 'Project Management'),
-    el('p.auth-sub', {}, 'Boards, timelines, and milestones for people who ship. Light enough to enjoy, structured enough to trust.'),
+    el('h1.auth-title', {}, '项目管理'),
+    el('p.auth-sub', {}, '专为高效交付打造的看板、时间线与里程碑。轻巧易用，结构严谨，值得信赖。'),
     el('div.auth-features', {},
-      feature('board', 'Kanban boards with drag and drop, labels, priorities, and assignees'),
-      feature('timeline', 'A timeline that shows every dated task and milestone at a glance'),
-      feature('cloud', 'Comments and files on every task, stored in your own Puter cloud')
+      feature('board', '支持拖拽、标签、优先级和负责人的看板'),
+      feature('timeline', '一目了然展现所有带日期任务与里程碑的时间线'),
+      feature('cloud', '每个任务均支持评论与附件，保存在您自己的 Puter 云端')
     ),
     cta,
-    el('p.auth-note', {}, 'Free. No ads. Powered by ',
-      el('a', { href: 'https://developer.puter.com', target: '_blank', rel: 'noopener' }, 'Puter'))
+    el('p.auth-note', {}, '免费 · 无广告 · 由 ',
+      el('a', { href: 'https://developer.puter.com', target: '_blank', rel: 'noopener' }, 'Puter'), ' 提供支持')
   );
 
   function feature(ic, text) {

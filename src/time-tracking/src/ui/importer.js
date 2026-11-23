@@ -17,7 +17,7 @@ import { sum } from '../lib/util.js';
 
 export function openImporter() {
   const body = el('div');
-  const modal = openModal({ title: 'Import time data', content: body });
+  const modal = openModal({ title: '导入工时数据', content: body });
 
   let headers = [];
   let dataRows = [];
@@ -42,7 +42,7 @@ export function openImporter() {
           rows = [];
         }
         if (rows.length < 2) {
-          toast('That file has no data rows', { icon: 'x' });
+          toast('该文件没有数据行', { icon: 'x' });
           return;
         }
         headers = rows[0];
@@ -54,13 +54,13 @@ export function openImporter() {
     append(body, [
       el('div.onboard-hero', {},
         el('div.empty-icon', { html: icon('fileUp', 28) }),
-        el('h3.onboard-title', {}, 'Bring your history with you'),
-        el('p.onboard-sub', {}, 'Use the detailed CSV export from Toggl, Clockify, Harvest, or any tracker with date, duration, and project columns. Clients and projects are matched by name and created when missing.')
+        el('h3.onboard-title', {}, '迁移您的历史记录'),
+        el('p.onboard-sub', {}, '支持来自 Toggl、Clockify、Harvest 的详细 CSV 导出文件，或任何包含日期、时长和项目列的工时追踪工具导出文件。客户和项目将按名称匹配，若不存在则自动创建。')
       ),
       el('button.btn.btn-primary.btn-block.btn-tall', {
         type: 'button',
         onclick: () => fileInput.click(),
-      }, 'Choose a CSV file'),
+      }, '选择 CSV 文件'),
       fileInput,
     ]);
   }
@@ -77,11 +77,11 @@ export function openImporter() {
     const errors = {};
     const rows = IMPORT_TARGETS.map((t) => {
       const select = el('select.select', {},
-        el('option', { value: -1, selected: mapping[t.key] === -1 }, t.required ? 'Choose a column' : 'Not in the file'),
-        headers.map((h, i) => el('option', { value: i, selected: mapping[t.key] === i }, h || `Column ${i + 1}`))
+        el('option', { value: -1, selected: mapping[t.key] === -1 }, t.required ? '选择列' : '文件中无此项'),
+        headers.map((h, i) => el('option', { value: i, selected: mapping[t.key] === i }, h || `第 ${i + 1} 列`))
       );
       selects[t.key] = select;
-      const row = field(t.required ? `${t.label} (required)` : t.label, select);
+      const row = field(t.required ? `${t.label}（必填）` : t.label, select);
       if (!t.required) return row;
       const err = fieldError(select);
       errors[t.key] = err;
@@ -92,8 +92,8 @@ export function openImporter() {
     append(body, [
       el('p.onboard-p', {},
         source === 'CSV'
-          ? 'Match the file columns to Hourly fields.'
-          : `This looks like a ${source} export; the columns below are matched already.`),
+          ? '将文件中的列与 Hourly 字段进行匹配。'
+          : `这看起来是 ${source} 的导出文件；以下列已为您自动匹配。`),
       el('div.import-map', {}, rows),
       el('button.btn.btn-primary.btn-block', {
         type: 'button',
@@ -102,13 +102,13 @@ export function openImporter() {
           const missing = IMPORT_TARGETS.filter((t) => t.required && mapping[t.key] === -1);
           for (const err of Object.values(errors)) err.hide();
           if (missing.length) {
-            for (const t of missing) errors[t.key].show(`Choose the column that holds the ${t.label.toLowerCase()}`);
+            for (const t of missing) errors[t.key].show(`请选择包含“${t.label}”的列`);
             selects[missing[0].key].focus();
             return;
           }
           renderReview();
         },
-      }, 'Review import'),
+      }, '预览导入'),
       backBtn(renderPick),
     ]);
   }
@@ -119,7 +119,7 @@ export function openImporter() {
     const { items, invalid } = rowsToItems(dataRows, mapping);
     if (!items.length) {
       append(body, [
-        el('p.onboard-p', {}, 'No importable rows were found; check the column mapping.'),
+        el('p.onboard-p', {}, '未找到可导入的数据行；请检查列匹配设置。'),
         invalid.length > 0 && invalidList(invalid),
         backBtn(renderMapping),
       ]);
@@ -129,7 +129,7 @@ export function openImporter() {
     const dates = items.map((i) => i.date).sort();
     const byClient = new Map();
     for (const i of items) {
-      const name = i.client || 'Imported';
+      const name = i.client || '已导入';
       byClient.set(name, (byClient.get(name) || 0) + i.seconds);
     }
     const topClients = [...byClient.entries()].sort((a, b) => b[1] - a[1]);
@@ -138,32 +138,32 @@ export function openImporter() {
       type: 'button',
       onclick: async () => {
         importBtn.disabled = true;
-        importBtn.textContent = 'Importing…';
+        importBtn.textContent = '正在导入…';
         try {
           const result = await store.importEntries(items);
           modal.close();
-          const parts = [`Imported ${result.added} entr${result.added === 1 ? 'y' : 'ies'}`];
-          if (result.skipped) parts.push(`${result.skipped} duplicate${result.skipped === 1 ? '' : 's'} skipped`);
-          toast(parts.join(', '), { icon: 'check', duration: 5000 });
+          const parts = [`已导入 ${result.added} 条记录`];
+          if (result.skipped) parts.push(`已跳过 ${result.skipped} 条重复项`);
+          toast(parts.join('，'), { icon: 'check', duration: 5000 });
         } catch (err) {
           console.error(err);
           importBtn.disabled = false;
-          importBtn.textContent = `Import ${items.length} entries`;
-          toast('Import failed, check your connection', { icon: 'wifiOff' });
+          importBtn.textContent = `导入 ${items.length} 条记录`;
+          toast('导入失败，请检查网络连接', { icon: 'wifiOff' });
         }
       },
-    }, `Import ${items.length} entries`);
+    }, `导入 ${items.length} 条记录`);
 
     append(body, [
       el('div.entry-summary', {},
-        summaryRow('Entries', String(items.length)),
-        summaryRow('Time', fmtDuration(sum(items, (i) => i.seconds))),
-        summaryRow('From', fmtDay(dates[0], { year: true })),
-        summaryRow('To', fmtDay(dates[dates.length - 1], { year: true })),
+        summaryRow('记录数', String(items.length)),
+        summaryRow('时长', fmtDuration(sum(items, (i) => i.seconds))),
+        summaryRow('起始日期', fmtDay(dates[0], { year: true })),
+        summaryRow('结束日期', fmtDay(dates[dates.length - 1], { year: true })),
         topClients.slice(0, 5).map(([name, secs]) => summaryRow(name, fmtDuration(secs)))
       ),
       invalid.length > 0 && invalidList(invalid),
-      el('p.small-note', {}, 'Rows identical to entries you already have are skipped, so importing twice never duplicates.'),
+      el('p.small-note', {}, '与现有记录完全相同的行将被跳过，因此重复导入不会产生重复数据。'),
       importBtn,
       backBtn(renderMapping),
     ]);
@@ -174,10 +174,10 @@ export function openImporter() {
     return el('div.import-invalid', {},
       el('p.import-invalid-title', {},
         el('span', { html: icon('alert', 14, 2.4), 'aria-hidden': 'true' }),
-        ` ${invalid.length} row${invalid.length === 1 ? '' : 's'} cannot be imported`),
+        ` 有 ${invalid.length} 行无法导入`),
       el('ul.import-invalid-list', {},
-        shown.map((r) => el('li', {}, `Line ${r.line}: ${r.reason}`)),
-        invalid.length > shown.length && el('li', {}, `and ${invalid.length - shown.length} more`))
+        shown.map((r) => el('li', {}, `第 ${r.line} 行：${r.reason}`)),
+        invalid.length > shown.length && el('li', {}, `以及另外 ${invalid.length - shown.length} 行`))
     );
   }
 
@@ -192,7 +192,7 @@ export function openImporter() {
     return el('button.btn.btn-ghost.btn-block', {
       type: 'button', style: { marginTop: '10px' },
       onclick: to,
-    }, 'Back');
+    }, '返回');
   }
 
   renderPick();

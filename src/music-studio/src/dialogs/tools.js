@@ -9,7 +9,7 @@ import * as E from '../model/edits.js';
 
 /** History rows: the initial state, every undo step, then the redo steps (pure). */
 export function historyEntries(store) {
-  const rows = [{ index: 0, label: 'Opened project', state: store.undoStack.length === 0 ? 'current' : 'past' }];
+  const rows = [{ index: 0, label: '已打开工程', state: store.undoStack.length === 0 ? 'current' : 'past' }];
   store.undoStack.forEach((s, i) => rows.push({ index: i + 1, label: s.label, state: i === store.undoStack.length - 1 ? 'current' : 'past' }));
   const n = store.undoStack.length;
   for (let j = store.redoStack.length - 1, k = 1; j >= 0; j--, k++) rows.push({ index: n + k, label: store.redoStack[j].label, state: 'future' });
@@ -25,7 +25,7 @@ export function openHistory(app) {
     return existing;
   }
   const store = app.store;
-  const list = h('div.history-list', { role: 'listbox', 'aria-label': 'Undo history', tabindex: '0' });
+  const list = h('div.history-list', { role: 'listbox', 'aria-label': '撤销历史', tabindex: '0' });
   let rows = [];
   const render = () => {
     rows = historyEntries(store);
@@ -45,7 +45,7 @@ export function openHistory(app) {
   const jump = (index) => {
     store.jumpTo(index);
     const r = historyEntries(store).find((x) => x.state === 'current');
-    announce(`Now at: ${r?.label}`);
+    announce(`当前处于：${r?.label}`);
   };
   list.addEventListener('click', (e) => {
     const row = e.target.closest('.history-row');
@@ -64,10 +64,10 @@ export function openHistory(app) {
   render();
   const win = openWindow({
     key: 'undo-history',
-    title: 'Undo history',
+    title: '撤销历史',
     icon: 'history',
     width: 280,
-    body: h('div.history', h('p.faint.history-note', 'Click a step to go back to it. Later steps stay available until you make a new change.'), list),
+    body: h('div.history', h('p.faint.history-note', '点击任意步骤即可回退到该位置。在您做出新的更改之前，后续步骤将始终保留。'), list),
     onClose: () => offs.forEach((off) => off()),
   });
   requestAnimationFrame(() => list.focus());
@@ -94,7 +94,7 @@ export async function openTapTempo(app) {
   const loadVersion = store.loadVersion;
   const taps = [];
   const value = h('div.tap-value', { 'aria-live': 'polite' }, String(store.project.bpm));
-  const unit = h('div.tap-unit.faint', 'Tap at least twice');
+  const unit = h('div.tap-unit.faint', '请至少敲击两次');
   let bpm = null;
   const tap = () => {
     const now = performance.now();
@@ -106,21 +106,21 @@ export async function openTapTempo(app) {
     pad.classList.add('flash');
     if (bpm) {
       value.textContent = bpm.toFixed(1);
-      unit.textContent = `BPM from ${Math.min(taps.length, 9)} taps`;
+      unit.textContent = `由 ${Math.min(taps.length, 9)} 次敲击测得的 BPM`;
     }
     applyBtn().disabled = !bpm;
   };
-  const pad = h('button.tap-pad', { type: 'button', onclick: tap, 'aria-label': 'Tap' }, 'Tap', h('span.faint', 'or press T'));
+  const pad = h('button.tap-pad', { type: 'button', onclick: tap, 'aria-label': '敲击测速' }, '敲击', h('span.faint', '或按 T 键'));
   const body = h('div.tap', pad, h('div.tap-readout', value, unit));
   const applyBtn = () => body.closest('.dialog')?.querySelector('.btn.primary') || { disabled: false };
   const done = openDialog({
     store,
-    title: 'Tap tempo',
+    title: '敲击测速 (Tap Tempo)',
     className: 'dlg-tap',
     body,
     buttons: [
-      { label: 'Cancel', value: null },
-      { label: 'Apply tempo', value: 'apply', primary: true, disabled: true },
+      { label: '取消', value: null },
+      { label: '应用速度', value: 'apply', primary: true, disabled: true },
     ],
     onSubmit: () => Boolean(bpm),
     initialFocus: '.tap-pad',
@@ -134,8 +134,8 @@ export async function openTapTempo(app) {
   });
   const r = await done;
   if (r === 'apply' && bpm && store.loadVersion === loadVersion) {
-    app.setTempo(bpm, 'Tap tempo');
-    app.notify(`Tempo set to ${bpm} BPM`);
+    app.setTempo(bpm, '敲击测速');
+    app.notify(`速度已设为 ${bpm} BPM`);
   }
 }
 
@@ -173,21 +173,21 @@ export async function purgeCommand(app) {
   const { store } = app;
   const loadVersion = store.loadVersion;
   const preview = purgeUnused(store.project);
-  const n = (count, word) => `${count} ${word}${count === 1 ? '' : 's'}`;
+  const n = (count, word) => `${count} 个${word}`;
   const describe = (result) => [
-    result.channels && n(result.channels, 'unused channel'),
-    result.patterns && n(result.patterns, 'empty pattern'),
-    result.samples && n(result.samples, 'unused sample'),
-  ].filter(Boolean).join(', ');
+    result.channels && n(result.channels, '未使用的通道'),
+    result.patterns && n(result.patterns, '空样式'),
+    result.samples && n(result.samples, '未使用的采样'),
+  ].filter(Boolean).join('、');
   const summary = describe(preview);
   if (!summary) {
-    app.notify('Nothing to purge: every channel, pattern and sample is in use');
+    app.notify('无需清理：所有通道、样式和采样均在使用中');
     return;
   }
   const allowed = Object.fromEntries(Object.entries(preview.removed).map(([kind, ids]) => [kind, new Set(ids)]));
-  const ok = await confirmDialog({ store, title: 'Purge unused', message: `Remove ${summary}? You can undo this.`, confirm: 'Remove', danger: true });
+  const ok = await confirmDialog({ store, title: '清理未使用的项', message: `要移除 ${summary} 吗？您可以撤销此操作。`, confirm: '移除', danger: true });
   if (!ok || store.loadVersion !== loadVersion) return;
-  const result = store.apply('Purge unused', (p) => purgeUnused(p, allowed));
+  const result = store.apply('清理未使用的项', (p) => purgeUnused(p, allowed));
   const removed = describe(result);
-  app.notify(removed ? `Removed ${removed}` : 'Nothing removed: the confirmed items are now in use or no longer exist');
+  app.notify(removed ? `已移除 ${removed}` : '未移除任何项：所确认的项目现在已在使用中或已不存在');
 }

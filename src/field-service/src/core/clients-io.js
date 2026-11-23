@@ -55,8 +55,8 @@ export function importClientsCSV(text) {
       lastName: last,
       company,
       useCompanyName: !!company && ((!first && !last) || named),
-      emails: get(r, 'email') ? [{ label: 'Main', address: get(r, 'email') }] : [],
-      phones: get(r, 'phone') ? [{ label: 'Main', number: get(r, 'phone') }] : [],
+      emails: get(r, 'email') ? [{ label: '主要', address: get(r, 'email') }] : [],
+      phones: get(r, 'phone') ? [{ label: '主要', number: get(r, 'phone') }] : [],
       properties: hasAddress
         ? [{ id: newId(), street1: get(r, 'street1'), street2: get(r, 'street2'), city: get(r, 'city'), region: get(r, 'region'), postal: get(r, 'postal'), country: get(r, 'country') }]
         : [],

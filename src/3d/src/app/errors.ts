@@ -36,7 +36,7 @@ export function reportUncaught(reason: unknown, now = Date.now()): boolean {
   lastSeen.set(msg, now);
   if (lastSeen.size > 200) lastSeen.delete(lastSeen.keys().next().value!);
   if (!app) return false;
-  app.report('ERROR', `Internal error: ${msg} (details in the browser console)`);
+  app.report('ERROR', `内部错误: ${msg}（详情请查看浏览器控制台）`);
   return true;
 }
 

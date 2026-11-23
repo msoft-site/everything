@@ -124,7 +124,7 @@ export class App extends Emitter {
         this.activate(doc);
         const ok = await this.commands.run('file.save');
         if (doc.dirty) {
-          if (ok) this.notify(`"${doc.name}" changed while saving and was left open. Save again to keep the latest changes.`);
+          if (ok) this.notify(`“${doc.name}”在保存过程中发生了更改，仍保持打开状态。请再次保存以保留最新更改。`);
           return false;
         }
       }
@@ -238,7 +238,7 @@ export class App extends Emitter {
       this.playStart = null;
       this.emit('transport', engine.state);
       if (!isUserError(err)) console.error(err);
-      this.notify(isUserError(err) ? err.message : 'Playback is not available in this browser.', { error: true });
+      this.notify(isUserError(err) ? err.message : '当前浏览器不支持音频播放。', { error: true });
     }
   }
 

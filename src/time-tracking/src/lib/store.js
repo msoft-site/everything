@@ -238,7 +238,7 @@ const idSet = (list) => new Set((list || []).map((r) => r?.id).filter(Boolean));
    negative amount, so there is no second concept to maintain. */
 
 const LINE_KINDS = ['fee', 'expense', 'discount'];
-const LINE_FALLBACK_LABEL = { fee: 'Fixed fee', expense: 'Expense', discount: 'Discount' };
+const LINE_FALLBACK_LABEL = { fee: '固定费用', expense: '报销费用', discount: '折扣' };
 
 /**
  * Clean up lines coming from the create sheet: a known kind, a label, a
@@ -2018,18 +2018,18 @@ class Store extends EventTarget {
       let key, label, sublabel = '', slot = 0;
       if (by === 'client') {
         key = client?.id || 'none';
-        label = client?.name || 'No client';
+        label = client?.name || '无客户';
         slot = client?.slot || 0;
       } else if (by === 'project') {
         key = project?.id || 'none';
-        label = project?.name || 'No project';
+        label = project?.name || '无项目';
         sublabel = client?.name || '';
         slot = client?.slot || 0;
       } else {
         // Prefixed so a task literally named "none" cannot collide with
         // the group holding untasked entries.
         key = e.task ? `task:${e.task.toLowerCase()}` : 'none';
-        label = e.task || 'No task';
+        label = e.task || '无任务';
         slot = client?.slot || 0;
       }
       let g = groups.get(key);
@@ -2070,7 +2070,7 @@ class Store extends EventTarget {
         : findProject(null, item.project);
       if (!project) {
         if (!client) {
-          const name = item.client || 'Imported';
+          const name = item.client || '已导入';
           client = findClient(name);
           if (!client) {
             client = await this.addClient({ name, slot: (this.clients.length % 8) + 1 });

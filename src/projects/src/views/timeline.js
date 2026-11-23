@@ -29,7 +29,7 @@ const MONTH_LABEL_W = 112;
  * normal store mutation, so the optimistic write and retry flow apply.
  */
 export function timelineView({ projectId }) {
-  const scroll = el('div.tl-scroll', { tabindex: 0, 'aria-label': 'Project timeline' });
+  const scroll = el('div.tl-scroll', { tabindex: 0, 'aria-label': '项目时间线' });
   const unscheduledWrap = el('div');
   const live = el('div.sr-only', { 'aria-live': 'polite' });
   const root = el('div.timeline-wrap', {}, scroll, unscheduledWrap, live);
@@ -66,8 +66,8 @@ export function timelineView({ projectId }) {
       geo = null;
       scroll.replaceChildren(emptyState({
         icon: 'timeline',
-        title: 'Nothing scheduled yet',
-        sub: 'Give tasks a start or due date, or add a milestone, and they appear here.',
+        title: '暂无已排期的任务',
+        sub: '为任务设置开始日期或截止日期，或添加里程碑后，它们会显示在这里。',
       }));
       renderUnscheduled(unscheduled);
       return;
@@ -156,13 +156,13 @@ export function timelineView({ projectId }) {
           type: 'button',
           className: `tl-diamond${m.done ? ' done' : ''}`,
           style: { left: `${at}px`, maxWidth: `${Math.max(room, 14)}px` },
-          title: `${m.name}: ${fmtLong(m.date)}`,
-          'aria-label': `Milestone ${m.name}, ${fmtLong(m.date)}`,
+          title: `${m.name}：${fmtLong(m.date)}`,
+          'aria-label': `里程碑 ${m.name}，${fmtLong(m.date)}`,
           onclick: () => { location.hash = `#/p/${projectId}/milestones`; },
         }, el('span.tl-diamond-shape'), el('span.tl-diamond-name', {}, m.name)));
       });
       canvas.append(el('div.tl-row.tl-mrow', {},
-        el('div.tl-label.tl-group-label', { html: icon('flag', 14, 2) }, ' Milestones'),
+        el('div.tl-label.tl-group-label', { html: icon('flag', 14, 2) }, ' 里程碑'),
         track
       ));
     }
@@ -199,10 +199,10 @@ export function timelineView({ projectId }) {
             + `${locked ? '' : ' draggable'}`,
           dataset: { taskId: t.id },
           style: { left: `${left}px`, width: `${Math.max(width, 10)}px`, background: isDone ? null : d.color },
-          title: `${t.title}: ${fmtShort(span.start)}${spans ? ` to ${fmtShort(span.end)}` : ''}`,
-          'aria-label': `${t.title}, ${fmtLong(span.start)}${spans ? ` to ${fmtLong(span.end)}` : ''}.`
-            + (locked ? '' : ' Alt plus left or right arrow reschedules by a day, add Shift to move the due date.')
-            + ' Enter to open.',
+          title: `${t.title}：${fmtShort(span.start)}${spans ? ` 至 ${fmtShort(span.end)}` : ''}`,
+          'aria-label': `${t.title}，${fmtLong(span.start)}${spans ? ` 至 ${fmtLong(span.end)}` : ''}。`
+            + (locked ? '' : ' 按 Alt 加左右方向键可按天调整排期，同时按住 Shift 可调整截止日期。')
+            + ' 按 Enter 打开。',
           onclick: () => openTaskSheet(projectId, t.id),
           onkeydown: (e) => onBarKey(e, t, locked),
         },
@@ -242,16 +242,16 @@ export function timelineView({ projectId }) {
   function renderUnscheduled(tasks) {
     if (!tasks.length) return;
     unscheduledWrap.append(el('section.tl-unscheduled', {},
-      el('h2.section-title', { html: icon('circleDashed', 15, 2) }, ` Unscheduled (${tasks.length})`),
+      el('h2.section-title', { html: icon('circleDashed', 15, 2) }, ` 未排期 (${tasks.length})`),
       el('p.form-hint', {}, geo
-        ? 'Drag one onto the chart to give it a due date, or open it to set both dates.'
-        : 'Open a task and set a start or due date to place it on the timeline.'),
+        ? '将任务拖到图表上可为其设置截止日期，或打开任务设置开始与截止日期。'
+        : '打开任务并设置开始或截止日期，即可将其放置到时间线上。'),
       el('div.tl-unscheduled-list', {},
         tasks.map((t) => el('button.tl-unscheduled-item', {
           type: 'button',
           className: `tl-unscheduled-item${geo ? ' draggable' : ''}`,
           dataset: { taskId: t.id },
-          title: geo ? `${t.title}. Drag onto the chart to schedule` : t.title,
+          title: geo ? `${t.title}。拖到图表上以安排日期` : t.title,
           onclick: () => openTaskSheet(projectId, t.id),
         }, t.title)))
     ));
@@ -269,14 +269,14 @@ export function timelineView({ projectId }) {
     const end = mode === 'start' ? span.end : addDays(span.end, delta);
     const days = diffDays(start, end) + 1;
     if (start === end) {
-      const only = task.startDate && !task.dueDate ? 'Starts ' : task.dueDate && !task.startDate ? 'Due ' : '';
+      const only = task.startDate && !task.dueDate ? '开始于 ' : task.dueDate && !task.startDate ? '截止于 ' : '';
       return { delta, label: `${only}${fmtShort(start)}` };
     }
-    return { delta, label: `${fmtShort(start)} → ${fmtShort(end)} · ${days} days` };
+    return { delta, label: `${fmtShort(start)} → ${fmtShort(end)} · ${days} 天` };
   }
 
   const dayISO = (dayIndex) => addDays(geo.range.start, dayIndex);
-  const dayPreview = (dayIndex) => `Due ${fmtShort(dayISO(dayIndex))}`;
+  const dayPreview = (dayIndex) => `截止于 ${fmtShort(dayISO(dayIndex))}`;
 
   /** Show the drop guide on a day column, or hide it (null). */
   function markDay(dayIndex) {
@@ -307,22 +307,22 @@ export function timelineView({ projectId }) {
     if (!patch) return;
     const title = task.title;
     remember(task, patch, mode === 'move'
-      ? `move of “${title}”`
-      : `${mode === 'start' ? 'start' : 'due'} date of “${title}”`);
+      ? `移动“${title}”`
+      : `“${title}”的${mode === 'start' ? '开始' : '截止'}日期`);
     store.updateTask(projectId, taskId, patch);
     const span = taskSpan(findTask(taskId));
     announce(span.start === span.end
-      ? `"${task.title}" moved to ${fmtLong(span.start)}`
-      : `"${task.title}" now runs ${fmtLong(span.start)} to ${fmtLong(span.end)}`);
+      ? `已将“${task.title}”移至 ${fmtLong(span.start)}`
+      : `“${task.title}”现定于 ${fmtLong(span.start)} 至 ${fmtLong(span.end)}`);
   }
 
   function schedule(taskId, dayIndex) {
     const task = findTask(taskId);
     if (!task) return;
     const iso = dayISO(dayIndex);
-    remember(task, { dueDate: iso }, `due date of “${task.title}”`);
+    remember(task, { dueDate: iso }, `“${task.title}”的截止日期`);
     store.updateTask(projectId, taskId, { dueDate: iso });
-    announce(`"${task.title}" is due ${fmtLong(iso)}`);
+    announce(`“${task.title}”截止于 ${fmtLong(iso)}`);
   }
 
   function onBarKey(e, task, locked) {

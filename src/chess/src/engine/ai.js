@@ -94,9 +94,9 @@ const PST = {
 };
 
 export const LEVELS = {
-  easy: { depth: 1, window: 150, quiescence: false, label: 'Easy' },
-  medium: { depth: 2, window: 40, quiescence: true, label: 'Medium' },
-  hard: { depth: 3, window: 0, quiescence: true, label: 'Hard' },
+  easy: { depth: 1, window: 150, quiescence: false, label: '简单' },
+  medium: { depth: 2, window: 40, quiescence: true, label: '中等' },
+  hard: { depth: 3, window: 0, quiescence: true, label: '困难' },
 };
 
 /** Manhattan distance from the middle of the board: 0 centrally, 6 in a corner. */

@@ -57,8 +57,8 @@ export function appsButton(cls = "") {
     {
       type: "button",
       class: `btn icon-btn apps-btn ${cls}`.trim(),
-      title: "Apps",
-      "aria-label": "Apps",
+      title: "应用",
+      "aria-label": "应用",
       "aria-haspopup": "dialog",
       "aria-expanded": isOpen ? "true" : "false",
       onclick: (e) => {
@@ -115,8 +115,8 @@ function build() {
     {
       type: "button",
       class: "btn icon-btn apps-panel-action apps-panel-close",
-      title: "Close",
-      "aria-label": "Close",
+      title: "关闭",
+      "aria-label": "关闭",
       onclick: () => closeAppsPanel({ focus: true }),
     },
     icon("X", 16),
@@ -128,14 +128,14 @@ function build() {
       href: APPS_NEWTAB_URL,
       target: "_blank",
       rel: "noopener noreferrer",
-      title: "Open in a new tab",
-      "aria-label": "Open Puter apps in a new tab",
+      title: "在新标签页中打开",
+      "aria-label": "在新标签页中打开 Puter 应用",
     },
     icon("ExternalLink", 16),
   );
   frame = el("iframe", {
     class: "apps-frame",
-    title: "Your Puter apps",
+    title: "您的 Puter 应用",
     referrerpolicy: "strict-origin-when-cross-origin",
     allow: "clipboard-read; clipboard-write",
   });
@@ -144,7 +144,7 @@ function build() {
     { class: "apps-panel-body is-loading" },
     el(
       "div",
-      { class: "apps-panel-loading", role: "status", "aria-label": "Loading" },
+      { class: "apps-panel-loading", role: "status", "aria-label": "正在加载" },
       el(
         "span",
         { class: "apps-panel-spinner", "aria-hidden": "true" },
@@ -158,14 +158,14 @@ function build() {
     {
       class: "apps-panel",
       role: "dialog",
-      "aria-label": "Apps",
+      "aria-label": "应用",
       tabindex: -1,
       hidden: true,
     },
     el(
       "div",
       { class: "apps-panel-header" },
-      el("span", { class: "apps-panel-title" }, "Apps"),
+      el("span", { class: "apps-panel-title" }, "应用"),
       el("div", { class: "apps-panel-actions" }, newTab, close),
     ),
     body,

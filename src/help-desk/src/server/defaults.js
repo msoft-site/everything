@@ -11,50 +11,50 @@ export function defaultConfig() {
   const start = randomId(8);
   const faq = randomId(8);
   return {
-    groups: [{ id: 'support', name: 'Support', desc: 'Everyone who answers requests' }],
+    groups: [{ id: 'support', name: '客服支持', desc: '负责解答请求的所有人员' }],
     fields: [],
     views: [],
     sla: structuredClone(DEFAULT_SLA),
     kb: {
-      categories: [{ id: general, name: 'General', desc: 'Basics and frequently asked questions', order: 0 }],
+      categories: [{ id: general, name: '常规', desc: '基础知识与常见问题解答', order: 0 }],
       sections: [
-        { id: start, categoryId: general, name: 'Getting started', order: 0 },
-        { id: faq, categoryId: general, name: 'Frequently asked questions', order: 1 },
+        { id: start, categoryId: general, name: '快速上手', order: 0 },
+        { id: faq, categoryId: general, name: '常见问题', order: 1 },
       ],
     },
     macros: [
       {
         id: randomId(8),
-        title: 'Ask for more details',
+        title: '询问更多详情',
         active: true,
         actions: [{ field: 'status', value: 'pending' }],
         comment: {
           public: true,
-          html: '<p>Hi {{requester.first_name}},</p><p>Thanks for reaching out. Could you share a few more details, such as the steps you took and any error message you saw? That will help us find the cause quickly.</p><p>Best,<br>{{agent.first_name}}</p>',
+          html: '<p>{{requester.first_name}}，您好：</p><p>感谢您联系我们。您能否提供更多细节，例如您的操作步骤以及看到的任何错误提示？这将帮助我们快速定位原因。</p><p>祝好，<br>{{agent.first_name}}</p>',
         },
       },
       {
         id: randomId(8),
-        title: 'Close and thank',
+        title: '关闭并致谢',
         active: true,
         actions: [{ field: 'status', value: 'solved' }],
         comment: {
           public: true,
-          html: '<p>Hi {{requester.first_name}},</p><p>Glad we could help. I am marking this request as solved. If anything else comes up, just reply and we will pick it up again.</p><p>Best,<br>{{agent.first_name}}</p>',
+          html: '<p>{{requester.first_name}}，您好：</p><p>很高兴能帮到您。我将把此请求标记为已解决。如果还有其他问题，只需直接回复，我们会继续为您跟进。</p><p>祝好，<br>{{agent.first_name}}</p>',
         },
       },
       {
         id: randomId(8),
-        title: 'Escalate to urgent',
+        title: '升级为紧急',
         active: true,
         actions: [{ field: 'priority', value: 'urgent' }, { field: 'add_tags', value: 'escalated' }],
-        comment: { public: false, html: '<p>Escalated. Needs attention today.</p>' },
+        comment: { public: false, html: '<p>已升级。需要今日处理。</p>' },
       },
     ],
     triggers: [
       {
         id: randomId(8),
-        title: 'Confirm new requests to the requester',
+        title: '向请求人确认收到新请求',
         active: true,
         event: 'created',
         conditions: { all: [{ field: 'actor', op: 'is', value: 'customer' }], any: [] },
@@ -63,22 +63,22 @@ export function defaultConfig() {
             field: 'notify_requester',
             // No text from the request is repeated here: anyone can submit the
             // form with any address, so this mail must not carry their words.
-            subject: 'We received your request',
-            body: 'Hello,\n\nThanks for contacting {{desk.name}}. Your request has been received and an agent will reply soon. You can follow it at the link below.',
+            subject: '我们已收到您的请求',
+            body: '您好，\n\n感谢您联系 {{desk.name}}。我们已收到您的请求，客服人员将尽快回复。您可以通过下方链接跟进处理进度。',
           },
         ],
       },
       {
         id: randomId(8),
-        title: 'Email the requester about public replies',
+        title: '有公开回复时向请求人发送邮件',
         active: true,
         event: 'any',
         conditions: { all: [{ field: 'actor', op: 'is', value: 'agent' }, { field: 'comment', op: 'is', value: 'public' }], any: [] },
-        actions: [{ field: 'notify_requester', subject: 'Re: {{ticket.subject}}', body: '{{comment.text}}' }],
+        actions: [{ field: 'notify_requester', subject: '回复：{{ticket.subject}}', body: '{{comment.text}}' }],
       },
       {
         id: randomId(8),
-        title: 'Tag urgent words',
+        title: '标记紧急词汇',
         active: false,
         event: 'created',
         conditions: { all: [], any: [{ field: 'subject', op: 'contains', value: 'urgent' }, { field: 'subject', op: 'contains', value: 'outage' }] },

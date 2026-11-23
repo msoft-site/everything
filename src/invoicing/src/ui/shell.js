@@ -24,16 +24,16 @@ import { detailView } from '../views/detail.js';
 /* The mobile tab bar holds four destinations plus More; routes marked
    tab: false live in the More sheet there. The desktop sidebar shows all. */
 const ROUTES = [
-  { hash: '#/', label: 'Home', icon: 'home', view: dashboardView },
-  { hash: '#/invoices', label: 'Invoices', icon: 'invoice', view: invoicesView },
-  { hash: '#/quotes', label: 'Estimates', icon: 'quote', view: quotesView },
+  { hash: '#/', label: '首页', icon: 'home', view: dashboardView },
+  { hash: '#/invoices', label: '发票', icon: 'invoice', view: invoicesView },
+  { hash: '#/quotes', label: '报价单', icon: 'quote', view: quotesView },
   { hash: '#/clients', label: 'Clients', icon: 'clients', view: clientsView },
   { hash: '#/recurring', label: 'Recurring', icon: 'repeat', view: recurringView, tab: false },
-  { hash: '#/receipts', label: 'Receipts', icon: 'receipt', view: receiptsView, tab: false },
-  { hash: '#/reports', label: 'Reports', icon: 'chart', view: reportsView, tab: false },
+  { hash: '#/receipts', label: '收款收据', icon: 'receipt', view: receiptsView, tab: false },
+  { hash: '#/reports', label: '报表', icon: 'chart', view: reportsView, tab: false },
   { hash: '#/items', label: 'Saved items', icon: 'tag', view: itemsView, tab: false },
   { hash: '#/trash', label: 'Trash', icon: 'trash', view: trashView, tab: false },
-  { hash: '#/settings', label: 'Settings', icon: 'gear', view: settingsView, tab: false, foot: true },
+  { hash: '#/settings', label: '设置', icon: 'gear', view: settingsView, tab: false, foot: true },
 ];
 
 /* The sidebar groups the same destinations under headings, so eleven items
@@ -41,7 +41,7 @@ const ROUTES = [
    `foot: true` above and sits below the rule with the account actions, where
    a shell's own preferences belong. */
 const NAV_GROUPS = [
-  { label: 'Billing', hashes: ['#/', '#/invoices', '#/quotes', '#/recurring'] },
+  { label: '账单与收费', hashes: ['#/', '#/invoices', '#/quotes', '#/recurring'] },
   { label: 'Records', hashes: ['#/clients', '#/receipts', '#/items'] },
   { label: 'Tools', hashes: ['#/reports', '#/trash'] },
 ];
@@ -161,9 +161,9 @@ export function mountShell(appRoot) {
       sample === 'read' ? null : el('button', {
         onclick: async () => {
           const ok = await confirmDialog({
-            title: 'Start fresh?',
+            title: '重新开始？',
             message: 'All sample data is removed and you set up your own business from scratch.',
-            confirmLabel: 'Wipe sample data',
+            confirmLabel: '清除示例数据',
           });
           if (!ok) return;
           try {
@@ -183,7 +183,7 @@ export function mountShell(appRoot) {
             location.hash = '#/';
           }
         },
-      }, 'Start fresh')
+      }, '重新开始')
     ));
   }
   store.addEventListener('change', renderSampleBanner);
@@ -319,7 +319,7 @@ export function mountShell(appRoot) {
 
   function openMoreSheet() {
     const modal = openModal({
-      title: 'More',
+      title: '更多',
       content: el('div.settings-list', {},
         ROUTES.filter((r) => r.tab === false).map((r) =>
           el('a.settings-row', {
@@ -382,7 +382,7 @@ export function mountShell(appRoot) {
         type: 'button',
         html: icon('logout', 17, 1.7),
         onclick: confirmSignOut,
-      }, el('span', {}, 'Sign out')));
+      }, el('span', {}, '退出登录')));
     }
 
     for (const r of ROUTES) {
@@ -402,7 +402,7 @@ export function mountShell(appRoot) {
       html: icon('more', 17, 1.7),
       'aria-haspopup': 'dialog',
       onclick: openMoreSheet,
-    }, el('span', {}, 'More')));
+    }, el('span', {}, '更多')));
   }
 
   /* Where the user stood on each page they stepped away from. Opening the
@@ -474,7 +474,7 @@ export function mountShell(appRoot) {
       main.setAttribute('tabindex', '-1');
       main.focus();
     },
-  }, 'Skip to content');
+  }, '跳转到主要内容');
 
   clear(appRoot);
   appRoot.append(skipLink, el('div.shell', {}, sidebar, main), tabbar, fab);

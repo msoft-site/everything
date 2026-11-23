@@ -28,22 +28,22 @@ export const MAX_INDENT = 6;
 
 /** Block types and what they can hold. */
 export const BLOCK_TYPES = {
-  paragraph: { label: 'Text', text: true },
-  h1: { label: 'Heading 1', text: true },
-  h2: { label: 'Heading 2', text: true },
-  h3: { label: 'Heading 3', text: true },
-  bulleted: { label: 'Bulleted list', text: true, list: true },
-  numbered: { label: 'Numbered list', text: true, list: true },
-  todo: { label: 'To-do list', text: true, list: true },
-  toggle: { label: 'Toggle list', text: true, list: true },
-  quote: { label: 'Quote', text: true },
-  callout: { label: 'Callout', text: true },
-  code: { label: 'Code', text: true, plain: true },
-  divider: { label: 'Divider' },
-  image: { label: 'Image' },
-  bookmark: { label: 'Web bookmark' },
-  page: { label: 'Page' },
-  table: { label: 'Table' },
+  paragraph: { label: '文本', text: true },
+  h1: { label: '一级标题', text: true },
+  h2: { label: '二级标题', text: true },
+  h3: { label: '三级标题', text: true },
+  bulleted: { label: '无序列表', text: true, list: true },
+  numbered: { label: '有序列表', text: true, list: true },
+  todo: { label: '待办列表', text: true, list: true },
+  toggle: { label: '折叠列表', text: true, list: true },
+  quote: { label: '引用', text: true },
+  callout: { label: '提示框', text: true },
+  code: { label: '代码', text: true, plain: true },
+  divider: { label: '分割线' },
+  image: { label: '图片' },
+  bookmark: { label: '网页书签' },
+  page: { label: '页面' },
+  table: { label: '表格' },
 };
 
 /** Fields that belong to one block type and are dropped when it changes. */

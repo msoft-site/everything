@@ -31,7 +31,7 @@ import type { History } from './history/history';
 import type { Assets } from './model/assets';
 import { loadPreferences, PREFERENCES_KEY, type Preferences } from './model/preferences';
 
-const modeLabels: Record<string, string> = { rgb: 'RGB', grayscale: 'Gray', cmyk: 'CMYK', lab: 'Lab', indexed: 'Index', bitmap: 'Bitmap', duotone: 'Duotone', multichannel: 'Multichannel' };
+const modeLabels: Record<string, string> = { rgb: 'RGB', grayscale: '灰度', cmyk: 'CMYK', lab: 'Lab', indexed: '索引', bitmap: '位图', duotone: '双色调', multichannel: '多通道' };
 const modeLabel = (doc: PhotoDocument) => modeLabels[doc.mode ?? 'rgb'] ?? 'RGB';
 
 export type { Preferences } from './model/preferences';
@@ -162,7 +162,7 @@ export class Editor {
   async showView(v: DocumentView) {
     if (!this.busy) return this.activateView(v);
     this.pendingView = v;
-    this.message(`“${v.session.doc.name}” is shown when the current task finishes.`);
+    this.message(`当前任务完成后将显示“${v.session.doc.name}”。`);
   }
   /** Close one window; the last window of a document closes the document. */
   async closeView(v: DocumentView) {
@@ -264,7 +264,7 @@ export class Editor {
       if (!(await s.closeHandler())) return false;
     } else if (!force && (s.dirty || this.hasPendingChanges(s))) {
       const { saveChangesDialog } = await import('./ui/dialog');
-      const choice = await saveChangesDialog(`Save changes to “${s.doc.name}” before closing?`, 'Your changes will be lost if you don’t save them.');
+      const choice = await saveChangesDialog(`关闭前是否保存对“${s.doc.name}”的更改？`, '如果不保存，您的更改将会丢失。');
       if (choice === 'cancel' || (choice === 'save' && !(await this.saveBeforeClose(s)))) return false;
     }
     // Another request (a second click on the close button) closed it meanwhile.
@@ -422,7 +422,7 @@ export class Editor {
     this.dock.render();
     performance.mark('photo-studio:shell');
     this.renderer = await Renderer.create(this.el<HTMLCanvasElement>('#canvas'), this.engine, this.preferences.gpuBackend);
-    if (this.preferences.gpuBackend === 'webgpu' && !/webgpu/i.test(this.renderer.name)) this.message('WebGPU is not available in this browser; using WebGL2.');
+    if (this.preferences.gpuBackend === 'webgpu' && !/webgpu/i.test(this.renderer.name)) this.message('当前浏览器不支持 WebGPU；已切换至 WebGL2。');
     this.renderer.frameListeners.add((canvas, doc) => this.windows.frame(canvas, doc));
     for (const hook of this.readyHooks.splice(0)) hook(this);
     this.windows.kind = this.preferences.windowLayout ?? 'tabs';
@@ -487,7 +487,7 @@ export class Editor {
   async runCommand(id: string, arg?: unknown) {
     const c = findCommand(id);
     if (!c) {
-      this.message(`Unknown command: ${id}`);
+      this.message(`未知命令：${id}`);
       return;
     }
     if (c.enabled && !c.enabled(this)) return;
@@ -553,11 +553,11 @@ export class Editor {
   editLayer(label: string, edit: (l: Layer) => void, operation: LockOperation = 'all') {
     if (!this.layer) return;
     if (this.selectedIds.size > 1) {
-      this.message('Select a single layer for this adjustment.');
+      this.message('请选择单个图层以进行此调整。');
       return;
     }
     if (layerLock(this.doc.layers, this.selected, operation)) {
-      this.message('Unlock this layer to edit it.');
+      this.message('请先解锁此图层再进行编辑。');
       return;
     }
     this.command(label, (d) => {
@@ -572,7 +572,7 @@ export class Editor {
     // menu. Older projects above the editing limit can still be edited or
     // reduced; only further growth is refused, before history is committed.
     if (before && layers.length > MAX_LAYERS && layers.length > allLayers(before.layers).length)
-      throw new Error(`A document can contain up to ${MAX_LAYERS} layers.`);
+      throw new Error(`一个文档最多可包含 ${MAX_LAYERS} 个图层。`);
     for (const l of layers) {
       if (l.textData) bakeTextScale(l);
       if (l.kind !== 'pixel' || !l.pixels) continue;
@@ -653,7 +653,7 @@ export class Editor {
     if (this.transform.active || !tool?.updateOptions?.({ e: this, el })) {
       let html = '';
       if (this.transform.active)
-        html = `<span class="transform-label">Free Transform</span><label class="transform-setting"><input id="transform-proportions" type="checkbox" ${this.transform.shared || this.transform.proportional ? 'checked' : ''} ${this.transform.shared ? 'disabled' : ''}>Proportions</label><label class="transform-setting"><input id="transform-snap" type="checkbox" ${this.transform.snapping ? 'checked' : ''}>Snap</label><button data-command="edit.transform-cancel" class="icon-button" title="Cancel transform (Escape)" aria-label="Cancel">${svg('ban', 16)}</button><button data-command="edit.transform-commit" class="icon-button transform-apply" title="Commit transform (Enter)" aria-label="Apply">${svg('check', 16)}</button>`;
+        html = `<span class="transform-label">自由变换</span><label class="transform-setting"><input id="transform-proportions" type="checkbox" ${this.transform.shared || this.transform.proportional ? 'checked' : ''} ${this.transform.shared ? 'disabled' : ''}>等比例</label><label class="transform-setting"><input id="transform-snap" type="checkbox" ${this.transform.snapping ? 'checked' : ''}>对齐</label><button data-command="edit.transform-cancel" class="icon-button" title="取消变换 (Escape)" aria-label="取消">${svg('ban', 16)}</button><button data-command="edit.transform-commit" class="icon-button transform-apply" title="提交变换 (Enter)" aria-label="应用">${svg('check', 16)}</button>`;
       else html = tool?.options?.(this) ?? '';
       el.innerHTML = html;
       if (!this.transform.active) tool?.bindOptions?.({ e: this, el });
@@ -897,7 +897,7 @@ export class Editor {
       if (close) {
         const v = this.views.find((x) => x.id === close.dataset.closeView);
         // Closing waits for the task, which may be working on that document.
-        if (v && this.busy) this.message(`“${v.session.doc.name}” can be closed when the current task finishes.`);
+        if (v && this.busy) this.message(`当前任务完成后即可关闭“${v.session.doc.name}”。`);
         else if (v) {
           // Closed from the keyboard, the focus moves to the tab shown now
           // instead of falling to the page with the removed button.
@@ -1006,8 +1006,8 @@ export class Editor {
         await openFiles(this, files.map((blob) => ({ blob, name: blob.name })), place && this.hasDocument);
       });
     if (!this.busy) return void open();
-    const names = files.length === 1 ? files[0].name : `${files.length} files`;
-    this.message(`${names} ${files.length === 1 ? 'opens' : 'open'} when the current task finishes.`);
+    const names = files.length === 1 ? files[0].name : `${files.length} 个文件`;
+    this.message(`当前任务完成后将打开 ${names}。`);
     void (async () => {
       while (this.busy) await this.idle;
       await open();

@@ -183,7 +183,7 @@ class App extends EventTarget {
     const res = await this.api.post('/tickets-bulk', { ids, ...body });
     for (const r of res.results || []) if (r.ticket) this.replica.upsert('t', r.ticket);
     const failed = (res.results || []).filter((r) => r.error);
-    if (failed.length) toastError({ message: `${failed.length} ticket${failed.length === 1 ? '' : 's'} could not be updated: ${failed[0].error}` });
+    if (failed.length) toastError({ message: `${failed.length} 个工单无法更新：${failed[0].error}` });
     return res;
   }
 
@@ -204,11 +204,11 @@ class App extends EventTarget {
   memberName(uuid) {
     if (!uuid) return '';
     const m = this.replica?.members?.[uuid];
-    return m ? m.name : 'Former agent';
+    return m ? m.name : '前客服人员';
   }
 
   userName(id) {
-    return this.replica?.users.get(id)?.name || 'Unknown customer';
+    return this.replica?.users.get(id)?.name || '未知客户';
   }
 
   helpCenterUrl() {

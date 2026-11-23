@@ -27,13 +27,13 @@ import { ListView } from '../views/list.js';
 import { TimelineView } from '../views/timeline.js';
 
 const VIEW_DESCRIPTIONS = {
-  grid: 'Rows and columns, like a spreadsheet',
-  calendar: 'Records on a month calendar by date',
-  gallery: 'Cards with cover images',
-  kanban: 'Cards in stacks you drag between',
-  timeline: 'Bars across time, from start to end',
-  list: 'A compact list, grouped if you like',
-  form: 'A form that adds records',
+  grid: '类似电子表格的行与列视图',
+  calendar: '按日期在月历上展示记录',
+  gallery: '带有封面图片的卡片视图',
+  kanban: '可在分组列之间拖拽的看板卡片',
+  timeline: '从开始到结束跨时间展示的横条',
+  list: '紧凑的列表，支持按需分组',
+  form: '用于收集并添加记录的表单',
 };
 
 const VIEWS = { grid: GridView, kanban: KanbanView, gallery: GalleryView, calendar: CalendarView, form: FormView, list: ListView, timeline: TimelineView };
@@ -54,7 +54,7 @@ export class BasePage {
     this.recordDialog = null;
     this.viewInst = null;
     this.offs = [];
-    this.el = h('div.basepage', h('div.loading-view', { role: 'status' }, h('div.spinner', { 'aria-label': 'Opening base' })));
+    this.el = h('div.basepage', h('div.loading-view', { role: 'status' }, h('div.spinner', { 'aria-label': '正在打开数据库' })));
   }
 
   get table() {
@@ -121,7 +121,7 @@ export class BasePage {
     let view = table.view(viewId) || table.view(prefs().lastViews[table.id]) || table.views[0];
     // A link to a record that was deleted (or is in another table) opens none.
     if (recordId && !table.record(recordId)) {
-      toast('That record no longer exists.');
+      toast('该记录已不存在。');
       recordId = null;
       replace = true;
     }
@@ -168,9 +168,9 @@ export class BasePage {
     this.applyBaseColor();
     this.el.classList.toggle('sidebar-closed', isOverlaySidebar() ? true : !prefs().sidebarOpen);
     this.topbar = h('header.topbar');
-    this.tabsEl = h('nav.tablesbar', { 'aria-label': 'Tables' });
-    this.viewbarEl = h('div.viewbar', { role: 'toolbar', 'aria-label': 'View' });
-    this.sidebarEl = h('nav.view-sidebar', { 'aria-label': 'Views' });
+    this.tabsEl = h('nav.tablesbar', { 'aria-label': '数据表' });
+    this.viewbarEl = h('div.viewbar', { role: 'toolbar', 'aria-label': '视图' });
+    this.sidebarEl = h('nav.view-sidebar', { 'aria-label': '视图列表' });
     this.viewHost = h('div.view-host');
     const scrim = h('div.sidebar-scrim', { onclick: () => this.toggleSidebar(false) });
     this.el.replaceChildren(this.topbar, this.tabsEl, h('main.base-main', { id: 'main', tabindex: '-1' }, this.viewbarEl, h('div.base-body', this.sidebarEl, scrim, this.viewHost)));
@@ -179,10 +179,10 @@ export class BasePage {
 
   renderTopbar() {
     const b = this.base.doc;
-    const home = h('button.home-btn', { type: 'button', 'aria-label': 'All bases', 'data-tip': 'All bases', onclick: () => this.app.navigate('') }, h('img', { src: './icon-192.png', alt: '', width: 24, height: 24 }));
+    const home = h('button.home-btn', { type: 'button', 'aria-label': '所有数据库', 'data-tip': '所有数据库', onclick: () => this.app.navigate('') }, h('img', { src: './icon-192.png', alt: '', width: 24, height: 24 }));
     const title = h(
       'button.base-title-btn',
-      { type: 'button', 'aria-haspopup': 'menu', 'aria-label': `Base: ${b.name}` },
+      { type: 'button', 'aria-haspopup': 'menu', 'aria-label': `数据库：${b.name}` },
       h('span.base-icon', { style: { background: accentColor(b.color) }, 'aria-hidden': 'true' }, icon(b.icon || 'table', 15)),
       h('span.base-title-text', b.name),
       icon('chevronDown', 14),
@@ -191,11 +191,11 @@ export class BasePage {
     // The color and icon picker stays with the title as it is redrawn.
     for (const p of popoversAnchoredIn(this.topbar)) if (p.anchor.classList.contains('base-title-btn')) p.reanchor(title);
     this.statusEl = h('span.save-status', { role: 'status', 'aria-live': 'polite' });
-    this.undoBtn = h('button.icon-btn', { type: 'button', 'aria-label': 'Undo', 'data-tip': 'Undo', 'data-kbd': `${modLabel()}Z`, onclick: () => this.undo() }, icon('undo', 16));
-    this.redoBtn = h('button.icon-btn', { type: 'button', 'aria-label': 'Redo', 'data-tip': 'Redo', 'data-kbd': `${modLabel()}Shift+Z`, onclick: () => this.redo() }, icon('redo', 16));
+    this.undoBtn = h('button.icon-btn', { type: 'button', 'aria-label': '撤销', 'data-tip': '撤销', 'data-kbd': `${modLabel()}Z`, onclick: () => this.undo() }, icon('undo', 16));
+    this.redoBtn = h('button.icon-btn', { type: 'button', 'aria-label': '重做', 'data-tip': '重做', 'data-kbd': `${modLabel()}Shift+Z`, onclick: () => this.redo() }, icon('redo', 16));
     // Quick search is the way to other tables, records and bases on phones too.
-    const searchBtn = h('button.icon-btn', { type: 'button', 'aria-label': 'Quick search', 'data-tip': 'Quick search', 'data-kbd': `${modLabel()}K`, onclick: () => this.quickSearch() }, icon('search', 16));
-    const help = h('button.icon-btn.hide-phone', { type: 'button', 'aria-label': 'Keyboard shortcuts', 'data-tip': 'Keyboard shortcuts', 'data-kbd': '?', onclick: () => this.app.showShortcuts() }, icon('help', 16));
+    const searchBtn = h('button.icon-btn', { type: 'button', 'aria-label': '快速搜索', 'data-tip': '快速搜索', 'data-kbd': `${modLabel()}K`, onclick: () => this.quickSearch() }, icon('search', 16));
+    const help = h('button.icon-btn.hide-phone', { type: 'button', 'aria-label': '键盘快捷键', 'data-tip': '键盘快捷键', 'data-kbd': '?', onclick: () => this.app.showShortcuts() }, icon('help', 16));
     this.topbar.replaceChildren(h('h1.sr-only', b.name), home, title, this.statusEl, h('div.grow'), h('div.topbar-actions', this.undoBtn, this.redoBtn, searchBtn, help), this.app.accountButton());
     this.renderStatus();
     this.renderUndo();
@@ -205,11 +205,11 @@ export class BasePage {
     if (!this.statusEl) return;
     const s = this.session.status;
     const map = {
-      saved: ['cloudCheck', 'All changes saved'],
-      pending: ['cloud', 'Saving...'],
-      saving: ['cloud', 'Saving...'],
-      offline: ['cloudOff', 'Offline. Changes are kept on this device.'],
-      error: ['alert', 'Not saved. Retrying...'],
+      saved: ['cloudCheck', '所有更改已保存'],
+      pending: ['cloud', '正在保存...'],
+      saving: ['cloud', '正在保存...'],
+      offline: ['cloudOff', '离线。更改已保存在此设备上。'],
+      error: ['alert', '未保存。正在重试...'],
     };
     const [ic, text] = map[s] || map.saved;
     this.statusEl.className = `save-status ${s}`;
@@ -224,12 +224,12 @@ export class BasePage {
   }
 
   renderTabs() {
-    const tabs = h('div.table-tabs', { role: 'tablist', 'aria-label': 'Tables' });
+    const tabs = h('div.table-tabs', { role: 'tablist', 'aria-label': '数据表' });
     let dragId = null;
     for (const t of this.base.tableList()) {
       const selected = t.id === this.tableId;
       const chevron = h('span.tab-chevron', { 'aria-hidden': 'true' }, icon('chevronDown', 14));
-      const tab = h('button.table-tab', { type: 'button', role: 'tab', 'aria-selected': String(selected), tabindex: selected ? '0' : '-1', draggable: 'true', dataset: { id: t.id }, title: selected ? 'Press Enter for table options' : null }, h('span.tab-name', t.name), chevron);
+      const tab = h('button.table-tab', { type: 'button', role: 'tab', 'aria-selected': String(selected), tabindex: selected ? '0' : '-1', draggable: 'true', dataset: { id: t.id }, title: selected ? '按 Enter 打开数据表选项' : null }, h('span.tab-name', t.name), chevron);
       tab.addEventListener('click', (e) => {
         if (selected && chevron.contains(e.target)) this.openTableMenu(tab, t);
         else if (!selected) this.go(t.id, null);
@@ -276,11 +276,11 @@ export class BasePage {
         if (!dragId || dragId === t.id) return;
         const list = this.base.doc.tables.map((x) => x.id).filter((x) => x !== dragId);
         const index = list.indexOf(t.id);
-        this.base.apply({ t: 'table.move', id: dragId, index }, { label: 'Move table' });
+        this.base.apply({ t: 'table.move', id: dragId, index }, { label: '移动数据表' });
       });
       tabs.append(tab);
     }
-    const add = h('button.btn.ghost.small.tabs-add', { type: 'button', 'aria-haspopup': 'menu' }, icon('plus', 14), h('span', 'Add or import'));
+    const add = h('button.btn.ghost.small.tabs-add', { type: 'button', 'aria-haspopup': 'menu' }, icon('plus', 14), h('span', '添加或导入'));
     add.addEventListener('click', () => this.openAddTableMenu(add));
     this.tabsEl.replaceChildren(tabs, add);
     // Tabs that do not fit scroll sideways with a mouse wheel too.
@@ -293,7 +293,7 @@ export class BasePage {
       // A long name cut short shows in full on hover.
       for (const name of tabs.querySelectorAll('.tab-name')) {
         const tab = name.parentElement;
-        if (name.scrollWidth > name.clientWidth) tab.title = tab.title ? `${name.textContent}. ${tab.title}` : name.textContent;
+        if (name.scrollWidth > name.clientWidth) tab.title = tab.title ? `${name.textContent}。${tab.title}` : name.textContent;
       }
       tabs.querySelector('[aria-selected=true]')?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
     });
@@ -302,8 +302,8 @@ export class BasePage {
   renderSidebar() {
     const table = this.table;
     if (!table) return;
-    const filter = h('input.input', { type: 'search', placeholder: 'Find a view', 'aria-label': 'Find a view' });
-    const list = h('ul.view-list', { 'aria-label': `Views of ${table.name}` });
+    const filter = h('input.input', { type: 'search', placeholder: '查找视图', 'aria-label': '查找视图' });
+    const list = h('ul.view-list', { 'aria-label': `${table.name} 的视图` });
     let dragId = null;
     const paint = () => {
       const q = filter.value.trim().toLowerCase();
@@ -311,13 +311,13 @@ export class BasePage {
       for (const v of table.views) {
         if (q && !v.name.toLowerCase().includes(q)) continue;
         const current = v.id === this.viewId;
-        const more = h('button.icon-btn', { type: 'button', 'aria-label': `${v.name} options`, 'aria-haspopup': 'menu', onclick: (e) => {
+        const more = h('button.icon-btn', { type: 'button', 'aria-label': `${v.name} 选项`, 'aria-haspopup': 'menu', onclick: (e) => {
           e.stopPropagation();
           this.openViewMenu(more, v);
         } }, icon('more', 14));
         // The type is said once: a view named "Grid view" is not "Grid view, Grid view".
-        const type = `${VIEW_TYPES[v.type]?.label} view`;
-        const label = [type.toLowerCase(), VIEW_TYPES[v.type]?.label.toLowerCase()].includes(v.name.trim().toLowerCase()) ? type : `${v.name}, ${type}`;
+        const type = `${VIEW_TYPES[v.type]?.label}视图`;
+        const label = [type.toLowerCase(), VIEW_TYPES[v.type]?.label.toLowerCase()].includes(v.name.trim().toLowerCase()) ? type : `${v.name}，${type}`;
         const link = h('a.view-link', { href: `#/${[this.baseId, table.id, v.id].map(encodeURIComponent).join('/')}`, 'aria-current': current ? 'page' : null, 'aria-label': label, draggable: 'false' }, viewIcon(v.type), h('span.view-name', v.name));
         const li = h('li.view-item', { 'aria-current': current ? 'true' : null, draggable: 'true' }, link, more);
         li.addEventListener('click', (e) => {
@@ -361,20 +361,20 @@ export class BasePage {
           e.preventDefault();
           if (!dragId || dragId === v.id) return;
           const ids = table.views.map((x) => x.id).filter((x) => x !== dragId);
-          this.base.apply({ t: 'view.move', table: table.id, id: dragId, index: ids.indexOf(v.id) }, { label: 'Move view' });
+          this.base.apply({ t: 'view.move', table: table.id, id: dragId, index: ids.indexOf(v.id) }, { label: '移动视图' });
         });
         list.append(li);
       }
-      if (!list.children.length) list.append(h('li.menu-empty', 'No views match'));
+      if (!list.children.length) list.append(h('li.menu-empty', '没有匹配的视图'));
     };
     filter.addEventListener('input', paint);
     paint();
-    const create = h('button.view-create-btn', { type: 'button', 'aria-haspopup': 'menu' }, icon('plus', 16), h('span', 'Create view'));
+    const create = h('button.view-create-btn', { type: 'button', 'aria-haspopup': 'menu' }, icon('plus', 16), h('span', '创建视图'));
     create.addEventListener('click', () => openMenu(create, VIEW_ORDER.map((type) => ({
       label: VIEW_TYPES[type].label,
       render: () => [viewIcon(type, 18), h('span.menu-label', h('span', VIEW_TYPES[type].label), h('span.menu-desc', VIEW_DESCRIPTIONS[type]))],
       onSelect: () => this.createView(type),
-    })), { label: 'Create a view', width: 300 }));
+    })), { label: '创建视图', width: 300 }));
     this.sidebarEl.replaceChildren(h('div.view-side-top', create, h('div.view-search', icon('search', 14), filter)), list);
   }
 
@@ -386,13 +386,13 @@ export class BasePage {
       return;
     }
     const sidebarOpen = !this.el.classList.contains('sidebar-closed');
-    const toggle = h('button.icon-btn', { type: 'button', 'aria-label': sidebarOpen ? 'Hide views' : 'Show views', 'aria-expanded': String(sidebarOpen), 'data-tip': sidebarOpen ? 'Hide views' : 'Show views', 'data-kbd': `${modLabel()}Shift+L`, onclick: () => this.toggleSidebar() }, icon(sidebarOpen ? 'panelLeftClose' : 'panelLeft', 16));
-    const sw = h('button.view-switch', { type: 'button', 'aria-haspopup': 'menu', 'aria-label': `View: ${view.name}` }, viewIcon(view.type), h('span.view-switch-name', view.name), icon('chevronDown', 14));
+    const toggle = h('button.icon-btn', { type: 'button', 'aria-label': sidebarOpen ? '隐藏视图列表' : '显示视图列表', 'aria-expanded': String(sidebarOpen), 'data-tip': sidebarOpen ? '隐藏视图列表' : '显示视图列表', 'data-kbd': `${modLabel()}Shift+L`, onclick: () => this.toggleSidebar() }, icon(sidebarOpen ? 'panelLeftClose' : 'panelLeft', 16));
+    const sw = h('button.view-switch', { type: 'button', 'aria-haspopup': 'menu', 'aria-label': `视图：${view.name}` }, viewIcon(view.type), h('span.view-switch-name', view.name), icon('chevronDown', 14));
     sw.addEventListener('click', () => this.openViewMenu(sw, view));
     // The toolbar is kept, so a panel open from it stays with its button.
     const toolbar = this.viewbarEl.querySelector(':scope > .toolbar') || h('div.toolbar');
     renderToolbar(toolbar, this, table, view);
-    const find = view.type === 'form' ? null : h('button.icon-btn', { type: 'button', 'aria-label': 'Find in view', 'data-tip': 'Find in view', 'data-kbd': `${modLabel()}F`, onclick: () => this.openFind() }, icon('search', 16));
+    const find = view.type === 'form' ? null : h('button.icon-btn', { type: 'button', 'aria-label': '在视图中查找', 'data-tip': '在视图中查找', 'data-kbd': `${modLabel()}F`, onclick: () => this.openFind() }, icon('search', 16));
     this.viewbarEl.replaceChildren(toggle, sw, h('div.toolbar-sep'), toolbar, h('div.viewbar-end', find));
   }
 
@@ -419,7 +419,7 @@ export class BasePage {
     this.closeFind();
     const view = this.view;
     if (!view) {
-      this.viewHost.replaceChildren(h('div.empty', h('h2', 'No views'), h('p', 'Create a view from the sidebar.')));
+      this.viewHost.replaceChildren(h('div.empty', h('h2', '暂无视图'), h('p', '请从侧边栏创建一个视图。')));
       return;
     }
     const Cls = VIEWS[view.type] || GridView;
@@ -482,7 +482,7 @@ export class BasePage {
       this.app.page = null;
       history.replaceState(null, '', `${location.pathname}${location.search}#/${[this.baseId, tableId, viewId, recordId].filter(Boolean).join('/')}`);
       await this.app.route();
-      toast('Updated with changes from another device.');
+      toast('已同步来自其他设备的最新更改。');
     }
   }
 
@@ -495,10 +495,10 @@ export class BasePage {
     this.undoToasts ||= new Set();
     const t = toast(message, {
       action: {
-        label: 'Undo',
+        label: '撤销',
         onClick: () => {
           if (this.base.undoStack[this.base.undoStack.length - 1] === step) this.undo();
-          else toast('Other changes were made since, so this can no longer be undone from here. Use Undo in the top bar.');
+          else toast('此后已进行其他更改，无法从此处直接撤销。请使用顶部栏的“撤销”按钮。');
         },
       },
     });
@@ -509,12 +509,12 @@ export class BasePage {
 
   undo() {
     const step = this.base.undo();
-    if (step) announce(`Undid ${step.label || 'change'}`);
+    if (step) announce(`已撤销${step.label || '更改'}`);
   }
 
   redo() {
     const step = this.base.redo();
-    if (step) announce(`Redid ${step.label || 'change'}`);
+    if (step) announce(`已重做${step.label || '更改'}`);
   }
 
   onKey(e) {
@@ -552,16 +552,16 @@ export class BasePage {
 
   openAddTableMenu(anchor) {
     openMenu(anchor, [
-      { label: 'Start from scratch', icon: 'table', onSelect: () => this.addTable() },
-      { label: 'Import a CSV file', icon: 'fileUp', onSelect: () => this.importTable() },
-    ], { label: 'Add a table' });
+      { label: '从空白开始', icon: 'table', onSelect: () => this.addTable() },
+      { label: '导入 CSV 文件', icon: 'fileUp', onSelect: () => this.importTable() },
+    ], { label: '添加数据表' });
   }
 
   addTable() {
     const n = this.base.doc.tables.length + 1;
-    let name = `Table ${n}`;
+    let name = `表 ${n}`;
     const names = new Set(this.base.doc.tables.map((t) => t.name.toLowerCase()));
-    for (let i = n; names.has(name.toLowerCase()); i++) name = `Table ${i}`;
+    for (let i = n; names.has(name.toLowerCase()); i++) name = `表 ${i}`;
     const id = this.base.addTable(name);
     this.go(id, null);
     requestAnimationFrame(() => this.renameTable(this.base.table(id)));
@@ -573,7 +573,7 @@ export class BasePage {
       onDone: ({ plan }) => {
         const id = addTableFromPlan(this.base, plan);
         this.go(id, null);
-        toast(`Imported ${plan.rows.length} record${plan.rows.length === 1 ? '' : 's'}`);
+        toast(`已导入 ${plan.rows.length} 条记录`);
       },
     });
   }
@@ -584,7 +584,7 @@ export class BasePage {
       table,
       onDone: ({ plan, mapping }) => {
         const n = appendPlan(this.base, table.id, plan, mapping);
-        toast(`Added ${n} record${n === 1 ? '' : 's'} to ${table.name}`);
+        toast(`已向 ${table.name} 添加 ${n} 条记录`);
       },
     });
   }
@@ -592,33 +592,33 @@ export class BasePage {
   openTableMenu(anchor, t) {
     const tables = this.base.tableList();
     openMenu(anchor, [
-      { label: 'Rename table', icon: 'pencil', hint: 'F2', onSelect: () => this.renameTable(t) },
-      { label: 'Edit table description', icon: 'info', onSelect: () => this.describeTable(t) },
-      { label: 'Duplicate table', icon: 'copy', onSelect: () => this.duplicateTable(t) },
+      { label: '重命名数据表', icon: 'pencil', hint: 'F2', onSelect: () => this.renameTable(t) },
+      { label: '编辑数据表描述', icon: 'info', onSelect: () => this.describeTable(t) },
+      { label: '复制数据表', icon: 'copy', onSelect: () => this.duplicateTable(t) },
       { type: 'sep' },
-      { label: 'Import CSV into this table', icon: 'fileUp', onSelect: () => this.importInto(t) },
-      { label: 'Export table as CSV', icon: 'download', onSelect: () => exportCsv(this.base, t, null) },
+      { label: '导入 CSV 到此表', icon: 'fileUp', onSelect: () => this.importInto(t) },
+      { label: '将此表导出为 CSV', icon: 'download', onSelect: () => exportCsv(this.base, t, null) },
       { type: 'sep' },
-      { label: 'Delete table', icon: 'trash', danger: true, disabled: tables.length < 2, title: tables.length < 2 ? 'A base needs at least one table.' : null, onSelect: () => this.deleteTable(t) },
+      { label: '删除数据表', icon: 'trash', danger: true, disabled: tables.length < 2, title: tables.length < 2 ? '一个数据库至少需要保留一张数据表。' : null, onSelect: () => this.deleteTable(t) },
     ], { label: t.name });
   }
 
   async renameTable(t) {
     if (!t) return;
-    const name = await promptDialog({ title: 'Rename table', label: 'Name', value: t.name, validate: (v) => (!v ? 'Enter a name.' : this.base.tableList().some((x) => x.id !== t.id && x.name.toLowerCase() === v.toLowerCase()) ? 'Another table has this name.' : null) });
-    if (name && name !== t.name) this.base.apply({ t: 'table.set', id: t.id, patch: { name } }, { label: 'Rename table' });
+    const name = await promptDialog({ title: '重命名数据表', label: '名称', value: t.name, validate: (v) => (!v ? '请输入名称。' : this.base.tableList().some((x) => x.id !== t.id && x.name.toLowerCase() === v.toLowerCase()) ? '已有另一张同名数据表。' : null) });
+    if (name && name !== t.name) this.base.apply({ t: 'table.set', id: t.id, patch: { name } }, { label: '重命名数据表' });
   }
 
   async describeTable(t) {
-    const text = await promptDialog({ title: `Description of ${t.name}`, label: 'Description', value: t.schema.description || '', placeholder: 'What is this table for?' });
-    if (text !== null) this.base.apply({ t: 'table.set', id: t.id, patch: { description: text } }, { label: 'Edit description' });
+    const text = await promptDialog({ title: `${t.name} 的描述`, label: '描述', value: t.schema.description || '', placeholder: '这张数据表用于做什么？' });
+    if (text !== null) this.base.apply({ t: 'table.set', id: t.id, patch: { description: text } }, { label: '编辑描述' });
   }
 
   duplicateTable(t) {
     const schema = structuredClone(t.schema);
     const idMap = new Map();
     schema.id = newId('tbl');
-    schema.name = `${t.name} copy`;
+    schema.name = `${t.name} 副本`;
     for (const f of schema.fields) {
       const nid = newId('fld');
       idMap.set(f.id, nid);
@@ -677,16 +677,16 @@ export class BasePage {
       return { ...r, id: recIds.get(r.id), c };
     });
     // Links in the copy are one-way, so the linked records do not change.
-    this.base.apply({ t: 'table.add', schema, recs, index: this.base.doc.tables.findIndex((x) => x.id === t.id) + 1 }, { label: 'Duplicate table' });
+    this.base.apply({ t: 'table.add', schema, recs, index: this.base.doc.tables.findIndex((x) => x.id === t.id) + 1 }, { label: '复制数据表' });
     this.go(schema.id, null);
   }
 
   async deleteTable(t) {
     if (this.base.tableList().length < 2) return;
-    const ok = await confirmDialog({ title: `Delete ${t.name}?`, message: `The table and its ${t.records.size} record${t.records.size === 1 ? '' : 's'} are deleted, along with links to it from other tables. You can undo this.`, confirmLabel: 'Delete table', danger: true });
+    const ok = await confirmDialog({ title: `确定删除 ${t.name}？`, message: `该数据表及其 ${t.records.size} 条记录将被删除，其他表中指向它的关联也会一并移除。此操作可以撤销。`, confirmLabel: '删除数据表', danger: true });
     if (!ok) return;
-    this.base.apply({ t: 'table.del', id: t.id }, { label: 'Delete table' });
-    this.toastUndo(`Deleted ${t.name}`);
+    this.base.apply({ t: 'table.del', id: t.id }, { label: '删除数据表' });
+    this.toastUndo(`已删除 ${t.name}`);
   }
 
   /* -------------------------------------------------------------- views */
@@ -701,38 +701,38 @@ export class BasePage {
   openViewMenu(anchor, v) {
     const table = this.table;
     openMenu(anchor, [
-      { label: 'Rename view', icon: 'pencil', onSelect: () => this.renameView(v) },
-      { label: 'Edit view description', icon: 'info', onSelect: () => this.describeView(v) },
-      { label: 'Duplicate view', icon: 'copy', onSelect: () => {
+      { label: '重命名视图', icon: 'pencil', onSelect: () => this.renameView(v) },
+      { label: '编辑视图描述', icon: 'info', onSelect: () => this.describeView(v) },
+      { label: '复制视图', icon: 'copy', onSelect: () => {
         const copy = structuredClone(v);
         copy.id = newId('viw');
-        copy.name = `${v.name} copy`;
-        this.base.apply({ t: 'view.add', table: table.id, view: copy, index: table.views.indexOf(v) + 1 }, { label: 'Duplicate view' });
+        copy.name = `${v.name} 副本`;
+        this.base.apply({ t: 'view.add', table: table.id, view: copy, index: table.views.indexOf(v) + 1 }, { label: '复制视图' });
         this.go(table.id, copy.id);
       } },
       { type: 'sep' },
-      v.type !== 'form' ? { label: 'Download CSV', icon: 'download', onSelect: () => exportCsv(this.base, table, v) } : null,
-      v.type !== 'form' ? { label: 'Print view', icon: 'printer', onSelect: () => this.printView(v) } : null,
+      v.type !== 'form' ? { label: '下载 CSV', icon: 'download', onSelect: () => exportCsv(this.base, table, v) } : null,
+      v.type !== 'form' ? { label: '打印视图', icon: 'printer', onSelect: () => this.printView(v) } : null,
       { type: 'sep' },
-      { label: 'Delete view', icon: 'trash', danger: true, disabled: table.views.length < 2, title: table.views.length < 2 ? 'A table needs at least one view.' : null, onSelect: () => this.deleteView(v) },
+      { label: '删除视图', icon: 'trash', danger: true, disabled: table.views.length < 2, title: table.views.length < 2 ? '一张数据表至少需要保留一个视图。' : null, onSelect: () => this.deleteView(v) },
     ], { label: v.name });
   }
 
   async renameView(v) {
-    const name = await promptDialog({ title: 'Rename view', label: 'Name', value: v.name, validate: (x) => (x ? null : 'Enter a name.') });
-    if (name && name !== v.name) this.base.updateView(this.table.id, v.id, { name }, { label: 'Rename view' });
+    const name = await promptDialog({ title: '重命名视图', label: '名称', value: v.name, validate: (x) => (x ? null : '请输入名称。') });
+    if (name && name !== v.name) this.base.updateView(this.table.id, v.id, { name }, { label: '重命名视图' });
   }
 
   async describeView(v) {
-    const text = await promptDialog({ title: `Description of ${v.name}`, label: 'Description', value: v.description || '' });
+    const text = await promptDialog({ title: `${v.name} 的描述`, label: '描述', value: v.description || '' });
     if (text !== null) this.base.updateView(this.table.id, v.id, { description: text });
   }
 
   deleteView(v) {
     const table = this.table;
     if (table.views.length < 2) return;
-    this.base.apply({ t: 'view.del', table: table.id, id: v.id }, { label: 'Delete view' });
-    this.toastUndo(`Deleted ${v.name}`);
+    this.base.apply({ t: 'view.del', table: table.id, id: v.id }, { label: '删除视图' });
+    this.toastUndo(`已删除 ${v.name}`);
   }
 
   printView(v) {
@@ -744,31 +744,31 @@ export class BasePage {
   openBaseMenu(anchor) {
     const b = this.base.doc;
     openMenu(anchor, [
-      { label: 'Rename base', icon: 'pencil', onSelect: async () => {
-        const name = await promptDialog({ title: 'Rename base', label: 'Name', value: b.name, validate: (v) => (v ? null : 'Enter a name.') });
-        if (name && name !== b.name) this.base.apply({ t: 'base.set', patch: { name } }, { label: 'Rename base' });
+      { label: '重命名数据库', icon: 'pencil', onSelect: async () => {
+        const name = await promptDialog({ title: '重命名数据库', label: '名称', value: b.name, validate: (v) => (v ? null : '请输入名称。') });
+        if (name && name !== b.name) this.base.apply({ t: 'base.set', patch: { name } }, { label: '重命名数据库' });
       } },
-      { label: 'Change color and icon', icon: 'palette', onSelect: () => {
-        openPopover(anchor, appearancePicker(b, (patch) => this.base.apply({ t: 'base.set', patch }, { label: 'Change base appearance' })), { className: 'padded', label: 'Color and icon' });
+      { label: '更改颜色与图标', icon: 'palette', onSelect: () => {
+        openPopover(anchor, appearancePicker(b, (patch) => this.base.apply({ t: 'base.set', patch }, { label: '更改数据库外观' })), { className: 'padded', label: '颜色与图标' });
       } },
-      { label: 'Duplicate base', icon: 'copy', onSelect: async () => {
+      { label: '复制数据库', icon: 'copy', onSelect: async () => {
         await this.session.flush().catch(() => {});
         try {
           const id = await this.store.duplicateBase(this.baseId);
-          toast('Base duplicated', { action: { label: 'Open', onClick: () => this.app.navigate(id) } });
+          toast('已复制数据库', { action: { label: '打开', onClick: () => this.app.navigate(id) } });
         } catch (err) {
           console.error(err);
-          toast('Could not duplicate the base.', { error: true });
+          toast('无法复制该数据库。', { error: true });
         }
       } },
-      { label: 'Download a backup', icon: 'download', description: 'Every table, record and comment as a JSON file.', onSelect: () => exportBaseJson(this.base) },
+      { label: '下载备份', icon: 'download', description: '将所有数据表、记录和评论保存为一个 JSON 文件。', onSelect: () => exportBaseJson(this.base) },
       { type: 'sep' },
-      { label: 'All bases', icon: 'home', onSelect: () => this.app.navigate('') },
-      { label: 'Move to trash', icon: 'trash', danger: true, onSelect: async () => {
+      { label: '所有数据库', icon: 'home', onSelect: () => this.app.navigate('') },
+      { label: '移至回收站', icon: 'trash', danger: true, onSelect: async () => {
         await this.session.flush().catch(() => {});
         this.store.trashBase(this.baseId);
         this.app.navigate('');
-        toast(`Moved ${b.name} to the trash`, { action: { label: 'Undo', onClick: () => this.store.restoreBase(this.baseId) } });
+        toast(`已将 ${b.name} 移至回收站`, { action: { label: '撤销', onClick: () => this.store.restoreBase(this.baseId) } });
       } },
     ], { label: b.name });
   }
@@ -808,14 +808,14 @@ export class BasePage {
       this.find.input.select();
       return;
     }
-    const input = h('input.input', { type: 'search', placeholder: 'Find in view', 'aria-label': 'Find in view' });
+    const input = h('input.input', { type: 'search', placeholder: '在视图中查找', 'aria-label': '在视图中查找' });
     const count = h('span.find-count', { 'aria-live': 'polite' });
-    const prev = h('button.icon-btn', { type: 'button', 'aria-label': 'Previous match', onclick: () => step(-1) }, icon('chevronUp', 16));
-    const next = h('button.icon-btn', { type: 'button', 'aria-label': 'Next match', onclick: () => step(1) }, icon('chevronDown', 16));
-    const close = h('button.icon-btn', { type: 'button', 'aria-label': 'Close find', onclick: () => this.closeFind(true) }, icon('x', 16));
+    const prev = h('button.icon-btn', { type: 'button', 'aria-label': '上一个匹配项', onclick: () => step(-1) }, icon('chevronUp', 16));
+    const next = h('button.icon-btn', { type: 'button', 'aria-label': '下一个匹配项', onclick: () => step(1) }, icon('chevronDown', 16));
+    const close = h('button.icon-btn', { type: 'button', 'aria-label': '关闭查找', onclick: () => this.closeFind(true) }, icon('x', 16));
     const bar = h('div.findbar', { role: 'search' }, icon('search', 14), input, count, prev, next, close);
     const paint = (info) => {
-      count.textContent = !input.value ? '' : info.total ? `${info.index + 1} of ${info.total}` : 'No matches';
+      count.textContent = !input.value ? '' : info.total ? `${info.index + 1} / ${info.total}` : '无匹配项';
     };
     const step = (d) => paint(this.viewInst.stepSearch(d));
     input.addEventListener('input', () => paint(this.viewInst.setSearch(input.value)));

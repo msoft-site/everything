@@ -10,6 +10,6 @@ void editor.start().then(() => {
   installLaunchOpen(editor);
 }, (error) => {
   console.error(error);
-  editor.el('#engine-status').textContent = 'Graphics unavailable';
+  editor.el('#engine-status').textContent = '图形引擎不可用';
   editor.message(error instanceof Error ? error.message : String(error));
 });

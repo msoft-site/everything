@@ -69,9 +69,9 @@ export const BOX_UNITS = Array.from({ length: SIZE }, (_, b) => {
  * every technique re-deriving the wording.
  */
 export const UNITS = [
-  ...ROW_UNITS.map((cells, i) => ({ kind: 'row', index: i, cells, label: `row ${i + 1}` })),
-  ...COL_UNITS.map((cells, i) => ({ kind: 'col', index: i, cells, label: `column ${i + 1}` })),
-  ...BOX_UNITS.map((cells, i) => ({ kind: 'box', index: i, cells, label: `box ${i + 1}` })),
+  ...ROW_UNITS.map((cells, i) => ({ kind: 'row', index: i, cells, label: `第 ${i + 1} 行` })),
+  ...COL_UNITS.map((cells, i) => ({ kind: 'col', index: i, cells, label: `第 ${i + 1} 列` })),
+  ...BOX_UNITS.map((cells, i) => ({ kind: 'box', index: i, cells, label: `第 ${i + 1} 宫` })),
 ];
 
 /** The three units (row, column, box) a cell belongs to. */

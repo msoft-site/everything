@@ -24,16 +24,16 @@ export const CUSTOM_BACKGROUND_ID = 'custom';
  */
 export const PRESET_BACKGROUNDS = Object.freeze(
   [
-    { id: 'forest', label: 'Forest' },
-    { id: 'lake', label: 'Lake' },
-    { id: 'garden', label: 'Garden' },
-    { id: 'underwater', label: 'Underwater' },
-    { id: 'skyline', label: 'Skyline' },
-    { id: 'office', label: 'Office' },
-    { id: 'library', label: 'Library' },
-    { id: 'cafe', label: 'Café' },
-    { id: 'living-room', label: 'Living room' },
-    { id: 'shapes', label: 'Shapes' },
+    { id: 'forest', label: '森林' },
+    { id: 'lake', label: '湖泊' },
+    { id: 'garden', label: '花园' },
+    { id: 'underwater', label: '水下' },
+    { id: 'skyline', label: '城市天际线' },
+    { id: 'office', label: '办公室' },
+    { id: 'library', label: '图书馆' },
+    { id: 'cafe', label: '咖啡馆' },
+    { id: 'living-room', label: '客厅' },
+    { id: 'shapes', label: '几何图形' },
   ].map(Object.freeze)
 );
 
@@ -91,8 +91,8 @@ export function sameBackground(a, b) {
 
 /** Human label for toasts and buttons. */
 export function describeBackground(spec) {
-  if (!spec || spec.type === 'none') return 'No background effect';
-  if (spec.type === 'blur') return spec.blur <= BLUR_SLIGHT ? 'Slight blur' : 'Background blur';
-  if (spec.id === CUSTOM_BACKGROUND_ID) return 'Your background';
-  return PRESET_BACKGROUNDS.find((p) => p.id === spec.id)?.label ?? 'Background image';
+  if (!spec || spec.type === 'none') return '无背景效果';
+  if (spec.type === 'blur') return spec.blur <= BLUR_SLIGHT ? '轻微模糊' : '背景模糊';
+  if (spec.id === CUSTOM_BACKGROUND_ID) return '您的背景';
+  return PRESET_BACKGROUNDS.find((p) => p.id === spec.id)?.label ?? '背景图片';
 }

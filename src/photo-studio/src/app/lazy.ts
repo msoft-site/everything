@@ -38,7 +38,7 @@ const IMPORT_FAILED = /dynamically imported module|Importing a module script fai
  * browser's own message is only a URL. Other errors pass through. */
 export function loadError(error: unknown): unknown {
   if (!(error instanceof Error) || !IMPORT_FAILED.test(error.message)) return error;
-  return new Error('This part of Photo Studio could not be loaded. Check the connection and try again, or reload the page if Photo Studio has been updated.', { cause: error });
+  return new Error('无法加载图片工作室的此模块。请检查网络连接后重试，若图片工作室已更新请刷新页面。', { cause: error });
 }
 
 /** A memoized module loader: `lazy(() => import('./dialog'))`. */
@@ -213,7 +213,7 @@ export function lazyPanel(meta: Omit<Panel, 'mount' | 'update'>, load: Lazy<Pick
           p.textContent = text;
           const retry = document.createElement('button');
           retry.type = 'button';
-          retry.textContent = 'Try Again';
+          retry.textContent = '重试';
           retry.addEventListener('click', () => {
             el.replaceChildren();
             panel.mount(e, el);

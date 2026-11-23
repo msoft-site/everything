@@ -42,7 +42,7 @@ export function encodeBytes(bytes: Uint8Array) {
 }
 function decodeBytes(value: unknown) {
   if (typeof value !== 'string' || value.length % 4 !== 0 || /[^A-Za-z0-9+/=]/.test(value))
-    throw new Error('Invalid asset encoding.');
+    throw new Error('无效的资产编码。');
   return Uint8Array.from(atob(value), (c) => c.charCodeAt(0));
 }
 function material(value: unknown, textures: SceneState['textures']): Material {
@@ -61,7 +61,7 @@ function material(value: unknown, textures: SceneState['textures']): Material {
     ![10497, 33071, 33648].includes(Number(value.wrapT)) ||
     (value.textureId !== undefined && (!identifier(value.textureId) || !textures[value.textureId]))
   )
-    throw new Error('Invalid material or missing texture.');
+    throw new Error('无效的材质或缺少纹理。');
   return {
     baseColor: [...value.baseColor] as Material['baseColor'],
     metallic: value.metallic,
@@ -78,21 +78,21 @@ function material(value: unknown, textures: SceneState['textures']): Material {
 /** Validate and reconstruct data; never merge untrusted JSON into editor objects. */
 export function parseDocument(source: string): SceneState {
   if (new TextEncoder().encode(source).byteLength > MAX_FILE_BYTES)
-    throw new Error('Scene files must be smaller than 64 MB.');
+    throw new Error('场景文件必须小于 64 MB。');
   let data: unknown;
   try {
     data = JSON.parse(source);
   } catch {
-    throw new Error('This file is not valid JSON. Choose a .3d.json scene file.');
+    throw new Error('此文件不是有效的 JSON。请选择一个 .3d.json 场景文件。');
   }
   if (
     !record(data) ||
     data.format !== '3d-scene' ||
     ![1, 2, 3, 4, 5].includes(Number(data.version))
   )
-    throw new Error('Unsupported scene format or version.');
+    throw new Error('不支持的场景格式或版本。');
   if (!text(data.name, 80) || !Array.isArray(data.objects) || data.objects.length > 5000)
-    throw new Error('Invalid scene name or object list (maximum 5,000 objects).');
+    throw new Error('无效的场景名称或物体列表（最多 5,000 个物体）。');
   const meshes: SceneState['meshes'] = Object.create(null),
     textures: SceneState['textures'] = Object.create(null);
   let vertices = 0;
@@ -103,10 +103,10 @@ export function parseDocument(source: string): SceneState {
       data.meshes.length > 5000 ||
       data.textures.length > 5000
     )
-      throw new Error('Invalid scene asset list.');
+      throw new Error('无效的场景资产列表。');
     for (const item of data.meshes) {
       if (!record(item) || !identifier(item.id) || meshes[item.id])
-        throw new Error('Invalid mesh ID.');
+        throw new Error('无效的网格 ID。');
       if (
         (data.version === 3 || data.version === 4 || data.version === 5) &&
         record(item.topology)
@@ -116,7 +116,7 @@ export function parseDocument(source: string): SceneState {
         for (const key of ['positions', 'offsets', 'indices', 'uvs', 'normals', 'seams'] as const) {
           if (key === 'seams' && raw[key] === undefined) continue;
           const bytes = decodeBytes(raw[key]);
-          if (bytes.length % 4) throw new Error('Invalid topology buffer.');
+          if (bytes.length % 4) throw new Error('无效的拓扑缓冲区。');
           const array =
             key === 'offsets' || key === 'indices' || key === 'seams'
               ? new Uint32Array(bytes.buffer)
@@ -126,14 +126,14 @@ export function parseDocument(source: string): SceneState {
         validateTopology(topology);
         const mesh = topologyMesh(item.id, topology);
         vertices += mesh.count;
-        if (vertices > 1_000_000) throw new Error('Scene exceeds 1,000,000 vertices.');
+        if (vertices > 1_000_000) throw new Error('场景顶点数超过 1,000,000。');
         meshes[item.id] = mesh;
         continue;
       }
       const packed = decodeBytes(item.vertices),
         uv = decodeBytes(item.uvs);
       if (!packed.length || packed.length % 72 || uv.length !== packed.length / 3)
-        throw new Error('Invalid mesh buffer sizes.');
+        throw new Error('无效的网格缓冲区大小。');
       const meshVertices = new Float32Array(packed.buffer),
         uvs = new Float32Array(uv.buffer);
       vertices += meshVertices.length / 6;
@@ -142,7 +142,7 @@ export function parseDocument(source: string): SceneState {
         meshVertices.some((v) => !Number.isFinite(v) || Math.abs(v) > 1e6) ||
         uvs.some((v) => !Number.isFinite(v))
       )
-        throw new Error('Invalid mesh data or scene exceeds 1,000,000 vertices.');
+        throw new Error('无效的网格数据或场景顶点数超过 1,000,000。');
       meshes[item.id] = meshAsset(item.id, meshVertices, uvs);
     }
     for (const item of data.textures) {
@@ -153,10 +153,10 @@ export function parseDocument(source: string): SceneState {
         !text(item.name, 80) ||
         !['image/png', 'image/jpeg'].includes(String(item.mimeType))
       )
-        throw new Error('Invalid texture.');
+        throw new Error('无效的纹理。');
       const bytes = decodeBytes(item.bytes);
       if (!bytes.length || bytes.length > 8 * 1024 * 1024)
-        throw new Error('Each texture must be smaller than 8 MB.');
+        throw new Error('每个纹理必须小于 8 MB。');
       textures[item.id] = {
         id: item.id,
         name: item.name,
@@ -185,7 +185,7 @@ export function parseDocument(source: string): SceneState {
       !vector(item.rotation) ||
       !vector(item.scale, true)
     )
-      throw new Error('Scene contains an invalid object, duplicate ID, or out-of-range transform.');
+      throw new Error('场景包含无效物体、重复 ID 或超出范围的变换。');
     let modifiers: Modifier[] | undefined;
     if (item.modifiers !== undefined || item.baseMeshId !== undefined) {
       if (
@@ -197,35 +197,35 @@ export function parseDocument(source: string): SceneState {
         !identifier(item.meshId) ||
         sourceIds.has(item.meshId)
       )
-        throw new Error('Invalid modifier source mesh.');
+        throw new Error('无效的修改器源网格。');
       modifiers = validateModifiers(item.modifiers);
       if (!modifiers.length)
-        throw new Error('Empty modifier stacks must use their source mesh directly.');
+        throw new Error('空的修改器堆栈必须直接使用其源网格。');
       const key = JSON.stringify([item.baseMeshId, modifiers]);
       if (evaluatedKeys.has(item.meshId) && evaluatedKeys.get(item.meshId) !== key)
-        throw new Error('Conflicting modifier asset IDs.');
+        throw new Error('修改器资产 ID 冲突。');
       if (!evaluatedKeys.has(item.meshId)) {
         const evaluated = topologyMesh(
           item.meshId,
           evaluateModifiers(meshes[item.baseMeshId].topology!, modifiers),
         );
         vertices += evaluated.count;
-        if (vertices > 1_000_000) throw new Error('Scene exceeds 1,000,000 vertices.');
+        if (vertices > 1_000_000) throw new Error('场景顶点数超过 1,000,000。');
         meshes[item.meshId] = evaluated;
         evaluatedKeys.set(item.meshId, key);
       }
     }
     if (item.kind === 'mesh' && (!identifier(item.meshId) || !meshes[item.meshId]))
-      throw new Error('Object mesh is missing.');
+      throw new Error('缺少物体网格。');
     if (item.parentId !== undefined && !identifier(item.parentId))
-      throw new Error('Invalid parent ID.');
+      throw new Error('无效的父级 ID。');
     if (item.kind === 'group' && Math.max(...item.scale) - Math.min(...item.scale) > 1e-6)
-      throw new Error('Group scales must be uniform.');
+      throw new Error('组缩放必须为等比缩放。');
     if (
       (item.hidden !== undefined && typeof item.hidden !== 'boolean') ||
       (item.locked !== undefined && typeof item.locked !== 'boolean')
     )
-      throw new Error('Invalid object visibility or lock.');
+      throw new Error('无效的物体可见性或锁定状态。');
     ids.add(item.id);
     return {
       id: item.id,
@@ -245,13 +245,13 @@ export function parseDocument(source: string): SceneState {
     };
   });
   if (objects.filter((o) => o.kind === 'light').length > 8)
-    throw new Error('A scene supports up to eight lights.');
+    throw new Error('一个场景最多支持 8 个灯光。');
   if (
     data.activeCamera !== undefined &&
     (typeof data.activeCamera !== 'string' ||
       !objects.some((o) => o.id === data.activeCamera && o.kind === 'camera'))
   )
-    throw new Error('Invalid active camera.');
+    throw new Error('无效的活动摄像机。');
   const lookup = new Map(objects.map((o) => [o.id, o]));
   for (const object of objects) {
     const visited = new Set([object.id]);
@@ -259,7 +259,7 @@ export function parseDocument(source: string): SceneState {
     while (parent) {
       const node = lookup.get(parent);
       if (!node || node.kind !== 'group' || visited.has(parent) || visited.size > 64)
-        throw new Error('Invalid or cyclic scene hierarchy.');
+        throw new Error('无效或存在循环的场景层级。');
       visited.add(parent);
       parent = node.parentId;
     }
@@ -269,7 +269,7 @@ export function parseDocument(source: string): SceneState {
     data.selection.some((id) => typeof id !== 'string' || !ids.has(id)) ||
     new Set(data.selection).size !== data.selection.length
   )
-    throw new Error('Scene selection is invalid.');
+    throw new Error('场景选中项无效。');
   const selection = data.selection as string[];
   let edit: EditSelection | undefined;
   if ((data.version === 3 || data.version === 4 || data.version === 5) && data.edit !== undefined) {
@@ -280,7 +280,7 @@ export function parseDocument(source: string): SceneState {
       !['vertex', 'edge', 'face'].includes(String(value.mode)) ||
       !Array.isArray(value.ids)
     )
-      throw new Error('Invalid mesh selection.');
+      throw new Error('无效的网格选中项。');
     const object = lookup.get(value.objectId),
       topology = object?.meshId ? meshes[object.baseMeshId ?? object.meshId]?.topology : undefined;
     if (
@@ -294,7 +294,7 @@ export function parseDocument(source: string): SceneState {
           id >= countComponents(topology, value.mode as EditSelection['mode']),
       )
     )
-      throw new Error('Invalid mesh component selection.');
+      throw new Error('无效的网格元素选中项。');
     edit = {
       objectId: value.objectId,
       mode: value.mode as EditSelection['mode'],
@@ -332,7 +332,7 @@ const encodedTextures = new WeakMap<
 /** Scene mutations operate on validated metadata and immutable assets. Cache their encodings
  * so autosave never decodes or re-encodes large mesh buffers after a transform or selection. */
 export function serializeDocument(state: SceneState): string {
-  if (state.objects.length > 5000) throw new Error('A scene can contain at most 5,000 objects.');
+  if (state.objects.length > 5000) throw new Error('一个场景最多可包含 5,000 个物体。');
   const evaluated = new Set(state.objects.filter((o) => o.baseMeshId).map((o) => o.meshId));
   const meshes = Object.values(state.meshes)
     .filter((m) => !evaluated.has(m.id))
@@ -387,7 +387,7 @@ export function serializeDocument(state: SceneState): string {
     2,
   );
   if (new TextEncoder().encode(source).byteLength > MAX_FILE_BYTES)
-    throw new Error('Scene files must be smaller than 64 MB.');
+    throw new Error('场景文件必须小于 64 MB。');
   return source;
 }
 export function documentFilename(name: string) {
@@ -395,6 +395,6 @@ export function documentFilename(name: string) {
     name
       .replace(/[^\p{L}\p{N} _.-]/gu, '')
       .replace(/^[. ]+|[. ]+$/g, '')
-      .slice(0, 80) || 'Untitled scene'
+      .slice(0, 80) || '未命名场景'
   }.3d.json`;
 }

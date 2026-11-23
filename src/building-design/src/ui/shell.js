@@ -56,7 +56,7 @@ export function buildShell(app) {
   const optionsbar = h('div.optionsbar', { role: 'toolbar', 'aria-label': 'Options' });
 
   // Docked panes
-  const propsTitle = h('h2.pane-title', { id: 'props-title' }, 'Properties');
+  const propsTitle = h('h2.pane-title', { id: 'props-title' }, '房产项目');
   const propsClose = h('button.icon-btn.sm', { type: 'button', 'aria-label': 'Hide Properties', 'data-tip': 'Hide Properties', onClick: () => app.togglePane('props') }, icon('x', 15));
   const propsBody = h('div.pane-body');
   const paneProps = h('section.pane.pane-props', { 'aria-labelledby': 'props-title' }, h('div.pane-head', propsTitle, propsClose), propsBody);

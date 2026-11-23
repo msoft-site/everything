@@ -151,12 +151,12 @@ function readZip64Extra(dv, start, len, fields) {
   while (o + 4 <= start + len) {
     const id = dv.getUint16(o, true);
     const size = dv.getUint16(o + 2, true);
-    if (o + 4 + size > start + len) throw new Error('This archive is damaged.');
+    if (o + 4 + size > start + len) throw new Error('此压缩包已损坏。');
     if (id === 0x0001) {
       let p = o + 4;
       for (const key of Object.keys(fields)) {
         if (fields[key] !== MAX32) continue;
-        if (p + 8 > o + 4 + size) throw new Error('This archive is damaged.');
+        if (p + 8 > o + 4 + size) throw new Error('此压缩包已损坏。');
         fields[key] = Number(dv.getBigUint64(p, true));
         p += 8;
       }
@@ -242,17 +242,17 @@ async function directoryAt(zip, tail, tailStart, eocd) {
         // Blob.slice clamps out-of-bounds ranges silently. Validate before slicing so
         // a damaged length cannot turn directory bytes (or a truncated file) into media.
         if (![f.offset, f.size, f.compressed].every((n) => Number.isSafeInteger(n) && n >= 0) || f.offset + 30 > cdStart) {
-          throw new Error('This archive is damaged or incomplete.');
+          throw new Error('此压缩包已损坏或不完整。');
         }
         const lh = await view(zip, f.offset, f.offset + 30);
-        if (lh.getUint32(0, true) !== 0x04034b50) throw new Error('This archive is damaged.');
+        if (lh.getUint32(0, true) !== 0x04034b50) throw new Error('此压缩包已损坏。');
         const start = f.offset + 30 + lh.getUint16(26, true) + lh.getUint16(28, true);
         if (start + f.compressed > cdStart || (method === 0 && f.compressed !== f.size)) {
-          throw new Error('This archive is damaged or incomplete.');
+          throw new Error('此压缩包已损坏或不完整。');
         }
         const raw = zip.slice(start, start + f.compressed);
         if (method === 0) {
-          if (await crcOfBlob(raw) !== checksum) throw new Error('This archive is damaged (checksum mismatch).');
+          if (await crcOfBlob(raw) !== checksum) throw new Error('此压缩包已损坏（校验和不匹配）。');
           return raw;
         }
         if (method === 8 && typeof DecompressionStream === 'function' && raw.stream) {
@@ -263,18 +263,18 @@ async function directoryAt(zip, tail, tailStart, eocd) {
           const validate = new TransformStream({
             transform(chunk, controller) {
               size += chunk.byteLength;
-              if (size > f.size) throw new Error('This archive is damaged or incomplete.');
+              if (size > f.size) throw new Error('此压缩包已损坏或不完整。');
               crc = crc32(chunk, crc);
               controller.enqueue(chunk);
             },
             flush() {
-              if (size !== f.size) throw new Error('This archive is damaged or incomplete.');
-              if (crc !== checksum) throw new Error('This archive is damaged (checksum mismatch).');
+              if (size !== f.size) throw new Error('此压缩包已损坏或不完整。');
+              if (crc !== checksum) throw new Error('此压缩包已损坏（校验和不匹配）。');
             },
           });
           return new Response(raw.stream().pipeThrough(new DecompressionStream('deflate-raw')).pipeThrough(validate)).blob();
         }
-        throw new Error(`${name} uses a compression this browser cannot read.`);
+        throw new Error(`${name} 使用了当前浏览器无法读取的压缩方式。`);
       },
     });
   }
@@ -292,7 +292,7 @@ async function directoryAt(zip, tail, tailStart, eocd) {
  * the file's contents (a slice of the input for stored entries).
  */
 export async function readZip(zip) {
-  if (zip.size < 22) throw new Error('This file is not a project file (too small).');
+  if (zip.size < 22) throw new Error('此文件不是项目文件（文件过小）。');
   // Search the bounded footer/comment window. Comments can contain signature
   // bytes, so neither the signature nor the comment length alone is enough.
   const tailStart = Math.max(0, zip.size - 22 - 0xffff);
@@ -305,9 +305,9 @@ export async function readZip(zip) {
     if (i + 22 + tail.getUint16(i + 20, true) > tail.byteLength) continue;
     const directory = await directoryAt(zip, tail, tailStart, i);
     if (!directory) continue;
-    if (directory.encrypted) throw new Error('Encrypted archives are not supported.');
+    if (directory.encrypted) throw new Error('不支持加密的压缩包。');
     return directory.entries;
   }
-  if (sawSignature) throw new Error('This archive is damaged or incomplete.');
-  throw new Error('This file is not a project file (not a ZIP archive).');
+  if (sawSignature) throw new Error('此压缩包已损坏或不完整。');
+  throw new Error('此文件不是项目文件（不是 ZIP 压缩包）。');
 }

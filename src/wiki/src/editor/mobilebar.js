@@ -25,8 +25,8 @@ export class MobileBar {
     };
     this.el = h(
       'div.mobile-bar',
-      { role: 'toolbar', 'aria-label': 'Block tools', hidden: true },
-      b('plus', 'Insert a block', () => {
+      { role: 'toolbar', 'aria-label': '块工具', hidden: true },
+      b('plus', '插入块', () => {
         const id = current();
         const el = id && editor.textEl(id);
         if (!el) return;
@@ -34,26 +34,26 @@ export class MobileBar {
         editor.insertText(id, '/');
         editor.openSlash(id, off.start);
       }),
-      b('moreVertical', 'Block actions', (btn) => {
+      b('moreVertical', '块操作', (btn) => {
         const id = current();
         if (id) editor.openBlockMenu(btn, [id]);
       }),
-      b('squareCheck', 'To-do', () => {
+      b('squareCheck', '待办事项', () => {
         const id = current();
         if (id) editor.turnInto([id], editor.block(id).type === 'todo' ? 'paragraph' : 'todo');
       }),
-      b('outdent', 'Outdent', () => {
+      b('outdent', '减少缩进', () => {
         const id = current();
         if (id) P.indentBlocks(editor.doc, [id], -1);
       }),
-      b('indent', 'Indent', () => {
+      b('indent', '增加缩进', () => {
         const id = current();
         if (id && P.canIndent(editor.doc, id)) P.indentBlocks(editor.doc, [id], 1);
       }),
-      b('bold', 'Bold', () => editor.toggleMark('bold')),
-      b('italic', 'Italic', () => editor.toggleMark('italic')),
-      b('link', 'Link', () => editor.toolbar.editLink()),
-      b('atSign', 'Link to a page', () => {
+      b('bold', '粗体', () => editor.toggleMark('bold')),
+      b('italic', '斜体', () => editor.toggleMark('italic')),
+      b('link', '链接', () => editor.toolbar.editLink()),
+      b('atSign', '链接到页面', () => {
         const id = current();
         const el = id && editor.textEl(id);
         if (!el) return;
@@ -62,7 +62,7 @@ export class MobileBar {
         editor.openMention(id, off.start);
       }),
       h('span.mb-spacer'),
-      b('keyboardOff', 'Done', () => {
+      b('keyboardOff', '完成', () => {
         document.activeElement?.blur?.();
         this.hide();
       }),

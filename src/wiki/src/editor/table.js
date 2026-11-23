@@ -51,7 +51,7 @@ export function renderTable(editor, main, b) {
   }, 400);
   main._save = save;
   const cellFocused = main.contains(document.activeElement) ? [document.activeElement.dataset.row, document.activeElement.dataset.col] : null;
-  const table = h('table.wiki-table', { role: 'grid', 'aria-label': 'Table', 'data-shape': shapeOf(data), 'data-ro': String(ro) });
+  const table = h('table.wiki-table', { role: 'grid', 'aria-label': '表格', 'data-shape': shapeOf(data), 'data-ro': String(ro) });
   data.rows.forEach((row, r) => {
     const tr = h('tr');
     row.forEach((text, c) => {
@@ -126,32 +126,32 @@ export function renderTable(editor, main, b) {
   };
   const menu = (anchor, r, c) => {
     openMenu(anchor, [
-      { label: 'Insert row above', icon: 'arrowUp', disabled: rows >= T.MAX_ROWS, run: () => addRow(r) },
-      { label: 'Insert row below', icon: 'arrowDown', disabled: rows >= T.MAX_ROWS, run: () => addRow(r + 1) },
-      { label: 'Insert column left', icon: 'arrowLeft', disabled: cols >= T.MAX_COLS, run: () => addCol(c) },
-      { label: 'Insert column right', icon: 'arrowRight', disabled: cols >= T.MAX_COLS, run: () => addCol(c + 1) },
+      { label: '在上方插入行', icon: 'arrowUp', disabled: rows >= T.MAX_ROWS, run: () => addRow(r) },
+      { label: '在下方插入行', icon: 'arrowDown', disabled: rows >= T.MAX_ROWS, run: () => addRow(r + 1) },
+      { label: '在左侧插入列', icon: 'arrowLeft', disabled: cols >= T.MAX_COLS, run: () => addCol(c) },
+      { label: '在右侧插入列', icon: 'arrowRight', disabled: cols >= T.MAX_COLS, run: () => addCol(c + 1) },
       { type: 'sep' },
-      { label: 'Header row', checked: data.header, run: () => change(() => T.setHeader(editor.doc, b.id, !data.header)) },
+      { label: '标题行', checked: data.header, run: () => change(() => T.setHeader(editor.doc, b.id, !data.header)) },
       { type: 'sep' },
-      { label: 'Delete row', icon: 'trash', danger: true, disabled: rows <= 1, run: () => change(() => {
+      { label: '删除行', icon: 'trash', danger: true, disabled: rows <= 1, run: () => change(() => {
           T.deleteRow(editor.doc, b.id, data.rowIds[r]);
           const near = data.rowIds[r + 1] || data.rowIds[r - 1];
           if (near) focusCell(near, data.colIds[c]);
         }) },
-      { label: 'Delete column', icon: 'trash', danger: true, disabled: cols <= 1, run: () => change(() => {
+      { label: '删除列', icon: 'trash', danger: true, disabled: cols <= 1, run: () => change(() => {
           T.deleteCol(editor.doc, b.id, data.colIds[c]);
           const near = data.colIds[c + 1] || data.colIds[c - 1];
           if (near) focusCell(data.rowIds[r], near);
         }) },
-    ], { label: 'Table cell' });
+    ], { label: '表格单元格' });
   };
   const controls = ro
     ? null
     : h(
         'div.table-controls',
-        h('button.btn.small.ghost', { type: 'button', disabled: rows >= T.MAX_ROWS, onclick: () => addRow(rows) }, icon('plus', 14), 'Row'),
-        h('button.btn.small.ghost', { type: 'button', disabled: cols >= T.MAX_COLS, onclick: () => addCol(cols) }, icon('plus', 14), 'Column'),
-        h('button.btn.small.ghost', { type: 'button', 'aria-label': 'Table options', onclick: (e) => {
+        h('button.btn.small.ghost', { type: 'button', disabled: rows >= T.MAX_ROWS, onclick: () => addRow(rows) }, icon('plus', 14), '行'),
+        h('button.btn.small.ghost', { type: 'button', disabled: cols >= T.MAX_COLS, onclick: () => addCol(cols) }, icon('plus', 14), '列'),
+        h('button.btn.small.ghost', { type: 'button', 'aria-label': '表格选项', onclick: (e) => {
             const cell = main.querySelector('td:focus, th:focus');
             menu(e.currentTarget, Number(cell?.dataset.r ?? 0), Number(cell?.dataset.c ?? 0));
           } }, icon('more', 14)),

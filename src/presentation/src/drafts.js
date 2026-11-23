@@ -29,7 +29,7 @@ function open() {
       reject(
         Object.assign(
           new Error(
-            "Local drafts are unavailable while an older Presentation tab is open. Close your other Presentation tabs, then try again.",
+            "当旧版演示文稿标签页处于打开状态时，本地草稿不可用。请关闭其他演示文稿标签页，然后重试。",
           ),
           { code: "blocked" },
         ),

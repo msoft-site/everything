@@ -135,8 +135,8 @@ export function localCollab(user) {
       }
     },
     deploy: async (progress) => {
-      progress('Starting the local sharing server...');
-      if (identity !== OWNER) throw new Error('In the local sandbox only "you" can share. Open the app without ?as= to share.');
+      progress('正在启动本地共享服务器...');
+      if (identity !== OWNER) throw new Error('在本地沙盒中只有 "you" 可以发起共享。请去掉 ?as= 参数打开应用以进行共享。');
       return SERVER;
     },
     refresh: async () => {},

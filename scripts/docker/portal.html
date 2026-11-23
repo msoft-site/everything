@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Everything 软件中心 - 全开源中文软件全家桶</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --card-hover: #334155;
+      --text: #f8fafc;
+      --subtext: #94a3b8;
+      --primary: #38bdf8;
+      --accent: #818cf8;
+      --border: #334155;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 2rem 1.5rem;
+    }
+    .header {
+      max-width: 1200px;
+      margin: 0 auto 2.5rem;
+      text-align: center;
+    }
+    .header h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.8rem;
+    }
+    .header p {
+      color: var(--subtext);
+      font-size: 1.05rem;
+      max-width: 650px;
+      margin: 0 auto;
+    }
+    .search-box {
+      margin: 1.8rem auto 0;
+      max-width: 480px;
+    }
+    .search-box input {
+      width: 100%;
+      padding: 0.75rem 1.2rem;
+      border-radius: 9999px;
+      border: 1px solid var(--border);
+      background: var(--card-bg);
+      color: var(--text);
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .search-box input:focus {
+      border-color: var(--primary);
+    }
+    .category-section {
+      max-width: 1200px;
+      margin: 0 auto 2.5rem;
+    }
+    .category-title {
+      font-size: 1.35rem;
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .app-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.25rem;
+    }
+    .app-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      transition: all 0.2s ease;
+    }
+    .app-card:hover {
+      background: var(--card-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px -5px rgba(0,0,0,0.3);
+      border-color: var(--primary);
+    }
+    .app-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: #000;
+      flex-shrink: 0;
+      object-fit: contain;
+    }
+    .app-info h3 {
+      font-size: 1.1rem;
+      margin-bottom: 0.35rem;
+      color: #fff;
+    }
+    .app-info p {
+      font-size: 0.85rem;
+      color: var(--subtext);
+      line-height: 1.4;
+    }
+    footer {
+      max-width: 1200px;
+      margin: 3rem auto 1rem;
+      text-align: center;
+      color: var(--subtext);
+      font-size: 0.85rem;
+      border-top: 1px solid var(--border);
+      padding-top: 1.5rem;
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <h1>Everything 中文软件中心</h1>
+    <p>全世界的软件，从零重建，全部开源。已完成全功能界面汉化，一键部署并随时随地在您的浏览器中离线畅享。</p>
+    <div class="search-box">
+      <input type="text" id="searchInput" placeholder="搜索应用名称或替代软件 (如 Excel, Slack, PS)..." />
+    </div>
+  </header>
+
+  <main id="appContainer"></main>
+
+  <footer>
+    <p>Everything Monorepo · 全部 51 款独立应用已实现全中文化 · 基于 MIT 开源协议</p>
+  </footer>
+
+  <script>
+    const appsData = [
+      {
+        category: "办公套件",
+        apps: [
+          { id: "spreadsheet", name: "电子表格 (Spreadsheet)", desc: "替代 Excel, Google Sheets。公式、图表、现代数据透视。", icon: "/app/spreadsheet/icon-128.png" },
+          { id: "documents", name: "文档编辑 (Documents)", desc: "替代 Word, Google Docs。专业文字排版与样式渲染。", icon: "/app/documents/icon-128.png" },
+          { id: "presentation", name: "演示文稿 (Presentation)", desc: "替代 PowerPoint, Keynote。幻灯片设计、切换与演说。", icon: "/app/presentation/icon-128.png" },
+          { id: "whiteboard", name: "白板 (Whiteboard)", desc: "替代 Miro, FigJam。脑图、无限画板、团队头脑风暴。", icon: "/app/whiteboard/icon-128.png" },
+          { id: "pdf", name: "PDF 编辑器 (PDF)", desc: "替代 Adobe Acrobat。阅读、注释、表单填写与批注导出。", icon: "/app/pdf/icon-128.png" },
+          { id: "notes", name: "笔记 (Notes)", desc: "替代 OneNote, Evernote, Apple Notes。富文本与 Markdown。", icon: "/app/notes/icon-128.png" },
+          { id: "records", name: "多维表格 (Records)", desc: "替代 Airtable, Baserow。敏捷数据库与多视图管理。", icon: "/app/records/icon-128.png" }
+        ]
+      },
+      {
+        category: "创意工具与工程",
+        apps: [
+          { id: "photo-studio", name: "图像工作室 (Photo Studio)", desc: "替代 Photoshop。多图层、蒙版、无损调整与滤镜。", icon: "/app/photo-studio/icon-128.png" },
+          { id: "vector-studio", name: "矢量设计 (Vector Studio)", desc: "替代 Illustrator, CorelDRAW。矢量贝塞尔曲线绘图。", icon: "/app/vector-studio/icon-128.png" },
+          { id: "audio-studio", name: "音频工作室 (Audio Studio)", desc: "替代 Audition, Sound Forge。WASM 加速 DSP 音效处理。", icon: "/app/audio-studio/icon-128.png" },
+          { id: "music-studio", name: "音乐工作室 (Music Studio)", desc: "替代 FL Studio, Ableton Live。音序器与虚拟合成器乐器。", icon: "/app/music-studio/icon-128.png" },
+          { id: "video-studio", name: "视频剪辑 (Video Studio)", desc: "替代 Premiere Pro, 剪映。多轨道时间轴剪辑与特效。", icon: "/app/video-studio/icon-128.png" },
+          { id: "3d", name: "三维建模 (3D Studio)", desc: "替代 Maya, Blender。视口渲染、网格雕刻与几何着色器。", icon: "/app/3d/icon-128.png" },
+          { id: "cad", name: "计算机设计 (CAD)", desc: "替代 AutoCAD, DraftSight。2D 工程制图与标准图层。", icon: "/app/cad/icon-128.png" },
+          { id: "parametric", name: "参数化建模 (Parametric)", desc: "替代 SolidWorks, Fusion 360。草图约束与三维特征建模。", icon: "/app/parametric/icon-128.png" },
+          { id: "circuits", name: "电路设计 (Circuits)", desc: "替代 Altium, Eagle。原理图设计、PCB 走线与 DRC 校验。", icon: "/app/circuits/icon-128.png" },
+          { id: "building-design", name: "建筑设计 (Building Design)", desc: "替代 Revit, ArchiCAD。BIM 建筑平立剖与三维联动。", icon: "/app/building-design/icon-128.png" }
+        ]
+      },
+      {
+        category: "团队协作与通信",
+        apps: [
+          { id: "meetings", name: "音视频会议 (Meetings)", desc: "替代 Zoom, Google Meet。实时多方高清视频与屏幕共享。", icon: "/app/meetings/icon-128.png" },
+          { id: "teamchat", name: "团队聊天 (Teamchat)", desc: "替代 Slack, Discord。公共频道、私聊、代码高亮与文件共享。", icon: "/app/teamchat/icon-128.png" },
+          { id: "email", name: "电子邮件 (Email)", desc: "替代 Gmail, Outlook。私密极速 Web 邮件客户端。", icon: "/app/email/icon-128.png" },
+          { id: "calendar", name: "日历日程 (Calendar)", desc: "替代 Google Calendar。事件预约、日程管理与提醒通知。", icon: "/app/calendar/icon-128.png" },
+          { id: "contacts", name: "通讯录 (Contacts)", desc: "替代 Google Contacts。联系人管理与 vCard 导入导出。", icon: "/app/contacts/icon-128.png" },
+          { id: "signatures", name: "电子签名 (Signatures)", desc: "替代 DocuSign。PDF 签署与线上合同授权流程。", icon: "/app/signatures/icon-128.png" }
+        ]
+      },
+      {
+        category: "商业与企业运营",
+        apps: [
+          { id: "tasks", name: "待办事项 (Tasks)", desc: "替代 Todoist, TickTick。自然语言日期、周期提醒与标签。", icon: "/app/tasks/icon-128.png" },
+          { id: "projects", name: "项目管理 (Projects)", desc: "替代 Trello, Asana。看板、甘特图、里程碑进度把控。", icon: "/app/projects/icon-128.png" },
+          { id: "wiki", name: "知识库 (Wiki)", desc: "替代 Notion, Confluence。树状文档库与协作沉淀。", icon: "/app/wiki/icon-128.png" },
+          { id: "crm", name: "客户关系 (CRM)", desc: "替代 Salesforce, HubSpot。销售漏斗与客户商机全流程。", icon: "/app/crm/icon-128.png" },
+          { id: "accounting", name: "财务记账 (Accounting)", desc: "替代 QuickBooks, Xero。复式记账、凭证、资产负债表与损益表。", icon: "/app/accounting/icon-128.png" },
+          { id: "invoicing", name: "发票管理 (Invoicing)", desc: "替代 FreshBooks。专业账单、估价单与收款对账。", icon: "/app/invoicing/icon-128.png" },
+          { id: "expense", name: "费用报销 (Expense)", desc: "替代 Expensify。发票 AI OCR 识别与报销单汇总。", icon: "/app/expense/icon-128.png" },
+          { id: "pos", name: "收银系统 (POS)", desc: "替代 Square, Lightspeed。触控点餐、商品零售与小票打印。", icon: "/app/pos/icon-128.png" },
+          { id: "inventory", name: "库存管理 (Inventory)", desc: "替代 Zoho Inventory。条码扫描、出入库、盘点与预警。", icon: "/app/inventory/icon-128.png" },
+          { id: "help-desk", name: "服务工单 (Help Desk)", desc: "替代 Zendesk, Intercom。客户支持工单与服务响应台。", icon: "/app/help-desk/icon-128.png" },
+          { id: "contracts", name: "合同管理 (Contracts)", desc: "替代 ContractSafe。履约周期监控与续约自动提醒。", icon: "/app/contracts/icon-128.png" },
+          { id: "hiring", name: "招聘管理 (Hiring)", desc: "替代 Greenhouse, Lever。招聘岗位与面试流程跟踪。", icon: "/app/hiring/icon-128.png" },
+          { id: "shifts", name: "排班管理 (Shifts)", desc: "替代 Deputy。班次编排、换班打卡与工时统计。", icon: "/app/shifts/icon-128.png" },
+          { id: "fleet", name: "车队管理 (Fleet)", desc: "替代 Fleetio。车辆档案、维保计划与油耗日志。", icon: "/app/fleet/icon-128.png" },
+          { id: "property-management", name: "房产物业 (Property)", desc: "替代 Buildium。房源单元、租户台账与报修追踪。", icon: "/app/property-management/icon-128.png" },
+          { id: "legal", name: "法律事务 (Legal)", desc: "替代 Clio。案件卷宗、冲突审查与律师工时计费。", icon: "/app/legal/icon-128.png" },
+          { id: "childcare", name: "幼托早教 (Childcare)", desc: "替代 Brightwheel。出勤点名、每日表现与家长互动。", icon: "/app/childcare/icon-128.png" },
+          { id: "field-service", name: "外勤服务 (Field Service)", desc: "替代 Jobber。上门派工、服务清单与现场签单确认。", icon: "/app/field-service/icon-128.png" },
+          { id: "time-tracking", name: "工时统计 (Time Tracking)", desc: "替代 Toggl, Harvest。项目耗时打卡与计费工单。", icon: "/app/time-tracking/icon-128.png" },
+          { id: "cap-table", name: "股权架构 (Cap Table)", desc: "替代 Carta。期权池、可转债与股权稀释测算。", icon: "/app/cap-table/icon-128.png" },
+          { id: "assets", name: "资产管理 (Assets)", desc: "企业设备固定资产、SN 码登记与借还流转。", icon: "/app/assets/icon-128.png" },
+          { id: "survey", name: "问卷调研 (Survey)", desc: "替代 Typeform, Google Forms。表单收集与可视化统计。", icon: "/app/survey/icon-128.png" }
+        ]
+      },
+      {
+        category: "开发者工具与休闲",
+        apps: [
+          { id: "api-client", name: "API 调试 (API Client)", desc: "替代 Postman, Insomnia。RESTful 接口调用与调试。", icon: "/app/api-client/icon-128.png" },
+          { id: "chess", name: "国际象棋 (Chess)", desc: "人机对弈、双人对决、可证明公平对局与时钟规则。", icon: "/app/chess/icon-128.png" },
+          { id: "checkers", name: "西洋跳棋 (Checkers)", desc: "经典吃子跳棋，包含 AI 对战与棋盘复盘功能。", icon: "/app/checkers/icon-128.png" },
+          { id: "backgammon", name: "双陆棋 (Backgammon)", desc: "具有可证明公平骰子和加倍魔方的双陆棋。", icon: "/app/backgammon/icon-128.png" },
+          { id: "solitaire", name: "纸牌接龙 (Solitaire)", desc: "经典翻牌、维加斯计分与蜘蛛纸牌玩法。", icon: "/app/solitaire/icon-128.png" },
+          { id: "sudoku", name: "数独 (Sudoku)", desc: "包含 11 种逻辑解法指引与每日挑战的数独题库。", icon: "/app/sudoku/icon-128.png" }
+        ]
+      }
+    ];
+
+    function renderApps(filter = "") {
+      const container = document.getElementById("appContainer");
+      container.innerHTML = "";
+      const lower = filter.toLowerCase().trim();
+
+      appsData.forEach(cat => {
+        const filtered = cat.apps.filter(a =>
+          a.name.toLowerCase().includes(lower) ||
+          a.desc.toLowerCase().includes(lower) ||
+          a.id.toLowerCase().includes(lower)
+        );
+        if (filtered.length === 0) return;
+
+        const section = document.createElement("section");
+        section.className = "category-section";
+
+        const title = document.createElement("h2");
+        title.className = "category-title";
+        title.textContent = `${cat.category} (${filtered.length})`;
+        section.appendChild(title);
+
+        const grid = document.createElement("div");
+        grid.className = "app-grid";
+
+        filtered.forEach(app => {
+          const card = document.createElement("a");
+          card.className = "app-card";
+          card.href = `/app/${app.id}/`;
+          card.innerHTML = `
+            <img class="app-icon" src="${app.icon}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'44\\' height=\\'44\\' viewBox=\\'0 0 24 24\\' fill=\\'none\\' stroke=\\'%2338bdf8\\' stroke-width=\\'2\\'><rect x=\\'3\\' y=\\'3\\' width=\\'18\\' height=\\'18\\' rx=\\'2\\' ry=\\'2\\'/></svg>'" alt="" />
+            <div class="app-info">
+              <h3>${app.name}</h3>
+              <p>${app.desc}</p>
+            </div>
+          `;
+          grid.appendChild(card);
+        });
+
+        section.appendChild(grid);
+        container.appendChild(section);
+      });
+    }
+
+    document.getElementById("searchInput").addEventListener("input", (e) => {
+      renderApps(e.target.value);
+    });
+
+    renderApps();
+  </script>
+</body>
+</html>

@@ -30,7 +30,7 @@ function showError(title, message, onRetry) {
     el('div.empty-icon', { html: icon('wifiOff', 30) }),
     el('h1.auth-title', { style: { fontSize: '22px' } }, title),
     el('p.auth-sub', {}, message),
-    el('button.btn.btn-primary.auth-cta', { onclick: onRetry }, 'Try again')
+    el('button.btn.btn-primary.auth-cta', { onclick: onRetry }, '重试')
   ));
   dismissSplash();
 }
@@ -46,7 +46,7 @@ async function start() {
       await boot();
       return;
     }
-    showError('Could not reach Puter', 'The Puter SDK failed to load. Check your connection and try again.', () => location.reload());
+    showError('无法连接到 Puter', 'Puter SDK 加载失败，请检查网络连接后重试。', () => location.reload());
     return;
   }
 
@@ -75,9 +75,9 @@ async function boot() {
   } catch (err) {
     console.error(err);
     if (!navigator.onLine) {
-      showError('You are offline', 'This device has no local copy of your data yet. Connect once and it will be available offline from then on.', () => location.reload());
+      showError('当前处于离线状态', '此设备尚未缓存您的数据副本。请先连接一次网络，之后即可离线使用。', () => location.reload());
     } else {
-      showError('Could not load your data', 'Something went wrong talking to your Puter cloud.', () => location.reload());
+      showError('无法加载您的数据', '与您的 Puter 云端通信时出现问题。', () => location.reload());
     }
     return;
   }
@@ -131,7 +131,7 @@ async function syncPending() {
   syncing = true;
   try {
     const n = await store.flushPending();
-    if (n) toast(`Back online, ${n} change${n === 1 ? '' : 's'} synced`, { icon: 'cloud' });
+    if (n) toast(`已恢复在线，已同步 ${n} 项更改`, { icon: 'cloud' });
   } catch (err) {
     console.error(err);
   } finally {
@@ -155,7 +155,7 @@ async function pullRemote() {
   try {
     const n = await store.refresh();
     if (n) {
-      toast(`Picked up ${n} change${n === 1 ? '' : 's'} from your other devices`, { icon: 'cloud' });
+      toast(`已从其他设备获取 ${n} 项更改`, { icon: 'cloud' });
     }
   } catch (err) {
     console.error(err);
@@ -193,8 +193,8 @@ function setupOfflineBanner() {
       return;
     }
     const text = isOffline
-      ? 'Offline, changes are saved here and sync when you are back'
-      : `${pending} change${pending === 1 ? '' : 's'} saved here, not synced yet`;
+      ? '离线状态，更改已保存在本地，恢复连接后将自动同步'
+      : `已在本地保存 ${pending} 项更改，尚未同步`;
     if (text === shown) return;
     shown = text;
     // role=status announces the state once; rebuilding only on a real

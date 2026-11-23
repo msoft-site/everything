@@ -38,11 +38,11 @@ export function revenueByMonth({ payments, invoices }, from, to) {
 /** Outstanding balances grouped by how late they are. */
 export function agedReceivables({ invoices, payments }, today) {
   const buckets = [
-    { id: 'current', label: 'Not yet due', amount: 0, count: 0 },
-    { id: 'd30', label: '1 to 30 days late', amount: 0, count: 0 },
-    { id: 'd60', label: '31 to 60 days late', amount: 0, count: 0 },
-    { id: 'd90', label: '61 to 90 days late', amount: 0, count: 0 },
-    { id: 'd90p', label: 'Over 90 days late', amount: 0, count: 0 },
+    { id: 'current', label: '尚未到期', amount: 0, count: 0 },
+    { id: 'd30', label: '逾期 1 至 30 天', amount: 0, count: 0 },
+    { id: 'd60', label: '逾期 31 至 60 天', amount: 0, count: 0 },
+    { id: 'd90', label: '逾期 61 至 90 天', amount: 0, count: 0 },
+    { id: 'd90p', label: '逾期超过 90 天', amount: 0, count: 0 },
   ];
   for (const inv of invoices) {
     const s = invoiceStatus(inv, today, payments);
@@ -64,7 +64,7 @@ export function revenueByItem(invoices, from, to, limit = 8) {
     if (!inv.sentAt || inv.badDebt || !inv.issueDate || inv.issueDate < from || inv.issueDate > to) continue;
     for (const it of inv.items || []) {
       if (!isIncluded(it)) continue;
-      const key = (it.name || 'Other').trim() || 'Other';
+      const key = (it.name || '其他').trim() || '其他';
       map.set(key, (map.get(key) || 0) + lineTotal(it));
     }
   }
@@ -103,7 +103,7 @@ export function leadSources(clients, from, to) {
   for (const c of clients) {
     const d = localDate(c.createdAt);
     if (!d || d < from || d > to) continue;
-    const k = c.leadSource || 'Not specified';
+    const k = c.leadSource || '未指定';
     map.set(k, (map.get(k) || 0) + 1);
   }
   return [...map].map(([label, count]) => ({ label, count })).sort((a, b) => b.count - a.count);
@@ -126,7 +126,7 @@ export function expensesByCategory(expenses, from, to) {
   const map = new Map();
   for (const x of expenses) {
     if (!x.date || x.date < from || x.date > to) continue;
-    const k = x.category || 'Other';
+    const k = x.category || '其他';
     map.set(k, (map.get(k) || 0) + (x.amount || 0));
   }
   return [...map].map(([label, amount]) => ({ label, amount })).sort((a, b) => b.amount - a.amount);

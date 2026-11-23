@@ -20,16 +20,16 @@ function reportsList({ navigate }) {
   const root = el('section.view', { 'aria-labelledby': 'rep-title' });
   let filter = 'open';
   const listWrap = el('div', { 'aria-busy': 'true' }, skeletonList(3));
-  const seg = el('div.segmented', { role: 'group', 'aria-label': 'Filter reports' },
+  const seg = el('div.segmented', { role: 'group', 'aria-label': '筛选报销单' },
     ['open', 'reimbursed', 'all'].map((f) => el('button', {
       type: 'button', 'aria-pressed': f === filter,
       onclick: (e) => { filter = f; for (const b of seg.children) b.setAttribute('aria-pressed', String(b === e.currentTarget)); render(); },
-    }, f === 'open' ? 'Open' : f === 'reimbursed' ? 'Reimbursed' : 'All')));
+    }, f === 'open' ? '进行中' : f === 'reimbursed' ? '已报销' : '全部')));
 
   root.append(
     el('div.page-head', {},
-      el('div', {}, el('h1.page-title', { id: 'rep-title' }, 'Reports'), el('p.page-sub', {}, 'Bundle expenses and track them to reimbursement')),
-      el('div.page-actions', {}, el('button.btn.btn-primary', { type: 'button', html: icon('plus', 16, 2.2), onclick: () => openReportForm({ onSaved: (r) => navigate(`#/reports/${r.id}`) }) }, 'New report'))),
+      el('div', {}, el('h1.page-title', { id: 'rep-title' }, '报销单'), el('p.page-sub', {}, '汇总多笔费用并全程跟踪报销进度')),
+      el('div.page-actions', {}, el('button.btn.btn-primary', { type: 'button', html: icon('plus', 16, 2.2), onclick: () => openReportForm({ onSaved: (r) => navigate(`#/reports/${r.id}`) }) }, '新建报销单'))),
     el('div.filter-bar', {}, seg),
     listWrap
   );
@@ -43,11 +43,11 @@ function reportsList({ navigate }) {
     clear(listWrap);
     listWrap.setAttribute('aria-busy', 'false');
     if (!store.reports.length) {
-      listWrap.append(emptyState({ icon: 'folder', title: 'No reports yet', text: 'A report groups expenses for a trip, a month, or a project, then moves from draft to submitted, approved, and reimbursed.', action: { label: 'Create a report', icon: 'plus', onClick: () => openReportForm({ onSaved: (r) => navigate(`#/reports/${r.id}`) }) } }));
+      listWrap.append(emptyState({ icon: 'folder', title: '暂无报销单', text: '报销单可将一次出差、某个月或某个项目的费用归集在一起，并依次推进草稿、已提交、已批准到已报销流程。', action: { label: '创建报销单', icon: 'plus', onClick: () => openReportForm({ onSaved: (r) => navigate(`#/reports/${r.id}`) }) } }));
       return;
     }
     if (!reports.length) {
-      listWrap.append(emptyState({ icon: 'folder', title: filter === 'open' ? 'Nothing open' : 'Nothing reimbursed yet', text: filter === 'open' ? 'Every report has been reimbursed.' : 'Reports land here once they are paid out.' }));
+      listWrap.append(emptyState({ icon: 'folder', title: filter === 'open' ? '暂无进行中的报销单' : '暂无已报销的报销单', text: filter === 'open' ? '所有报销单均已完成报销。' : '报销打款完成后会显示在这里。' }));
       return;
     }
     listWrap.append(el('div.report-grid', {}, reports.map((r) => reportCard(r, all))));
@@ -60,10 +60,10 @@ function reportsList({ navigate }) {
       el('div.row.between', {}, el('h3.report-card-title.truncate', {}, r.title), statusBadge(r.status)),
       el('div.report-card-total', {}, formatTotals(t.byCurrency, store.settings.baseCurrency)),
       el('div.report-card-meta', {},
-        `${t.count} expense${t.count === 1 ? '' : 's'}`,
-        t.count ? `, ${t.withReceipt}/${t.count} with receipts` : '',
-        r.status === 'reimbursed' && r.reimbursedAt ? `, paid ${formatDate(new Date(r.reimbursedAt).toISOString().slice(0, 10))}` : ''),
-      el('ol.steps', { 'aria-label': `Status: ${STATUS_LABEL[r.status]}` }, REPORT_STATUSES.map((s, i) => el('li', { className: `step${i <= step ? ' done' : ''}`, 'aria-current': s === r.status ? 'step' : null }, el('span.visually-hidden', {}, STATUS_LABEL[s]))))
+        `${t.count} 笔费用`,
+        t.count ? `，${t.withReceipt}/${t.count} 含票据` : '',
+        r.status === 'reimbursed' && r.reimbursedAt ? `，已于 ${formatDate(new Date(r.reimbursedAt).toISOString().slice(0, 10))} 报销` : ''),
+      el('ol.steps', { 'aria-label': `状态：${STATUS_LABEL[r.status]}` }, REPORT_STATUSES.map((s, i) => el('li', { className: `step${i <= step ? ' done' : ''}`, 'aria-current': s === r.status ? 'step' : null }, el('span.visually-hidden', {}, STATUS_LABEL[s]))))
     );
   }
 
@@ -84,8 +84,8 @@ function reportDetail({ navigate, id }) {
     const report = store.report(id);
     clear(root);
     if (!report) {
-      root.append(el('a.back-link', { href: '#/reports', html: icon('chevL', 16, 2.2) }, 'Reports'),
-        emptyState({ icon: 'folder', title: 'Report not found', text: 'It may have been deleted.' }));
+      root.append(el('a.back-link', { href: '#/reports', html: icon('chevL', 16, 2.2) }, '报销单'),
+        emptyState({ icon: 'folder', title: '未找到报销单', text: '该报销单可能已被删除。' }));
       return;
     }
     let all = [];
@@ -100,33 +100,33 @@ function reportDetail({ navigate, id }) {
     const primary = next && el('button.btn.btn-primary', {
       type: 'button', html: icon(next === 'submitted' ? 'send' : next === 'approved' ? 'badge' : 'banknote', 16, 2.2),
       onclick: async () => {
-        if (next === 'submitted' && !expenses.length) { toast('Add at least one expense before submitting', { icon: 'info' }); return; }
+        if (next === 'submitted' && !expenses.length) { toast('提交前请至少添加一笔费用', { icon: 'info' }); return; }
         if (next === 'submitted' && missingReceipts) {
-          const ok = await confirmDialog({ title: 'Submit without every receipt?', message: `${missingReceipts} expense${missingReceipts === 1 ? ' has' : 's have'} no receipt attached. You can still submit, but the expenses are locked until the report is withdrawn.`, confirmLabel: 'Submit anyway', danger: false });
+          const ok = await confirmDialog({ title: '部分费用缺少票据，确认提交？', message: `有 ${missingReceipts} 笔费用尚未附上票据。您仍可提交，但提交后费用将被锁定，撤回报销单后才能修改。`, confirmLabel: '仍然提交', danger: false });
           if (!ok) return;
         }
-        try { await store.transitionReport(id, next); toast(`Report ${STATUS_LABEL[next].toLowerCase()}`); } catch (err) { console.error(err); toast('Couldn’t update the report', { icon: 'wifiOff' }); }
+        try { await store.transitionReport(id, next); toast(`报销单${STATUS_LABEL[next]}`); } catch (err) { console.error(err); toast('无法更新报销单', { icon: 'wifiOff' }); }
       },
     }, transitionLabel(report.status));
 
     const more = el('div.page-actions', {},
-      report.status === 'submitted' && el('button.btn.btn-ghost', { type: 'button', html: icon('undo', 16, 2.2), onclick: async () => { await store.transitionReport(id, 'draft').catch(() => toast('Couldn’t withdraw', { icon: 'wifiOff' })); toast('Report back in draft'); } }, 'Withdraw'),
+      report.status === 'submitted' && el('button.btn.btn-ghost', { type: 'button', html: icon('undo', 16, 2.2), onclick: async () => { await store.transitionReport(id, 'draft').catch(() => toast('无法撤回', { icon: 'wifiOff' })); toast('报销单已退回草稿状态'); } }, '撤回'),
       el('button.btn.btn-outline', { type: 'button', html: icon('sheet', 16, 2.2), onclick: () => {
-        if (!expenses.length) { toast('Nothing to export', { icon: 'info' }); return; }
+        if (!expenses.length) { toast('没有可导出的数据', { icon: 'info' }); return; }
         downloadBlob(new Blob([expensesToCSV(expenses, { categories: store.categories, reports: store.reports })], { type: 'text/csv;charset=utf-8' }), `${report.title.replace(/[^\w-]+/g, '-')}.csv`);
       } }, 'CSV'),
-      el('button.btn.btn-outline', { type: 'button', html: icon('printer', 16, 2.2), onclick: () => window.print() }, 'Print'),
-      el('button.icon-btn', { type: 'button', html: icon('pencil', 18, 2), 'aria-label': 'Edit report', title: 'Edit', onclick: () => openReportForm({ report }) }),
-      el('button.icon-btn.danger', { type: 'button', html: icon('trash', 18, 2), 'aria-label': 'Delete report', title: 'Delete', onclick: async () => {
-        const ok = await confirmDialog({ title: 'Delete this report?', message: 'Its expenses are kept and go back to “not in a report”.', confirmLabel: 'Delete report' });
+      el('button.btn.btn-outline', { type: 'button', html: icon('printer', 16, 2.2), onclick: () => window.print() }, '打印'),
+      el('button.icon-btn', { type: 'button', html: icon('pencil', 18, 2), 'aria-label': '编辑报销单', title: '编辑', onclick: () => openReportForm({ report }) }),
+      el('button.icon-btn.danger', { type: 'button', html: icon('trash', 18, 2), 'aria-label': '删除报销单', title: '删除', onclick: async () => {
+        const ok = await confirmDialog({ title: '删除此报销单？', message: '报销单内的费用将被保留，并恢复为“未加入报销单”状态。', confirmLabel: '删除报销单' });
         if (!ok) return;
-        try { await store.deleteReport(id); toast('Report deleted', { icon: 'trash' }); navigate('#/reports'); } catch (err) { console.error(err); toast('Couldn’t delete', { icon: 'wifiOff' }); }
+        try { await store.deleteReport(id); toast('报销单已删除', { icon: 'trash' }); navigate('#/reports'); } catch (err) { console.error(err); toast('无法删除', { icon: 'wifiOff' }); }
       } }),
       primary
     );
 
     const step = REPORT_STATUSES.indexOf(report.status);
-    const timeline = el('ol.timeline', { 'aria-label': 'Report progress' }, REPORT_STATUSES.map((s, i) => {
+    const timeline = el('ol.timeline', { 'aria-label': '报销进度' }, REPORT_STATUSES.map((s, i) => {
       const at = { submitted: report.submittedAt, approved: report.approvedAt, reimbursed: report.reimbursedAt, draft: report.createdAt }[s];
       return el('li', { className: `tl-step${i <= step ? ' done' : ''}${s === report.status ? ' current' : ''}`, 'aria-current': s === report.status ? 'step' : null },
         el('span.tl-dot', { 'aria-hidden': 'true' }),
@@ -135,30 +135,30 @@ function reportDetail({ navigate, id }) {
     }));
 
     root.append(
-      el('a.back-link', { href: '#/reports', html: icon('chevL', 16, 2.2) }, 'Reports'),
+      el('a.back-link', { href: '#/reports', html: icon('chevL', 16, 2.2) }, '报销单'),
       el('div.page-head', {},
         el('div', {},
           el('div.row', {}, el('h1.page-title', { id: 'rep-title' }, report.title), statusBadge(report.status)),
-          el('p.page-sub', {}, report.notes || `Created ${formatDate(new Date(report.createdAt).toISOString().slice(0, 10))}`)),
+          el('p.page-sub', {}, report.notes || `创建于 ${formatDate(new Date(report.createdAt).toISOString().slice(0, 10))}`)),
         more),
       el('div.report-summary.card', {},
-        el('div.report-total', {}, el('span.label', {}, 'Total'), el('span.value', {}, formatTotals(t.byCurrency, store.settings.baseCurrency))),
+        el('div.report-total', {}, el('span.label', {}, '合计'), el('span.value', {}, formatTotals(t.byCurrency, store.settings.baseCurrency))),
         el('div.report-facts', {},
-          fact('receipt', `${t.withReceipt}/${t.count}`, 'with receipts'),
-          fact('circleCheck', `${t.reconciled}/${t.count}`, 'reconciled'),
-          fact('layers', String(t.count), t.count === 1 ? 'expense' : 'expenses')),
+          fact('receipt', `${t.withReceipt}/${t.count}`, '含票据'),
+          fact('circleCheck', `${t.reconciled}/${t.count}`, '已对账'),
+          fact('layers', String(t.count), '笔费用')),
         timeline),
-      !editable && el('div.banner', {}, el('span', { html: icon('info', 15, 2.2) }), el('span.grow', {}, 'This report has been submitted. Withdraw it to add or remove expenses.')),
+      !editable && el('div.banner', {}, el('span', { html: icon('info', 15, 2.2) }), el('span.grow', {}, '此报销单已提交。如需添加或移除费用，请先将其撤回。')),
       el('div.card', {},
-        sectionHead('Expenses', editable && el('button.btn.btn-outline.btn-sm', { type: 'button', html: icon('plus', 14, 2.2), onclick: () => openAddExpenses(report, all) }, 'Add expenses')),
+        sectionHead('费用明细', editable && el('button.btn.btn-outline.btn-sm', { type: 'button', html: icon('plus', 14, 2.2), onclick: () => openAddExpenses(report, all) }, '添加费用')),
         expenses.length
           ? expenseListByDay(expenses, (e) => ({
             onClick: () => openExpenseForm({ expense: e }), showDate: false,
             trail: el('div.trail', {}, el('div.amount', {}, formatMoney(e.amount, e.currency)),
-              editable && el('button.icon-btn', { type: 'button', html: icon('x', 16, 2.2), 'aria-label': `Remove ${e.merchant} from report`, title: 'Remove from report',
-                onclick: (ev) => { ev.stopPropagation(); store.setReport([e.id], null).then(() => toast('Removed from report')).catch(() => toast('Couldn’t remove', { icon: 'wifiOff' })); } })),
+              editable && el('button.icon-btn', { type: 'button', html: icon('x', 16, 2.2), 'aria-label': `从报销单移除 ${e.merchant}`, title: '从报销单移除',
+                onclick: (ev) => { ev.stopPropagation(); store.setReport([e.id], null).then(() => toast('已从报销单移除')).catch(() => toast('无法移除', { icon: 'wifiOff' })); } })),
           }))
-          : emptyState({ icon: 'receipt', title: 'No expenses in this report', text: editable ? 'Add expenses you have already captured, or capture new ones and pick this report when saving.' : '', action: editable ? { label: 'Add expenses', icon: 'plus', onClick: () => openAddExpenses(report, all) } : null }))
+          : emptyState({ icon: 'receipt', title: '此报销单暂无费用', text: editable ? '添加已录入的费用，或在采集新票据保存时选择此报销单。' : '', action: editable ? { label: '添加费用', icon: 'plus', onClick: () => openAddExpenses(report, all) } : null }))
     );
   }
 
@@ -170,21 +170,21 @@ function reportDetail({ navigate, id }) {
     const candidates = all.filter((e) => !e.reportId);
     const picked = new Set();
     const list = el('div');
-    const addBtn = el('button.btn.btn-primary', { type: 'button', disabled: true }, 'Add');
+    const addBtn = el('button.btn.btn-primary', { type: 'button', disabled: true }, '添加');
     const renderList = () => {
       clear(list);
-      if (!candidates.length) { list.append(el('p.muted', {}, 'Every expense is already in a report. Capture a new one and pick this report when saving.')); return; }
+      if (!candidates.length) { list.append(el('p.muted', {}, '所有费用均已加入报销单。请采集新费用并在保存时选择此报销单。')); return; }
       list.append(expenseListByDay(candidates, (e) => ({
-        onClick: () => { if (picked.has(e.id)) picked.delete(e.id); else picked.add(e.id); addBtn.disabled = !picked.size; addBtn.textContent = picked.size ? `Add ${picked.size}` : 'Add'; renderList(); },
-        showDate: false, selected: picked.has(e.id), onToggle: (on) => { if (on) picked.add(e.id); else picked.delete(e.id); addBtn.disabled = !picked.size; addBtn.textContent = picked.size ? `Add ${picked.size}` : 'Add'; renderList(); },
+        onClick: () => { if (picked.has(e.id)) picked.delete(e.id); else picked.add(e.id); addBtn.disabled = !picked.size; addBtn.textContent = picked.size ? `添加 ${picked.size} 笔` : '添加'; renderList(); },
+        showDate: false, selected: picked.has(e.id), onToggle: (on) => { if (on) picked.add(e.id); else picked.delete(e.id); addBtn.disabled = !picked.size; addBtn.textContent = picked.size ? `添加 ${picked.size} 笔` : '添加'; renderList(); },
       }), { totals: false }));
     };
     renderList();
     addBtn.onclick = async () => {
       addBtn.disabled = true;
-      try { await store.setReport([...picked], report.id); modal.close(); toast(`${picked.size} added to ${report.title}`); } catch (err) { console.error(err); addBtn.disabled = false; toast('Couldn’t add', { icon: 'wifiOff' }); }
+      try { await store.setReport([...picked], report.id); modal.close(); toast(`已添加 ${picked.size} 笔费用至 ${report.title}`); } catch (err) { console.error(err); addBtn.disabled = false; toast('无法添加', { icon: 'wifiOff' }); }
     };
-    const modal = openModal({ title: 'Add expenses', content: el('div', {}, list, el('div.row.end', {}, el('button.btn.btn-ghost', { type: 'button', onclick: () => modal.close() }, 'Cancel'), addBtn)) });
+    const modal = openModal({ title: '添加费用', content: el('div', {}, list, el('div.row.end', {}, el('button.btn.btn-ghost', { type: 'button', onclick: () => modal.close() }, '取消'), addBtn)) });
   }
 
   const onChange = () => render();
@@ -198,8 +198,8 @@ function reportDetail({ navigate, id }) {
 
 export function openReportForm({ report = null, onSaved = null } = {}) {
   const title = el('input.input', { type: 'text', value: report?.title || '', placeholder: suggestReportTitle(monthKey()), maxlength: 80 });
-  const notes = el('textarea.textarea', { rows: 2, placeholder: 'Purpose, cost centre, trip' }, report?.notes || '');
-  const save = el('button.btn.btn-primary', { type: 'submit' }, report ? 'Save' : 'Create report');
+  const notes = el('textarea.textarea', { rows: 2, placeholder: '报销事由、成本中心、出差行程' }, report?.notes || '');
+  const save = el('button.btn.btn-primary', { type: 'submit' }, report ? '保存' : '创建报销单');
   const form = el('form', {
     onsubmit: async (e) => {
       e.preventDefault();
@@ -208,14 +208,14 @@ export function openReportForm({ report = null, onSaved = null } = {}) {
         const data = { title: title.value.trim() || title.placeholder, notes: notes.value.trim() };
         const saved = report ? await store.updateReport(report.id, data) : await store.createReport(data);
         modal.close();
-        toast(report ? 'Report updated' : 'Report created');
+        toast(report ? '报销单已更新' : '报销单已创建');
         onSaved?.(saved);
-      } catch (err) { console.error(err); save.disabled = false; toast('Couldn’t save', { icon: 'wifiOff' }); }
+      } catch (err) { console.error(err); save.disabled = false; toast('无法保存', { icon: 'wifiOff' }); }
     },
   },
-    field('Title', title),
-    field('Notes', notes, { hint: '(optional)' }),
-    el('div.row.end', {}, el('button.btn.btn-ghost', { type: 'button', onclick: () => modal.close() }, 'Cancel'), save));
-  const modal = openModal({ title: report ? 'Edit report' : 'New report', content: form });
+    field('标题', title),
+    field('备注', notes, { hint: '（选填）' }),
+    el('div.row.end', {}, el('button.btn.btn-ghost', { type: 'button', onclick: () => modal.close() }, '取消'), save));
+  const modal = openModal({ title: report ? '编辑报销单' : '新建报销单', content: form });
   return modal;
 }

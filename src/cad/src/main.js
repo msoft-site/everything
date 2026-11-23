@@ -13,7 +13,7 @@ app
   .start()
   .catch((err) => {
     console.error(err);
-    if (app.shell) app.fatal('Something went wrong while starting. Reload the page to try again.', err);
+    if (app.shell) app.fatal('启动时出现问题。请刷新页面重试。', err);
   })
   .finally(() => showAlphaNotice());
 

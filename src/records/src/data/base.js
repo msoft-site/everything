@@ -133,7 +133,7 @@ export class Base extends Emitter {
     const primary = table.primary;
     const v = this.compute.value(table, rec, primary);
     const s = toText(primary, v, this.compute.ctx);
-    return s || 'Unnamed record';
+    return s || '未命名记录';
   }
 
   /* ------------------------------------------------------------ history */
@@ -732,7 +732,7 @@ export class Base extends Emitter {
       const o0 = table.maxOrder() + 1;
       place = { orders: cellsList.map((_, i) => o0 + i), moved: [] };
     }
-    return this._newRecords(table, cellsList, place, label || (cellsList.length === 1 ? 'Add record' : `Add ${cellsList.length} records`));
+    return this._newRecords(table, cellsList, place, label || `添加 ${cellsList.length} 条记录`);
   }
 
   /** New records at the given orders, after moving others to make room (one undo step). */
@@ -767,13 +767,13 @@ export class Base extends Emitter {
 
   deleteRecords(tableId, ids) {
     if (!ids.length) return;
-    this.apply({ t: 'rec.del', table: tableId, ids }, { label: ids.length === 1 ? 'Delete record' : `Delete ${ids.length} records` });
+    this.apply({ t: 'rec.del', table: tableId, ids }, { label: `删除 ${ids.length} 条记录` });
   }
 
   /** changes: [{ id, cells }] */
   setCells(tableId, changes, label) {
     if (!changes.length) return;
-    this.apply({ t: 'rec.set', table: tableId, changes }, { label: label || 'Edit' });
+    this.apply({ t: 'rec.set', table: tableId, changes }, { label: label || '编辑' });
   }
 
   setCell(tableId, recId, fieldId, value) {
@@ -820,7 +820,7 @@ export class Base extends Emitter {
         for (const k of copies.get(r.id) || []) orders[k] = ++n;
       }
     }
-    return this._newRecords(table, cellsList, { orders, moved }, ids.length === 1 ? 'Duplicate record' : 'Duplicate records');
+    return this._newRecords(table, cellsList, { orders, moved }, '复制记录');
   }
 
   moveRecords(tableId, ids, beforeId) {
@@ -829,12 +829,12 @@ export class Base extends Emitter {
     const rest = table.ordered().filter((r) => !moving.has(r.id));
     const i = beforeId ? rest.findIndex((r) => r.id === beforeId) : -1;
     const { orders, moved } = placeOrders(rest, i < 0 ? rest.length : i, ids.length);
-    this.apply({ t: 'rec.order', table: tableId, orders: [...moved, ...ids.map((id, k) => ({ id, o: orders[k] }))] }, { label: 'Move records' });
+    this.apply({ t: 'rec.order', table: tableId, orders: [...moved, ...ids.map((id, k) => ({ id, o: orders[k] }))] }, { label: '移动记录' });
   }
 
   addTable(name, { fields, recs, index } = {}) {
     const schema = makeTable(name, fields);
-    this.apply({ t: 'table.add', schema, recs: recs || [], index }, { label: 'Add table' });
+    this.apply({ t: 'table.add', schema, recs: recs || [], index }, { label: '添加数据表' });
     return schema.id;
   }
 
@@ -846,7 +846,7 @@ export class Base extends Emitter {
     const table = this.table(tableId);
     const field = {
       id: newId('fld'),
-      name: uniqueName(name || TYPES[type]?.label || 'Field', table.fields.map((f) => f.name)),
+      name: uniqueName(name || TYPES[type]?.label || '字段', table.fields.map((f) => f.name)),
       type,
       options: { ...defaultOptions(type), ...clone(options || {}) },
     };
@@ -877,7 +877,7 @@ export class Base extends Emitter {
       ops.push(numbered.op);
     }
     ops.unshift({ t: 'field.add', table: tableId, field, index, values });
-    this.apply(ops.length === 1 ? ops[0] : { t: 'batch', ops }, { label: 'Add field' });
+    this.apply(ops.length === 1 ? ops[0] : { t: 'batch', ops }, { label: '添加字段' });
     return field.id;
   }
 
@@ -887,7 +887,7 @@ export class Base extends Emitter {
     const field = table.field(fieldId);
     if (patch.name !== undefined) patch.name = uniqueName(patch.name, table.fields.filter((f) => f.id !== fieldId).map((f) => f.name)) || field.name;
     if (patch.type && fieldId === table.schema.primaryFieldId && !PRIMARY_TYPES.has(patch.type)) {
-      throw new Error(`The primary field can't be a ${TYPES[patch.type].label.toLowerCase()} field.`);
+      throw new Error(`主字段不能设为${TYPES[patch.type].label}字段。`);
     }
     const ops = [];
     const before = clone(field);
@@ -940,7 +940,7 @@ export class Base extends Emitter {
     this.transact(() => {
       this.apply(ops.length === 1 ? ops[0] : { t: 'batch', ops });
       if (before.type !== field.type) this._refitConditions(table, field, before);
-    }, 'Edit field');
+    }, '编辑字段');
   }
 
   /**
@@ -998,8 +998,8 @@ export class Base extends Emitter {
 
   deleteField(tableId, fieldId) {
     const table = this.table(tableId);
-    if (fieldId === table.schema.primaryFieldId) throw new Error("The primary field can't be deleted.");
-    this.apply({ t: 'field.del', table: tableId, id: fieldId }, { label: 'Delete field' });
+    if (fieldId === table.schema.primaryFieldId) throw new Error('无法删除主字段。');
+    this.apply({ t: 'field.del', table: tableId, id: fieldId }, { label: '删除字段' });
   }
 
   duplicateField(tableId, fieldId, withValues = true) {
@@ -1010,22 +1010,22 @@ export class Base extends Emitter {
     if (withValues && !isComputed(field)) {
       for (const r of table.records.values()) if (r.c[fieldId] !== undefined) values[r.id] = clone(r.c[fieldId]);
     }
-    const copy = { name: `${field.name} copy`, type: field.type, options: clone(field.options), description: field.description };
+    const copy = { name: `${field.name} 副本`, type: field.type, options: clone(field.options), description: field.description };
     if (field.type === 'link') copy.options.inverseId = null;
     // Values come with the field (links with their other side), so records
     // are not edited, and it is one undo step.
-    return this.transact(() => this.addField(tableId, copy, { index, values }), 'Duplicate field');
+    return this.transact(() => this.addField(tableId, copy, { index, values }), '复制字段');
   }
 
   addView(tableId, type, name, index) {
     const table = this.table(tableId);
     const view = createView(table, type, uniqueName(name, table.views.map((v) => v.name)));
-    this.apply({ t: 'view.add', table: tableId, view, index }, { label: 'Add view' });
+    this.apply({ t: 'view.add', table: tableId, view, index }, { label: '添加视图' });
     return view.id;
   }
 
   updateView(tableId, viewId, patch, opts) {
-    this.apply({ t: 'view.set', table: tableId, id: viewId, patch }, { label: 'Change view', ...opts });
+    this.apply({ t: 'view.set', table: tableId, id: viewId, patch }, { label: '更改视图', ...opts });
   }
 }
 
@@ -1160,7 +1160,7 @@ export function scrubView(v, fieldId) {
 }
 
 export function uniqueName(name, taken) {
-  const base = String(name || '').trim() || 'Untitled';
+  const base = String(name || '').trim() || '未命名';
   const lower = new Set(taken.map((n) => n.toLowerCase()));
   if (!lower.has(base.toLowerCase())) return base;
   for (let i = 2; ; i++) {
@@ -1175,25 +1175,25 @@ export function makeChoice(name, existing = []) {
 
 /** A new table schema with a primary text field and a grid view. */
 export function makeTable(name, fields) {
-  const primary = { id: newId('fld'), name: 'Name', type: 'text', options: {} };
+  const primary = { id: newId('fld'), name: '名称', type: 'text', options: {} };
   const list = fields?.length ? fields.map((f) => ({ id: f.id || newId('fld'), name: f.name, type: f.type, options: { ...defaultOptions(f.type), ...(f.options || {}) }, ...(f.description ? { description: f.description } : {}) })) : [primary];
-  const schema = { id: newId('tbl'), name: name || 'Table', primaryFieldId: list[0].id, fields: list, views: [], nextNumber: 1 };
+  const schema = { id: newId('tbl'), name: name || '数据表', primaryFieldId: list[0].id, fields: list, views: [], nextNumber: 1 };
   const table = new Table(schema);
-  schema.views.push(createView(table, 'grid', 'Grid view'));
+  schema.views.push(createView(table, 'grid', '表格视图'));
   return schema;
 }
 
 /** A blank base document: one table with a few starter fields. */
-export function makeBaseDoc(name = 'Untitled base', { color = 'blue', icon = 'table' } = {}) {
+export function makeBaseDoc(name = '未命名数据库', { color = 'blue', icon = 'table' } = {}) {
   const fields = [
-    { name: 'Name', type: 'text' },
-    { name: 'Notes', type: 'longText' },
-    { name: 'Status', type: 'singleSelect', options: { choices: [makeChoice('Todo', []), makeChoice('In progress', [{ color: 'blue' }]), makeChoice('Done', [{ color: 'blue' }, { color: 'cyan' }])] } },
+    { name: '名称', type: 'text' },
+    { name: '备注', type: 'longText' },
+    { name: '状态', type: 'singleSelect', options: { choices: [makeChoice('待办', []), makeChoice('进行中', [{ color: 'blue' }]), makeChoice('已完成', [{ color: 'blue' }, { color: 'cyan' }])] } },
   ];
   fields[2].options.choices[0].color = 'red';
   fields[2].options.choices[1].color = 'yellow';
   fields[2].options.choices[2].color = 'green';
-  const table = makeTable('Table 1', fields);
+  const table = makeTable('表 1', fields);
   const now = Date.now();
   return { v: 1, id: newId('app'), name, color, icon, tables: [table], createdAt: now, updatedAt: now };
 }

@@ -42,9 +42,9 @@ const PNG_BUDGET = 250 * 1024;
  * file is not an image this can read.
  */
 export async function prepareLogo(file) {
-  if (!file) throw new Error('No file');
-  if (!/^image\//.test(file.type || '')) throw new Error('That file is not an image');
-  if (file.size > MAX_FILE) throw new Error('That image is too large, use one under 10 MB');
+  if (!file) throw new Error('未选择文件');
+  if (!/^image\//.test(file.type || '')) throw new Error('该文件不是图片');
+  if (file.size > MAX_FILE) throw new Error('图片过大，请使用 10 MB 以下的图片');
 
   const img = await decode(file);
   // An ImageBitmap reports width/height; an <img> that was never laid out
@@ -76,7 +76,7 @@ export async function prepareLogo(file) {
   const jpeg = await toBlob(flat, 'image/jpeg', 0.88);
   if (jpeg && (!png || jpeg.size < png.size)) return jpeg;
   if (png) return png;
-  throw new Error('Could not read that image');
+  throw new Error('无法读取该图片');
 }
 
 /**
@@ -96,10 +96,10 @@ async function decode(file) {
     return await new Promise((resolve, reject) => {
       const img = new Image();
       img.onload = () => {
-        if (!img.naturalWidth || !img.naturalHeight) reject(new Error('Could not read that image'));
+        if (!img.naturalWidth || !img.naturalHeight) reject(new Error('无法读取该图片'));
         else resolve(img);
       };
-      img.onerror = () => reject(new Error('Could not read that image'));
+      img.onerror = () => reject(new Error('无法读取该图片'));
       img.src = url;
     });
   } finally {

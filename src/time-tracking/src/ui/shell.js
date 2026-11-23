@@ -19,14 +19,14 @@ import { projectsView } from '../views/projects.js';
 import { settingsView, confirmSignOut } from '../views/settings.js';
 
 const ROUTES = [
-  { hash: '#/', label: 'Timer', icon: 'timer', view: timerView },
-  { hash: '#/timesheet', label: 'Timesheet', icon: 'calendar', view: timesheetView },
-  { hash: '#/reports', label: 'Reports', icon: 'chart', view: reportsView },
-  { hash: '#/projects', label: 'Projects', icon: 'folders', view: projectsView },
-  { hash: '#/settings', label: 'Settings', icon: 'gear', view: settingsView },
+  { hash: '#/', label: '计时器', icon: 'timer', view: timerView },
+  { hash: '#/timesheet', label: '工时表', icon: 'calendar', view: timesheetView },
+  { hash: '#/reports', label: '报表', icon: 'chart', view: reportsView },
+  { hash: '#/projects', label: '项目', icon: 'folders', view: projectsView },
+  { hash: '#/settings', label: '设置', icon: 'gear', view: settingsView },
 ];
 
-const BASE_TITLE = 'Hourly · Time Tracking';
+const BASE_TITLE = 'Hourly · 工时追踪';
 
 /* Budget crossings warn once per session per threshold: the map holds the
    highest bucket seen (0 under 80%, 1 at 80%+, 2 at 100%+), and only an
@@ -45,8 +45,8 @@ async function checkBudgets() {
     const prev = budgetBuckets.get(p.id) ?? 0;
     if (!seed && bucket > prev) {
       toast(bucket === 2
-        ? `${p.name} is over budget`
-        : `${p.name} is at ${Math.round(prog.ratio * 100)}% of its budget`,
+        ? `${p.name} 已超出预算`
+        : `${p.name} 已达到预算的 ${Math.round(prog.ratio * 100)}%`,
       { icon: 'alert', duration: 5000 });
     }
     // Only ever raised: dropping back under a threshold (a deleted entry,
@@ -61,7 +61,7 @@ async function checkBudgets() {
 function tickTitle() {
   if (store.running) {
     const project = store.project(store.timer.projectId);
-    document.title = `${fmtTimer(store.elapsedSeconds())} · ${project?.name || 'Tracking'}`;
+    document.title = `${fmtTimer(store.elapsedSeconds())} · ${project?.name || '追踪中'}`;
   } else if (document.title !== BASE_TITLE) {
     document.title = BASE_TITLE;
   }
@@ -92,7 +92,7 @@ export function mountShell(appRoot) {
   const skipLink = el('button.skip-link', {
     type: 'button',
     onclick: () => main.focus(),
-  }, 'Skip to content');
+  }, '跳转到主内容');
 
   /* Sample-data banner: always visible while exploring, one-tap wipe. */
   function renderSampleBanner() {
@@ -100,25 +100,25 @@ export function mountShell(appRoot) {
     if (!store.settings.sampleData) return;
     sampleBanner.append(el('div.sample-banner', {},
       el('span.sample-banner-ic', { html: icon('sparkle', 14, 2.2) }),
-      el('span.grow', {}, 'Sample data, explore freely, nothing here is yours'),
+      el('span.grow', {}, '当前为示例数据，可随意探索，此处内容并非您的真实数据'),
       el('button', {
         onclick: async () => {
           const ok = await confirmDialog({
-            title: 'Start fresh?',
-            message: 'All sample data is removed and you set up your own clients from scratch.',
-            confirmLabel: 'Wipe sample data',
+            title: '全新开始？',
+            message: '所有示例数据将被移除，您可以从头开始设置自己的客户。',
+            confirmLabel: '清除示例数据',
           });
           if (!ok) return;
           try {
             await wipeSampleData(store);
           } catch (err) {
             console.error(err);
-            toast('Could not wipe, check your connection', { icon: 'wifiOff' });
+            toast('无法清除，请检查网络连接', { icon: 'wifiOff' });
             return;
           }
           openOnboarding();
         },
-      }, 'Start fresh')
+      }, '全新开始')
     ));
   }
   store.addEventListener('change', renderSampleBanner);
@@ -130,9 +130,9 @@ export function mountShell(appRoot) {
   }
 
   /* Sidebar (desktop) */
-  const username = store.user?.username || 'Puter user';
+  const username = store.user?.username || 'Puter 用户';
   const sidebarNav = el('div', { style: { display: 'contents' } });
-  const sidebar = el('nav.sidebar', { 'aria-label': 'Main navigation' },
+  const sidebar = el('nav.sidebar', { 'aria-label': '主导航' },
     el('div.brand', {},
       el('img', { src: './icons/icon-192.png', width: 30, height: 30, alt: '' }),
       'Hourly'
@@ -142,22 +142,22 @@ export function mountShell(appRoot) {
     el('button.btn.btn-primary.sidebar-add', {
       html: icon('plus', 17, 2.2),
       onclick: () => openEntryForm(),
-    }, ' Log time'),
+    }, ' 记录工时'),
     el('div.sidebar-user', {},
       el('span.user-avatar', {}, username.charAt(0).toUpperCase()),
       el('span.name', { title: username }, username),
       // Inside Puter, the platform owns the session; no sign-out here.
       !isPuterApp() && el('button.icon-btn', {
         html: icon('logout', 18, 2),
-        'aria-label': 'Sign out',
-        title: 'Sign out',
+        'aria-label': '退出登录',
+        title: '退出登录',
         onclick: confirmSignOut,
       })
     )
   );
 
   /* Tab bar (mobile) */
-  const tabbar = el('nav.tabbar', { 'aria-label': 'Main navigation' });
+  const tabbar = el('nav.tabbar', { 'aria-label': '主导航' });
 
   function renderNav() {
     const active = routeFor(location.hash);
@@ -192,7 +192,7 @@ export function mountShell(appRoot) {
 
   const fab = el('button.fab', {
     html: icon('plus', 26, 2.2),
-    'aria-label': 'Log time',
+    'aria-label': '记录工时',
     onclick: () => openEntryForm(),
   });
 

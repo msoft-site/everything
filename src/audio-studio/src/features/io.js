@@ -27,18 +27,18 @@ const hasAudio = (app) => Boolean(audio(app));
 
 export function installIo(app) {
   registerIcons({ 'corner-left-up': CornerLeftUp });
-  app.registerPanel({ id: 'media', title: 'Media Browser', create: mediaBrowserPanel, near: ['files', 'favorites', 'markers'] });
-  app.registerPanel({ id: 'metadata', title: 'Metadata', create: metadataPanel, near: ['properties', 'assistant'] });
+  app.registerPanel({ id: 'media', title: '媒体浏览器', create: mediaBrowserPanel, near: ['files', 'favorites', 'markers'] });
+  app.registerPanel({ id: 'metadata', title: '元数据', create: metadataPanel, near: ['properties', 'assistant'] });
   app.recorder = createRecorder(app);
   app.recording = false;
   app.inputMetering = false;
   const C = app.commands;
 
   C.register([
-    { id: 'file.exportFile', label: 'File...', shortcut: 'Mod+Shift+E', enabled: hasAudio, run: () => saveFlow(app, audio(app), { mode: 'export' }) },
+    { id: 'file.exportFile', label: '文件...', shortcut: 'Mod+Shift+E', enabled: hasAudio, run: () => saveFlow(app, audio(app), { mode: 'export' }) },
     {
       id: 'file.saveSelectionAs',
-      label: 'Save Selection As...',
+      label: '选区另存为...',
       shortcut: 'Mod+Alt+S',
       enabled: (a) => Boolean(audio(a)?.hasSelection),
       run: () => {
@@ -46,27 +46,27 @@ export function installIo(app) {
         return saveFlow(app, doc, { mode: 'selection', range: [doc.selection.start, doc.selection.end] });
       },
     },
-    { id: 'file.download', label: 'Download to This Device...', enabled: hasAudio, run: () => saveFlow(app, audio(app), { mode: 'download' }) },
-    { id: 'file.importMarkers', label: 'Markers...', enabled: hasAudio, run: () => importMarkers(app) },
+    { id: 'file.download', label: '下载到此设备...', enabled: hasAudio, run: () => saveFlow(app, audio(app), { mode: 'download' }) },
+    { id: 'file.importMarkers', label: '标记...', enabled: hasAudio, run: () => importMarkers(app) },
     {
       id: 'file.recover',
-      label: 'Recover Unsaved Files...',
+      label: '恢复未保存的文件...',
       enabled: () => Boolean(autosave),
       run: async () => {
         const list = await autosave.check();
-        if (!list.length) return app.notify('There are no autosaved files to recover.');
+        if (!list.length) return app.notify('没有可恢复的自动保存文件。');
         return recoveryDialog(app, autosave, list);
       },
     },
     {
       id: 'file.restoreBackup',
-      label: 'Restore Session Backup...',
+      label: '恢复会话备份...',
       enabled: () => Boolean(app.sessionBackup),
       run: () => backupBrowserDialog(app, app.sessionBackup),
     },
     {
       id: 'transport.record',
-      label: (a) => (a.recording || a.recorder?.active || a.multitrack?.recorder?.active ? 'Stop Recording' : 'Record'),
+      label: (a) => (a.recording || a.recorder?.active || a.multitrack?.recorder?.active ? '停止录音' : '录音'),
       shortcut: 'Shift+Space',
       // Base command for every kind: the multitrack session overrides run()
       // through its document kind to record into armed tracks.
@@ -75,34 +75,34 @@ export function installIo(app) {
     },
     {
       id: 'transport.recordOverwrite',
-      label: 'Overwrite When Recording',
+      label: '录音时覆盖',
       // Waveform editor, no selection: record over the audio after the playhead instead of inserting.
       checked: (a) => Boolean(a.prefs.get('recordOverwrite')),
       run: () => app.prefs.toggle('recordOverwrite'),
     },
     {
       id: 'transport.punchRoll',
-      label: 'Punch and Roll',
+      label: '穿插并预卷录音',
       // Waveform editor: rolls in from before the playhead (or selection) and records over what follows.
       enabled: (a) => Boolean(audio(a)) && !a.recording && !a.recorder?.active,
       run: () => punchAndRoll(app),
     },
     {
       id: 'transport.meterInput',
-      label: 'Meter Input Signal',
+      label: '监测输入信号',
       checked: (a) => Boolean(a.inputMetering),
       run: () => toggleInputMeter(app),
     },
   ]);
 
   app.preferenceSections = app.preferenceSections || [];
-  app.preferenceSections.push({ category: 'audioHardware', title: 'Devices', keywords: 'input microphone device latency output', build: audioHardwarePrefs });
+  app.preferenceSections.push({ category: 'audioHardware', title: '设备', keywords: 'input microphone device latency output 输入 麦克风 设备 延迟 输出', build: audioHardwarePrefs });
 
   // Open Recent: Puter files, reopened through their path. Sessions come first, then audio
   // files; a name shared by files in different folders shows its folder.
   app.recentMenuItems = () => {
     const list = app.prefs.get('recent') || [];
-    if (!list.length) return [{ type: 'cmd', label: 'No Recent Files', enabled: false }];
+    if (!list.length) return [{ type: 'cmd', label: '无最近使用的文件', enabled: false }];
     const groups = recentGroups(list);
     return [
       ...groups.flatMap((g, i) => [...(i ? [null] : []), ...g]).map((r) => (!r ? { type: 'sep' } : {
@@ -118,7 +118,7 @@ export function installIo(app) {
         },
       })),
       { type: 'sep' },
-      { type: 'cmd', label: 'Clear Recent Files', enabled: true, run: () => app.prefs.set('recent', []) },
+      { type: 'cmd', label: '清除最近使用的文件', enabled: true, run: () => app.prefs.set('recent', []) },
     ];
   };
 
@@ -202,20 +202,20 @@ export function installIo(app) {
 // ------------------------------------------------------------------ record
 
 async function newRecordingDialog(app) {
-  const name = h('input.input', { type: 'text', value: app.uniqueName(recordingName()), 'aria-label': 'File name', style: { width: '100%' } });
-  const rate = h('select.select', { 'aria-label': 'Sample rate' }, [8000, 11025, 16000, 22050, 32000, 44100, 48000, 88200, 96000, 192000].map((r) => h('option', { value: r, selected: r === app.prefs.get('defaultRate') }, `${r} Hz`)));
-  const channels = h('select.select', { 'aria-label': 'Channels' }, h('option', { value: '1', selected: app.prefs.get('defaultChannels') === 1 }, 'Mono'), h('option', { value: '2', selected: app.prefs.get('defaultChannels') !== 1 }, 'Stereo'));
-  const bits = h('select.select', { 'aria-label': 'Bit depth' }, [16, 24, 32].map((b) => h('option', { value: b, selected: b === 32 }, b === 32 ? '32 (float)' : String(b))));
+  const name = h('input.input', { type: 'text', value: app.uniqueName(recordingName()), 'aria-label': '文件名', style: { width: '100%' } });
+  const rate = h('select.select', { 'aria-label': '采样率' }, [8000, 11025, 16000, 22050, 32000, 44100, 48000, 88200, 96000, 192000].map((r) => h('option', { value: r, selected: r === app.prefs.get('defaultRate') }, `${r} Hz`)));
+  const channels = h('select.select', { 'aria-label': '声道' }, h('option', { value: '1', selected: app.prefs.get('defaultChannels') === 1 }, '单声道'), h('option', { value: '2', selected: app.prefs.get('defaultChannels') !== 1 }, '立体声'));
+  const bits = h('select.select', { 'aria-label': '位深度' }, [16, 24, 32].map((b) => h('option', { value: b, selected: b === 32 }, b === 32 ? '32 (浮点)' : String(b))));
   const r = await openDialog({
-    title: 'New Audio File',
+    title: '新建音频文件',
     body: h(
       'div',
-      h('p.muted', { style: { margin: '0 0 10px', maxWidth: '360px' } }, 'Recording starts in a new file with these settings.'),
-      h('div.form-grid', h('label', 'File Name:'), name, h('label', 'Sample Rate:'), rate, h('label', 'Channels:'), channels, h('label', 'Bit Depth:'), bits),
+      h('p.muted', { style: { margin: '0 0 10px', maxWidth: '360px' } }, '将使用这些设置在新文件中开始录音。'),
+      h('div.form-grid', h('label', '文件名：'), name, h('label', '采样率：'), rate, h('label', '声道：'), channels, h('label', '位深度：'), bits),
     ),
     buttons: [
-      { label: 'Cancel', value: null },
-      { label: 'Record', value: 'ok', primary: true },
+      { label: '取消', value: null },
+      { label: '录音', value: 'ok', primary: true },
     ],
   });
   if (r !== 'ok') return null;
@@ -291,7 +291,7 @@ function preroll(app, doc, at, secs) {
       offTransport();
       cancelAnimationFrame(raf);
       counter?.remove();
-      app.setStatus(ok ? '' : 'Pre-roll cancelled');
+      app.setStatus(ok ? '' : '预卷已取消');
       resolve(ok);
     };
     const offEnded = engine.on('ended', () => finish(true));
@@ -310,11 +310,11 @@ function preroll(app, doc, at, secs) {
     const tick = () => {
       if (done) return;
       const left = Math.max(0, total - (performance.now() - started) / 1000);
-      const text = `Recording in ${Math.ceil(left)}`;
+      const text = `录音倒计时 ${Math.ceil(left)}`;
       if (counter && text !== shown) counter.textContent = shown = text;
       raf = requestAnimationFrame(tick);
     };
-    app.setStatus('Pre-roll...');
+    app.setStatus('预卷中...');
     app
       .play({ from, to: at, loop: false })
       .then(() => {
@@ -352,11 +352,11 @@ async function toggleInputMeter(app) {
 
 function audioHardwarePrefs(app) {
   const p = app.prefs;
-  const input = h('select.select', { 'aria-label': 'Default input device' }, h('option', { value: '' }, 'System Default'));
+  const input = h('select.select', { 'aria-label': '默认输入设备' }, h('option', { value: '' }, '系统默认'));
   // Output choice needs AudioContext.setSinkId (not in every browser).
   const canPickOutput = typeof AudioContext !== 'undefined' && typeof AudioContext.prototype.setSinkId === 'function';
-  const output = h('select.select', { 'aria-label': 'Default output device' }, h('option', { value: '' }, 'System Default'));
-  const allow = h('button.btn', { type: 'button', hidden: true }, 'Show Device Names');
+  const output = h('select.select', { 'aria-label': '默认输出设备' }, h('option', { value: '' }, '系统默认'));
+  const allow = h('button.btn', { type: 'button', hidden: true }, '显示设备名称');
   const latency = h('span.muted.tabular');
   const fill = async () => {
     let devices = [];
@@ -366,14 +366,14 @@ function audioHardwarePrefs(app) {
       devices = [];
     }
     const inputs = devices.filter((d) => d.kind === 'audioinput' && d.deviceId !== 'default');
-    input.replaceChildren(h('option', { value: '' }, 'System Default'), ...inputs.map((d, i) => h('option', { value: d.deviceId }, d.label || `Input ${i + 1}`)));
+    input.replaceChildren(h('option', { value: '' }, '系统默认'), ...inputs.map((d, i) => h('option', { value: d.deviceId }, d.label || `输入 ${i + 1}`)));
     input.value = inputs.some((d) => d.deviceId === p.get('inputDevice')) ? p.get('inputDevice') : '';
     const outputs = devices.filter((d) => d.kind === 'audiooutput' && d.deviceId !== 'default');
-    output.replaceChildren(h('option', { value: '' }, 'System Default'), ...outputs.map((d, i) => h('option', { value: d.deviceId }, d.label || `Output ${i + 1}`)));
+    output.replaceChildren(h('option', { value: '' }, '系统默认'), ...outputs.map((d, i) => h('option', { value: d.deviceId }, d.label || `输出 ${i + 1}`)));
     output.value = outputs.some((d) => d.deviceId === p.get('outputDevice')) ? p.get('outputDevice') : '';
     allow.hidden = !inputs.length || inputs.some((d) => d.label);
     const e = app.engine;
-    latency.textContent = e.ctx ? `${((e.outputLatencyFrames / e.rate) * 1000).toFixed(1)} ms at ${e.rate} Hz` : 'Measured when playback or recording starts';
+    latency.textContent = e.ctx ? `${((e.outputLatencyFrames / e.rate) * 1000).toFixed(1)} ms (${e.rate} Hz)` : '在开始播放或录音时测量';
   };
   input.addEventListener('change', async () => {
     p.set('inputDevice', input.value || null);
@@ -399,11 +399,11 @@ function audioHardwarePrefs(app) {
   return [
     h(
       'div.form-grid',
-      h('label', 'Default Input:'),
+      h('label', '默认输入：'),
       h('div.io-row', input, allow),
-      canPickOutput ? h('label', 'Default Output:') : null,
+      canPickOutput ? h('label', '默认输出：') : null,
       canPickOutput ? output : null,
-      h('label', 'Output Latency:'),
+      h('label', '输出延迟：'),
       latency,
     ),
   ];
@@ -416,7 +416,7 @@ export async function importMarkers(app) {
   if (!doc) return false;
   const targetOpen = () => {
     if (app.documents.includes(doc)) return true;
-    app.notify('Marker import stopped because the destination file was closed.', { error: true });
+    app.notify('由于目标文件已关闭，标记导入已停止。', { error: true });
     return false;
   };
   let file = null;
@@ -442,19 +442,19 @@ export async function importMarkers(app) {
   } catch (err) {
     // A file with no readable markers is the user's to fix, not a failure of the command.
     const why = err?.message ? ` ${err.message}` : '';
-    const from = name ? ` from "${name}"` : '';
+    const from = name ? `（来自“${name}”）` : '';
     const hint =
-      'Marker files are tab-separated or CSV text with Name and Start columns, as File > Export > Markers writes them.';
-    app.notify(`No markers were imported${from}.${why} ${hint}`, { error: true });
+      '标记文件应为包含 Name 和 Start 列的制表符分隔或 CSV 文本文件，格式与“文件 > 导出 > 标记”导出的文件相同。';
+    app.notify(`未能导入任何标记${from}。${why} ${hint}`, { error: true });
     return;
   }
   const inside = parsed.filter((m) => m.start <= doc.length).map((m) => createMarker({ ...m, duration: Math.min(m.duration, doc.length - m.start) }));
   if (!inside.length) {
-    app.notify('All markers in the file are past the end of this audio.', { error: true });
+    app.notify('文件中的所有标记均超出了此音频的结尾。', { error: true });
     return;
   }
-  doc.apply('Import Markers', { ...doc.state, markers: sortMarkers([...doc.state.markers, ...inside]) });
-  app.notify(`Imported ${inside.length} marker${inside.length === 1 ? '' : 's'}${inside.length < parsed.length ? ` (${parsed.length - inside.length} past the end were skipped)` : ''}.`);
+  doc.apply('导入标记', { ...doc.state, markers: sortMarkers([...doc.state.markers, ...inside]) });
+  app.notify(`已导入 ${inside.length} 个标记${inside.length < parsed.length ? `（已跳过超出结尾的 ${parsed.length - inside.length} 个标记）` : ''}。`);
   app.dock?.openPanel('markers', { focus: false });
 }
 

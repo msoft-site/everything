@@ -248,5 +248,5 @@ export function deletePage(doc, id) {
 
 /** The plain text a page is known by. */
 export function displayTitle(page) {
-  return (page?.title || '').trim() || 'Untitled';
+  return (page?.title || '').trim() || '无标题';
 }

@@ -15,51 +15,51 @@ const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'bas
 
 export const OPERATORS = {
   text: [
-    ['contains', 'contains'], ['doesNotContain', 'does not contain'], ['is', 'is'], ['isNot', 'is not'],
-    ['isEmpty', 'is empty'], ['isNotEmpty', 'is not empty'],
+    ['contains', '包含'], ['doesNotContain', '不包含'], ['is', '等于'], ['isNot', '不等于'],
+    ['isEmpty', '为空'], ['isNotEmpty', '不为空'],
   ],
   number: [
     ['=', '='], ['!=', '≠'], ['<', '<'], ['>', '>'], ['<=', '≤'], ['>=', '≥'],
-    ['isEmpty', 'is empty'], ['isNotEmpty', 'is not empty'],
+    ['isEmpty', '为空'], ['isNotEmpty', '不为空'],
   ],
   select: [
-    ['is', 'is'], ['isNot', 'is not'], ['isAnyOf', 'is any of'], ['isNoneOf', 'is none of'],
-    ['isEmpty', 'is empty'], ['isNotEmpty', 'is not empty'],
+    ['is', '等于'], ['isNot', '不等于'], ['isAnyOf', '属于其中之一'], ['isNoneOf', '不属于其中任何一项'],
+    ['isEmpty', '为空'], ['isNotEmpty', '不为空'],
   ],
   multi: [
-    ['hasAnyOf', 'has any of'], ['hasAllOf', 'has all of'], ['isExactly', 'is exactly'], ['hasNoneOf', 'has none of'],
-    ['isEmpty', 'is empty'], ['isNotEmpty', 'is not empty'],
+    ['hasAnyOf', '包含其中任一'], ['hasAllOf', '包含全部'], ['isExactly', '完全等于'], ['hasNoneOf', '不包含其中任何一项'],
+    ['isEmpty', '为空'], ['isNotEmpty', '不为空'],
   ],
-  checkbox: [['is', 'is']],
+  checkbox: [['is', '为']],
   date: [
-    ['is', 'is'], ['isBefore', 'is before'], ['isAfter', 'is after'], ['isOnOrBefore', 'is on or before'],
-    ['isOnOrAfter', 'is on or after'], ['isWithin', 'is within'], ['isEmpty', 'is empty'], ['isNotEmpty', 'is not empty'],
+    ['is', '是'], ['isBefore', '早于'], ['isAfter', '晚于'], ['isOnOrBefore', '不晚于'],
+    ['isOnOrAfter', '不早于'], ['isWithin', '介于范围内'], ['isEmpty', '为空'], ['isNotEmpty', '不为空'],
   ],
   link: [
-    ['contains', 'contains'], ['doesNotContain', 'does not contain'], ['isEmpty', 'is empty'], ['isNotEmpty', 'is not empty'],
+    ['contains', '包含'], ['doesNotContain', '不包含'], ['isEmpty', '为空'], ['isNotEmpty', '不为空'],
   ],
   attachment: [
-    ['filenameContains', 'filename contains'], ['hasFileType', 'has file type'], ['isEmpty', 'is empty'], ['isNotEmpty', 'is not empty'],
+    ['filenameContains', '文件名包含'], ['hasFileType', '文件类型为'], ['isEmpty', '为空'], ['isNotEmpty', '不为空'],
   ],
   list: [
-    ['contains', 'contains'], ['doesNotContain', 'does not contain'], ['isEmpty', 'is empty'], ['isNotEmpty', 'is not empty'],
+    ['contains', '包含'], ['doesNotContain', '不包含'], ['isEmpty', '为空'], ['isNotEmpty', '不为空'],
   ],
 };
 
 export const NO_VALUE_OPS = new Set(['isEmpty', 'isNotEmpty']);
 
 export const DATE_MODES = {
-  today: 'today', tomorrow: 'tomorrow', yesterday: 'yesterday', oneWeekAgo: 'one week ago', oneWeekFromNow: 'one week from now',
-  oneMonthAgo: 'one month ago', oneMonthFromNow: 'one month from now', daysAgo: 'number of days ago',
-  daysFromNow: 'number of days from now', exactDate: 'exact date',
+  today: '今天', tomorrow: '明天', yesterday: '昨天', oneWeekAgo: '一周前', oneWeekFromNow: '一周后',
+  oneMonthAgo: '一个月前', oneMonthFromNow: '一个月后', daysAgo: '若干天前',
+  daysFromNow: '若干天后', exactDate: '指定日期',
 };
 
 export const WITHIN_MODES = {
-  pastWeek: 'the past week', pastMonth: 'the past month', pastYear: 'the past year', nextWeek: 'the next week',
-  nextMonth: 'the next month', nextYear: 'the next year', pastDays: 'the past number of days', nextDays: 'the next number of days',
+  pastWeek: '过去一周', pastMonth: '过去一个月', pastYear: '过去一年', nextWeek: '未来一周',
+  nextMonth: '未来一个月', nextYear: '未来一年', pastDays: '过去若干天', nextDays: '未来若干天',
 };
 
-export const FILE_TYPES = { image: 'Image', text: 'Text', pdf: 'PDF', video: 'Video', audio: 'Audio', spreadsheet: 'Spreadsheet' };
+export const FILE_TYPES = { image: '图片', text: '文本', pdf: 'PDF', video: '视频', audio: '音频', spreadsheet: '电子表格' };
 
 export function operatorsFor(field, ctx) {
   return OPERATORS[valueKind(field, ctx)] || OPERATORS.text;

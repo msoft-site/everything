@@ -7,6 +7,6 @@ self.onmessage = (e) => {
     const r = renderMusic(id, sampleRate);
     self.postMessage({ req, left: r.left, right: r.right, sampleRate: r.sampleRate }, [r.left.buffer, r.right.buffer]);
   } catch (err) {
-    self.postMessage({ req, error: err?.message || 'Could not render the music.' });
+    self.postMessage({ req, error: err?.message || '无法渲染音乐。' });
   }
 };

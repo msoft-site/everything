@@ -26,7 +26,7 @@ export function encode(bytes) {
 
 export function decode(value, max = Infinity) {
   if (typeof value !== 'string' || value.length > max || value.length % 4 === 1 || !/^[A-Za-z0-9+/]*={0,2}$/.test(value)) {
-    throw new Error('Invalid collaboration update.');
+    throw new Error('无效的协作更新。');
   }
   return Uint8Array.from(atob(value), (c) => c.charCodeAt(0));
 }
@@ -78,7 +78,7 @@ export async function verify(key, value, signature) {
 export function workerURL(value) {
   const url = new URL(value);
   if (url.protocol !== 'https:' || !/^[a-z0-9-]+\.puter\.work$/.test(url.hostname) || url.port || url.username || url.password || url.pathname !== '/' || url.search || url.hash) {
-    throw new Error('Invalid collaboration server address.');
+    throw new Error('无效的协作服务器地址。');
   }
   return url.origin;
 }
@@ -102,7 +102,7 @@ export function parseLink(value, base = typeof location === 'undefined' ? 'https
   const url = new URL(value, base);
   const p = new URLSearchParams(url.hash.slice(1));
   const room = p.get('space');
-  if (!room || !ID.test(room)) throw new Error('Invalid space link.');
+  if (!room || !ID.test(room)) throw new Error('无效的空间链接。');
   const page = p.get('page');
   return {
     server: workerURL(p.get('server')),

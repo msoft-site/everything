@@ -23,7 +23,28 @@ import { renderTable } from './table.js';
 import { getPage, displayTitle } from '../data/tree.js';
 
 const CLIP_TYPE = 'application/x-wiki-blocks';
-const typeLabel = (type) => P.BLOCK_TYPES[type]?.label || 'Text';
+const typeLabel = (type) => P.BLOCK_TYPES[type]?.label || '文本';
+
+const COLOR_NAMES = {
+  gray: '灰色',
+  brown: '棕色',
+  orange: '橙色',
+  yellow: '黄色',
+  green: '绿色',
+  blue: '蓝色',
+  purple: '紫色',
+  pink: '粉色',
+  red: '红色',
+};
+
+const MARK_NAMES = {
+  bold: '粗体',
+  italic: '斜体',
+  underline: '下划线',
+  strike: '删除线',
+  code: '行内代码',
+  bg: '高亮',
+};
 
 export class Editor {
   /**
@@ -39,12 +60,12 @@ export class Editor {
     this.els = new Map();
     this.rendered = new Map();
     this.selected = new Set();
-    this.root = h('div.editor', { role: 'region', 'aria-label': 'Page content', tabindex: '-1' });
+    this.root = h('div.editor', { role: 'region', 'aria-label': '页面内容', tabindex: '-1' });
     this.handle = h(
       'div.blk-handle',
       { 'aria-hidden': 'true' },
-      h('button.handle-btn', { type: 'button', tabindex: '-1', 'data-tip': 'Add a block below', onclick: (e) => this.handleAdd(e) }, icon('plus', 16)),
-      h('button.handle-btn.grip', { type: 'button', tabindex: '-1', 'data-tip': 'Drag to move, click for options' }, icon('grip', 16)),
+      h('button.handle-btn', { type: 'button', tabindex: '-1', 'data-tip': '在下方添加块', onclick: (e) => this.handleAdd(e) }, icon('plus', 16)),
+      h('button.handle-btn.grip', { type: 'button', tabindex: '-1', 'data-tip': '拖动以移动，点击查看选项' }, icon('grip', 16)),
     );
     this.dropLine = h('div.drop-line', { 'aria-hidden': 'true' });
     host.append(this.root, this.handle, this.dropLine);
@@ -191,11 +212,11 @@ export class Editor {
         'data-placeholder': PLACEHOLDERS[type] || '',
       });
       if (type === 'code') {
-        const lang = h('button.code-lang', { type: 'button', 'aria-label': 'Code language', disabled: this.readOnly }, 'Plain text');
+        const lang = h('button.code-lang', { type: 'button', 'aria-label': '代码语言', disabled: this.readOnly }, '纯文本');
         lang.addEventListener('click', () => this.pickLanguage(b.id, lang));
-        const copy = h('button.code-copy', { type: 'button', 'aria-label': 'Copy code', 'data-tip': 'Copy code' }, icon('copy', 14));
+        const copy = h('button.code-copy', { type: 'button', 'aria-label': '复制代码', 'data-tip': '复制代码' }, icon('copy', 14));
         copy.addEventListener('click', () => {
-          navigator.clipboard?.writeText(this.textOf(b.id)).then(() => this.ctx.toast('Code copied'));
+          navigator.clipboard?.writeText(this.textOf(b.id)).then(() => this.ctx.toast('已复制代码'));
         });
         el.append(h('div.code-head', { contenteditable: 'false' }, lang, copy), h('div.blk-main', text));
       } else {
@@ -205,7 +226,7 @@ export class Editor {
       return el;
     }
     if (type === 'divider') {
-      el.append(h('div.blk-main.divider', { tabindex: '-1', role: 'separator', 'aria-label': 'Divider' }, h('hr')));
+      el.append(h('div.blk-main.divider', { tabindex: '-1', role: 'separator', 'aria-label': '分割线' }, h('hr')));
       return el;
     }
     if (type === 'page') {
@@ -237,17 +258,17 @@ export class Editor {
     if (b.type === 'bulleted') return h('span.blk-marker.bullet', { 'aria-hidden': 'true' });
     if (b.type === 'numbered') return h('span.blk-marker.number', { 'aria-hidden': 'true' });
     if (b.type === 'todo') {
-      const box = h('button.blk-marker.check', { type: 'button', role: 'checkbox', 'aria-checked': 'false', 'aria-label': 'Done', disabled: this.readOnly }, icon('check', 13, { stroke: 3 }));
+      const box = h('button.blk-marker.check', { type: 'button', role: 'checkbox', 'aria-checked': 'false', 'aria-label': '已完成', disabled: this.readOnly }, icon('check', 13, { stroke: 3 }));
       box.addEventListener('click', () => this.toggleChecked(b.id));
       return box;
     }
     if (b.type === 'toggle') {
-      const btn = h('button.blk-marker.toggle', { type: 'button', 'aria-expanded': 'true', 'aria-label': 'Show content' }, icon('chevronRight', 15));
+      const btn = h('button.blk-marker.toggle', { type: 'button', 'aria-expanded': 'true', 'aria-label': '显示内容' }, icon('chevronRight', 15));
       btn.addEventListener('click', () => this.toggleCollapsed(b.id));
       return btn;
     }
     if (b.type === 'callout') {
-      const btn = h('button.blk-marker.callout-icon', { type: 'button', 'aria-label': 'Change callout icon', disabled: this.readOnly });
+      const btn = h('button.blk-marker.callout-icon', { type: 'button', 'aria-label': '更改提示框图标', disabled: this.readOnly });
       btn.addEventListener('click', () => this.ctx.pickIcon?.(btn, { name: this.block(b.id)?.icon }, (picked) => P.setBlock(this.doc, b.id, { icon: picked?.name || 'lightbulb' })));
       return btn;
     }
@@ -291,7 +312,7 @@ export class Editor {
       if (b.type === 'toggle') {
         const btn = el.querySelector('.toggle');
         btn.setAttribute('aria-expanded', String(!b.collapsed));
-        btn.setAttribute('aria-label', b.collapsed ? 'Show content' : 'Hide content');
+        btn.setAttribute('aria-label', b.collapsed ? '显示内容' : '隐藏内容');
         el.classList.toggle('collapsed', !!b.collapsed);
       }
       if (b.type === 'callout') {
@@ -299,8 +320,9 @@ export class Editor {
         btn.replaceChildren(icon(hasIcon(b.icon) ? b.icon : 'lightbulb', 18));
       }
       if (b.type === 'code') {
-        el.querySelector('.code-lang').textContent = b.language || 'Plain text';
-        el.querySelector('.blk-text').setAttribute('aria-label', `Code, ${b.language || 'plain text'}`);
+        const dispLang = !b.language || b.language === 'Plain text' ? '纯文本' : b.language;
+        el.querySelector('.code-lang').textContent = dispLang;
+        el.querySelector('.blk-text').setAttribute('aria-label', `代码，${dispLang}`);
       }
       return;
     }
@@ -317,8 +339,8 @@ export class Editor {
     if (link.dataset.key === key) return;
     link.dataset.key = key;
     link.dataset.page = b.page || '';
-    fill(link, page ? pageIcon(page, 18) : icon('fileText', 18), h('span.page-block-title', page ? displayTitle(page) : 'Page not found'), page?.trashed ? h('span.page-block-note', 'In trash') : null);
-    link.setAttribute('aria-label', page ? `Open page ${displayTitle(page)}` : 'Page not found');
+    fill(link, page ? pageIcon(page, 18) : icon('fileText', 18), h('span.page-block-title', page ? displayTitle(page) : '找不到页面'), page?.trashed ? h('span.page-block-note', '在回收站中') : null);
+    link.setAttribute('aria-label', page ? `打开页面 ${displayTitle(page)}` : '找不到页面');
   }
 
   async renderImage(el, b) {
@@ -332,10 +354,10 @@ export class Editor {
     }
     main.dataset.key = key;
     if (!b.asset && !b.url) {
-      main.replaceChildren(this.readOnly ? h('div.media-empty', icon('image', 18), 'No image') : this.imagePicker(b.id));
+      main.replaceChildren(this.readOnly ? h('div.media-empty', icon('image', 18), '无图片') : this.imagePicker(b.id));
       return;
     }
-    const caption = h('div.media-caption', { contenteditable: this.readOnly ? 'false' : 'true', role: 'textbox', 'aria-label': 'Image caption', 'data-placeholder': 'Add a caption' });
+    const caption = h('div.media-caption', { contenteditable: this.readOnly ? 'false' : 'true', role: 'textbox', 'aria-label': '图片说明', 'data-placeholder': '添加说明' });
     caption.textContent = b.caption || '';
     caption.addEventListener('input', debounce(() => P.setBlock(this.doc, b.id, { caption: caption.textContent.slice(0, 1000) || null }), 400));
     caption.addEventListener('keydown', (e) => {
@@ -344,7 +366,7 @@ export class Editor {
         this.insertAfter(b.id, { type: 'paragraph' });
       }
     });
-    const img = h('img', { alt: b.caption || 'Image', draggable: 'false' });
+    const img = h('img', { alt: b.caption || '图片', draggable: 'false' });
     const frame = h('div.media-frame', { style: { width: b.width ? `${b.width}%` : null } }, img);
     if (!this.readOnly) {
       for (const side of ['left', 'right']) {
@@ -356,40 +378,40 @@ export class Editor {
     main.replaceChildren(frame, caption);
     const src = b.url ? safeUrl(b.url) : await this.ctx.space.assetUrl(b.asset).catch(() => null);
     if (src) img.src = src;
-    else frame.replaceChildren(h('div.media-empty', icon('image', 18), 'This image could not be loaded'));
+    else frame.replaceChildren(h('div.media-empty', icon('image', 18), '无法加载此图片'));
   }
 
   imagePicker(id) {
     const file = h('input', { type: 'file', accept: 'image/*', hidden: true });
     file.addEventListener('change', () => file.files[0] && this.uploadImage(id, file.files[0]));
-    const up = h('button.btn.small', { type: 'button' }, icon('upload', 15), 'Upload');
+    const up = h('button.btn.small', { type: 'button' }, icon('upload', 15), '上传');
     up.addEventListener('click', () => file.click());
-    const linkBtn = h('button.btn.small.ghost', { type: 'button' }, icon('link', 15), 'Link');
+    const linkBtn = h('button.btn.small.ghost', { type: 'button' }, icon('link', 15), '链接');
     linkBtn.addEventListener('click', () => {
-      const input = h('input.field', { type: 'url', placeholder: 'Paste an image link', 'aria-label': 'Image link' });
-      const form = h('form.inline-form', input, h('button.btn.primary.small', { type: 'submit' }, 'Embed'));
+      const input = h('input.field', { type: 'url', placeholder: '粘贴图片链接', 'aria-label': '图片链接' });
+      const form = h('form.inline-form', input, h('button.btn.primary.small', { type: 'submit' }, '嵌入'));
       form.addEventListener('submit', (e) => {
         e.preventDefault();
         const url = safeUrl(input.value);
         if (url && /^https?:/i.test(url)) P.setBlock(this.doc, id, { url });
-        else input.setCustomValidity('Enter a web address that starts with https://');
+        else input.setCustomValidity('请输入以 https:// 开头的网址');
         input.reportValidity();
       });
       linkBtn.parentElement.replaceWith(form);
       input.focus();
     });
-    return h('div.media-empty.picker', icon('image', 18), h('span', 'Add an image'), h('div.media-actions', up, linkBtn), file);
+    return h('div.media-empty.picker', icon('image', 18), h('span', '添加图片'), h('div.media-actions', up, linkBtn), file);
   }
 
   async uploadImage(id, fileOrBlob) {
-    if (!/^image\//.test(fileOrBlob.type)) return this.ctx.toast('Only images can be added here.', { kind: 'error' });
-    if (fileOrBlob.size > 10 * 1024 * 1024) return this.ctx.toast('Images can be up to 10 MB.', { kind: 'error' });
+    if (!/^image\//.test(fileOrBlob.type)) return this.ctx.toast('此处只能添加图片。', { kind: 'error' });
+    if (fileOrBlob.size > 10 * 1024 * 1024) return this.ctx.toast('图片大小不能超过 10 MB。', { kind: 'error' });
     try {
-      this.ctx.toast('Uploading image...');
+      this.ctx.toast('正在上传图片...');
       const asset = await this.ctx.space.putAsset(fileOrBlob);
       if (this.blocks.has(id)) P.setBlock(this.doc, id, { asset, url: null });
     } catch (err) {
-      this.ctx.toast(err.message || 'The image could not be uploaded.', { kind: 'error' });
+      this.ctx.toast(err.message || '无法上传图片。', { kind: 'error' });
     }
   }
 
@@ -417,8 +439,8 @@ export class Editor {
   renderBookmark(el, b) {
     const main = el.querySelector('.bookmark-main');
     if (!b.url) {
-      if (this.readOnly) return main.replaceChildren(h('div.media-empty', icon('bookmark', 18), 'No link'));
-      const input = h('input.field', { type: 'url', placeholder: 'Paste a link, then press Enter', 'aria-label': 'Bookmark link' });
+      if (this.readOnly) return main.replaceChildren(h('div.media-empty', icon('bookmark', 18), '无链接'));
+      const input = h('input.field', { type: 'url', placeholder: '粘贴链接后按 Enter 键', 'aria-label': '书签链接' });
       const form = h('form.media-empty.picker', icon('bookmark', 18), input);
       form.addEventListener('submit', (e) => {
         e.preventDefault();
@@ -1111,7 +1133,7 @@ export class Editor {
     if (this.readOnly) return;
     const b = this.block(id);
     P.setBlock(this.doc, id, { checked: !b.checked });
-    announce(b.checked ? 'Not done' : 'Done');
+    announce(b.checked ? '未完成' : '已完成');
   }
 
   toggleCollapsed(id) {
@@ -1143,7 +1165,7 @@ export class Editor {
       }
     }, LOCAL);
     if (focus && ids.includes(focus.id)) this.pendingSel = focus;
-    announce(`Turned into ${typeLabel(type)}`);
+    announce(`已转换为${typeLabel(type)}`);
   }
 
   moveBy(ids, dir) {
@@ -1169,7 +1191,7 @@ export class Editor {
     if (focus) this.pendingSel = focus;
     else this.renderSoon();
     if (this.selected.size) queueMicrotask(() => this.selectBlocks(sorted));
-    announce(dir < 0 ? 'Moved up' : 'Moved down');
+    announce(dir < 0 ? '已上移' : '已下移');
   }
 
   /* ---------- formatting ---------- */
@@ -1188,12 +1210,12 @@ export class Editor {
       if (attrs[mark] === value) delete attrs[mark];
       else attrs[mark] = value;
       this.override = { id, pos: off.start, attrs };
-      announce(`${mark[0].toUpperCase() + mark.slice(1)} ${attrs[mark] ? 'on' : 'off'}`);
+      announce(`${MARK_NAMES[mark] || mark} ${attrs[mark] ? '已开启' : '已关闭'}`);
       return;
     }
     const has = formatAt(yt, off.start, off.end)[mark] === value;
     this.applyFormat(id, off, { [mark]: has ? null : value });
-    announce(`${mark === 'bg' ? 'Highlight' : mark[0].toUpperCase() + mark.slice(1)} ${has ? 'off' : 'on'}`);
+    announce(`${MARK_NAMES[mark] || mark} ${has ? '已关闭' : '已开启'}`);
   }
 
   applyFormat(id, off, attrs) {
@@ -1222,16 +1244,16 @@ export class Editor {
 
   openSlash(id, at) {
     const items = [
-      { type: 'header', label: 'Basic blocks' },
+      { type: 'header', label: '基础块' },
       ...INSERTABLE.map((c) => ({ ...c, hint: c.shortcut, run: () => this.applySlash(c) })),
-      { type: 'header', label: 'Pages' },
+      { type: 'header', label: '页面' },
       ...PAGE_COMMANDS.map((c) => ({ ...c, run: () => this.applySlash(c) })),
     ];
-    this.openTrigger('slash', id, at, items, 'Insert a block');
+    this.openTrigger('slash', id, at, items, '插入块');
   }
 
   openMention(id, at) {
-    this.openTrigger('mention', id, at, this.mentionItems(''), 'Link to a page');
+    this.openTrigger('mention', id, at, this.mentionItems(''), '链接到页面');
   }
 
   mentionItems(q) {
@@ -1247,7 +1269,7 @@ export class Editor {
     this.closeMenus();
     const el = this.textEl(id);
     const range = document.getSelection().getRangeAt(0).getBoundingClientRect();
-    const menu = new Menu(items, { label, external: true, empty: kind === 'mention' ? 'No pages found' : 'No matching blocks', className: 'slash-menu' });
+    const menu = new Menu(items, { label, external: true, empty: kind === 'mention' ? '未找到页面' : '无匹配的块', className: 'slash-menu' });
     const pop = new Popover({ anchor: range.height ? range : el.getBoundingClientRect(), content: menu.el, className: 'menu-pop', role: null, returnFocus: false, onClose: () => {
       if (this[kind]?.menu === menu) this[kind] = null;
       el.removeAttribute('aria-controls');
@@ -1376,7 +1398,7 @@ export class Editor {
     t.pop.close({ focus: false });
     const at = this.removeTrigger(t);
     const yt = P.textOf(this.doc, t.id);
-    const label = title || 'Untitled';
+    const label = title || '无标题';
     this.doc.transact(() => {
       yt.insert(at, label, { page: pageId });
       yt.insert(at + label.length, ' ', {});
@@ -1387,8 +1409,9 @@ export class Editor {
   }
 
   pickLanguage(id, anchor) {
-    const cur = this.block(id)?.language || 'Plain text';
-    openMenu(anchor, CODE_LANGUAGES.map((l) => ({ label: l, checked: l === cur, radio: true, run: () => P.setBlock(this.doc, id, { language: l === 'Plain text' ? null : l }) })), { label: 'Code language', filter: true, filterPlaceholder: 'Search languages' });
+    const raw = this.block(id)?.language;
+    const cur = !raw || raw === 'Plain text' ? '纯文本' : raw;
+    openMenu(anchor, CODE_LANGUAGES.map((l) => ({ label: l, checked: l === cur, radio: true, run: () => P.setBlock(this.doc, id, { language: l === '纯文本' || l === 'Plain text' ? null : l }) })), { label: '代码语言', filter: true, filterPlaceholder: '搜索语言' });
   }
 
   /* ---------- block handle, block menu and block selection ---------- */
@@ -1415,7 +1438,7 @@ export class Editor {
       document.getSelection()?.removeAllRanges();
       this.root.focus({ preventScroll: true });
       this.els.get(ids.at(-1))?.scrollIntoView({ block: 'nearest' });
-      announce(`${this.selected.size} block${this.selected.size === 1 ? '' : 's'} selected`);
+      announce(`已选择 ${this.selected.size} 个块`);
     }
     this.toolbar.update(null);
   }
@@ -1504,16 +1527,16 @@ export class Editor {
     for (const b of pageBlocks) this.ctx.trashPage?.(b.page);
     this.selected.clear();
     if (before && this.blocks.has(before)) this.pendingSel = { id: before, start: 'end' };
-    announce(`${all.size} block${all.size === 1 ? '' : 's'} deleted`);
+    announce(`已删除 ${all.size} 个块`);
   }
 
   blockMenuItems(ids) {
     const first = this.block(ids[0]);
     const textual = ids.every((id) => TEXT_TYPES.has(this.block(id)?.type));
     const colorItems = (key) => [
-      { label: 'Default', checked: !first[key], radio: true, run: () => this.setBlockColor(ids, { color: key === 'color' ? null : first.color, bg: key === 'bg' ? null : first.bg }) },
+      { label: '默认', checked: !first[key], radio: true, run: () => this.setBlockColor(ids, { color: key === 'color' ? null : first.color, bg: key === 'bg' ? null : first.bg }) },
       ...COLORS.map((c) => ({
-        label: c[0].toUpperCase() + c.slice(1),
+        label: COLOR_NAMES[c] || c[0].toUpperCase() + c.slice(1),
         icon: h(`span.swatch.${key === 'bg' ? 'bg' : 'fg'}`, { 'data-c': c }, key === 'color' ? 'A' : ''),
         checked: first[key] === c,
         run: () => this.setBlockColor(ids, { color: key === 'color' ? c : first.color, bg: key === 'bg' ? c : first.bg }),
@@ -1522,21 +1545,21 @@ export class Editor {
     const items = [];
     if (textual) {
       items.push({
-        label: 'Turn into',
+        label: '转换为',
         icon: 'refresh',
         submenu: () => INSERTABLE.filter((c) => TEXT_TYPES.has(c.type)).map((c) => ({ label: c.label, icon: c.icon, checked: ids.every((id) => this.block(id).type === c.type), run: () => this.turnInto(ids, c.type) })),
       });
-      items.push({ label: 'Text color', icon: 'baseline', submenu: () => colorItems('color') }, { label: 'Background', icon: 'palette', submenu: () => colorItems('bg') });
+      items.push({ label: '文字颜色', icon: 'baseline', submenu: () => colorItems('color') }, { label: '背景颜色', icon: 'palette', submenu: () => colorItems('bg') });
     }
     items.push(
       { type: 'sep' },
-      { label: 'Duplicate', icon: 'copy', hint: `${modLabel}D`, run: () => P.duplicateBlocks(this.doc, ids) },
-      { label: 'Move up', icon: 'arrowUp', run: () => this.moveBy(ids, -1) },
-      { label: 'Move down', icon: 'arrowDown', run: () => this.moveBy(ids, 1) },
-      { label: 'Copy link to block', icon: 'link', run: () => this.ctx.copyBlockLink?.(ids[0]) },
+      { label: '创建副本', icon: 'copy', hint: `${modLabel}D`, run: () => P.duplicateBlocks(this.doc, ids) },
+      { label: '上移', icon: 'arrowUp', run: () => this.moveBy(ids, -1) },
+      { label: '下移', icon: 'arrowDown', run: () => this.moveBy(ids, 1) },
+      { label: '复制块链接', icon: 'link', run: () => this.ctx.copyBlockLink?.(ids[0]) },
       ...(this.ctx.blockMenuExtras?.(ids) || []),
       { type: 'sep' },
-      { label: 'Delete', icon: 'trash', danger: true, hint: 'Del', run: () => this.deleteBlocks(ids) },
+      { label: '删除', icon: 'trash', danger: true, hint: 'Del', run: () => this.deleteBlocks(ids) },
     );
     return items;
   }
@@ -1545,7 +1568,7 @@ export class Editor {
     if (this.readOnly) return;
     this.flushInput();
     if (!ids.every((id) => this.selected.has(id))) this.selectBlocks(ids);
-    openMenu(anchor, this.blockMenuItems(ids), { label: 'Block actions', filter: true, filterPlaceholder: 'Search actions', onClose: () => {} });
+    openMenu(anchor, this.blockMenuItems(ids), { label: '块操作', filter: true, filterPlaceholder: '搜索操作', onClose: () => {} });
   }
 
   /* ---------- dragging blocks ---------- */
@@ -1587,7 +1610,7 @@ export class Editor {
       if (drop) {
         P.moveBlocks(this.doc, ids, drop);
         queueMicrotask(() => this.selectBlocks(ids));
-        announce('Moved');
+        announce('已移动');
       }
     };
     const key = (ev) => {
@@ -1670,7 +1693,7 @@ export class Editor {
     e.clipboardData.setData('text/plain', blocksToMarkdown(norm, opts).trim());
     e.clipboardData.setData('text/html', blocksToHtml(norm, opts));
     e.clipboardData.setData(CLIP_TYPE, JSON.stringify(norm.map((b) => (b.type === 'page' ? { type: 'paragraph', delta: [{ insert: this.ctx.pageTitle(b.page), attributes: { page: b.page } }], indent: b.indent } : b))));
-    announce(`${blocks.length} block${blocks.length === 1 ? '' : 's'} copied`);
+    announce(`已复制 ${blocks.length} 个块`);
     if (cut && !this.readOnly) this.deleteBlocks(ids);
   }
 
@@ -1761,7 +1784,7 @@ export class Editor {
     this.render();
     if (this.textEl(last)) this.focusBlock(last, 'end');
     else this.selectBlocks([last]);
-    announce(`Pasted ${ids.length} blocks`);
+    announce(`已粘贴 ${ids.length} 个块`);
   }
 
   insertDelta(id, delta) {

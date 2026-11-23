@@ -19,9 +19,9 @@ import { notificationState, requestNotificationPermission } from '../ui/reminder
 
 export async function confirmSignOut() {
   const ok = await confirmDialog({
-    title: 'Sign out?',
-    message: 'Your data stays safe in your Puter account and is here when you sign back in.',
-    confirmLabel: 'Sign out',
+    title: '退出登录？',
+    message: '您的数据将安全地保留在 Puter 账户中，下次登录时即可恢复。',
+    confirmLabel: '退出登录',
     danger: false,
   });
   if (!ok) return;
@@ -31,9 +31,9 @@ export async function confirmSignOut() {
     // The flush failed (offline?) — signing out now would silently discard
     // the very changes the dialog above promised were safe.
     const discard = await confirmDialog({
-      title: 'Some changes are not saved',
-      message: 'Your latest changes could not reach Puter and will be lost if you sign out now. Check your connection and try again, or sign out anyway.',
-      confirmLabel: 'Sign out anyway',
+      title: '部分更改尚未保存',
+      message: '您的最新更改无法同步到 Puter，如果现在退出登录将会丢失。请检查网络连接后重试，或仍然退出登录。',
+      confirmLabel: '仍然退出登录',
     });
     if (!discard) return;
   }
@@ -43,16 +43,16 @@ export async function confirmSignOut() {
 }
 
 export function settingsView() {
-  const username = store.user?.username || 'Puter user';
+  const username = store.user?.username || 'Puter 用户';
 
   /* Appearance */
-  const themeGroup = el('div.seg', { role: 'radiogroup', 'aria-label': 'Theme' });
+  const themeGroup = el('div.seg', { role: 'radiogroup', 'aria-label': '主题' });
   function renderTheme() {
     const current = store.settings.theme || 'system';
     themeGroup.replaceChildren(...[
-      { value: 'light', label: 'Light', icon: 'sun' },
-      { value: 'dark', label: 'Dark', icon: 'moon' },
-      { value: 'system', label: 'System', icon: 'monitor' },
+      { value: 'light', label: '浅色', icon: 'sun' },
+      { value: 'dark', label: '深色', icon: 'moon' },
+      { value: 'system', label: '跟随系统', icon: 'monitor' },
     ].map((o) => el('button.seg-btn', {
       type: 'button',
       role: 'radio',
@@ -77,28 +77,28 @@ export function settingsView() {
     html: icon('download', 15, 2),
     onclick: () => openMenu(exportBtn, [
       {
-        label: 'Everything (.zip)',
+        label: '全部内容 (.zip)',
         icon: 'archive',
         onClick: () => exportBackup(exportBtn, { withAttachments: true }),
       },
       {
-        label: 'Data only (.json)',
+        label: '仅数据 (.json)',
         icon: 'fileText',
         onClick: () => exportBackup(exportBtn, { withAttachments: false }),
       },
       canSaveFiles() && 'sep',
       canSaveFiles() && {
-        label: 'Save .zip to Puter…',
+        label: '保存 .zip 到 Puter…',
         icon: 'cloud',
         onClick: () => exportBackup(exportBtn, { withAttachments: true, toPuter: true }),
       },
     ]),
-  }, ' Export');
+  }, ' 导出');
 
   const importBtn = el('button.btn.btn-ghost.btn-sm', {
     html: icon('upload', 15, 2),
     onclick: () => importInput.click(),
-  }, ' Import');
+  }, ' 导入');
 
   const importInput = el('input', {
     type: 'file',
@@ -117,20 +117,20 @@ export function settingsView() {
 
   function reminderSub() {
     const state = notificationState();
-    if (state === 'unsupported') return 'This browser cannot show notifications';
-    if (state === 'granted') return 'Reminders appear while the app is open, or in a pinned tab';
-    if (state === 'denied') return 'Blocked in your browser settings. The count in the tab title still works';
-    return 'Reminders appear in the app; allow notifications to see them when it is in the background';
+    if (state === 'unsupported') return '当前浏览器不支持显示通知';
+    if (state === 'granted') return '当应用处于打开状态或固定在标签页时将显示提醒';
+    if (state === 'denied') return '已在浏览器设置中阻止。标签页标题中的计数仍会正常工作';
+    return '提醒会在应用内显示；允许通知后，应用在后台运行时也能看到提醒';
   }
 
   function renderReminders() {
     const state = notificationState();
     clear(reminderControl);
     if (state === 'granted') {
-      reminderControl.append(el('span.settings-state', {}, 'On'));
+      reminderControl.append(el('span.settings-state', {}, '已开启'));
     } else if (state === 'denied' || state === 'unsupported') {
       reminderControl.append(el('span.settings-state.muted', {},
-        state === 'denied' ? 'Blocked' : 'Unavailable'));
+        state === 'denied' ? '已阻止' : '不可用'));
     } else {
       reminderControl.append(el('button.btn.btn-ghost.btn-sm', {
         onclick: async () => {
@@ -140,7 +140,7 @@ export function settingsView() {
           const sub = row?.querySelector('.sub');
           if (sub) sub.textContent = reminderSub();
         },
-      }, 'Allow'));
+      }, '允许'));
     }
   }
   renderReminders();
@@ -151,9 +151,9 @@ export function settingsView() {
     // Two rows in this section put an "Open" button on the right, and out of
     // that context — a screen reader's list of buttons, or a voice command —
     // the pair is indistinguishable. Each says which one it is, count and all.
-    'aria-label': `Open deleted projects${trashCount ? ` (${trashCount})` : ''}`,
+    'aria-label': `打开已删除的项目${trashCount ? ` (${trashCount})` : ''}`,
     onclick: () => openProjectTrash(),
-  }, trashCount ? `Open (${trashCount})` : 'Open');
+  }, trashCount ? `打开 (${trashCount})` : '打开');
 
   const section = (title, ...rows) => el('section.settings-section', {},
     el('h2.section-title', {}, title),
@@ -169,78 +169,77 @@ export function settingsView() {
   return el('section.view.settings-view', {},
     el('header.view-head', {},
       menuButton(),
-      el('a.icon-btn.back-btn', { href: '#/', 'aria-label': 'All projects', html: icon('arrowL', 20, 2) }),
-      el('h1.view-title', {}, 'Settings')
+      el('a.icon-btn.back-btn', { href: '#/', 'aria-label': '所有项目', html: icon('arrowL', 20, 2) }),
+      el('h1.view-title', {}, '设置')
     ),
 
-    section('Appearance',
-      row({ ic: 'monitor', title: 'Theme', sub: 'System follows your device setting', control: themeGroup })
+    section('外观',
+      row({ ic: 'monitor', title: '主题', sub: '跟随系统将采用您的设备设置', control: themeGroup })
     ),
 
-    section('Reminders',
+    section('提醒',
       row({
         ic: 'bell',
-        title: 'Notify me about due tasks',
+        title: '到期任务提醒通知',
         sub: reminderSub(),
         control: reminderControl,
       })
     ),
 
-    section('Keyboard',
+    section('键盘',
       row({
         ic: 'help',
-        title: 'Keyboard shortcuts',
-        sub: `Press ? anywhere, or ${MOD_KEY}+K for the command palette`,
-        control: el('button.btn.btn-ghost.btn-sm', { onclick: () => openShortcuts() }, 'View'),
+        title: '键盘快捷键',
+        sub: `在任意位置按 ?，或按 ${MOD_KEY}+K 打开命令面板`,
+        control: el('button.btn.btn-ghost.btn-sm', { onclick: () => openShortcuts() }, '查看'),
       })
     ),
 
-    section('Data',
+    section('数据',
       row({
         ic: 'download',
-        title: 'Export everything',
-        sub: 'A .zip with every project and its attachments, or JSON on its own',
+        title: '导出全部数据',
+        sub: '包含所有项目及其附件的 .zip 压缩包，或单独的 JSON 文件',
         control: exportBtn,
       }),
       row({
         ic: 'upload',
-        title: 'Import',
-        sub: 'A backup from this app, a Trello board JSON, or a CSV from Asana or a '
-          + 'spreadsheet. Always added as new projects',
+        title: '导入',
+        sub: '本应用的备份、Trello 看板 JSON，或来自 Asana 及电子表格的 CSV。始终作为新项目添加',
         control: el('span.row', {}, importBtn, importInput),
       }),
       row({
         ic: 'calendarClock',
-        title: 'Calendar file',
-        sub: 'An .ics of every due date and milestone, for the calendar you already use',
+        title: '日历文件',
+        sub: '包含所有截止日期与里程碑的 .ics 文件，适用于您常用的日历应用',
         control: el('button.btn.btn-ghost.btn-sm', {
-          'aria-label': 'Export a calendar file',
+          'aria-label': '导出日历文件',
           onclick: () => openCalendarExport(),
-        }, 'Export'),
+        }, '导出'),
       }),
       row({
         ic: 'history',
-        title: 'Restore points',
-        sub: 'Daily copies of each project, kept automatically, including deleted ones',
+        title: '还原点',
+        sub: '自动保留每个项目（包括已删除项目）的每日副本',
         control: el('button.btn.btn-ghost.btn-sm', {
-          'aria-label': 'Open restore points',
+          'aria-label': '打开还原点',
           onclick: () => openRestorePoints(),
-        }, 'Open'),
+        }, '打开'),
       }),
       row({
         ic: 'trashBin',
-        title: 'Deleted projects',
-        sub: `Restorable for ${TRASH_DAYS} days after deletion`,
+        title: '已删除的项目',
+        sub: `删除后可在 ${TRASH_DAYS} 天内恢复`,
         control: trashBtn,
       }),
       store.settings.sampleData && row({
-        ic: 'sparkle', title: 'Sample data', sub: 'Wipe the sample project and start fresh',
+        ic: 'sparkle', title: '示例数据', sub: '清除示例项目并重新开始',
         control: el('button.btn.btn-ghost.btn-sm', {
           onclick: async () => {
             const ok = await confirmDialog({
-              title: 'Start fresh?',
-              message: 'The sample project is removed and you start with a clean workspace.',
-              confirmLabel: 'Wipe sample data',
+              title: '重新开始？',
+              message: '示例项目将被移除，您将从干净的工作区开始。',
+              confirmLabel: '清除示例数据',
             });
             if (!ok) return;
             try {
@@ -249,27 +248,27 @@ export function settingsView() {
               openOnboarding();
             } catch (err) {
               console.error(err);
-              toast('Could not wipe. Check your connection', { icon: 'cloudOff' });
+              toast('无法清除，请检查网络连接', { icon: 'cloudOff' });
             }
           },
-        }, 'Wipe'),
+        }, '清除'),
       })
     ),
 
-    section('Account',
-      row({ ic: 'users', title: username, sub: 'Signed in with Puter' }),
+    section('账户',
+      row({ ic: 'users', title: username, sub: '已通过 Puter 登录' }),
       // Inside the Puter desktop, the session belongs to the OS — no sign-out.
       puter.env !== 'app' && row({
-        ic: 'logout', title: 'Sign out', sub: 'Your data stays in your Puter account',
-        control: el('button.btn.btn-ghost.btn-sm', { onclick: confirmSignOut }, 'Sign out'),
+        ic: 'logout', title: '退出登录', sub: '您的数据将保留在您的 Puter 账户中',
+        control: el('button.btn.btn-ghost.btn-sm', { onclick: confirmSignOut }, '退出登录'),
       })
     ),
 
-    section('About',
-      row({ ic: 'board', title: 'Project Management', sub: 'Boards, timelines, and milestones. Your data lives in your own Puter cloud.' }),
+    section('关于',
+      row({ ic: 'board', title: '项目管理', sub: '看板、时间线与里程碑。您的数据保存在您自己的 Puter 云端。' }),
       row({
-        ic: 'cloud', title: 'Powered by Puter',
-        control: el('a.btn.btn-ghost.btn-sm', { href: 'https://developer.puter.com', target: '_blank', rel: 'noopener' }, 'Learn more'),
+        ic: 'cloud', title: '由 Puter 提供支持',
+        control: el('a.btn.btn-ghost.btn-sm', { href: 'https://developer.puter.com', target: '_blank', rel: 'noopener' }, '了解更多'),
       })
     )
   );

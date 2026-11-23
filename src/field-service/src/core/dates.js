@@ -95,7 +95,7 @@ function fmt(opts) {
   const key = JSON.stringify(opts);
   let f = fmtCache.get(key);
   if (!f) {
-    f = new Intl.DateTimeFormat(undefined, opts);
+    f = new Intl.DateTimeFormat('zh-CN', opts);
     fmtCache.set(key, f);
   }
   return f;
@@ -132,18 +132,18 @@ export function formatTime(t) {
 }
 
 export function formatTimeRange(start, end) {
-  if (!start) return 'Anytime';
+  if (!start) return '全天随时';
   return end ? `${formatTime(start)} - ${formatTime(end)}` : formatTime(start);
 }
 
 /** Relative description used in lists: "Today", "Tomorrow", "3 days ago". */
 export function relativeDay(iso, ref = today()) {
   const n = diffDays(ref, iso);
-  if (n === 0) return 'Today';
-  if (n === 1) return 'Tomorrow';
-  if (n === -1) return 'Yesterday';
+  if (n === 0) return '今天';
+  if (n === 1) return '明天';
+  if (n === -1) return '昨天';
   if (n > 1 && n < 7) return formatDate(iso, { weekday: 'long' });
-  if (n < 0 && n > -30) return `${-n} days ago`;
+  if (n < 0 && n > -30) return `${-n} 天前`;
   return formatDate(iso);
 }
 
@@ -151,13 +151,13 @@ export function relativeDay(iso, ref = today()) {
 export function timeAgo(isoDateTime, now = Date.now()) {
   if (!isoDateTime) return '';
   const s = Math.round((now - new Date(isoDateTime).getTime()) / 1000);
-  if (s < 45) return 'just now';
+  if (s < 45) return '刚刚';
   const m = Math.round(s / 60);
-  if (m < 60) return `${m} min ago`;
+  if (m < 60) return `${m} 分钟前`;
   const h = Math.round(m / 60);
-  if (h < 24) return `${h} hr ago`;
+  if (h < 24) return `${h} 小时前`;
   const d = Math.round(h / 24);
-  if (d < 30) return `${d} day${d === 1 ? '' : 's'} ago`;
+  if (d < 30) return `${d} 天前`;
   return formatDate(isoDateTime);
 }
 

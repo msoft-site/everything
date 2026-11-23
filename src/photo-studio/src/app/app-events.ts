@@ -6,13 +6,13 @@ import type { DocumentSession } from './session';
 
 export type AppEvent = 'start' | 'new-document' | 'open-document' | 'before-save' | 'after-save' | 'export' | 'close-document';
 export const appEventLabels: Record<AppEvent, string> = {
-  start: 'Start Application',
-  'new-document': 'New Document',
-  'open-document': 'Open Document',
-  'before-save': 'Before Saving Document',
-  'after-save': 'After Saving Document',
-  export: 'Export Document',
-  'close-document': 'Close Document',
+  start: '启动应用程序',
+  'new-document': '新建文档',
+  'open-document': '打开文档',
+  'before-save': '保存文档之前',
+  'after-save': '保存文档之后',
+  export: '导出文档',
+  'close-document': '关闭文档',
 };
 export type AppEventListener = (event: AppEvent, session?: DocumentSession) => void | Promise<void>;
 

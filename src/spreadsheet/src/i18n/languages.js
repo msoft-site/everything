@@ -57,12 +57,12 @@ export function negotiateLanguage(requested, available = [...IDS]) {
     const hit = offered.find(([, l]) => l.language === want.language && l.script === want.script);
     if (hit) return hit[0];
   }
-  return SOURCE_LANGUAGE;
+  return available.includes('zh-Hans') ? 'zh-Hans' : SOURCE_LANGUAGE;
 }
 
 /** The browser's languages, most preferred first. */
 export function browserLanguages() {
   const nav = globalThis.navigator;
   const list = nav?.languages?.length ? nav.languages : [nav?.language].filter(Boolean);
-  return [...list];
+  return list.length ? [...list] : ['zh-Hans'];
 }

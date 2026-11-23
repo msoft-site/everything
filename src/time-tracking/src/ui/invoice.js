@@ -24,17 +24,17 @@ export const invoiceNumber = (n) => `#${String(n).padStart(4, '0')}`;
 
 /* One wording for a tax rate that will not parse, phrased like the rate
    errors on the entry and client sheets. */
-const TAX_ERROR = 'Enter the tax rate as a number, like 19';
+const TAX_ERROR = '请输入数字格式的税率，例如 19';
 
 /* Same for an amount received. */
-const AMOUNT_ERROR = 'Enter the amount received, like 500';
+const AMOUNT_ERROR = '请输入收款金额，例如 500';
 
 /** How an invoice's state reads wherever it is shown. */
 export const STATE_LABEL = {
-  paid: 'Paid',
-  partial: 'Partly paid',
-  overdue: 'Overdue',
-  open: 'Open',
+  paid: '已付',
+  partial: '部分支付',
+  overdue: '已逾期',
+  open: '未付',
 };
 
 /** "3 days overdue" / "due in 5 days" / "due today", from a due date. */
@@ -42,22 +42,22 @@ export function dueText(invoice, today = todayISO()) {
   if (!invoice.dueDate) return null;
   if (invoiceState(invoice, today) === 'paid') return null;
   const days = daysApart(today, invoice.dueDate);
-  if (days === 0) return 'due today';
-  if (days < 0) return `${Math.abs(days)} ${Math.abs(days) === 1 ? 'day' : 'days'} overdue`;
-  return `due in ${days} ${days === 1 ? 'day' : 'days'}`;
+  if (days === 0) return '今天到期';
+  if (days < 0) return `已逾期 ${Math.abs(days)} 天`;
+  return `${days} 天后到期`;
 }
 
 
 
 /* Manual invoice lines: what an invoice carries besides tracked time. */
 const LINE_KINDS = [
-  { key: 'fee', label: 'Fixed fee', placeholder: 'e.g. Project fee, milestone 2' },
-  { key: 'expense', label: 'Expense', placeholder: 'e.g. Stock licence, flight' },
-  { key: 'discount', label: 'Discount', placeholder: 'e.g. Introductory discount' },
+  { key: 'fee', label: '固定费用', placeholder: '例如：项目费、里程碑 2' },
+  { key: 'expense', label: '报销费用', placeholder: '例如：图库授权、机票' },
+  { key: 'discount', label: '折扣', placeholder: '例如：首单优惠' },
 ];
 const LINE_LABEL = Object.fromEntries(LINE_KINDS.map((k) => [k.key, k.label]));
-const AMOUNT_LINE_ERROR = 'Enter the amount as a number, like 500';
-const QUANTITY_ERROR = 'Enter a quantity like 1, 2, or 0.5';
+const AMOUNT_LINE_ERROR = '请输入数字格式的金额，例如 500';
+const QUANTITY_ERROR = '请输入数量，例如 1、2 或 0.5';
 
 /**
  * Add or edit one manual line, over the create sheet that owns the list.
@@ -85,11 +85,11 @@ function openLineForm({ line = null, currency, onSave, onRemove = null }) {
   });
   const amountErr = fieldError(amount);
   nativeError(amount, amountErr, AMOUNT_LINE_ERROR);
-  const taxable = switchField('Taxed at the invoice rate', line ? line.taxable !== false : true,
-    { hint: 'Turn this off for a pass-through cost that carries no tax.' });
+  const taxable = switchField('按账单税率计税', line ? line.taxable !== false : true,
+    { hint: '对于不含税的代垫费用，请关闭此项。' });
 
-  const quantityField = el('div', {}, field('Quantity', quantity), quantityErr);
-  const amountField = el('div', {}, field(`Unit amount (${currency})`, amount), amountErr);
+  const quantityField = el('div', {}, field('数量', quantity), quantityErr);
+  const amountField = el('div', {}, field(`单价 (${currency})`, amount), amountErr);
   const sync = () => {
     const k = kind.value;
     label.placeholder = LINE_KINDS.find((x) => x.key === k).placeholder;
@@ -97,7 +97,7 @@ function openLineForm({ line = null, currency, onSave, onRemove = null }) {
     // question of what it multiplies.
     quantityField.hidden = k === 'discount';
     amountField.querySelector('.field-label').textContent =
-      k === 'discount' ? `Amount to deduct (${currency})` : `Unit amount (${currency})`;
+      k === 'discount' ? `扣减金额 (${currency})` : `单价 (${currency})`;
   };
   kind.addEventListener('change', sync);
   sync();
@@ -137,18 +137,18 @@ function openLineForm({ line = null, currency, onSave, onRemove = null }) {
       modal.close();
     },
   },
-    field('Kind', kind),
-    field('Description', label, { hint: 'Printed on the invoice as the line item.' }),
+    field('类型', kind),
+    field('描述', label, { hint: '作为明细项打印在账单上。' }),
     el('div.form-grid', {}, quantityField, amountField),
     taxable,
-    el('button.btn.btn-primary.btn-block', { type: 'submit' }, isEdit ? 'Save line' : 'Add line'),
+    el('button.btn.btn-primary.btn-block', { type: 'submit' }, isEdit ? '保存明细项' : '添加明细项'),
     isEdit && onRemove && el('button.btn.btn-ghost.btn-block.btn-danger-ghost', {
       type: 'button',
       onclick: () => { onRemove(); modal.close(); },
-    }, 'Remove line')
+    }, '移除明细项')
   );
 
-  const modal = openModal({ title: isEdit ? 'Edit line' : 'Add a line', content: form });
+  const modal = openModal({ title: isEdit ? '编辑明细项' : '添加明细项', content: form });
 }
 
 /**
@@ -164,19 +164,18 @@ export function openCreateInvoice({ client, entries = [] }) {
   // The same resolution that invoicing freezes, so the preview is exact.
   const timeSubtotal = round2(sum(targets, (e) => store.entryAmount(e)));
   const n = targets.length;
-  const noun = n === 1 ? 'entry' : 'entries';
   const nextNumber = store.invoices.reduce((m, i) => Math.max(m, i.number), 0) + 1;
 
   const issueDate = el('input.input', { type: 'date', value: todayISO(), required: true });
   const issueDateErr = fieldError(issueDate);
-  nativeError(issueDate, issueDateErr, 'Pick the issue date for this invoice');
+  nativeError(issueDate, issueDateErr, '请选择此账单的开具日期');
 
   /* Due date, dated from the payment terms so it starts filled in rather
      than blank. It follows the issue date until the user sets it by hand;
      after that their date is theirs, and clearing it means this invoice
      has no due date at all (and so can never read as overdue). */
   const terms = store.resolvePaymentTermsDays(client.id);
-  const termsSource = client.paymentTermsDays != null ? `${client.name}` : 'your payment terms';
+  const termsSource = client.paymentTermsDays != null ? `${client.name}` : '您的付款条款';
   const dueDate = el('input.input', {
     type: 'date', value: dueDateFor(issueDate.value, terms) || '',
   });
@@ -191,12 +190,12 @@ export function openCreateInvoice({ client, entries = [] }) {
      billing terms the app never remembered. */
   const resolvedTax = store.resolveTaxRate(client.id);
   const taxInput = el('input.input', {
-    type: 'text', inputmode: 'decimal', autocomplete: 'off', placeholder: 'e.g. 19',
+    type: 'text', inputmode: 'decimal', autocomplete: 'off', placeholder: '例如：19',
     value: resolvedTax || '',
   });
   const taxErr = fieldError(taxInput);
-  const taxSource = client.taxRate != null ? `${client.name}` : 'your default rate';
-  const notes = el('textarea.input.textarea', { rows: 2, maxLength: 500, placeholder: 'Shown at the bottom of the invoice' });
+  const taxSource = client.taxRate != null ? `${client.name}` : '您的默认税率';
+  const notes = el('textarea.input.textarea', { rows: 2, maxLength: 500, placeholder: '显示在账单底部' });
 
   /* Manual lines, in the order they were added, editable until the
      invoice is issued and frozen with it after that. */
@@ -217,7 +216,7 @@ export function openCreateInvoice({ client, entries = [] }) {
       linesBox.append(el('div.card.list-card', {}, lines.map((l, i) => el('div.entry-row', {},
         el('button.entry-main', {
           type: 'button',
-          'aria-label': `Edit line: ${l.label || LINE_LABEL[l.kind]}`,
+          'aria-label': `编辑明细项：${l.label || LINE_LABEL[l.kind]}`,
           onclick: () => openLineForm({
             line: l,
             currency,
@@ -232,8 +231,8 @@ export function openCreateInvoice({ client, entries = [] }) {
             ),
             el('div.entry-sub', {}, [
               l.quantity !== 1 ? `${l.quantity} × ${fmtMoney(l.unitAmount, currency)}` : null,
-              l.taxable === false ? 'no tax' : null,
-            ].filter(Boolean).join(' · ') || 'Tap to edit')
+              l.taxable === false ? '不含税' : null,
+            ].filter(Boolean).join(' · ') || '点击编辑')
           ),
           el('div.entry-nums', {},
             el('div.entry-duration', {}, fmtMoney(lineAmount(l), currency))
@@ -249,7 +248,7 @@ export function openCreateInvoice({ client, entries = [] }) {
         currency,
         onSave: (next) => { lines.push(next); renderLines(); renderTotals(); },
       }),
-    }, ' Add a fee, expense, or discount'));
+    }, ' 添加固定费用、报销费用或折扣'));
   };
 
   const renderTotals = () => {
@@ -266,27 +265,27 @@ export function openCreateInvoice({ client, entries = [] }) {
       el('span.summary-label', {}, label),
       el(strong ? 'strong.summary-value' : 'span.summary-value', {}, value));
     append(totalsBox, [
-      seconds > 0 && row('Billable time', fmtDuration(seconds)),
-      seconds > 0 && manual !== 0 && row('Tracked work', fmtMoney(timeSubtotal, currency)),
+      seconds > 0 && row('可计费时长', fmtDuration(seconds)),
+      seconds > 0 && manual !== 0 && row('已追踪工作', fmtMoney(timeSubtotal, currency)),
       manual !== 0 && row(
-        `${lines.length} added ${lines.length === 1 ? 'line' : 'lines'}`,
+        `${lines.length} 个附加明细项`,
         fmtMoney(manual, currency)),
-      row('Subtotal', fmtMoney(totals.subtotal, currency)),
-      rate > 0 && row(`Tax (${rate}%)${untaxed ? ', taxable lines only' : ''}`, fmtMoney(totals.tax, currency)),
-      row('Total', fmtMoney(totals.total, currency), true),
+      row('小计', fmtMoney(totals.subtotal, currency)),
+      rate > 0 && row(`税费 (${rate}%)${untaxed ? '（仅计税项）' : ''}`, fmtMoney(totals.tax, currency)),
+      row('合计', fmtMoney(totals.total, currency), true),
     ]);
     // Nothing to bill, or a discount deeper than the invoice: either way
     // there is no honest document to issue, so the button says so.
     const nothing = !targets.length && !lines.length;
     save.disabled = nothing || totals.total < 0;
-    save.textContent = nothing ? 'Add time or a line to invoice'
-      : totals.total < 0 ? 'The discount is larger than the invoice'
-        : `Create invoice ${invoiceNumber(nextNumber)}`;
+    save.textContent = nothing ? '请添加工时或明细项以开具账单'
+      : totals.total < 0 ? '折扣金额超过了账单总额'
+        : `创建账单 ${invoiceNumber(nextNumber)}`;
   };
   taxInput.addEventListener('input', renderTotals);
 
   const save = el('button.btn.btn-primary.btn-block', { type: 'submit' },
-    `Create invoice ${invoiceNumber(nextNumber)}`);
+    `创建账单 ${invoiceNumber(nextNumber)}`);
   renderLines();
   renderTotals();
 
@@ -314,40 +313,40 @@ export function openCreateInvoice({ client, entries = [] }) {
       } catch (err) {
         console.error(err);
         save.disabled = false;
-        toast('Could not create the invoice, check your connection', { icon: 'wifiOff' });
+        toast('无法创建账单，请检查网络连接', { icon: 'wifiOff' });
         return;
       }
       modal.close();
-      toast(`Invoice ${invoiceNumber(invoice.number)} created`, { icon: 'receipt' });
+      toast(`账单 ${invoiceNumber(invoice.number)} 已创建`, { icon: 'receipt' });
       openInvoiceView(invoice);
     },
   },
     el('p.confirm-message', {}, targets.length
-      ? `${n} unbilled ${noun} for ${client.name} become invoice ${invoiceNumber(nextNumber)}. Their rates, rounding, and currency lock so the record never shifts; voiding the invoice reopens them.`
-      : `${client.name} has no unbilled time in view, so this invoice bills what you add below. Voiding it later undoes the whole document.`),
+      ? `${client.name} 的 ${n} 条未开票记录将生成账单 ${invoiceNumber(nextNumber)}。其费率、取整规则和币种将被锁定以确保账单记录不再变动；作废账单可重新解锁这些记录。`
+      : `${client.name} 当前没有未开票工时，因此此账单仅包含您在下方添加的明细项。日后作废账单将撤销整个单据。`),
     el('div.form-grid', {},
-      el('div', {}, field('Issue date', issueDate), issueDateErr),
-      el('div', {}, field('Tax rate (%)', taxInput, {
-        hint: resolvedTax > 0 ? `From ${taxSource}.` : null,
+      el('div', {}, field('开具日期', issueDate), issueDateErr),
+      el('div', {}, field('税率 (%)', taxInput, {
+        hint: resolvedTax > 0 ? `来自${taxSource}。` : null,
       }), taxErr)
     ),
-    field('Due date', dueDate, {
+    field('到期日', dueDate, {
       hint: terms != null
-        ? `${termsLabel(terms)} from ${termsSource}. Change it for this invoice, or leave it empty for no due date.`
-        : 'Optional. Set payment terms in Settings, or on this client, to have this filled in for you.',
+        ? `按${termsSource}（${termsLabel(terms)}）计算。可针对此账单修改，或留空表示无到期日。`
+        : '选填。在“设置”或此客户下设置付款条款后，将自动为您填写。',
     }),
-    el('h3.sheet-section', {}, 'Fees, expenses, and discounts'),
+    el('h3.sheet-section', {}, '费用、报销与折扣'),
     linesBox,
     el('p.field-hint', {},
-      'Optional lines that are not tracked time. They print under the time on the invoice and count toward the subtotal.'),
-    field('Notes', notes),
+      '非追踪工时的可选明细项。它们将打印在账单工时下方并计入小计。'),
+    field('备注', notes),
     totalsBox,
     !store.settings.businessName && el('p.field-hint', {},
-      'Tip: add your business details under Settings → Invoicing to complete the invoice header.'),
+      '提示：在“设置 → 账单开具”中添加您的企业信息以完善账单抬头。'),
     save
   );
 
-  const modal = openModal({ title: 'Create invoice', content: form });
+  const modal = openModal({ title: '创建账单', content: form });
 }
 
 /**
@@ -370,7 +369,7 @@ export async function openInvoiceForClient(client) {
       && store.project(entry.projectId)?.clientId === client.id);
   } catch (err) {
     console.error(err);
-    toast('Could not read your entries, check your connection', { icon: 'wifiOff' });
+    toast('无法读取您的记录，请检查网络连接', { icon: 'wifiOff' });
     return;
   }
   openCreateInvoice({ client, entries: unbilled });
@@ -379,12 +378,12 @@ export async function openInvoiceForClient(client) {
 export function openNewInvoice() {
   const clients = store.activeClients();
   if (!clients.length) {
-    toast('Add a client first', { icon: 'users' });
+    toast('请先添加客户', { icon: 'users' });
     return;
   }
   const select = el('select.select', { required: true },
     clients.map((c) => el('option', { value: c.id }, c.name)));
-  const next = el('button.btn.btn-primary.btn-block', { type: 'submit' }, 'Continue');
+  const next = el('button.btn.btn-primary.btn-block', { type: 'submit' }, '继续');
   const form = el('form.form', {
     onsubmit: async (e) => {
       e.preventDefault();
@@ -397,10 +396,10 @@ export function openNewInvoice() {
       await openInvoiceForClient(client);
     },
   },
-    field('Client', select, { hint: 'Any unbilled time they are holding is included; you can add fees, expenses, or a discount next.' }),
+    field('客户', select, { hint: '将包含该客户下所有未开票工时；下一步您可以添加固定费用、报销费用或折扣。' }),
     next
   );
-  const modal = openModal({ title: 'New invoice', content: form });
+  const modal = openModal({ title: '新建账单', content: form });
 }
 
 /**
@@ -417,18 +416,18 @@ export function openPaymentSheet(invoice) {
 
   const date = el('input.input', { type: 'date', value: todayISO(), required: true });
   const dateErr = fieldError(date);
-  nativeError(date, dateErr, 'Pick the day the money arrived');
+  nativeError(date, dateErr, '请选择款项到账日期');
   const amount = el('input.input', {
     type: 'text', inputmode: 'decimal', autocomplete: 'off',
     value: outstandingAmount(fresh()) || '',
-    placeholder: `e.g. ${outstandingAmount(fresh()) || invoice.total}`,
+    placeholder: `例如：${outstandingAmount(fresh()) || invoice.total}`,
     required: true,
   });
   const amountErr = fieldError(amount);
   nativeError(amount, amountErr, AMOUNT_ERROR);
   const note = el('input.input', {
     type: 'text', maxLength: 120, autocomplete: 'off',
-    placeholder: 'e.g. Deposit, or a transfer reference',
+    placeholder: '例如：定金，或转账流水号',
   });
 
   const summary = el('div.entry-summary');
@@ -443,16 +442,16 @@ export function openPaymentSheet(invoice) {
       el(strong ? 'strong.summary-value' : 'span.summary-value', {}, value));
     clear(summary);
     append(summary, [
-      row('Invoice total', money(inv.total)),
-      paid > 0 && row('Received', money(paid)),
-      row(left > 0 ? 'Still outstanding' : 'Settled', money(left), true),
+      row('账单总额', money(inv.total)),
+      paid > 0 && row('已收款', money(paid)),
+      row(left > 0 ? '待付余额' : '已结清', money(left), true),
     ]);
 
     clear(paidList);
     const payments = [...(inv.payments || [])].sort((a, b) => a.date.localeCompare(b.date));
     if (!payments.length) return;
     paidList.append(
-      el('h3.sheet-section', {}, 'Payments received'),
+      el('h3.sheet-section', {}, '已收款项'),
       el('div.card.list-card', {}, payments.map((p) => el('div.entry-row', {},
         el('div.entry-main.entry-main-static', {},
           el('div.entry-text', {},
@@ -462,14 +461,14 @@ export function openPaymentSheet(invoice) {
         ),
         el('button.icon-btn', {
           html: icon('trash', 16, 2),
-          'aria-label': `Remove the ${money(p.amount)} payment from ${fmtDay(p.date, { year: true })}`,
-          title: 'Remove this payment',
+          'aria-label': `移除 ${fmtDay(p.date, { year: true })} 的 ${money(p.amount)} 收款记录`,
+          title: '移除此收款记录',
           onclick: async () => {
             try {
               await store.removePayment(inv.id, p.id);
             } catch (err) {
               console.error(err);
-              toast('Could not remove, check your connection', { icon: 'wifiOff' });
+              toast('无法移除，请检查网络连接', { icon: 'wifiOff' });
               return;
             }
             amount.value = outstandingAmount(fresh()) || '';
@@ -481,7 +480,7 @@ export function openPaymentSheet(invoice) {
   };
   renderState();
 
-  const save = el('button.btn.btn-primary.btn-block', { type: 'submit' }, 'Record payment');
+  const save = el('button.btn.btn-primary.btn-block', { type: 'submit' }, '记录收款');
 
   const form = el('form.form', {
     onsubmit: async (e) => {
@@ -499,27 +498,27 @@ export function openPaymentSheet(invoice) {
       } catch (err) {
         console.error(err);
         save.disabled = false;
-        toast('Could not save the payment, check your connection', { icon: 'wifiOff' });
+        toast('无法保存收款记录，请检查网络连接', { icon: 'wifiOff' });
         return;
       }
       const inv = fresh();
       modal.close();
       toast(invoiceState(inv) === 'paid'
-        ? `Invoice ${invoiceNumber(inv.number)} is paid`
-        : `${money(value)} recorded, ${money(outstandingAmount(inv))} outstanding`, { icon: 'banknote' });
+        ? `账单 ${invoiceNumber(inv.number)} 已付清`
+        : `已记录 ${money(value)}，尚余 ${money(outstandingAmount(inv))} 未付`, { icon: 'banknote' });
     },
   },
     summary,
     el('div.form-grid', {},
-      el('div', {}, field('Date received', date), dateErr),
-      el('div', {}, field(`Amount (${cur})`, amount), amountErr)
+      el('div', {}, field('收款日期', date), dateErr),
+      el('div', {}, field(`金额 (${cur})`, amount), amountErr)
     ),
-    field('Note', note),
+    field('备注', note),
     save,
     paidList
   );
 
-  const modal = openModal({ title: `Payment for ${invoiceNumber(invoice.number)}`, content: form });
+  const modal = openModal({ title: `${invoiceNumber(invoice.number)} 的收款记录`, content: form });
 }
 
 /**
@@ -563,7 +562,7 @@ export async function openInvoiceView(invoice) {
     if (!line) {
       line = {
         // Project · task, the separator every other list in the app uses.
-        label: [project?.name || 'No project', e.task].filter(Boolean).join(' · '),
+        label: [project?.name || '无项目', e.task].filter(Boolean).join(' · '),
         rate,
         seconds: 0,
         amount: 0,
@@ -594,30 +593,30 @@ export async function openInvoiceView(invoice) {
       const n = inv.entries.length;
       const paid = paidAmount(inv);
       const ok = await confirmDialog({
-        title: `Void invoice ${invoiceNumber(inv.number)}?`,
-        message: `The invoice is deleted and its ${n} ${n === 1 ? 'entry returns' : 'entries return'} to unbilled, with rates unlocked. The number may be reused by the next invoice.`
+        title: `作废账单 ${invoiceNumber(inv.number)}？`,
+        message: `该账单将被删除，其中的 ${n} 条记录将恢复为未开票状态，费率也将解锁。该账单编号可供下一张账单重新使用。`
           // Voiding a bill that was partly or fully settled throws the
           // payment record away with it, which is worth saying out loud.
-          + (paid > 0 ? ` The ${money(paid)} recorded as received is deleted too.` : ''),
-        confirmLabel: 'Void invoice',
+          + (paid > 0 ? ` 已记录收到的 ${money(paid)} 款项也将一并删除。` : ''),
+        confirmLabel: '作废账单',
       });
       if (!ok) return;
       try {
         await store.voidInvoice(inv.id);
       } catch (err) {
         console.error(err);
-        toast('Could not void, check your connection', { icon: 'wifiOff' });
+        toast('无法作废，请检查网络连接', { icon: 'wifiOff' });
         return;
       }
-      toast(`Invoice ${invoiceNumber(inv.number)} voided`, { icon: 'trash' });
+      toast(`账单 ${invoiceNumber(inv.number)} 已作废`, { icon: 'trash' });
       close();
     },
-  }, 'Void');
+  }, '作废');
 
   /* The payment button keeps its node identity across renders: closing the
      payment sheet puts focus back on the control that opened it, and a
      rebuilt button would be a different, detached node by then. */
-  const payLabel = el('span', {}, ' Record payment');
+  const payLabel = el('span', {}, ' 记录收款');
   const payBtn = el('button.btn.btn-ghost.btn-slim', {
     html: icon('banknote', 15, 2),
     onclick: () => openPaymentSheet(current()),
@@ -628,11 +627,11 @@ export async function openInvoiceView(invoice) {
     const state = invoiceState(inv);
     if (state === 'paid') {
       const on = lastPaymentDate(inv);
-      return [el('p.invoice-meta-line', {}, on ? `Paid ${fmtDay(on, { year: true })}` : 'Paid')];
+      return [el('p.invoice-meta-line', {}, on ? `已于 ${fmtDay(on, { year: true })} 付清` : '已付清')];
     }
     if (!inv.dueDate) return [];
     return [el('p.invoice-meta-line', {},
-      `Due ${fmtDay(inv.dueDate, { year: true })}`,
+      `到期日 ${fmtDay(inv.dueDate, { year: true })}`,
       state === 'overdue' ? ` · ${dueText(inv)}` : '')];
   }
 
@@ -642,18 +641,18 @@ export async function openInvoiceView(invoice) {
     const row = (label, value, cls = '') => el(`div.invoice-total-row${cls}`, {},
       el('span', {}, label), el('span', {}, value));
     return el('div.invoice-totals', {},
-      row('Subtotal', money(inv.subtotal)),
-      inv.taxRate > 0 && row(`Tax (${inv.taxRate}%)`, money(inv.tax)),
+      row('小计', money(inv.subtotal)),
+      inv.taxRate > 0 && row(`税费 (${inv.taxRate}%)`, money(inv.tax)),
       // With nothing paid, the last line is the one to pay, worded as it
       // always has been. Once money has come in, the total is a fact and
       // the amount still owed becomes the line that matters.
       paid > 0
-        ? row('Total', money(inv.total), '.sum')
-        : row('Total due', money(inv.total), '.total'),
-      paid > 0 && row('Paid', `−${money(paid)}`),
+        ? row('合计', money(inv.total), '.sum')
+        : row('应付总额', money(inv.total), '.total'),
+      paid > 0 && row('已付', `−${money(paid)}`),
       // "Amount due" while something is owed; a settled invoice states its
       // balance instead, which is the honest word for zero.
-      paid > 0 && row(left > 0 ? 'Amount due' : 'Balance', money(left), '.total')
+      paid > 0 && row(left > 0 ? '待付金额' : '余额', money(left), '.total')
     );
   }
 
@@ -666,30 +665,30 @@ export async function openInvoiceView(invoice) {
           // Decorative: the business name right below says the same thing,
           // so a screen reader gains nothing from reading it twice.
           logoSrc && el('img.invoice-logo', { src: logoSrc, alt: '' }),
-          el('div.invoice-business-name', {}, inv.business.name || store.user?.username || 'Invoice'),
+          el('div.invoice-business-name', {}, inv.business.name || store.user?.username || '账单'),
           addressBlock(inv.business.address),
-          inv.business.taxId && el('p.invoice-meta-line', {}, `Tax ID: ${inv.business.taxId}`)
+          inv.business.taxId && el('p.invoice-meta-line', {}, `税号：${inv.business.taxId}`)
         ),
         el('div.invoice-title-block', {},
-          el('div.invoice-doc-title', {}, 'INVOICE'),
+          el('div.invoice-doc-title', {}, '账单'),
           el('div.invoice-number', {}, invoiceNumber(inv.number)),
-          el('p.invoice-meta-line', {}, `Issued ${fmtDay(inv.issueDate, { year: true })}`),
+          el('p.invoice-meta-line', {}, `开具日期 ${fmtDay(inv.issueDate, { year: true })}`),
           statusLines(inv),
           inv.periodFrom && el('p.invoice-meta-line', {},
-            `Service period ${fmtDay(inv.periodFrom, { year: true })} – ${fmtDay(inv.periodTo, { year: true })}`),
+            `服务周期 ${fmtDay(inv.periodFrom, { year: true })} – ${fmtDay(inv.periodTo, { year: true })}`),
           // A settled bill says so on the page, so a re-sent copy is a
           // receipt rather than a second demand; a late one says that too.
           (state === 'paid' || state === 'overdue') && el('div', {
             className: `invoice-stamp ${state}`,
-          }, state === 'paid' ? 'PAID' : 'OVERDUE')
+          }, state === 'paid' ? '已付清' : '已逾期')
         )
       ),
       el('section.invoice-billto', {},
-        el('div.invoice-label', {}, 'Billed to'),
+        el('div.invoice-label', {}, '客户信息'),
         el('div.invoice-billto-name', {}, inv.billTo.name),
         addressBlock(inv.billTo.address),
         inv.billTo.email && el('p.invoice-meta-line', {}, inv.billTo.email),
-        inv.billTo.taxId && el('p.invoice-meta-line', {}, `Tax ID: ${inv.billTo.taxId}`)
+        inv.billTo.taxId && el('p.invoice-meta-line', {}, `税号：${inv.billTo.taxId}`)
       ),
       /* Hours, rate, and amount never wrap, so a wide enough set of line
          items (a five-figure amount, a long rate) outgrows a phone whatever
@@ -699,10 +698,10 @@ export async function openInvoiceView(invoice) {
       el('div.invoice-table-wrap', {},
         el('table.invoice-table', {},
           el('thead', {}, el('tr', {},
-            el('th.desc', {}, 'Description'),
-            el('th.num', {}, 'Hours'),
-            el('th.num', {}, 'Rate'),
-            el('th.num', {}, 'Amount')
+            el('th.desc', {}, '描述'),
+            el('th.num', {}, '工时'),
+            el('th.num', {}, '费率'),
+            el('th.num', {}, '金额')
           )),
           el('tbody', {},
             items.map((line) => el('tr', {},
@@ -714,7 +713,7 @@ export async function openInvoiceView(invoice) {
             // Time that could not be resolved into line items still has to
             // account for the hours the invoice froze.
             !items.length && inv.seconds > 0
-              && el('tr', {}, el('td.desc', { colSpan: 4 }, `${fmtDuration(inv.seconds)} of billable work`)),
+              && el('tr', {}, el('td.desc', { colSpan: 4 }, `${fmtDuration(inv.seconds)} 可计费工作`)),
             /* Fees, expenses, and discounts, printed under the time. The
                quantity rides in the description rather than the Hours
                column: a count of licences is not a number of hours, and
@@ -734,7 +733,7 @@ export async function openInvoiceView(invoice) {
       ),
       // The footnote only exists when a line is actually excluded, so the
       // arithmetic of a mixed invoice can be followed to the cent.
-      marksUntaxed && el('p.invoice-note', {}, '* not subject to tax'),
+      marksUntaxed && el('p.invoice-note', {}, '* 免税项目'),
       totalsBlock(inv),
       (inv.business.payment || inv.notes || inv.terms) && el('footer.invoice-foot', {},
         // Payment instructions get their own labelled block: a client
@@ -742,7 +741,7 @@ export async function openInvoiceView(invoice) {
         // terms sentence to find an IBAN. A settled invoice needs none of
         // it: nothing is left to pay.
         inv.business.payment && state !== 'paid' && el('div.invoice-pay', {},
-          el('div.invoice-label', {}, 'How to pay'),
+          el('div.invoice-label', {}, '付款方式'),
           el('p.invoice-pay-text', {}, inv.business.payment)
         ),
         inv.notes && el('p', {}, inv.notes),
@@ -754,10 +753,10 @@ export async function openInvoiceView(invoice) {
   function render() {
     const inv = current();
     const state = invoiceState(inv);
-    payLabel.textContent = state === 'paid' ? ' Payments' : ' Record payment';
+    payLabel.textContent = state === 'paid' ? ' 收款记录' : ' 记录收款';
     payBtn.title = state === 'paid'
-      ? 'See or correct what was received'
-      : 'Record money received against this invoice';
+      ? '查看或更正已收款项'
+      : '记录此账单收到的款项';
     overlay.body.replaceChildren(buildSheet(inv));
   }
 
@@ -772,7 +771,7 @@ export async function openInvoiceView(invoice) {
   };
 
   overlay = openPrintOverlay({
-    label: `Invoice ${invoiceNumber(invoice.number)} for ${invoice.billTo.name}`,
+    label: `${invoice.billTo.name} 的账单 ${invoiceNumber(invoice.number)}`,
     onClose: () => store.removeEventListener('change', onChange),
     actions: () => [
       payBtn,
@@ -780,14 +779,14 @@ export async function openInvoiceView(invoice) {
       // which tasks, how long.
       el('button.btn.btn-ghost.btn-slim', {
         html: icon('calendar', 15, 2),
-        title: 'A printable timesheet backing this invoice',
+        title: '此账单随附的可打印工时表',
         onclick: () => openTimesheetSheet({ invoice }),
-      }, ' Timesheet'),
+      }, ' 工时表'),
       voidBtn,
       el('button.btn.btn-primary.btn-slim', {
         html: icon('printer', 15, 2),
         onclick: () => window.print(),
-      }, ' Print or save as PDF'),
+      }, ' 打印或另存为 PDF'),
     ],
   });
 

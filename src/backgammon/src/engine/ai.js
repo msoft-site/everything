@@ -80,9 +80,9 @@ const POINT_VALUE = [
  * right, so most of the strength here is in `evaluate`, not in the search.
  */
 export const LEVELS = {
-  easy: { plies: 1, window: 14, label: 'Easy' },
-  medium: { plies: 1, window: 3, label: 'Medium' },
-  hard: { plies: 2, candidates: 10, window: 0, label: 'Hard' },
+  easy: { plies: 1, window: 14, label: '简单' },
+  medium: { plies: 1, window: 3, label: '中等' },
+  hard: { plies: 2, candidates: 10, window: 0, label: '困难' },
 };
 
 /* ------------------------------------------------------------------ */

@@ -30,43 +30,43 @@ export async function runUrlAction() {
 
   if (req.action === 'stop') {
     if (!store.running) {
-      toast('No timer is running', { icon: 'timer' });
+      toast('当前没有正在运行的计时器', { icon: 'timer' });
       return;
     }
     try {
       const entry = await store.stopTimer();
-      toast(`Logged ${fmtClock(entry.seconds)}`, { icon: 'check' });
+      toast(`已记录 ${fmtClock(entry.seconds)}`, { icon: 'check' });
     } catch (err) {
       console.error(err);
-      toast('Could not stop, check your connection', { icon: 'wifiOff' });
+      toast('无法停止，请检查网络连接', { icon: 'wifiOff' });
     }
     return;
   }
 
   // start
   if (store.running) {
-    toast('A timer is already running', { icon: 'timer' });
+    toast('已有计时器正在运行', { icon: 'timer' });
     return;
   }
   if (!req.projectId) {
-    toast('That link does not say which project to track', { icon: 'folders' });
+    toast('该链接未指定要追踪的项目', { icon: 'folders' });
     return;
   }
   const project = store.project(req.projectId);
   if (!project) {
-    toast('That project no longer exists', { icon: 'folders' });
+    toast('该项目已不存在', { icon: 'folders' });
     return;
   }
   if (project.archived) {
-    toast(`${project.name} is archived`, { icon: 'archive' });
+    toast(`${project.name} 已归档`, { icon: 'archive' });
     return;
   }
   try {
     await store.startTimer({ projectId: project.id, task: req.task, billable: project.billable });
-    toast(`Tracking ${project.name}`, { icon: 'timer' });
+    toast(`正在追踪 ${project.name}`, { icon: 'timer' });
   } catch (err) {
     console.error(err);
-    toast('Could not start, check your connection', { icon: 'wifiOff' });
+    toast('无法启动，请检查网络连接', { icon: 'wifiOff' });
   }
 }
 

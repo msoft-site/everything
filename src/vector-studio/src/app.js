@@ -130,7 +130,7 @@ export class App extends Emitter {
 
   #buildShell() {
     this.menubar = createMenubar(this, MENUS);
-    const homeBtn = iconButton('home', 'Home', () => this.showHome(), { className: 'home-btn' });
+    const homeBtn = iconButton('home', '主页', () => this.showHome(), { className: 'home-btn' });
     this.titleEl = h('h1.app-title', 'Vector Studio');
     this.accountEl = h('div.account');
     this.topRight = h('div.topbar-right', this.#themeButton(), this.accountEl);
@@ -143,23 +143,23 @@ export class App extends Emitter {
         onclick: (e) => {
           const r = e.currentTarget.getBoundingClientRect();
           const items = MENUS.map((m) => ({ type: 'sub', label: m.label, items: resolveItems(this, m.submenu) }));
-          openMenu(this, items, { x: r.left, y: r.bottom + 4, anchor: e.currentTarget, label: 'Menu' });
+          openMenu(this, items, { x: r.left, y: r.bottom + 4, anchor: e.currentTarget, label: '菜单' });
         },
       },
       icon('ellipsis-vertical', 16),
-      'Menu',
+      '菜单',
     );
     this.topbar = h('header.topbar', homeBtn, this.menubar, this.compactMenuBtn, h('div.topbar-center', this.titleEl), this.topRight);
 
     this.toolbar = createToolbar(this);
-    this.tabsEl = h('div.doc-tabs', { role: 'toolbar', 'aria-label': 'Open documents' });
-    this.canvasHost = h('div.canvas-host', { tabindex: '0', role: 'application', 'aria-roledescription': 'vector canvas', 'aria-label': 'Canvas', 'aria-describedby': 'canvas-desc' });
+    this.tabsEl = h('div.doc-tabs', { role: 'toolbar', 'aria-label': '已打开的文档' });
+    this.canvasHost = h('div.canvas-host', { tabindex: '0', role: 'application', 'aria-roledescription': '矢量画布', 'aria-label': '画布', 'aria-describedby': 'canvas-desc' });
     // What is selected, for screen readers (read with the canvas, announced on keyboard changes).
-    this.canvasDesc = h('p#canvas-desc.sr-only', 'No selection');
+    this.canvasDesc = h('p#canvas-desc.sr-only', '未选择对象');
     this.canvasWrap = h('div.canvas-wrap', this.canvasHost);
     this.rulers = createRulers(this, this.canvasWrap);
     this.isolationBar = h('div.isolation-bar', { hidden: true });
-    this.taskbar = h('div.taskbar', { role: 'toolbar', 'aria-label': 'Task bar', hidden: true });
+    this.taskbar = h('div.taskbar', { role: 'toolbar', 'aria-label': '任务栏', hidden: true });
     this.home = h('div.home-host', { hidden: true });
     this.statusbar = createStatusbar(this);
     this.docArea = h('main#main.doc-area', this.tabsEl, this.isolationBar, h('div.canvas-stack', this.canvasWrap, this.taskbar, this.home), this.statusbar.el, this.canvasDesc);
@@ -176,10 +176,10 @@ export class App extends Emitter {
   }
 
   #themeButton() {
-    const btn = iconButton('monitor', 'Theme', (e) => {
+    const btn = iconButton('monitor', '主题', (e) => {
       const items = resolveItems(this, THEME_OPTIONS.map((t) => `theme.${t.value}`));
       const r = e.currentTarget.getBoundingClientRect();
-      openMenu(this, items, { x: r.left - 120, y: r.bottom + 4, anchor: e.currentTarget, label: 'Theme' });
+      openMenu(this, items, { x: r.left - 120, y: r.bottom + 4, anchor: e.currentTarget, label: '主题' });
     });
     this.themeBtn = btn;
     return btn;
@@ -198,17 +198,17 @@ export class App extends Emitter {
     el.replaceChildren();
     if (this.user) {
       const avatar = this.picture ? h('img.avatar', { src: this.picture, alt: '' }) : h('span.avatar.initial', (this.user.username || '?')[0].toUpperCase());
-      const btn = h('button.account-btn', { type: 'button', 'aria-label': `Account: ${this.user.username}`, 'aria-haspopup': 'menu', 'data-tip': this.user.username }, avatar);
+      const btn = h('button.account-btn', { type: 'button', 'aria-label': `账号：${this.user.username}`, 'aria-haspopup': 'menu', 'data-tip': this.user.username }, avatar);
       btn.addEventListener('click', () => {
-        const items = [{ type: 'cmd', label: `Signed in as ${this.user.username}`, enabled: false }];
+        const items = [{ type: 'cmd', label: `已登录为 ${this.user.username}`, enabled: false }];
         // Inside the Puter desktop the session belongs to Puter, so there is no sign-out here.
-        if (this.env !== 'app' && this.onSignOut) items.push({ type: 'sep' }, { type: 'cmd', label: 'Sign out', enabled: true, run: () => this.onSignOut() });
+        if (this.env !== 'app' && this.onSignOut) items.push({ type: 'sep' }, { type: 'cmd', label: '退出登录', enabled: true, run: () => this.onSignOut() });
         const r = btn.getBoundingClientRect();
-        openMenu(this, items, { x: r.right - 200, y: r.bottom + 4, anchor: btn, label: 'Account' });
+        openMenu(this, items, { x: r.right - 200, y: r.bottom + 4, anchor: btn, label: '账号' });
       });
       el.append(btn);
     } else if (this.onSignIn) {
-      el.append(h('button.btn.small.signin-btn', { type: 'button', onclick: () => this.onSignIn() }, icon('login', 14), h('span.signin-label', 'Sign in')));
+      el.append(h('button.btn.small.signin-btn', { type: 'button', onclick: () => this.onSignIn() }, icon('login', 14), h('span.signin-label', '登录')));
     }
   }
 
@@ -241,7 +241,7 @@ export class App extends Emitter {
   }
 
   showContextMenu(x, y) {
-    contextMenu(this, CONTEXT_MENU, x, y, 'Canvas context menu');
+    contextMenu(this, CONTEXT_MENU, x, y, '画布右键菜单');
   }
 
   showMenuAt(anchor, spec, label) {
@@ -277,15 +277,15 @@ export class App extends Emitter {
   describeSelection(editor = this.editor) {
     if (!editor) return '';
     const ids = editor.topSelection();
-    if (!ids.length) return 'No selection';
-    if (ids.length > 1) return `${ids.length} objects selected`;
+    if (!ids.length) return '未选择对象';
+    if (ids.length > 1) return `已选择 ${ids.length} 个对象`;
     const node = editor.doc.get(ids[0]);
     let name = defaultLabel(node).replace(/^<(.*)>$/, '$1');
-    if (node.type === 'text' && !node.name) name = `Text "${name}"`;
+    if (node.type === 'text' && !node.name) name = `文字 "${name}"`;
     const b = editor.selectionBounds();
     const units = editor.doc.root.units || 'pt';
-    const size = b ? `, ${formatLength(b.w, units)} by ${formatLength(b.h, units)}` : '';
-    return `${name} selected${size}`;
+    const size = b ? `，${formatLength(b.w, units)} × ${formatLength(b.h, units)}` : '';
+    return `已选择 ${name}${size}`;
   }
 
   #describeTimer = 0;
@@ -419,11 +419,11 @@ export class App extends Emitter {
     if (!force && editor.doc.dirty) {
       const save = await openDialog({
         title: 'Vector Studio',
-        body: h('p.dialog-message', `Save changes to "${editor.name}" before closing?`),
+        body: h('p.dialog-message', `关闭前是否保存对“${editor.name}”的更改？`),
         buttons: [
-          { label: "Don't Save", value: 'discard', left: true },
-          { label: 'Cancel', value: null },
-          { label: 'Save', value: 'save', primary: true },
+          { label: '不保存', value: 'discard', left: true },
+          { label: '取消', value: null },
+          { label: '保存', value: 'save', primary: true },
         ],
       });
       if (!save) return false;
@@ -471,11 +471,11 @@ export class App extends Emitter {
     const tabs = this.editors.map((ed) => {
       const active = ed === this.editor;
       const zoom = Math.round(ed.view.zoom * 100 * 100) / 100;
-      const label = `${ed.name}${ed.doc.dirty ? '*' : ''} @ ${zoom}% (${ed.doc.root.colorMode === 'CMYK' ? 'CMYK' : 'RGB'}/${ed.viewOptions.mode === 'outline' ? 'Outline' : 'Preview'})`;
+      const label = `${ed.name}${ed.doc.dirty ? '*' : ''} @ ${zoom}% (${ed.doc.root.colorMode === 'CMYK' ? 'CMYK' : 'RGB'}/${ed.viewOptions.mode === 'outline' ? '轮廓' : '预览'})`;
       // Close button before the title.
       const tab = h(
         'div.doc-tab',
-        h('button.icon-btn.doc-tab-close', { type: 'button', 'aria-label': `Close ${ed.name}`, 'data-tip': `Close (${formatShortcut('Mod+W')})`, onclick: () => this.closeDocument(ed) }, icon('x', 12)),
+        h('button.icon-btn.doc-tab-close', { type: 'button', 'aria-label': `关闭 ${ed.name}`, 'data-tip': `关闭 (${formatShortcut('Mod+W')})`, onclick: () => this.closeDocument(ed) }, icon('x', 12)),
         h('button.doc-tab-btn', { type: 'button', 'aria-current': active ? 'true' : null, title: label, onclick: () => this.activate(ed) }, label),
       );
       tab.classList.toggle('active', active);
@@ -514,8 +514,8 @@ export class App extends Emitter {
     if (!on) return;
     const g = ed.doc.get(ed.isolation);
     this.isolationBar.replaceChildren(
-      h('button.icon-btn', { type: 'button', 'aria-label': 'Exit Isolation Mode', 'data-tip': 'Exit Isolation Mode (Esc)', onclick: () => this.commands.run('object.exitIsolation') }, icon('chevron-left', 14)),
-      h('span', `${ed.doc.layerOf(ed.isolation)?.name || 'Layer'} › ${g ? defaultLabel(g) : '<Group>'}`),
+      h('button.icon-btn', { type: 'button', 'aria-label': '退出隔离模式', 'data-tip': '退出隔离模式 (Esc)', onclick: () => this.commands.run('object.exitIsolation') }, icon('chevron-left', 14)),
+      h('span', `${ed.doc.layerOf(ed.isolation)?.name || '图层'} › ${g ? defaultLabel(g) : '<编组>'}`),
     );
   }
 
@@ -761,21 +761,21 @@ export class App extends Emitter {
   #registerAppCommands() {
     const c = this.commands;
     c.register([
-      { id: 'file.new', label: 'New...', shortcut: 'Mod+N', run: (a) => (a.newDocumentDialog ? a.newDocumentDialog() : a.newDocument()) },
-      { id: 'file.close', label: 'Close', shortcut: 'Mod+W', enabled: (a) => Boolean(a.editor), run: (a) => a.closeDocument() },
+      { id: 'file.new', label: '新建...', shortcut: 'Mod+N', run: (a) => (a.newDocumentDialog ? a.newDocumentDialog() : a.newDocument()) },
+      { id: 'file.close', label: '关闭', shortcut: 'Mod+W', enabled: (a) => Boolean(a.editor), run: (a) => a.closeDocument() },
       {
         id: 'file.closeAll',
-        label: 'Close All',
+        label: '全部关闭',
         shortcut: 'Alt+Mod+W',
         enabled: (a) => a.editors.length > 0,
         run: async (a) => {
           for (const ed of [...a.editors]) if (!(await a.closeDocument(ed))) return;
         },
       },
-      { id: 'window.toggleDock', label: (a) => (a.panelsShown ? 'Hide Panels' : 'Show Panels'), run: (a) => a.setDockOpen(!a.panelsShown) },
+      { id: 'window.toggleDock', label: (a) => (a.panelsShown ? '隐藏面板' : '显示面板'), run: (a) => a.setDockOpen(!a.panelsShown) },
       {
         id: 'window.resetWorkspace',
-        label: 'Reset Standard',
+        label: '重置标准工作区',
         run: (a) => {
           a.setDockOpen(true);
           a.root.classList.remove('hide-panels', 'hide-dock');
@@ -785,7 +785,7 @@ export class App extends Emitter {
       },
       {
         id: 'window.screenMode',
-        label: 'Change Screen Mode',
+        label: '切换屏幕模式',
         shortcut: 'F',
         run: () => {
           if (!document.fullscreenElement) document.documentElement.requestFullscreen?.().catch(() => {});
@@ -803,20 +803,20 @@ export class App extends Emitter {
           a.rulers.refresh();
         },
       })),
-      { id: 'help.shortcuts', label: 'Keyboard Shortcuts', shortcut: 'Alt+Shift+Mod+K', run: (a) => a.showShortcuts() },
-      { id: 'edit.keyboardShortcuts', label: 'Keyboard Shortcuts...', run: (a) => a.showShortcuts() },
+      { id: 'help.shortcuts', label: '键盘快捷键', shortcut: 'Alt+Shift+Mod+K', run: (a) => a.showShortcuts() },
+      { id: 'edit.keyboardShortcuts', label: '键盘快捷键...', run: (a) => a.showShortcuts() },
       {
         id: 'help.about',
-        label: 'About Vector Studio',
+        label: '关于 Vector Studio',
         run: (a) =>
           a.dialogs.open({
-            title: 'About Vector Studio',
+            title: '关于 Vector Studio',
             body: h(
               'div.about',
-              h('p', 'Vector Studio is a free, open-source vector illustration editor. Your files are stored in your own Puter cloud.'),
-              h('p', h('a', { href: 'https://developer.puter.com', target: '_blank', rel: 'noopener' }, 'Powered by Puter')),
+              h('p', 'Vector Studio 是一款免费、开源的矢量插画编辑器。您的文件存储在您自己的 Puter 云端。'),
+              h('p', h('a', { href: 'https://developer.puter.com', target: '_blank', rel: 'noopener' }, '由 Puter 提供技术支持')),
             ),
-            buttons: [{ label: 'OK', value: true, primary: true }],
+            buttons: [{ label: '确定', value: true, primary: true }],
           }),
       },
     ]);
@@ -838,13 +838,13 @@ export class App extends Emitter {
 
   showShortcuts() {
     const rows = [];
-    for (const [, T] of this.toolClasses) if (T.shortcut) rows.push([T.label, formatShortcut(T.shortcut), 'Tools']);
+    for (const [, T] of this.toolClasses) if (T.shortcut) rows.push([T.label, formatShortcut(T.shortcut), '工具']);
     for (const [id, cmd] of this.commands.commands) {
       if (!cmd.shortcut) continue;
       rows.push([this.commands.label(id), formatShortcut([].concat(cmd.shortcut)[0]), id.split('.')[0]]);
     }
-    rows.push(['Pan (temporary Hand)', 'Space', 'Navigation'], ['Swap Fill and Stroke', formatShortcut('Shift+X'), 'Paint'], ['Toggle Fill and Stroke', 'X', 'Paint'], ['Default Fill and Stroke', 'D', 'Paint'], ['Color / Gradient / None', ', . /', 'Paint'], ['Nudge (10x with Shift)', '← ↑ → ↓', 'Object'], ['Hide panels', 'Tab', 'Window']);
-    const filter = h('input.shortcut-search', { type: 'search', placeholder: 'Search shortcuts', 'aria-label': 'Search shortcuts' });
+    rows.push(['平移（临时抓手工具）', 'Space', '导航'], ['互换填色与描边', formatShortcut('Shift+X'), '颜色'], ['切换填色与描边焦点', 'X', '颜色'], ['默认填色与描边', 'D', '颜色'], ['颜色 / 渐变 / 无', ', . /', '颜色'], ['微移（按住 Shift 为 10 倍）', '← ↑ → ↓', '对象'], ['隐藏面板', 'Tab', '窗口']);
+    const filter = h('input.shortcut-search', { type: 'search', placeholder: '搜索快捷键', 'aria-label': '搜索快捷键' });
     const tbody = h('tbody');
     const render = () => {
       const q = filter.value.toLowerCase();
@@ -853,10 +853,10 @@ export class App extends Emitter {
     filter.addEventListener('input', render);
     render();
     return openDialog({
-      title: 'Keyboard Shortcuts',
+      title: '键盘快捷键',
       className: 'wide',
-      body: h('div.shortcuts', filter, h('div.shortcut-table-wrap', { tabindex: '0', role: 'region', 'aria-label': 'Shortcuts' }, h('table.shortcut-table', h('thead', h('tr', h('th', 'Command'), h('th', 'Shortcut'), h('th', 'Group'))), tbody))),
-      buttons: [{ label: 'Close', value: true, primary: true }],
+      body: h('div.shortcuts', filter, h('div.shortcut-table-wrap', { tabindex: '0', role: 'region', 'aria-label': '快捷键' }, h('table.shortcut-table', h('thead', h('tr', h('th', '命令'), h('th', '快捷键'), h('th', '分组'))), tbody))),
+      buttons: [{ label: '关闭', value: true, primary: true }],
     });
   }
 }

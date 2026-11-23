@@ -44,14 +44,14 @@ export const DEFAULT_SETTINGS = {
 };
 
 export const DEFAULT_CATEGORIES = [
-  { id: 'meals', name: 'Meals', icon: 'utensils', slot: 2 },
-  { id: 'travel', name: 'Travel', icon: 'plane', slot: 1 },
-  { id: 'lodging', name: 'Lodging', icon: 'bed', slot: 7 },
-  { id: 'transport', name: 'Ground transport', icon: 'car', slot: 3 },
-  { id: 'office', name: 'Office supplies', icon: 'paperclip', slot: 4 },
-  { id: 'software', name: 'Software', icon: 'laptop', slot: 5 },
-  { id: 'entertainment', name: 'Client entertainment', icon: 'wine', slot: 8 },
-  { id: 'other', name: 'Other', icon: 'tag', slot: 6 },
+  { id: 'meals', name: '餐饮美食', icon: 'utensils', slot: 2 },
+  { id: 'travel', name: '差旅交通', icon: 'plane', slot: 1 },
+  { id: 'lodging', name: '酒店住宿', icon: 'bed', slot: 7 },
+  { id: 'transport', name: '市内交通', icon: 'car', slot: 3 },
+  { id: 'office', name: '办公用品', icon: 'paperclip', slot: 4 },
+  { id: 'software', name: '软件订阅', icon: 'laptop', slot: 5 },
+  { id: 'entertainment', name: '客户招待', icon: 'wine', slot: 8 },
+  { id: 'other', name: '其他', icon: 'tag', slot: 6 },
 ];
 
 export const EXPORT_VERSION = 1;
@@ -343,7 +343,7 @@ export class Store extends EventTarget {
   async createReport({ title, notes = '' }) {
     const now = Date.now();
     const report = {
-      id: uid(), title: String(title || '').trim() || 'Untitled report', notes, status: 'draft',
+      id: uid(), title: String(title || '').trim() || '未命名报销单', notes, status: 'draft',
       submittedAt: null, approvedAt: null, reimbursedAt: null, createdAt: now, updatedAt: now,
     };
     this.reports = [report, ...this.reports];
@@ -410,7 +410,7 @@ export class Store extends EventTarget {
     this.emit('statements');
   }
 
-  async addStatementLines(lines, { source = 'Statement' } = {}) {
+  async addStatementLines(lines, { source = '账单' } = {}) {
     const existing = await this.loadStatements();
     const batchId = uid();
     const now = Date.now();

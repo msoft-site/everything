@@ -49,38 +49,38 @@ export function previewURL(file) {
 
 export function openReceiptViewer(exp) {
   const body = el('div.receipt-viewer', {},
-    el('div.receipt-loading', { html: icon('spinner', 22, 2), className: 'receipt-loading spin-wrap' }, el('span', {}, 'Loading receipt'))
+    el('div.receipt-loading', { html: icon('spinner', 22, 2), className: 'receipt-loading spin-wrap' }, el('span', {}, '正在加载票据…'))
   );
   const download = el('button.icon-btn', {
-    type: 'button', html: icon('download', 19, 2), 'aria-label': 'Download receipt', title: 'Download',
+    type: 'button', html: icon('download', 19, 2), 'aria-label': '下载票据', title: '下载',
     onclick: async () => {
       const blob = await store.readReceipt(exp.receiptPath).catch(() => null);
       if (blob) downloadBlob(blob, exp.receiptName || `receipt-${exp.id}`);
     },
   });
-  const modal = openModal({ title: exp.merchant || 'Receipt', content: body, wide: true, headerActions: download });
+  const modal = openModal({ title: exp.merchant || '票据', content: body, wide: true, headerActions: download });
 
   receiptURL(exp).then((url) => {
     body.replaceChildren();
     if (!url) {
       body.append(el('div.empty', {},
         el('div.empty-icon', { html: icon('imageOff', 26) }),
-        el('h3', {}, 'Couldn’t load this receipt'),
-        el('p', {}, 'The file may have been moved or deleted from your Puter drive.')
+        el('h3', {}, '无法加载此票据'),
+        el('p', {}, '该文件可能已从您的 Puter 云盘中移动或删除。')
       ));
       return;
     }
     if (isPdf(exp)) {
       body.append(
-        el('iframe.receipt-pdf', { src: url, title: 'Receipt PDF' }),
+        el('iframe.receipt-pdf', { src: url, title: '票据 PDF' }),
         el('p.small.muted', { style: { textAlign: 'center', marginTop: '10px' } },
-          el('a', { href: url, target: '_blank', rel: 'noopener' }, 'Open in a new tab'))
+          el('a', { href: url, target: '_blank', rel: 'noopener' }, '在新标签页中打开'))
       );
       return;
     }
-    const img = el('img.receipt-img', { src: url, alt: `Receipt from ${exp.merchant || 'unknown merchant'}` });
+    const img = el('img.receipt-img', { src: url, alt: `${exp.merchant || '未知商家'}的票据` });
     const wrap = el('button.receipt-zoom', {
-      type: 'button', 'aria-label': 'Toggle zoom', 'aria-pressed': 'false',
+      type: 'button', 'aria-label': '切换缩放', 'aria-pressed': 'false',
       onclick: () => {
         const on = wrap.classList.toggle('zoomed');
         wrap.setAttribute('aria-pressed', String(on));

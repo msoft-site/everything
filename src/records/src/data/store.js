@@ -108,7 +108,7 @@ export class Store extends Emitter {
       }
       if (!f || (doc && !Array.isArray(doc.tables))) return null;
       const d = doc || {};
-      return { name: d.name || 'Untitled base', color: d.color || 'blue', icon: d.icon || 'table', createdAt: d.createdAt, updatedAt: d.updatedAt, openedAt: d.updatedAt, starred: false, tables: d.tables?.length, ...e };
+      return { name: d.name || '未命名数据库', color: d.color || 'blue', icon: d.icon || 'table', createdAt: d.createdAt, updatedAt: d.updatedAt, openedAt: d.updatedAt, starred: false, tables: d.tables?.length, ...e };
     });
     return found.filter(Boolean);
   }
@@ -237,7 +237,7 @@ export class Store extends Emitter {
    * Create a base from a document (or a blank one) and its records
    * ({ tableId: record[] }). Returns the new base id.
    */
-  async createBase({ id = null, name = 'Untitled base', color = 'blue', icon = 'table', doc = null, records = {} } = {}) {
+  async createBase({ id = null, name = '未命名数据库', color = 'blue', icon = 'table', doc = null, records = {} } = {}) {
     const d = doc ? structuredClone(doc) : makeBaseDoc(name, { color, icon });
     if (id) d.id = id;
     if (doc) {
@@ -287,7 +287,7 @@ export class Store extends Emitter {
     if (this.closing.has(id)) await this.closing.get(id);
     if (this.sessions.has(id)) return this.sessions.get(id);
     const file = await this.backend.read(`${basePath(id)}/base.json`);
-    if (!file) throw Object.assign(new Error('This base could not be found.'), { code: 'missing' });
+    if (!file) throw Object.assign(new Error('找不到该数据库。'), { code: 'missing' });
     const doc = JSON.parse(file.text);
     const stat = await this.backend.stat(`${basePath(id)}/base.json`).catch(() => null);
     const version = stat ? `${stat.modified}|${stat.size}` : null;
@@ -332,7 +332,7 @@ export class Store extends Emitter {
         return JSON.parse(f.text).records || [];
       } catch {
         // Opening without these records would overwrite them on the next save.
-        throw Object.assign(new Error('Part of this base could not be read.'), { code: 'corrupt' });
+        throw Object.assign(new Error('无法读取该数据库的部分内容。'), { code: 'corrupt' });
       }
     });
     const chunkOf = new Map();
@@ -397,8 +397,8 @@ export class Store extends Emitter {
     session.editedAt = edited;
     if (pending.length) session.markUnsaved(replay);
     const notes = [];
-    if (cloudNewer) notes.push('Some changes to fields or views made on this device while offline were replaced by newer changes from another device.');
-    if (stale) notes.push(`${stale === 1 ? 'A record' : `${stale} records`} edited on this device while offline ${stale === 1 ? 'was' : 'were'} changed on another device since; the newer changes were kept.`);
+    if (cloudNewer) notes.push('此设备离线期间对字段或视图所做的部分更改已被另一台设备上的最新更改替代。');
+    if (stale) notes.push(`此设备离线期间编辑的 ${stale} 条记录已在另一台设备上更新，已保留最新更改。`);
     if (notes.length) session.conflict = notes.join(' ');
     this.updateEntry(id, { openedAt: this.now(), name: doc.name, color: doc.color, icon: doc.icon, tables: doc.tables.length });
     return session;
@@ -448,7 +448,7 @@ export class Store extends Emitter {
     await this.closing.get(id);
     const s = this.sessions.get(id);
     if (s) {
-      s.base.apply({ t: 'base.set', patch }, { label: 'Edit base' });
+      s.base.apply({ t: 'base.set', patch }, { label: '编辑数据库' });
       return;
     }
     const path = `${basePath(id)}/base.json`;
@@ -492,7 +492,7 @@ export class Store extends Emitter {
         }
       }
     }
-    return this.createBase({ name: `${doc.name} copy`, color: doc.color, icon: doc.icon, doc, records });
+    return this.createBase({ name: `${doc.name} 副本`, color: doc.color, icon: doc.icon, doc, records });
   }
 
   /**
@@ -913,7 +913,7 @@ export class BaseSession extends Emitter {
       // Put the changes back so the next try includes them.
       this.requeue(u);
       const offline = typeof navigator !== 'undefined' && navigator.onLine === false;
-      this.setStatus(offline ? 'offline' : 'error', isQuota(err) ? 'Your Puter storage is full. Free up space to keep saving.' : err?.message || String(err));
+      this.setStatus(offline ? 'offline' : 'error', isQuota(err) ? '您的 Puter 存储空间已满。请释放空间以继续保存。' : err?.message || String(err));
       const wait = RETRY[Math.min(this.retry, RETRY.length - 1)];
       this.retry++;
       this.schedule(wait, { retry: true });

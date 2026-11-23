@@ -77,17 +77,17 @@ export const MINIMUMS = [0, 6, 10, 15, 30, 60];
 export const TERM_DAYS = [0, 7, 14, 21, 30, 45, 60];
 
 export function roundingLabel(minutes) {
-  return minutes ? `Up to ${minutes} minutes` : 'No rounding';
+  return minutes ? `向上取整至 ${minutes} 分钟` : '不取整';
 }
 
 export function minimumLabel(minutes) {
-  if (!minutes) return 'No minimum';
-  return minutes === 60 ? '1 hour' : `${minutes} minutes`;
+  if (!minutes) return '无最低时长';
+  return minutes === 60 ? '1 小时' : `${minutes} 分钟`;
 }
 
 export function termsLabel(days) {
-  if (days == null) return 'No due date';
-  return Number(days) === 0 ? 'Due on receipt' : `Net ${days} days`;
+  if (days == null) return '无到期日';
+  return Number(days) === 0 ? '收到即付' : `${days} 天内付清`;
 }
 
 const moneyFmtCache = new Map();

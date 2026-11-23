@@ -115,16 +115,16 @@ addKeys('Object Mode', [
   { key: 'D', alt: true, op: 'object.duplicate_move_linked', when: objectMode },
   { key: 'X', op: 'object.delete', when: objectMode },
   { key: 'DEL', op: 'object.delete', props: { confirm: false }, when: objectMode },
-  { key: 'A', shift: true, menu: addMenu, menuTitle: 'Add', menuSearch: true, when: objectMode },
+  { key: 'A', shift: true, menu: addMenu, menuTitle: '添加', menuSearch: true, when: objectMode },
   { key: 'H', op: 'object.hide_view_set', when: objectMode },
   { key: 'H', shift: true, op: 'object.hide_view_set', props: { unselected: true }, when: objectMode },
   { key: 'H', alt: true, op: 'object.hide_view_clear', when: objectMode },
   { key: 'M', op: 'object.move_to_collection', when: objectMode },
   { key: 'M', shift: true, op: 'object.link_to_collection', when: objectMode },
   { key: 'J', ctrl: true, op: 'object.join', when: objectMode },
-  { key: 'P', ctrl: true, menu: parentSetMenu, menuTitle: 'Set Parent To', when: objectMode },
-  { key: 'P', alt: true, menu: parentClearMenu, menuTitle: 'Clear Parent', when: objectMode },
-  { key: 'A', ctrl: true, menu: applyMenu, menuTitle: 'Apply', when: objectMode },
+  { key: 'P', ctrl: true, menu: parentSetMenu, menuTitle: '设置父级到', when: objectMode },
+  { key: 'P', alt: true, menu: parentClearMenu, menuTitle: '清除父级', when: objectMode },
+  { key: 'A', ctrl: true, menu: applyMenu, menuTitle: '应用', when: objectMode },
   { key: 'F2', op: 'object.rename' },
   { key: 'C', ctrl: true, op: 'view3d.copybuffer', when: objectMode },
   { key: 'V', ctrl: true, op: 'view3d.pastebuffer', when: objectMode },
@@ -149,5 +149,5 @@ export function modePie() {
   const pe = modes.find((x) => x.mode === 'PARTICLE_EDIT');
   const particle = pe ? { label: pe.label, icon: pe.icon, active: app.doc.mode === pe.mode, op: 'object.mode_set', props: { mode: pe.mode } } : null;
   // W E S N NW NE SW SE
-  openPie('Mode', [items[0], items[1], items[4], items[2], items[3], items[5], items[6], particle], app.pointer.x, app.pointer.y, 'Tab');
+  openPie('模式', [items[0], items[1], items[4], items[2], items[3], items[5], items[6], particle], app.pointer.x, app.pointer.y, 'Tab');
 }

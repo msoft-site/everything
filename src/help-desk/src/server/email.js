@@ -16,7 +16,7 @@ export function ticketNumberFrom(subject) {
 export function cleanSubject(subject) {
   let s = String(subject || '').replace(/\s*\[#\d+\]\s*/g, ' ');
   for (let i = 0; i < 5; i++) s = s.replace(/^\s*(re|fw|fwd|aw|sv|antw)\s*:\s*/i, '');
-  return cleanLine(s, 200) || '(no subject)';
+  return cleanLine(s, 200) || '（无主题）';
 }
 
 /**
@@ -53,7 +53,7 @@ export function cleanMessage(m) {
     from,
     name: cleanLine(m.from?.name, 120) || from.split('@')[0],
     subject: cleanLine(m.subject, 300),
-    text: body || '(empty message)',
+    text: body || '（空消息）',
     cc: (Array.isArray(m.cc) ? m.cc : []).map((c) => normEmail(c?.address || c)).filter(Boolean).slice(0, 9),
     attachments: Array.isArray(m.attachments) ? m.attachments : [],
     date: Date.parse(m.date) || null,

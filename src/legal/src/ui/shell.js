@@ -25,17 +25,17 @@ export const REPO_URL = 'https://github.com/heyputer/everything';
 const RAIL_KEY = 'legal.rail';
 
 export const NAV = [
-  { id: 'dashboard', label: 'Dashboard', icon: 'dashboard', href: '#/', key: 'd' },
+  { id: 'dashboard', label: '仪表盘', icon: 'dashboard', href: '#/', key: 'd' },
   { id: 'calendar', label: 'Calendar', icon: 'calendar', href: '#/calendar', key: 'c' },
-  { id: 'tasks', label: 'Tasks', icon: 'list-checks', href: '#/tasks', key: 't', badge: 'tasks' },
-  { id: 'matters', label: 'Matters', icon: 'briefcase', href: '#/matters', key: 'm' },
-  { id: 'contacts', label: 'Contacts', icon: 'contact', href: '#/contacts', key: 'o' },
+  { id: 'tasks', label: '任务待办', icon: 'list-checks', href: '#/tasks', key: 't', badge: 'tasks' },
+  { id: 'matters', label: '案件卷宗', icon: 'briefcase', href: '#/matters', key: 'm' },
+  { id: 'contacts', label: '联系人', icon: 'contact', href: '#/contacts', key: 'o' },
   { id: 'activities', label: 'Activities', icon: 'clock', href: '#/activities', key: 'a' },
-  { id: 'billing', label: 'Billing', icon: 'receipt-text', href: '#/billing', key: 'b', badge: 'billing' },
-  { id: 'accounts', label: 'Accounts', icon: 'landmark', href: '#/accounts', key: 'u' },
-  { id: 'documents', label: 'Documents', icon: 'folder', href: '#/documents', key: 'f' },
+  { id: 'billing', label: '账单与收费', icon: 'receipt-text', href: '#/billing', key: 'b', badge: 'billing' },
+  { id: 'accounts', label: '账户', icon: 'landmark', href: '#/accounts', key: 'u' },
+  { id: 'documents', label: '文档', icon: 'folder', href: '#/documents', key: 'f' },
   { id: 'communications', label: 'Communications', icon: 'messages', href: '#/communications', key: 'e' },
-  { id: 'reports', label: 'Reports', icon: 'chart', href: '#/reports', key: 'r' },
+  { id: 'reports', label: '报表', icon: 'chart', href: '#/reports', key: 'r' },
 ];
 
 const TABBAR = ['dashboard', 'matters', 'calendar', 'activities'];
@@ -74,7 +74,7 @@ export function buildShell({ onSignIn } = {}) {
   const railToggle = h('button.nav-link.rail-toggle', { type: 'button', onClick: () => setRail(railMode === 'expanded' ? 'collapsed' : 'expanded') });
   const firmName = h('span.brand-name.truncate');
   const firmSub = h('span.brand-sub.truncate');
-  const settingsLink = h('a.nav-link', { href: '#/settings', 'data-tip': 'Settings' }, icon('settings', 18), h('span.label', 'Settings'));
+  const settingsLink = h('a.nav-link', { href: '#/settings', 'data-tip': '设置' }, icon('settings', 18), h('span.label', '设置'));
   navLinks.set('settings', settingsLink);
 
   const rail = h(
@@ -147,13 +147,13 @@ export function buildShell({ onSignIn } = {}) {
       tabLinks.set(id, a);
       return a;
     }),
-    h('button', { type: 'button', onClick: () => openMoreSheet(), 'aria-haspopup': 'dialog' }, icon('menu', 21), h('span', 'More')),
+    h('button', { type: 'button', onClick: () => openMoreSheet(), 'aria-haspopup': 'dialog' }, icon('menu', 21), h('span', '更多')),
   );
 
   const root = h(
     'div.app',
     { dataset: { rail: railMode } },
-    h('a.skip-link', { href: '#main', onClick: (e) => (e.preventDefault(), main.focus()) }, 'Skip to content'),
+    h('a.skip-link', { href: '#main', onClick: (e) => (e.preventDefault(), main.focus()) }, '跳转到主要内容'),
     rail,
     h('div.main-col', topbar, banner, main),
     tabbar,
@@ -427,14 +427,14 @@ function openAccountMenu(anchor, onSignIn) {
       const link = (label, ic, attrs) => h(attrs.href ? 'a.menu-item' : 'button.menu-item', { type: attrs.href ? null : 'button', ...attrs }, icon(ic, 16), h('span.grow', label));
       const me = app.me();
       const items = [
-        link('Settings', 'settings', { href: '#/settings', onClick: () => close() }),
+        link('设置', 'settings', { href: '#/settings', onClick: () => close() }),
         link('Keyboard shortcuts', 'keyboard', { onClick: () => (close(), showShortcuts()) }),
         link('Source code on GitHub', 'github', { href: REPO_URL, target: '_blank', rel: 'noopener noreferrer', onClick: () => close() }),
       ];
       let footer = null;
       if (app.demo) footer = link('Sign in with Puter', 'log-in', { onClick: () => (close(), onSignIn?.()) });
       else if (canSignOut())
-        footer = link('Sign out', 'log-out', {
+        footer = link('退出登录', 'log-out', {
           onClick: async () => {
             close();
             const unsent = app.store.pendingCount();
@@ -530,7 +530,7 @@ function firmSwitcher(close) {
 function openMoreSheet() {
   const more = NAV.filter((n) => !TABBAR.includes(n.id));
   openDialog({
-    title: 'More',
+    title: '更多',
     cls: 'sheet',
     body: ({ close }) =>
       h(
@@ -538,7 +538,7 @@ function openMoreSheet() {
         { 'aria-label': 'More sections' },
         h(
           'ul.list.more-list',
-          [...more, { id: 'settings', label: 'Settings', icon: 'settings', href: '#/settings' }].map((n) =>
+          [...more, { id: 'settings', label: '设置', icon: 'settings', href: '#/settings' }].map((n) =>
             h('li', h('a.list-item', { href: n.href, onClick: () => close() }, icon(n.icon, 20), h('span.grow', n.label), icon('chevron-right', 16))),
           ),
           h('li', h('a.list-item', { href: REPO_URL, target: '_blank', rel: 'noopener noreferrer' }, icon('github', 20), h('span.grow', 'Source code on GitHub'), icon('external', 16))),

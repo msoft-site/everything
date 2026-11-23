@@ -41,7 +41,7 @@ export function tokenize(src) {
     const start = i;
     if (c === '{') {
       const end = src.indexOf('}', i + 1);
-      if (end < 0) throw new FormulaError('A field reference is missing its closing }');
+      if (end < 0) throw new FormulaError('字段引用缺少右花括号 }');
       tokens.push({ t: 'field', v: src.slice(i + 1, end), at: start });
       i = end + 1;
       continue;
@@ -56,7 +56,7 @@ export function tokenize(src) {
           i += 2;
         } else s += src[i++];
       }
-      if (i >= n) throw new FormulaError('A text value is missing its closing quote');
+      if (i >= n) throw new FormulaError('文本值缺少闭合引号');
       i++;
       tokens.push({ t: 'str', v: s, at: start });
       continue;
@@ -81,7 +81,7 @@ export function tokenize(src) {
       i += op.length;
       continue;
     }
-    throw new FormulaError(`Unexpected character "${c}"`);
+    throw new FormulaError(`意外字符 "${c}"`);
   }
   tokens.push({ t: 'end', at: n });
   return tokens;
@@ -107,7 +107,7 @@ export function parse(src) {
   const isOp = (...ops) => peek().t === 'op' && ops.includes(peek().v);
   const expect = (v) => {
     const tk = next();
-    if (tk.t !== 'op' || tk.v !== v) throw new FormulaError(tk.t === 'end' ? `Expected "${v}" before the end` : `Expected "${v}"`);
+    if (tk.t !== 'op' || tk.v !== v) throw new FormulaError(tk.t === 'end' ? `结尾前缺少 "${v}"` : `应为 "${v}"`);
   };
 
   function cmp() {
@@ -184,15 +184,15 @@ export function parse(src) {
             }
           }
           expect(')');
-          if (!FUNCTIONS[name]) throw new FormulaError(`Unknown function ${tk.v}`);
+          if (!FUNCTIONS[name]) throw new FormulaError(`未知函数 ${tk.v}`);
           const [min, max] = FUNCTIONS[name].arity;
-          if (args.length < min) throw new FormulaError(`${name} needs at least ${min} argument${min === 1 ? '' : 's'}`);
-          if (max >= 0 && args.length > max) throw new FormulaError(`${name} takes at most ${max} argument${max === 1 ? '' : 's'}`);
+          if (args.length < min) throw new FormulaError(`${name} 至少需要 ${min} 个参数`);
+          if (max >= 0 && args.length > max) throw new FormulaError(`${name} 最多接受 ${max} 个参数`);
           return { k: 'call', name, args };
         }
         if (name === 'TRUE') return { k: 'bool', v: true };
         if (name === 'FALSE') return { k: 'bool', v: false };
-        throw new FormulaError(`Unknown name "${tk.v}". Put field names in braces, like {${tk.v}}`);
+        throw new FormulaError(`未知名称 "${tk.v}"。请将字段名称放在花括号中，例如 {${tk.v}}`);
       }
       case 'op':
         if (tk.v === '(') {
@@ -200,15 +200,15 @@ export function parse(src) {
           expect(')');
           return e;
         }
-        throw new FormulaError(`Unexpected "${tk.v}"`);
+        throw new FormulaError(`意外的 "${tk.v}"`);
       default:
-        throw new FormulaError('The formula ends too early');
+        throw new FormulaError('公式未完整结束');
     }
   }
 
-  if (peek().t === 'end') throw new FormulaError('The formula is empty');
+  if (peek().t === 'end') throw new FormulaError('公式为空');
   const ast = cmp();
-  if (peek().t !== 'end') throw new FormulaError(`Unexpected "${peek().v}"`);
+  if (peek().t !== 'end') throw new FormulaError(`意外的 "${peek().v}"`);
   return ast;
 }
 
@@ -276,10 +276,10 @@ export function fromDisplay(src, fields) {
   const out = mapRefs(String(src || ''), (ref, inner) => {
     // A backslash typed in a name without escaping still finds the field.
     const id = ids.has(ref) ? ref : byName.get(ref.trim().toLowerCase()) ?? byName.get(inner.trim().toLowerCase());
-    if (!id) throw new FormulaError(`Unknown field {${ref}}`);
+    if (!id) throw new FormulaError(`未知字段 {${ref}}`);
     return `{${id}}`;
   });
-  if (out === null) throw new FormulaError('A field reference is missing its closing }');
+  if (out === null) throw new FormulaError('字段引用缺少右花括号 }');
   return out;
 }
 
@@ -370,7 +370,7 @@ function unitName(u) {
   // "M" is months and "m" minutes, as in moment.js.
   if (u === 'M') return 'months';
   const unit = UNIT_ALIASES.get(String(u || 'days').trim().toLowerCase());
-  if (!unit) throw new FormulaError(`Unknown time unit "${u}"`, '#VALUE');
+  if (!unit) throw new FormulaError(`未知时间单位 "${u}"`, '#VALUE');
   return unit;
 }
 
@@ -486,7 +486,7 @@ def('XOR', [1, -1], 'checkbox', (a) => flat(a).filter(truthy).length % 2 === 1);
 def('NOT', [1, 1], 'checkbox', (a) => !truthy(a[0]));
 def('BLANK', [0, 0], 'text', () => null);
 def('ERROR', [0, 1], 'text', (a) => {
-  throw new FormulaError(a[0] ? toStr(a[0]) : 'Error');
+  throw new FormulaError(a[0] ? toStr(a[0]) : '错误');
 });
 /**
  * Errors IFERROR and ISERROR pass on: a reference cycle (or the result
@@ -549,14 +549,14 @@ def('FLOOR', [1, 2], 'number', (a) => {
 def('INT', [1, 1], 'number', num1(Math.floor));
 def('MOD', [2, 2], 'number', (a) => {
   const d = toNum(a[1]);
-  if (d === 0) throw new FormulaError('Division by zero', '#DIV/0');
+  if (d === 0) throw new FormulaError('除以零', '#DIV/0');
   const v = toNum(a[0]) % d;
   return v !== 0 && Math.sign(v) !== Math.sign(d) ? v + d : v;
 });
 def('POWER', [2, 2], 'number', (a) => toNum(a[0]) ** toNum(a[1]));
 def('SQRT', [1, 1], 'number', (a) => {
   const v = toNum(a[0]);
-  if (v < 0) throw new FormulaError('Square root of a negative number', '#NUM');
+  if (v < 0) throw new FormulaError('负数不能开平方根', '#NUM');
   return Math.sqrt(v);
 });
 def('EXP', [1, 1], 'number', num1(Math.exp));
@@ -590,7 +590,7 @@ def('COUNTA', [1, -1], 'number', (a) => flat(a).filter((v) => !isBlank(v)).lengt
 def('COUNTALL', [1, -1], 'number', (a) => flat(a).length);
 def('VALUE', [1, 1], 'number', (a) => {
   const n = toNum(a[0]);
-  if (Number.isNaN(n)) throw new FormulaError(`Not a number: ${toStr(a[0])}`, '#VALUE');
+  if (Number.isNaN(n)) throw new FormulaError(`不是有效数字：${toStr(a[0])}`, '#VALUE');
   return n;
 });
 
@@ -649,7 +649,7 @@ function regex(p, flags = '') {
   try {
     return new RegExp(src, flags);
   } catch {
-    throw new FormulaError('Invalid regular expression', '#VALUE');
+    throw new FormulaError('无效的正则表达式', '#VALUE');
   }
 }
 def('REGEX_MATCH', [2, 2], 'checkbox', (a) => regex(a[1]).test(toStr(a[0])));
@@ -747,7 +747,7 @@ def('WORKDAY', [2, 3], 'date', (a) => {
   const holidays = holidaySet(a[2]);
   let n = Math.trunc(toNum(a[1]));
   // About a hundred years of workdays, as WORKDAY_DIFF allows.
-  if (!Number.isFinite(n) || Math.abs(n) > 26100) throw new FormulaError('Too many workdays', '#NUM');
+  if (!Number.isFinite(n) || Math.abs(n) > 26100) throw new FormulaError('工作日数过多', '#NUM');
   const step = n < 0 ? -1 : 1;
   const out = new Date(d.getFullYear(), d.getMonth(), d.getDate());
   while (n !== 0) {
@@ -767,7 +767,7 @@ def('WORKDAY_DIFF', [2, 3], 'number', (a) => {
   let count = 0;
   const d = new Date(from.getFullYear(), from.getMonth(), from.getDate());
   const end = new Date(to.getFullYear(), to.getMonth(), to.getDate());
-  if (Math.round((end - d) / 86400000) > 36600) throw new FormulaError('Date range too large', '#NUM');
+  if (Math.round((end - d) / 86400000) > 36600) throw new FormulaError('日期范围过大', '#NUM');
   while (d <= end) {
     if (isWorkday(d, holidays)) count++;
     d.setDate(d.getDate() + 1);
@@ -829,39 +829,39 @@ export const FUNCTIONS = F;
 
 /** Help text for the formula editor, grouped by category. */
 export const FUNCTION_HELP = {
-  Logical: {
-    IF: 'IF(condition, value if true, value if false)', SWITCH: 'SWITCH(expression, pattern, result, ..., default)',
-    AND: 'AND(a, b, ...)', OR: 'OR(a, b, ...)', XOR: 'XOR(a, b, ...)', NOT: 'NOT(value)', BLANK: 'BLANK()',
-    ERROR: 'ERROR(message)', ISERROR: 'ISERROR(expression)', IFERROR: 'IFERROR(expression, fallback)', ISBLANK: 'ISBLANK(value)',
+  逻辑函数: {
+    IF: 'IF(条件, 为真时的值, 为假时的值)', SWITCH: 'SWITCH(表达式, 匹配值, 结果, ..., 默认值)',
+    AND: 'AND(a, b, ...)', OR: 'OR(a, b, ...)', XOR: 'XOR(a, b, ...)', NOT: 'NOT(值)', BLANK: 'BLANK()',
+    ERROR: 'ERROR(提示信息)', ISERROR: 'ISERROR(表达式)', IFERROR: 'IFERROR(表达式, 备用值)', ISBLANK: 'ISBLANK(值)',
   },
-  Numeric: {
-    ABS: 'ABS(number)', ROUND: 'ROUND(number, digits)', ROUNDUP: 'ROUNDUP(number, digits)', ROUNDDOWN: 'ROUNDDOWN(number, digits)',
-    CEILING: 'CEILING(number, significance)', FLOOR: 'FLOOR(number, significance)', INT: 'INT(number)', MOD: 'MOD(number, divisor)',
-    POWER: 'POWER(base, exponent)', SQRT: 'SQRT(number)', EXP: 'EXP(power)', LOG: 'LOG(number, base)', LN: 'LN(number)',
-    EVEN: 'EVEN(number)', ODD: 'ODD(number)', SUM: 'SUM(a, b, ...)', AVERAGE: 'AVERAGE(a, b, ...)', MAX: 'MAX(a, b, ...)',
-    MIN: 'MIN(a, b, ...)', COUNT: 'COUNT(a, b, ...)', COUNTA: 'COUNTA(a, b, ...)', COUNTALL: 'COUNTALL(a, b, ...)', VALUE: 'VALUE(text)',
+  数学函数: {
+    ABS: 'ABS(数字)', ROUND: 'ROUND(数字, 小数位数)', ROUNDUP: 'ROUNDUP(数字, 小数位数)', ROUNDDOWN: 'ROUNDDOWN(数字, 小数位数)',
+    CEILING: 'CEILING(数字, 基数)', FLOOR: 'FLOOR(数字, 基数)', INT: 'INT(数字)', MOD: 'MOD(被除数, 除数)',
+    POWER: 'POWER(底数, 指数)', SQRT: 'SQRT(数字)', EXP: 'EXP(幂)', LOG: 'LOG(数字, 底数)', LN: 'LN(数字)',
+    EVEN: 'EVEN(数字)', ODD: 'ODD(数字)', SUM: 'SUM(a, b, ...)', AVERAGE: 'AVERAGE(a, b, ...)', MAX: 'MAX(a, b, ...)',
+    MIN: 'MIN(a, b, ...)', COUNT: 'COUNT(a, b, ...)', COUNTA: 'COUNTA(a, b, ...)', COUNTALL: 'COUNTALL(a, b, ...)', VALUE: 'VALUE(文本)',
   },
-  Text: {
-    CONCATENATE: 'CONCATENATE(a, b, ...)', LEN: 'LEN(text)', LOWER: 'LOWER(text)', UPPER: 'UPPER(text)', TRIM: 'TRIM(text)',
-    LEFT: 'LEFT(text, count)', RIGHT: 'RIGHT(text, count)', MID: 'MID(text, start, count)', FIND: 'FIND(needle, text, start)',
-    SEARCH: 'SEARCH(needle, text, start)', SUBSTITUTE: 'SUBSTITUTE(text, old, new, index)', REPLACE: 'REPLACE(text, start, count, new)',
-    REPT: 'REPT(text, times)', T: 'T(value)', ENCODE_URL_COMPONENT: 'ENCODE_URL_COMPONENT(text)', REGEX_MATCH: 'REGEX_MATCH(text, pattern)',
-    REGEX_EXTRACT: 'REGEX_EXTRACT(text, pattern)', REGEX_REPLACE: 'REGEX_REPLACE(text, pattern, replacement)',
+  文本函数: {
+    CONCATENATE: 'CONCATENATE(a, b, ...)', LEN: 'LEN(文本)', LOWER: 'LOWER(文本)', UPPER: 'UPPER(文本)', TRIM: 'TRIM(文本)',
+    LEFT: 'LEFT(文本, 字符数)', RIGHT: 'RIGHT(文本, 字符数)', MID: 'MID(文本, 起始位置, 字符数)', FIND: 'FIND(查找内容, 文本, 起始位置)',
+    SEARCH: 'SEARCH(查找内容, 文本, 起始位置)', SUBSTITUTE: 'SUBSTITUTE(文本, 原文本, 新文本, 替换序号)', REPLACE: 'REPLACE(文本, 起始位置, 字符数, 新文本)',
+    REPT: 'REPT(文本, 重复次数)', T: 'T(值)', ENCODE_URL_COMPONENT: 'ENCODE_URL_COMPONENT(文本)', REGEX_MATCH: 'REGEX_MATCH(文本, 正则表达式)',
+    REGEX_EXTRACT: 'REGEX_EXTRACT(文本, 正则表达式)', REGEX_REPLACE: 'REGEX_REPLACE(文本, 正则表达式, 替换内容)',
   },
-  Date: {
-    TODAY: 'TODAY()', NOW: 'NOW()', DATEADD: 'DATEADD(date, count, "days")', DATETIME_DIFF: 'DATETIME_DIFF(date1, date2, "days")',
-    DATETIME_FORMAT: 'DATETIME_FORMAT(date, "YYYY-MM-DD")', DATETIME_PARSE: 'DATETIME_PARSE(text)', DATESTR: 'DATESTR(date)',
-    YEAR: 'YEAR(date)', MONTH: 'MONTH(date)', DAY: 'DAY(date)', HOUR: 'HOUR(date)', MINUTE: 'MINUTE(date)', SECOND: 'SECOND(date)',
-    WEEKDAY: 'WEEKDAY(date, "Monday")', WEEKNUM: 'WEEKNUM(date)', WORKDAY: 'WORKDAY(start, days, holidays)',
-    WORKDAY_DIFF: 'WORKDAY_DIFF(start, end, holidays)', IS_BEFORE: 'IS_BEFORE(date1, date2)', IS_AFTER: 'IS_AFTER(date1, date2)',
-    IS_SAME: 'IS_SAME(date1, date2, "day")', TONOW: 'TONOW(date, "days")', FROMNOW: 'FROMNOW(date, "days")',
+  日期函数: {
+    TODAY: 'TODAY()', NOW: 'NOW()', DATEADD: 'DATEADD(日期, 数量, "days")', DATETIME_DIFF: 'DATETIME_DIFF(日期1, 日期2, "days")',
+    DATETIME_FORMAT: 'DATETIME_FORMAT(日期, "YYYY-MM-DD")', DATETIME_PARSE: 'DATETIME_PARSE(文本)', DATESTR: 'DATESTR(日期)',
+    YEAR: 'YEAR(日期)', MONTH: 'MONTH(日期)', DAY: 'DAY(日期)', HOUR: 'HOUR(日期)', MINUTE: 'MINUTE(日期)', SECOND: 'SECOND(日期)',
+    WEEKDAY: 'WEEKDAY(日期, "Monday")', WEEKNUM: 'WEEKNUM(日期)', WORKDAY: 'WORKDAY(开始日期, 天数, 节假日)',
+    WORKDAY_DIFF: 'WORKDAY_DIFF(开始日期, 结束日期, 节假日)', IS_BEFORE: 'IS_BEFORE(日期1, 日期2)', IS_AFTER: 'IS_AFTER(日期1, 日期2)',
+    IS_SAME: 'IS_SAME(日期1, 日期2, "day")', TONOW: 'TONOW(日期, "days")', FROMNOW: 'FROMNOW(日期, "days")',
     CREATED_TIME: 'CREATED_TIME()', LAST_MODIFIED_TIME: 'LAST_MODIFIED_TIME()',
   },
-  Array: {
-    ARRAYJOIN: 'ARRAYJOIN(values, separator)', ARRAYUNIQUE: 'ARRAYUNIQUE(values)', ARRAYCOMPACT: 'ARRAYCOMPACT(values)',
-    ARRAYFLATTEN: 'ARRAYFLATTEN(values)', ARRAYSLICE: 'ARRAYSLICE(values, start, end)',
+  数组函数: {
+    ARRAYJOIN: 'ARRAYJOIN(值列表, 分隔符)', ARRAYUNIQUE: 'ARRAYUNIQUE(值列表)', ARRAYCOMPACT: 'ARRAYCOMPACT(值列表)',
+    ARRAYFLATTEN: 'ARRAYFLATTEN(值列表)', ARRAYSLICE: 'ARRAYSLICE(值列表, 起始位置, 结束位置)',
   },
-  Record: { RECORD_ID: 'RECORD_ID()' },
+  记录函数: { RECORD_ID: 'RECORD_ID()' },
 };
 
 /* -------------------------------------------------------------- compile */
@@ -910,7 +910,7 @@ function arith(op, a, b) {
     case '*':
       return x * y;
     case '/':
-      if (y === 0) throw new FormulaError('Division by zero', '#DIV/0');
+      if (y === 0) throw new FormulaError('除以零', '#DIV/0');
       return x / y;
     default:
       return null;
@@ -919,7 +919,7 @@ function arith(op, a, b) {
 
 /** Arithmetic that gives no number ("abc" * 2, LOG(0)) is #NUM, not NaN inside text. */
 function finite(v) {
-  if (typeof v === 'number' && !Number.isFinite(v)) throw new FormulaError('The result is not a finite number', '#NUM');
+  if (typeof v === 'number' && !Number.isFinite(v)) throw new FormulaError('计算结果不是有限数值', '#NUM');
   return v;
 }
 
@@ -974,7 +974,7 @@ export function compile(ast) {
       return (ctx) => f.fn(args.map((g) => g(ctx)), ctx);
     }
     default:
-      throw new FormulaError('Bad formula');
+      throw new FormulaError('无效的公式');
   }
 }
 

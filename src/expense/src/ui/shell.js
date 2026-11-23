@@ -15,15 +15,15 @@ import { settingsView, confirmSignOut, canSignOut } from '../views/settings.js';
 /* Four destinations on the mobile tab bar plus More; routes marked tab: false
    live in the More sheet there. The desktop sidebar shows everything. */
 export const ROUTES = [
-  { hash: '#/', label: 'Home', icon: 'home', view: dashboardView, key: 'h' },
-  { hash: '#/expenses', label: 'Expenses', icon: 'receipt', view: expensesView, key: 'e' },
-  { hash: '#/reports', label: 'Reports', icon: 'folder', view: reportsView, key: 'r' },
-  { hash: '#/reconcile', label: 'Reconcile', icon: 'scale', view: reconcileView, key: 'c' },
-  { hash: '#/settings', label: 'Settings', icon: 'gear', view: settingsView, tab: false, key: 's' },
+  { hash: '#/', label: '首页', icon: 'home', view: dashboardView, key: 'h' },
+  { hash: '#/expenses', label: '费用', icon: 'receipt', view: expensesView, key: 'e' },
+  { hash: '#/reports', label: '报销单', icon: 'folder', view: reportsView, key: 'r' },
+  { hash: '#/reconcile', label: '对账', icon: 'scale', view: reconcileView, key: 'c' },
+  { hash: '#/settings', label: '设置', icon: 'gear', view: settingsView, tab: false, key: 's' },
 ];
 
 const MORE_SUBS = {
-  '#/settings': 'Account, appearance, categories, and your data',
+  '#/settings': '账户、外观、分类与您的数据',
 };
 
 /** Match "#/reports/abc" to the reports route and expose the id as a param. */
@@ -48,27 +48,27 @@ export function mountShell(appRoot) {
     if (!store.settings.sampleData) return;
     sampleBanner.append(el('div.banner', {},
       el('span', { html: icon('sparkle', 15, 2.2) }),
-      el('span.grow', {}, 'Sample data: explore freely, nothing here is yours'),
+      el('span.grow', {}, '示例数据：欢迎随意体验，此处并非您的真实数据'),
       el('button', {
         type: 'button',
         onclick: async () => {
           const ok = await confirmDialog({
-            title: 'Start fresh?',
-            message: 'All sample data is removed and you set up your own expenses from scratch.',
-            confirmLabel: 'Wipe sample data',
+            title: '重新开始？',
+            message: '所有示例数据将被清除，您可以从头开始设置自己的费用数据。',
+            confirmLabel: '清除示例数据',
           });
           if (!ok) return;
           try {
             await wipeSampleData(store);
           } catch (err) {
             console.error(err);
-            toast('Couldn’t wipe. Check your connection', { icon: 'wifiOff' });
+            toast('无法清除，请检查网络连接', { icon: 'wifiOff' });
             return;
           }
           location.hash = '#/';
           openOnboarding({ onCapture: () => openCapture() });
         },
-      }, 'Start fresh')
+      }, '重新开始')
     ));
   }
   store.addEventListener('change', renderSampleBanner);
@@ -94,36 +94,36 @@ export function mountShell(appRoot) {
   function navBadge(route) {
     const n = route.hash === '#/expenses' ? badges.expenses : route.hash === '#/reconcile' ? badges.reconcile : 0;
     if (!n) return null;
-    const label = route.hash === '#/expenses' ? `${n} not in a report` : `${n} statement line${n === 1 ? '' : 's'} to match`;
+    const label = route.hash === '#/expenses' ? `${n} 笔未加入报销单` : `${n} 条账单记录待匹配`;
     return el('span.nav-badge', { role: 'img', 'aria-label': label, title: label }, n > 99 ? '99+' : String(n));
   }
 
   /* Sidebar (desktop) */
-  const username = store.user?.username || 'Puter user';
+  const username = store.user?.username || 'Puter 用户';
   const sidebarNav = el('div', { style: { display: 'contents' } });
-  const sidebar = el('nav.sidebar', { 'aria-label': 'Main navigation' },
-    el('div.brand', {}, el('img', { src: './icons/icon-192.png', width: 28, height: 28, alt: '' }), 'Expenses'),
+  const sidebar = el('nav.sidebar', { 'aria-label': '主导航' },
+    el('div.brand', {}, el('img', { src: './icons/icon-192.png', width: 28, height: 28, alt: '' }), '费用报销'),
     sidebarNav,
     el('div.sidebar-spacer'),
     el('button.btn.btn-primary.sidebar-add', {
       type: 'button', html: icon('camera', 17, 2.2), 'aria-keyshortcuts': 'n',
       onclick: () => openCapture(),
-    }, ' Capture receipt'),
+    }, ' 采集票据'),
     el('div.sidebar-user', {},
       el('span.user-avatar', { 'aria-hidden': 'true' }, username.charAt(0).toUpperCase()),
       el('span.name', { title: username }, username),
       canSignOut() && el('button.icon-btn', {
-        type: 'button', html: icon('logout', 18, 2), 'aria-label': 'Sign out', title: 'Sign out', onclick: confirmSignOut,
+        type: 'button', html: icon('logout', 18, 2), 'aria-label': '退出登录', title: '退出登录', onclick: confirmSignOut,
       })
     )
   );
 
   /* Tab bar (mobile) */
-  const tabbar = el('nav.tabbar', { 'aria-label': 'Main navigation' });
+  const tabbar = el('nav.tabbar', { 'aria-label': '主导航' });
 
   function openMoreSheet() {
     const modal = openModal({
-      title: 'More',
+      title: '更多',
       content: el('div.settings-list', {},
         ROUTES.filter((r) => r.tab === false).map((r) =>
           el('a.settings-row.clickable', { href: r.hash, onclick: () => modal.close() },
@@ -161,7 +161,7 @@ export function mountShell(appRoot) {
       html: icon('more', 23, 1.8),
       'aria-haspopup': 'dialog',
       onclick: openMoreSheet,
-    }, el('span', {}, 'More')));
+    }, el('span', {}, '更多')));
   }
 
   function renderRoute() {
@@ -173,7 +173,7 @@ export function mountShell(appRoot) {
     currentView = route.view({ navigate, params });
     viewWrap.append(currentView);
     window.scrollTo({ top: 0 });
-    document.title = route === ROUTES[0] ? 'Expenses' : `${route.label}  Expenses`;
+    document.title = route === ROUTES[0] ? '费用报销' : `${route.label} · 费用报销`;
     if ((location.hash || '').includes('capture=1')) {
       history.replaceState(null, '', route.hash);
       setTimeout(() => openCapture(), 150);
@@ -181,11 +181,11 @@ export function mountShell(appRoot) {
   }
 
   const fab = el('button.fab', {
-    type: 'button', html: icon('camera', 26, 2), 'aria-label': 'Capture receipt', 'aria-keyshortcuts': 'n',
+    type: 'button', html: icon('camera', 26, 2), 'aria-label': '采集票据', 'aria-keyshortcuts': 'n',
     onclick: () => openCapture(),
   });
 
-  const skipLink = el('a.skip-link', { href: '#main' }, 'Skip to content');
+  const skipLink = el('a.skip-link', { href: '#main' }, '跳至主要内容');
   skipLink.addEventListener('click', (e) => {
     e.preventDefault();
     main.setAttribute('tabindex', '-1');

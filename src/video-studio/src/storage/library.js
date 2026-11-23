@@ -168,15 +168,15 @@ export class Library extends Emitter {
     try {
       raw = await this.backend.readJSON(`projects/${id}.json`);
     } catch (err) {
-      if (err instanceof SyntaxError) throw unreadable('This project file is damaged.');
+      if (err instanceof SyntaxError) throw unreadable('此项目文件已损坏。');
       throw err;
     }
-    if (!raw) throw unreadable('This project could not be found. It may have been deleted.');
+    if (!raw) throw unreadable('找不到此项目，可能已被删除。');
     let project;
     try {
       project = normalizeProject(raw);
     } catch (err) {
-      throw unreadable(err?.message || 'This project file is damaged.');
+      throw unreadable(err?.message || '此项目文件已损坏。');
     }
     // The file name is the id: a document without one (or with another) must still save back to this file.
     project.id = id;
@@ -459,7 +459,7 @@ export class Library extends Emitter {
       added: Date.now(),
       origin,
     });
-    if (info.soundUnsupported) onNote?.(`${source.name || 'This video'}: its sound can't be played in this browser, so it was added without sound.`);
+    if (info.soundUnsupported) onNote?.(`${source.name || '此视频'}：当前浏览器不支持播放其音频，已作为无声视频添加。`);
     this.blobs.set(hash, file);
     this._store(asset, file);
     this.emit('media-available', { hash });
@@ -474,7 +474,7 @@ export class Library extends Emitter {
   async addMediaBlob(fields, blob) {
     const hash = await fingerprint(blob);
     const asset = normalizeAsset({ id: uid('a'), added: Date.now(), ...fields, hash, size: blob.size });
-    if (!asset) throw new Error(`Unsupported media: ${fields?.name || 'file'}`);
+    if (!asset) throw new Error(`不支持的媒体格式：${fields?.name || '文件'}`);
     const typed = asset.mime && blob.type !== asset.mime ? new Blob([blob], { type: asset.mime }) : blob;
     this.blobs.set(hash, typed);
     this.emit('media-available', { hash });
@@ -599,7 +599,7 @@ export class Library extends Emitter {
     }
     if (!blob) {
       blob = await this.backend.readBlob(path);
-      if (!blob) throw new Error(`Media file missing: ${asset.name}`);
+      if (!blob) throw new Error(`媒体文件缺失：${asset.name}`);
       if (asset.mime && blob.type !== asset.mime) blob = new Blob([blob], { type: asset.mime });
       if (this.cache) this.cache.writeBlob(path, blob).catch(() => {});
     }
@@ -769,7 +769,7 @@ export class AutoSaver extends Emitter {
     const stall = setTimeout(() => {
       if (!this.saving) return;
       this.stalled = true;
-      this.error = new Error('Saving is taking too long. Check your connection.');
+      this.error = new Error('保存耗时过长，请检查您的网络连接。');
       this._set('error', this.error);
       wake();
     }, STALL_MS);

@@ -50,25 +50,25 @@ const MAX_ROWS = 500;
 const CROSS_SORTS = LIST_SORTS.filter((s) => s.key !== 'column');
 
 const HEADERS = [
-  { label: 'Project', cls: 'col-proj' },
-  { label: 'Task', sort: 'title', cls: 'col-task' },
-  { label: 'Column', cls: 'col-col' },
-  { label: 'Due', sort: 'due', cls: 'col-due' },
-  { label: 'Priority', sort: 'priority', cls: 'col-prio' },
-  { label: 'Assignees', cls: 'col-people' },
-  { label: 'Labels', cls: 'col-labels' },
-  { label: 'Milestone', cls: 'col-ms' },
-  { label: 'Updated', sort: 'updated', cls: 'col-when' },
+  { label: '项目', cls: 'col-proj' },
+  { label: '任务', sort: 'title', cls: 'col-task' },
+  { label: '分栏', cls: 'col-col' },
+  { label: '截止日期', sort: 'due', cls: 'col-due' },
+  { label: '优先级', sort: 'priority', cls: 'col-prio' },
+  { label: '负责人', cls: 'col-people' },
+  { label: '标签', cls: 'col-labels' },
+  { label: '里程碑', cls: 'col-ms' },
+  { label: '更新时间', sort: 'updated', cls: 'col-when' },
 ];
 
-const plural = (n) => (n === 1 ? 'task' : 'tasks');
+const plural = () => '个任务';
 
 /** Why an action that only makes sense inside one project is not offered. */
 const PROJECT_SCOPED = {
-  column: 'Columns belong to one project, so there is no column to move to across projects',
-  label: 'Labels belong to one project, so the same label cannot be set across projects',
-  assignee: 'Members belong to one project, so the same person cannot be assigned across projects',
-  milestone: 'Milestones belong to one project, so one cannot be set across projects',
+  column: '分栏仅属于单个项目，因此无法跨项目移动到同一分栏',
+  label: '标签仅属于单个项目，因此无法跨项目设置同一标签',
+  assignee: '成员仅属于单个项目，因此无法跨项目指派同一负责人',
+  milestone: '里程碑仅属于单个项目，因此无法跨项目设置同一里程碑',
 };
 
 export function allTasksView() {
@@ -99,9 +99,9 @@ export function allTasksView() {
   let groups = [];
   let capped = 0;
 
-  const table = el('table.list-table', { 'aria-label': 'Tasks in every project' });
+  const table = el('table.list-table', { 'aria-label': '所有项目中的任务' });
   const scroller = el('div.list-scroll', {}, table);
-  const bulkBar = el('div.bulk-bar', { role: 'region', 'aria-label': 'Bulk actions' });
+  const bulkBar = el('div.bulk-bar', { role: 'region', 'aria-label': '批量操作' });
   const count = el('span.list-count', { role: 'status', 'aria-live': 'polite' });
   const note = el('p.form-hint.list-note');
   const offline = offlineNotice();
@@ -150,7 +150,7 @@ export function allTasksView() {
     'aria-expanded': 'false',
     onclick: () => openMenu(sortBtn, [
       ...CROSS_SORTS.map((s) => ({
-        label: s.key === 'board' ? 'Project order' : s.label,
+        label: s.key === 'board' ? '项目顺序' : s.label,
         checked: () => state.sort.key === s.key,
         onClick: () => {
           state.sort = { key: s.key, dir: s.key === state.sort.key ? state.sort.dir : 'asc' };
@@ -159,7 +159,7 @@ export function allTasksView() {
       })),
       'sep',
       {
-        label: state.sort.dir === 'desc' ? 'Ascending' : 'Descending',
+        label: state.sort.dir === 'desc' ? '升序' : '降序',
         icon: state.sort.dir === 'desc' ? 'arrowUp' : 'arrowDown',
         disabled: state.sort.key === 'board',
         onClick: () => {
@@ -173,18 +173,18 @@ export function allTasksView() {
   const root = el('section.view.list-view.all-view', {},
     el('header.view-head', {},
       menuButton(),
-      el('a.icon-btn.back-btn', { href: '#/', 'aria-label': 'All projects', html: icon('arrowL', 20, 2) }),
+      el('a.icon-btn.back-btn', { href: '#/', 'aria-label': '所有项目', html: icon('arrowL', 20, 2) }),
       el('div.grow', {},
-        el('h1.view-title', {}, 'All tasks'),
-        el('p.form-hint.today-date', {}, 'Every project, in one list')
+        el('h1.view-title', {}, '所有任务'),
+        el('p.form-hint.today-date', {}, '所有项目汇总于同一列表')
       )
     ),
     offline,
     savedViews,
     bar,
     el('div.list-toolbar', {},
-      el('span.list-toolbar-label', {}, 'Group'), groupBtn,
-      el('span.list-toolbar-label', {}, 'Sort'), sortBtn,
+      el('span.list-toolbar-label', {}, '分组'), groupBtn,
+      el('span.list-toolbar-label', {}, '排序'), sortBtn,
       el('span.grow'),
       count
     ),
@@ -287,8 +287,8 @@ export function allTasksView() {
         dataset: { cell: 'due' },
         className: `list-cell-btn${tone}${task.dueDate ? '' : ' empty'}`,
         'aria-label': task.dueDate
-          ? `Due ${fmtLong(task.dueDate)}. Change the due date`
-          : `Set a due date for ${task.title}`,
+          ? `截止于 ${fmtLong(task.dueDate)}。更改截止日期`
+          : `为 ${task.title} 设置截止日期`,
         onclick: showInput,
       }, task.dueDate ? fmtShort(task.dueDate) : '—');
       cell.replaceChildren(btn);
@@ -299,7 +299,7 @@ export function allTasksView() {
       const input = el('input.list-inline.list-due', {
         type: 'date',
         value: task.dueDate || '',
-        'aria-label': `Due date for ${task.title}`,
+        'aria-label': `${task.title} 的截止日期`,
         dataset: { cell: 'due' },
         onchange: () => store.updateTask(projectId, task.id, { dueDate: input.value || null }),
         onblur: () => { if (input.isConnected) showButton(); },
@@ -318,7 +318,7 @@ export function allTasksView() {
 
   function priorityCell(task, projectId) {
     return el('select.list-inline', {
-      'aria-label': `Priority for ${task.title}`,
+      'aria-label': `${task.title} 的优先级`,
       dataset: { cell: 'priority' },
       className: `list-inline${task.priority ? ` list-prio-${task.priority}` : ''}`,
       onchange: (e) => store.updateTask(projectId, task.id, { priority: e.target.value || null }),
@@ -349,12 +349,12 @@ export function allTasksView() {
         el('input.list-check', {
           type: 'checkbox',
           checked: selected.has(task.id),
-          'aria-label': `Select ${task.title}`,
+          'aria-label': `选择 ${task.title}`,
           onclick: (e) => onRowCheck(task, e),
         })
       ),
       el('td.col-proj', {},
-        el('a.list-project', { href: `#/p/${entry.id}`, title: `Open ${entry.name}` },
+        el('a.list-project', { href: `#/p/${entry.id}`, title: `打开 ${entry.name}` },
           el('span.dot', { style: { background: entry.color }, 'aria-hidden': 'true' }),
           el('span.list-project-name', {}, entry.name)
         )
@@ -365,10 +365,10 @@ export function allTasksView() {
           dataset: { cell: 'title' },
           className: `list-title${isDone ? ' done' : ''}`,
           onclick: () => openTaskSheet(entry.id, task.id),
-        }, task.title || 'Untitled task'),
+        }, task.title || '无标题任务'),
         isRecurring(task) && el('span.list-flag', {
-          html: icon('repeat', 12, 2), title: 'Repeats when done', role: 'img',
-          'aria-label': 'Repeats when done',
+          html: icon('repeat', 12, 2), title: '完成后重复', role: 'img',
+          'aria-label': '完成后重复',
         })
       ),
       // Read-only across projects: a column belongs to one board.
@@ -382,7 +382,7 @@ export function allTasksView() {
         ? el('span.list-labels', {}, labels.map((l) => labelChip(l)))
         : dash()),
       el('td.col-ms', {}, milestone
-        ? el('span.list-ms', { title: `${milestone.name}: ${fmtLong(milestone.date)}` },
+        ? el('span.list-ms', { title: `${milestone.name}：${fmtLong(milestone.date)}` },
           el('span.list-ms-ic', { html: icon('flag', 12, 2), 'aria-hidden': 'true' }),
           milestone.name)
         : dash()),
@@ -406,8 +406,8 @@ export function allTasksView() {
         type: 'button',
         className: `list-sort${active ? ' active' : ''}`,
         title: active
-          ? (dir === 'asc' ? 'Sort descending' : 'Back to project order')
-          : `Sort by ${h.label.toLowerCase()}`,
+          ? (dir === 'asc' ? '降序排列' : '返回项目顺序')
+          : `按${h.label}排序`,
         onclick: () => {
           state.sort = !active ? { key: h.sort, dir: 'asc' }
             : dir === 'asc' ? { key: h.sort, dir: 'desc' }
@@ -437,7 +437,7 @@ export function allTasksView() {
     const all = everythingSelected();
     box.checked = all;
     box.indeterminate = selected.size > 0 && !all;
-    box.setAttribute('aria-label', all ? 'Clear selection' : 'Select every task shown');
+    box.setAttribute('aria-label', all ? '清除选择' : '全选显示的任务');
   }
 
   function headEl() {
@@ -467,7 +467,7 @@ export function allTasksView() {
     toast(message, {
       icon: 'listTodo',
       duration: 7000,
-      action: undo ? { label: 'Undo', onClick: undo } : null,
+      action: undo ? { label: '撤销', onClick: undo } : null,
     });
   }
 
@@ -484,7 +484,7 @@ export function allTasksView() {
       before.set(projectId, snapshot(list, keys));
       store.bulkUpdateTasks(projectId, list.map((t) => t.id), patch);
     }
-    done(`${tasks.length} ${plural(tasks.length)} ${label}`, () => {
+    done(`${tasks.length} ${plural(tasks.length)}${label}`, () => {
       for (const [projectId, patches] of before) store.bulkPatchTasks(projectId, patches);
     });
   }
@@ -494,26 +494,26 @@ export function allTasksView() {
     const set = (iso) => bulkEdit({
       patch: { dueDate: iso },
       keys: ['dueDate'],
-      label: iso ? `due ${fmtShort(iso)}` : 'left without a due date',
+      label: iso ? `截止于 ${fmtShort(iso)}` : '已清除截止日期',
     });
     openMenu(anchor, [
-      { label: 'Today', onClick: () => set(today) },
-      { label: 'Tomorrow', onClick: () => set(addDays(today, 1)) },
-      { label: 'In a week', onClick: () => set(addDays(today, 7)) },
+      { label: '今天', onClick: () => set(today) },
+      { label: '明天', onClick: () => set(addDays(today, 1)) },
+      { label: '一周后', onClick: () => set(addDays(today, 7)) },
       {
-        label: 'Pick a date…',
+        label: '选择日期…',
         onClick: async () => {
           const value = await promptDialog({
-            title: `Due date for ${selected.size} ${plural(selected.size)}`,
-            label: 'Due date',
+            title: `${selected.size} ${plural(selected.size)}的截止日期`,
+            label: '截止日期',
             type: 'date',
-            confirmLabel: 'Set due date',
+            confirmLabel: '设置截止日期',
           });
           if (value) set(value);
         },
       },
       'sep',
-      { label: 'Clear due date', onClick: () => set(null) },
+      { label: '清除截止日期', onClick: () => set(null) },
     ]);
   }
 
@@ -536,28 +536,28 @@ export function allTasksView() {
         onclick: onClick,
       }, ` ${label}`);
 
-    const dueBtn = action('Due', 'calendar', () => dueMenu(dueBtn));
+    const dueBtn = action('截止日期', 'calendar', () => dueMenu(dueBtn));
 
-    const prioBtn = action('Priority', 'medium', () => openMenu(prioBtn, [
+    const prioBtn = action('优先级', 'medium', () => openMenu(prioBtn, [
       ...PRIORITIES.map((p) => ({
         label: p.label,
         prefix: el('span.filter-prio', { html: icon(p.value, 13, 2.2), 'aria-hidden': 'true' }),
         onClick: () => bulkEdit({
-          patch: { priority: p.value }, keys: ['priority'], label: `set to ${p.label}`,
+          patch: { priority: p.value }, keys: ['priority'], label: `设为${p.label}`,
         }),
       })),
       'sep',
       {
-        label: 'No priority',
+        label: '无优先级',
         onClick: () => bulkEdit({
-          patch: { priority: null }, keys: ['priority'], label: 'left without a priority',
+          patch: { priority: null }, keys: ['priority'], label: '已清除优先级',
         }),
       },
     ]));
 
-    const moreBtn = action('More', 'more', () => openMenu(moreBtn, [
+    const moreBtn = action('更多', 'more', () => openMenu(moreBtn, [
       {
-        label: 'Duplicate',
+        label: '复制',
         icon: 'copy',
         onClick: () => {
           const copies = new Map();
@@ -570,7 +570,7 @@ export function allTasksView() {
           selected.clear();
           for (const ids of copies.values()) for (const id of ids) selected.add(id);
           render();
-          done(`${total} ${plural(total)} duplicated`, () => {
+          done(`已复制 ${total} ${plural(total)}`, () => {
             // A copy that never existed does not belong in the trash.
             for (const [projectId, ids] of copies) {
               store.bulkDeleteTasks(projectId, ids);
@@ -580,7 +580,7 @@ export function allTasksView() {
         },
       },
       {
-        label: 'Archive',
+        label: '归档',
         icon: 'archive',
         onClick: () => {
           const archived = new Map();
@@ -591,7 +591,7 @@ export function allTasksView() {
             total += ids.length;
           }
           selected.clear();
-          done(`${total} ${plural(total)} archived`, () => {
+          done(`已归档 ${total} ${plural(total)}`, () => {
             for (const [projectId, ids] of archived) {
               store.bulkRestoreTasks(projectId, ids, 'archive');
             }
@@ -600,7 +600,7 @@ export function allTasksView() {
       },
       'sep',
       {
-        label: 'Delete',
+        label: '删除',
         icon: 'trash',
         danger: true,
         onClick: () => {
@@ -612,7 +612,7 @@ export function allTasksView() {
             total += ids.length;
           }
           selected.clear();
-          done(`${total} ${plural(total)} moved to trash`, () => {
+          done(`已将 ${total} ${plural(total)}移至回收站`, () => {
             for (const [projectId, ids] of deleted) {
               store.bulkRestoreTasks(projectId, ids, 'trash');
             }
@@ -622,19 +622,19 @@ export function allTasksView() {
     ]));
 
     bulkBar.append(
-      el('span.bulk-count', {}, `${selected.size} selected`),
+      el('span.bulk-count', {}, `已选 ${selected.size} 项`),
       el('div.bulk-actions', {},
         dueBtn,
         prioBtn,
-        action('Move to', 'board', null, PROJECT_SCOPED.column),
-        action('Labels', 'tag', null, PROJECT_SCOPED.label),
-        action('Assign', 'users', null, PROJECT_SCOPED.assignee),
+        action('移动到', 'board', null, PROJECT_SCOPED.column),
+        action('标签', 'tag', null, PROJECT_SCOPED.label),
+        action('指派', 'users', null, PROJECT_SCOPED.assignee),
         moreBtn
       ),
       el('button.btn.btn-ghost.btn-sm.bulk-clear', {
         type: 'button',
         onclick: () => { selected.clear(); lastClicked = null; syncSelection(); },
-      }, 'Clear')
+      }, '清除')
     );
   }
 
@@ -652,7 +652,7 @@ export function allTasksView() {
         // A column name shared by several boards says so, so nobody reads one
         // group as one project's column.
         group.projects?.length > 1 && el('span.list-group-scope', {},
-          `${group.projects.length} projects`),
+          `${group.projects.length} 个项目`),
         el('span.list-group-count', {}, String(group.tasks.length))
       )
     );
@@ -665,8 +665,8 @@ export function allTasksView() {
 
     groupBtn.textContent = CROSS_GROUPS.find((g) => g.key === state.group).label;
     const sortLabel = state.sort.key === 'board'
-      ? 'Project order'
-      : CROSS_SORTS.find((s) => s.key === state.sort.key)?.label ?? 'Project order';
+      ? '项目顺序'
+      : CROSS_SORTS.find((s) => s.key === state.sort.key)?.label ?? '项目顺序';
     sortBtn.textContent = state.sort.key === 'board'
       ? sortLabel
       : `${sortLabel} ${state.sort.dir === 'desc' ? '↓' : '↑'}`;
@@ -674,21 +674,21 @@ export function allTasksView() {
     clear(table);
     if (!rows.length) {
       table.append(el('tbody', {}, el('tr', {}, el('td', { colSpan: HEADERS.length + 1 },
-        pending ? el('div.view-loading', { role: 'status', 'aria-label': 'Loading your projects' },
+        pending ? el('div.view-loading', { role: 'status', 'aria-label': '正在加载您的项目' },
           el('span.spinner'))
           : isFilterActive(filter)
             ? emptyState({
               icon: 'search',
-              title: 'No tasks match the filter',
-              sub: 'Clear a facet above, or widen the search.',
-              action: el('button.btn.btn-ghost.btn-sm', { onclick: () => bar.reset() }, 'Clear filters'),
+              title: '没有匹配筛选条件的任务',
+              sub: '请清除上方的筛选条件，或放宽搜索范围。',
+              action: el('button.btn.btn-ghost.btn-sm', { onclick: () => bar.reset() }, '清除筛选'),
             })
             : emptyState({
               icon: 'listTodo',
-              title: store.projects.length ? 'No tasks yet' : 'No projects yet',
+              title: store.projects.length ? '暂无任务' : '暂无项目',
               sub: store.projects.length
-                ? 'Add tasks on any board and every one of them shows up here.'
-                : 'Create a project and its work lands in this list.',
+                ? '在任意看板上添加任务后，所有任务都会显示在这里。'
+                : '创建项目后，其中的工作将显示在此列表中。',
             })
       ))));
     } else {
@@ -702,21 +702,19 @@ export function allTasksView() {
     }
 
     count.textContent = pending
-      ? `${rows.length} of ${total} ${plural(total)} · loading ${pending} more`
+      ? `${rows.length}/${total} ${plural(total)} · 正在加载其余 ${pending} 个项目`
       : matched === total
-        ? `${total} ${plural(total)} in ${ctx.projects.length} project${ctx.projects.length === 1 ? '' : 's'}`
-        : `${matched} of ${total} ${plural(total)}`;
+        ? `共 ${ctx.projects.length} 个项目中的 ${total} ${plural(total)}`
+        : `${matched}/${total} ${plural(total)}`;
 
     // Nothing is dropped quietly: a cap and a failed read both say so.
     const notes = [];
     if (capped) {
-      notes.push(`Showing the first ${MAX_ROWS} of ${matched} matching tasks. `
-        + 'Narrow the filter to see the rest.');
+      notes.push(`正在显示 ${matched} 个匹配任务中的前 ${MAX_ROWS} 个。`
+        + '请收窄筛选范围以查看其余任务。');
     }
     if (failedIds.size) {
-      const one = failedIds.size === 1;
-      notes.push(`${failedIds.size} project${one ? '' : 's'} could not be read, so `
-        + `${one ? 'its' : 'their'} tasks are missing from this list.`);
+      notes.push(`有 ${failedIds.size} 个项目无法读取，因此其中的任务未显示在此列表中。`);
     }
     note.textContent = notes.join(' ');
     note.hidden = !notes.length;

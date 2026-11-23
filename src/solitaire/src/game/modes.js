@@ -12,13 +12,13 @@ import * as spider from './spider.js';
 // Every game the menu offers. `key` is what stats and the remembered choice
 // are filed under; klondike-1 is the original game and the default.
 export const MODES = [
-  { key: 'klondike-1', group: 'Klondike', label: 'Draw 1', game: 'klondike', opts: { draw: 1, scoring: 'standard' } },
-  { key: 'klondike-3', group: 'Klondike', label: 'Draw 3', game: 'klondike', opts: { draw: 3, scoring: 'standard' } },
-  { key: 'vegas-1', group: 'Vegas', label: 'Draw 1', game: 'klondike', opts: { draw: 1, scoring: 'vegas' } },
-  { key: 'vegas-3', group: 'Vegas', label: 'Draw 3', game: 'klondike', opts: { draw: 3, scoring: 'vegas' } },
-  { key: 'spider-1', group: 'Spider', label: '1 suit', game: 'spider', opts: { suits: 1 } },
-  { key: 'spider-2', group: 'Spider', label: '2 suits', game: 'spider', opts: { suits: 2 } },
-  { key: 'spider-4', group: 'Spider', label: '4 suits', game: 'spider', opts: { suits: 4 } },
+  { key: 'klondike-1', group: '经典接龙', label: '翻 1 张', game: 'klondike', opts: { draw: 1, scoring: 'standard' } },
+  { key: 'klondike-3', group: '经典接龙', label: '翻 3 张', game: 'klondike', opts: { draw: 3, scoring: 'standard' } },
+  { key: 'vegas-1', group: '维加斯', label: '翻 1 张', game: 'klondike', opts: { draw: 1, scoring: 'vegas' } },
+  { key: 'vegas-3', group: '维加斯', label: '翻 3 张', game: 'klondike', opts: { draw: 3, scoring: 'vegas' } },
+  { key: 'spider-1', group: '蜘蛛纸牌', label: '单花色', game: 'spider', opts: { suits: 1 } },
+  { key: 'spider-2', group: '蜘蛛纸牌', label: '双花色', game: 'spider', opts: { suits: 2 } },
+  { key: 'spider-4', group: '蜘蛛纸牌', label: '四花色', game: 'spider', opts: { suits: 4 } },
 ];
 
 export const DEFAULT_MODE = 'klondike-1';

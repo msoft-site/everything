@@ -97,7 +97,7 @@ function renderSpider(boardEl, game, layout) {
       e.style.left = (d * fanX) + 'px';
       stockPile.appendChild(e);
     }
-    stockPile.appendChild(stockCounter(deals === 1 ? '1 deal' : `${deals} deals`));
+    stockPile.appendChild(stockCounter(`${deals} 次发牌`));
   }
   hooks.attachStockTap(stockPile);
   top.appendChild(stockPile);

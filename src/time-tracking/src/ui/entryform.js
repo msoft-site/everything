@@ -15,7 +15,7 @@ import { parseAmount, fmtMoney } from '../lib/util.js';
 
 /* One wording for a bad duration, whether the field was left empty (the
    browser catches that) or holds something unparseable (this file does). */
-const DURATION_HINT = 'Enter a duration like 1:30, 90m, or 1.5h';
+const DURATION_HINT = '请输入时长，例如 1:30、90m 或 1.5h';
 
 /**
  * openEntryForm({ date, entry, prefill, onSaved })
@@ -34,7 +34,7 @@ export function openEntryForm({ date = todayISO(), entry = null, prefill = null,
   // select keeps the source entry's own project available as
   // "(archived)"), or old entries could never be fixed or reused again.
   if (!entry && !prefill && !store.activeProjects().length) {
-    toast('Add a client and a project first', { icon: 'folders' });
+    toast('请先添加客户和项目', { icon: 'folders' });
     location.hash = '#/projects';
     return;
   }
@@ -45,7 +45,7 @@ export function openEntryForm({ date = todayISO(), entry = null, prefill = null,
   const src = entry || prefill;
   const project = projectSelect(store, src?.projectId);
   const task = el('input.input', {
-    type: 'text', value: src?.task || '', placeholder: 'e.g. Design review',
+    type: 'text', value: src?.task || '', placeholder: '例如：设计评审',
     autocomplete: 'off', maxLength: 120, list: 'task-suggestions',
   });
   const taskList = el('datalist', { id: 'task-suggestions' });
@@ -55,7 +55,7 @@ export function openEntryForm({ date = todayISO(), entry = null, prefill = null,
     // h:mm:ss when the seconds don't fall on a minute (timer entries):
     // "1:30" would parse back to 1:30:00 and silently shave the rest off.
     value: src ? (src.seconds % 60 ? fmtTimer(src.seconds) : fmtClock(src.seconds)) : '',
-    placeholder: 'e.g. 1:30, 90m, or 1.5h',
+    placeholder: '例如：1:30、90m 或 1.5h',
     required: true,
   });
   const projectErr = fieldError(project);
@@ -63,8 +63,8 @@ export function openEntryForm({ date = todayISO(), entry = null, prefill = null,
   const durationErr = fieldError(duration);
   // The browser blocks an empty required field before the submit handler
   // runs, so these are the messages that field actually shows.
-  nativeError(project, projectErr, 'Pick a project for this entry');
-  nativeError(dateInput, dateErr, 'Pick the date this time was worked');
+  nativeError(project, projectErr, '请为此记录选择一个项目');
+  nativeError(dateInput, dateErr, '请选择工作日期');
   nativeError(duration, durationErr, DURATION_HINT);
   /* Optional clock times. Duration stays the source of truth for billing,
      so these only ever derive it (or derive from it): fill in a start and
@@ -162,17 +162,17 @@ export function openEntryForm({ date = todayISO(), entry = null, prefill = null,
     }
     const first = clashes[0];
     const project = store.project(first.projectId);
-    const name = [project?.name || 'another entry', first.task].filter(Boolean).join(' · ');
+    const name = [project?.name || '另一条记录', first.task].filter(Boolean).join(' · ');
     overlapNote.hidden = false;
     overlapNote.textContent = clashes.length === 1
-      ? `Overlaps ${name}, ${fmtTimeRange(first.startedAt, first.endedAt)}. Saving is fine if that is what happened.`
-      : `Overlaps ${clashes.length} entries, starting with ${name}. Saving is fine if that is what happened.`;
+      ? `与 ${name}（${fmtTimeRange(first.startedAt, first.endedAt)}）时间重叠。如果实际情况如此，可以直接保存。`
+      : `与 ${clashes.length} 条记录时间重叠（包括 ${name}）。如果实际情况如此，可以直接保存。`;
   }
   dateInput.addEventListener('change', () => { loadDay().catch(console.error); });
   loadDay().catch(console.error);
 
   const notes = el('textarea.input.textarea', { rows: 2, maxLength: 500 }, src?.notes || '');
-  const billable = switchField('Billable', src ? src.billable : true);
+  const billable = switchField('可计费', src ? src.billable : true);
   // Fresh work follows the selected project's default, like the timer
   // and week grid. Editing or duplicating preserves the entry's own
   // billing choice; the switch remains available for explicit overrides.
@@ -200,9 +200,9 @@ export function openEntryForm({ date = todayISO(), entry = null, prefill = null,
     const date = dateInput.value || todayISO();
     const resolved = store.resolveRate({ projectId, rate: null, date });
     const p = store.project(projectId);
-    const source = rateAt(p?.rate, date) != null ? 'Project rate'
-      : rateAt(store.client(p?.clientId)?.rate, date) != null ? 'Client rate'
-        : 'Default rate';
+    const source = rateAt(p?.rate, date) != null ? '项目费率'
+      : rateAt(store.client(p?.clientId)?.rate, date) != null ? '客户费率'
+        : '默认费率';
     rate.placeholder = `${source} (${fmtMoney(resolved, store.resolveCurrency({ projectId }))}/h)`;
   };
   project.addEventListener('change', setRatePlaceholder);
@@ -217,7 +217,7 @@ export function openEntryForm({ date = todayISO(), entry = null, prefill = null,
   project.addEventListener('change', refreshSuggestions);
   refreshSuggestions();
 
-  const save = el('button.btn.btn-primary.btn-block', { type: 'submit' }, isEdit ? 'Save changes' : 'Log time');
+  const save = el('button.btn.btn-primary.btn-block', { type: 'submit' }, isEdit ? '保存更改' : '记录工时');
 
   const form = el('form.form', {
     onsubmit: async (e) => {
@@ -271,31 +271,31 @@ export function openEntryForm({ date = todayISO(), entry = null, prefill = null,
       } catch (err) {
         console.error(err);
         save.disabled = false;
-        toast('Could not save, check your connection', { icon: 'wifiOff' });
+        toast('无法保存，请检查网络连接', { icon: 'wifiOff' });
         return;
       }
       modal.close();
-      toast(isEdit ? 'Entry updated' : `Logged ${fmtClock(seconds)}`);
+      toast(isEdit ? '记录已更新' : `已记录 ${fmtClock(seconds)}`);
       onSaved?.();
     },
   },
-    el('div', {}, field('Project', project), projectErr),
-    field('Task', task, { hint: 'Group work inside a project, reports can total by task.' }),
+    el('div', {}, field('项目', project), projectErr),
+    field('任务', task, { hint: '在项目内对工作进行分组，报表可按任务汇总。' }),
     taskList,
     el('div.form-grid', {},
-      el('div', {}, field('Date', dateInput), dateErr),
-      el('div', {}, field('Duration', duration), durationErr)
+      el('div', {}, field('日期', dateInput), dateErr),
+      el('div', {}, field('时长', duration), durationErr)
     ),
     el('div.form-grid', {},
-      field('Start', startTime),
-      field('End', endTime)
+      field('开始时间', startTime),
+      field('结束时间', endTime)
     ),
     el('p.field-hint', { style: { marginTop: '-4px' } },
-      'Optional. Fill in two of start, end, and duration and the third follows; clearing either time removes both.'),
+      '选填。填写开始时间、结束时间和时长中的任意两项，第三项将自动计算；清空任一时间将同时移除两项。'),
     overlapNote,
     billable,
-    el('div', {}, field('Custom hourly rate', rate, { hint: 'Leave empty to use the project, client, or default rate.' }), rateErr),
-    field('Notes', notes),
+    el('div', {}, field('自定义时薪费率', rate, { hint: '留空则使用项目、客户或默认费率。' }), rateErr),
+    field('备注', notes),
     save,
     isEdit && el('button.btn.btn-ghost.btn-block', {
       type: 'button',
@@ -305,13 +305,13 @@ export function openEntryForm({ date = todayISO(), entry = null, prefill = null,
         modal.close();
         openEntryForm({ prefill: entry, onSaved });
       },
-    }, ' Duplicate'),
+    }, ' 复制记录'),
     isEdit && el('button.btn.btn-ghost.btn-block.btn-danger-ghost', {
       type: 'button',
       onclick: async () => {
         const ok = await confirmDialog({
-          title: 'Delete entry?',
-          message: 'This time entry is removed from your timesheet.',
+          title: '删除记录？',
+          message: '此工时记录将从您的工时表中移除。',
         });
         if (!ok) return;
         let removed;
@@ -319,27 +319,27 @@ export function openEntryForm({ date = todayISO(), entry = null, prefill = null,
           removed = await store.deleteEntry(entry.id, entry.date);
         } catch (err) {
           console.error(err);
-          toast('Could not delete, check your connection', { icon: 'wifiOff' });
+          toast('无法删除，请检查网络连接', { icon: 'wifiOff' });
           return;
         }
         modal.close();
-        toast('Entry deleted', {
+        toast('记录已删除', {
           icon: 'trash',
           action: removed && {
-            label: 'Undo',
+            label: '撤销',
             // Restore the record itself (same id, createdAt, position),
             // like bulk delete does; re-adding through addEntry would
             // mint a new entry that sorts to the top of its day.
-            onClick: () => store.restoreEntries([removed]).catch(() => toast('Could not restore, check your connection', { icon: 'wifiOff' })),
+            onClick: () => store.restoreEntries([removed]).catch(() => toast('无法恢复，请检查网络连接', { icon: 'wifiOff' })),
           },
         });
         onSaved?.();
       },
-    }, 'Delete entry')
+    }, '删除记录')
   );
 
   const modal = openModal({
-    title: isEdit ? 'Edit entry' : prefill ? 'Duplicate entry' : 'Log time',
+    title: isEdit ? '编辑记录' : prefill ? '复制记录' : '记录工时',
     content: form,
   });
 }
@@ -369,7 +369,7 @@ function openLockedEntry(entry, onSaved) {
         modal.close();
         openInvoiceView(invoice);
       },
-    }, `View invoice ${invoiceNumber(invoice.number)}`)
+    }, `查看账单 ${invoiceNumber(invoice.number)}`)
     : el('button.btn.btn-ghost.btn-block', {
       type: 'button',
       style: { marginTop: '10px' },
@@ -380,36 +380,36 @@ function openLockedEntry(entry, onSaved) {
         } catch (err) {
           console.error(err);
           unlock.disabled = false;
-          toast('Could not unlock, check your connection', { icon: 'wifiOff' });
+          toast('无法解锁，请检查网络连接', { icon: 'wifiOff' });
           return;
         }
         modal.close();
         // Straight into the editable form on the thawed entry.
         openEntryForm({ entry: { ...entry, invoicedAt: null, lockedRate: null }, onSaved });
       },
-    }, 'Mark as not invoiced');
+    }, '标记为未开票');
 
   const body = el('div', {},
     el('div.locked-note', {},
       el('span.locked-note-ic', { html: icon('checkCheck', 18, 2) }),
       el('div', {},
         el('p.locked-note-title', {}, invoice
-          ? `On invoice ${invoiceNumber(invoice.number)}, issued ${fmtDay(invoice.issueDate, { year: true })}`
-          : `Invoiced on ${fmtDay(isoOf(new Date(entry.invoicedAt)), { year: true })}`),
+          ? `已计入账单 ${invoiceNumber(invoice.number)}，开具于 ${fmtDay(invoice.issueDate, { year: true })}`
+          : `已于 ${fmtDay(isoOf(new Date(entry.invoicedAt)), { year: true })} 开票`),
         el('p.locked-note-sub', {}, invoice
-          ? 'This entry is billed on an issued invoice, so it is locked. Void the invoice to edit or delete it.'
-          : 'This entry is part of a billed record, so it is locked. Un-mark it to edit or delete.')
+          ? '此记录已计入已开具的账单，因此处于锁定状态。如需编辑或删除，请先作废该账单。'
+          : '此记录属于已开票记录，因此处于锁定状态。取消标记后即可编辑或删除。')
       )
     ),
     el('div.entry-summary', {},
-      row('Project', [project?.name || 'No project', entry.task].filter(Boolean).join(' · ')),
-      row('Client', client?.name || 'No client'),
-      row('Date', fmtDay(entry.date, { year: true })),
-      entry.startedAt && entry.endedAt && row('Time', fmtTimeRange(entry.startedAt, entry.endedAt)),
-      row('Duration', fmtClock(entry.seconds)),
-      entry.billable && row('Rate', `${fmtMoney(store.effectiveRate(entry), currency)}/h (locked)`),
-      entry.billable && row('Amount', fmtMoney(store.entryAmount(entry), currency)),
-      entry.notes && row('Notes', entry.notes)
+      row('项目', [project?.name || '无项目', entry.task].filter(Boolean).join(' · ')),
+      row('客户', client?.name || '无客户'),
+      row('日期', fmtDay(entry.date, { year: true })),
+      entry.startedAt && entry.endedAt && row('时间', fmtTimeRange(entry.startedAt, entry.endedAt)),
+      row('时长', fmtClock(entry.seconds)),
+      entry.billable && row('费率', `${fmtMoney(store.effectiveRate(entry), currency)}/h（已锁定）`),
+      entry.billable && row('金额', fmtMoney(store.entryAmount(entry), currency)),
+      entry.notes && row('备注', entry.notes)
     ),
     // Reusing billed work is always allowed: the copy is a fresh,
     // unlocked entry, the billed record itself stays untouched.
@@ -420,9 +420,9 @@ function openLockedEntry(entry, onSaved) {
         modal.close();
         openEntryForm({ prefill: entry, onSaved });
       },
-    }, ' Duplicate as new entry'),
+    }, ' 复制为新记录'),
     unlock
   );
 
-  const modal = openModal({ title: 'Invoiced entry', content: body });
+  const modal = openModal({ title: '已开票记录', content: body });
 }

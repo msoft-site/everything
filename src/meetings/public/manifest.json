@@ -1,7 +1,7 @@
 {
-  "name": "Puter Meetings",
-  "short_name": "Meetings",
-  "description": "Free video meetings in your browser. No downloads, just a link you can share.",
+  "name": "Puter 视频会议",
+  "short_name": "视频会议",
+  "description": "在浏览器中进行免费视频会议。无需下载，只需分享链接即可。",
   "id": "/",
   "start_url": "/",
   "scope": "/",

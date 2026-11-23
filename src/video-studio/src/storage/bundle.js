@@ -135,16 +135,16 @@ export async function importProjectBundle(library, file, { onProgress } = {}) {
     } catch {
       manifest = null;
     }
-    if (manifest?.format && manifest.format !== BUNDLE_FORMAT) throw new Error('This ZIP file is not a Video Studio project file.');
-    if (manifest?.version > BUNDLE_VERSION) throw new Error('This project file was made by a newer version of Video Studio.');
+    if (manifest?.format && manifest.format !== BUNDLE_FORMAT) throw new Error('此 ZIP 文件不是视频工坊项目文件。');
+    if (manifest?.version > BUNDLE_VERSION) throw new Error('此项目文件由较新版本的视频工坊创建。');
   }
   const projectEntry = byName.get('project.json');
-  if (!projectEntry) throw new Error('This ZIP file is not a Video Studio project file (project.json is missing).');
+  if (!projectEntry) throw new Error('此 ZIP 文件不是视频工坊项目文件（缺少 project.json）。');
   let raw;
   try {
     raw = JSON.parse(await (await projectEntry.blob()).text());
   } catch {
-    throw new Error('The project in this file is damaged.');
+    throw new Error('此文件中的项目数据已损坏。');
   }
   const project = normalizeProject(raw);
   const assets = Object.values(project.assets);

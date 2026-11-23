@@ -36,23 +36,23 @@ export function parseRecipients(input) {
   for (const raw of String(input || '').split(/[,;\s]+/)) {
     const email = raw.trim().toLowerCase();
     if (!email || seen.has(email)) continue;
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return { error: `"${raw}" is not an email address.` };
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return { error: `“${raw}”不是有效的电子邮箱地址。` };
     seen.add(email);
     out.push(email);
   }
-  if (!out.length) return { error: 'Add at least one email address.' };
-  if (out.length > MAX_RECIPIENTS) return { error: `Send to at most ${MAX_RECIPIENTS} addresses at once.` };
+  if (!out.length) return { error: '请至少添加一个电子邮箱地址。' };
+  if (out.length > MAX_RECIPIENTS) return { error: `单次最多发送给 ${MAX_RECIPIENTS} 个地址。` };
   return { list: out };
 }
 
 /** Why a send did not happen, in words the user can act on. */
 export function failureMessage(status, data) {
   const code = (data && data.error) || '';
-  if (status === 401 || code === 'sign_in_required') return 'Sign in to Puter again to send email.';
-  if (status === 429 || code === 'daily_limit') return "You've reached today's email limit. Try again tomorrow.";
-  if (status === 503 || code === 'temporarily_unavailable') return 'The email service is busy. Try again in a moment, or open the message in your email app.';
-  if (status === 404) return 'The email service is not available. Open the message in your email app instead.';
-  return 'Could not send the email. Try again, or open it in your email app.';
+  if (status === 401 || code === 'sign_in_required') return '请重新登录 Puter 以发送邮件。';
+  if (status === 429 || code === 'daily_limit') return '您已达到今日邮件发送上限，请明天再试。';
+  if (status === 503 || code === 'temporarily_unavailable') return '邮件服务繁忙，请稍后重试，或在您的邮件应用中打开此邮件。';
+  if (status === 404) return '邮件服务不可用，请改为在您的邮件应用中打开此邮件。';
+  return '无法发送邮件，请重试，或在您的邮件应用中打开。';
 }
 
 /**
@@ -60,7 +60,7 @@ export function failureMessage(status, data) {
  * Resolves the worker's summary; rejects with a message fit for a toast.
  */
 export async function sendDocument({ kind, doc, settings, to, subject, body, force = false }, { getPuter = puterOf, workerUrl = EMAIL_WORKER_URL, timeoutMs = SEND_TIMEOUT_MS } = {}) {
-  if (!mailerAvailable(getPuter)) throw new Error('Sending email needs a Puter session. Open the message in your email app instead.');
+  if (!mailerAvailable(getPuter)) throw new Error('发送邮件需要 Puter 会话。请改为在您的邮件应用中打开此邮件。');
   const recipients = to.map((email) => ({ email, version: digest([email, subject, body]) }));
   const request = {
     method: 'POST',
@@ -87,8 +87,8 @@ export async function sendDocument({ kind, doc, settings, to, subject, body, for
       new Promise((_, reject) => (timer = setTimeout(() => reject(new Error('timeout')), timeoutMs))),
     ]);
   } catch (err) {
-    if (err?.message === 'timeout') throw new Error('The email service did not answer in time. It may still go out; sending again will not create a duplicate.');
-    throw new Error('Could not reach the email service. Check your connection, or open the message in your email app.');
+    if (err?.message === 'timeout') throw new Error('邮件服务未及时响应。邮件可能仍会发出；重新发送不会造成重复。');
+    throw new Error('无法连接邮件服务。请检查网络连接，或在您的邮件应用中打开此邮件。');
   } finally {
     clearTimeout(timer);
   }
@@ -108,10 +108,10 @@ export function describeResult(out) {
   const limited = results.filter((r) => r.status === 'skipped' && r.reason === 'daily_limit').length;
   const failed = (out?.failed || 0) + (out?.suppressed || 0);
   const delivered = results.filter((r) => r.status === 'sent' || (r.status === 'skipped' && r.reason === 'already_sent')).map((r) => r.email);
-  const notes = [failed ? `${failed} could not be reached` : '', limited ? `${limited} not sent because today's email limit was reached` : ''].filter(Boolean).join(', and ');
-  if (sent && !notes) return { ok: true, delivered, message: `Emailed to ${sent} recipient${sent === 1 ? '' : 's'}` };
-  if (!sent && already && !notes) return { ok: true, delivered, duplicate: true, message: 'They already have this exact message.' };
-  if (sent) return { ok: true, partial: true, delivered, message: `Emailed ${sent}, but ${notes}.` };
-  if (limited && !failed) return { ok: false, delivered, message: "Today's email limit was reached. Try again tomorrow, or open the message in your email app." };
-  return { ok: false, delivered, message: 'The email could not be delivered.' };
+  const notes = [failed ? `${failed} 个地址无法送达` : '', limited ? `${limited} 个地址因达到今日发送上限而未发送` : ''].filter(Boolean).join('，且');
+  if (sent && !notes) return { ok: true, delivered, message: `已发送邮件给 ${sent} 位收件人` };
+  if (!sent && already && !notes) return { ok: true, delivered, duplicate: true, message: '对方已收到过完全相同的邮件。' };
+  if (sent) return { ok: true, partial: true, delivered, message: `已发送 ${sent} 封，但有 ${notes}。` };
+  if (limited && !failed) return { ok: false, delivered, message: '已达到今日邮件发送上限。请明天再试，或在您的邮件应用中打开此邮件。' };
+  return { ok: false, delivered, message: '邮件无法送达。' };
 }

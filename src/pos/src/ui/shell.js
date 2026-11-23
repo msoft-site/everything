@@ -16,12 +16,12 @@ import { reportsView } from '../views/reports.js';
 import { settingsView, confirmSignOut } from '../views/settings.js';
 
 const ROUTES = [
-  { hash: '#/', label: 'Register', icon: 'cart', view: registerView },
-  { hash: '#/products', label: 'Products', icon: 'package', view: productsView },
-  { hash: '#/receipts', label: 'Receipts', icon: 'receipt', view: receiptsView },
-  { hash: '#/customers', label: 'Customers', icon: 'users', view: customersView },
-  { hash: '#/reports', label: 'Reports', icon: 'chart', view: reportsView },
-  { hash: '#/settings', label: 'Settings', icon: 'gear', view: settingsView },
+  { hash: '#/', label: '收银开单', icon: 'cart', view: registerView },
+  { hash: '#/products', label: '商品档案', icon: 'package', view: productsView },
+  { hash: '#/receipts', label: '收款收据', icon: 'receipt', view: receiptsView },
+  { hash: '#/customers', label: '客户', icon: 'users', view: customersView },
+  { hash: '#/reports', label: '报表', icon: 'chart', view: reportsView },
+  { hash: '#/settings', label: '设置', icon: 'gear', view: settingsView },
 ];
 
 export function mountShell(appRoot) {
@@ -42,9 +42,9 @@ export function mountShell(appRoot) {
       el('button', {
         onclick: async () => {
           const ok = await confirmDialog({
-            title: 'Start fresh?',
+            title: '重新开始？',
             message: 'All sample products and sales are removed and you set up your own store from scratch.',
-            confirmLabel: 'Wipe sample data',
+            confirmLabel: '清除示例数据',
           });
           if (!ok) return;
           try {
@@ -56,7 +56,7 @@ export function mountShell(appRoot) {
           }
           openOnboarding();
         },
-      }, 'Start fresh')
+      }, '重新开始')
     ));
   }
   store.addEventListener('change', renderSampleBanner);
@@ -83,8 +83,8 @@ export function mountShell(appRoot) {
       // Inside a Puter app window the platform owns the session - no sign-out.
       !isPuterApp() && el('button.icon-btn', {
         html: icon('logout', 18, 2),
-        'aria-label': 'Sign out',
-        title: 'Sign out',
+        'aria-label': '退出登录',
+        title: '退出登录',
         onclick: confirmSignOut,
       })
     )

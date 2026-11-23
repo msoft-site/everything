@@ -49,10 +49,10 @@ export function openBackgroundDialog({ media }) {
   const video = el('video', { autoplay: true, playsinline: true, muted: true });
   video.muted = true;
   video.srcObject = media.stream;
-  const previewNote = el('div', { class: 'bg-preview-note' }, 'Camera is off. Effects apply when it’s back on');
+  const previewNote = el('div', { class: 'bg-preview-note' }, '摄像头已关闭。重新开启后将应用背景效果');
   const preview = el('div', { class: 'bg-preview' }, video, previewNote);
 
-  const grid = el('div', { class: 'bg-grid', role: 'group', 'aria-label': 'Background options' });
+  const grid = el('div', { class: 'bg-grid', role: 'group', 'aria-label': '背景选项' });
 
   const fileInput = el('input', {
     type: 'file',
@@ -75,12 +75,12 @@ export function openBackgroundDialog({ media }) {
     },
     el(
       'div',
-      { class: 'dialog effects-dialog', role: 'dialog', 'aria-modal': 'true', 'aria-label': 'Change background', tabindex: '-1' },
+      { class: 'dialog effects-dialog', role: 'dialog', 'aria-modal': 'true', 'aria-label': '更改背景', tabindex: '-1' },
       el(
         'div',
         { class: 'dialog-header' },
-        el('h2', {}, 'Change background'),
-        el('button', { class: 'icon-btn', 'aria-label': 'Close', onclick: () => backdrop.remove() }, icon('close'))
+        el('h2', {}, '更改背景'),
+        el('button', { class: 'icon-btn', 'aria-label': '关闭', onclick: () => backdrop.remove() }, icon('close'))
       ),
       el('div', { class: 'dialog-body' }, preview, grid, fileInput)
     )
@@ -134,17 +134,17 @@ export function openBackgroundDialog({ media }) {
     grid.append(
       tile({
         spec: { type: 'none' },
-        label: 'No effect',
+        label: '无效果',
         content: [icon('block')],
       }),
       tile({
         spec: { type: 'blur', blur: BLUR_SLIGHT },
-        label: 'Slight blur',
+        label: '轻微模糊',
         content: [icon('blurSlight')],
       }),
       tile({
         spec: { type: 'blur', blur: BLUR_STRONG },
-        label: 'Blur',
+        label: '模糊',
         content: [icon('blur')],
       })
     );
@@ -162,7 +162,7 @@ export function openBackgroundDialog({ media }) {
       grid.append(
         tile({
           spec: { type: 'image', id: CUSTOM_BACKGROUND_ID, src: customSrc },
-          label: 'Your image',
+          label: '您的图片',
           image: customSrc,
         })
       );
@@ -172,12 +172,12 @@ export function openBackgroundDialog({ media }) {
         'button',
         {
           class: 'bg-tile bg-tile-upload',
-          title: 'Upload an image',
-          'aria-label': customSrc !== undefined ? 'Replace image' : 'Add image',
+          title: '上传图片',
+          'aria-label': customSrc !== undefined ? '替换图片' : '添加图片',
           onclick: () => fileInput.click(),
         },
         icon('upload'),
-        el('span', { class: 'bg-tile-label' }, customSrc !== undefined ? 'Replace image' : 'Add image')
+        el('span', { class: 'bg-tile-label' }, customSrc !== undefined ? '替换图片' : '添加图片')
       )
     );
     if (!focused) return;
@@ -229,7 +229,7 @@ export function openBackgroundDialog({ media }) {
       await choose({ type: 'image', id: CUSTOM_BACKGROUND_ID, src });
       renderTiles();
     } catch {
-      toast('Couldn’t read that image. Try a different file.', { icon: 'info' });
+      toast('无法读取该图片，请尝试其他文件。', { icon: 'info' });
     }
   }
 }

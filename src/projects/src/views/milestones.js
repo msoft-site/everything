@@ -17,11 +17,11 @@ export function milestonesView({ projectId }) {
   const expanded = new Set();
   const root = el('div.milestones-wrap', {},
     el('div.row.row-between.milestones-head', {},
-      el('p.form-hint.grow', {}, 'Milestones mark the dates that matter. Attach tasks to them from the task sheet.'),
+      el('p.form-hint.grow', {}, '里程碑用于标记关键节点日期。可在任务详情面板中将任务关联到里程碑。'),
       el('button.btn.btn-primary.btn-sm', {
         html: icon('plus', 14, 2.2),
         onclick: () => openMilestoneForm(),
-      }, ' Add milestone')
+      }, ' 添加里程碑')
     ),
     list
   );
@@ -29,12 +29,12 @@ export function milestonesView({ projectId }) {
   const doc = () => store.getDoc(projectId);
 
   function dueLabel(m, today) {
-    if (m.done) return { text: 'Reached', cls: 'done' };
+    if (m.done) return { text: '已达成', cls: 'done' };
     const d = diffDays(today, m.date);
-    if (d < 0) return { text: `${-d} day${d === -1 ? '' : 's'} overdue`, cls: 'overdue' };
-    if (d === 0) return { text: 'Today', cls: 'soon' };
-    if (d <= 7) return { text: `In ${d} day${d === 1 ? '' : 's'}`, cls: 'soon' };
-    return { text: `In ${d} days`, cls: '' };
+    if (d < 0) return { text: `已逾期 ${-d} 天`, cls: 'overdue' };
+    if (d === 0) return { text: '今天', cls: 'soon' };
+    if (d <= 7) return { text: `${d} 天后`, cls: 'soon' };
+    return { text: `${d} 天后`, cls: '' };
   }
 
   function milestoneRow(m) {
@@ -46,20 +46,20 @@ export function milestonesView({ projectId }) {
 
     const menuBtn = el('button.icon-btn', {
       html: icon('more', 18, 2),
-      'aria-label': `Options for ${m.name}`,
+      'aria-label': `${m.name} 的选项`,
       'aria-haspopup': 'menu',
       'aria-expanded': 'false',
       onclick: (e) => {
         e.stopPropagation();
         openMenu(menuBtn, [
-          { label: 'Edit milestone', icon: 'pencil', onClick: () => openMilestoneForm(m) },
+          { label: '编辑里程碑', icon: 'pencil', onClick: () => openMilestoneForm(m) },
           {
-            label: m.done ? 'Mark as not reached' : 'Mark as reached', icon: 'check',
+            label: m.done ? '标记为未达成' : '标记为已达成', icon: 'check',
             onClick: () => store.updateMilestone(projectId, m.id, { done: !m.done }),
           },
           'sep',
           {
-            label: 'Delete milestone', icon: 'trash', danger: true,
+            label: '删除里程碑', icon: 'trash', danger: true,
             // No confirm: the toast explains what happened to its tasks and
             // undoes the whole thing.
             onClick: () => {
@@ -67,12 +67,12 @@ export function milestonesView({ projectId }) {
               if (!removed) return;
               const n = removed.taskIds.length;
               toast(n
-                ? `Milestone deleted. ${n} task${n === 1 ? '' : 's'} kept, without a milestone`
-                : 'Milestone deleted', {
+                ? `里程碑已删除。已保留 ${n} 个任务并解除了里程碑关联`
+                : '里程碑已删除', {
                 icon: 'trash',
                 duration: 7000,
                 action: {
-                  label: 'Undo',
+                  label: '撤销',
                   onClick: () => store.restoreMilestone(projectId, removed),
                 },
               });
@@ -98,7 +98,7 @@ export function milestonesView({ projectId }) {
             el('span', { className: isDone ? 'done-text' : '' }, t.title)
           );
         })
-        : el('p.form-hint', {}, 'No tasks attached yet. Pick this milestone from any task sheet.')
+        : el('p.form-hint', {}, '暂无关联任务。可在任意任务详情面板中选择此里程碑。')
     );
 
     const chevron = el('span.chevron', {
@@ -125,8 +125,8 @@ export function milestonesView({ projectId }) {
         el('div.milestone-date', {}, fmtLong(m.date)),
         m.description && el('p.milestone-desc', {}, m.description),
         el('div.milestone-progress', {},
-          progressBar(done, total, { label: `${m.name}: ${done} of ${total} tasks done` }),
-          el('span.milestone-count', {}, total ? `${done}/${total}` : 'No tasks'))
+          progressBar(done, total, { label: `${m.name}：已完成 ${done}/${total} 个任务` }),
+          el('span.milestone-count', {}, total ? `${done}/${total}` : '暂无任务'))
       ),
       chevron
     );
@@ -149,7 +149,7 @@ export function milestonesView({ projectId }) {
     const dateId = fieldId('milestone-date');
     const descId = fieldId('milestone-desc');
     const nameInput = el('input.input', {
-      id: nameId, type: 'text', value: m?.name || '', placeholder: 'e.g. Public launch',
+      id: nameId, type: 'text', value: m?.name || '', placeholder: '例如：公开发布',
       maxLength: 80, required: true,
     });
     const dateInput = el('input.input', {
@@ -157,7 +157,7 @@ export function milestonesView({ projectId }) {
     });
     const descInput = el('textarea.input', {
       id: descId, rows: 3, value: m?.description || '',
-      placeholder: 'What does reaching it mean?',
+      placeholder: '达成该里程碑意味着什么？',
     });
 
     const form = el('form', {
@@ -165,7 +165,7 @@ export function milestonesView({ projectId }) {
         e.preventDefault();
         // `required` catches an empty field; a name of only spaces gets past it
         // and would otherwise leave the button looking broken.
-        const name = requireValue(nameInput, 'A milestone needs a name.');
+        const name = requireValue(nameInput, '里程碑需要填写名称。');
         if (!name) return;
         if (!isValidISO(dateInput.value)) { dateInput.focus(); return; }
         const fields = { name, date: dateInput.value, description: descInput.value.trim() };
@@ -174,16 +174,16 @@ export function milestonesView({ projectId }) {
         modal.close();
       },
     },
-      el('div.field', {}, el('label.label', { htmlFor: nameId }, 'Name'), nameInput),
-      el('div.field', {}, el('label.label', { htmlFor: dateId }, 'Date'), dateInput),
-      el('div.field', {}, el('label.label', { htmlFor: descId }, 'Description (optional)'), descInput),
+      el('div.field', {}, el('label.label', { htmlFor: nameId }, '名称'), nameInput),
+      el('div.field', {}, el('label.label', { htmlFor: dateId }, '日期'), dateInput),
+      el('div.field', {}, el('label.label', { htmlFor: descId }, '描述（可选）'), descInput),
       el('div.row.row-end', {},
-        el('button.btn.btn-ghost', { type: 'button', onclick: () => modal.close() }, 'Cancel'),
-        el('button.btn.btn-primary', { type: 'submit' }, m ? 'Save changes' : 'Add milestone')
+        el('button.btn.btn-ghost', { type: 'button', onclick: () => modal.close() }, '取消'),
+        el('button.btn.btn-primary', { type: 'submit' }, m ? '保存更改' : '添加里程碑')
       )
     );
     const modal = openModal({
-      title: m ? 'Edit milestone' : 'New milestone',
+      title: m ? '编辑里程碑' : '新建里程碑',
       content: form,
       dismissOnBack: true,
     });
@@ -196,9 +196,9 @@ export function milestonesView({ projectId }) {
     if (!d.milestones.length) {
       list.append(emptyState({
         icon: 'flag',
-        title: 'No milestones yet',
-        sub: 'Design freeze, beta, launch day: give the project dates to aim for.',
-        action: el('button.btn.btn-primary', { onclick: () => openMilestoneForm() }, 'Add a milestone'),
+        title: '暂无里程碑',
+        sub: '设计冻结、测试版、正式发布日：为项目设定明确的目标日期。',
+        action: el('button.btn.btn-primary', { onclick: () => openMilestoneForm() }, '添加里程碑'),
       }));
       return;
     }

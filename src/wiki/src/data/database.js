@@ -21,35 +21,35 @@ import { keyBetween, compareOrder } from '../lib/order.js';
 import { COLORS } from '../lib/sanitize.js';
 
 export const PROP_TYPES = {
-  title: { label: 'Title', icon: 'type' },
-  text: { label: 'Text', icon: 'text' },
-  number: { label: 'Number', icon: 'hash' },
-  select: { label: 'Select', icon: 'circleChevronDown' },
-  multi: { label: 'Multi-select', icon: 'tags' },
-  status: { label: 'Status', icon: 'loader' },
-  date: { label: 'Date', icon: 'calendar' },
-  checkbox: { label: 'Checkbox', icon: 'squareCheck' },
-  url: { label: 'URL', icon: 'link' },
-  email: { label: 'Email', icon: 'atSign' },
-  phone: { label: 'Phone', icon: 'phone' },
-  created: { label: 'Created time', icon: 'clock' },
-  edited: { label: 'Last edited time', icon: 'clock' },
+  title: { label: '标题', icon: 'type' },
+  text: { label: '文本', icon: 'text' },
+  number: { label: '数字', icon: 'hash' },
+  select: { label: '单选', icon: 'circleChevronDown' },
+  multi: { label: '多选', icon: 'tags' },
+  status: { label: '状态', icon: 'loader' },
+  date: { label: '日期', icon: 'calendar' },
+  checkbox: { label: '复选框', icon: 'squareCheck' },
+  url: { label: '网址', icon: 'link' },
+  email: { label: '邮箱', icon: 'atSign' },
+  phone: { label: '电话', icon: 'phone' },
+  created: { label: '创建时间', icon: 'clock' },
+  edited: { label: '最后编辑时间', icon: 'clock' },
 };
 
 export const VIEW_TYPES = {
-  table: { label: 'Table', icon: 'table' },
-  board: { label: 'Board', icon: 'kanban' },
-  list: { label: 'List', icon: 'list' },
-  gallery: { label: 'Gallery', icon: 'grid' },
-  calendar: { label: 'Calendar', icon: 'calendar' },
+  table: { label: '表格', icon: 'table' },
+  board: { label: '看板', icon: 'kanban' },
+  list: { label: '列表', icon: 'list' },
+  gallery: { label: '画廊', icon: 'grid' },
+  calendar: { label: '日历', icon: 'calendar' },
 };
 
 export const TITLE = 'title';
 
 const STATUS_OPTIONS = () => [
-  { id: uid(6), name: 'Not started', color: 'gray' },
-  { id: uid(6), name: 'In progress', color: 'blue' },
-  { id: uid(6), name: 'Done', color: 'green' },
+  { id: uid(6), name: '未开始', color: 'gray' },
+  { id: uid(6), name: '进行中', color: 'blue' },
+  { id: uid(6), name: '已完成', color: 'green' },
 ];
 
 function root(doc) {
@@ -141,9 +141,9 @@ export function initDatabase(doc, { props = null, view = 'table' } = {}) {
     const p = sub(doc, 'props');
     sub(doc, 'views');
     sub(doc, 'rows');
-    if (!p.has(TITLE)) writeEntry(p, TITLE, { name: 'Name', type: 'title', order: 'a' });
+    if (!p.has(TITLE)) writeEntry(p, TITLE, { name: '名称', type: 'title', order: 'a' });
     let order = 'b';
-    for (const spec of props || [{ name: 'Tags', type: 'multi' }]) {
+    for (const spec of props || [{ name: '标签', type: 'multi' }]) {
       writeEntry(p, uid(8), { ...spec, order, ...(spec.type === 'status' && !spec.options ? { options: STATUS_OPTIONS() } : {}), ...(['select', 'multi'].includes(spec.type) && !spec.options ? { options: [] } : {}) });
       order = keyBetween(order, '');
     }
@@ -169,7 +169,7 @@ export function addProp(doc, { name, type = 'text', after = null } = {}) {
   const id = uid(8);
   local(doc, () => {
     writeEntry(sub(doc, 'props'), id, {
-      name: name || PROP_TYPES[type]?.label || 'Property',
+      name: name || PROP_TYPES[type]?.label || '属性',
       type,
       order: keyBetween(lo, hi > lo ? hi : ''),
       ...(type === 'status' ? { options: STATUS_OPTIONS() } : ['select', 'multi'].includes(type) ? { options: [] } : {}),
@@ -228,7 +228,7 @@ export function addView(doc, { type = 'table', name = null } = {}) {
   const dateProp = type === 'calendar' ? listProps(doc).find((p) => p.type === 'date')?.id || null : null;
   local(doc, () => {
     writeEntry(sub(doc, 'views'), id, {
-      name: name || VIEW_TYPES[type]?.label || 'View',
+      name: name || VIEW_TYPES[type]?.label || '视图',
       type,
       order: keyBetween(views.at(-1)?.order || '', ''),
       sorts: [],
@@ -369,7 +369,7 @@ export function valueText(prop, value) {
     case 'multi':
       return (Array.isArray(value) ? value : []).map((v) => optionOf(prop, v)?.name || '').join(', ');
     case 'checkbox':
-      return value ? 'Yes' : 'No';
+      return value ? '是' : '否';
     case 'created':
     case 'edited':
       return new Date(value).toISOString();
@@ -392,9 +392,9 @@ export const FILTER_OPS = {
 };
 
 export const FILTER_LABELS = {
-  contains: 'contains', not_contains: 'does not contain', is: 'is', is_not: 'is not', starts: 'starts with',
-  empty: 'is empty', not_empty: 'is not empty', eq: '=', neq: '≠', gt: '>', lt: '<', gte: '≥', lte: '≤',
-  has: 'contains', has_not: 'does not contain', before: 'is before', after: 'is after', checked: 'is checked', unchecked: 'is not checked',
+  contains: '包含', not_contains: '不包含', is: '是', is_not: '不是', starts: '开头是',
+  empty: '为空', not_empty: '不为空', eq: '=', neq: '≠', gt: '>', lt: '<', gte: '≥', lte: '≤',
+  has: '包含', has_not: '不包含', before: '早于', after: '晚于', checked: '已勾选', unchecked: '未勾选',
 };
 
 export function filterKind(type) {
@@ -503,15 +503,15 @@ export function queryRows(doc, view, pageOf, { search = '' } = {}) {
 
 /** Board columns: one per option (plus "No value"), with their rows. */
 export function groupRows(rows, prop) {
-  if (!prop) return [{ id: null, name: 'All', color: 'gray', rows }];
+  if (!prop) return [{ id: null, name: '全部', color: 'gray', rows }];
   if (prop.type === 'checkbox') {
     return [
-      { id: true, name: 'Checked', color: 'green', rows: rows.filter((r) => !!r.values[prop.id]) },
-      { id: false, name: 'Unchecked', color: 'gray', rows: rows.filter((r) => !r.values[prop.id]) },
+      { id: true, name: '已勾选', color: 'green', rows: rows.filter((r) => !!r.values[prop.id]) },
+      { id: false, name: '未勾选', color: 'gray', rows: rows.filter((r) => !r.values[prop.id]) },
     ];
   }
   const groups = (prop.options || []).map((o) => ({ id: o.id, name: o.name, color: o.color, rows: [] }));
-  const none = { id: null, name: `No ${prop.name}`, color: 'gray', rows: [] };
+  const none = { id: null, name: `无${prop.name}`, color: 'gray', rows: [] };
   const byId = new Map(groups.map((g) => [g.id, g]));
   for (const r of rows) {
     const v = r.values[prop.id];

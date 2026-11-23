@@ -354,5 +354,5 @@ export function sanitizeName(name) {
     .replace(/\s+/g, ' ')
     .trim()
     .slice(0, 60);
-  return cleaned || 'Guest';
+  return cleaned || '访客';
 }

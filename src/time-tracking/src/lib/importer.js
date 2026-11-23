@@ -11,18 +11,18 @@ const pad2 = (n) => String(n).padStart(2, '0');
 
 /** The fields an import can fill, with the headers that auto-match them. */
 export const IMPORT_TARGETS = [
-  { key: 'date', label: 'Date', required: true, candidates: ['start date', 'date'] },
-  { key: 'duration', label: 'Duration', required: true, candidates: ['duration', 'duration (h)', 'duration (decimal)', 'hours', 'time (h)'] },
-  { key: 'project', label: 'Project', required: true, candidates: ['project', 'project name'] },
-  { key: 'client', label: 'Client', required: false, candidates: ['client', 'client name'] },
-  { key: 'task', label: 'Task', required: false, candidates: ['description', 'task', 'title'] },
-  { key: 'notes', label: 'Notes', required: false, candidates: ['notes', 'note'] },
-  { key: 'billable', label: 'Billable', required: false, candidates: ['billable', 'billable?'] },
+  { key: 'date', label: '日期', required: true, candidates: ['start date', 'date', '日期', '开始日期'] },
+  { key: 'duration', label: '时长', required: true, candidates: ['duration', 'duration (h)', 'duration (decimal)', 'hours', 'time (h)', '时长', '工时'] },
+  { key: 'project', label: '项目', required: true, candidates: ['project', 'project name', '项目', '项目名称'] },
+  { key: 'client', label: '客户', required: false, candidates: ['client', 'client name', '客户', '客户名称'] },
+  { key: 'task', label: '任务', required: false, candidates: ['description', 'task', 'title', '任务', '描述', '标题'] },
+  { key: 'notes', label: '备注', required: false, candidates: ['notes', 'note', '备注'] },
+  { key: 'billable', label: '可计费', required: false, candidates: ['billable', 'billable?', '可计费'] },
   /* Toggl and Clockify both export clock times in their own columns next
      to the date; Harvest does not. Matching is exact, so "start time"
      never collides with the "start date" the date field claims. */
-  { key: 'start', label: 'Start time', required: false, candidates: ['start time', 'start', 'from'] },
-  { key: 'end', label: 'End time', required: false, candidates: ['end time', 'end', 'to'] },
+  { key: 'start', label: '开始时间', required: false, candidates: ['start time', 'start', 'from', '开始时间', '开始'] },
+  { key: 'end', label: '结束时间', required: false, candidates: ['end time', 'end', 'to', '结束时间', '结束'] },
 ];
 
 /**
@@ -120,7 +120,7 @@ export function rowsToItems(rows, mapping) {
     if (!date || !seconds || !project) {
       invalid.push({
         line: i + 2, // 1-based, after the header row
-        reason: !date ? 'unreadable date' : !seconds ? 'unreadable duration' : 'missing project',
+        reason: !date ? '无法识别的日期' : !seconds ? '无法识别的时长' : '缺少项目',
       });
       return;
     }

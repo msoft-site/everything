@@ -43,12 +43,12 @@ export function createBackend(options) {
 
   async function identity(req) {
     const who = await req.who?.();
-    if (!who || !who.uuid) fail(401, 'unauthorized', 'Sign in with Puter to continue');
+    if (!who || !who.uuid) fail(401, 'unauthorized', '请登录 Puter 以继续');
     return who;
   }
 
   function deskId(value) {
-    if (!isId(value, 6, 24)) fail(404, 'no_desk', 'This help desk does not exist');
+    if (!isId(value, 6, 24)) fail(404, 'no_desk', '此服务台不存在');
     return value;
   }
 
@@ -60,11 +60,11 @@ export function createBackend(options) {
     const [meta, members, groups, fields, triggers] = await store.getMany([
       K.meta, K.members, K.cfg('groups'), K.cfg('fields'), K.cfg('triggers'),
     ]);
-    if (!meta || (meta.deleted && !allowDeleted)) fail(404, 'no_desk', 'This help desk does not exist');
+    if (!meta || (meta.deleted && !allowDeleted)) fail(404, 'no_desk', '此服务台不存在');
     const me = members && Object.hasOwn(members, who.uuid) ? members[who.uuid] : null;
-    if (!me || !me.active) fail(403, 'not_member', 'You are not an agent on this help desk');
-    if (owner && me.role !== 'owner') fail(403, 'forbidden', 'Only the owner can do that');
-    if (admin && me.role === 'agent') fail(403, 'forbidden', 'Only administrators can do that');
+    if (!me || !me.active) fail(403, 'not_member', '您不是此服务台的客服人员');
+    if (owner && me.role !== 'owner') fail(403, 'forbidden', '只有所有者才能执行此操作');
+    if (admin && me.role === 'agent') fail(403, 'forbidden', '只有管理员才能执行此操作');
     return {
       desk, K, meta, members, me, who,
       cfg: { groups: groups || [], fields: fields || [], triggers: triggers || [] },
@@ -79,14 +79,14 @@ export function createBackend(options) {
     const [meta, members, groups, fields, triggers] = await store.getMany([
       K.meta, K.members, K.cfg('groups'), K.cfg('fields'), K.cfg('triggers'),
     ]);
-    if (!meta || meta.deleted || !meta.portal?.enabled) fail(404, 'no_portal', 'This help center is not available');
+    if (!meta || meta.deleted || !meta.portal?.enabled) fail(404, 'no_portal', '此帮助中心不可用');
     return { desk, K, meta, members: members || {}, cfg: { groups: groups || [], fields: fields || [], triggers: triggers || [] } };
   }
 
   async function rateLimit(K, scope, who, limit, windowSeconds) {
     const key = K.rate(scope, (await sha256(who || 'anon')).slice(0, 20));
     if (!(await store.allow(key, limit, windowSeconds))) {
-      fail(429, 'rate_limited', 'Too many requests. Please wait a few minutes and try again.');
+      fail(429, 'rate_limited', '请求过于频繁，请稍候几分钟再试。');
     }
   }
 
@@ -109,7 +109,7 @@ export function createBackend(options) {
 
   function num(value) {
     const n = Number(value);
-    if (!Number.isInteger(n) || n <= 0) fail(404, 'not_found', 'Not found');
+    if (!Number.isInteger(n) || n <= 0) fail(404, 'not_found', '未找到');
     return n;
   }
 
@@ -137,13 +137,13 @@ export function createBackend(options) {
     const who = await identity(req);
     const owner = await env.ownerUuid();
     // Fail closed: if the owner cannot be told, nobody may create desks.
-    if (!owner || owner !== who.uuid) fail(403, 'forbidden', 'Only the owner of this server can create help desks on it');
+    if (!owner || owner !== who.uuid) fail(403, 'forbidden', '只有此服务器的所有者才能在其上创建服务台');
     const body = req.body || {};
     const name = cleanLine(body.name, 80);
-    if (!name) throw new ValidationError('Give the help desk a name', 'name');
+    if (!name) throw new ValidationError('请为服务台命名', 'name');
     const desk = isId(body.id, 8, 24) ? body.id : randomId(10);
     const K = deskKeys(desk);
-    if (await store.get(K.meta)) fail(409, 'exists', 'A help desk with that id already exists');
+    if (await store.get(K.meta)) fail(409, 'exists', '具有该 ID 的服务台已存在');
     const now = store.now();
     const meta = {
       id: desk,
@@ -154,7 +154,7 @@ export function createBackend(options) {
       server: null,
       timezone: cleanLine(body.timezone, 60) || null,
       autoCloseDays: 4,
-      portal: { enabled: false, title: name, intro: 'Search for answers or send us a request.', color: null, signInRequired: false },
+      portal: { enabled: false, title: name, intro: '搜索解答或向我们提交请求。', color: null, signInRequired: false },
       email: { enabled: true, replyTo: null },
       csat: { enabled: true },
       sweptAt: now,
@@ -162,7 +162,7 @@ export function createBackend(options) {
     };
     const members = {
       [who.uuid]: {
-        uuid: who.uuid, username: who.username || '', name: cleanLine(body.agentName, 80) || who.username || 'Owner',
+        uuid: who.uuid, username: who.username || '', name: cleanLine(body.agentName, 80) || who.username || '所有者',
         role: 'owner', groups: ['support'], active: true, joinedAt: now,
       },
     };
@@ -184,7 +184,7 @@ export function createBackend(options) {
   routes.post('/api/import/:desk', async (req) => {
     const who = await identity(req);
     const owner = await env.ownerUuid();
-    if (!owner || owner !== who.uuid) fail(403, 'forbidden', 'Only the owner of this server can import data');
+    if (!owner || owner !== who.uuid) fail(403, 'forbidden', '只有此服务器的所有者才能导入数据');
     const desk = deskId(req.params.desk);
     const prefix = deskKeys(desk).prefix;
     const items = (Array.isArray(req.body?.items) ? req.body.items : []).slice(0, 500)
@@ -213,7 +213,7 @@ export function createBackend(options) {
   routes.put('/api/d/:desk/cfg/:kind', async (req) => {
     const c = await agentContext(req, { admin: true });
     const kind = req.params.kind;
-    if (!CONFIG_KINDS.includes(kind)) fail(404, 'not_found', 'Unknown settings');
+    if (!CONFIG_KINDS.includes(kind)) fail(404, 'not_found', '未知设置');
     const value = validateConfig(kind, req.body?.value);
     await store.commit(c.K, [{ key: c.K.cfg(kind), value }], { k: 'c', id: kind, v: value, by: c.who.uuid });
     return { value };
@@ -293,7 +293,7 @@ export function createBackend(options) {
     const c = await agentContext(req);
     // Own keys only: "__proto__" or "constructor" must not reach a listing.
     const prop = Object.hasOwn(KIND_PREFIX, req.params.kind) ? KIND_PREFIX[req.params.kind] : null;
-    if (!prop) fail(404, 'not_found', 'Unknown records');
+    if (!prop) fail(404, 'not_found', '未知记录');
     const rev = req.query?.cursor ? null : await settledRev(c);
     const page = await store.page(c.K[prop], { limit: 500, cursor: req.query?.cursor || undefined });
     return { items: page.items.map((i) => i.value).filter(Boolean), cursor: page.cursor, rev };
@@ -311,7 +311,7 @@ export function createBackend(options) {
     const c = await agentContext(req);
     const id = num(req.params.id);
     const ticket = await store.get(c.K.ticket(id));
-    if (!ticket) fail(404, 'not_found', 'That ticket does not exist');
+    if (!ticket) fail(404, 'not_found', '该工单不存在');
     const events = await ticketEvents(store, c.K, id);
     return { ticket, events };
   });
@@ -326,7 +326,7 @@ export function createBackend(options) {
 
   async function setFlags(c, id, flags, field) {
     const before = await store.get(c.K.ticket(id));
-    if (!before) fail(404, 'not_found', 'That ticket does not exist');
+    if (!before) fail(404, 'not_found', '该工单不存在');
     const now = store.now();
     const ticket = await writeTicket(store, c.K, id, { ...flags, updatedAt: now, updatedBy: c.who.uuid });
     // Every flag that actually changed (a restore can clear spam, the trash
@@ -364,7 +364,7 @@ export function createBackend(options) {
     const id = num(req.params.id);
     const ticket = await store.get(c.K.ticket(id));
     if (!ticket) return { ok: true };
-    if (!ticket.deleted) fail(409, 'not_deleted', 'Move the ticket to the trash before deleting it for good');
+    if (!ticket.deleted) fail(409, 'not_deleted', '请先将工单移至回收站，然后再彻底删除');
     const events = await store.all(c.K.eventPrefix(id), { max: 10000 });
     // Deleted for good includes the files attached to it.
     const fileIds = [...new Set(events.flatMap((e) => (e.value?.attachments || []).map((a) => a?.id)).filter((f) => isId(f, 8, 40)))];
@@ -378,7 +378,7 @@ export function createBackend(options) {
 
   routes.post('/api/d/:desk/tickets-bulk', async (req) => {
     const c = await agentContext(req);
-    if (!Array.isArray(req.body?.ids)) throw new ValidationError('Choose the tickets to change', 'ids');
+    if (!Array.isArray(req.body?.ids)) throw new ValidationError('请选择要更改的工单', 'ids');
     const ids = [...new Set(req.body.ids.map(Number).filter((n) => Number.isInteger(n) && n > 0))].slice(0, 100);
     const action = req.body?.action || 'update';
     const results = [];
@@ -402,16 +402,16 @@ export function createBackend(options) {
     const c = await agentContext(req);
     const id = num(req.params.id);
     const into = num(req.body?.into);
-    if (id === into) throw new ValidationError('A ticket cannot be merged into itself', 'into');
+    if (id === into) throw new ValidationError('工单不能合并到自身', 'into');
     const [source, target] = await store.getMany([c.K.ticket(id), c.K.ticket(into)]);
-    if (!source || !target) fail(404, 'not_found', 'One of the tickets no longer exists');
-    if (target.status === 'closed') fail(409, 'closed', 'Closed tickets cannot receive merges');
-    if (source.status === 'closed') fail(409, 'closed', 'Closed tickets cannot be merged');
-    if (source.deleted || source.spam || target.deleted || target.spam) fail(409, 'unavailable', 'Tickets in the trash or marked as spam cannot be merged');
-    if (source.mergedInto) fail(409, 'merged', 'This ticket was already merged'); 
+    if (!source || !target) fail(404, 'not_found', '其中一个工单已不存在');
+    if (target.status === 'closed') fail(409, 'closed', '已关闭的工单不能接收合并');
+    if (source.status === 'closed') fail(409, 'closed', '已关闭的工单不能被合并');
+    if (source.deleted || source.spam || target.deleted || target.spam) fail(409, 'unavailable', '回收站中或标记为垃圾信息的工单不能合并');
+    if (source.mergedInto) fail(409, 'merged', '此工单已被合并'); 
     const publicNote = req.body?.public !== false;
-    const sourceText = cleanText(req.body?.sourceComment, 4000) || `This request was closed and merged into request #${into} "${target.subject}".`;
-    const targetText = cleanText(req.body?.targetComment, 4000) || `Request #${id} "${source.subject}" was closed and merged into this request.`;
+    const sourceText = cleanText(req.body?.sourceComment, 4000) || `此请求已关闭并合并至请求 #${into} “${target.subject}”。`;
+    const targetText = cleanText(req.body?.targetComment, 4000) || `请求 #${id} “${source.subject}”已关闭并合并至此请求。`;
     await updateTicket(env, c.desk, c, into, {
       comment: { html: textToHtml(targetText), public: publicNote },
       patch: { tags: [...new Set([...(target.tags || []), ...(source.tags || [])])] },
@@ -513,10 +513,10 @@ export function createBackend(options) {
 
   routes.post('/api/d/:desk/files', async (req) => {
     const c = await agentContext(req);
-    if (!env.fs) fail(501, 'no_files', 'File storage is not available');
+    if (!env.fs) fail(501, 'no_files', '文件存储不可用');
     const blob = req.raw;
-    if (!blob || typeof blob.size !== 'number') throw new ValidationError('No file was sent', 'file');
-    if (blob.size > LIMITS.attachment) throw new ValidationError('Files can be up to 20 MB', 'file');
+    if (!blob || typeof blob.size !== 'number') throw new ValidationError('未发送文件', 'file');
+    if (blob.size > LIMITS.attachment) throw new ValidationError('文件最大可达 20 MB', 'file');
     let name = 'file';
     try {
       name = safeName(decodeURIComponent(req.headers?.['x-file-name'] || 'file'));
@@ -551,9 +551,9 @@ export function createBackend(options) {
 
   routes.get('/api/d/:desk/files/:fid', async (req) => {
     const c = await agentContext(req);
-    if (!env.fs) fail(501, 'no_files', 'File storage is not available');
+    if (!env.fs) fail(501, 'no_files', '文件存储不可用');
     const meta = isId(req.params.fid, 8, 40) ? await store.get(c.K.file(req.params.fid)) : null;
-    if (!meta) fail(404, 'not_found', 'That file no longer exists');
+    if (!meta) fail(404, 'not_found', '该文件已不存在');
     return fileResponse(meta);
   });
 
@@ -563,11 +563,11 @@ export function createBackend(options) {
     const out = {};
     if ('name' in body) {
       const n = cleanLine(body.name, LIMITS.name);
-      if (!n) throw new ValidationError('A customer needs a name', 'name');
+      if (!n) throw new ValidationError('客户需要填写姓名', 'name');
       out.name = n;
     }
     if ('email' in body) {
-      if (body.email && !isEmail(String(body.email).trim().toLowerCase())) throw new ValidationError('That email address does not look right', 'email');
+      if (body.email && !isEmail(String(body.email).trim().toLowerCase())) throw new ValidationError('该电子邮箱地址格式不正确', 'email');
       out.email = normEmail(body.email) || null;
     }
     if ('phone' in body) out.phone = cleanLine(body.phone, 40) || null;
@@ -584,10 +584,10 @@ export function createBackend(options) {
     const c = await agentContext(req);
     const body = req.body || {};
     const email = normEmail(body.email);
-    if (body.email && !email) throw new ValidationError('That email address does not look right', 'email');
+    if (body.email && !email) throw new ValidationError('该电子邮箱地址格式不正确', 'email');
     if (email) {
       const existing = await findUserByEmail(store, c.K, email);
-      if (existing) fail(409, 'exists', `${existing.name} already uses that email address`, { current: existing });
+      if (existing) fail(409, 'exists', `${existing.name} 已使用该电子邮箱地址`, { current: existing });
     }
     return { user: await createUser(store, c.K, body, c.actor) };
   });
@@ -596,11 +596,11 @@ export function createBackend(options) {
     const c = await agentContext(req);
     const id = num(req.params.id);
     const before = await store.get(c.K.user(id));
-    if (!before) fail(404, 'not_found', 'That customer no longer exists');
+    if (!before) fail(404, 'not_found', '该客户已不存在');
     const patch = userPatch(req.body || {});
     if ('email' in patch && patch.email !== before.email && patch.email) {
       const other = await store.get(c.K.userByEmail(patch.email));
-      if (other && other !== id) fail(409, 'exists', 'Another customer already uses that email address');
+      if (other && other !== id) fail(409, 'exists', '其他客户已使用该电子邮箱地址');
     }
     const user = await store.update(c.K.user(id), { ...patch, updatedAt: store.now() });
     const records = [];
@@ -616,7 +616,7 @@ export function createBackend(options) {
     const user = await store.get(c.K.user(id));
     if (!user) return { ok: true };
     const page = await store.page(c.K.requesterPrefix(id), { limit: 1 });
-    if (page.items.length) fail(409, 'has_tickets', 'This customer has tickets. Delete or reassign them first.');
+    if (page.items.length) fail(409, 'has_tickets', '此客户名下存在工单，请先删除或重新分配这些工单。');
     await store.delMany([user.email ? c.K.userByEmail(user.email) : null, user.puter ? c.K.userByUuid(user.puter) : null].filter(Boolean));
     await store.del(c.K.user(id));
     await store.commit(c.K, [], { k: 'u', id, v: null, by: c.who.uuid });
@@ -653,7 +653,7 @@ export function createBackend(options) {
     const out = {};
     if ('name' in body) {
       const n = cleanLine(body.name, 120);
-      if (!n) throw new ValidationError('An organization needs a name', 'name');
+      if (!n) throw new ValidationError('组织需要填写名称', 'name');
       out.name = n;
     }
     if ('domains' in body) out.domains = [...new Set((Array.isArray(body.domains) ? body.domains : String(body.domains || '').split(/[\s,]+/)).map(normDomain).filter(Boolean))].slice(0, 20);
@@ -670,7 +670,7 @@ export function createBackend(options) {
     if (!taken.length) return;
     const orgs = await store.getMany(taken.map(([, o]) => c.K.org(o)));
     const clash = taken.findIndex((_, i) => orgs[i]);
-    if (clash >= 0) throw new ValidationError(`${taken[clash][0]} already belongs to ${orgs[clash].name}`, 'domains');
+    if (clash >= 0) throw new ValidationError(`${taken[clash][0]} 已归属于 ${orgs[clash].name}`, 'domains');
   }
 
   async function syncDomains(c, id, before, after) {
@@ -700,7 +700,7 @@ export function createBackend(options) {
     const c = await agentContext(req);
     const id = num(req.params.id);
     const before = await store.get(c.K.org(id));
-    if (!before) fail(404, 'not_found', 'That organization no longer exists');
+    if (!before) fail(404, 'not_found', '该组织已不存在');
     const patch = orgPatch(req.body || {});
     if ('domains' in patch) await checkDomains(c, id, patch.domains);
     const org = await store.update(c.K.org(id), { ...patch, updatedAt: store.now() });
@@ -733,7 +733,7 @@ export function createBackend(options) {
     const out = {};
     if ('title' in body) {
       const t = cleanLine(body.title, 200);
-      if (!t) throw new ValidationError('Give the article a title', 'title');
+      if (!t) throw new ValidationError('请为文章填写标题', 'title');
       out.title = t;
     }
     if ('section' in body) out.section = cleanLine(body.section, 40) || null;
@@ -774,14 +774,14 @@ export function createBackend(options) {
     const c = await agentContext(req);
     const id = num(req.params.id);
     const [article, body] = await store.getMany([c.K.article(id), c.K.articleBody(id)]);
-    if (!article) fail(404, 'not_found', 'That article no longer exists');
+    if (!article) fail(404, 'not_found', '该文章已不存在');
     return { article, body: body?.html || '' };
   });
 
   routes.post('/api/d/:desk/articles/:id', async (req) => {
     const c = await agentContext(req);
     const id = num(req.params.id);
-    if (!(await store.get(c.K.article(id)))) fail(404, 'not_found', 'That article no longer exists');
+    if (!(await store.get(c.K.article(id)))) fail(404, 'not_found', '该文章已不存在');
     const article = await saveArticle(c, id, articlePatch(req.body || {}), req.body && 'body' in req.body ? String(req.body.body ?? '') : undefined);
     return { article };
   });
@@ -827,9 +827,9 @@ export function createBackend(options) {
     await identity(req);
     const K = deskKeys(desk);
     const code = String(req.params.code || '');
-    if (!/^[a-z0-9]{10,40}$/.test(code)) fail(404, 'bad_invite', 'This invite link is not valid');
+    if (!/^[a-z0-9]{10,40}$/.test(code)) fail(404, 'bad_invite', '此邀请链接无效');
     const [meta, invite] = await store.getMany([K.meta, K.invite(code)]);
-    if (!meta || meta.deleted || !invite || invite.expiresAt < store.now()) fail(404, 'bad_invite', 'This invite link has expired or was already used. Ask an administrator for a new one.');
+    if (!meta || meta.deleted || !invite || invite.expiresAt < store.now()) fail(404, 'bad_invite', '此邀请链接已过期或已被使用。请向管理员索取新链接。');
     return { name: meta.name, role: invite.role, by: invite.byName || null, expiresAt: invite.expiresAt };
   });
 
@@ -840,12 +840,12 @@ export function createBackend(options) {
     const code = String(req.body?.code || '');
     await rateLimit(K, 'join', who.uuid, 10, 600);
     const [meta, members, invite, groups] = await store.getMany([K.meta, K.members, /^[a-z0-9]{10,40}$/.test(code) ? K.invite(code) : `${K.prefix}inv:none`, K.cfg('groups')]);
-    if (!meta || meta.deleted) fail(404, 'no_desk', 'This help desk does not exist');
+    if (!meta || meta.deleted) fail(404, 'no_desk', '此服务台不存在');
     if (members?.[who.uuid]?.active) return { desk, meta, me: members[who.uuid], already: true };
-    if (!invite || invite.expiresAt < store.now()) fail(403, 'bad_invite', 'This invite link has expired or was already used. Ask an administrator for a new one.');
+    if (!invite || invite.expiresAt < store.now()) fail(403, 'bad_invite', '此邀请链接已过期或已被使用。请向管理员索取新链接。');
     const now = store.now();
     const me = {
-      uuid: who.uuid, username: who.username || '', name: cleanLine(req.body?.name, 80) || who.username || 'Agent',
+      uuid: who.uuid, username: who.username || '', name: cleanLine(req.body?.name, 80) || who.username || '客服人员',
       // New agents join the default group, if the desk still has it.
       role: invite.role, groups: (groups || []).some((g) => g.id === 'support') ? ['support'] : [], active: true, joinedAt: now, invitedBy: invite.by,
     };
@@ -859,10 +859,10 @@ export function createBackend(options) {
     const c = await agentContext(req);
     const uuid = req.params.uuid;
     const target = Object.hasOwn(c.members, uuid) ? c.members[uuid] : null;
-    if (!target) fail(404, 'not_found', 'That person is not on this help desk');
+    if (!target) fail(404, 'not_found', '该人员不在本服务台中');
     const self = uuid === c.who.uuid;
     const isAdmin = c.me.role !== 'agent';
-    if (!self && !isAdmin) fail(403, 'forbidden', 'Only administrators can change other agents');
+    if (!self && !isAdmin) fail(403, 'forbidden', '只有管理员才能修改其他客服人员');
     const body = req.body || {};
     const patch = {};
     if ('name' in body) patch[`${uuid}.name`] = cleanLine(body.name, 80) || target.name;
@@ -886,7 +886,7 @@ export function createBackend(options) {
     const c = await agentContext(req, { admin: req.params.uuid !== (await req.who?.())?.uuid });
     const target = Object.hasOwn(c.members, uuid) ? c.members[uuid] : null;
     if (!target) return { ok: true };
-    if (target.role === 'owner') fail(409, 'owner', 'The owner cannot be removed');
+    if (target.role === 'owner') fail(409, 'owner', '不能移除所有者');
     await store.remove(c.K.members, uuid);
     await memberChange(c.K, c.who.uuid);
     return { ok: true };
@@ -920,19 +920,19 @@ export function createBackend(options) {
     const agent = e.by?.type === 'agent';
     return {
       id: e.id, at: e.at, html: e.html, attachments: e.attachments || [],
-      by: agent ? { type: 'agent', name: members[e.by.id]?.name || e.by.name || 'Support' } : { type: e.by?.type || 'customer', name: hideCustomer ? '' : e.by?.name || '' },
+      by: agent ? { type: 'agent', name: members[e.by.id]?.name || e.by.name || '客服支持' } : { type: e.by?.type || 'customer', name: hideCustomer ? '' : e.by?.name || '' },
     };
   }
 
   /** The requester behind a help center call: a link key or their Puter account. */
   async function requestAccess(req, p, id) {
     const ticket = await store.get(p.K.ticket(id));
-    if (!ticket || ticket.deleted || ticket.spam) fail(404, 'not_found', 'We could not find that request');
+    if (!ticket || ticket.deleted || ticket.spam) fail(404, 'not_found', '未找到该请求');
     const key = String(req.query?.key || req.body?.key || '');
     if (key && key.length >= 16 && key === ticket.key) return ticket;
     const who = await req.who?.().catch(() => null);
     if (who?.uuid && ticket.submitterPuter && ticket.submitterPuter === who.uuid) return ticket;
-    fail(403, 'forbidden', 'This link is not valid for that request');
+    fail(403, 'forbidden', '此链接对该请求无效');
   }
 
   async function publishedArticles(p) {
@@ -967,7 +967,7 @@ export function createBackend(options) {
     const p = await portalContext(req);
     const id = num(req.params.id);
     const [article, body] = await store.getMany([p.K.article(id), p.K.articleBody(id)]);
-    if (!article || article.status !== 'published') fail(404, 'not_found', 'That article is not available');
+    if (!article || article.status !== 'published') fail(404, 'not_found', '该文章不可用');
     const viewKey = p.K.rate('view', (await sha256(`${ipOf(req)}:${id}`)).slice(0, 20));
     store.allow(viewKey, 1, 3600).then((first) => (first ? store.incr(p.K.article(id), { views: 1 }) : null)).catch(() => {});
     const { author, updatedBy, ...rest } = article;
@@ -979,7 +979,7 @@ export function createBackend(options) {
     const id = num(req.params.id);
     await rateLimit(p.K, 'vote', `${ipOf(req)}:${id}`, 3, 3600);
     const article = await store.get(p.K.article(id));
-    if (!article || article.status !== 'published') fail(404, 'not_found', 'That article is not available');
+    if (!article || article.status !== 'published') fail(404, 'not_found', '该文章不可用');
     const next = await store.incr(p.K.article(id), { [req.body?.up ? 'up' : 'down']: 1 });
     return { up: next.up || 0, down: next.down || 0 };
   });
@@ -988,19 +988,19 @@ export function createBackend(options) {
     const p = await portalContext(req);
     const body = req.body || {};
     const who = await req.who?.().catch(() => null);
-    if (p.meta.portal?.signInRequired && !who?.uuid) fail(401, 'unauthorized', 'Sign in to send a request');
+    if (p.meta.portal?.signInRequired && !who?.uuid) fail(401, 'unauthorized', '请先登录以提交请求');
     await rateLimit(p.K, 'req', ipOf(req), 10, 3600);
     const email = normEmail(body.email);
-    if (!email) throw new ValidationError('Enter a valid email address so we can reply', 'email');
+    if (!email) throw new ValidationError('请输入有效的电子邮箱地址以便我们回复', 'email');
     const name = cleanLine(body.name, LIMITS.name) || email.split('@')[0];
     const description = cleanText(body.description, 20000).trim();
-    if (!description) throw new ValidationError('Describe your request', 'description');
+    if (!description) throw new ValidationError('请描述您的请求', 'description');
     // Checked before a customer is created for a new address.
-    if (!cleanLine(body.subject, LIMITS.subject)) throw new ValidationError('Add a subject', 'subject');
+    if (!cleanLine(body.subject, LIMITS.subject)) throw new ValidationError('请添加主题', 'subject');
     const portalFields = p.cfg.fields.filter((x) => x.active && x.portal);
-    if (body.fields !== undefined && (!body.fields || typeof body.fields !== 'object')) throw new ValidationError('The request fields are not valid', 'fields');
+    if (body.fields !== undefined && (!body.fields || typeof body.fields !== 'object')) throw new ValidationError('请求字段无效', 'fields');
     const missing = portalFields.find((f) => f.required && cleanFieldValue(f, body.fields?.[f.id]) === undefined);
-    if (missing) throw new ValidationError(`${missing.title} is required`, `field:${missing.id}`);
+    if (missing) throw new ValidationError(`${missing.title} 为必填项`, `field:${missing.id}`);
     let requester = await findUserByEmail(store, p.K, email);
     // Anyone can type any address, so a request filed under a customer who
     // already exists is marked for agents as coming from an unverified sender.
@@ -1045,18 +1045,18 @@ export function createBackend(options) {
     const ticket = await requestAccess(req, p, id);
     await rateLimit(p.K, 'reply', ipOf(req), 60, 3600);
     const text = cleanText(req.body?.body, 20000).trim();
-    if (!text) throw new ValidationError('Write a reply first', 'body');
+    if (!text) throw new ValidationError('请先填写回复内容', 'body');
     const requester = await store.get(p.K.user(ticket.requester));
     // Like new requests, a suspended customer's reply is accepted quietly and
     // dropped: it must not reopen the ticket or start a follow-up.
     if (requester?.suspended) return { ticket: publicTicket(ticket, p.meta) };
-    const actor = { type: 'customer', id: null, userId: ticket.requester, name: requester?.name || 'Customer' };
+    const actor = { type: 'customer', id: null, userId: ticket.requester, name: requester?.name || '客户' };
     if (ticket.status === 'closed') {
       // A closed request takes no more replies; the reply opens a follow-up.
       const res = await createTicket(env, p.desk, p, {
         subject: ticket.subject.startsWith('Re: ') ? ticket.subject : `Re: ${ticket.subject}`,
         requester: ticket.requester,
-        comment: { html: textToHtml(`${text}\n\n(Follow-up to request #${ticket.id})`), public: true },
+        comment: { html: textToHtml(`${text}\n\n（针对请求 #${ticket.id} 的跟进）`), public: true },
         via: 'portal',
         tags: ['follow_up'],
         submitterPuter: ticket.submitterPuter,
@@ -1076,17 +1076,17 @@ export function createBackend(options) {
     const ticket = await requestAccess(req, p, id);
     if (ticket.status === 'solved' || ticket.status === 'closed') return { ticket: publicTicket(ticket, p.meta) };
     const requester = await store.get(p.K.user(ticket.requester));
-    const actor = { type: 'customer', id: null, userId: ticket.requester, name: requester?.name || 'Customer' };
+    const actor = { type: 'customer', id: null, userId: ticket.requester, name: requester?.name || '客户' };
     const res = await updateTicket(env, p.desk, p, id, { system: { status: 'solved' } }, actor);
     return { ticket: publicTicket(res.ticket, p.meta) };
   });
 
   routes.post('/p/:desk/requests/:id/rate', async (req) => {
     const p = await portalContext(req);
-    if (!p.meta.csat?.enabled) fail(404, 'not_found', 'Ratings are turned off');
+    if (!p.meta.csat?.enabled) fail(404, 'not_found', '满意度评价已关闭');
     const id = num(req.params.id);
     const ticket = await requestAccess(req, p, id);
-    if (!['solved', 'closed'].includes(ticket.status)) fail(409, 'not_solved', 'You can rate a request once it is solved');
+    if (!['solved', 'closed'].includes(ticket.status)) fail(409, 'not_solved', '请求解决后即可进行评价');
     const score = req.body?.score === 'bad' ? 'bad' : 'good';
     const comment = cleanText(req.body?.comment, 2000);
     // The same rating again changes nothing and writes nothing.
@@ -1095,7 +1095,7 @@ export function createBackend(options) {
     const now = store.now();
     const csat = { score, comment, at: now };
     const requester = await store.get(p.K.user(ticket.requester));
-    const actor = { type: 'customer', id: null, userId: ticket.requester, name: requester?.name || 'Customer' };
+    const actor = { type: 'customer', id: null, userId: ticket.requester, name: requester?.name || '客户' };
     // Through the usual update, so triggers on satisfaction run and notify.
     const res = await updateTicket(env, p.desk, p, id, { csat }, actor);
     return { ticket: publicTicket(res.ticket, p.meta) };
@@ -1118,12 +1118,12 @@ export function createBackend(options) {
     const id = num(req.query?.ticket);
     await requestAccess(req, p, id);
     const fid = req.params.fid;
-    if (!isId(fid, 8, 40) || !env.fs) fail(404, 'not_found', 'That file is not available');
+    if (!isId(fid, 8, 40) || !env.fs) fail(404, 'not_found', '该文件不可用');
     const events = await ticketEvents(store, p.K, id);
     const shared = events.some((e) => e.kind === 'comment' && e.public && (e.attachments || []).some((a) => a.id === fid));
-    if (!shared) fail(404, 'not_found', 'That file is not available');
+    if (!shared) fail(404, 'not_found', '该文件不可用');
     const meta = await store.get(p.K.file(fid));
-    if (!meta) fail(404, 'not_found', 'That file is not available');
+    if (!meta) fail(404, 'not_found', '该文件不可用');
     return fileResponse(meta);
   });
 
@@ -1131,12 +1131,12 @@ export function createBackend(options) {
 
   async function handle(req) {
     const m = routes.match(req.method, req.path);
-    if (!m) return { status: 404, body: { error: 'not_found', message: 'Unknown endpoint' } };
+    if (!m) return { status: 404, body: { error: 'not_found', message: '未知接口' } };
     // Every route reads fields of an object body; anything else is refused
     // here rather than failing halfway through a route.
     const body = req.body;
     if (body !== undefined && body !== null && (typeof body !== 'object' || Array.isArray(body))) {
-      return { status: 400, body: { error: 'bad_request', message: 'The request body must be a JSON object' } };
+      return { status: 400, body: { error: 'bad_request', message: '请求体必须是 JSON 对象' } };
     }
     try {
       const out = await m.route.handler({ ...req, params: m.params });

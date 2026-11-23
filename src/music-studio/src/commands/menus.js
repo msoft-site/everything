@@ -10,37 +10,37 @@
 
 export const MENUS = [
   {
-    label: 'File',
+    label: '文件',
     items: [
       'file.new',
-      { label: 'New from template', submenu: ['file.newEmpty', 'file.newStarter', 'file.newDemo'] },
+      { label: '从模板新建', submenu: ['file.newEmpty', 'file.newStarter', 'file.newDemo'] },
       'file.open',
       'file.openLocal',
-      { label: 'Open recent', items: (app) => app.recentMenuItems?.() || [] },
+      { label: '打开最近使用', items: (app) => app.recentMenuItems?.() || [] },
       '-',
       'file.save',
       'file.saveAs',
       'file.saveLocal',
       '-',
-      { label: 'Import', submenu: ['file.importAudio', 'file.importMidi'] },
-      { label: 'Export', submenu: ['file.exportWav', 'file.exportMidi', '-', 'file.exportStems'] },
+      { label: '导入', submenu: ['file.importAudio', 'file.importMidi'] },
+      { label: '导出', submenu: ['file.exportWav', 'file.exportMidi', '-', 'file.exportStems'] },
       '-',
       'project.settings',
     ],
   },
   {
-    label: 'Edit',
+    label: '编辑',
     items: ['edit.undo', 'edit.redo', 'view.history', '-', 'edit.cut', 'edit.copy', 'edit.paste', 'edit.delete', '-', 'edit.selectAll', 'edit.deselect', 'edit.duplicate'],
   },
   {
-    label: 'Add',
+    label: '添加',
     items: [
       'add.synth',
       'add.drum',
       'add.sampler',
-      { label: 'Instrument preset', items: (app) => app.presetMenuItems?.() || [] },
+      { label: '乐器预设', items: (app) => app.presetMenuItems?.() || [] },
       '-',
-      { label: 'Effect on selected insert', items: (app) => app.effectMenuItems?.() || [] },
+      { label: '在选中轨道上添加效果器', items: (app) => app.effectMenuItems?.() || [] },
       '-',
       'add.automation',
       'add.pattern',
@@ -48,11 +48,11 @@ export const MENUS = [
     ],
   },
   {
-    label: 'Patterns',
+    label: '样式',
     items: ['patterns.new', 'patterns.nextEmpty', '-', 'patterns.rename', 'patterns.color', 'patterns.clone', 'patterns.delete', '-', 'patterns.moveUp', 'patterns.moveDown', '-', 'patterns.prev', 'patterns.next', '-', 'patterns.splitByChannel', 'patterns.transpose'],
   },
   {
-    label: 'View',
+    label: '视图',
     items: [
       'view.playlist',
       'view.rack',
@@ -60,22 +60,22 @@ export const MENUS = [
       'view.mixer',
       'view.browser',
       '-',
-      { label: 'Theme', submenu: ['theme.system', 'theme.light', 'theme.dark'] },
+      { label: '主题', submenu: ['theme.system', 'theme.light', 'theme.dark'] },
       'view.history',
       'view.resetLayout',
       'view.fullscreen',
     ],
   },
   {
-    label: 'Options',
+    label: '选项',
     items: ['options.metronome', 'options.countIn', 'options.typingKeyboard', 'options.midiInput', 'options.stepEdit', 'options.recordQuantize', 'options.autoScroll', '-', 'project.settings', 'options.audio', 'options.preferences'],
   },
   {
-    label: 'Tools',
+    label: '工具',
     items: ['tools.quantize', 'tools.riff', 'tools.chords', '-', 'tools.tapTempo', 'tools.stopSound', '-', 'tools.selectUnused', 'tools.purgeUnused'],
   },
   {
-    label: 'Help',
+    label: '帮助',
     items: ['help.shortcuts', 'help.tour', '-', 'help.github', 'help.about'],
   },
 ];
@@ -97,7 +97,7 @@ export function buildMenuItems(app, spec) {
     } else if (s.items) {
       out.push({ type: 'submenu', label: s.label, items: () => {
         const list = s.items(app);
-        return list.length ? list : [{ type: 'cmd', label: 'None', enabled: false }];
+        return list.length ? list : [{ type: 'cmd', label: '无', enabled: false }];
       } });
     }
   }

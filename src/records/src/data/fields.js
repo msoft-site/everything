@@ -21,33 +21,33 @@ import {
 } from '../lib/format.js';
 
 export const TYPES = {
-  text: { label: 'Single line text', icon: 'fText', group: 'basic' },
-  longText: { label: 'Long text', icon: 'fLongText', group: 'basic' },
-  attachment: { label: 'Attachment', icon: 'fAttachment', group: 'basic' },
-  checkbox: { label: 'Checkbox', icon: 'fCheckbox', group: 'basic' },
-  multipleSelect: { label: 'Multiple select', icon: 'fMulti', group: 'basic' },
-  singleSelect: { label: 'Single select', icon: 'fSingle', group: 'basic' },
-  date: { label: 'Date', icon: 'fDate', group: 'basic' },
-  phone: { label: 'Phone number', icon: 'fPhone', group: 'basic' },
-  email: { label: 'Email', icon: 'fEmail', group: 'basic' },
-  url: { label: 'URL', icon: 'fUrl', group: 'basic' },
-  number: { label: 'Number', icon: 'fNumber', group: 'basic' },
-  currency: { label: 'Currency', icon: 'fCurrency', group: 'basic' },
-  percent: { label: 'Percent', icon: 'fPercent', group: 'basic' },
-  duration: { label: 'Duration', icon: 'fDuration', group: 'basic' },
-  rating: { label: 'Rating', icon: 'fRating', group: 'basic' },
-  barcode: { label: 'Barcode', icon: 'fBarcode', group: 'basic' },
-  link: { label: 'Link to another record', icon: 'fLink', group: 'relational' },
-  lookup: { label: 'Lookup', icon: 'fLookup', group: 'relational', computed: true },
-  rollup: { label: 'Rollup', icon: 'fRollup', group: 'relational', computed: true },
-  count: { label: 'Count', icon: 'fCount', group: 'relational', computed: true },
-  formula: { label: 'Formula', icon: 'fFormula', group: 'computed', computed: true },
-  autonumber: { label: 'Autonumber', icon: 'fAutonumber', group: 'computed', readOnly: true },
-  createdTime: { label: 'Created time', icon: 'fCreatedTime', group: 'computed', computed: true },
-  lastModifiedTime: { label: 'Last modified time', icon: 'fModifiedTime', group: 'computed', computed: true },
-  createdBy: { label: 'Created by', icon: 'fCreatedBy', group: 'computed', computed: true },
-  lastModifiedBy: { label: 'Last modified by', icon: 'fModifiedBy', group: 'computed', computed: true },
-  button: { label: 'Button', icon: 'fButton', group: 'computed', computed: true },
+  text: { label: '单行文本', icon: 'fText', group: 'basic' },
+  longText: { label: '长文本', icon: 'fLongText', group: 'basic' },
+  attachment: { label: '附件', icon: 'fAttachment', group: 'basic' },
+  checkbox: { label: '复选框', icon: 'fCheckbox', group: 'basic' },
+  multipleSelect: { label: '多选', icon: 'fMulti', group: 'basic' },
+  singleSelect: { label: '单选', icon: 'fSingle', group: 'basic' },
+  date: { label: '日期', icon: 'fDate', group: 'basic' },
+  phone: { label: '电话号码', icon: 'fPhone', group: 'basic' },
+  email: { label: '电子邮箱', icon: 'fEmail', group: 'basic' },
+  url: { label: '网址', icon: 'fUrl', group: 'basic' },
+  number: { label: '数字', icon: 'fNumber', group: 'basic' },
+  currency: { label: '货币', icon: 'fCurrency', group: 'basic' },
+  percent: { label: '百分比', icon: 'fPercent', group: 'basic' },
+  duration: { label: '时长', icon: 'fDuration', group: 'basic' },
+  rating: { label: '评分', icon: 'fRating', group: 'basic' },
+  barcode: { label: '条形码', icon: 'fBarcode', group: 'basic' },
+  link: { label: '关联其他记录', icon: 'fLink', group: 'relational' },
+  lookup: { label: '查找引用', icon: 'fLookup', group: 'relational', computed: true },
+  rollup: { label: '汇总', icon: 'fRollup', group: 'relational', computed: true },
+  count: { label: '计数', icon: 'fCount', group: 'relational', computed: true },
+  formula: { label: '公式', icon: 'fFormula', group: 'computed', computed: true },
+  autonumber: { label: '自动编号', icon: 'fAutonumber', group: 'computed', readOnly: true },
+  createdTime: { label: '创建时间', icon: 'fCreatedTime', group: 'computed', computed: true },
+  lastModifiedTime: { label: '最后修改时间', icon: 'fModifiedTime', group: 'computed', computed: true },
+  createdBy: { label: '创建人', icon: 'fCreatedBy', group: 'computed', computed: true },
+  lastModifiedBy: { label: '最后修改人', icon: 'fModifiedBy', group: 'computed', computed: true },
+  button: { label: '按钮', icon: 'fButton', group: 'computed', computed: true },
 };
 
 /** Order in the "add field" menu. */
@@ -72,33 +72,33 @@ export function isReadOnly(field) {
 }
 
 export const DESCRIPTIONS = {
-  text: 'A single line of text.',
-  longText: 'Longer text that can span several lines.',
-  attachment: 'Files such as images, documents and spreadsheets.',
-  checkbox: 'A box that can be checked or unchecked.',
-  multipleSelect: 'Choose any number of options from a list.',
-  singleSelect: 'Choose one option from a list.',
-  date: 'A calendar date, with an optional time.',
-  phone: 'A telephone number.',
-  email: 'An email address.',
-  url: 'A web address.',
-  number: 'An integer or a decimal number.',
-  currency: 'An amount of money.',
-  percent: 'A percentage.',
-  duration: 'A length of time in hours, minutes and seconds.',
-  rating: 'A rating on a scale, shown as icons.',
-  barcode: 'A barcode or product code.',
-  link: 'Link to records in another table.',
-  lookup: 'Show values from a field of linked records.',
-  rollup: 'Summarize values from linked records.',
-  count: 'Count the linked records.',
-  formula: 'Compute a value from other fields.',
-  autonumber: 'A unique number for each record, assigned in order.',
-  createdTime: 'The date and time each record was created.',
-  lastModifiedTime: 'The date and time each record was last changed.',
-  createdBy: 'Who created each record.',
-  lastModifiedBy: 'Who last changed each record.',
-  button: 'A button that opens a link built from the record.',
+  text: '单行简短文本。',
+  longText: '可跨多行的长文本。',
+  attachment: '图片、文档、电子表格等文件。',
+  checkbox: '可勾选或取消勾选的复选框。',
+  multipleSelect: '从列表中选择任意数量的选项。',
+  singleSelect: '从列表中选择一个选项。',
+  date: '日历日期，可包含时间。',
+  phone: '电话号码。',
+  email: '电子邮箱地址。',
+  url: '网页链接地址。',
+  number: '整数或小数。',
+  currency: '货币金额。',
+  percent: '百分比数值。',
+  duration: '以小时、分钟和秒表示的时间长度。',
+  rating: '以图标显示的等级评分。',
+  barcode: '条形码或商品编码。',
+  link: '关联到另一张表中的记录。',
+  lookup: '显示关联记录中某个字段的值。',
+  rollup: '对关联记录中的值进行汇总计算。',
+  count: '统计关联记录的数量。',
+  formula: '根据其他字段计算得出结果。',
+  autonumber: '按顺序为每条记录分配唯一编号。',
+  createdTime: '每条记录创建的日期和时间。',
+  lastModifiedTime: '每条记录最后修改的日期和时间。',
+  createdBy: '创建每条记录的用户。',
+  lastModifiedBy: '最后修改每条记录的用户。',
+  button: '点击可打开由记录生成的链接按钮。',
 };
 
 /** Default options for a new field of a type. */
@@ -135,26 +135,26 @@ export function defaultOptions(type) {
     case 'formula':
       return { formula: '', format: 'auto', precision: 2 };
     case 'button':
-      return { label: 'Open', url: '' };
+      return { label: '打开', url: '' };
     default:
       return {};
   }
 }
 
 export const ROLLUP_FUNCTIONS = {
-  sum: 'Sum',
-  avg: 'Average',
-  min: 'Minimum',
-  max: 'Maximum',
-  count: 'Count values',
-  countAll: 'Count all',
-  countUnique: 'Count unique',
-  concat: 'Join as text',
-  unique: 'Unique values',
-  and: 'All true',
-  or: 'Any true',
-  earliest: 'Earliest date',
-  latest: 'Latest date',
+  sum: '求和',
+  avg: '平均值',
+  min: '最小值',
+  max: '最大值',
+  count: '有效值计数',
+  countAll: '总数',
+  countUnique: '唯一值计数',
+  concat: '拼接为文本',
+  unique: '唯一值列表',
+  and: '全部为真',
+  or: '任一为真',
+  earliest: '最早日期',
+  latest: '最晚日期',
 };
 
 /* ---------------------------------------------------------- empty checks */
@@ -275,7 +275,7 @@ export function toText(field, v, ctx) {
     case 'link':
       return Array.isArray(v) ? v.map((id) => ctx?.recordName?.(o.tableId, id) ?? '').join(', ') : '';
     case 'button':
-      return o.label || 'Open';
+      return o.label || '打开';
     case 'formula':
       return formatComputed(v, ctx?.formulaKind?.(field) || 'text', o);
     case 'rollup': {
@@ -503,28 +503,28 @@ export function splitList(text) {
 /* ------------------------------------------------------------ summaries */
 
 export const SUMMARIES = {
-  none: 'None',
-  empty: 'Empty',
-  filled: 'Filled',
-  unique: 'Unique',
-  percentEmpty: 'Percent empty',
-  percentFilled: 'Percent filled',
-  percentUnique: 'Percent unique',
-  sum: 'Sum',
-  avg: 'Average',
-  median: 'Median',
-  min: 'Min',
-  max: 'Max',
-  range: 'Range',
-  stdev: 'Standard deviation',
-  checked: 'Checked',
-  unchecked: 'Unchecked',
-  percentChecked: 'Percent checked',
-  percentUnchecked: 'Percent unchecked',
-  earliest: 'Earliest date',
-  latest: 'Latest date',
-  dateRange: 'Date range (days)',
-  totalSize: 'Total attachment size',
+  none: '无',
+  empty: '未填写',
+  filled: '已填写',
+  unique: '唯一值',
+  percentEmpty: '未填写占比',
+  percentFilled: '已填写占比',
+  percentUnique: '唯一值占比',
+  sum: '求和',
+  avg: '平均值',
+  median: '中位数',
+  min: '最小值',
+  max: '最大值',
+  range: '极差',
+  stdev: '标准差',
+  checked: '已勾选',
+  unchecked: '未勾选',
+  percentChecked: '已勾选占比',
+  percentUnchecked: '未勾选占比',
+  earliest: '最早日期',
+  latest: '最晚日期',
+  dateRange: '日期跨度（天）',
+  totalSize: '附件总大小',
 };
 
 export function summariesFor(kind) {
@@ -621,7 +621,7 @@ export function summarize(kind, values, fn, fmt = (n) => formatNumber(n, 2)) {
       if (fn === 'earliest') return formatDate(ds[0], { dateFormat: 'local' });
       if (fn === 'latest') return formatDate(ds[ds.length - 1], { dateFormat: 'local' });
       const days = Math.round((new Date(ds[ds.length - 1]) - new Date(ds[0])) / 86400000);
-      return `${days} day${days === 1 ? '' : 's'}`;
+      return `${days} 天`;
     }
     case 'totalSize': {
       let bytes = 0;

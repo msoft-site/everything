@@ -147,11 +147,11 @@ export function parseDuration(text, format = 'h:mm') {
 /* ------------------------------------------------------------------ dates */
 
 export const DATE_FORMATS = {
-  local: 'Local',
-  friendly: 'Friendly',
-  us: 'US',
-  european: 'European',
-  iso: 'ISO',
+  local: '本地',
+  friendly: '易读格式',
+  us: '美式',
+  european: '欧式',
+  iso: 'ISO 标准',
 };
 
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -389,13 +389,13 @@ export function addMonths(d, n) {
 /** Relative time for activity and comments: "just now", "5 minutes ago", ... */
 export function timeAgo(ts, now = Date.now()) {
   const s = Math.round((now - ts) / 1000);
-  if (s < 45) return 'just now';
+  if (s < 45) return '刚刚';
   const m = Math.round(s / 60);
-  if (m < 60) return `${m} minute${m === 1 ? '' : 's'} ago`;
+  if (m < 60) return `${m} 分钟前`;
   const h = Math.round(m / 60);
-  if (h < 24) return `${h} hour${h === 1 ? '' : 's'} ago`;
+  if (h < 24) return `${h} 小时前`;
   const d = Math.round(h / 24);
-  if (d < 30) return `${d} day${d === 1 ? '' : 's'} ago`;
+  if (d < 30) return `${d} 天前`;
   return formatDate(new Date(ts).toISOString(), { dateFormat: 'friendly' });
 }
 

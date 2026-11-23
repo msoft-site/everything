@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -11,7 +11,7 @@
 <link rel="icon" href="/favicon-32x32.png" type="image/png" sizes="32x32">
 <link rel="icon" href="/favicon-16x16.png" type="image/png" sizes="16x16">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180">
-<title>Book a meeting — Puter Calendar</title>
+<title>预约会议 — Puter 日历</title>
 <style>
   :root { color-scheme: light dark;
     --bg: #f6f7f9; --card: #ffffff; --text: #1a1d21; --muted: #6b7280;
@@ -265,7 +265,7 @@
 </head>
 <body>
 <main class="card" id="book-root">
-  <div class="pane"><p class="kicker">Book a meeting</p><h1>Loading…</h1></div>
+  <div class="pane"><p class="kicker">预约会议</p><h1>加载中…</h1></div>
 </main>
 <script>
 /**
@@ -411,8 +411,8 @@
   function pad2(n) { return (n < 10 ? '0' : '') + n; }
 
   function durationLabel(min) {
-    if (min % 60 === 0) return min === 60 ? '1 hour' : (min / 60) + ' hours';
-    return min + ' minutes';
+    if (min % 60 === 0) return min === 60 ? '1 小时' : (min / 60) + ' 小时';
+    return min + ' 分钟';
   }
 
   /** The value if it is exactly a Puter Meetings room link, else '' — the only
@@ -450,7 +450,7 @@
     var lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Puter Calendar//Booking//EN',
       'BEGIN:VEVENT', 'UID:' + uid + '@calendar.puter.com', 'DTSTAMP:' + dt(Date.now()),
       'DTSTART:' + dt(booking.start), 'DTEND:' + dt(booking.end),
-      'SUMMARY:' + esc(booking.title || 'Meeting')];
+      'SUMMARY:' + esc(booking.title || '会议')];
     if (booking.location) lines.push('LOCATION:' + esc(booking.location));
     if (join) lines.push('DESCRIPTION:' + esc('Join: ' + join), 'URL:' + join,
       'X-GOOGLE-CONFERENCE:' + join, 'CONFERENCE;VALUE=URI;FEATURE=VIDEO:' + join);
@@ -495,7 +495,7 @@
     // cancellation once the meeting has started. (Declared up here, before
     // the dispatch below returns — a `var` further down would still be
     // undefined when the fetch callbacks run.)
-    var STARTED_TEXT = 'This meeting has already started, so it can no longer be cancelled from here.';
+    var STARTED_TEXT = '此会议已经开始，无法再从此处取消。';
 
     if (/^[0-9a-f]{40}$/.test(token)) {
       loadManage();
@@ -507,7 +507,7 @@
      *  meeting had started) — otherwise the page would silently come back
      *  with the button gone and nothing to say why. */
     function loadManage(notice) {
-      renderLoading('Loading your booking…');
+      renderLoading('正在加载您的预约…');
       fetchFn(worker + '/api/booking/' + token)
         .then(function (res) {
           if (res.status === 404) return renderGone();
@@ -520,43 +520,43 @@
     function renderManage(data, notice) {
       var booking = data.booking || {};
       var page = data.page || null;
-      document.title = (booking.title || 'Booking') + ' — Puter Calendar';
+      document.title = (booking.title || '预约') + ' — Puter 日历';
       root.replaceChildren();
       root.className = 'card';
       var pane = el('div', 'pane');
-      pane.append(el('p', 'kicker', 'Your booking'));
-      pane.append(el('h1', null, booking.title || 'Meeting'));
+      pane.append(el('p', 'kicker', '您的预约'));
+      pane.append(el('h1', null, booking.title || '会议'));
       if (notice) {
         var ban = el('div', 'banner' + (notice.err ? ' banner--err' : ''), notice.text);
         ban.setAttribute('role', notice.err ? 'alert' : 'status');
         pane.append(ban);
       } else if (booking.status === 'cancelled') {
-        var cb = booking.cancelledBy === 'host' ? 'by the organizer' : '';
-        var ended = el('div', 'banner banner--muted', ('This booking was cancelled ' + cb).trim() + '.');
+        var cb = booking.cancelledBy === 'host' ? '已被组织者取消' : '已取消';
+        var ended = el('div', 'banner banner--muted', '此预约' + cb + '。');
         ended.setAttribute('role', 'status');
         pane.append(ended);
       }
-      row(pane, 'When', fmtWhenRange(booking.start, booking.end, guessTz()) + ' (' + tzLabel(guessTz()) + ')');
-      if (booking.location) row(pane, 'Where', booking.location);
+      row(pane, '时间', fmtWhenRange(booking.start, booking.end, guessTz()) + ' (' + tzLabel(guessTz()) + ')');
+      if (booking.location) row(pane, '地点', booking.location);
       // No join link on a cancelled booking — the room was never started.
       if (booking.status === 'confirmed') joinRow(pane, meetingUrlOf(booking));
-      if (booking.organizer) row(pane, 'With', booking.organizer);
-      row(pane, 'Booked for', booking.name ? booking.name + ' (' + booking.email + ')' : booking.email);
+      if (booking.organizer) row(pane, '组织者', booking.organizer);
+      row(pane, '预约人', booking.name ? booking.name + ' (' + booking.email + ')' : booking.email);
 
       if (booking.status === 'confirmed' && booking.canCancel) {
-        var reasonLabel = el('label', 'f', 'Add a note for the organizer (optional)');
+        var reasonLabel = el('label', 'f', '给组织者留言（可选）');
         reasonLabel.htmlFor = 'cancel-reason';
         var reason = el('textarea', 'f');
         reason.id = 'cancel-reason';
         reason.maxLength = 500;
         reason.value = cancelDraft;
         var actions = el('div', 'actions');
-        var cancelBtn = el('button', 'danger', 'Cancel booking');
+        var cancelBtn = el('button', 'danger', '取消预约');
         cancelBtn.type = 'button';
         cancelBtn.addEventListener('click', function () {
           cancelDraft = reason.value;
           cancelBtn.disabled = true;
-          cancelBtn.textContent = 'Cancelling…';
+          cancelBtn.textContent = '取消中…';
           fetchFn(worker + '/api/booking/' + token + '/cancel', {
             method: 'POST',
             body: new URLSearchParams({ reason: reason.value }),
@@ -574,7 +574,7 @@
             .catch(function () {
               // renderManage rebuilds the pane (this button included), so a
               // fresh, enabled Cancel comes back on its own — with the draft.
-              renderManage(data, { err: true, text: "Couldn't cancel. Check your connection and try again." });
+              renderManage(data, { err: true, text: '无法取消预约。请检查网络连接后重试。' });
             });
         });
         actions.append(cancelBtn);
@@ -586,7 +586,7 @@
         pane.append(el('p', 'fine', STARTED_TEXT));
       } else if (booking.status === 'cancelled' && page && page.enabled) {
         var rebook = el('p', 'fine');
-        var a = el('a', null, 'Pick a new time');
+        var a = el('a', null, '重新选择时间');
         a.href = worker + '/book/' + page.id;
         rebook.append(a);
         pane.append(rebook);
@@ -678,7 +678,7 @@
     }
 
     function loadPage() {
-      renderLoading('Loading available times…');
+      renderLoading('正在加载可用时间…');
       fetchFn(worker + '/api/book/' + pageId)
         .then(function (res) {
           if (res.status === 404) return renderGone();
@@ -688,7 +688,7 @@
             page = data.page || {};
             serverSkew = isFinite(data.now) ? data.now - Date.now() : 0;
             minNoticeMs = Math.max(0, Number(page.minNoticeMin) || 0) * 60000;
-            document.title = (page.title || 'Book a meeting') + ' — Puter Calendar';
+            document.title = (page.title || '预约会议') + ' — Puter 日历';
             var today = monthOfKey(dayKey(nowMs(), tz));
             minMonthKey = monthKeyOf(today.y, today.m);
             var horizon = monthOfKey(dayKey(nowMs() + (page.maxAdvanceDays || 60) * DAY, tz));
@@ -771,7 +771,7 @@
         info.append(pic);
       }
       if (page.organizer) info.append(el('p', 'kicker', page.organizer));
-      info.append(el('h1', null, page.title || 'Meeting'));
+      info.append(el('h1', null, page.title || '会议'));
       var dur = el('p', 'fact');
       dur.append(svgIcon(ICONS.clock), el('span', null, durationLabel(page.durationMin || 30)));
       info.append(dur);
@@ -788,7 +788,7 @@
       var zone = el('div', 'fact fact--tz');
       zone.append(svgIcon(ICONS.globe));
       if (step === 'pick') {
-        var tzLabelEl = el('label', 'sr-only', 'Time zone');
+        var tzLabelEl = el('label', 'sr-only', '时区');
         tzLabelEl.htmlFor = 'bk-tz';
         var tzSelect = el('select');
         tzSelect.id = 'bk-tz';
@@ -879,7 +879,7 @@
       var pane = el('div', 'pane pane--cal');
       // The month's own header names this column on screen; the heading stays
       // for the outline a screen reader walks.
-      pane.append(el('h2', 'sr-only', 'Pick a date & time'));
+      pane.append(el('h2', 'sr-only', '选择日期与时间'));
 
       var key = monthKeyOf(view.y, view.m);
       var entry = monthCache[key];
@@ -896,7 +896,7 @@
       var prev = el('button');
       prev.append(svgIcon(ICONS.chevronLeft));
       prev.type = 'button';
-      prev.setAttribute('aria-label', 'Previous month');
+      prev.setAttribute('aria-label', '上个月');
       prev.setAttribute('data-focus-key', 'nav-prev');
       prev.disabled = key <= minMonthKey;
       prev.addEventListener('click', function () {
@@ -908,7 +908,7 @@
       var next = el('button');
       next.append(svgIcon(ICONS.chevronRight));
       next.type = 'button';
-      next.setAttribute('aria-label', 'Next month');
+      next.setAttribute('aria-label', '下个月');
       next.setAttribute('data-focus-key', 'nav-next');
       next.disabled = key >= maxMonthKey;
       next.addEventListener('click', function () {
@@ -949,7 +949,7 @@
         // a screen reader as both pressed and "no times".
         btn.setAttribute('aria-pressed', String(k === selectedDay && available));
         btn.setAttribute('aria-label', dayLabelFmt.format(new Date(Date.UTC(view.y, view.m - 1, day)))
-          + (available ? ', times available' : ', no times'));
+          + (available ? '，有可用时间' : '，无可用时间'));
         btn.setAttribute('data-focus-key', 'day-' + k);
         if (k === todayKey) btn.className += ' cal-day--today';
         (function (dk) {
@@ -972,10 +972,10 @@
 
       // --- times for the selected day, beside the month ---
       var times = el('section', 'pane pane--times');
-      times.setAttribute('aria-label', 'Available times');
+      times.setAttribute('aria-label', '可用时间');
       layout.append(times);
       if (entry && entry.loading) {
-        var busy = el('p', 'loading', 'Loading times…');
+        var busy = el('p', 'loading', '正在加载时间…');
         // Stands in for the Try again button while the refetch is in flight:
         // focusable, and carrying that button's key so the keyboard hops from
         // the press to this message and on to whatever replaces it.
@@ -987,8 +987,8 @@
         // kind of dead end, and dressing it as muted body text with an inline
         // link both hid it and left "Try again" a 59x21 target.
         var errBox = el('div', 'slots-error');
-        errBox.append(el('div', 'banner banner--err', "Couldn't load times for this month."));
-        var retry = el('button', 'retry', 'Try again');
+        errBox.append(el('div', 'banner banner--err', '无法加载本月的可用时间。'));
+        var retry = el('button', 'retry', '重试');
         retry.type = 'button';
         retry.setAttribute('data-focus-key', 'retry');
         retry.addEventListener('click', function () {
@@ -1019,7 +1019,7 @@
               armedSlot = null;
               renderBooking();
             });
-            var confirm = el('button', 'slot-confirm', 'Confirm');
+            var confirm = el('button', 'slot-confirm', '确认');
             confirm.type = 'button';
             confirm.setAttribute('data-focus-key', 'confirm-' + ms);
             confirm.addEventListener('click', function () {
@@ -1058,12 +1058,12 @@
         // Point at the next month only while the horizon lets it be visited —
         // at the last month the nav button beside this text is disabled.
         times.append(el('p', 'empty', noneAnywhere
-          ? 'No times are available at the moment. Check back later, or contact the organizer.'
+          ? '目前没有可预约的时间。请稍后再试，或直接联系组织者。'
           : key < maxMonthKey
-            ? 'No times available this month. Try the next one.'
-            : 'No times available this month.'));
+            ? '本月没有可预约的时间。请查看下个月。'
+            : '本月没有可预约的时间。'));
       } else {
-        times.append(el('p', 'empty', 'Pick a highlighted day to see times.'));
+        times.append(el('p', 'empty', '请选择高亮显示的日期以查看可用时间。'));
       }
     }
 
@@ -1095,7 +1095,7 @@
     }
 
     function buildForm(pane) {
-      pane.append(el('h2', null, 'Enter your details'));
+      pane.append(el('h2', null, '填写您的信息'));
       var summary = el('div', 'summary');
       summary.append(el('div', 'when', fmtWhenRange(chosenSlot, chosenSlot + (page.durationMin || 30) * 60000, tz)));
       summary.append(el('div', 'sub', tzLabel(tz) + ' · ' + durationLabel(page.durationMin || 30)));
@@ -1107,7 +1107,7 @@
       // inline errors (and leaving stale ones behind) — the handler's own
       // checks are the single source of truth.
       form.noValidate = true;
-      var nameLabel = el('label', 'f', 'Name');
+      var nameLabel = el('label', 'f', '姓名');
       nameLabel.htmlFor = 'bk-name';
       var name = el('input', 'f');
       name.id = 'bk-name';
@@ -1128,7 +1128,7 @@
       // the described-by link reads the message out (ignored while hidden).
       name.setAttribute('aria-describedby', nameErr.id);
 
-      var emailLabel = el('label', 'f', 'Email');
+      var emailLabel = el('label', 'f', '电子邮箱');
       emailLabel.htmlFor = 'bk-email';
       var email = el('input', 'f');
       email.id = 'bk-email';
@@ -1142,7 +1142,7 @@
       emailErr.hidden = true;
       email.setAttribute('aria-describedby', emailErr.id);
 
-      var notesLabel = el('label', 'f', 'Anything that will help prepare? (optional)');
+      var notesLabel = el('label', 'f', '有需要提前了解的事项吗？（可选）');
       notesLabel.htmlFor = 'bk-notes';
       var notes = el('textarea', 'f');
       notes.id = 'bk-notes';
@@ -1154,9 +1154,9 @@
       banner.hidden = true;
 
       var actions = el('div', 'actions');
-      var submit = el('button', 'primary', 'Schedule meeting');
+      var submit = el('button', 'primary', '确认预约会议');
       submit.type = 'submit';
-      var back = el('button', 'ghost', 'Back');
+      var back = el('button', 'ghost', '返回');
       back.type = 'button';
       back.addEventListener('click', function () {
         rememberForm();
@@ -1178,10 +1178,10 @@
         var okEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim());
         name.setAttribute('aria-invalid', String(!okName));
         nameErr.hidden = okName;
-        nameErr.textContent = 'Please enter your name.';
+        nameErr.textContent = '请输入您的姓名。';
         email.setAttribute('aria-invalid', String(!okEmail));
         emailErr.hidden = okEmail;
-        emailErr.textContent = 'Please enter a valid email address.';
+        emailErr.textContent = '请输入有效的电子邮箱地址。';
         if (!okName || !okEmail) {
           (okName ? email : name).focus();
           return;
@@ -1189,7 +1189,7 @@
         banner.hidden = true;
         submit.disabled = true;
         back.disabled = true;
-        submit.textContent = 'Scheduling…';
+        submit.textContent = '正在预约…';
         submit.setAttribute('aria-busy', 'true');
         fetchFn(worker + '/api/book/' + pageId, {
           method: 'POST',
@@ -1211,7 +1211,7 @@
                 monthCache = {};
                 step = 'pick';
                 armedSlot = null;
-                pickNotice = { err: true, text: 'That time was just booked. Please pick another.' };
+                pickNotice = { err: true, text: '该时间段刚刚被预约，请重新选择其他时间。' };
                 renderBooking('notice');
                 ensureMonth(view);
                 return;
@@ -1223,26 +1223,26 @@
                 monthCache = {};
                 step = 'pick';
                 armedSlot = null;
-                pickNotice = { err: true, text: 'That time is no longer available. Please pick another.' };
+                pickNotice = { err: true, text: '该时间段已不可用，请选择其他时间。' };
                 renderBooking('notice');
                 ensureMonth(view);
                 return;
               }
               if (res.status === 429) {
-                showFail("This page can't take more bookings today. Please try again tomorrow.");
+                showFail('此页面今日预约次数已达上限，请明天再试。');
                 return;
               }
-              showFail("Couldn't schedule the meeting. Check your connection and try again.");
+              showFail('无法预约该会议。请检查您的网络连接后重试。');
             });
           })
           .catch(function () {
-            showFail("Couldn't schedule the meeting. Check your connection and try again.");
+            showFail('无法预约该会议。请检查您的网络连接后重试。');
           });
 
         function showFail(text) {
           submit.disabled = false;
           back.disabled = false;
-          submit.textContent = 'Schedule meeting';
+          submit.textContent = '确认预约会议';
           submit.removeAttribute('aria-busy');
           banner.textContent = text;
           banner.hidden = false;
@@ -1259,41 +1259,41 @@
       // showFail writes into nodes the replaceChildren below just detached.
       var hasTimes = isFinite(booking.start) && isFinite(booking.end);
       var manageUrl = data.token ? worker + '/booking/' + data.token : '';
-      document.title = 'Confirmed — Puter Calendar';
+      document.title = '已确认 — Puter 日历';
       root.replaceChildren();
       root.className = 'card';
       var pane = el('div', 'pane');
       var mark = el('div', 'done-icon');
       mark.append(svgIcon(ICONS.check));
       pane.append(mark);
-      var h = el('h1', null, "You're scheduled");
+      var h = el('h1', null, '预约成功');
       h.tabIndex = -1;
       pane.append(h);
       // `duplicate` means this press found the booking the guest already had
       // (their first press landed, its reply didn't) — so the mail is already
       // sent and this reply carries no manage token to promise.
       var status = el('div', 'banner', data.duplicate
-        ? 'You had already booked this time, so nothing changed.' +
-          (hasTimes ? ' You can add it to your calendar below.' : '')
+        ? '您此前已预约过该时间段，无需重复提交。' +
+          (hasTimes ? ' 您可以在下方将其添加到日历。' : '')
         : !hasTimes
         ? (data.emailed && data.emailed.guest
-          ? 'A confirmation email is on its way to ' + booking.email + '.'
-          : 'Your booking is confirmed.')
+          ? '确认邮件正发送至 ' + booking.email + '。'
+          : '您的预约已确认。')
         : (data.emailed && data.emailed.guest
-          ? 'A confirmation email is on its way to ' + booking.email +
-            '. You can also add this meeting to your calendar below.'
-          : 'Add this meeting to your calendar below.'));
+          ? '确认邮件正发送至 ' + booking.email +
+            '。您也可以在下方将此会议添加到您的日历。'
+          : '请在下方将此会议添加到您的日历。'));
       status.setAttribute('role', 'status');
       pane.append(status);
-      row(pane, 'What', (booking.title || 'Meeting') + (booking.organizer ? ' with ' + booking.organizer : ''));
-      if (hasTimes) row(pane, 'When', fmtWhenRange(booking.start, booking.end, tz) + ' (' + tzLabel(tz) + ')');
-      if (booking.location) row(pane, 'Where', booking.location);
+      row(pane, '主题', (booking.title || '会议') + (booking.organizer ? '（与 ' + booking.organizer + '）' : ''));
+      if (hasTimes) row(pane, '时间', fmtWhenRange(booking.start, booking.end, tz) + ' (' + tzLabel(tz) + ')');
+      if (booking.location) row(pane, '地点', booking.location);
       joinRow(pane, meetingUrlOf(booking));
-      row(pane, 'Booked for', booking.name ? booking.name + ' (' + booking.email + ')' : booking.email);
+      row(pane, '预约人', booking.name ? booking.name + ' (' + booking.email + ')' : booking.email);
 
       if (hasTimes) {
         var actions = el('div', 'actions');
-        var ics = el('a', 'ghost', 'Add to calendar (.ics)');
+        var ics = el('a', 'ghost', '添加到日历 (.ics)');
         ics.href = 'data:text/calendar;charset=utf-8,' + encodeURIComponent(bookingIcs(booking));
         ics.setAttribute('download', 'meeting.ics');
         actions.append(ics);
@@ -1302,11 +1302,11 @@
 
       if (manageUrl) {
         var fine = el('p', 'fine');
-        fine.append(document.createTextNode('Need to make a change? '));
-        var a = el('a', null, 'Cancel this booking');
+        fine.append(document.createTextNode('需要变更安排？'));
+        var a = el('a', null, '取消此预约');
         a.href = manageUrl;
         fine.append(a);
-        fine.append(document.createTextNode('. This link is personal, so keep it handy.'));
+        fine.append(document.createTextNode('。此链接为个人专属链接，请妥善保存。'));
         pane.append(fine);
       }
       root.append(pane);
@@ -1339,7 +1339,7 @@
     function joinRow(pane, url) {
       if (!url) return;
       var node = el('div', 'row');
-      node.append(el('b', null, 'Join'));
+      node.append(el('b', null, '加入会议'));
       var a = el('a', null, url);
       a.href = url;
       a.target = '_blank';
@@ -1352,7 +1352,7 @@
       root.replaceChildren();
       root.className = 'card';
       var pane = el('div', 'pane');
-      pane.append(el('p', 'kicker', 'Book a meeting'));
+      pane.append(el('p', 'kicker', '预约会议'));
       pane.append(el('h1', null, text));
       root.append(pane);
     }
@@ -1361,10 +1361,10 @@
       root.replaceChildren();
       root.className = 'card';
       var pane = el('div', 'pane');
-      pane.append(el('p', 'kicker', 'Book a meeting'));
-      pane.append(el('h1', null, "This link isn't active"));
+      pane.append(el('p', 'kicker', '预约会议'));
+      pane.append(el('h1', null, '此链接已失效'));
       pane.append(el('div', 'row',
-        "This booking link is invalid or has been removed. If you think that's a mistake, ask the person who sent it for a fresh one."));
+        '此预约链接无效或已被移除。如果您认为有误，请联系发送此链接的人获取新链接。'));
       root.append(pane);
       foot();
     }
@@ -1373,10 +1373,10 @@
       root.replaceChildren();
       root.className = 'card';
       var pane = el('div', 'pane');
-      pane.append(el('p', 'kicker', 'Book a meeting'));
-      pane.append(el('h1', null, 'Not accepting bookings'));
+      pane.append(el('p', 'kicker', '预约会议'));
+      pane.append(el('h1', null, '暂停接受预约'));
       pane.append(el('div', 'row',
-        'This booking page is turned off right now. Check back later, or contact the organizer directly.'));
+        '此预约页面目前已关闭。请稍后再试，或直接联系组织者。'));
       root.append(pane);
       foot();
     }
@@ -1385,10 +1385,10 @@
       root.replaceChildren();
       root.className = 'card';
       var pane = el('div', 'pane');
-      pane.append(el('p', 'kicker', 'Book a meeting'));
-      pane.append(el('h1', null, 'Could not load this page'));
-      pane.append(el('div', 'banner banner--err', 'Check your connection and try again.'));
-      var retry = el('button', 'retry', 'Try again');
+      pane.append(el('p', 'kicker', '预约会议'));
+      pane.append(el('h1', null, '无法加载此页面'));
+      pane.append(el('div', 'banner banner--err', '请检查您的网络连接后重试。'));
+      var retry = el('button', 'retry', '重试');
       retry.type = 'button';
       retry.addEventListener('click', function () { retryFn(); });
       pane.append(retry);
@@ -1398,7 +1398,7 @@
 
     function foot() {
       var bar = el('p', 'foot');
-      bar.append(document.createTextNode('Scheduled with'));
+      bar.append(document.createTextNode('预约支持：'));
       var link = el('a');
       var markImg = el('img');
       markImg.src = '/favicon-48x48.png';
@@ -1406,7 +1406,7 @@
       markImg.width = 18;
       markImg.height = 18;
       link.append(markImg);
-      link.append(document.createTextNode('Puter Calendar'));
+      link.append(document.createTextNode('Puter 日历'));
       link.href = 'https://calendar.puter.com/';
       link.rel = 'noopener';
       bar.append(link);

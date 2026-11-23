@@ -25,17 +25,17 @@ export function scoreMatch(line, expense, tol = DEFAULT_TOLERANCE) {
 
   const reasons = [];
   let score = 50;
-  if (diff < 0.005) { score += 30; reasons.push('Exact amount'); } else { score += 15; reasons.push('Amount within tolerance'); }
+  if (diff < 0.005) { score += 30; reasons.push('金额完全一致'); } else { score += 15; reasons.push('金额在误差范围内'); }
   const dayScore = Math.max(0, 15 - Math.abs(days) * 4);
   score += dayScore;
-  reasons.push(days === 0 ? 'Same day' : `${Math.abs(days)} day${Math.abs(days) === 1 ? '' : 's'} apart`);
+  reasons.push(days === 0 ? '同一天' : `相差 ${Math.abs(days)} 天`);
 
   const lt = new Set(tokens(line.description));
   const et = tokens(expense.merchant);
   const shared = et.filter((t) => lt.has(t) || [...lt].some((l) => l.length > 3 && (l.startsWith(t) || t.startsWith(l))));
   if (et.length && shared.length) {
     score += Math.min(20, 10 + shared.length * 5);
-    reasons.push('Merchant matches');
+    reasons.push('商家名称匹配');
   }
   return { score: Math.min(100, Math.round(score)), reasons, days, diff };
 }

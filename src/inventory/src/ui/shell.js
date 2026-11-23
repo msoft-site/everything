@@ -24,7 +24,7 @@ import { settingsView, confirmSignOut } from '../views/settings.js';
 
 /**
  * Every route shows in the desktop sidebar. `tab: true` also earns a
- * slot in the mobile tab bar; the rest live behind its "More" sheet, so
+ * slot in the mobile tab bar; the rest live behind its "更多" sheet, so
  * the bar keeps thumb-sized targets however many views we add.
  *
  * A route with `match` is a detail page: it isn't in either navigation
@@ -33,16 +33,16 @@ import { settingsView, confirmSignOut } from '../views/settings.js';
  * open.
  */
 const ROUTES = [
-  { hash: '#/', label: 'Overview', icon: 'dashboard', view: dashboardView, tab: true },
-  { hash: '#/products', label: 'Products', icon: 'package', view: productsView, tab: true },
+  { hash: '#/', label: '概览', icon: 'dashboard', view: dashboardView, tab: true },
+  { hash: '#/products', label: '商品档案', icon: 'package', view: productsView, tab: true },
   { hash: '#/takeout', label: 'Take out', icon: 'packageMinus', view: takeoutView },
   { hash: '#/reorder', label: 'Reorder', icon: 'cart', view: reorderView, tab: true },
   { hash: '#/stocktake', label: 'Stocktake', icon: 'clipboard', view: stocktakeView },
   { hash: '#/history', label: 'History', icon: 'history', view: historyView, tab: true },
-  { hash: '#/reports', label: 'Reports', icon: 'chart', view: reportsView },
+  { hash: '#/reports', label: '报表', icon: 'chart', view: reportsView },
   { hash: '#/locations', label: 'Locations', icon: 'pin', view: locationsView },
-  { hash: '#/suppliers', label: 'Suppliers', icon: 'truck', view: suppliersView },
-  { hash: '#/settings', label: 'Settings', icon: 'gear', view: settingsView },
+  { hash: '#/suppliers', label: '供货商', icon: 'truck', view: suppliersView },
+  { hash: '#/settings', label: '设置', icon: 'gear', view: settingsView },
   /* The app's one deep-linkable object URL: the thing an owner
      bookmarks, and where a scanned code that resolves to a known
      product can land. */
@@ -75,9 +75,9 @@ export function mountShell(appRoot) {
       el('button', {
         onclick: async () => {
           const ok = await confirmDialog({
-            title: 'Start fresh?',
+            title: '重新开始？',
             message: 'All sample data is removed and you set up your own inventory from scratch.',
-            confirmLabel: 'Wipe sample data',
+            confirmLabel: '清除示例数据',
           });
           if (!ok) return;
           try {
@@ -89,7 +89,7 @@ export function mountShell(appRoot) {
           }
           openOnboarding();
         },
-      }, 'Start fresh')
+      }, '重新开始')
     )));
   }
   store.addEventListener('change', renderSampleBanner);
@@ -169,8 +169,8 @@ export function mountShell(appRoot) {
       el('span.name', { title: username }, username),
       !isPuterApp && el('button.icon-btn', {
         html: icon('logout', 18, 2),
-        'aria-label': 'Sign out',
-        title: 'Sign out',
+        'aria-label': '退出登录',
+        title: '退出登录',
         onclick: confirmSignOut,
       })
     )
@@ -215,7 +215,7 @@ export function mountShell(appRoot) {
       html: icon('more', 22, 1.8),
       'aria-haspopup': 'dialog',
       onclick: () => openMoreSheet(overflow, active),
-    }, el('span', {}, 'More')));
+    }, el('span', {}, '更多')));
   }
 
   /* Mobile overflow: the routes the tab bar has no room for. */
@@ -230,7 +230,7 @@ export function mountShell(appRoot) {
       navBadge(r),
       el('span', { html: icon('chevR', 18), style: { color: 'var(--ink-3)' } })
     )));
-    const modal = openModal({ title: 'More', content });
+    const modal = openModal({ title: '更多', content });
   }
 
   function renderRoute({ moveFocus = false } = {}) {

@@ -1,0 +1,13 @@
+services:
+  everything:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: everything-suite:latest
+    container_name: everything-suite
+    restart: unless-stopped
+    ports:
+      # 映射到宿主机/NAS 的 8080 端口（可按需修改，如 8888:80）
+      - "8080:80"
+    environment:
+      - TZ=Asia/Shanghai

@@ -52,10 +52,10 @@ export async function shareForReview({ puter, project, library, scope = 'all', t
   const server = await d.ensureWorker(puter, { progress: (text) => onPhase('server', { text }) });
   const { project: source, range } = reviewSource(project, scope);
   const duration = projectDuration(source);
-  if (duration <= 0) throw new Error('Add something to the timeline first.');
+  if (duration <= 0) throw new Error('请先向时间轴添加内容。');
   const size = outputSize(source.settings.width, source.settings.height, REVIEW_PRESET.resolution);
   const caps = await d.detectCapabilities({ ...size, fps: source.settings.fps || 30 }).catch(() => null);
-  if (caps && !caps.video.length) throw new Error('This browser cannot encode video, so a review copy cannot be made here.');
+  if (caps && !caps.video.length) throw new Error('当前浏览器不支持视频编码，无法在此创建审阅副本。');
   const settings = reviewSettings(source, caps, cleanTitle(title || project.name));
   onPhase('render', { fraction: 0 });
   const result = await d.exportProject(source, library, settings, { kind: 'video', signal, onProgress: (p) => onPhase('render', { fraction: p.fraction, preview: p.preview }) });

@@ -14,7 +14,7 @@ export const BUNDLE_PATH = 'worker/video-studio-review-worker.js';
 
 const deployments = new WeakMap();
 
-const unreachable = () => new Error('Could not reach the review server. Check your connection and try again.');
+const unreachable = () => new Error('无法连接到审阅服务器，请检查网络连接后重试。');
 
 /**
  * Call an operation on a review worker. Errors carry .status from the
@@ -41,7 +41,7 @@ export async function call(puter, server, input, { timeout = 30_000 } = {}) {
     }
     const data = await res.json().catch(() => null);
     if (res.ok && !data) throw unreachable();
-    if (!res.ok) throw Object.assign(new Error(data?.message || 'The review server had a problem. Try again.'), {
+    if (!res.ok) throw Object.assign(new Error(data?.message || '审阅服务器遇到问题，请重试。'), {
       status: res.status,
       ...(data?.code === COMMENT_DELIVERY_PENDING ? { code: data.code } : {}),
     });
@@ -63,11 +63,11 @@ export async function ownWorker(puter) {
 
 async function bundle(fetcher) {
   const res = await fetcher(new URL(BUNDLE_PATH, document.baseURI).href, { cache: 'no-cache' });
-  if (!res.ok) throw new Error('The review server could not be prepared.');
+  if (!res.ok) throw new Error('无法准备审阅服务器。');
   const source = await res.text();
   const build = /video-studio-review-worker build=([a-z0-9]+)/.exec(source)?.[1];
   const builtAt = Number(/ at=(\d+)/.exec(source.slice(0, 160))?.[1]) || 0;
-  if (!build) throw new Error('The review server could not be prepared.');
+  if (!build) throw new Error('无法准备审阅服务器。');
   return { source, build, builtAt };
 }
 
@@ -79,10 +79,10 @@ async function bundle(fetcher) {
 export async function deploy(puter, { progress = () => {}, fetcher = (...a) => fetch(...a), wait = (ms) => new Promise((r) => setTimeout(r, ms)), attempts = 20 } = {}) {
   const account = puter.authToken;
   const sameAccount = () => {
-    if (puter.authToken !== account) throw new Error('Your Puter account changed. Reload the page.');
+    if (puter.authToken !== account) throw new Error('您的 Puter 账号已更改，请重新加载页面。');
   };
   let config = await puter.kv.get(WORKER_KEY);
-  progress('Preparing the review server...');
+  progress('正在准备审阅服务器...');
   const { source, build, builtAt } = await bundle(fetcher);
   sameAccount();
   if (!config) {
@@ -100,7 +100,7 @@ export async function deploy(puter, { progress = () => {}, fetcher = (...a) => f
     config = { ...config, build, builtAt };
     await puter.kv.set(WORKER_KEY, config);
   }
-  progress('Starting the review server...');
+  progress('正在启动审阅服务器...');
   const server = workerURL(config.server);
   for (let i = 0; i < attempts; i++) {
     try {
@@ -115,7 +115,7 @@ export async function deploy(puter, { progress = () => {}, fetcher = (...a) => f
     sameAccount();
     await wait(1000);
   }
-  throw new Error('The review server is still starting. Try again in a moment.');
+  throw new Error('审阅服务器仍在启动中，请稍后重试。');
 }
 
 /** deploy() once per page and account; later calls reuse the result. */

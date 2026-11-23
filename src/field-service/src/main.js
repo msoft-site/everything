@@ -35,7 +35,7 @@ if (import.meta.env.PROD && 'serviceWorker' in navigator && location.protocol ==
 }
 
 async function boot() {
-  mount(root, h('div.boot', { role: 'status', 'aria-label': 'Loading' }, h('img', { src: './icons/icon-192.png', alt: '' })));
+  mount(root, h('div.boot', { role: 'status', 'aria-label': '加载中' }, h('img', { src: './icons/icon-192.png', alt: '' })));
   app.env = platform.puterEnv();
   if (await platform.isSignedIn()) {
     await startSignedIn();
@@ -56,7 +56,7 @@ async function handleSignIn() {
   } catch (err) {
     const code = err?.error || err?.code || err?.message;
     if (code === 'auth_window_closed') return;
-    toast(code === 'popup_blocked' ? 'Allow pop-ups for this site to sign in.' : 'Sign in did not complete. Please try again.', { type: 'error' });
+    toast(code === 'popup_blocked' ? '请允许本站弹出窗口以完成登录。' : '登录未完成，请重试。', { type: 'error' });
   }
 }
 
@@ -66,7 +66,7 @@ async function startSignedIn() {
     user = await platform.getUser();
   } catch (err) {
     console.error(err);
-    showWelcome('We could not reach your Puter account. Check your connection and try again.');
+    showWelcome('无法连接到您的 Puter 账户。请检查网络连接后重试。');
     return;
   }
   app.user = { username: user.username, uuid: user.uuid };
@@ -80,7 +80,7 @@ async function startSignedIn() {
   } catch (err) {
     // Guessing "your own business" here could open the wrong one.
     console.error('[field-service] could not read workspaces', err);
-    showWelcome('We could not load your businesses from Puter. Check your connection and try again.');
+    showWelcome('无法从 Puter 加载您的企业信息。请检查网络连接后重试。');
     return;
   }
   const join = location.hash.startsWith('#/join') ? team.parseJoin(Object.fromEntries(new URLSearchParams(location.hash.split('?')[1] || ''))) : null;
@@ -120,7 +120,7 @@ async function startSignedIn() {
     // Every request refused from here on reports it again; act once.
     if (!app.team || app.team.role === 'owner' || removed) return;
     removed = true;
-    toast('You no longer have access to this business. Switching back to your own.', { type: 'error', duration: 8000 });
+    toast('您已不再拥有该企业的访问权限，正在切回您自己的企业。', { type: 'error', duration: 8000 });
     setTimeout(() => team.leaveWorkspace(app.team.url), 2500);
   });
   if (!app.team || app.team.role === 'owner') maybeOnboard();
@@ -147,7 +147,7 @@ async function checkTeamTurnedOn(kv, store) {
     switchingToTeam = false;
     return;
   }
-  toast('Team sign-in was turned on from another device. Switching over...', { type: 'info' });
+  toast('已在其他设备上开启团队登录，正在切换...', { type: 'info' });
   setTimeout(() => location.reload(), 1500);
 }
 
@@ -186,21 +186,21 @@ async function acceptInvite(kv, ws, { url, token }) {
   // Joining sends your Puter session to that business's server, so ask first.
   const host = new URL(url).hostname;
   const ok = await confirmDialog({
-    title: 'Join a business?',
-    message: `You opened an invitation to a business whose team server is ${host}. While you work in it, that server receives your Puter sign-in with every request, and what you add there is stored in its owner's account. Only accept invitations from people you know and trust.`,
-    confirmLabel: 'Join business',
+    title: '加入企业？',
+    message: `您打开了一份企业邀请，其团队服务器为 ${host}。在该企业工作期间，您的每次请求都会将 Puter 登录凭证发送至该服务器，且您添加的内容将保存在该企业所有者的账户中。请仅接受您认识且信任的人发出的邀请。`,
+    confirmLabel: '加入企业',
   });
   if (!ok) return ws;
   try {
     const res = await team.call(url, 'join', { token });
-    const entry = { url, business: res.business || 'Team business', role: res.role };
+    const entry = { url, business: res.business || '团队企业', role: res.role };
     const joined = [...ws.joined.filter((j) => j.url !== url), entry];
     const next = { ...ws, joined, current: url };
     await team.saveWorkspaces(kv, next);
-    setTimeout(() => toast(res.already ? `You are already a member of ${entry.business}.` : `Welcome to ${entry.business}. You joined as ${res.role === 'admin' ? 'an admin' : 'a team member'}.`), 600);
+    setTimeout(() => toast(res.already ? `您已经是 ${entry.business} 的成员。` : `欢迎加入 ${entry.business}。您已作为${res.role === 'admin' ? '管理员' : '团队成员'}加入。`), 600);
     return next;
   } catch (err) {
-    setTimeout(() => toast(err.message || 'This invitation could not be used.', { type: 'error' }), 600);
+    setTimeout(() => toast(err.message || '此邀请无法使用。', { type: 'error' }), 600);
     return ws;
   }
 }
@@ -228,18 +228,18 @@ function showWelcome(error) {
     'button.btn.primary.lg',
     { type: 'button', disabled: !available || null, onClick: handleSignIn },
     icon('log-in', 18),
-    'Sign in',
+    '登录',
   );
   const demoBtn = h(
     'button.btn.lg',
     {
       type: 'button',
       onClick: async () => {
-        mount(root, h('div.boot', { role: 'status', 'aria-label': 'Loading demo' }, h('img', { src: './icons/icon-192.png', alt: '' })));
+        mount(root, h('div.boot', { role: 'status', 'aria-label': '正在加载演示' }, h('img', { src: './icons/icon-192.png', alt: '' })));
         await startDemo();
       },
     },
-    'Explore the demo',
+    '体验演示版',
   );
   mount(
     root,
@@ -247,35 +247,35 @@ function showWelcome(error) {
       'div.welcome',
       h(
         'main.welcome-main',
-        h('div.brand', h('img', { src: './icons/icon-192.png', alt: '' }), 'Field Service'),
-        h('h1', 'Run your service business from one place.'),
+        h('div.brand', h('img', { src: './icons/icon-192.png', alt: '' }), '现场服务'),
+        h('h1', '一站式管理您的现场服务业务。'),
         h(
           'p.lead',
-          'Win work with clear quotes, schedule your crew, track every visit, and get paid faster. Free and open source.',
+          '用清晰的报价单赢得业务、排班调度团队、跟踪每次上门服务并更快收款。免费且开源。',
         ),
         error ? h('div.notice.danger', { role: 'alert' }, icon('alert'), h('span', error)) : null,
-        location.hash.startsWith('#/join') ? h('div.notice.accent', icon('users'), h('span', 'You have been invited to join a business. Sign in with Puter to accept the invitation.')) : null,
-        !available ? h('div.notice.warning', { role: 'alert' }, icon('warning'), h('span', 'Puter could not be loaded, so signing in is unavailable right now. You can still explore the demo.')) : null,
+        location.hash.startsWith('#/join') ? h('div.notice.accent', icon('users'), h('span', '您受邀加入一家企业。请使用 Puter 登录以接受邀请。')) : null,
+        !available ? h('div.notice.warning', { role: 'alert' }, icon('warning'), h('span', '无法加载 Puter，暂时无法登录。您仍然可以体验演示版。')) : null,
         h('div.cta', signInBtn, demoBtn),
         h(
           'ul.welcome-points',
           [
-            ['users', 'Clients, properties, and full work history in one profile'],
-            ['file-pen', 'Quotes with optional items, deposits, and one-click conversion to jobs'],
-            ['calendar-days', 'Drag-and-drop schedule for one-off and recurring visits'],
-            ['receipt-text', 'Invoices, payments, and reports that show what you are owed'],
+            ['users', '在一个档案中集中管理客户、物业地址及完整历史工单'],
+            ['file-pen', '支持可选项与定金的报价单，一键转换为工单'],
+            ['calendar-days', '支持单次与定期上门服务的拖拽式日程排班'],
+            ['receipt-text', '账单、收款记录与财务报表，让应收账款一目了然'],
           ].map(([ic, text]) => h('li', icon(ic), h('span', text))),
         ),
         h(
           'div.welcome-foot',
-          h('a', { href: REPO_URL, target: '_blank', rel: 'noopener noreferrer' }, icon('github', 16), 'Source on GitHub'),
-          h('span', 'Your data is stored in your own Puter account.'),
+          h('a', { href: REPO_URL, target: '_blank', rel: 'noopener noreferrer' }, icon('github', 16), 'GitHub 源码'),
+          h('span', '您的数据存储在您自己的 Puter 账户中。'),
         ),
       ),
       h('div.welcome-art', { 'aria-hidden': 'true', html: WELCOME_ART }),
     ),
   );
-  document.title = 'Field Service';
+  document.title = '现场服务';
 }
 
 // Illustration: a simplified week schedule with visit blocks. Uses theme

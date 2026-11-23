@@ -2,9 +2,9 @@ import { Emitter } from '../lib/emitter.js';
 
 /** What to tell the user when a device can't be acquired. */
 const DEVICE_ERRORS = Object.freeze({
-  audio: 'Microphone unavailable. Check permissions or pick another device.',
-  video: 'Camera unavailable. Check permissions or pick another device.',
-  both: 'Camera and microphone are unavailable. Check browser permissions.',
+  audio: '麦克风不可用。请检查权限或选择其他设备。',
+  video: '摄像头不可用。请检查权限或选择其他设备。',
+  both: '摄像头和麦克风均不可用。请检查浏览器权限。',
 });
 
 /**
@@ -252,8 +252,8 @@ export class LocalMedia extends Emitter {
         error: err,
         // A bad image is the user's file, not the browser — say which.
         message: /image/i.test(err?.message ?? '')
-          ? 'That background image couldn’t be loaded.'
-          : 'Background effects aren’t available in this browser.',
+          ? '无法加载该背景图片。'
+          : '此浏览器不支持背景效果。',
       });
       return false;
     }
@@ -301,7 +301,7 @@ export class LocalMedia extends Emitter {
       this.emit('error', {
         kind: 'noise-suppression',
         error: err,
-        message: 'Noise suppression isn’t available in this browser.',
+        message: '此浏览器不支持噪音抑制。',
       });
       return false;
     }
@@ -432,7 +432,7 @@ export class LocalMedia extends Emitter {
       this.emit('error', {
         kind: 'background',
         error: err,
-        message: 'Background effects aren’t available in this browser.',
+        message: '此浏览器不支持背景效果。',
       });
     });
   }
@@ -472,7 +472,7 @@ export class LocalMedia extends Emitter {
       this.emit('error', {
         kind: 'noise-suppression',
         error: err,
-        message: 'Noise suppression isn’t available in this browser.',
+        message: '此浏览器不支持噪音抑制。',
       });
     });
   }
@@ -581,7 +581,7 @@ export class LocalMedia extends Emitter {
       const got = await this.#tryAcquire('video', { seq, quiet: true });
       if (seq !== this.#seq.video || this.#closed) return;
       this.camOn = got && !!this.videoTrack;
-      if (!this.camOn) this.emit('error', { kind: 'video', error: null, message: 'Your camera was disconnected.' });
+      if (!this.camOn) this.emit('error', { kind: 'video', error: null, message: '您的摄像头已断开连接。' });
     } else {
       const muted = !this.micOn;
       this.#dropTrack('audio', /* silent */ true);
@@ -591,7 +591,7 @@ export class LocalMedia extends Emitter {
         this.audioTrack.enabled = !muted;
       } else {
         this.micOn = false;
-        this.emit('error', { kind: 'audio', error: null, message: 'Your microphone was disconnected.' });
+        this.emit('error', { kind: 'audio', error: null, message: '您的麦克风已断开连接。' });
       }
     }
     this.emit('change', { micOn: this.micOn, camOn: this.camOn });

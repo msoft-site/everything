@@ -41,8 +41,8 @@ export async function orgForEmail(store, K, email) {
 export async function createUser(store, K, input, by) {
   const email = normEmail(input.email);
   const name = cleanLine(input.name, LIMITS.name) || (email ? email.split('@')[0] : '');
-  if (!name) throw new ValidationError('A customer needs a name or an email address', 'name');
-  if (input.email && !email) throw new ValidationError('That email address does not look right', 'email');
+  if (!name) throw new ValidationError('客户需要填写姓名或电子邮箱地址', 'name');
+  if (input.email && !email) throw new ValidationError('该电子邮箱地址格式不正确', 'email');
   if (email) {
     const existing = await findUserByEmail(store, K, email);
     if (existing) return existing;
@@ -78,12 +78,12 @@ export async function createUser(store, K, input, by) {
 export async function resolveRequester(store, K, input, by) {
   if (input && (typeof input === 'number' || typeof input === 'string') && Number(input)) {
     const user = await store.get(K.user(Number(input)));
-    if (!user) throw new ValidationError('That requester no longer exists', 'requester');
+    if (!user) throw new ValidationError('该请求人已不存在', 'requester');
     return user;
   }
   if (input && input.id) return resolveRequester(store, K, input.id, by);
   if (input && (input.email || input.name)) return createUser(store, K, input, by);
-  throw new ValidationError('Choose who the ticket is for', 'requester');
+  throw new ValidationError('请选择工单的请求人', 'requester');
 }
 
 /** Clean custom field values against the desk's field definitions. */
@@ -126,24 +126,24 @@ export function cleanPatch(patch, { members, cfg, ticket }) {
   if (!patch || typeof patch !== 'object') return out;
   if ('subject' in patch) {
     const s = cleanLine(patch.subject, LIMITS.subject);
-    if (!s) throw new ValidationError('The subject cannot be empty', 'subject');
+    if (!s) throw new ValidationError('主题不能为空', 'subject');
     out.subject = s;
   }
   if ('status' in patch) {
     const s = oneOf(patch.status, STATUSES);
-    if (!s || s === 'closed') throw new ValidationError('Choose a valid status', 'status');
+    if (!s || s === 'closed') throw new ValidationError('请选择有效的状态', 'status');
     out.status = s;
   }
   if ('priority' in patch) out.priority = oneOf(patch.priority, PRIORITIES, null);
   if ('type' in patch) out.type = oneOf(patch.type, TYPES, null);
   if ('assignee' in patch) {
     const a = patch.assignee || null;
-    if (a && !members[a]?.active) throw new ValidationError('That agent is not on this help desk', 'assignee');
+    if (a && !members[a]?.active) throw new ValidationError('该客服人员不在本服务台中', 'assignee');
     out.assignee = a;
   }
   if ('group' in patch) {
     const g = patch.group || null;
-    if (g && !(cfg.groups || []).some((x) => x.id === g)) throw new ValidationError('That group no longer exists', 'group');
+    if (g && !(cfg.groups || []).some((x) => x.id === g)) throw new ValidationError('该分组已不存在', 'group');
     out.group = g;
   }
   if ('tags' in patch) out.tags = normTags(patch.tags);
@@ -160,7 +160,7 @@ export function cleanPatch(patch, { members, cfg, ticket }) {
     // Every ticket has a requester: emails, "My requests" and the index of
     // a customer's tickets all depend on it.
     const r = Number(patch.requester);
-    if (!Number.isInteger(r) || r <= 0) throw new ValidationError('Choose a requester', 'requester');
+    if (!Number.isInteger(r) || r <= 0) throw new ValidationError('请选择请求人', 'requester');
     out.requester = r;
   }
   return out;
@@ -238,10 +238,10 @@ export async function sendNotifications(env, { meta, desk, ticket, requester, ag
     }
     const subject = cleanLine(renderPlaceholders(n.subject || '[{{desk.name}}] {{ticket.subject}}', data), 300);
     const bodyText = renderPlaceholders(n.body || '{{comment.text}}', data);
-    const text = `${bodyText}\n\n${link ? `View your request: ${link}\n\n` : ''}Request #${ticket.id}`;
+    const text = `${bodyText}\n\n${link ? `查看您的请求：${link}\n\n` : ''}请求 #${ticket.id}`;
     const html = `<div style="font-family:system-ui,sans-serif;font-size:14px;line-height:1.5;color:#1d2125">${textToHtml(bodyText)}${
-      link ? `<p><a href="${escapeHtml(link)}">View your request</a></p>` : ''
-    }<p style="color:#6b7280;font-size:12px">Request #${ticket.id} &middot; ${escapeHtml(meta.name || 'Help desk')}</p></div>`;
+      link ? `<p><a href="${escapeHtml(link)}">查看您的请求</a></p>` : ''
+    }<p style="color:#6b7280;font-size:12px">请求 #${ticket.id} &middot; ${escapeHtml(meta.name || '服务台')}</p></div>`;
     try {
       const res = await env.email({ to: recipients, subject: `${subject} [#${ticket.id}]`, text, html, replyTo: meta.email.replyTo || (meta.email.inbox && meta.email.address) || undefined });
       results.push({ to: recipients, ok: !(res?.failed?.length), failed: res?.failed || [], trigger: n.trigger });
@@ -262,10 +262,10 @@ export async function createTicket(env, desk, ctx, input, actor) {
   const { meta, members, cfg } = ctx;
   const now = store.now();
   const subject = cleanLine(input.subject, LIMITS.subject);
-  if (!subject) throw new ValidationError('Add a subject', 'subject');
+  if (!subject) throw new ValidationError('请添加主题', 'subject');
   const via = oneOf(input.via, CHANNELS, actor.type === 'customer' ? 'portal' : 'web');
   const comment = commentFrom(input.comment, { by: actor, via, now });
-  if (!comment && actor.type === 'customer') throw new ValidationError('Describe your request', 'description');
+  if (!comment && actor.type === 'customer') throw new ValidationError('请描述您的请求', 'description');
   // The requester is resolved below, from an email or a customer id.
   const { requester: _requester, ...fields } = input;
   const base = cleanPatch(
@@ -391,10 +391,10 @@ export async function updateTicket(env, desk, ctx, id, input, actor) {
   const K = deskKeys(desk);
   const { meta, members, cfg } = ctx;
   const before = await store.get(K.ticket(id));
-  if (!before) fail(404, 'not_found', 'That ticket no longer exists');
+  if (!before) fail(404, 'not_found', '该工单已不存在');
   // A satisfaction rating is the one thing a closed ticket still takes.
-  if (before.status === 'closed' && !input.csat) fail(409, 'closed', 'Closed tickets cannot be changed. Create a follow-up instead.');
-  if (before.deleted && !input.allowDeleted) fail(409, 'deleted', 'This ticket is in the trash. Restore it to make changes.');
+  if (before.status === 'closed' && !input.csat) fail(409, 'closed', '已关闭的工单无法修改，请创建跟进工单。');
+  if (before.deleted && !input.allowDeleted) fail(409, 'deleted', '此工单在回收站中，请先恢复后再进行修改。');
   const now = store.now();
   const patch = actor.type === 'agent' ? cleanPatch(input.patch, { members, cfg, ticket: before }) : {};
   if (input.system) Object.assign(patch, input.system);
@@ -405,7 +405,7 @@ export async function updateTicket(env, desk, ctx, id, input, actor) {
   if (input.csat) after.csat = input.csat;
   if (patch.requester && patch.requester !== before.requester) {
     const user = await store.get(K.user(patch.requester));
-    if (!user) throw new ValidationError('That requester no longer exists', 'requester');
+    if (!user) throw new ValidationError('该请求人已不存在', 'requester');
     after.org = user.org || null;
   }
   // Customer replies reopen a ticket that was waiting on them or solved.
@@ -417,7 +417,7 @@ export async function updateTicket(env, desk, ctx, id, input, actor) {
   // solves (the ticket screen, bulk edit, a macro); merging closes as is.
   if (actor.type === 'agent' && patch.status === 'solved' && before.status !== 'solved' && !input.system?.mergedInto) {
     const missing = (cfg.fields || []).filter((f) => f.active && f.required && (after.fields?.[f.id] == null || after.fields[f.id] === ''));
-    if (missing.length) throw new ValidationError(`Fill in ${missing.map((f) => f.title).join(', ')} before solving`, `field:${missing[0].id}`);
+    if (missing.length) throw new ValidationError(`解决工单前请先填写 ${missing.map((f) => f.title).join('、')}`, `field:${missing[0].id}`);
   }
   const trig = runTriggers(cfg.triggers, { before, after, event: 'updated', actor: actor.type, comment, me: actor.id });
   after = trig.ticket;
@@ -532,7 +532,7 @@ export async function autoClose(env, desk, meta, { limit = 50 } = {}) {
     if (t && t.status === 'solved' && !t.deleted && !t.spam) {
       const now = store.now();
       const ticket = await writeTicket(store, K, id, { status: 'closed', closedAt: now, updatedAt: now });
-      const ev = { id: eventId(now), ticket: id, kind: 'change', at: now, by: { type: 'system', id: null, name: 'Automation' }, changes: [{ field: 'status', from: 'solved', to: 'closed' }] };
+      const ev = { id: eventId(now), ticket: id, kind: 'change', at: now, by: { type: 'system', id: null, name: '自动规则' }, changes: [{ field: 'status', from: 'solved', to: 'closed' }] };
       await store.commit(K, [{ key: eventKey(K, id, ev.id), value: ev }], { k: 't', id, v: ticket, by: null, ev: { byType: 'system', status: 'closed' } });
       closed++;
     }

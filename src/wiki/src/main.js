@@ -26,45 +26,45 @@ function screen(...children) {
   root.replaceChildren(h('main.splash', { id: 'main' }, ...children));
 }
 
-function loading(text = 'Opening your wiki...') {
+function loading(text = '正在打开您的知识库...') {
   root.setAttribute('aria-busy', 'true');
   root.replaceChildren(h('div.splash', { role: 'status' }, logo(), h('div.spinner', { 'aria-hidden': 'true' }), h('p.splash-sub', text)));
 }
 
 function errorScreen(title, message, retry) {
-  screen(h('div.splash-icon', icon('cloudOff', 28)), h('h1.splash-title', title), h('p.splash-sub', message), retry ? h('button.btn.primary.splash-cta', { type: 'button', onclick: retry }, 'Try again') : null);
+  screen(h('div.splash-icon', icon('cloudOff', 28)), h('h1.splash-title', title), h('p.splash-sub', message), retry ? h('button.btn.primary.splash-cta', { type: 'button', onclick: retry }, '重试') : null);
 }
 
 function signInScreen(onSignedIn, inviting) {
-  const btn = h('button.btn.primary.splash-cta', { type: 'button' }, 'Sign in');
+  const btn = h('button.btn.primary.splash-cta', { type: 'button' }, '登录');
   const error = h('p.field-error', { role: 'alert' });
   btn.addEventListener('click', async () => {
     btn.disabled = true;
-    btn.textContent = 'Waiting for Puter...';
+    btn.textContent = '正在等待 Puter...';
     error.textContent = '';
     try {
       await puter.auth.signIn();
       onSignedIn();
     } catch (err) {
       btn.disabled = false;
-      btn.textContent = 'Sign in';
-      if (err?.error === 'popup_blocked') error.textContent = 'Your browser blocked the sign-in window. Allow pop-ups for this site and try again.';
-      else if (err?.error !== 'auth_window_closed') error.textContent = 'Could not sign in. Try again.';
+      btn.textContent = '登录';
+      if (err?.error === 'popup_blocked') error.textContent = '您的浏览器拦截了登录窗口。请允许此站点的弹出窗口后重试。';
+      else if (err?.error !== 'auth_window_closed') error.textContent = '无法登录，请重试。';
     }
   });
   const feature = (ic, text) => h('li', icon(ic, 18), h('span', text));
   screen(
     logo(),
-    h('h1.splash-title', inviting ? 'You are invited to a shared space' : 'Wiki'),
-    h('p.splash-sub', inviting ? 'Sign in with Puter to open it.' : 'Docs, notes and databases for you and your team.'),
+    h('h1.splash-title', inviting ? '您受邀加入一个共享空间' : '知识库'),
+    h('p.splash-sub', inviting ? '使用 Puter 登录以打开该空间。' : '面向个人与团队的文档、笔记和数据库。'),
     inviting
       ? null
       : h(
           'ul.splash-features',
-          feature('pencil', 'Write with blocks: headings, lists, to-dos, tables, code and images'),
-          feature('database', 'Track anything with tables, boards, lists and calendars'),
-          feature('users', 'Share pages and edit together in real time'),
-          feature('cloud', 'Stored as files in your own Puter cloud'),
+          feature('pencil', '使用块编辑器写作：标题、列表、待办、表格、代码与图片'),
+          feature('database', '通过表格、看板、列表和日历追踪一切'),
+          feature('users', '分享页面并与他人实时协同编辑'),
+          feature('cloud', '以文件形式存储在您自己的 Puter 云端'),
         ),
     btn,
     error,
@@ -87,7 +87,7 @@ async function start({ backend, kv, cache, user, env, collab, onSignOut, picture
     await ws.start();
   } catch (err) {
     console.error(err);
-    errorScreen('Could not open your wiki', 'Check your connection and try again.', () => location.reload());
+    errorScreen('无法打开您的知识库', '请检查您的网络连接后重试。', () => location.reload());
     return;
   }
   const app = new App(root, { ws, user, env, onSignOut, picture: null, puter: typeof puter === 'undefined' ? null : puter });
@@ -124,7 +124,7 @@ async function boot() {
     return;
   }
   if (typeof puter === 'undefined') {
-    errorScreen('Could not reach Puter', 'Wiki keeps your pages in your Puter cloud. Check your connection and try again.', () => location.reload());
+    errorScreen('无法连接到 Puter', '知识库将您的页面保存在 Puter 云端。请检查网络连接后重试。', () => location.reload());
     return;
   }
   const env = puter.env;

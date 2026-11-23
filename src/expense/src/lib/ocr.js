@@ -12,6 +12,13 @@ import { normalizeText, tokens } from './util.js';
 
 export const DEFAULT_OCR_MODEL = 'gpt-5.6-luna';
 export const PAYMENT_METHODS = ['Card', 'Cash', 'Bank transfer', 'Mobile payment', 'Other'];
+export const PAYMENT_METHOD_LABELS = {
+  Card: '银行卡',
+  Cash: '现金',
+  'Bank transfer': '银行转账',
+  'Mobile payment': '移动支付',
+  Other: '其他',
+};
 
 export function buildOcrPrompt({ categories = [], baseCurrency = 'USD' } = {}) {
   const cats = categories.map((c) => c.name).join(', ') || 'Other';
@@ -157,7 +164,7 @@ export async function runReceiptOcr(file, { categories, baseCurrency, model = DE
       const res = await sdk.ai.chat(`${prompt}\n\nHere is the OCR text of the receipt:\n\n${text.slice(0, 6000)}`);
       const json = extractJson(messageText(res));
       const result = normalizeOcrResult(json || {}, { categories, baseCurrency, now });
-      if (!json) result.notes = result.notes || 'Read from OCR text; please check the fields';
+      if (!json) result.notes = result.notes || '从 OCR 文本读取，请核对各字段';
       return { result, source: 'ocr', rawText: text };
     }
   } catch (err) {
@@ -170,7 +177,7 @@ export async function runReceiptOcr(file, { categories, baseCurrency, model = DE
 
 function errorMessage(err) {
   const msg = err?.message || err?.error?.message || (typeof err === 'string' ? err : '');
-  if (/insufficient|credit|quota|limit/i.test(msg)) return 'AI usage limit reached. Add the expense manually, or try again later.';
-  if (/network|fetch|offline/i.test(msg)) return 'Couldn’t reach the AI service. Check your connection.';
-  return msg ? `Couldn’t read the receipt: ${msg}` : 'Couldn’t read the receipt.';
+  if (/insufficient|credit|quota|limit/i.test(msg)) return '已达到 AI 使用限额（usage limit）。请手动添加费用，或稍后再试。';
+  if (/network|fetch|offline/i.test(msg)) return '无法连接到 AI 服务，请检查网络连接。';
+  return msg ? `无法读取票据：${msg}` : '无法读取票据。';
 }

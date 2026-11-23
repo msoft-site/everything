@@ -28,17 +28,17 @@ import { settingsView, confirmSignOut } from '../views/settings.js';
 /* The mobile tab bar holds four destinations plus More; routes marked
    tab: false live in the More sheet there. The desktop sidebar shows all. */
 const ROUTES = [
-  { hash: '#/', label: 'Home', icon: 'home', view: dashboardView },
+  { hash: '#/', label: '首页', icon: 'home', view: dashboardView },
   { hash: '#/cap-table', label: 'Cap table', icon: 'table', view: capTableView },
-  { hash: '#/securities', label: 'Securities', icon: 'file-text', view: securitiesView },
-  { hash: '#/stakeholders', label: 'Stakeholders', icon: 'users', view: stakeholdersView },
+  { hash: '#/securities', label: '证券', icon: 'file-text', view: securitiesView },
+  { hash: '#/stakeholders', label: '股东与持股人', icon: 'users', view: stakeholdersView },
   { hash: '#/classes', label: 'Share classes', icon: 'layers', view: classesView, tab: false },
   { hash: '#/rounds', label: 'Round modeling', icon: 'trending-up', view: roundsView, tab: false },
   { hash: '#/exit', label: 'Exit scenarios', icon: 'scale', view: exitView, tab: false },
   { hash: '#/attention', label: 'Needs attention', icon: 'alert', view: attentionView, tab: false },
-  { hash: '#/reports', label: 'Reports', icon: 'landmark', view: reportsView, tab: false },
+  { hash: '#/reports', label: '报表', icon: 'landmark', view: reportsView, tab: false },
   { hash: '#/history', label: 'History', icon: 'clock', view: historyView, tab: false },
-  { hash: '#/settings', label: 'Settings', icon: 'gear', view: settingsView, tab: false },
+  { hash: '#/settings', label: '设置', icon: 'gear', view: settingsView, tab: false },
 ];
 
 /* One line about each destination, for the More sheet on a phone and for
@@ -174,9 +174,9 @@ export function mountShell(appRoot) {
       el('button', {
         onclick: async () => {
           const ok = await confirmDialog({
-            title: 'Start fresh?',
+            title: '重新开始？',
             message: 'All sample data is removed and you set up your own company from scratch.',
-            confirmLabel: 'Wipe sample data',
+            confirmLabel: '清除示例数据',
           });
           if (!ok) return;
           try {
@@ -188,7 +188,7 @@ export function mountShell(appRoot) {
           }
           openOnboarding();
         },
-      }, 'Start fresh')
+      }, '重新开始')
     ));
   }
 
@@ -228,7 +228,7 @@ export function mountShell(appRoot) {
         el('span.grow', {},
           el('div.t', {}, 'New company'),
           el('div.s', {}, 'A separate cap table under this account'))));
-    const modal = openModal({ title: 'Companies', content });
+    const modal = openModal({ title: '企业客户', content });
   }
 
   /* Sidebar (desktop) */
@@ -269,8 +269,8 @@ export function mountShell(appRoot) {
       // Inside Puter (env 'app') the platform owns the session - no sign-out.
       isPuterApp() ? null : el('button.icon-btn', {
         html: icon('logout', 18, 2),
-        'aria-label': 'Sign out',
-        title: 'Sign out',
+        'aria-label': '退出登录',
+        title: '退出登录',
         onclick: confirmSignOut,
       })
     )
@@ -334,7 +334,7 @@ export function mountShell(appRoot) {
         'aria-label': open > 0 ? `More, ${open} ${open === 1 ? 'item needs' : 'items need'} attention` : null,
         dataset: { route: 'more' },
         onclick: openMoreSheet,
-      }, el('span', {}, 'More'), open > 0 ? el('span.tab-dot', { 'aria-hidden': 'true' }) : null)
+      }, el('span', {}, '更多'), open > 0 ? el('span.tab-dot', { 'aria-hidden': 'true' }) : null)
     );
     if (focused) bar.querySelector(`[data-route="${CSS.escape(focused)}"]`)?.focus({ preventScroll: true });
   }
@@ -353,7 +353,7 @@ export function mountShell(appRoot) {
           el('div.s', {}, ROUTE_SUBS[r.hash] || '')),
         el('span', { html: icon('chevR', 16, 2), style: { color: 'var(--ink-3)', display: 'inline-flex' } }));
     }));
-    const modal = openModal({ title: 'More', content });
+    const modal = openModal({ title: '更多', content });
   }
 
   let renderQueued = false;
@@ -392,7 +392,7 @@ export function mountShell(appRoot) {
     // A view rendering a specific record (a stakeholder, say) names itself;
     // everything else is titled by its route.
     const label = node.dataset?.viewTitle
-      || (route.label === 'Home' ? (store.company.name || 'Cap Table') : route.label);
+      || (route.label === '首页' ? (store.company.name || 'Cap Table') : route.label);
     document.title = route.hash === '#/' && !node.dataset?.viewTitle ? 'Cap Table' : `${label} · Cap Table`;
     topbarTitle.textContent = label;
     renderNav();

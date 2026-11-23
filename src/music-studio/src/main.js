@@ -13,6 +13,6 @@ try {
   app.emit('ready');
 } catch (err) {
   console.error(err);
-  document.getElementById('app').textContent = 'Music Studio could not start. Reload the page to try again.';
+  document.getElementById('app').textContent = '音乐工作室无法启动，请刷新页面重试。';
 }
 showAlphaNotice();

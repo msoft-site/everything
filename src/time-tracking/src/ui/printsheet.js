@@ -74,7 +74,7 @@ export function openPrintOverlay({ label, actions = () => [], onClose = null }) 
     tabindex: -1,
   },
     el('div.invoice-toolbar', {},
-      el('button.btn.btn-ghost.btn-slim', { html: icon('chevL', 15, 2), onclick: close }, ' Back'),
+      el('button.btn.btn-ghost.btn-slim', { html: icon('chevL', 15, 2), onclick: close }, ' 返回'),
       el('span.grow'),
       actions(close)
     ),

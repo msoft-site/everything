@@ -7,7 +7,7 @@
 import { squareToIndex, indexToSquare } from '../engine/chess.js';
 
 const PIECE_BASE = `${import.meta.env.BASE_URL}pieces/`;
-const TYPE_NAMES = { p: 'pawn', n: 'knight', b: 'bishop', r: 'rook', q: 'queen', k: 'king' };
+const TYPE_NAMES = { p: '兵', n: '马', b: '象', r: '车', q: '后', k: '王' };
 const REDUCED_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)');
 
 export function pieceUrl(piece) {
@@ -16,8 +16,8 @@ export function pieceUrl(piece) {
 }
 
 export function pieceLabel(piece) {
-  const color = piece.charCodeAt(0) < 97 ? 'White' : 'Black';
-  return `${color} ${TYPE_NAMES[piece.toLowerCase()]}`;
+  const color = piece.charCodeAt(0) < 97 ? '白' : '黑';
+  return `${color}${TYPE_NAMES[piece.toLowerCase()]}`;
 }
 
 export class BoardView {
@@ -182,9 +182,9 @@ export class BoardView {
       squareEl.classList.toggle('hint', target === false);
       squareEl.classList.toggle('capture-hint', target === true);
 
-      let label = piece ? `${square}, ${pieceLabel(piece)}` : `${square}, empty`;
-      if (target === true) label += ', capture';
-      else if (target === false) label += ', legal move';
+      let label = piece ? `${square}，${pieceLabel(piece)}` : `${square}，空`;
+      if (target === true) label += '，可吃子';
+      else if (target === false) label += '，合法着法';
       squareEl.setAttribute('aria-label', label);
       if (state.selected === square) squareEl.setAttribute('aria-selected', 'true');
       else squareEl.removeAttribute('aria-selected');

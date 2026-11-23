@@ -9,15 +9,15 @@ export function accountAvatar() {
   return el('div', {
     class: 'avatar is-loading',
     'aria-busy': 'true',
-    'aria-label': 'Loading profile picture',
+    'aria-label': '正在加载头像',
     role: 'img',
   });
 }
 
 export async function loadAccountAvatar(avatar, user, auth) {
-  const name = user?.username ?? 'You';
+  const name = user?.username ?? '您';
   const account = user?.uuid ?? user?.id ?? user?.username;
-  avatar.title = `Signed in as ${name}`;
+  avatar.title = `已登录为 ${name}`;
   let cache;
   try {
     const stored = JSON.parse(localStorage.getItem(CACHE_KEY));
@@ -35,7 +35,7 @@ export async function loadAccountAvatar(avatar, user, auth) {
   const ready = () => {
     avatar.classList.remove('is-loading');
     avatar.removeAttribute('aria-busy');
-    avatar.setAttribute('aria-label', `Signed in as ${name}`);
+    avatar.setAttribute('aria-label', `已登录为 ${name}`);
   };
   const fallback = () => {
     avatar.textContent = initials(name);

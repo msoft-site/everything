@@ -18,17 +18,17 @@ export function defaultSettings() {
     numbering: { quote: 1, job: 1, invoice: 1, request: 1 },
     quotes: {
       validDays: 30,
-      message: 'Thank you for the opportunity to quote on this work. Let us know if you have any questions.',
-      disclaimer: 'This quote is valid for the next 30 days, after which values may be subject to change.',
+      message: '感谢您给我们提供本次工作报价的机会。如有任何问题，请随时与我们联系。',
+      disclaimer: '本报价单自出具之日起 30 天内有效，逾期价格可能会有所调整。',
     },
     invoices: {
       terms: 'net30',
-      message: 'Thank you for your business. Please contact us with any questions regarding this invoice.',
+      message: '感谢您的惠顾。如对本账单有任何疑问，请随时与我们联系。',
       disclaimer: '',
     },
     jobs: { defaultBilling: 'on_completion' },
-    leadSources: ['Referral', 'Google', 'Website', 'Social media', 'Flyer', 'Repeat client', 'Other'],
-    expenseCategories: ['Materials', 'Fuel', 'Equipment', 'Subcontractor', 'Office', 'Vehicle', 'Other'],
+    leadSources: ['转介绍', 'Google', '网站', '社交媒体', '传单', '老客户', '其他'],
+    expenseCategories: ['材料', '燃油', '设备', '分包商', '办公', '车辆', '其他'],
     onboarded: false,
   };
 }
@@ -45,13 +45,13 @@ export function mergeSettings(base, changes) {
 }
 
 export const PAYMENT_TERMS = [
-  { id: 'receipt', label: 'Due upon receipt', days: 0 },
-  { id: 'net7', label: 'Net 7', days: 7 },
-  { id: 'net15', label: 'Net 15', days: 15 },
-  { id: 'net30', label: 'Net 30', days: 30 },
-  { id: 'net45', label: 'Net 45', days: 45 },
-  { id: 'net60', label: 'Net 60', days: 60 },
-  { id: 'custom', label: 'Custom date', days: null },
+  { id: 'receipt', label: '收到即付', days: 0 },
+  { id: 'net7', label: '7 天账期 (Net 7)', days: 7 },
+  { id: 'net15', label: '15 天账期 (Net 15)', days: 15 },
+  { id: 'net30', label: '30 天账期 (Net 30)', days: 30 },
+  { id: 'net45', label: '45 天账期 (Net 45)', days: 45 },
+  { id: 'net60', label: '60 天账期 (Net 60)', days: 60 },
+  { id: 'custom', label: '自定义日期', days: null },
 ];
 
 export function termDays(terms) {
@@ -59,11 +59,11 @@ export function termDays(terms) {
 }
 
 export const PAYMENT_METHODS = [
-  { id: 'cash', label: 'Cash' },
-  { id: 'check', label: 'Check' },
-  { id: 'card', label: 'Credit or debit card' },
-  { id: 'bank', label: 'Bank transfer' },
-  { id: 'other', label: 'Other' },
+  { id: 'cash', label: '现金' },
+  { id: 'check', label: '支票' },
+  { id: 'card', label: '信用卡或借记卡' },
+  { id: 'bank', label: '银行转账' },
+  { id: 'other', label: '其他' },
 ];
 
 export function taxRateFor(settings, taxId) {

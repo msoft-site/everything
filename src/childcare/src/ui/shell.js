@@ -25,32 +25,32 @@ const RAIL_KEY = 'childcare.rail';
 
 const STAFF_NAV = [
   [
-    { id: 'home', label: 'Home', icon: 'home', href: '#/', key: 'h' },
+    { id: 'home', label: '首页', icon: 'home', href: '#/', key: 'h' },
     { id: 'attendance', label: 'Check-in', icon: 'user-check', href: '#/attendance', key: 'a' },
     { id: 'activities', label: 'Activities', icon: 'notebook-pen', href: '#/activities', key: 'l' },
-    { id: 'messages', label: 'Messages', icon: 'messages', href: '#/messages', key: 'm', badge: 'messages' },
+    { id: 'messages', label: '即时消息', icon: 'messages', href: '#/messages', key: 'm', badge: 'messages' },
   ],
   [
-    { id: 'children', label: 'Children', icon: 'baby', href: '#/children', key: 'c' },
+    { id: 'children', label: '幼儿档案', icon: 'baby', href: '#/children', key: 'c' },
     { id: 'families', label: 'Families', icon: 'users', href: '#/families', key: 'f' },
-    { id: 'rooms', label: 'Rooms', icon: 'door-open', href: '#/rooms', key: 'r' },
-    { id: 'staff', label: 'Staff', icon: 'id-card', href: '#/staff', key: 's' },
+    { id: 'rooms', label: '班级教室', icon: 'door-open', href: '#/rooms', key: 'r' },
+    { id: 'staff', label: '教职工', icon: 'id-card', href: '#/staff', key: 's' },
   ],
   [
     { id: 'calendar', label: 'Calendar', icon: 'calendar-days', href: '#/calendar', key: 'e' },
     { id: 'menus', label: 'Menus', icon: 'utensils', href: '#/menus', key: 'u' },
-    { id: 'billing', label: 'Billing', icon: 'wallet', href: '#/billing', key: 'b', badge: 'billing', manager: true },
-    { id: 'reports', label: 'Reports', icon: 'chart', href: '#/reports', key: 'o' },
+    { id: 'billing', label: '账单与收费', icon: 'wallet', href: '#/billing', key: 'b', badge: 'billing', manager: true },
+    { id: 'reports', label: '报表', icon: 'chart', href: '#/reports', key: 'o' },
   ],
 ];
 
 const FAMILY_NAV = [
   [
     { id: 'home', label: 'Today', icon: 'home', href: '#/', key: 'h' },
-    { id: 'messages', label: 'Messages', icon: 'messages', href: '#/messages', key: 'm', badge: 'messages' },
+    { id: 'messages', label: '即时消息', icon: 'messages', href: '#/messages', key: 'm', badge: 'messages' },
     { id: 'calendar', label: 'Calendar', icon: 'calendar-days', href: '#/calendar', key: 'e' },
     { id: 'menus', label: 'Menus', icon: 'utensils', href: '#/menus', key: 'u' },
-    { id: 'billing', label: 'Billing', icon: 'wallet', href: '#/billing', key: 'b', badge: 'billing' },
+    { id: 'billing', label: '账单与收费', icon: 'wallet', href: '#/billing', key: 'b', badge: 'billing' },
   ],
 ];
 
@@ -150,7 +150,7 @@ export function buildShell({ onSignIn } = {}) {
 
   const topbar = h(
     'header.topbar',
-    h('a.mobile-brand', { href: '#/', 'aria-label': 'Home' }, h('img', { src: './icons/icon-192.png', alt: '' }), h('span.truncate.mobile-school')),
+    h('a.mobile-brand', { href: '#/', 'aria-label': '首页' }, h('img', { src: './icons/icon-192.png', alt: '' }), h('span.truncate.mobile-school')),
     h(
       'button.search-trigger',
       { type: 'button', onClick: () => openSearch(), 'aria-label': 'Search', 'aria-keyshortcuts': '/' },
@@ -166,7 +166,7 @@ export function buildShell({ onSignIn } = {}) {
       { type: 'button', 'aria-label': 'Keyboard shortcuts', title: 'Keyboard shortcuts (?)', onClick: () => showShortcuts() },
       icon('keyboard'),
     ),
-    h('a.icon-btn.desktop-only', { href: '#/settings', 'aria-label': 'Settings', title: 'Settings' }, icon('settings')),
+    h('a.icon-btn.desktop-only', { href: '#/settings', 'aria-label': '设置', title: '设置' }, icon('settings')),
     accountBtn,
   );
 
@@ -204,13 +204,13 @@ export function buildShell({ onSignIn } = {}) {
       tabLinks.set(id, a);
       return a;
     }),
-    h('button', { type: 'button', onClick: () => openMoreSheet(), 'aria-haspopup': 'dialog' }, icon('menu', 22), h('span', 'More')),
+    h('button', { type: 'button', onClick: () => openMoreSheet(), 'aria-haspopup': 'dialog' }, icon('menu', 22), h('span', '更多')),
   );
 
   const root = h(
     'div.app',
     { dataset: { rail: railMode } },
-    h('a.skip-link', { href: '#main', onClick: (e) => (e.preventDefault(), main.focus()) }, 'Skip to content'),
+    h('a.skip-link', { href: '#main', onClick: (e) => (e.preventDefault(), main.focus()) }, '跳转到主要内容'),
     rail,
     h('div.main-col', topbar, banner, main),
     tabbar,
@@ -338,14 +338,14 @@ function openAccountMenu(anchor, onSignIn) {
     ({ close }) => {
       const link = (label, ic, attrs) => h(attrs.href ? 'a.menu-item' : 'button.menu-item', { type: attrs.href ? null : 'button', ...attrs }, icon(ic, 16), h('span.grow', label));
       const items = [
-        link('Settings', 'settings', { href: '#/settings', onClick: () => close() }),
+        link('设置', 'settings', { href: '#/settings', onClick: () => close() }),
         link('Keyboard shortcuts', 'keyboard', { onClick: () => (close(), showShortcuts()) }),
         link('Source code on GitHub', 'github', { href: REPO_URL, target: '_blank', rel: 'noopener noreferrer', onClick: () => close() }),
       ];
       let footer = null;
       if (app.demo) footer = link('Sign in with Puter', 'log-in', { onClick: () => (close(), onSignIn?.()) });
       else if (canSignOut())
-        footer = link('Sign out', 'log-out', {
+        footer = link('退出登录', 'log-out', {
           onClick: async () => {
             close();
             if (app.store.pendingCount()) {
@@ -407,7 +407,7 @@ function roleLabel() {
     const g = app.store.get('guardians', app.me.guardianId);
     return g ? `Family · ${personName(g)}` : 'Family';
   }
-  return r === 'owner' ? 'Director' : r === 'admin' ? 'Admin' : 'Staff';
+  return r === 'owner' ? 'Director' : r === 'admin' ? 'Admin' : '教职工';
 }
 
 /** Lists the person's own school and those they joined, when there is a choice. */
@@ -415,7 +415,7 @@ function schoolSwitcher(close) {
   const ws = app.workspaces;
   if (app.demo || !ws || !ws.joined?.length) return null;
   const current = app.team && app.team.role !== 'owner' ? app.team.url : 'own';
-  const label = (r) => (r === 'parent' ? 'Family' : r === 'admin' ? 'Admin' : 'Staff');
+  const label = (r) => (r === 'parent' ? 'Family' : r === 'admin' ? 'Admin' : '教职工');
   const options = [{ id: 'own', label: 'My school', sub: app.team?.role === 'owner' || current === 'own' ? app.store.state.settings.school.name || '' : '' }, ...ws.joined.map((j) => ({ id: j.url, label: j.school || 'School', sub: label(j.role) }))];
   return [
     h('div.menu-sep'),
@@ -447,14 +447,14 @@ function openMoreSheet() {
   const tabs = tabbarIds();
   const more = [...allNav().filter((n) => !tabs.includes(n.id)), ...(isFamily() ? [] : [{ id: 'kiosk', label: 'Check-in kiosk', icon: 'tablet', href: '#/kiosk' }])];
   openDialog({
-    title: 'More',
+    title: '更多',
     body: ({ close }) =>
       h(
         'nav',
         { 'aria-label': 'More sections' },
         h(
           'ul.list',
-          [...more, { id: 'settings', label: 'Settings', icon: 'settings', href: '#/settings' }].map((n) =>
+          [...more, { id: 'settings', label: '设置', icon: 'settings', href: '#/settings' }].map((n) =>
             h('li', h('a.list-item', { href: n.href, onClick: () => close() }, icon(n.icon, 20), h('span.title', n.label))),
           ),
           h(

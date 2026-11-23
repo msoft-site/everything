@@ -73,7 +73,7 @@ export class Workspace extends Emitter {
     space.on('role', () => this.emit('spaces'));
     space.on('meta', () => this.emit('spaces'));
     space.on('presence', (roster) => this.emit('presence', space, roster));
-    space.on('refused', (err) => this.emit('error', err.message || 'A change could not be saved.'));
+    space.on('refused', (err) => this.emit('error', err.message || '无法保存更改。'));
     space.on('lost', (err) => this.roomLost(space, err));
     space.on('reset', (id) => this.emit('reset', space, id));
   }
@@ -110,11 +110,11 @@ export class Workspace extends Emitter {
 
   async seed() {
     const tree = this.personal.tree;
-    const welcome = addPage(tree, { title: 'Getting started', icon: { name: 'sparkles', color: 'purple' }, by: this.by });
+    const welcome = addPage(tree, { title: '快速入门', icon: { name: 'sparkles', color: 'purple' }, by: this.by });
     insertBlocks(await this.personal.doc(welcome), welcomeBlocks());
-    await this.createFromTemplate(this.personal, 'tasks', { title: 'Tasks' });
-    const notes = addPage(tree, { title: 'Notes', icon: { name: 'notebookPen', color: 'yellow' }, by: this.by });
-    insertBlocks(await this.personal.doc(notes), [{ type: 'paragraph', text: 'A place for quick notes. Add subpages with the + next to this page in the sidebar.' }]);
+    await this.createFromTemplate(this.personal, 'tasks', { title: '任务' });
+    const notes = addPage(tree, { title: '笔记', icon: { name: 'notebookPen', color: 'yellow' }, by: this.by });
+    insertBlocks(await this.personal.doc(notes), [{ type: 'paragraph', text: '用于记录随手笔记的地方。点击侧边栏中此页面旁边的 + 号即可添加子页面。' }]);
   }
 
   /** Creates a page (optionally from a template). Returns its id. */
@@ -123,7 +123,7 @@ export class Workspace extends Emitter {
     const id = addPage(space.tree, { parent, title, kind, icon, after, by: this.by });
     if (kind === 'database') {
       const doc = await space.doc(id);
-      initDatabase(doc, { props: [{ name: 'Tags', type: 'multi' }] });
+      initDatabase(doc, { props: [{ name: '标签', type: 'multi' }] });
     }
     return id;
   }
@@ -300,7 +300,7 @@ export class Workspace extends Emitter {
     const db = await space.doc(page.parent);
     const values = listRows(db).find((r) => r.id === rowId)?.values || {};
     const id = addRow(db, { values, after: rowId });
-    addPage(space.tree, { id, parent: page.parent, title: `${page.title || 'Untitled'} (copy)`, icon: page.icon || null, row: true, by: this.by });
+    addPage(space.tree, { id, parent: page.parent, title: `${page.title || '无标题'}（副本）`, icon: page.icon || null, row: true, by: this.by });
     const content = new Y.Doc();
     cloneDocContent(await space.doc(rowId), content, new Map());
     if (content.getMap('blocks').size) await space.putDoc(id, Y.encodeStateAsUpdate(content));
@@ -310,7 +310,7 @@ export class Workspace extends Emitter {
   /** Moves a page (with its subpages) to another space, under a parent. */
   async moveToSpace(from, pageId, to, parent = null) {
     if (from === to) return false;
-    if (getPage(from.tree, pageId)?.row) throw new Error('Database rows stay in their database.');
+    if (getPage(from.tree, pageId)?.row) throw new Error('数据库行必须保留在其所属数据库中。');
     await from.ensureSaved();
     const bundle = await exportSubtree(from, pageId);
     await importSubtree(from, to, bundle, parent);
@@ -435,7 +435,7 @@ export class Workspace extends Emitter {
   /** Deletes a shared space for everyone (owner only). */
   async deleteRoom(roomId) {
     const space = this.spaces.get(roomId);
-    if (!space?.canManage) throw new Error('Only the owner can delete this space.');
+    if (!space?.canManage) throw new Error('只有所有者可以删除此空间。');
     await space.request('delete');
     await this.leaveRoom(roomId);
   }
@@ -445,14 +445,14 @@ export class Workspace extends Emitter {
    * shared space on this person's collaboration server. Returns the space.
    */
   async sharePage(pageId, progress = () => {}) {
-    if (!this.collab) throw new Error('Sharing needs a Puter account.');
+    if (!this.collab) throw new Error('共享功能需要 Puter 账户。');
     const from = this.personal;
     const root = getPage(from.tree, pageId);
-    if (!root) throw new Error('This page no longer exists.');
-    if (root.row) throw new Error('Share the database this row belongs to instead.');
+    if (!root) throw new Error('此页面已不存在。');
+    if (root.row) throw new Error('请改为共享此行所属的数据库。');
     await from.ensureSaved();
     const server = await this.collab.deploy(progress);
-    progress('Copying pages...');
+    progress('正在复制页面...');
     const bundle = await exportSubtree(from, pageId);
     const tree = treeFromBundle(bundle);
     const docs = { tree: encodeBase64(Y.encodeStateAsUpdate(tree)) };
@@ -463,11 +463,11 @@ export class Workspace extends Emitter {
     const space = await this.openRoom(entry);
     this.rooms.push(entry);
     await this.saveRooms();
-    progress('Copying images...');
+    progress('正在复制图片...');
     const failed = await copyAssets(from, space, bundle.assets);
     if (failed.length) {
       // Keep the private copy rather than lose images.
-      this.emit('error', `${failed.length} image${failed.length === 1 ? '' : 's'} could not be copied to the shared space, so your private copy was kept too.`);
+      this.emit('error', `${failed.length} 张图片无法复制到共享空间，因此同时保留了您的私人副本。`);
     } else await this.removeMoved(from, pageId, space);
     this.emit('spaces');
     return space;

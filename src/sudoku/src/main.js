@@ -322,19 +322,19 @@ function render() {
   const spec = DIFFICULTIES[game.difficulty] ?? DIFFICULTIES.medium;
   el.statusDifficulty.textContent = spec.label;
   el.statusNote.textContent = game.daily
-    ? `Daily puzzle, ${formatDate(game.daily)}`
-    : `${game.givens ?? countGivens(game)} clues`;
+    ? `每日挑战，${formatDate(game.daily)}`
+    : `${game.givens ?? countGivens(game)} 个提示数`;
 
   const filled = countFilled(game);
   el.progress.setAttribute('aria-valuenow', String(filled));
-  el.progress.setAttribute('aria-valuetext', `${filled} of 81 cells filled`);
+  el.progress.setAttribute('aria-valuetext', `已填入 ${filled} / 81 个单元格`);
   el.progressFill.style.width = `${(100 * filled) / CELLS}%`;
   el.progress.classList.toggle('complete', state.solved);
 
   el.clock.hidden = !state.settings.showTimer;
   el.pauseBtn.hidden = state.solved;
-  el.pauseBtn.setAttribute('aria-label', state.paused ? 'Resume' : 'Pause');
-  el.pauseBtn.title = state.paused ? 'Resume' : 'Pause';
+  el.pauseBtn.setAttribute('aria-label', state.paused ? '继续' : '暂停');
+  el.pauseBtn.title = state.paused ? '继续' : '暂停';
   renderClock();
   renderHintCard();
 }
@@ -355,7 +355,7 @@ function renderHintCard() {
   }
   el.hintCard.hidden = false;
   el.hintBadge.textContent =
-    hint.kind === 'step' ? hint.step.label : hint.kind === 'mistake' ? 'Mistake' : 'Stuck';
+    hint.kind === 'step' ? hint.step.label : hint.kind === 'mistake' ? '错误' : '卡住了';
   el.hintText.textContent = hint.message;
   // Only a real deduction can be applied; a mistake is the player's to undo,
   // and being stuck has nothing to apply.
@@ -378,7 +378,7 @@ const countGivens = (game) => {
 function formatDate(isoDate) {
   const [y, m, d] = isoDate.split('-').map(Number);
   const date = new Date(y, (m || 1) - 1, d || 1);
-  return date.toLocaleDateString(undefined, { day: 'numeric', month: 'short' });
+  return date.toLocaleDateString('zh-CN', { day: 'numeric', month: 'short' });
 }
 
 /* ------------------------------------------------------------------ */
@@ -481,8 +481,8 @@ async function startPuzzle({ difficulty, daily = null }) {
     // "your <Label>" rather than "a <label>", so the wording does not need to
     // know that Expert takes "an" and the other three take "a".
     title: daily
-      ? 'Building the daily puzzle…'
-      : `Building your ${DIFFICULTIES[difficulty].label} puzzle…`,
+      ? '正在生成每日挑战谜题…'
+      : `正在生成您的${DIFFICULTIES[difficulty].label}难度谜题…`,
   });
 
   try {
@@ -497,11 +497,11 @@ async function startPuzzle({ difficulty, daily = null }) {
     game.givens = result.givens;
     adoptGame(game, { fresh: true });
     announce(
-      `New ${DIFFICULTIES[game.difficulty].label} puzzle, ${result.givens} clues. ` +
-        `Use the arrow keys to move and 1 to 9 to enter a digit.`,
+      `新${DIFFICULTIES[game.difficulty].label}难度谜题，共 ${result.givens} 个提示数。` +
+        `使用方向键移动，按 1 到 9 输入数字。`,
     );
   } catch {
-    toast('Could not build a puzzle. Please try again.');
+    toast('无法生成谜题，请重试。');
     // Give the board back exactly as it was, running clock included.
     if (wasPaused) {
       showPauseVeil();
@@ -558,9 +558,9 @@ const hasProgress = (game) =>
 async function confirmNewPuzzle(action) {
   if (hasProgress(state.game)) {
     const ok = await confirmAction({
-      title: 'Start a new puzzle?',
-      body: 'This one is unfinished. Its progress will be discarded.',
-      confirmLabel: 'Start new',
+      title: '开始新谜题？',
+      body: '当前谜题尚未完成，已有进度将被丢弃。',
+      confirmLabel: '开始新谜题',
     });
     if (!ok) return;
   }
@@ -600,7 +600,7 @@ function enterDigit(digit, { asNote = state.notesMode } = {}) {
   if (!game || state.solved || state.paused || state.selected === null) return;
   const cell = state.selected;
   if (isGiven(game, cell)) {
-    announce('That cell is one of the puzzle’s clues.');
+    announce('该单元格是题目自带的提示数。');
     return;
   }
   state.interacted = true;
@@ -610,7 +610,7 @@ function enterDigit(digit, { asNote = state.notesMode } = {}) {
     const move = toggleNote(game, cell, digit);
     if (move) {
       state.hint = null;
-      announce(`Pencilled ${digit} ${game.notes[cell] & (1 << (digit - 1)) ? 'in' : 'out'} at ${cellName(cell)}`);
+      announce(`已在 ${cellName(cell)} ${game.notes[cell] & (1 << (digit - 1)) ? '添加' : '移除'}候选数 ${digit}`);
     }
   } else {
     // Tapping the digit already there clears it: the fastest way to fix a
@@ -618,7 +618,7 @@ function enterDigit(digit, { asNote = state.notesMode } = {}) {
     if (game.values[cell] === digit) {
       clearCell(game, cell);
       state.hint = null;
-      announce(`Cleared ${cellName(cell)}`);
+      announce(`已清除 ${cellName(cell)}`);
     } else {
       const move = setValue(game, cell, digit, { autoClearNotes: state.settings.autoClearNotes });
       if (!move) return;
@@ -626,9 +626,9 @@ function enterDigit(digit, { asNote = state.notesMode } = {}) {
       const isWrong = game.solution[cell] !== digit;
       if (isWrong && state.settings.checkAsYouGo) {
         recordMistake(game);
-        announce(`${digit} at ${cellName(cell)} is wrong`);
+        announce(`${cellName(cell)} 填入的 ${digit} 不正确`);
       } else {
-        announce(`${digit} at ${cellName(cell)}`);
+        announce(`在 ${cellName(cell)} 填入 ${digit}`);
       }
     }
   }
@@ -643,7 +643,7 @@ function eraseSelected() {
   state.interacted = true;
   if (clearCell(game, state.selected)) {
     state.hint = null;
-    announce(`Cleared ${cellName(state.selected)}`);
+    announce(`已清除 ${cellName(state.selected)}`);
     afterMove();
   }
 }
@@ -661,7 +661,7 @@ function stepHistory(direction) {
   // without hunting for it.
   const touched = direction === 'undo' ? move.before : move.after;
   if (touched.length) state.selected = touched[0].i;
-  announce(direction === 'undo' ? 'Undone' : 'Redone');
+  announce(direction === 'undo' ? '已撤销' : '已重做');
   afterMove();
   focusBoardCell(state.selected);
 }
@@ -724,16 +724,16 @@ function applyHint() {
   state.hint = null;
 
   if (hint.step.placements.length) {
-    announce(`Placed ${hint.step.placements[0].digit} at ${cellName(hint.step.placements[0].cell)}`);
+    announce(`已在 ${cellName(hint.step.placements[0].cell)} 填入 ${hint.step.placements[0].digit}`);
   } else {
     // An elimination only shows on the board where there were pencil marks to
     // rub out, so with none the card would simply vanish and look like a button
     // that did nothing. The deduction is still recorded and still moves the next
     // hint forward, so it is worth saying that out loud.
     const n = hint.step.eliminations.length;
-    const message = `${n} candidate${n === 1 ? '' : 's'} ruled out`;
+    const message = `已排除 ${n} 个候选数`;
     announce(message);
-    toast(`${message}.`);
+    toast(`${message}。`);
   }
   afterMove();
   boardView.focusCell(state.selected);
@@ -760,8 +760,8 @@ function dismissHint() {
 function showPauseVeil() {
   showVeil({
     icon: 'pause',
-    title: 'Paused',
-    button: 'Resume',
+    title: '已暂停',
+    button: '继续',
     onButton: () => setPaused(false),
   });
   // Focus follows the only live control, so Enter resumes and a screen reader
@@ -777,12 +777,12 @@ function setPaused(paused) {
     state.timer.pause();
     flushSave();
     showPauseVeil();
-    announce('Paused');
+    announce('已暂停');
   } else {
     state.timer.start();
     hideVeil();
     boardView.focusCell(state.selected);
-    announce('Resumed');
+    announce('已继续');
   }
   render();
 }
@@ -830,25 +830,25 @@ function finishGame() {
   render();
   showResult({ game, flawless, isRecord });
   announce(
-    `Solved in ${formatDuration(game.elapsedMs)}.` +
-      (isRecord ? ' A new best time.' : '') +
-      (flawless ? ' No hints, no mistakes.' : ''),
+    `已完成解答，用时 ${formatDuration(game.elapsedMs)}。` +
+      (isRecord ? ' 创造了新的最佳用时纪录。' : '') +
+      (flawless ? ' 未使用提示，零失误。' : ''),
   );
 }
 
 function showResult({ game, flawless, isRecord }) {
   const spec = DIFFICULTIES[game.difficulty] ?? DIFFICULTIES.medium;
   el.solvedSub.textContent = game.daily
-    ? `${spec.label} daily puzzle for ${formatDate(game.daily)}.`
-    : `${spec.label} puzzle complete.`;
+    ? `${formatDate(game.daily)} ${spec.label}难度每日挑战。`
+    : `${spec.label}难度谜题已完成。`;
 
   const streak = game.daily ? dailyStreakOn(state.stats, game.daily) : 0;
   const cells = [
-    { label: 'Time', value: formatDuration(game.elapsedMs), record: isRecord },
-    { label: 'Hints', value: String(game.hintsUsed), record: false },
+    { label: '用时', value: formatDuration(game.elapsedMs), record: isRecord },
+    { label: '提示', value: String(game.hintsUsed), record: false },
     game.daily
-      ? { label: 'Streak', value: `${streak}`, record: false }
-      : { label: 'Clean', value: flawless ? 'Yes' : 'No', record: flawless },
+      ? { label: '连胜', value: `${streak}`, record: false }
+      : { label: '无瑕', value: flawless ? '是' : '否', record: flawless },
   ];
 
   el.resultGrid.innerHTML = '';
@@ -904,32 +904,32 @@ function openStats() {
   const streak = dailyStreakOn(state.stats, today);
   const best = state.stats.daily.best;
   el.statsSub.textContent = streak
-    ? `Daily streak ${streak}, best ${best}.`
+    ? `每日挑战连胜 ${streak} 天，历史最佳 ${best} 天。`
     : best
-      ? `No daily streak right now. Best was ${best}.`
-      : 'Solve the daily puzzle to start a streak.';
+      ? `当前无每日挑战连胜。历史最佳为 ${best} 天。`
+      : '完成每日挑战谜题即可开启连胜纪录。';
   el.statsDialog.showModal();
 }
 
 const OPTIONS = [
   {
     key: 'checkAsYouGo',
-    name: 'Check as I go',
-    note: 'Mark a digit red the moment it cannot be right.',
+    name: '即时检查错误',
+    note: '填入的数字一旦不正确即立刻标红。',
   },
   {
     key: 'highlightPeers',
-    name: 'Highlight row, column and box',
-    note: 'Shade everything the selected cell can see.',
+    name: '高亮同行、同列和同宫',
+    note: '为选中单元格所在的行、列、宫添加底色。',
   },
-  { key: 'highlightSame', name: 'Highlight matching digits', note: 'Pick out every copy of the selected digit.' },
+  { key: 'highlightSame', name: '高亮相同数字', note: '突出显示盘面上与选中数字相同的所有单元格。' },
   {
     key: 'autoClearNotes',
-    name: 'Tidy pencil marks',
-    note: 'Placing a digit rubs it out of the cells it rules out.',
+    name: '自动清理候选数标记',
+    note: '填入数字后自动从相关单元格的候选数中移除该数字。',
   },
-  { key: 'showRemaining', name: 'Show digits remaining', note: 'A count on each key of how many are left.' },
-  { key: 'showTimer', name: 'Show the clock', note: 'Times are still recorded either way.' },
+  { key: 'showRemaining', name: '显示剩余数字数量', note: '在每个数字按键上显示还需填入的剩余个数。' },
+  { key: 'showTimer', name: '显示计时器', note: '即使隐藏计时器，用时也仍会正常记录。' },
 ];
 
 function openSettings() {
@@ -985,24 +985,24 @@ function renderAccount() {
   const hosted = account.isHostedSession();
 
   if (!state.signedIn) {
-    el.accountName.textContent = 'Sign in';
+    el.accountName.textContent = '登录';
     el.accountBtn.disabled = false;
-    el.accountBtn.title = 'Sign in to carry your puzzles and times between devices';
-    el.accountBtn.setAttribute('aria-label', 'Sign in with Puter');
+    el.accountBtn.title = '登录以在多台设备间同步您的谜题进度和用时记录';
+    el.accountBtn.setAttribute('aria-label', '使用 Puter 登录');
     return;
   }
 
-  el.accountName.textContent = state.accountName ?? 'Signed in';
+  el.accountName.textContent = state.accountName ?? '已登录';
   // Inside a Puter app the session belongs to the shell around us, so there is
   // no sign-out to offer: the button becomes a label saying who is signed in.
   // https://docs.puter.com/Utils/env/
   el.accountBtn.disabled = hosted;
   el.accountBtn.title = hosted
-    ? `Signed in as ${state.accountName ?? 'your Puter account'}`
-    : 'Sign out';
+    ? `已登录为 ${state.accountName ?? '您的 Puter 账户'}`
+    : '退出登录';
   el.accountBtn.setAttribute(
     'aria-label',
-    hosted ? `Signed in as ${state.accountName ?? 'your Puter account'}` : 'Sign out',
+    hosted ? `已登录为 ${state.accountName ?? '您的 Puter 账户'}` : '退出登录',
   );
 }
 
@@ -1029,8 +1029,8 @@ async function followSignIn() {
   const adopted = await syncEverything({ adoptCloudGame: !state.interacted });
   toast(
     adopted
-      ? 'Signed in, and picked up the puzzle you left on another device.'
-      : 'Signed in. Your times and puzzles now follow you.',
+      ? '已登录，并恢复了您在其他设备上未完成的谜题。'
+      : '已登录。您的用时记录和谜题进度现在将随账户同步。',
   );
 }
 
@@ -1040,9 +1040,9 @@ async function followSignIn() {
  */
 async function requestSignOut() {
   const ok = await confirmAction({
-    title: 'Sign out?',
-    body: 'Your records stay in your account. This device keeps its own copy.',
-    confirmLabel: 'Sign out',
+    title: '退出登录？',
+    body: '您的战绩记录仍保留在账户中，当前设备也会保留本地副本。',
+    confirmLabel: '退出登录',
   });
   if (!ok) return;
   // The account's copy of the puzzle trails the board by a few seconds (see
@@ -1061,7 +1061,7 @@ function followSignOut() {
   state.signedIn = false;
   state.accountName = null;
   renderAccount();
-  toast('Signed out.');
+  toast('已退出登录。');
 }
 
 /**
@@ -1253,7 +1253,7 @@ document.addEventListener('keydown', (event) => {
 function toggleNotesMode() {
   state.notesMode = !state.notesMode;
   render();
-  announce(state.notesMode ? 'Pencil marks on' : 'Pencil marks off');
+  announce(state.notesMode ? '已开启候选数标记' : '已关闭候选数标记');
 }
 
 /* ------------------------------------------------------------------ */
@@ -1279,7 +1279,7 @@ function wire() {
     // the one already in play would discard the player's progress on it and hand
     // back the identical grid, so the button says so instead.
     if (state.game?.daily === today && !state.solved) {
-      toast('You are already on today’s daily puzzle.');
+      toast('您当前已经在游玩今日的每日挑战谜题了。');
       return;
     }
     confirmNewPuzzle(() => startPuzzle({ difficulty: 'medium', daily: today }));
@@ -1298,15 +1298,15 @@ function wire() {
     // One modal at a time, so the records go away while the question is asked.
     el.statsDialog.close();
     const ok = await confirmAction({
-      title: 'Reset your records?',
-      body: 'Times, counts and your daily streak will be cleared. This cannot be undone.',
-      confirmLabel: 'Reset',
+      title: '重置战绩记录？',
+      body: '所有用时、统计次数和每日挑战连胜都将被清空。此操作无法撤销。',
+      confirmLabel: '重置',
     });
     if (ok) {
       state.stats = emptyStats();
       saveStats(state.stats);
       if (state.signedIn) await pushStats(state.stats);
-      announce('Records reset.');
+      announce('战绩记录已重置。');
     }
     // Either way, back to the records: cancelling should not cost the player the
     // dialog they were reading, and after a reset the emptied table is the
@@ -1360,7 +1360,7 @@ async function main() {
     el.controlsHint.textContent = DIFFICULTIES[state.nextDifficulty].blurb;
     saved.givens = countGivens(saved);
     adoptGame(saved);
-    toast('Picked up where you left off.');
+    toast('已恢复上次未完成的进度。');
   } else {
     await startPuzzle({ difficulty: state.nextDifficulty });
   }
@@ -1376,7 +1376,7 @@ async function main() {
   // never blocks it.
   await refreshAccount();
   if (await syncEverything({ adoptCloudGame: !state.interacted })) {
-    toast('Picked up the puzzle you left on another device.');
+    toast('已恢复您在其他设备上未完成的谜题。');
   }
   render();
 }

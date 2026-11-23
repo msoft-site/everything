@@ -32,15 +32,15 @@ export function sampleDataset(store, { now = new Date() } = {}) {
 
   const reports = [
     {
-      id: uid(), title: `Client visit, ${label(twoBack)}`, notes: 'Two-day trip for the kickoff workshop.', status: 'reimbursed',
+      id: uid(), title: `客户拜访（${label(twoBack)}）`, notes: '为期两天的启动研讨会出差。', status: 'reimbursed',
       submittedAt: ts(twoBack, 26), approvedAt: ts(twoBack, 28), reimbursedAt: ts(lastMonth, 4), createdAt: ts(twoBack, 20), updatedAt: ts(lastMonth, 4),
     },
     {
-      id: uid(), title: `${label(lastMonth)} expenses`, notes: '', status: 'submitted',
+      id: uid(), title: `${label(lastMonth)}费用报销`, notes: '', status: 'submitted',
       submittedAt: ts(thisMonth, 2), approvedAt: null, reimbursedAt: null, createdAt: ts(lastMonth, 30), updatedAt: ts(thisMonth, 2),
     },
     {
-      id: uid(), title: `${label(thisMonth)} expenses`, notes: '', status: 'draft',
+      id: uid(), title: `${label(thisMonth)}费用报销`, notes: '', status: 'draft',
       submittedAt: null, approvedAt: null, reimbursedAt: null, createdAt: ts(thisMonth, 1), updatedAt: ts(thisMonth, 1),
     },
   ];
@@ -66,7 +66,7 @@ export function sampleDataset(store, { now = new Date() } = {}) {
     };
     if (reconcile && method === 'Card') {
       const line = {
-        id: uid(), batchId, source: 'Company card statement', date: toISO(new Date(y, m - 1, Math.min(d + 1, daysIn))),
+        id: uid(), batchId, source: '公司信用卡账单', date: toISO(new Date(y, m - 1, Math.min(d + 1, daysIn))),
         description: `${merchant.toUpperCase()} ${['NYC', 'SFO', 'AUS', 'CHI'][n % 4]}`, amount, currency: cur,
         matchedExpenseId: exp.id, importedAt: ts(thisMonth, 3),
       };
@@ -82,9 +82,9 @@ export function sampleDataset(store, { now = new Date() } = {}) {
   // Two months back: a finished trip, everything reimbursed and reconciled.
   add(twoBack, 8, 'travel', { reportIdx: 0, reconcile: true });
   add(twoBack, 9, 'transport', { reportIdx: 0, reconcile: true });
-  add(twoBack, 9, 'lodging', { reportIdx: 0, reconcile: true, note: 'One night, workshop venue rate' });
+  add(twoBack, 9, 'lodging', { reportIdx: 0, reconcile: true, note: '住宿一晚，研讨会协议价' });
   add(twoBack, 9, 'meals', { reportIdx: 0, method: 'Cash' });
-  add(twoBack, 10, 'entertainment', { reportIdx: 0, reconcile: true, note: 'Dinner with the client team, 4 guests' });
+  add(twoBack, 10, 'entertainment', { reportIdx: 0, reconcile: true, note: '与客户团队晚餐，共 4 位客人' });
   add(twoBack, 10, 'transport', { reportIdx: 0, reconcile: true });
   add(twoBack, 15, 'software', { reportIdx: 0, reconcile: true });
 
@@ -105,20 +105,20 @@ export function sampleDataset(store, { now = new Date() } = {}) {
   add(thisMonth, 12, 'meals');
   add(thisMonth, 16, 'meals', { method: 'Mobile payment' });
   add(thisMonth, 20, 'transport');
-  add(thisMonth, 24, 'entertainment', { note: 'Lunch with a prospect' });
+  add(thisMonth, 24, 'entertainment', { note: '与潜在客户共进午餐' });
 
   // Open statement lines: one that matches an unreconciled expense exactly,
   // one that is a day off with a slightly different amount, one with no
   // expense at all (a card charge nobody filed yet).
   const loose = expenses[thisMonth].filter((e) => !e.reconciled);
   if (loose[0]) {
-    statements.push({ id: uid(), batchId, source: 'Company card statement', date: loose[0].date, description: `${loose[0].merchant.toUpperCase()} POS`, amount: loose[0].amount, currency: cur, matchedExpenseId: null, importedAt: ts(thisMonth, 3) });
+    statements.push({ id: uid(), batchId, source: '公司信用卡账单', date: loose[0].date, description: `${loose[0].merchant.toUpperCase()} POS`, amount: loose[0].amount, currency: cur, matchedExpenseId: null, importedAt: ts(thisMonth, 3) });
   }
   if (loose[1]) {
     const [y, m, d] = loose[1].date.split('-').map(Number);
-    statements.push({ id: uid(), batchId, source: 'Company card statement', date: toISO(new Date(y, m - 1, d + 1)), description: `${loose[1].merchant.toUpperCase()} #4471`, amount: loose[1].amount, currency: cur, matchedExpenseId: null, importedAt: ts(thisMonth, 3) });
+    statements.push({ id: uid(), batchId, source: '公司信用卡账单', date: toISO(new Date(y, m - 1, d + 1)), description: `${loose[1].merchant.toUpperCase()} #4471`, amount: loose[1].amount, currency: cur, matchedExpenseId: null, importedAt: ts(thisMonth, 3) });
   }
-  statements.push({ id: uid(), batchId, source: 'Company card statement', date: toISO(new Date(now.getFullYear(), now.getMonth(), Math.max(1, now.getDate() - 2))), description: 'PARKING GARAGE 22', amount: 18, currency: cur, matchedExpenseId: null, importedAt: ts(thisMonth, 3) });
+  statements.push({ id: uid(), batchId, source: '公司信用卡账单', date: toISO(new Date(now.getFullYear(), now.getMonth(), Math.max(1, now.getDate() - 2))), description: 'PARKING GARAGE 22', amount: 18, currency: cur, matchedExpenseId: null, importedAt: ts(thisMonth, 3) });
 
   // Month files are newest-first, like the store writes them.
   for (const key of Object.keys(expenses)) expenses[key].sort((a, b) => (a.date < b.date ? 1 : -1));
@@ -139,7 +139,7 @@ export function sampleDataset(store, { now = new Date() } = {}) {
   }
   function label(key) {
     const [y, m] = key.split('-').map(Number);
-    return new Date(y, m - 1, 1).toLocaleDateString(undefined, { month: 'long', year: 'numeric' });
+    return new Date(y, m - 1, 1).toLocaleDateString('zh-CN', { month: 'long', year: 'numeric' });
   }
 }
 
@@ -171,7 +171,7 @@ export function renderSampleReceipt(expense, categoryName = '') {
   ctx.fillText(expense.date, 320, 184);
   ctx.textAlign = 'left';
   ctx.fillStyle = '#1c1c1a';
-  const lines = [[categoryName || 'Purchase', expense.amount * 0.91], ['Tax', expense.amount * 0.09]];
+  const lines = [[categoryName || '消费项目', expense.amount * 0.91], ['税额', expense.amount * 0.09]];
   let y = 280;
   ctx.font = '24px ui-monospace, Menlo, monospace';
   for (const [name, amt] of lines) {
@@ -184,13 +184,13 @@ export function renderSampleReceipt(expense, categoryName = '') {
   ctx.fillRect(80, y, 480, 2);
   y += 52;
   ctx.font = '600 30px ui-monospace, Menlo, monospace';
-  ctx.fillText('TOTAL', 80, y);
+  ctx.fillText('合计', 80, y);
   ctx.textAlign = 'right';
   ctx.fillText(`${expense.currency} ${expense.amount.toFixed(2)}`, 560, y);
   ctx.textAlign = 'center';
   ctx.font = '20px ui-monospace, Menlo, monospace';
   ctx.fillStyle = '#5a5955';
-  ctx.fillText(`${expense.paymentMethod || 'Card'} ending 4471`, 320, y + 70);
-  ctx.fillText('Thank you for your visit', 320, y + 130);
+  ctx.fillText(`尾号 4471 (${expense.paymentMethod || 'Card'})`, 320, y + 70);
+  ctx.fillText('感谢您的光临', 320, y + 130);
   return new Promise((resolve) => canvas.toBlob((blob) => resolve(blob), 'image/png'));
 }

@@ -57,13 +57,13 @@ export function createKeypad(root, { onDigit }) {
       key.el.classList.toggle('selected-digit', !view.notesMode && key.digit === view.selectedDigit);
       key.el.setAttribute('aria-disabled', inert || exhausted ? 'true' : 'false');
       key.el.title = view.notesMode
-        ? `Pencil in ${key.digit}`
+        ? `标记候选数 ${key.digit}`
         : exhausted
-          ? `All nine ${key.digit}s are placed`
-          : `Enter ${key.digit} (${left} left)`;
+          ? `所有九个 ${key.digit} 均已填入`
+          : `填入 ${key.digit}（剩余 ${left} 个）`;
       key.el.setAttribute(
         'aria-label',
-        view.notesMode ? `Pencil in ${key.digit}` : `${key.digit}, ${left} remaining`,
+        view.notesMode ? `标记候选数 ${key.digit}` : `${key.digit}，剩余 ${left} 个`,
       );
 
       const text = view.showRemaining && !exhausted ? String(left) : '';

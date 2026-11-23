@@ -28,9 +28,9 @@ export const KING = 175;
 // opening, a man-heavy middlegame, and a king-heavy open position (typical
 // 30-300ms/move), so hard was lowered from the brief's starting depth 10.
 export const LEVELS = {
-  easy: { depth: 2, window: 120, label: 'Easy' },
-  medium: { depth: 6, window: 30, label: 'Medium' },
-  hard: { depth: 8, window: 0, label: 'Hard' },
+  easy: { depth: 2, window: 120, label: '简单' },
+  medium: { depth: 6, window: 30, label: '中等' },
+  hard: { depth: 8, window: 0, label: '困难' },
 };
 
 /**

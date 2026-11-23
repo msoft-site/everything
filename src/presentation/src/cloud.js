@@ -3,7 +3,7 @@ export const FOLDER = "Presentations";
 const sdk = () => {
   if (!globalThis.puter)
     throw new Error(
-      "Puter is unavailable. Check your connection and try again.",
+      "Puter 不可用。请检查您的网络连接后重试。",
     );
   return globalThis.puter;
 };
@@ -30,17 +30,17 @@ export async function signIn() {
     await sdk().auth.signIn();
   } catch (error) {
     if (error?.error === "auth_window_closed")
-      throw Object.assign(new Error("Sign-in was cancelled."), {
+      throw Object.assign(new Error("登录已取消。"), {
         code: "cancelled",
       });
     if (error?.error === "popup_blocked")
       throw new Error(
-        "The browser blocked the Puter sign-in window. Allow pop-ups for this site and try again.",
+        "浏览器拦截了 Puter 登录窗口。请允许此站点的弹出窗口后重试。",
         { cause: error },
       );
     if (error instanceof Error) throw error;
     throw new Error(
-      error?.msg || error?.message || "Puter sign-in failed. Please try again.",
+      error?.msg || error?.message || "Puter 登录失败。请重试。",
       { cause: error },
     );
   }
@@ -164,7 +164,7 @@ export async function renameFile(path, name) {
   )
     throw Object.assign(
       new Error(
-        `A file named “${fileName}” is already in that folder. Choose another name.`,
+        `该文件夹中已存在名为“${fileName}”的文件。请选用其他名称。`,
       ),
       { code: "exists" },
     );
@@ -302,7 +302,7 @@ export async function* aiChatStream(
   { model, tools, maxTokens } = {},
 ) {
   const ai = globalThis.puter?.ai;
-  if (!ai?.chat) throw new Error("AI is not available here.");
+  if (!ai?.chat) throw new Error("此处无法使用 AI。");
   const options = {
     stream: true,
     ...(model ? { model } : {}),
@@ -372,6 +372,6 @@ function aiError(e) {
     inner?.message ||
     (typeof e?.error === "string" ? e.error : "") ||
     (typeof e === "string" ? e : "") ||
-    "The AI did not answer.";
+    "AI 未响应。";
   return Object.assign(new Error(message), { code: inner?.code || e?.code });
 }

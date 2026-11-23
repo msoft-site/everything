@@ -19,15 +19,15 @@ export const LOW_TIME_MS = 20000;
  * a stable format: add ids rather than renaming them.
  */
 export const TIME_CONTROLS = [
-  { id: 'unlimited', label: 'No limit', initial: 0, increment: 0, group: null },
-  { id: '1+0', label: '1 + 0', initial: 60000, increment: 0, group: 'Bullet' },
-  { id: '2+1', label: '2 + 1', initial: 120000, increment: 1000, group: 'Bullet' },
-  { id: '3+0', label: '3 + 0', initial: 180000, increment: 0, group: 'Blitz' },
-  { id: '3+2', label: '3 + 2', initial: 180000, increment: 2000, group: 'Blitz' },
-  { id: '5+0', label: '5 + 0', initial: 300000, increment: 0, group: 'Blitz' },
-  { id: '5+3', label: '5 + 3', initial: 300000, increment: 3000, group: 'Blitz' },
-  { id: '10+0', label: '10 + 0', initial: 600000, increment: 0, group: 'Rapid' },
-  { id: '15+10', label: '15 + 10', initial: 900000, increment: 10000, group: 'Rapid' },
+  { id: 'unlimited', label: '不限时', initial: 0, increment: 0, group: null },
+  { id: '1+0', label: '1 + 0', initial: 60000, increment: 0, group: '子弹棋' },
+  { id: '2+1', label: '2 + 1', initial: 120000, increment: 1000, group: '子弹棋' },
+  { id: '3+0', label: '3 + 0', initial: 180000, increment: 0, group: '超快棋' },
+  { id: '3+2', label: '3 + 2', initial: 180000, increment: 2000, group: '超快棋' },
+  { id: '5+0', label: '5 + 0', initial: 300000, increment: 0, group: '超快棋' },
+  { id: '5+3', label: '5 + 3', initial: 300000, increment: 3000, group: '超快棋' },
+  { id: '10+0', label: '10 + 0', initial: 600000, increment: 0, group: '快棋' },
+  { id: '15+10', label: '15 + 10', initial: 900000, increment: 10000, group: '快棋' },
 ];
 
 export const DEFAULT_TIME_ID = 'unlimited';
@@ -66,8 +66,8 @@ export function speakClock(ms) {
   const minutes = Math.floor(seconds / 60);
   const rest = seconds % 60;
   const parts = [];
-  if (minutes) parts.push(`${minutes} minute${minutes === 1 ? '' : 's'}`);
-  if (rest || !minutes) parts.push(`${rest} second${rest === 1 ? '' : 's'}`);
+  if (minutes) parts.push(`${minutes} 分`);
+  if (rest || !minutes) parts.push(`${rest} 秒`);
   return parts.join(' ');
 }
 

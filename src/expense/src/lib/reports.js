@@ -6,10 +6,10 @@ import { monthLabel } from './dates.js';
 export const REPORT_STATUSES = ['draft', 'submitted', 'approved', 'reimbursed'];
 
 export const STATUS_LABEL = {
-  draft: 'Draft',
-  submitted: 'Submitted',
-  approved: 'Approved',
-  reimbursed: 'Reimbursed',
+  draft: '草稿',
+  submitted: '已提交',
+  approved: '已批准',
+  reimbursed: '已报销',
 };
 
 /** Forward step, or null when the report is at the end of its life. */
@@ -28,7 +28,7 @@ export function canTransition(from, to) {
 
 /** The verb shown on the primary button for a given status. */
 export function transitionLabel(status) {
-  return { draft: 'Submit report', submitted: 'Mark approved', approved: 'Mark reimbursed' }[status] || null;
+  return { draft: '提交报销单', submitted: '标记为已批准', approved: '标记为已报销' }[status] || null;
 }
 
 /** Expenses can only be added or removed while the report is a draft. */
@@ -51,7 +51,7 @@ export function reportTotals(report, expenses) {
 }
 
 export function suggestReportTitle(monthKeyStr) {
-  return `${monthLabel(monthKeyStr)} expenses`;
+  return `${monthLabel(monthKeyStr)}费用报销`;
 }
 
 /** Stamp the timestamp field that belongs to the new status. */

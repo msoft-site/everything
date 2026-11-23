@@ -44,7 +44,7 @@ function loading(text) {
   root.replaceChildren(h('div.splash', { role: 'status' }, appIcon(56), h('div.spinner'), h('p', text)));
 }
 
-function errorScreen(title, message, retry, retryLabel = 'Try again') {
+function errorScreen(title, message, retry, retryLabel = '重试') {
   root.removeAttribute('aria-busy');
   root.replaceChildren(h('main#main.splash', icon('cloudOff', 32), h('h1.splash-title', title), h('p.splash-sub', message), retry ? h('button.btn.primary', { type: 'button', onclick: retry }, retryLabel) : null));
 }
@@ -53,10 +53,10 @@ function errorScreen(title, message, retry, retryLabel = 'Try again') {
 function cantLoad(err, what) {
   console.error(err);
   const offline = typeof navigator !== 'undefined' && navigator.onLine === false;
-  toast(offline ? `Couldn't open ${what} while offline. Connect and try again.` : `Couldn't open ${what}. Reload the page and try again.`, {
+  toast(offline ? `离线状态下无法打开${what}。请连接网络后重试。` : `无法打开${what}。请重新加载页面后重试。`, {
     kind: 'error',
     duration: 12000,
-    action: { label: 'Reload', onClick: () => location.reload() },
+    action: { label: '重新加载', onClick: () => location.reload() },
   });
 }
 
@@ -84,7 +84,7 @@ async function openProjectNow(id, files, current) {
   if (!current()) return;
   view?.dispose?.();
   view = null;
-  loading('Opening project...');
+  loading('正在打开项目...');
   let project;
   let claim;
   try {
@@ -92,7 +92,7 @@ async function openProjectNow(id, files, current) {
     ({ project, claim } = await library.openForEditing(id));
   } catch (err) {
     if (!current()) return;
-    toast(err?.message || "Couldn't open the project.", { kind: 'error' });
+    toast(err?.message || '无法打开该项目。', { kind: 'error' });
     showHome();
     return;
   }
@@ -101,7 +101,7 @@ async function openProjectNow(id, files, current) {
     return;
   }
   if (project.deletedAt) {
-    toast(`${project.name} is in the Trash. Restore it to open it.`, { kind: 'error' });
+    toast(`${project.name} 位于回收站中。请先还原再打开。`, { kind: 'error' });
     history.replaceState(null, '', '#trash');
     showHome();
     return;
@@ -109,10 +109,10 @@ async function openProjectNow(id, files, current) {
   // Open in another tab too: edits in both would overwrite each other, so ask first.
   if (!claim.held) {
     const ok = await confirmDialog({
-      title: 'Project open in another tab',
-      message: `${project.name} is already open in another tab or window. Changes made in both places overwrite each other. Open it here anyway?`,
-      confirm: 'Open anyway',
-      cancel: 'Go back',
+      title: '项目已在其他标签页中打开',
+      message: `${project.name} 已在另一个标签页或窗口中打开。在两处同时进行的修改会相互覆盖。仍要在此处打开吗？`,
+      confirm: '仍然打开',
+      cancel: '返回',
     });
     if (!current()) {
       claim.release();
@@ -145,7 +145,7 @@ async function openProjectNow(id, files, current) {
     claim.release();
     if (!current()) return;
     view = null;
-    cantLoad(err, 'the editor');
+    cantLoad(err, '编辑器');
     showHome();
     return;
   }
@@ -167,7 +167,7 @@ function createProject(opts = {}, files) {
 }
 
 async function createProjectNow(opts, files, current) {
-  loading('Creating project...');
+  loading('正在创建项目...');
   try {
     const project = await library.createProject({ name: await library.nextProjectName(), ratio: opts.ratio || 'original' });
     if (!current()) return;
@@ -175,7 +175,7 @@ async function createProjectNow(opts, files, current) {
   } catch (err) {
     if (!current()) return;
     console.error(err);
-    toast("Couldn't create a project.", { kind: 'error' });
+    toast('无法创建项目。', { kind: 'error' });
     showHome();
   }
 }
@@ -201,7 +201,7 @@ async function openHandedOver(files, { dropped }) {
   const editor = view?.ctx && !view._disposed ? view : null;
   if (!bundles.length && dropped && editor) {
     const assets = await editor.ctx.actions.importFiles(media);
-    if (assets.length) toast(assets.length === 1 ? `${assets[0].name} added to the project's media.` : `${assets.length} files added to the project's media.`, { kind: 'info' });
+    if (assets.length) toast(assets.length === 1 ? `已将 ${assets[0].name} 添加到项目素材库。` : `已将 ${assets.length} 个文件添加到项目素材库。`, { kind: 'info' });
     return;
   }
   // The open project is saved first (with its cover, as leaving it does); the user can stay when it cannot be.
@@ -219,14 +219,14 @@ async function openHandedOver(files, { dropped }) {
     await createProject({ ratio: 'original' }, media);
     return;
   }
-  loading(bundles.length === 1 ? 'Opening project file...' : 'Opening project files...');
+  loading(bundles.length === 1 ? '正在打开项目文件...' : '正在打开多个项目文件...');
   const opened = [];
   for (const file of bundles) {
     try {
       opened.push((await importProjectBundle(library, file)).project);
     } catch (err) {
       console.error(err);
-      toast(err?.message || `Couldn't open ${file.name}.`, { kind: 'error' });
+      toast(err?.message || `无法打开 ${file.name}。`, { kind: 'error' });
     }
   }
   // Both at once: the project files are added, then the media opens in a new project.
@@ -244,7 +244,7 @@ async function profilePicture() {
 }
 
 async function startSignedIn(env) {
-  loading('Loading your projects...');
+  loading('正在加载您的项目...');
   let user = null;
   try {
     user = await puter.auth.getUser();
@@ -357,14 +357,14 @@ async function openReviewNow(link, current) {
   if (!current()) return;
   view?.dispose?.();
   view = null;
-  loading('Opening review...');
+  loading('正在打开审阅页面...');
   let ReviewPage;
   try {
     ({ ReviewPage } = await import('./ui/review/review-page.js'));
   } catch (err) {
     if (!current()) return;
     view = null;
-    cantLoad(err, 'the review');
+    cantLoad(err, '审阅页面');
     showHome();
     return;
   }
@@ -384,7 +384,7 @@ function route() {
   try {
     review = parseReviewHash(location.hash);
   } catch (err) {
-    errorScreen('This review link does not work', err.message, null);
+    errorScreen('此审阅链接无效', err.message, null);
     return;
   }
   const m = /#project=([^&]+)/.exec(location.hash);
@@ -394,7 +394,7 @@ function route() {
     try {
       id = decodeURIComponent(m[1]);
     } catch {
-      errorScreen('This project link does not work', 'The project address is incomplete or damaged. Open the project from your projects instead.', showHome, 'Back to projects');
+      errorScreen('此项目链接无效', '项目地址不完整或已损坏。请从您的项目列表中打开该项目。', showHome, '返回项目列表');
       return;
     }
     openProject(id);

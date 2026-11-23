@@ -16,12 +16,12 @@ export function downloadBlob(blob, filename) {
 export function expensesToRows(expenses, { categories = [], reports = [] } = {}) {
   const cat = (id) => categories.find((c) => c.id === id)?.name || '';
   const rep = (id) => reports.find((r) => r.id === id);
-  const header = ['Date', 'Merchant', 'Amount', 'Currency', 'Category', 'Payment method', 'Report', 'Report status', 'Reconciled', 'Receipt', 'Notes'];
+  const header = ['日期', '商家', '金额', '币种', '分类', '支付方式', '报销单', '报销单状态', '已对账', '票据', '备注'];
   const rows = expenses.map((e) => {
     const r = rep(e.reportId);
     return [
       e.date, e.merchant, e.amount.toFixed(2), e.currency, cat(e.categoryId), e.paymentMethod || '',
-      r?.title || '', r ? STATUS_LABEL[r.status] : '', e.reconciled ? 'Yes' : 'No', e.receiptPath ? 'Yes' : 'No', e.notes || '',
+      r?.title || '', r ? STATUS_LABEL[r.status] : '', e.reconciled ? '是' : '否', e.receiptPath ? '是' : '否', e.notes || '',
     ];
   });
   return [header, ...rows];

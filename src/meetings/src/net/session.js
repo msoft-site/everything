@@ -1031,11 +1031,11 @@ export class RoomSession extends Emitter {
       console.warn('[session] could not serve the meeting after taking over', error);
       if (this.#peers.size === 0) {
         // Alone, and unreachable by anyone else — nothing is left to hold open.
-        this.#endMeeting('The meeting could not continue after the host left.');
+        this.#endMeeting('主持人离开后会议无法继续进行。');
         return;
       }
       this.emit('error', {
-        message: 'The meeting is still running, but new participants can’t join right now.',
+        message: '会议仍在进行中，但新参会者暂时无法加入。',
         error,
       });
       return;
@@ -1163,7 +1163,7 @@ export class RoomSession extends Emitter {
       if (msg.invite) void this.#connectToNewHost(msg.hostId, msg.invite);
     }
     if (msg.invite) this.#setCode(msg.invite, 'claim');
-    this.emit('host-changed', { hostId: msg.hostId, name: host?.identity.name ?? 'Someone', self: false });
+    this.emit('host-changed', { hostId: msg.hostId, name: host?.identity.name ?? '某位参会者', self: false });
     this.#relayHostClaim(msg, viaPeer);
   }
 
@@ -1439,7 +1439,7 @@ export class RoomSession extends Emitter {
     if (this.#left) return;
     this.#left = true;
     this.#teardownEverything(reason);
-    this.emit('ended', { reason: reason || 'The meeting has ended.' });
+    this.emit('ended', { reason: reason || '会议已结束。' });
   }
 
   // ---- guest grant ----
@@ -2099,7 +2099,7 @@ export class RoomSession extends Emitter {
       peer.directConnecting = false;
       console.warn('[session] direct peer serve failed', error);
       // Say so once; the retries are quiet about it.
-      if (!peer.directRetries) this.emit('error', { message: 'Could not create a direct peer link.', error });
+      if (!peer.directRetries) this.emit('error', { message: '无法创建点对点直连连接。', error });
       this.#retryDirectGuestLink(peer);
     }
   }
@@ -2176,7 +2176,7 @@ export class RoomSession extends Emitter {
       connectPromise.then((c) => c?.close?.('timeout')).catch(() => {});
       peer.directConnecting = false;
       console.warn('[session] direct peer connect failed', error);
-      this.emit('error', { message: 'Could not connect to a direct peer link.', error });
+      this.emit('error', { message: '无法连接到点对点直连连接。', error });
       return;
     }
 

@@ -309,7 +309,7 @@ function onBeat(call, lease, { ok, held, stale, room, error }) {
     // Only worth a word if the host was told of the trouble.
     if (call.linkAlerted) {
       call.linkAlerted = false;
-      toast('Your meeting link is working again.', { icon: 'info' });
+      toast('您的会议链接已恢复正常。', { icon: 'info' });
     }
     return;
   }
@@ -343,7 +343,7 @@ async function onLinkHeld(call, room) {
   notifyOnce('link-held', LINK_TROUBLE_TOAST_EVERY_MS, () => {
     call.linkAlerted = true;
     toast(
-      'Someone else started a meeting on this link at the same time. New participants will join theirs; this meeting carries on for everyone in it.',
+      '其他人同时在此链接上发起了会议。新参会者将加入他们的会议；当前会议对已在其中的所有人继续进行。',
       { icon: 'info' }
     );
   });
@@ -369,7 +369,7 @@ function onGrantFailed(call, inForce) {
   if (call !== activeCall || !call.session.isHost || inForce) return;
   notifyOnce('grant-failed', LINK_TROUBLE_TOAST_EVERY_MS, () => {
     call.grantAlerted = true;
-    toast('Guests without a Puter account may not be able to connect until Puter can be reached again.', {
+    toast('在重新连接到 Puter 之前，没有 Puter 账号的访客可能无法连接。', {
       icon: 'info',
     });
   });
@@ -379,7 +379,7 @@ function onGrantRestored(call) {
   lastNotified.delete('grant-failed'); // the next failure is news again
   if (call !== activeCall || !call.grantAlerted) return;
   call.grantAlerted = false;
-  toast('Puter can be reached again — guests without an account can connect.', { icon: 'info' });
+  toast('已重新连接到 Puter —— 没有账号的访客现在可以连接了。', { icon: 'info' });
 }
 
 /** A heartbeat did not land: the entry is ageing towards gone while the meeting hums along. */
@@ -388,7 +388,7 @@ function onPublishError(call, error) {
   if (call !== activeCall) return;
   notifyOnce('link-write-failed', LINK_TROUBLE_TOAST_EVERY_MS, () => {
     call.linkAlerted = true;
-    toast('The meeting link couldn’t be updated just now. New participants may not find this meeting until it can be.', {
+    toast('刚才无法更新会议链接。在更新成功之前，新参会者可能无法找到此会议。', {
       icon: 'info',
     });
   });
@@ -429,7 +429,7 @@ async function onMeetingMovedOn(call, lease, room) {
   console.warn('[app] the meeting moved on to a later host while we were out of reach');
   if (call.session.connectedPeerIds().length > 0) {
     notifyOnce('meeting-moved-on', LINK_TROUBLE_TOAST_EVERY_MS, () =>
-      toast('The meeting continued under a new host while you were disconnected. New participants will join them.', {
+      toast('在您断开连接期间，会议已由新主持人继续主持。新参会者将加入他们的会议。', {
         icon: 'info',
       })
     );
@@ -438,7 +438,7 @@ async function onMeetingMovedOn(call, lease, room) {
   if (room?.status !== 'live' || !room.invite) return;
   await moveToMeeting(call, room, {
     alone: () => call.session.connectedPeerIds().length === 0,
-    message: 'The meeting continued under a new host while you were disconnected — you’ve rejoined it.',
+    message: '在您断开连接期间，会议已由新主持人继续主持 —— 您已重新加入该会议。',
   });
 }
 
@@ -452,7 +452,7 @@ async function onMeetingMovedOn(call, lease, room) {
 async function moveToRival(call, room) {
   return moveToMeeting(call, room, {
     alone: () => call.session.peerCount === 0,
-    message: 'Someone else started this meeting at the same time — you’ve joined them.',
+    message: '其他人同时发起了此会议 —— 您已加入他们的会议。',
   });
 }
 
@@ -551,14 +551,14 @@ function route() {
 function mountLeft(rootEl, { code, wasHost, meetingEnded, reason }, appCtx) {
   clear(rootEl);
   let seconds = 60;
-  const countdown = el('span', {}, `Returning to home screen in ${seconds}s`);
+  const countdown = el('span', {}, `${seconds} 秒后返回主屏幕`);
   const timer = setInterval(() => {
     seconds -= 1;
-    countdown.textContent = `Returning to home screen in ${seconds}s`;
+    countdown.textContent = `${seconds} 秒后返回主屏幕`;
     if (seconds <= 0) appCtx.goHome();
   }, 1000);
 
-  const title = meetingEnded ? 'The meeting has ended' : 'You left the meeting';
+  const title = meetingEnded ? '会议已结束' : '您已离开会议';
   // Leaving removes the button that was focused, which drops focus to
   // <body> — so the keyboard restarts from the top of the document and a
   // screen reader is told nothing at all about where it landed. Give the
@@ -585,8 +585,8 @@ function mountLeft(rootEl, { code, wasHost, meetingEnded, reason }, appCtx) {
               { style: { color: 'var(--text-secondary)', margin: '0' } },
               // The session's own reason (e.g. a takeover that could not
               // serve) beats the generic story, which would be wrong there.
-              (reason ?? 'Everyone has left, so the meeting is over.') +
-                (roomful ? ' The link still works, so anyone holding it can start the meeting again.' : '')
+              (reason ?? '所有人均已离开，会议已结束。') +
+                (roomful ? ' 链接仍然有效，持有链接的任何人都可以重新发起会议。' : '')
             )
           : null,
         el('p', { style: { color: 'var(--text-secondary)', margin: '0' } }, countdown),
@@ -598,7 +598,7 @@ function mountLeft(rootEl, { code, wasHost, meetingEnded, reason }, appCtx) {
                 'button',
                 { class: 'btn btn-outline', onclick: () => appCtx.openPrejoin({ mode: 'join', code }) },
                 icon('videoCall'),
-                wasHost ? 'Restart meeting' : 'Rejoin'
+                wasHost ? '重新发起会议' : '重新加入'
               )
             : wasHost || meetingEnded
               ? el(
@@ -616,17 +616,17 @@ function mountLeft(rootEl, { code, wasHost, meetingEnded, reason }, appCtx) {
                     },
                   },
                   icon('videoCall'),
-                  'Start a new meeting'
+                  '发起新会议'
                 )
               : code
                 ? el(
                     'button',
                     { class: 'btn btn-outline', onclick: () => appCtx.openPrejoin({ mode: 'join', code }) },
                     icon('videoCall'),
-                    'Rejoin'
+                    '重新加入'
                   )
                 : null,
-          el('button', { class: 'btn btn-primary', onclick: () => appCtx.goHome() }, 'Return to home screen')
+          el('button', { class: 'btn btn-primary', onclick: () => appCtx.goHome() }, '返回主屏幕')
         )
       )
     )

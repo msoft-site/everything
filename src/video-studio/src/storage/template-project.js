@@ -16,7 +16,7 @@ export async function createProjectFromTemplate(library, tpl, { name, artFile = 
     if (m.kind === 'image') {
       const { width, height } = artSize(m.spec, project.settings);
       const file = await artFile(m.spec, width, height);
-      if (!file) throw new Error("This browser can't draw the template's images.");
+      if (!file) throw new Error('当前浏览器无法绘制该模板的图像。');
       asset = await library.addMediaBlob({ kind: 'image', name: `${m.name}.${file.ext}`, ext: file.ext, mime: file.mime, width, height, origin: 'template' }, file.blob);
     } else {
       const file = sfxFile(m.sfx);

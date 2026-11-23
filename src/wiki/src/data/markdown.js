@@ -9,7 +9,7 @@ import { listNumber } from './page.js';
 const PREFIX = { h1: '# ', h2: '## ', h3: '### ', bulleted: '- ', toggle: '- ' };
 
 /** Blocks (from listBlocks) to Markdown. pageTitle(id) names linked pages. */
-export function blocksToMarkdown(blocks, { pageTitle = () => 'Untitled', assetName = null } = {}) {
+export function blocksToMarkdown(blocks, { pageTitle = () => '无标题', assetName = null } = {}) {
   const lines = [];
   let prevType = null;
   const list = blocks.map((b) => ({ type: b.type, indent: b.indent || 0 }));
@@ -227,7 +227,7 @@ export function htmlToBlocks(html) {
 }
 
 /** Blocks to simple HTML (copying, and export as a web page). */
-export function blocksToHtml(blocks, { pageTitle = () => 'Untitled', assetSrc = () => '' } = {}) {
+export function blocksToHtml(blocks, { pageTitle = () => '无标题', assetSrc = () => '' } = {}) {
   let html = '';
   const open = [];
   const closeLists = (depth = 0, type = null) => {

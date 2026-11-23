@@ -17,15 +17,15 @@ import { shortcutLabel } from './shortcuts.js';
 export const NAV = [
   {
     id: 'accounting', label: 'Accounting', icon: 'bank',
-    links: [['Banking', 'banking'], ['Reconcile', 'reconcile'], ['Rules', 'rules'], ['Chart of accounts', 'accounts'], ['Recurring transactions', 'recurring'], ['Audit log', 'audit']],
+    links: [['银行', 'banking'], ['对账', 'reconcile'], ['Rules', 'rules'], ['Chart of accounts', 'accounts'], ['Recurring transactions', 'recurring'], ['Audit log', 'audit']],
   },
   {
     id: 'expenses', label: 'Purchases', icon: 'wallet',
-    links: [['All purchases', 'expenses'], ['Bills', 'bills'], ['Vendors', 'vendors']],
+    links: [['All purchases', 'expenses'], ['Bills', 'bills'], ['供应商', 'vendors']],
   },
   {
     id: 'sales', label: 'Sales', icon: 'invoice',
-    links: [['All sales', 'sales'], ['Invoices', 'invoices'], ['Estimates', 'estimates'], ['Customers', 'customers'], ['Products & services', 'items']],
+    links: [['All sales', 'sales'], ['发票', 'invoices'], ['报价单', 'estimates'], ['客户', 'customers'], ['Products & services', 'items']],
   },
   {
     id: 'tax', label: 'Sales Tax', icon: 'percent',
@@ -49,7 +49,7 @@ export const CREATE_MENU = [
   { title: 'Sales', items: [['Invoice', 'invoice', 'newInvoice'], ['Record payment', 'payment', 'newPayment'], ['Estimate', 'estimate', 'newEstimate'], ['Sales receipt', 'sales-receipt'], ['Credit memo', 'credit-memo'], ['Refund receipt', 'refund-receipt'], ['Add customer', '@customer']] },
   { title: 'Purchases', items: [['Expense', 'expense', 'newExpense'], ['Check', 'check', 'newCheck'], ['Bill', 'bill', 'newBill'], ['Pay bills', 'pay-bills'], ['Purchase order', 'purchase-order'], ['Vendor credit', 'vendor-credit'], ['Credit card refund', 'cc-credit'], ['Add vendor', '@vendor']] },
   { title: 'Accounting', items: [['Deposit', 'deposit'], ['Transfer', 'transfer'], ['Journal entry', 'journal'], ['Credit card payment', 'cc-payment'], ['Add product or service', '@item'], ['Add account', '@account']] },
-  { title: 'Import', items: [['Bank statement', '@import'], ['Customers', '@importCustomers'], ['Vendors', '@importVendors'], ['Products and services', '@importItems']] },
+  { title: 'Import', items: [['Bank statement', '@import'], ['客户', '@importCustomers'], ['供应商', '@importVendors'], ['Products and services', '@importItems']] },
 ];
 
 let createHandler = () => {};
@@ -72,7 +72,7 @@ export function mountShell(root, { user, picture, onSignOut }) {
 
   const app = el('div.app', { class: collapsed ? 'panel-collapsed' : '' });
   const live = el('div.sr-only', { id: 'sr-live', 'aria-live': 'polite', 'aria-atomic': 'true' });
-  const skip = el('a.skip-link', { href: '#main' }, 'Skip to content');
+  const skip = el('a.skip-link', { href: '#main' }, '跳转到主要内容');
   skip.addEventListener('click', (e) => { e.preventDefault(); main.focus(); });
 
   // ------------------------------------------------------------- rail
@@ -92,17 +92,17 @@ export function mountShell(root, { user, picture, onSignOut }) {
   const appsBtn = railItem('Menu', 'apps', null, { button: true, toggle: true });
   appsBtn.addEventListener('click', () => togglePanel());
   const rail = el('nav.rail', { 'aria-label': 'Primary' },
-    el('a.rail-logo', { href: href('home'), 'aria-label': 'Home', html: appMark(34) }),
+    el('a.rail-logo', { href: href('home'), 'aria-label': '首页', html: appMark(34) }),
     createBtn,
-    railItem('Home', 'home', 'home'),
-    railItem('Banking', 'bank', 'banking'),
+    railItem('首页', 'home', 'home'),
+    railItem('银行', 'bank', 'banking'),
     railItem('Sales', 'invoice', 'sales'),
     railItem('Purchases', 'wallet', 'expenses'),
-    railItem('Reports', 'reports', 'reports'),
+    railItem('报表', 'reports', 'reports'),
     el('div.rail-sep'),
     appsBtn,
     el('div.rail-bottom', {},
-      railItem('Settings', 'settings', 'settings')));
+      railItem('设置', 'settings', 'settings')));
 
   // ------------------------------------------------------------ topbar
   const menuBtn = el('button.icon-btn.topbar-menu', { type: 'button', 'aria-label': 'Open navigation', 'aria-expanded': 'false', html: icon('menu', 22) });
@@ -118,7 +118,7 @@ export function mountShell(root, { user, picture, onSignOut }) {
   const sync = el('span.sync-pill', { role: 'status', 'aria-live': 'polite' });
   const helpBtn = el('button.icon-btn.hide-mobile', { type: 'button', 'aria-label': 'Keyboard shortcuts', title: 'Keyboard shortcuts', html: icon('keyboard', 20) });
   helpBtn.addEventListener('click', () => document.dispatchEvent(new CustomEvent('shortcuts:help')));
-  const settingsBtn = el('a.icon-btn.hide-mobile', { href: href('settings'), 'aria-label': 'Settings', title: 'Settings', html: icon('settings', 20) });
+  const settingsBtn = el('a.icon-btn.hide-mobile', { href: href('settings'), 'aria-label': '设置', title: '设置', html: icon('settings', 20) });
   const avatar = el('span.avatar', { 'aria-hidden': 'true' }, initials(user?.username || ''));
   if (picture) avatar.replaceChildren(el('img', { src: picture, alt: '' }));
   const userBtn = el('button.icon-btn', { type: 'button', 'aria-label': `Account menu for ${user?.username || 'you'}`, 'aria-haspopup': 'menu', 'aria-expanded': 'false' }, avatar);
@@ -133,7 +133,7 @@ export function mountShell(root, { user, picture, onSignOut }) {
       'sep',
       { label: 'Company settings', icon: 'settings', onClick: () => navigate('settings') },
       { label: 'Keyboard shortcuts', icon: 'keyboard', onClick: () => document.dispatchEvent(new CustomEvent('shortcuts:help')) },
-      ...(isPuterApp() ? [] : ['sep', { label: 'Sign out', icon: 'logout', onClick: onSignOut }]),
+      ...(isPuterApp() ? [] : ['sep', { label: '退出登录', icon: 'logout', onClick: onSignOut }]),
     ], { align: 'end', label: 'Account' });
   });
   const topbar = el('header.topbar', {},
@@ -161,7 +161,7 @@ export function mountShell(root, { user, picture, onSignOut }) {
     collapseBtn.addEventListener('click', () => togglePanel(false));
     nodes.push(el('div.panel-head', {}, el('span', {}, 'Sections'), collapseBtn));
     const favs = (store.settings.favoriteReports || []).map((id) => reportMeta(id)).filter(Boolean);
-    const groups = [...NAV, { id: 'reports', label: 'Reports', icon: 'reports', links: [['Standard reports', 'reports'], ...favs.map((m) => [m.title, `report/${m.id}`])] }];
+    const groups = [...NAV, { id: 'reports', label: '报表', icon: 'reports', links: [['Standard reports', 'reports'], ...favs.map((m) => [m.title, `report/${m.id}`])] }];
     const exact = r ? `${r.name}/${r.params[0] || ''}` : '';
     const hasExact = groups.some((g) => g.links.some(([, t]) => t === exact));
     const isCurrent = (target) => (hasExact ? target === exact : target === active);
@@ -217,7 +217,7 @@ export function mountShell(root, { user, picture, onSignOut }) {
   const tabCreate = el('button.tab-btn.tab-create', { type: 'button', 'aria-label': 'Create', 'aria-haspopup': 'dialog', 'aria-expanded': 'false' }, el('span.tab-ico', { html: icon('plus', 22) }));
   tabCreate.addEventListener('click', () => openCreateMenu(tabCreate));
   const tabbar = el('nav.tabbar', { 'aria-label': 'Primary' },
-    tab('Home', 'home', 'home'), tab('Banking', 'bank', 'banking'), tabCreate, tab('Sales', 'invoice', 'sales'), tab('Reports', 'reports', 'reports'));
+    tab('首页', 'home', 'home'), tab('银行', 'bank', 'banking'), tabCreate, tab('Sales', 'invoice', 'sales'), tab('报表', 'reports', 'reports'));
 
   app.append(skip, rail, frame, tabbar, panelScrim, live);
   clear(root).append(app);

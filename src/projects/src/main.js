@@ -15,13 +15,13 @@ function showError(title, message, onRetry) {
     el('div.empty-icon', { html: icon('cloudOff', 30) }),
     el('h1.auth-title', {}, title),
     el('p.auth-sub', {}, message),
-    el('button.btn.btn-primary.auth-cta', { onclick: onRetry }, 'Try again')
+    el('button.btn.btn-primary.auth-cta', { onclick: onRetry }, '重试')
   ));
 }
 
 async function start() {
   if (typeof puter === 'undefined') {
-    showError('Could not reach Puter', 'The Puter SDK failed to load. Check your connection and try again.', () => location.reload());
+    showError('无法连接到 Puter', 'Puter SDK 加载失败。请检查网络连接后重试。', () => location.reload());
     return;
   }
 
@@ -44,7 +44,7 @@ async function boot() {
     await store.init();
   } catch (err) {
     console.error(err);
-    showError('Could not load your data', 'Something went wrong talking to your Puter cloud. Check your connection and try again.', () => location.reload());
+    showError('无法加载您的数据', '与您的 Puter 云端通信时出现问题。请检查网络连接后重试。', () => location.reload());
     return;
   }
 

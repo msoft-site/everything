@@ -7,17 +7,17 @@ import { clientName, formatAddress, normalize, primaryEmail, primaryPhone } from
 const TYPES = [
   {
     coll: 'clients',
-    label: 'Clients',
+    label: '客户',
     text: (r) => [clientName(r), r.company, ...(r.emails || []).map((e) => e.address), ...(r.phones || []).map((p) => p.number), ...(r.properties || []).map((p) => formatAddress(p)), ...(r.tags || [])].join(' '),
     title: (r) => clientName(r),
     sub: (r) => [primaryEmail(r), primaryPhone(r)].filter(Boolean).join(' · ') || formatAddress(r.properties?.[0]),
     href: (r) => `#/clients/${r.id}`,
     icon: 'user',
   },
-  { coll: 'requests', label: 'Requests', prefix: 'Request', icon: 'inbox' },
-  { coll: 'quotes', label: 'Quotes', prefix: 'Quote', icon: 'file-pen' },
-  { coll: 'jobs', label: 'Jobs', prefix: 'Job', icon: 'hammer' },
-  { coll: 'invoices', label: 'Invoices', prefix: 'Invoice', icon: 'receipt-text' },
+  { coll: 'requests', label: '服务请求', prefix: '服务请求', icon: 'inbox' },
+  { coll: 'quotes', label: '报价单', prefix: '报价单', icon: 'file-pen' },
+  { coll: 'jobs', label: '工单', prefix: '工单', icon: 'hammer' },
+  { coll: 'invoices', label: '账单', prefix: '账单', icon: 'receipt-text' },
 ];
 
 export function createSearchIndex(store) {

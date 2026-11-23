@@ -63,26 +63,26 @@ export class LinkHealth extends Emitter {
     if (state === null) return null;
     switch (state) {
       case 'working':
-        return { state, label: 'Working', detail: 'Anyone who opens the link reaches this meeting.' };
+        return { state, label: '正常', detail: '任何打开此链接的人都能进入本次会议。' };
       case 'refreshing':
         return {
           state,
-          label: 'Refreshing…',
-          detail: 'The link is being updated. Anyone opening it right now will be in shortly.',
+          label: '正在刷新…',
+          detail: '链接正在更新。现在打开链接的人稍后即可进入。',
         };
       case 'held':
         return {
           state,
-          label: 'In use by another meeting',
+          label: '正被另一场会议使用',
           detail:
-            'Someone else started a meeting on this link at the same time, and the link points at theirs. New participants will land there; this meeting carries on for everyone in it.',
+            '其他人同时在此链接上发起了会议，当前链接指向他们的会议。新参会者将进入那场会议；当前会议对已在其中的所有人继续进行。',
         };
       default:
         return {
           state,
-          label: 'Can’t be updated',
+          label: '无法更新',
           detail:
-            'The link couldn’t be updated just now. New participants may not find this meeting until it can be — if someone is stuck, ask them to reopen the link in a moment.',
+            '刚才无法更新链接。在更新成功之前，新参会者可能无法找到此会议 —— 如果有人无法进入，请让他们稍后重新打开链接。',
         };
     }
   }

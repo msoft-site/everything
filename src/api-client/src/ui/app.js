@@ -106,7 +106,7 @@ export class App {
     window.addEventListener('unhandledrejection', (e) => {
       if (e.reason?.name !== 'ReadOnlyError') return;
       e.preventDefault();
-      toast({ kind: 'warning', title: 'View only', text: `${e.reason.message} Duplicate it to make your own copy.` });
+      toast({ kind: 'warning', title: '仅查看', text: `${e.reason.message} 请复制一份以创建您自己的副本。` });
     });
     document.addEventListener('visibilitychange', () => {
       if (document.visibilityState === 'hidden') {
@@ -150,15 +150,15 @@ export class App {
     if (Date.now() - (this.storageErrorAt || 0) < 10000) return;
     this.storageErrorAt = Date.now();
     console.error(err);
-    const where = this.sync ? 'It is still saved to your Puter cloud.' : 'It will be lost when you close the app.';
-    const cause = err?.name === 'QuotaExceededError' ? 'This browser is out of storage space.' : 'This browser refused to store it.';
-    toast({ kind: 'error', title: 'Could not save on this device', text: `${cause} ${where}` });
+    const where = this.sync ? '更改仍会保存到您的 Puter 云端。' : '关闭应用后更改将会丢失。';
+    const cause = err?.name === 'QuotaExceededError' ? '此浏览器的存储空间已满。' : '此浏览器拒绝存储数据。';
+    toast({ kind: 'error', title: '无法在此设备上保存', text: `${cause}${where}` });
   }
 
   #build() {
-    this.sidebarResizer = h('div.resizer.vertical', { role: 'separator', 'aria-orientation': 'vertical', 'aria-label': 'Resize sidebar', tabindex: '0' });
+    this.sidebarResizer = h('div.resizer.vertical', { role: 'separator', 'aria-orientation': 'vertical', 'aria-label': '调整侧边栏大小', tabindex: '0' });
     // Not an <aside>: on phones it becomes a dialog, a role an <aside> may not take.
-    this.sidebarEl = h('div.sidebar#sidebar', { role: 'complementary', 'aria-label': 'Sidebar' }, this.sidebar.el, this.sidebarResizer);
+    this.sidebarEl = h('div.sidebar#sidebar', { role: 'complementary', 'aria-label': '侧边栏' }, this.sidebar.el, this.sidebarResizer);
     // As a drawer on phones, Tab cycles within it.
     this.sidebarEl.addEventListener('keydown', (e) => {
       if (e.key !== 'Tab' || this.sidebarEl.getAttribute('aria-modal') !== 'true') return;
@@ -171,7 +171,7 @@ export class App {
     // The tab panel of the open tabs; it shows the active tab's view.
     this.content = h('div.tab-content#tab-panel');
     this.rightPanel = h('aside.right-panel', {
-      'aria-label': 'Code snippet',
+      'aria-label': '代码片段',
       hidden: true,
       // Lying over the editor it is closed like a sheet.
       onkeydown: (e) => {
@@ -191,7 +191,7 @@ export class App {
     this.scrim = h('div.scrim', { onclick: () => this.toggleSidebar(false) });
     this.shell = h(
       'div.shell',
-      h('a.skip-link', { href: '#main', onclick: (e) => { e.preventDefault(); this.focusMain(); } }, 'Skip to editor'),
+      h('a.skip-link', { href: '#main', onclick: (e) => { e.preventDefault(); this.focusMain(); } }, '跳转到编辑器'),
       this.#header(),
       h('div.body', this.#rail(), this.sidebarEl, this.mainEl),
       this.#statusbar(),
@@ -216,30 +216,30 @@ export class App {
   }
 
   #header() {
-    this.menuBtn = h('button.icon-btn.appbar-menu', { type: 'button', 'aria-label': 'Open sidebar', 'aria-controls': 'sidebar', onclick: () => this.toggleSidebar() }, icon('menu', 18));
+    this.menuBtn = h('button.icon-btn.appbar-menu', { type: 'button', 'aria-label': '打开侧边栏', 'aria-controls': 'sidebar', onclick: () => this.toggleSidebar() }, icon('menu', 18));
     const search = h(
       'button.appbar-search',
-      { type: 'button', onclick: () => openPalette(this), 'aria-label': 'Search collections, requests and environments', 'aria-keyshortcuts': isMac ? 'Meta+K' : 'Control+K' },
+      { type: 'button', onclick: () => openPalette(this), 'aria-label': '搜索集合、请求和环境', 'aria-keyshortcuts': isMac ? 'Meta+K' : 'Control+K' },
       icon('search', 15),
-      h('span.appbar-search-text', 'Search'),
+      h('span.appbar-search-text', '搜索'),
       h('kbd', shortcut('Mod+K')),
     );
     this.syncEl = h('div.sync-indicator', { role: 'status' });
     this.accountEl = h('div.account');
     this.#renderAccount();
-    const importBtn = h('button.btn.sm.appbar-import', { type: 'button', 'aria-label': 'Import', title: `Import (${shortcut('Mod+O')})`, onclick: () => openImportDialog(this) }, icon('import', 15), h('span', 'Import'));
-    const settings = h('button.icon-btn', { type: 'button', 'aria-label': 'Settings', title: 'Settings', onclick: () => openSettingsDialog(this) }, icon('settings', 17));
-    const theme = h('button.icon-btn', { type: 'button', 'aria-label': 'Theme', title: 'Theme' }, icon('sun', 17));
+    const importBtn = h('button.btn.sm.appbar-import', { type: 'button', 'aria-label': '导入', title: `导入 (${shortcut('Mod+O')})`, onclick: () => openImportDialog(this) }, icon('import', 15), h('span', '导入'));
+    const settings = h('button.icon-btn', { type: 'button', 'aria-label': '设置', title: '设置', onclick: () => openSettingsDialog(this) }, icon('settings', 17));
+    const theme = h('button.icon-btn', { type: 'button', 'aria-label': '主题', title: '主题' }, icon('sun', 17));
     menuButton(theme, () => [
-      { heading: 'Theme' },
-      { label: 'System', icon: 'monitor', checked: prefs.get('theme') === 'system', run: () => this.setTheme('system') },
-      { label: 'Light', icon: 'sun', checked: prefs.get('theme') === 'light', run: () => this.setTheme('light') },
-      { label: 'Dark', icon: 'moon', checked: prefs.get('theme') === 'dark', run: () => this.setTheme('dark') },
-    ], { align: 'end', label: 'Theme' });
+      { heading: '主题' },
+      { label: '跟随系统', icon: 'monitor', checked: prefs.get('theme') === 'system', run: () => this.setTheme('system') },
+      { label: '浅色', icon: 'sun', checked: prefs.get('theme') === 'light', run: () => this.setTheme('light') },
+      { label: '深色', icon: 'moon', checked: prefs.get('theme') === 'dark', run: () => this.setTheme('dark') },
+    ], { align: 'end', label: '主题' });
     return h(
       'header.appbar',
       this.menuBtn,
-      h('div.appbar-brand', h('img', { src: './icon-192.png', alt: '', width: 22, height: 22 }), h('h1.appbar-title', 'API Client'), h('span.alpha-tag', { title: 'Early preview: features may change' }, 'Alpha')),
+      h('div.appbar-brand', h('img', { src: './icon-192.png', alt: '', width: 22, height: 22 }), h('h1.appbar-title', 'API 客户端'), h('span.alpha-tag', { title: '早期预览版：功能可能会发生变更' }, 'Alpha')),
       h('div.appbar-center', search),
       h('div.appbar-actions', importBtn, this.syncEl, theme, settings, this.accountEl),
     );
@@ -255,43 +255,43 @@ export class App {
       );
     this.railEl = h(
       'nav.rail',
-      { 'aria-label': 'Sidebar sections' },
-      item('collections', 'collections', 'Collections'),
-      item('environments', 'globe', 'Environments'),
-      item('history', 'history', 'History'),
+      { 'aria-label': '侧边栏分区' },
+      item('collections', 'collections', '集合'),
+      item('environments', 'globe', '环境'),
+      item('history', 'history', '历史记录'),
     );
     return this.railEl;
   }
 
   #statusbar() {
     const btn = (label, ic, onclick, extra = {}) => h('button.status-btn', { type: 'button', onclick, 'aria-label': label || null, title: label || null, ...extra }, icon(ic, 14), h('span.status-label', label));
-    this.consoleBtn = btn('Console', 'terminal', () => this.console.toggle(), { 'aria-pressed': 'false', 'aria-controls': 'console', 'aria-keyshortcuts': 'Control+`' });
+    this.consoleBtn = btn('控制台', 'terminal', () => this.console.toggle(), { 'aria-pressed': 'false', 'aria-controls': 'console', 'aria-keyshortcuts': 'Control+`' });
     this.consoleBadge = h('span.status-badge', { hidden: true });
     this.consoleBtn.append(this.consoleBadge);
-    this.transportBtn = btn('', 'zap', null, { title: 'How requests are sent' });
-    menuButton(this.transportBtn, () => this.#transportItems(), { side: 'top', align: 'end', label: 'Send requests through' });
+    this.transportBtn = btn('', 'zap', null, { title: '请求发送方式' });
+    menuButton(this.transportBtn, () => this.#transportItems(), { side: 'top', align: 'end', label: '请求发送渠道' });
     this.#renderTransport();
-    this.layoutBtn = h('button.status-btn', { type: 'button', 'aria-label': 'Response layout', title: 'Response layout' }, icon(prefs.get('layout') === 'side' ? 'columns' : 'rows', 14));
+    this.layoutBtn = h('button.status-btn', { type: 'button', 'aria-label': '响应面板布局', title: '响应面板布局' }, icon(prefs.get('layout') === 'side' ? 'columns' : 'rows', 14));
     menuButton(this.layoutBtn, () => [
-      { heading: 'Response pane' },
-      { label: 'Below the request', icon: 'rows', checked: prefs.get('layout') !== 'side', run: () => this.setLayout('stacked') },
-      { label: 'Beside the request', icon: 'columns', checked: prefs.get('layout') === 'side', run: () => this.setLayout('side') },
-    ], { side: 'top', align: 'end', label: 'Response layout' });
+      { heading: '响应面板' },
+      { label: '位于请求下方', icon: 'rows', checked: prefs.get('layout') !== 'side', run: () => this.setLayout('stacked') },
+      { label: '位于请求右侧', icon: 'columns', checked: prefs.get('layout') === 'side', run: () => this.setLayout('side') },
+    ], { side: 'top', align: 'end', label: '响应面板布局' });
     return h(
       'footer.statusbar',
       h(
         'div.status-left',
-        h('button.status-btn.icon-only', { type: 'button', 'aria-label': 'Toggle sidebar', title: `Toggle sidebar (${shortcut('Mod+\\')})`, onclick: () => this.toggleSidebar() }, icon('panelLeft', 14)),
+        h('button.status-btn.icon-only', { type: 'button', 'aria-label': '切换侧边栏', title: `切换侧边栏 (${shortcut('Mod+\\')})`, onclick: () => this.toggleSidebar() }, icon('panelLeft', 14)),
         this.consoleBtn,
-        btn('Cookies', 'cookie', () => openCookiesDialog(this)),
+        btn('Cookie', 'cookie', () => openCookiesDialog(this)),
       ),
       h('div.status-msg', { role: 'status', ref: (el) => (this.statusMsg = el) }),
       h(
         'div.status-right',
         this.transportBtn,
         this.layoutBtn,
-        h('button.status-btn.icon-only', { type: 'button', 'aria-label': 'Keyboard shortcuts', title: 'Keyboard shortcuts', onclick: () => openShortcutsDialog() }, icon('keyboard', 14)),
-        h('a.status-btn.icon-only.github-link', { href: REPO_URL, target: '_blank', rel: 'noopener', 'aria-label': 'Source code on GitHub', title: 'Source code on GitHub' }, icon('github', 14)),
+        h('button.status-btn.icon-only', { type: 'button', 'aria-label': '键盘快捷键', title: '键盘快捷键', onclick: () => openShortcutsDialog() }, icon('keyboard', 14)),
+        h('a.status-btn.icon-only.github-link', { href: REPO_URL, target: '_blank', rel: 'noopener', 'aria-label': 'GitHub 源代码', title: 'GitHub 源代码' }, icon('github', 14)),
       ),
     );
   }
@@ -367,19 +367,19 @@ export class App {
       return;
     }
     if (!s.signedIn) {
-      fill(this.accountEl, h('button.btn.sm.primary', { type: 'button', onclick: () => this.signIn() }, icon('logIn', 15), h('span.signin-label', 'Sign in')));
+      fill(this.accountEl, h('button.btn.sm.primary', { type: 'button', onclick: () => this.signIn() }, icon('logIn', 15), h('span.signin-label', '登录')));
       return;
     }
-    const name = s.user?.username || 'Account';
+    const name = s.user?.username || '账户';
     const avatar = h('span.avatar', this.picture ? h('img', { src: this.picture, alt: '' }) : name.slice(0, 1).toUpperCase());
-    const btn = h('button.account-btn', { type: 'button', 'aria-label': `Account: ${name}` }, avatar);
+    const btn = h('button.account-btn', { type: 'button', 'aria-label': `账户：${name}` }, avatar);
     menuButton(btn, () => [
       { heading: name },
-      { label: 'Sync now', icon: 'refresh', disabled: !this.sync, run: () => this.sync?.pull() },
-      { label: 'Export everything', icon: 'download', run: () => openExportDialog(this) },
+      { label: '立即同步', icon: 'refresh', disabled: !this.sync, run: () => this.sync?.pull() },
+      { label: '导出全部', icon: 'download', run: () => openExportDialog(this) },
       s.env === 'app' ? null : '-',
-      s.env === 'app' ? null : { label: 'Sign out', icon: 'logOut', run: () => this.signOut() },
-    ], { align: 'end', label: 'Account' });
+      s.env === 'app' ? null : { label: '退出登录', icon: 'logOut', run: () => this.signOut() },
+    ], { align: 'end', label: '账户' });
     fill(this.accountEl, btn);
   }
 
@@ -397,8 +397,8 @@ export class App {
       try {
         localStorage.removeItem(SEND_AFTER_SIGN_IN);
       } catch {}
-      if (err?.error === 'popup_blocked') toast({ kind: 'error', title: 'Sign-in window blocked', text: 'Allow pop-ups for this site and try again.' });
-      else if (err?.error !== 'auth_window_closed') toast({ kind: 'error', title: 'Could not sign in', text: 'Please try again.' });
+      if (err?.error === 'popup_blocked') toast({ kind: 'error', title: '登录窗口被拦截', text: '请允许此站点的弹出式窗口并重试。' });
+      else if (err?.error !== 'auth_window_closed') toast({ kind: 'error', title: '无法登录', text: '请重试。' });
     }
   }
 
@@ -424,25 +424,25 @@ export class App {
 
   async signOut() {
     const ok = await confirmDialog({
-      title: 'Sign out?',
-      message: 'Your collections stay in your Puter account. This browser will show the signed-out workspace.',
-      confirmLabel: 'Sign out',
+      title: '确定退出登录吗？',
+      message: '您的集合仍将保留在 Puter 账户中。此浏览器将切换到未登录的工作区。',
+      confirmLabel: '退出登录',
     });
     if (ok) await this.onSignOut();
   }
 
   #renderSync() {
     if (!this.session.signedIn) {
-      fill(this.syncEl, h('span.sync-local', { title: 'Saved in this browser only. Sign in to sync with your Puter account.' }, icon('cloudOff', 15), h('span.sr-only', 'Saved in this browser only')));
+      fill(this.syncEl, h('span.sync-local', { title: '仅保存在此浏览器中。登录即可与您的 Puter 账户同步。' }, icon('cloudOff', 15), h('span.sr-only', '仅保存在此浏览器中')));
       return;
     }
     const status = this.sync?.status || 'idle';
     const map = {
-      idle: ['cloud', 'Synced with Puter'],
-      synced: ['cloudCheck', 'All changes saved to Puter'],
-      pending: ['cloud', 'Saving changes...'],
-      syncing: ['refresh', 'Syncing with Puter...'],
-      error: ['cloudOff', 'Could not reach Puter. Changes are kept on this device and will sync later.'],
+      idle: ['cloud', '已与 Puter 同步'],
+      synced: ['cloudCheck', '所有更改已保存至 Puter'],
+      pending: ['cloud', '正在保存更改...'],
+      syncing: ['refresh', '正在与 Puter 同步...'],
+      error: ['cloudOff', '无法连接到 Puter。更改已保存在此设备上，稍后将自动同步。'],
     };
     const [ic, text] = map[status] || map.idle;
     fill(this.syncEl, h(`span.sync-state${status === 'syncing' ? '.spin' : ''}${status === 'error' ? '.error' : ''}`, { title: text }, icon(ic, 15), h('span.sr-only', text)));
@@ -473,12 +473,12 @@ export class App {
     const t = prefs.get('transport');
     const signed = this.session.signedIn;
     return [
-      { heading: 'Send requests through' },
-      { label: 'Automatic', icon: 'zap', checked: t === 'auto', run: () => this.setTransport('auto') },
-      { label: 'Browser only', icon: 'globe', checked: t === 'browser', run: () => this.setTransport('browser') },
-      { label: signed ? 'Puter relay' : 'Puter relay (sign in)', icon: 'server', checked: t === 'relay', disabled: !signed, run: () => this.setTransport('relay') },
+      { heading: '请求发送渠道' },
+      { label: '自动', icon: 'zap', checked: t === 'auto', run: () => this.setTransport('auto') },
+      { label: '仅浏览器', icon: 'globe', checked: t === 'browser', run: () => this.setTransport('browser') },
+      { label: signed ? 'Puter 中继' : 'Puter 中继（需登录）', icon: 'server', checked: t === 'relay', disabled: !signed, run: () => this.setTransport('relay') },
       '-',
-      { label: 'What is the difference?', icon: 'help', run: () => openSettingsDialog(this, 'requests') },
+      { label: '有什么区别？', icon: 'help', run: () => openSettingsDialog(this, 'requests') },
     ];
   }
 
@@ -489,9 +489,9 @@ export class App {
 
   #renderTransport() {
     const t = prefs.get('transport');
-    const label = { auto: 'Auto', browser: 'Browser', relay: 'Relay' }[t];
+    const label = { auto: '自动', browser: '浏览器', relay: '中继' }[t];
     fill(this.transportBtn, icon(t === 'relay' ? 'server' : t === 'browser' ? 'globe' : 'zap', 14), h('span.status-label', label));
-    this.transportBtn.setAttribute('aria-label', `Send requests through: ${label}`);
+    this.transportBtn.setAttribute('aria-label', `请求发送渠道：${label}`);
   }
 
   sendOptions() {
@@ -576,8 +576,8 @@ export class App {
     this.tabbar.renderEnv();
     this.sidebar.render();
     this.refreshVariables();
-    const name = this.environmentId ? this.ws.getEnvironment(this.environmentId).name : 'No environment';
-    announce(`Environment: ${name}`);
+    const name = this.environmentId ? this.ws.getEnvironment(this.environmentId).name : '无环境';
+    announce(`环境：${name}`);
   }
 
   refreshVariables() {
@@ -593,11 +593,11 @@ export class App {
   }
 
   tabTitle(tab) {
-    if (DRAFT_KINDS.has(tab.kind)) return tab.draft?.name || 'Untitled Request';
-    if (tab.kind === 'environment') return tab.refId === 'globals' ? 'Globals' : this.ws.getEnvironment(tab.refId)?.name || 'Environment';
+    if (DRAFT_KINDS.has(tab.kind)) return tab.draft?.name || '未命名请求';
+    if (tab.kind === 'environment') return tab.refId === 'globals' ? '全局变量' : this.ws.getEnvironment(tab.refId)?.name || '环境';
     const loc = this.ws.locate(tab.refId);
-    if (tab.kind === 'runner') return `Run ${loc?.item.name || ''}`.trim();
-    return loc?.item.name || 'Untitled';
+    if (tab.kind === 'runner') return `运行 ${loc?.item.name || ''}`.trim();
+    return loc?.item.name || '未命名';
   }
 
   isDirty(tab) {
@@ -729,9 +729,9 @@ export class App {
       let dlg;
       const btn = (label, value, cls = '') => h(`button.btn${cls}`, { type: 'button', onclick: () => dlg.close(value) }, label);
       dlg = openDialog({
-        title: 'Save changes?',
-        body: h('p', { style: { margin: 0, color: 'var(--text-muted)' } }, `"${this.tabTitle(tab)}" has unsaved changes.`),
-        footer: [btn("Don't save", 'discard'), h('span.spacer'), btn('Cancel', 'cancel'), btn('Save', 'save', '.primary')],
+        title: '保存更改？',
+        body: h('p', { style: { margin: 0, color: 'var(--text-muted)' } }, `“${this.tabTitle(tab)}”有未保存的更改。`),
+        footer: [btn('不保存', 'discard'), h('span.spacer'), btn('取消', 'cancel'), btn('保存', 'save', '.primary')],
       });
       dlg.result.then((v) => resolve(v || 'cancel'));
     });
@@ -771,7 +771,7 @@ export class App {
     if (!tab.refId || !this.ws.locate(tab.refId)) return this.saveTabAs(tab);
     const owner = this.ws.locate(tab.refId).collection;
     if (owner.shared && !['write', 'manage'].includes(owner.shared.mode)) {
-      toast({ kind: 'warning', title: 'View only', text: `"${owner.name}" is shared with you as view only.`, actions: [{ label: 'Save a copy', run: () => this.saveTabAs(tab) }] });
+      toast({ kind: 'warning', title: '仅查看', text: `“${owner.name}”以仅查看权限共享给您。`, actions: [{ label: '另存为副本', run: () => this.saveTabAs(tab) }] });
       return false;
     }
     await this.ws.saveRequest(tab.draft);
@@ -780,7 +780,7 @@ export class App {
     this.tabbar.render();
     this.views.get(tab.id)?.onSaved?.();
     this.persistTabs();
-    announce('Saved');
+    announce('已保存');
     return true;
   }
 
@@ -812,7 +812,7 @@ export class App {
     this.sidebar.reveal(saved.id);
     this.#destroyView(tab.id);
     this.activate(tab.id);
-    toast({ kind: 'success', title: 'Request saved', text: `Saved to ${this.ws.getCollection(collectionId).name}.` });
+    toast({ kind: 'success', title: '请求已保存', text: `已保存至 ${this.ws.getCollection(collectionId).name}。` });
     return true;
   }
 
@@ -853,20 +853,20 @@ export class App {
     this.content.replaceChildren(
       h(
         'div.launch',
-        h('h1.launch-title', 'Start with a request'),
-        h('p.launch-sub', 'Build, send and test HTTP requests. Organize them in collections and switch between environments.'),
+        h('h1.launch-title', '从创建请求开始'),
+        h('p.launch-sub', '构建、发送和测试 HTTP 请求。将请求组织到集合中并在不同环境之间切换。'),
         h(
           'div.launch-grid',
-          action('plus', 'New request', () => this.newRequest(), shortcut('Mod+Alt+N')),
-          action('folderPlus', 'New collection', () => this.createCollection()),
-          action('import', 'Import', () => openImportDialog(this)),
-          action('globe', 'New environment', () => this.createEnvironment()),
-          action('plug', 'New WebSocket', () => this.newWebSocket()),
-          action('play', 'Run a collection', () => (this.ws.collections.length ? this.runCollection(this.ws.collections[0].id) : this.createCollection())),
+          action('plus', '新建请求', () => this.newRequest(), shortcut('Mod+Alt+N')),
+          action('folderPlus', '新建集合', () => this.createCollection()),
+          action('import', '导入', () => openImportDialog(this)),
+          action('globe', '新建环境', () => this.createEnvironment()),
+          action('plug', '新建 WebSocket', () => this.newWebSocket()),
+          action('play', '运行集合', () => (this.ws.collections.length ? this.runCollection(this.ws.collections[0].id) : this.createCollection())),
         ),
         this.session.signedIn || !this.session.puter
           ? null
-          : h('p.launch-note', icon('info', 14), h('span', 'You are not signed in, so your work is saved in this browser. '), h('button.link-btn', { type: 'button', onclick: () => this.signIn() }, 'Sign in'), h('span', ' to sync it across devices.')),
+          : h('p.launch-note', icon('info', 14), h('span', '您尚未登录，工作内容保存在当前浏览器中。'), h('button.link-btn', { type: 'button', onclick: () => this.signIn() }, '登录'), h('span', '以跨设备同步数据。')),
       ),
     );
     this.#renderRightPanel();
@@ -949,7 +949,7 @@ export class App {
   // Workspace actions --------------------------------------------------------
 
   async createCollection() {
-    const name = await promptDialog({ title: 'New collection', label: 'Name', value: 'New Collection', confirmLabel: 'Create' });
+    const name = await promptDialog({ title: '新建集合', label: '名称', value: 'New Collection', confirmLabel: '创建' });
     if (!name) return null;
     const c = await this.ws.addCollection({ name });
     this.showSection('collections');
@@ -959,7 +959,7 @@ export class App {
   }
 
   async createEnvironment() {
-    const name = await promptDialog({ title: 'New environment', label: 'Name', value: 'New Environment', confirmLabel: 'Create' });
+    const name = await promptDialog({ title: '新建环境', label: '名称', value: 'New Environment', confirmLabel: '创建' });
     if (!name) return null;
     const e = await this.ws.addEnvironment({ name });
     this.showSection('environments');
@@ -986,7 +986,7 @@ export class App {
   }
 
   async addFolderTo(collectionId, parentId) {
-    const name = await promptDialog({ title: 'New folder', label: 'Name', value: 'New Folder', confirmLabel: 'Create' });
+    const name = await promptDialog({ title: '新建文件夹', label: '名称', value: 'New Folder', confirmLabel: '创建' });
     if (!name) return null;
     const f = newFolder({ name });
     await this.ws.addItem(collectionId, parentId || collectionId, f);
@@ -998,7 +998,8 @@ export class App {
   async renameItem(id) {
     const loc = this.ws.locate(id);
     if (!loc) return;
-    const name = await promptDialog({ title: `Rename ${loc.item.type}`, label: 'Name', value: loc.item.name, confirmLabel: 'Rename' });
+    const typeLabel = { collection: '集合', folder: '文件夹', request: '请求', websocket: 'WebSocket 请求' }[loc.item.type] || loc.item.type;
+    const name = await promptDialog({ title: `重命名${typeLabel}`, label: '名称', value: loc.item.name, confirmLabel: '重命名' });
     if (!name || name === loc.item.name) return;
     await this.ws.updateItem(id, (item) => {
       item.name = name;
@@ -1017,7 +1018,7 @@ export class App {
     this.sidebar.focusedId = id;
     this.sidebar.restoreFocus = true;
     this.sidebar.reveal(id);
-    announce(`Moved to ${this.ws.locate(id).parents.map((p) => p.name).join(' / ')}`);
+    announce(`已移动至 ${this.ws.locate(id).parents.map((p) => p.name).join(' / ')}`);
   }
 
   async deleteItem(id) {
@@ -1025,17 +1026,18 @@ export class App {
     if (!loc) return;
     if (loc.item.type === 'collection' && loc.item.shared) return this.leaveShared(id);
     const kind = loc.item.type;
-    const extra = kind === 'request' ? '' : ' and everything in it';
-    const ok = await confirmDialog({ title: `Delete ${kind}?`, message: `"${loc.item.name}"${extra} will be deleted. This cannot be undone.`, confirmLabel: 'Delete', danger: true });
+    const typeLabel = { collection: '集合', folder: '文件夹', request: '请求', websocket: 'WebSocket 请求' }[kind] || kind;
+    const extra = kind === 'request' || kind === 'websocket' ? '' : '及其中的所有内容';
+    const ok = await confirmDialog({ title: `删除${typeLabel}？`, message: `“${loc.item.name}”${extra}将被删除。此操作无法撤销。`, confirmLabel: '删除', danger: true });
     if (!ok) return;
     await this.ws.removeItem(id);
-    toast({ kind: 'success', title: `${kind[0].toUpperCase()}${kind.slice(1)} deleted` });
+    toast({ kind: 'success', title: `${typeLabel}已删除` });
   }
 
   async deleteEnvironment(id) {
     const env = this.ws.getEnvironment(id);
     if (!env) return;
-    const ok = await confirmDialog({ title: 'Delete environment?', message: `"${env.name}" and its variables will be deleted. This cannot be undone.`, confirmLabel: 'Delete', danger: true });
+    const ok = await confirmDialog({ title: '删除环境？', message: `“${env.name}”及其变量将被删除。此操作无法撤销。`, confirmLabel: '删除', danger: true });
     if (!ok) return;
     if (this.environmentId === id) await this.setEnvironment(null);
     await this.ws.deleteEnvironment(id);
@@ -1045,7 +1047,7 @@ export class App {
 
   async shareCollection(id) {
     if (!this.session.signedIn || !this.shared) {
-      toast({ kind: 'info', title: 'Sign in to share', text: 'Sharing uses your Puter account.', actions: this.session.puter ? [{ label: 'Sign in', run: () => this.signIn() }] : [] });
+      toast({ kind: 'info', title: '登录后即可共享', text: '共享功能需要使用您的 Puter 账户。', actions: this.session.puter ? [{ label: '登录', run: () => this.signIn() }] : [] });
       return;
     }
     const { openShareDialog } = await import('./share-dialog.js');
@@ -1056,9 +1058,9 @@ export class App {
     const c = this.ws.getCollection(id);
     if (!c?.shared) return;
     const ok = await confirmDialog({
-      title: 'Remove shared collection?',
-      message: `"${c.name}" will be removed from your list and you will lose access. ${c.shared.owner || 'The owner'} can share it with you again.`,
-      confirmLabel: 'Remove',
+      title: '移除共享集合？',
+      message: `“${c.name}”将从您的列表中移除，且您将失去访问权限。${c.shared.owner || '所有者'}可以再次将其共享给您。`,
+      confirmLabel: '移除',
       danger: true,
     });
     if (ok) await this.shared.leave(id);
@@ -1167,9 +1169,9 @@ export class App {
     view?.showResult?.(result);
     const r = result.response;
     if (r) {
-      announce(`${r.status} ${r.statusText || ''}, ${Math.round(r.timeMs)} milliseconds`);
+      announce(`${r.status} ${r.statusText || ''}，${Math.round(r.timeMs)} 毫秒`);
       if (tab.refId) this.ws.saveResponse(tab.refId, { ...r, tests: result.tests, warnings: result.warnings }).catch(() => {});
-    } else if (result.error && result.error.code !== 'aborted') announce(`Request failed: ${result.error.message}`);
+    } else if (result.error && result.error.code !== 'aborted') announce(`请求失败：${result.error.message}`);
     if (result.resolved || result.error?.code !== 'aborted') {
       await this.ws.addHistory({
         request: sent,
@@ -1179,7 +1181,7 @@ export class App {
       }).catch(() => {});
     }
     const failed = result.tests.filter((t) => !t.passed && !t.skipped).length;
-    if (result.tests.length) this.setStatus(`${result.tests.length - failed} of ${result.tests.length} tests passed`);
+    if (result.tests.length) this.setStatus(`${result.tests.length - failed} / ${result.tests.length} 项测试通过`);
   }
 
   // Shortcuts -------------------------------------------------------------

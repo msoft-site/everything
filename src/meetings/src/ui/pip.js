@@ -190,7 +190,7 @@ export class PictureInPicture extends Emitter {
       if (documentPipSupported()) await this.#openWindow(epoch);
       else if (hostedPipSupported()) await this.#openHosted(epoch);
       else if (videoPipSupported()) await this.#openVideo();
-      else throw new PipUnavailableError('This browser has no picture-in-picture.');
+      else throw new PipUnavailableError('此浏览器不支持画中画功能。');
     } finally {
       this.#opening = false;
     }
@@ -285,7 +285,7 @@ export class PictureInPicture extends Emitter {
         arrival,
         new Promise((_, reject) => {
           timer = setTimeout(
-            () => reject(new Error('The picture-in-picture page did not load.')),
+            () => reject(new Error('画中画页面未能加载。')),
             HOSTED_ATTACH_TIMEOUT_MS
           );
         }),
@@ -319,7 +319,7 @@ export class PictureInPicture extends Emitter {
     this.#win = win;
 
     const doc = win.document;
-    doc.title = 'Meeting';
+    doc.title = '会议';
     // The window opens on a document with no language of its own, which
     // leaves a screen reader guessing how to pronounce the names in it.
     if (document.documentElement.lang) doc.documentElement.lang = document.documentElement.lang;
@@ -329,8 +329,8 @@ export class PictureInPicture extends Emitter {
     // "+2" stands in for a sentence, so the chip carries the sentence too
     // rather than reading out as a bare number.
     this.#countEl = el('span', { class: 'pip-count', role: 'img', style: { display: 'none' } });
-    this.#micBtn = this.#ctlButton('Turn off microphone', () => this.#media.setMicOn(!this.#media.micOn));
-    this.#camBtn = this.#ctlButton('Turn off camera', () => this.#media.setCamOn(!this.#media.camOn));
+    this.#micBtn = this.#ctlButton('关闭麦克风', () => this.#media.setMicOn(!this.#media.micOn));
+    this.#camBtn = this.#ctlButton('关闭摄像头', () => this.#media.setCamOn(!this.#media.camOn));
 
     doc.body.className = 'pip-window';
     doc.body.append(
@@ -344,8 +344,8 @@ export class PictureInPicture extends Emitter {
           'button',
           {
             class: 'round-ctl',
-            title: this.#hosted ? 'Back to the meeting' : 'Back to the meeting tab',
-            'aria-label': this.#hosted ? 'Back to the meeting' : 'Back to the meeting tab',
+            title: this.#hosted ? '返回会议' : '返回会议标签页',
+            'aria-label': this.#hosted ? '返回会议' : '返回会议标签页',
             onclick: () => this.returnToTab(),
           },
           icon('back')
@@ -354,8 +354,8 @@ export class PictureInPicture extends Emitter {
           'button',
           {
             class: 'leave-btn',
-            title: 'Leave call',
-            'aria-label': 'Leave call',
+            title: '离开通话',
+            'aria-label': '离开通话',
             onclick: () => {
               // The only control here whose result is somewhere else: the
               // tab swaps the call for the post-call screen — a countdown
@@ -400,8 +400,8 @@ export class PictureInPicture extends Emitter {
 
   #renderControls() {
     if (!this.#micBtn) return;
-    setCtl(this.#micBtn, 'mic', this.#media.micOn, 'microphone');
-    setCtl(this.#camBtn, 'cam', this.#media.camOn, 'camera');
+    setCtl(this.#micBtn, 'mic', this.#media.micOn, '麦克风');
+    setCtl(this.#camBtn, 'cam', this.#media.camOn, '摄像头');
   }
 
   // ---- single-video fallback ----
@@ -409,7 +409,7 @@ export class PictureInPicture extends Emitter {
   async #openVideo() {
     const primary = primaryPipTile(this.#tiles, { pinnedId: this.#pinnedId });
     if (!primary) {
-      throw new PipUnavailableError('Turn on a camera or present to float the meeting.');
+      throw new PipUnavailableError('请开启摄像头或共享屏幕以使用悬浮窗显示会议。');
     }
 
     const video = el('video', { class: 'pip-source', autoplay: true, playsinline: true, muted: true });
@@ -573,7 +573,7 @@ function setCount(node, shown, total) {
   const hidden = total - shown;
   node.style.display = hidden > 0 ? '' : 'none';
   node.textContent = hidden > 0 ? `+${hidden}` : '';
-  const label = `Showing ${shown} of ${total}`;
+  const label = `正在显示 ${shown} / ${total}`;
   node.title = label;
   node.setAttribute('aria-label', label);
 }
@@ -581,7 +581,7 @@ function setCount(node, shown, total) {
 function setCtl(btn, kind, on, label) {
   clear(btn).append(icon(on ? kind : `${kind}Off`));
   btn.classList.toggle('off', !on);
-  btn.title = `Turn ${on ? 'off' : 'on'} ${label}`;
+  btn.title = `${on ? '关闭' : '开启'}${label}`;
   btn.setAttribute('aria-label', btn.title);
   btn.setAttribute('aria-pressed', on ? 'true' : 'false');
 }

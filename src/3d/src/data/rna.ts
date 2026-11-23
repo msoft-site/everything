@@ -189,17 +189,17 @@ export function channelLabel(path: string, index: number): string {
   const rgba = ['R', 'G', 'B', 'A'];
   const tail = path.split('.').pop() ?? path;
   const nice: Record<string, [string, string[]]> = {
-    location: ['Location', xyz],
-    rotation_euler: ['Euler Rotation', xyz],
-    rotation_quaternion: ['Quaternion Rotation', wxyz],
-    rotation_axis_angle: ['Axis-Angle Rotation', ['W', 'X', 'Y', 'Z']],
-    scale: ['Scale', xyz],
-    delta_location: ['Delta Location', xyz],
-    color: ['Color', rgba],
-    energy: ['Power', []],
-    lens: ['Focal Length', []],
-    value: ['Value', []],
-    default_value: ['Default Value', rgba],
+    location: ['位置', xyz],
+    rotation_euler: ['欧拉旋转', xyz],
+    rotation_quaternion: ['四元数旋转', wxyz],
+    rotation_axis_angle: ['轴角旋转', ['W', 'X', 'Y', 'Z']],
+    scale: ['缩放', xyz],
+    delta_location: ['增量位置', xyz],
+    color: ['颜色', rgba],
+    energy: ['能量', []],
+    lens: ['焦距', []],
+    value: ['值', []],
+    default_value: ['默认值', rgba],
   };
   const m = /\["([^"]+)"\]/.exec(path);
   const prefix = m ? `${m[1]} ` : '';

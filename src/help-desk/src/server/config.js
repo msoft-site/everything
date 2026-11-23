@@ -118,7 +118,7 @@ const VALIDATORS = {
               return label && v ? { value: v, label } : null;
             })
             .filter(Boolean);
-          if (!out.options.length) throw new ValidationError(`Add at least one option to "${out.title}"`, 'options');
+          if (!out.options.length) throw new ValidationError(`请为“${out.title}”添加至少一个选项`, 'options');
         }
         return out;
       })
@@ -169,9 +169,9 @@ const VALIDATORS = {
 
 export function validateConfig(kind, value) {
   const fn = VALIDATORS[kind];
-  if (!fn) throw new ValidationError('Unknown settings', 'kind');
+  if (!fn) throw new ValidationError('未知设置', 'kind');
   const out = fn(value);
-  if (JSON.stringify(out).length > 350 * 1024) throw new ValidationError('These settings are too large to save', kind);
+  if (JSON.stringify(out).length > 350 * 1024) throw new ValidationError('设置内容过大，无法保存', kind);
   return out;
 }
 
@@ -180,7 +180,7 @@ export function validateMeta(input, current) {
   const out = {};
   if ('name' in input) {
     const name = cleanLine(input.name, 80);
-    if (!name) throw new ValidationError('Give the help desk a name', 'name');
+    if (!name) throw new ValidationError('请为服务台命名', 'name');
     out.name = name;
   }
   if ('appUrl' in input) {

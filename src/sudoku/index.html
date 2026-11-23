@@ -1,11 +1,11 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta
       name="description"
-      content="Play Sudoku free in your browser. Four difficulties, a new daily puzzle, pencil marks, undo, and hints that explain the logic instead of just giving the answer."
+      content="在浏览器中免费畅玩数独。四种难度、每日新谜题、候选数标记、撤销功能，以及解释推理逻辑而不仅仅是直接给出答案的提示。"
     />
     <meta name="color-scheme" content="light dark" />
     <link rel="icon" href="favicon.ico" sizes="16x16 32x32 48x48" />
@@ -16,17 +16,17 @@
     <link rel="manifest" href="site.webmanifest" />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://sudoku.puter.com/" />
-    <meta property="og:site_name" content="Sudoku" />
-    <meta property="og:title" content="Sudoku: play free in your browser" />
+    <meta property="og:site_name" content="数独" />
+    <meta property="og:title" content="数独：在浏览器中免费畅玩" />
     <meta
       property="og:description"
-      content="Four difficulties, a new daily puzzle, pencil marks, and hints that explain the logic."
+      content="四种难度、每日新谜题、候选数标记，以及解释推理逻辑的提示。"
     />
     <!-- Matches --bg for each scheme, so the browser chrome does not flash a
          colour the page never uses. main.js re-asserts the resolved one. -->
     <meta name="theme-color" content="#f4f5f7" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#101215" media="(prefers-color-scheme: dark)" />
-    <title>Sudoku: Play Free in Your Browser</title>
+    <title>数独：在浏览器中免费畅玩</title>
     <link rel="canonical" href="https://sudoku.puter.com/" />
     <script>
       // Resolve the theme before first paint so a dark-mode player never gets a
@@ -59,8 +59,7 @@
   <body>
     <noscript>
       <p class="noscript-note">
-        This Sudoku runs entirely in your browser and needs JavaScript to generate
-        puzzles. Enable JavaScript to play.
+        本数独游戏完全在您的浏览器中运行，需要启用 JavaScript 来生成谜题。请启用 JavaScript 开始游玩。
       </p>
     </noscript>
 
@@ -71,31 +70,31 @@
             <img src="icon-96.png" alt="" width="30" height="30" />
           </span>
           <h1 class="brand-name">
-            Sudoku<span class="visually-hidden">, play free in your browser</span>
+            数独<span class="visually-hidden">，在浏览器中免费畅玩</span>
           </h1>
         </div>
 
         <div class="topbar-right">
-          <div class="segmented" role="group" aria-label="Colour theme">
-            <button type="button" data-theme-choice="light" aria-pressed="false" title="Light theme">
-              <i data-lucide="sun"></i><span class="visually-hidden">Light theme</span>
+          <div class="segmented" role="group" aria-label="色彩主题">
+            <button type="button" data-theme-choice="light" aria-pressed="false" title="浅色主题">
+              <i data-lucide="sun"></i><span class="visually-hidden">浅色主题</span>
             </button>
-            <button type="button" data-theme-choice="dark" aria-pressed="false" title="Dark theme">
-              <i data-lucide="moon"></i><span class="visually-hidden">Dark theme</span>
+            <button type="button" data-theme-choice="dark" aria-pressed="false" title="深色主题">
+              <i data-lucide="moon"></i><span class="visually-hidden">深色主题</span>
             </button>
-            <button type="button" data-theme-choice="system" aria-pressed="false" title="Match system theme">
-              <i data-lucide="monitor"></i><span class="visually-hidden">Match system theme</span>
+            <button type="button" data-theme-choice="system" aria-pressed="false" title="跟随系统主题">
+              <i data-lucide="monitor"></i><span class="visually-hidden">跟随系统主题</span>
             </button>
           </div>
 
-          <button class="icon-btn" id="stats-btn" type="button" title="Records" aria-label="Records">
+          <button class="icon-btn" id="stats-btn" type="button" title="战绩记录" aria-label="战绩记录">
             <i data-lucide="chart-no-axes-column"></i>
           </button>
-          <button class="icon-btn" id="settings-btn" type="button" title="Settings" aria-label="Settings">
+          <button class="icon-btn" id="settings-btn" type="button" title="设置" aria-label="设置">
             <i data-lucide="settings"></i>
           </button>
-          <button class="account-btn" id="account-btn" type="button" aria-label="Account">
-            <i data-lucide="user-round"></i><span class="account-name" id="account-name">Sign in</span>
+          <button class="account-btn" id="account-btn" type="button" aria-label="账户">
+            <i data-lucide="user-round"></i><span class="account-name" id="account-name">登录</span>
           </button>
         </div>
       </header>
@@ -106,12 +105,12 @@
             <!-- Rows are real DOM rows so the ARIA grid pattern works: arrow
                  keys move a roving tabindex, and a screen reader can read a
                  row or a column rather than 81 loose buttons. -->
-            <div id="board" class="board" role="grid" aria-label="Sudoku grid" aria-rowcount="9" aria-colcount="9"></div>
+            <div id="board" class="board" role="grid" aria-label="数独盘面" aria-rowcount="9" aria-colcount="9"></div>
             <div class="veil" id="veil" hidden>
               <div class="veil-inner">
                 <span class="veil-icon" id="veil-icon"><i data-lucide="pause"></i></span>
-                <p class="veil-title" id="veil-title">Paused</p>
-                <button class="btn btn-primary" id="veil-btn" type="button">Resume</button>
+                <p class="veil-title" id="veil-title">已暂停</p>
+                <button class="btn btn-primary" id="veil-btn" type="button">继续</button>
               </div>
             </div>
           </div>
@@ -121,14 +120,14 @@
           <section class="card status-card">
             <div class="status-row">
               <div class="status-text">
-                <p class="status-difficulty" id="status-difficulty">Medium</p>
-                <p class="status-note" id="status-note">New puzzle</p>
+                <p class="status-difficulty" id="status-difficulty">中等</p>
+                <p class="status-note" id="status-note">新谜题</p>
               </div>
               <div class="status-right">
                 <!-- role="timer" is readable on demand but never announced,
                      which is what a value changing every second wants to be. -->
-                <span class="clock" id="clock" role="timer" aria-label="Elapsed time">0:00</span>
-                <button class="icon-btn" id="pause-btn" type="button" title="Pause" aria-label="Pause">
+                <span class="clock" id="clock" role="timer" aria-label="用时">0:00</span>
+                <button class="icon-btn" id="pause-btn" type="button" title="暂停" aria-label="暂停">
                   <i data-lucide="pause"></i>
                 </button>
               </div>
@@ -137,7 +136,7 @@
               class="progress"
               id="progress"
               role="progressbar"
-              aria-label="Cells filled"
+              aria-label="已填单元格"
               aria-valuemin="0"
               aria-valuemax="81"
               aria-valuenow="0"
@@ -148,43 +147,43 @@
 
           <section class="card hint-card" id="hint-card" hidden aria-labelledby="hint-title">
             <div class="hint-head">
-              <span class="hint-badge" id="hint-badge">Hidden single</span>
-              <button class="icon-btn icon-btn-sm" id="hint-close" type="button" title="Dismiss hint" aria-label="Dismiss hint">
+              <span class="hint-badge" id="hint-badge">隐性唯一数</span>
+              <button class="icon-btn icon-btn-sm" id="hint-close" type="button" title="关闭提示" aria-label="关闭提示">
                 <i data-lucide="x"></i>
               </button>
             </div>
-            <h2 class="visually-hidden" id="hint-title">Hint</h2>
+            <h2 class="visually-hidden" id="hint-title">提示</h2>
             <p class="hint-text" id="hint-text"></p>
             <button class="btn btn-primary btn-block" id="hint-apply" type="button">
-              <i data-lucide="check"></i>Apply it
+              <i data-lucide="check"></i>应用提示
             </button>
           </section>
 
-          <div class="tools" role="group" aria-label="Tools">
-            <button class="tool" id="undo-btn" type="button" title="Undo (Ctrl+Z)" disabled>
-              <i data-lucide="undo-2"></i><span class="tool-label">Undo</span>
+          <div class="tools" role="group" aria-label="工具栏">
+            <button class="tool" id="undo-btn" type="button" title="撤销 (Ctrl+Z)" disabled>
+              <i data-lucide="undo-2"></i><span class="tool-label">撤销</span>
             </button>
-            <button class="tool" id="redo-btn" type="button" title="Redo (Ctrl+Shift+Z)" disabled>
-              <i data-lucide="redo-2"></i><span class="tool-label">Redo</span>
+            <button class="tool" id="redo-btn" type="button" title="重做 (Ctrl+Shift+Z)" disabled>
+              <i data-lucide="redo-2"></i><span class="tool-label">重做</span>
             </button>
-            <button class="tool" id="erase-btn" type="button" title="Erase (Backspace)">
-              <i data-lucide="eraser"></i><span class="tool-label">Erase</span>
+            <button class="tool" id="erase-btn" type="button" title="擦除 (Backspace)">
+              <i data-lucide="eraser"></i><span class="tool-label">擦除</span>
             </button>
             <!-- The icon carries the state as well as the colour does: a
                  crossed-out pencil when marks are off, a plain one when they
                  are on. Swapped by CSS from aria-pressed, so the two cannot
                  disagree. -->
-            <button class="tool" id="notes-btn" type="button" title="Pencil marks (N)" aria-pressed="false">
+            <button class="tool" id="notes-btn" type="button" title="候选数标记 (N)" aria-pressed="false">
               <i data-lucide="pencil-off" class="icon-notes-off"></i>
               <i data-lucide="pencil" class="icon-notes-on"></i>
-              <span class="tool-label">Notes</span>
+              <span class="tool-label">笔记</span>
             </button>
-            <button class="tool" id="hint-btn" type="button" title="Hint (H)">
-              <i data-lucide="lightbulb"></i><span class="tool-label">Hint</span>
+            <button class="tool" id="hint-btn" type="button" title="提示 (H)">
+              <i data-lucide="lightbulb"></i><span class="tool-label">提示</span>
             </button>
           </div>
 
-          <div class="keypad" id="keypad" role="group" aria-label="Enter a digit"></div>
+          <div class="keypad" id="keypad" role="group" aria-label="输入数字"></div>
 
           <section class="controls">
             <!-- "Next puzzle" rather than "Difficulty": this select does not
@@ -192,22 +191,22 @@
                  governs is what stops it from looking like it disagrees with
                  the level named in the status card. -->
             <label class="field">
-              <span class="field-label">Next puzzle</span>
+              <span class="field-label">下一局难度</span>
               <select id="difficulty-select"></select>
             </label>
             <div class="button-row">
               <button class="btn btn-primary" id="new-game-btn" type="button">
-                <i data-lucide="plus"></i>New puzzle
+                <i data-lucide="plus"></i>新谜题
               </button>
               <button class="btn btn-ghost" id="daily-btn" type="button">
-                <i data-lucide="calendar-days"></i>Daily
+                <i data-lucide="calendar-days"></i>每日挑战
               </button>
             </div>
             <p class="controls-hint" id="controls-hint"></p>
           </section>
 
           <footer class="app-footer">
-            <a href="https://developer.puter.com" target="_blank" rel="noopener noreferrer">Powered by Puter</a>
+            <a href="https://developer.puter.com" target="_blank" rel="noopener noreferrer">由 Puter 提供技术支持</a>
           </footer>
         </aside>
       </main>
@@ -221,43 +220,43 @@
 
     <dialog class="dialog" id="solved-dialog" aria-labelledby="solved-title" aria-describedby="solved-sub">
       <span class="dialog-icon dialog-icon-good"><i data-lucide="trophy"></i></span>
-      <h2 class="dialog-title" id="solved-title">Solved</h2>
+      <h2 class="dialog-title" id="solved-title">解答成功</h2>
       <p class="dialog-sub" id="solved-sub"></p>
       <dl class="result-grid" id="result-grid"></dl>
       <div class="dialog-buttons">
-        <button class="btn btn-primary" id="solved-new" type="button" autofocus>New puzzle</button>
-        <button class="btn btn-ghost" id="solved-close" type="button">Close</button>
+        <button class="btn btn-primary" id="solved-new" type="button" autofocus>新谜题</button>
+        <button class="btn btn-ghost" id="solved-close" type="button">关闭</button>
       </div>
     </dialog>
 
     <dialog class="dialog" id="stats-dialog" aria-labelledby="stats-title">
-      <h2 class="dialog-title" id="stats-title">Records</h2>
+      <h2 class="dialog-title" id="stats-title">战绩记录</h2>
       <p class="dialog-sub" id="stats-sub"></p>
       <div class="stats-table-wrap">
         <table class="stats-table">
           <thead>
             <tr>
-              <th scope="col">Level</th>
-              <th scope="col">Played</th>
-              <th scope="col">Solved</th>
-              <th scope="col">Best</th>
-              <th scope="col">Clean</th>
+              <th scope="col">难度</th>
+              <th scope="col">已玩</th>
+              <th scope="col">完成</th>
+              <th scope="col">最佳</th>
+              <th scope="col">无瑕</th>
             </tr>
           </thead>
           <tbody id="stats-body"></tbody>
         </table>
       </div>
       <div class="dialog-buttons">
-        <button class="btn btn-ghost btn-danger" id="stats-reset" type="button">Reset</button>
-        <button class="btn btn-primary" id="stats-close" type="button" autofocus>Done</button>
+        <button class="btn btn-ghost btn-danger" id="stats-reset" type="button">重置</button>
+        <button class="btn btn-primary" id="stats-close" type="button" autofocus>完成</button>
       </div>
     </dialog>
 
     <dialog class="dialog" id="settings-dialog" aria-labelledby="settings-title">
-      <h2 class="dialog-title" id="settings-title">Settings</h2>
+      <h2 class="dialog-title" id="settings-title">设置</h2>
       <div class="option-list" id="option-list"></div>
       <div class="dialog-buttons">
-        <button class="btn btn-primary" id="settings-close" type="button" autofocus>Done</button>
+        <button class="btn btn-primary" id="settings-close" type="button" autofocus>完成</button>
       </div>
     </dialog>
 
@@ -266,7 +265,7 @@
       <p class="dialog-sub" id="confirm-sub"></p>
       <div class="dialog-buttons">
         <button class="btn btn-danger-solid" id="confirm-yes" type="button"></button>
-        <button class="btn btn-ghost" id="confirm-no" type="button" autofocus>Cancel</button>
+        <button class="btn btn-ghost" id="confirm-no" type="button" autofocus>取消</button>
       </div>
     </dialog>
 

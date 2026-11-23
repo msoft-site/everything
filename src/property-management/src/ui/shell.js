@@ -28,15 +28,15 @@ const GROUPS_KEY = 'propertymgmt.navGroups';
  * core/counts.js.
  */
 export const NAV = [
-  { id: 'home', label: 'Dashboard', icon: 'dashboard', href: '#/', key: 'h' },
+  { id: 'home', label: '仪表盘', icon: 'dashboard', href: '#/', key: 'h' },
   {
     group: 'rentals',
     label: 'Rentals',
     icon: 'building',
     items: [
-      { id: 'properties', label: 'Properties', href: '#/properties', key: 'p' },
+      { id: 'properties', label: '房产项目', href: '#/properties', key: 'p' },
       { id: 'leases', label: 'Rent roll', href: '#/leases', key: 'r' },
-      { id: 'tenants', label: 'Tenants', href: '#/tenants', key: 't' },
+      { id: 'tenants', label: '租户档案', href: '#/tenants', key: 't' },
       { id: 'owners', label: 'Rental owners', href: '#/owners', key: 'o' },
       { id: 'balances', label: 'Outstanding balances', href: '#/balances', key: 'd', badge: 'balances', alert: true },
     ],
@@ -58,7 +58,7 @@ export const NAV = [
     items: [
       { id: 'financials', label: 'Financials', href: '#/financials', key: 'f' },
       { id: 'ledger', label: 'General ledger', href: '#/ledger', key: 'g' },
-      { id: 'banking', label: 'Banking', href: '#/banking', key: 'k' },
+      { id: 'banking', label: '银行', href: '#/banking', key: 'k' },
       { id: 'bills', label: 'Bills', href: '#/bills', key: 'b', badge: 'bills', alert: true },
       { id: 'accounts', label: 'Chart of accounts', href: '#/accounts', key: 'y' },
       { id: 'budgets', label: 'Budgets', href: '#/budgets', key: 'u' },
@@ -66,18 +66,18 @@ export const NAV = [
   },
   {
     group: 'maintenance',
-    label: 'Maintenance',
+    label: '维修保养',
     icon: 'wrench',
     items: [
       { id: 'work-orders', label: 'Work orders', href: '#/work-orders', key: 'w', badge: 'workOrders' },
-      { id: 'vendors', label: 'Vendors', href: '#/vendors', key: 'v' },
-      { id: 'inspections', label: 'Inspections', href: '#/inspections', key: 'i' },
+      { id: 'vendors', label: '供应商', href: '#/vendors', key: 'v' },
+      { id: 'inspections', label: '车辆巡检', href: '#/inspections', key: 'i' },
     ],
   },
-  { id: 'tasks', label: 'Tasks', icon: 'list-checks', href: '#/tasks', key: 's', badge: 'tasks' },
+  { id: 'tasks', label: '任务待办', icon: 'list-checks', href: '#/tasks', key: 's', badge: 'tasks' },
   { id: 'communication', label: 'Communication', icon: 'megaphone', href: '#/communication', key: 'm' },
   { id: 'calendar', label: 'Calendar', icon: 'calendar-days', href: '#/calendar', key: 'c' },
-  { id: 'reports', label: 'Reports', icon: 'chart', href: '#/reports', key: 'e' },
+  { id: 'reports', label: '报表', icon: 'chart', href: '#/reports', key: 'e' },
 ];
 
 /** Every link, flattened, with its section. */
@@ -227,12 +227,12 @@ export function buildShell({ onSignIn } = {}) {
 
   const rail = h(
     'aside.rail',
-    h('a.rail-brand', { href: '#/', 'aria-label': 'Dashboard' }, h('img.brand-mark', { src: './icons/icon-192.png', alt: '' }), h('div.brand-text', companyName, companySub)),
+    h('a.rail-brand', { href: '#/', 'aria-label': '仪表盘' }, h('img.brand-mark', { src: './icons/icon-192.png', alt: '' }), h('div.brand-text', companyName, companySub)),
     h('div.rail-create', createBtn),
     nav,
     h(
       'div.rail-foot',
-      h('a.nav-link.foot-link', { href: '#/settings', 'data-nav': 'settings', title: 'Settings' }, icon('settings', 19), h('span.label', 'Settings')),
+      h('a.nav-link.foot-link', { href: '#/settings', 'data-nav': 'settings', title: '设置' }, icon('settings', 19), h('span.label', '设置')),
       h(
         'div.rail-foot-row',
         h(
@@ -254,7 +254,7 @@ export function buildShell({ onSignIn } = {}) {
 
   const topbar = h(
     'header.topbar',
-    h('a.mobile-brand', { href: '#/', 'aria-label': 'Dashboard' }, h('img', { src: './icons/icon-192.png', alt: '' }), h('span.truncate.mobile-company')),
+    h('a.mobile-brand', { href: '#/', 'aria-label': '仪表盘' }, h('img', { src: './icons/icon-192.png', alt: '' }), h('span.truncate.mobile-company')),
     h(
       'button.search-trigger',
       { type: 'button', onClick: () => openSearch(), 'aria-label': 'Search', 'aria-keyshortcuts': '/' },
@@ -299,17 +299,17 @@ export function buildShell({ onSignIn } = {}) {
     { 'aria-label': 'Main' },
     TABBAR.map((id) => {
       const item = ALL_NAV.find((n) => n.id === id);
-      const a = h('a', { href: item.href }, icon(TAB_ICONS[id] || item.icon, 22), h('span', id === 'home' ? 'Home' : item.label));
+      const a = h('a', { href: item.href }, icon(TAB_ICONS[id] || item.icon, 22), h('span', id === 'home' ? '首页' : item.label));
       tabLinks.set(id, a);
       return a;
     }),
-    h('button', { type: 'button', onClick: () => openMoreSheet(), 'aria-haspopup': 'dialog' }, icon('menu', 22), h('span', 'More')),
+    h('button', { type: 'button', onClick: () => openMoreSheet(), 'aria-haspopup': 'dialog' }, icon('menu', 22), h('span', '更多')),
   );
 
   const root = h(
     'div.app',
     { dataset: { rail: railMode } },
-    h('a.skip-link', { href: '#main', onClick: (e) => (e.preventDefault(), main.focus()) }, 'Skip to content'),
+    h('a.skip-link', { href: '#main', onClick: (e) => (e.preventDefault(), main.focus()) }, '跳转到主要内容'),
     rail,
     h('div.main-col', topbar, banner, main),
     tabbar,
@@ -447,14 +447,14 @@ function openAccountMenu(anchor, onSignIn) {
     ({ close }) => {
       const link = (label, ic, attrs) => h(attrs.href ? 'a.menu-item' : 'button.menu-item', { type: attrs.href ? null : 'button', ...attrs }, icon(ic, 16), h('span.grow', label));
       const items = [
-        link('Settings', 'settings', { href: '#/settings', onClick: () => close() }),
+        link('设置', 'settings', { href: '#/settings', onClick: () => close() }),
         link('Keyboard shortcuts', 'keyboard', { onClick: () => (close(), showShortcuts()) }),
         link('Source code on GitHub', 'github', { href: REPO_URL, target: '_blank', rel: 'noopener noreferrer', onClick: () => close() }),
       ];
       let footer = null;
       if (app.demo) footer = link('Sign in with Puter', 'log-in', { onClick: () => (close(), onSignIn?.()) });
       else if (canSignOut())
-        footer = link('Sign out', 'log-out', {
+        footer = link('退出登录', 'log-out', {
           onClick: async () => {
             close();
             if (app.store.pendingCount()) {
@@ -574,7 +574,7 @@ function openMoreSheet() {
         ),
         h(
           'ul.list',
-          h('li', h('a.list-item', { href: '#/settings', onClick: () => close() }, icon('settings', 20), h('span.title', 'Settings'))),
+          h('li', h('a.list-item', { href: '#/settings', onClick: () => close() }, icon('settings', 20), h('span.title', '设置'))),
           h(
             'li',
             h('a.list-item', { href: REPO_URL, target: '_blank', rel: 'noopener noreferrer' }, icon('github', 20), h('span.title.grow', 'Source code on GitHub'), icon('external', 16)),

@@ -14,7 +14,7 @@ export function encodeBase64(bytes) {
 
 export function decodeBase64(value) {
   if (typeof value !== 'string' || value.length % 4 === 1 || !/^[A-Za-z0-9+/]*={0,2}$/.test(value)) {
-    throw new Error('Invalid update.');
+    throw new Error('无效的更新。');
   }
   return Uint8Array.from(atob(value), (c) => c.charCodeAt(0));
 }

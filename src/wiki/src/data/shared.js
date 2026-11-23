@@ -490,7 +490,7 @@ export class SharedSpace extends Space {
     const entry = await this.load(id);
     Y.applyUpdate(entry.doc, state, 'import');
     await this.flush(entry);
-    if (entry.pending.length) throw new Error('A page could not be saved to the shared space. Try again.');
+    if (entry.pending.length) throw new Error('无法将页面保存到共享空间，请重试。');
   }
 
   async docState(id) {
@@ -528,7 +528,7 @@ export class SharedSpace extends Space {
       if (e.pending.length) await this.flush(e);
     }
     if (this.refused) throw this.refused;
-    if (this.hasUnsaved()) throw new Error('Some changes could not be saved yet. Check your connection and try again.');
+    if (this.hasUnsaved()) throw new Error('部分更改尚无法保存。请检查您的网络连接后重试。');
   }
 
   /** Documents not shown and fully saved stop being synchronized. */

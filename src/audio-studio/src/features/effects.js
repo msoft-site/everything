@@ -37,11 +37,11 @@ export function installEffects(app) {
   };
   app.registerPanel({
     id: 'effects',
-    title: 'Effects Rack',
+    title: '效果机架',
     create: effectsRackPanel,
     near: ['media', 'markers'],
     menu: (a) => [
-      { type: 'cmd', label: 'Apply Rack', enabled: true, run: () => applyRack(a) },
+      { type: 'cmd', label: '应用机架', enabled: true, run: () => applyRack(a) },
     ],
   });
 }

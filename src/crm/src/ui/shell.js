@@ -22,14 +22,14 @@ import { settingsView, confirmSignOut } from '../views/settings.js';
    tab: false live in the More sheet there. The desktop sidebar shows
    everything. */
 const ROUTES = [
-  { hash: '#/', label: 'Home', icon: 'dashboard', view: dashboardView },
-  { hash: '#/pipeline', label: 'Pipeline', icon: 'pipeline', view: pipelineView },
-  { hash: '#/leads', label: 'Leads', icon: 'users', view: leadsView },
+  { hash: '#/', label: '首页', icon: 'dashboard', view: dashboardView },
+  { hash: '#/pipeline', label: '销售漏斗', icon: 'pipeline', view: pipelineView },
+  { hash: '#/leads', label: '线索潜客', icon: 'users', view: leadsView },
   { hash: '#/followups', label: 'Follow-ups', icon: 'followups', view: followupsView },
-  { hash: '#/companies', label: 'Companies', icon: 'company', view: companiesView, tab: false },
-  { hash: '#/activity', label: 'Activity', icon: 'video', view: activityView, tab: false },
+  { hash: '#/companies', label: '企业客户', icon: 'company', view: companiesView, tab: false },
+  { hash: '#/activity', label: '动态', icon: 'video', view: activityView, tab: false },
   { hash: '#/forecast', label: 'Forecast', icon: 'chart', view: forecastView, tab: false },
-  { hash: '#/settings', label: 'Settings', icon: 'gear', view: settingsView, tab: false },
+  { hash: '#/settings', label: '设置', icon: 'gear', view: settingsView, tab: false },
 ];
 
 /* One-line descriptions for the More sheet. */
@@ -67,9 +67,9 @@ export function mountShell(appRoot) {
       el('button', {
         onclick: async () => {
           const ok = await confirmDialog({
-            title: 'Start fresh?',
+            title: '重新开始？',
             message: 'All sample data is removed and you start with an empty CRM.',
-            confirmLabel: 'Wipe sample data',
+            confirmLabel: '清除示例数据',
           });
           if (!ok) return;
           try {
@@ -81,7 +81,7 @@ export function mountShell(appRoot) {
           }
           openOnboarding();
         },
-      }, 'Start fresh')
+      }, '重新开始')
     ));
   }
   store.addEventListener('change', renderSampleBanner);
@@ -145,7 +145,7 @@ export function mountShell(appRoot) {
       content: el('div.settings-list', {},
         entry('deal', 'Deal', 'An opportunity to move through the pipeline', () => openDealForm()),
         entry('userPlus', 'Lead', 'A person you might sell to', () => openContactForm()),
-        entry('video', 'Activity', 'Log a meeting, call, email, or note', () => openActivityForm()),
+        entry('video', '动态', 'Log a meeting, call, email, or note', () => openActivityForm()),
         entry('followups', 'Follow-up', 'A dated reminder to reach out', () => openTaskForm())
       ),
     });
@@ -182,8 +182,8 @@ export function mountShell(appRoot) {
       // Inside Puter's desktop the platform owns the session - no sign-out.
       puter.env !== 'app' && el('button.icon-btn', {
         html: icon('logout', 18, 2),
-        'aria-label': 'Sign out',
-        title: 'Sign out',
+        'aria-label': '退出登录',
+        title: '退出登录',
         onclick: confirmSignOut,
       })
     )
@@ -194,7 +194,7 @@ export function mountShell(appRoot) {
 
   function openMoreSheet() {
     const modal = openModal({
-      title: 'More',
+      title: '更多',
       content: el('div.settings-list', {},
         el('button.settings-row', {
           type: 'button',
@@ -254,7 +254,7 @@ export function mountShell(appRoot) {
       html: icon('more', 23, 1.8),
       'aria-haspopup': 'dialog',
       onclick: openMoreSheet,
-    }, el('span', {}, 'More')));
+    }, el('span', {}, '更多')));
   }
 
   /* ---------- scroll memory ----------

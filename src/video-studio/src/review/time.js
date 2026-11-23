@@ -62,7 +62,7 @@ export function reviewTimecode(t, fps) {
 /** "00:12:04 to 00:12:09" style label for a comment's pin. */
 export function pinLabel(comment, fps) {
   if (comment.t === null || comment.t === undefined) return '';
-  return comment.end !== null && comment.end !== undefined ? `${reviewTimecode(comment.t, fps)} to ${reviewTimecode(comment.end, fps)}` : reviewTimecode(comment.t, fps);
+  return comment.end !== null && comment.end !== undefined ? `${reviewTimecode(comment.t, fps)} 至 ${reviewTimecode(comment.end, fps)}` : reviewTimecode(comment.t, fps);
 }
 
 /**
@@ -115,7 +115,7 @@ export function spokenAt(t) {
   const m = Math.floor(s / 60);
   const rest = s % 60;
   const parts = [];
-  if (m) parts.push(`${m} minute${m === 1 ? '' : 's'}`);
-  parts.push(`${rest} second${rest === 1 ? '' : 's'}`);
-  return parts.join(' ');
+  if (m) parts.push(`${m}分`);
+  parts.push(`${rest}秒`);
+  return parts.join('');
 }

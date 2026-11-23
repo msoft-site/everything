@@ -175,7 +175,7 @@ export function rowsToStatementLines(rows, mapping, { currency = 'USD' } = {}) {
     }
     const description = String(r[mapping.descCol] ?? '').trim();
     if (!date || amount === null) {
-      skipped.push({ row: i + (mapping.hasHeader ? 2 : 1), reason: !date ? 'No date' : 'No amount' });
+      skipped.push({ row: i + (mapping.hasHeader ? 2 : 1), reason: !date ? '无日期' : '无金额' });
       return;
     }
     lines.push({ date, description, amount, currency });

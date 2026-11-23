@@ -57,7 +57,7 @@ function go(hash, { newDocument = false } = {}) {
 }
 
 /** Why a document could not be opened, in the user's terms. */
-const openFailureMessage = (e) => (P.isNotFound(e) ? 'That file no longer exists' : e?.name === 'HwpError' ? e.message : 'Could not open the file');
+const openFailureMessage = (e) => (P.isNotFound(e) ? '该文件已不存在' : e?.name === 'HwpError' ? e.message : '无法打开文件');
 
 /** The URL that shows a document: its file, the invitation to the shared document it is, or the template it is being written from. */
 const docHash = (doc) => (doc.path ? `#/edit/${encodeURIComponent(doc.path)}` : doc.collab?.hash ? doc.collab.hash : doc.template ? `#/new/${encodeURIComponent(doc.template)}` : '#/new');
@@ -107,7 +107,7 @@ async function unmount(stillWanted = () => true) {
   return true;
 }
 
-const LEAVE_TITLES = ['Leave without saving?', 'Save before leaving?', CLOSE_TITLE, SAVE_CHANGES_TITLE];
+const LEAVE_TITLES = ['不保存并离开？', '离开前是否保存？', CLOSE_TITLE, SAVE_CHANGES_TITLE];
 /** Whether the question about leaving an unsaved document is on screen, whichever navigation or import asked it. */
 const leaveQuestionOpen = () => [...document.querySelectorAll('.modal-root:not(.closing) [role="dialog"]')].some((dialog) => LEAVE_TITLES.includes(dialog.getAttribute('aria-label')));
 
@@ -120,16 +120,16 @@ function leaveDialog(doc, { unsaveable = false, undelivered = false } = {}) {
   if (undelivered) {
     return confirmDialog({
       title: LEAVE_TITLES[0],
-      message: 'Your latest changes have not reached the shared document yet, so nobody else has them. Keep editing until the connection is back, or leave: this browser keeps them and sends them the next time you open the document here.',
-      confirmLabel: 'Leave', cancelLabel: 'Keep editing',
+      message: '您的最新更改尚未同步到共享文档，其他人暂时看不到。您可以继续编辑直到恢复连接，或者直接离开：当前浏览器会保留这些更改，并在您下次在此打开该文档时发送。',
+      confirmLabel: '离开', cancelLabel: '继续编辑',
     }).then((leave) => (leave ? 'leave' : 'stay'));
   }
   // A preview, or a file that could not be opened, has no save to try again: say what staying is for.
   if (unsaveable) {
     return confirmDialog({
       title: LEAVE_TITLES[0],
-      message: `This document could not be opened for editing, so it has not been saved to Puter. ${doc.blob ? 'Stay to download a copy, or leave without it.' : 'Leave without it?'}`,
-      confirmLabel: 'Leave without saving', cancelLabel: 'Stay',
+      message: `此文档无法打开进行编辑，因此尚未保存到 Puter。${doc.blob ? '留下以下载副本，或直接离开。' : '确定直接离开吗？'}`,
+      confirmLabel: '不保存并离开', cancelLabel: '留下',
     }).then((leave) => (leave ? 'leave' : 'stay'));
   }
   // Signing in helps only a document that can be saved at all; one that never opened cannot be.
@@ -139,20 +139,20 @@ function leaveDialog(doc, { unsaveable = false, undelivered = false } = {}) {
       // A document that never reached a file has no "latest changes" to speak of; the whole of it is at stake.
       message: doc.waitsForPlace && doc.path
         // Inside the Puter desktop a template or other file's edits wait for a Save to put them in a new .docx; the file stays as it is.
-        ? `Your changes to “${P.displayName(doc.path)}” have not been saved yet. Keep editing to save them as a new document, or leave and discard them.`
+        ? `您对“${P.displayName(doc.path)}”所做的更改尚未保存。继续编辑以将其另存为新文档，或离开并放弃更改。`
         : doc.path || doc.lastSaved
-        ? 'Your latest changes could not be saved. Keep editing to try again, or leave and discard those changes.'
-        : 'This document has not been saved yet. Keep editing to try again, or leave and discard it.',
-      confirmLabel: 'Leave without saving', cancelLabel: 'Keep editing',
+        ? '您的最新更改无法保存。继续编辑以重试，或离开并放弃这些更改。'
+        : '此文档尚未保存。继续编辑以重试，或离开并放弃该文档。',
+      confirmLabel: '不保存并离开', cancelLabel: '继续编辑',
     }).then((leave) => (leave ? 'leave' : 'stay'));
   }
   return new Promise((resolve) => {
     const content = el('div', {},
-      el('p.modal-text', {}, 'This document is not saved anywhere yet. Sign in to Puter to save it to your own cloud, or leave and discard it.'),
+      el('p.modal-text', {}, '此文档尚未保存在任何位置。登录 Puter 将其保存到您的个人云端，或离开并放弃该文档。'),
       el('div.row.row-end', { style: { flexWrap: 'wrap' } },
-        el('button.btn.btn-ghost', { type: 'button', onclick: () => modal.close() }, 'Keep editing'),
-        el('button.btn.btn-danger', { type: 'button', onclick: () => { resolve('leave'); modal.close(); } }, 'Leave without saving'),
-        el('button.btn.btn-primary', { type: 'button', onclick: () => { resolve('sign-in'); modal.close(); } }, 'Sign in and save')));
+        el('button.btn.btn-ghost', { type: 'button', onclick: () => modal.close() }, '继续编辑'),
+        el('button.btn.btn-danger', { type: 'button', onclick: () => { resolve('leave'); modal.close(); } }, '不保存并离开'),
+        el('button.btn.btn-primary', { type: 'button', onclick: () => { resolve('sign-in'); modal.close(); } }, '登录并保存')));
     const modal = openModal({ title: LEAVE_TITLES[1], content, onClose: () => resolve('stay') });
   });
 }
@@ -170,10 +170,11 @@ function mount(kind, view) {
 
 /** A cloud document was asked for without a session: offer the sign-in, or a new document. */
 function mountSignInGate(requestedHash, what) {
-  document.title = 'Documents';
+  const whatZh = what === 'template' ? '模板' : what === 'shared document' ? '共享文档' : '文档';
+  document.title = '文档';
   mount('gate', { el: signInView({
-    title: `Sign in to open this ${what}`,
-    message: `Documents live in your own Puter cloud. Sign in to open this ${what}, or start a new document without an account.`,
+    title: `登录以打开此${whatZh}`,
+    message: `文档保存在您自己的 Puter 云端。请登录以打开此${whatZh}，或在不登录的情况下新建空白文档。`,
     onSignIn: async () => { if (await session.signIn() && location.hash === requestedHash) route(); },
     onSkip: () => go('#/'),
   }) });
@@ -183,8 +184,8 @@ function mountSignInGate(requestedHash, what) {
  * The screen while something opens. `cancel`: what leaving does, offered once the wait is noticeable (a large file
  * on a slow connection, a request that hangs), since inside the Puter desktop there is no browser Back button.
  */
-function showLoading(label = 'Opening', { cancel = null } = {}) {
-  const leave = cancel && el('button.btn.btn-outline', { type: 'button', hidden: true, style: { marginTop: '6px' }, onclick: cancel }, 'Cancel');
+function showLoading(label = '正在打开', { cancel = null } = {}) {
+  const leave = cancel && el('button.btn.btn-outline', { type: 'button', hidden: true, style: { marginTop: '6px' }, onclick: cancel }, '取消');
   appRoot.replaceChildren(el('div.auth-view', {},
     el('div.auth-card', {},
       el('span.spin', { html: icon('spinner', 28), style: { color: 'var(--ink-3)' } }),
@@ -247,7 +248,7 @@ const nav = {
       onImported: () => { if (stillHere() && current?.kind === 'home') current.view.reload(); },
       // In the editor a picture is a likelier drop than a document, and it has a place to go.
       nothingMessage: !picked && current?.kind === 'editor' && imageFilesFrom({ files }).length
-        ? 'Drop pictures on the page to insert them'
+        ? '将图片拖放到页面上即可插入'
         : nothingImportable(files, { picked }),
     });
   },
@@ -256,12 +257,12 @@ const nav = {
     const stillWanted = () => request === importRequest && current === source;
     let doc;
     try { doc = await Doc.fromImportFile(file); }
-    catch (e) { if (stillWanted()) { console.error(e); toast(e?.message || 'Could not import that file', { icon: 'alert', duration: 8000 }); } return; }
+    catch (e) { if (stillWanted()) { console.error(e); toast(e?.message || '无法导入该文件', { icon: 'alert', duration: 8000 }); } return; }
     // File reads and converter loading can finish after another navigation.
     // Only the newest request may close the current editor and install its copy.
     if (!stillWanted()) return;
     // The question about leaving the open document unsaved is already up: a second file must not ask it again on top.
-    if (leaveQuestionOpen()) { toast('Answer the question about the open document first', { icon: 'info' }); return; }
+    if (leaveQuestionOpen()) { toast('请先回答关于当前打开文档的提示', { icon: 'info' }); return; }
     // Closing the editor can ask about unsaved edits. A hash change meanwhile
     // (a link, the back button) waits for the answer instead of asking again on top.
     importing++;
@@ -333,15 +334,15 @@ async function route({ newDocument = false } = {}) {
     if (location.hash !== requestedHash) return;
     if (r === 'home') {
       mount('home', homeView(nav));
-      document.title = 'Documents';
-      P.setWindowTitle('Documents');
+      document.title = '文档';
+      P.setWindowTitle('文档');
       return;
     }
     if (r === 'new') {
       const customPath = customTemplatePath(template);
       if (customPath) {
         if (session.signedOut) { mountSignInGate(requestedHash, 'template'); return; }
-        showLoading('Opening', { cancel: () => go(HOME) });
+        showLoading('正在打开', { cancel: () => go(HOME) });
         try {
           const doc = await unlessLeft(requestedHash, Doc.fromTemplateFile(customPath));
           if (doc === LEFT) { abandoned = true; return; }
@@ -350,18 +351,18 @@ async function route({ newDocument = false } = {}) {
         } catch (e) {
           if (location.hash !== requestedHash) return;
           console.error(e);
-          toast(P.isNotFound(e) ? 'That template no longer exists' : 'Could not open the template', { icon: 'alert', duration: 5000 });
+          toast(P.isNotFound(e) ? '该模板已不存在' : '无法打开模板', { icon: 'alert', duration: 5000 });
           go(HOME);
         }
         return;
       }
       const t = template ? templateById(template) : null;
-      if (template && !t) toast('That template does not exist', { icon: 'alert' });
+      if (template && !t) toast('该模板不存在', { icon: 'alert' });
       openEditor(Doc.blank(t ? { template: t.id, name: t.name } : {}));
       return;
     }
     if (session.signedOut) { mountSignInGate(requestedHash, 'document'); return; }
-    showLoading('Opening', { cancel: () => go(HOME) });
+    showLoading('正在打开', { cancel: () => go(HOME) });
     try {
       const doc = await unlessLeft(requestedHash, Doc.fromPath(path));
       if (doc === LEFT) { abandoned = true; return; }
@@ -383,7 +384,7 @@ async function route({ newDocument = false } = {}) {
 /** Join a shared document from its link and open the editor on the room's state. */
 async function openInvitation(link, requestedHash) {
   if (!link.local && session.signedOut) { mountSignInGate(requestedHash, 'shared document'); return; }
-  showLoading('Joining the shared document', { cancel: () => go(HOME) });
+  showLoading('正在加入共享文档', { cancel: () => go(HOME) });
   try {
     // The owner's own invitation (from their mail, say) opens the file the room belongs to: that is the document they
     // own, saved as they edit. Joined from the link, it would be a copy of the room that nothing saves.
@@ -405,11 +406,11 @@ async function openInvitation(link, requestedHash) {
     doc.setSaving(false);
     doc.collab = { client: joined.client, link, hash: requestedHash };
     openEditor(doc);
-    document.title = `${doc.name} — Documents`;
+    document.title = `${doc.name} — 文档`;
   } catch (e) {
     if (location.hash !== requestedHash) return;
     console.error(e);
-    toast(e?.status === 403 ? e.message : `Could not open the shared document: ${e?.message || e}`, { icon: 'alert', duration: 8000 });
+    toast(e?.status === 403 ? e.message : `无法打开共享文档：${e?.message || e}`, { icon: 'alert', duration: 8000 });
     go(HOME);
   }
 }
@@ -422,7 +423,7 @@ async function openInvitation(link, requestedHash) {
  */
 async function start() {
   if (!P.hasSDK()) {
-    appRoot.replaceChildren(errorView('Could not reach Puter', 'The Puter SDK failed to load. Check your connection and try again.', () => location.reload()));
+    appRoot.replaceChildren(errorView('无法连接到 Puter', 'Puter SDK 加载失败。请检查网络连接后重试。', () => location.reload()));
     return;
   }
   P.onLaunchedWithItems((items) => {
@@ -438,7 +439,7 @@ async function start() {
 
 let booted = false;
 async function boot() {
-  showLoading('Loading');
+  showLoading('正在加载');
   // Before anything else: a file dropped on the loading screen is meant for
   // the app, and the browser would otherwise leave the app to open it.
   setupFileDrop();
@@ -479,7 +480,7 @@ function setupFileDrop() {
   const show = () => {
     if (!hint) {
       hint = el('div.drop-hint.dragging-over', { 'aria-hidden': 'true' },
-        el('div.drop-hint-card', {}, el('span', { html: icon('upload', 26) }), el('span', {}, 'Drop to open')));
+        el('div.drop-hint-card', {}, el('span', { html: icon('upload', 26) }), el('span', {}, '松开以打开')));
       document.body.append(hint);
     }
     // Nothing reports a file leaving the window for good, and dragleave fires
@@ -530,14 +531,14 @@ function setupOfflineBanner() {
   const update = () => {
     if (!navigator.onLine && !banner) {
       // With AutoSave off only Save writes, the reconnection included: the banner must not promise otherwise.
-      const text = autosaveEnabled() ? 'Offline. Changes will save when you reconnect' : 'Offline. Save your changes when you reconnect';
+      const text = autosaveEnabled() ? '已离线。重新连接后将自动保存更改' : '已离线。重新连接后请保存您的更改';
       banner = el('div.offline-banner', { html: icon('wifiOff', 15, 2) }, ` ${text}`);
       document.body.append(banner);
       announce(text);
     } else if (navigator.onLine && banner) {
       banner.remove();
       banner = null;
-      announce('Back online');
+      announce('已恢复在线');
       // Only pending edits go out; an untouched new document has no file to write yet.
       const doc = current?.view?.doc;
       if (doc?.dirty) doc.save({ auto: true, fresh: true }).catch(() => {});

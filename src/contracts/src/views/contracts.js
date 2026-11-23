@@ -8,7 +8,7 @@ import { debounce, joinDot } from '../lib/util.js';
 
 const FILTERS = [
   { key: 'all', label: 'All', match: () => true },
-  { key: 'active', label: 'Active', match: (c, info) => c.status === 'active' && info.phase !== 'expired' },
+  { key: 'active', label: '生效中', match: (c, info) => c.status === 'active' && info.phase !== 'expired' },
   { key: 'attention', label: 'Needs attention', match: (c, info) => needsAttention(c, info) },
   { key: 'draft', label: 'Drafts', match: (c) => c.status === 'draft' },
   { key: 'closed', label: 'Ended', match: (c, info) => c.status === 'terminated' || (c.status === 'active' && info.phase === 'expired') },

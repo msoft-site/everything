@@ -179,12 +179,12 @@ const SETTINGS_KEY = 'chess-settings';
 const DISPLAY_VALUES = { p: 1, n: 3, b: 3, r: 5, q: 9 };
 const MODES = ['computer', 'local', 'online'];
 const MODE_NOTES = {
-  computer: 'Player vs. Computer',
-  local: 'Pass & Play',
-  online: 'Online Match',
+  computer: '人机对战',
+  local: '同屏对战',
+  online: '在线对战',
 };
 /** How the mode switch names each mode. */
-const MODE_LABELS = { computer: 'Computer', local: 'Pass & Play', online: 'Online' };
+const MODE_LABELS = { computer: '电脑', local: '同屏对战', online: '在线' };
 /** Clock repaint rate. Tenths are shown when the time is low; this reads them. */
 const CLOCK_TICK_MS = 100;
 /**
@@ -254,7 +254,7 @@ let toastTimer = 0;
 let copyCodeTimer = 0;
 let copyLinkTimer = 0;
 
-const colorName = (color) => (color === 'w' ? 'White' : 'Black');
+const colorName = (color) => (color === 'w' ? '白方' : '黑方');
 const otherColor = (color) => (color === 'w' ? 'b' : 'w');
 const cap = (text) => text.charAt(0).toUpperCase() + text.slice(1);
 /** The PGN result for a game `winner` won. */
@@ -281,7 +281,7 @@ function gameInProgress() {
 }
 
 function opponentLabel() {
-  return opponentName || 'Your friend';
+  return opponentName || '您的好友';
 }
 
 /**
@@ -290,8 +290,8 @@ function opponentLabel() {
  */
 function sideName(color) {
   if (mode === 'local') return colorName(color);
-  if (color === myColor) return 'you';
-  return mode === 'computer' ? 'the computer' : opponentLabel();
+  if (color === myColor) return '你';
+  return mode === 'computer' ? '电脑' : opponentLabel();
 }
 
 /* ------------------------------------------------------------------ */
@@ -508,8 +508,8 @@ function announceLowTime() {
   lowAnnounced[running] = true;
   els.srStatus.textContent =
     mode !== 'local' && running === myColor
-      ? `Your time is low — ${speakClock(ms)} left.`
-      : `${cap(sideName(running))} is low on time — ${speakClock(ms)} left.`;
+      ? `您的时间不多了 — 还剩 ${speakClock(ms)}。`
+      : `${cap(sideName(running))}时间不多了 — 还剩 ${speakClock(ms)}。`;
 }
 
 function handleFlagFall(loser) {
@@ -537,17 +537,17 @@ function describeTimeout(loser) {
       ...base,
       kind: 'draw',
       result: '1/2-1/2',
-      title: 'Draw',
-      sub: `${cap(sideName(loser))} ran out of time, but ${sideName(winner)} cannot checkmate.`,
+      title: '和棋',
+      sub: `${cap(sideName(loser))}超时，但${sideName(winner)}子力不足以将死。`,
     };
   }
-  const sub = `${cap(sideName(loser))} ran out of time.`;
+  const sub = `${cap(sideName(loser))}超时。`;
   if (mode === 'local') {
     return {
       ...base,
       kind: 'win',
       result: resultFor(winner),
-      title: `${colorName(winner)} wins`,
+      title: `${colorName(winner)}获胜`,
       sub,
     };
   }
@@ -555,7 +555,7 @@ function describeTimeout(loser) {
     ...base,
     kind: loser === myColor ? 'loss' : 'win',
     result: resultFor(winner),
-    title: loser === myColor ? 'You lose' : 'You win',
+    title: loser === myColor ? '你输了' : '你赢了',
     sub,
   };
 }
@@ -651,12 +651,12 @@ function goToPly(target) {
 function announceReview() {
   const plies = viewPlies();
   if (!reviewing()) {
-    els.srStatus.textContent = 'Back to the current position.';
+    els.srStatus.textContent = '已返回当前局面。';
   } else if (plies === 0) {
-    els.srStatus.textContent = 'Starting position.';
+    els.srStatus.textContent = '初始局面。';
   } else {
     const move = game.history()[plies - 1];
-    els.srStatus.textContent = `${colorName(move.color)} played ${move.san}. Reviewing.`;
+    els.srStatus.textContent = `${colorName(move.color)}走 ${move.san}。复盘中。`;
   }
 }
 
@@ -740,10 +740,10 @@ function restoreGame() {
   announcedPlies = game.history().length;
   els.srStatus.textContent =
     mode === 'local'
-      ? `Game restored. ${colorName(game.turn())} to move.`
-      : `Game restored. You play ${colorName(myColor)}.`;
+      ? `对局已恢复。轮到${colorName(game.turn())}走棋。`
+      : `对局已恢复。你执${colorName(myColor)}。`;
   renderAll();
-  showToast('Picked up where you left off.');
+  showToast('已恢复上次未完成的对局。');
   if (mode === 'computer' && game.turn() !== myColor) computerTurn();
   return true;
 }
@@ -802,8 +802,8 @@ function canUndo() {
 /** Name of the side that owns `color`, as spoken to this device's player. */
 function moverName(color) {
   if (mode === 'local') return colorName(color);
-  if (color === myColor) return 'You';
-  return mode === 'computer' ? 'Computer' : opponentName || 'Opponent';
+  if (color === myColor) return '你';
+  return mode === 'computer' ? '电脑' : opponentName || '对手';
 }
 
 /** Tell assistive technology about moves, check, and game results. */
@@ -812,14 +812,14 @@ function announceState(status, lastMove) {
   if (plies === announcedPlies) return;
   let text;
   if (plies < announcedPlies) {
-    text = 'Move taken back.';
+    text = '已悔棋。';
   } else {
-    text = `${moverName(lastMove.color)} played ${lastMove.san}.`;
+    text = `${moverName(lastMove.color)}走 ${lastMove.san}。`;
     if (status.over) {
       const end = describeEnd(status);
       text += ` ${end.title} — ${end.sub}`;
     } else if (status.check) {
-      text += ' Check.';
+      text += ' 将军。';
     }
   }
   announcedPlies = plies;
@@ -834,24 +834,24 @@ function renderPlayers(status) {
   let topIsCpu = false;
   if (mode === 'computer') {
     topIsCpu = true;
-    els.topName.textContent = 'Computer';
+    els.topName.textContent = '电脑';
     els.topCaption.textContent = thinking
-      ? `${LEVELS[thinkingLevel].label} · thinking`
+      ? `${LEVELS[thinkingLevel].label} · 思考中`
       : LEVELS[level].label;
-    els.bottomName.textContent = 'You';
-    els.bottomCaption.textContent = `Playing ${colorName(bottom)}`;
+    els.bottomName.textContent = '你';
+    els.bottomCaption.textContent = `执${colorName(bottom)}`;
   } else if (mode === 'local') {
     els.topName.textContent = colorName(top);
     els.topCaption.textContent = MODE_NOTES.local;
     els.bottomName.textContent = colorName(bottom);
     els.bottomCaption.textContent = MODE_NOTES.local;
   } else {
-    els.topName.textContent = opponentName || 'Opponent';
-    els.topCaption.textContent = `Playing ${colorName(top)} · ${
-      session?.connected ? 'connected' : 'disconnected'
+    els.topName.textContent = opponentName || '对手';
+    els.topCaption.textContent = `执${colorName(top)} · ${
+      session?.connected ? '已连接' : '已断开'
     }`;
-    els.bottomName.textContent = 'You';
-    els.bottomCaption.textContent = `Playing ${colorName(bottom)}`;
+    els.bottomName.textContent = '你';
+    els.bottomCaption.textContent = `执${colorName(bottom)}`;
   }
   els.topIconCpu?.classList.toggle('hidden', !topIsCpu);
   els.topIconUser?.classList.toggle('hidden', topIsCpu);
@@ -923,7 +923,7 @@ function renderMoves(plies) {
       ply.dataset.ply = String(j + 1);
       ply.setAttribute(
         'aria-label',
-        `${colorName(move.color)} move ${Math.ceil((j + 1) / 2)}, ${move.san}`,
+        `${colorName(move.color)}第 ${Math.ceil((j + 1) / 2)} 步，${move.san}`,
       );
       if (j + 1 === plies) {
         ply.classList.add('current');
@@ -1009,9 +1009,9 @@ function renderReviewBar(plies) {
   if (!reviewing()) {
     els.reviewNote.textContent = '';
   } else if (plies === 0) {
-    els.reviewNote.textContent = 'Reviewing the start';
+    els.reviewNote.textContent = '正在复盘初始局面';
   } else {
-    els.reviewNote.textContent = `Reviewing ${plyLabel(plies)} ${game.history()[plies - 1].san}`;
+    els.reviewNote.textContent = `正在复盘 ${plyLabel(plies)} ${game.history()[plies - 1].san}`;
   }
 }
 
@@ -1046,13 +1046,13 @@ function describeEnd(status) {
   if (status.reason === 'checkmate') {
     const base = { reason: 'checkmate', result: status.result, termination: 'normal' };
     if (mode === 'local') {
-      const winner = status.result === '1-0' ? 'White' : 'Black';
-      const loser = winner === 'White' ? 'Black' : 'White';
+      const winner = status.result === '1-0' ? '白方' : '黑方';
+      const loser = winner === '白方' ? '黑方' : '白方';
       return {
         ...base,
         kind: 'win',
-        title: `${winner} wins`,
-        sub: `Checkmate — ${loser}'s king is trapped.`,
+        title: `${winner}获胜`,
+        sub: `将死 — ${loser}的王已被困死。`,
       };
     }
     const iWon = (status.result === '1-0') === (myColor === 'w');
@@ -1060,33 +1060,33 @@ function describeEnd(status) {
       return {
         ...base,
         kind: 'win',
-        title: 'You win',
+        title: '你赢了',
         sub:
           mode === 'online'
-            ? `Checkmate — ${opponentLabel()} has no escape.`
-            : 'Checkmate — the computer has no escape.',
+            ? `将死 — ${opponentLabel()}无路可逃。`
+            : '将死 — 电脑无路可逃。',
       };
     }
     return {
       ...base,
       kind: 'loss',
-      title: 'You lose',
-      sub: 'Checkmate — your king is trapped.',
+      title: '你输了',
+      sub: '将死 — 你的王已被困死。',
     };
   }
   const reasons = {
-    stalemate: 'Stalemate — no legal moves remain.',
-    'insufficient material': 'Neither side has enough material to mate.',
-    'fifty-move rule': 'Fifty moves without a capture or pawn move.',
-    'threefold repetition': 'The same position occurred three times.',
+    stalemate: '逼和 — 无合法着法。',
+    'insufficient material': '双方子力均不足以将死。',
+    'fifty-move rule': '连续五十回合未吃子或动兵。',
+    'threefold repetition': '同一局面重复出现三次。',
   };
   return {
     kind: 'draw',
     reason: status.reason,
     result: status.result,
     termination: 'normal',
-    title: 'Draw',
-    sub: reasons[status.reason] || 'Drawn position.',
+    title: '和棋',
+    sub: reasons[status.reason] || '和棋局面。',
   };
 }
 
@@ -1147,7 +1147,7 @@ function updateModeUi() {
 
   const creating = onlineUiState === 'creating';
   els.hostBtn.disabled = creating;
-  els.hostBtnLabel.textContent = creating ? 'Creating…' : 'Create game';
+  els.hostBtnLabel.textContent = creating ? '正在创建…' : '创建对局';
   els.joinInput.disabled = creating;
   els.joinBtn.disabled = creating;
 
@@ -1167,7 +1167,7 @@ function updateModeUi() {
   const showTime = !online || showIdle;
   els.levelField.classList.toggle('hidden', !showLevel);
   els.colorField.classList.toggle('hidden', !showColor);
-  els.colorLabel.textContent = online ? 'You play' : 'Play as';
+  els.colorLabel.textContent = online ? '你执' : '执子';
   els.timeField.classList.toggle('hidden', !showTime);
   els.fieldRow.classList.toggle('hidden', !(showLevel || showColor || showTime));
   // The hint belongs to the settings that only take hold at the start of a
@@ -1176,11 +1176,11 @@ function updateModeUi() {
   // next to controls that sit above the Join box.
   if (online) {
     els.controlsHint.textContent =
-      'Color and clock apply to games you create, not ones you join.';
+      '执子颜色和计时仅对您创建的对局生效，加入的对局由房主决定。';
   } else if (showColor) {
-    els.controlsHint.textContent = 'Color and clock take effect when a new game starts.';
+    els.controlsHint.textContent = '执子颜色和计时将在新对局开始时生效。';
   } else {
-    els.controlsHint.textContent = 'The clock takes effect when a new game starts.';
+    els.controlsHint.textContent = '计时设置将在新对局开始时生效。';
   }
 
   const finished = gameFinished();
@@ -1191,12 +1191,12 @@ function updateModeUi() {
   els.rematchBtn.classList.toggle('hidden', !(playingOnline && finished));
   els.leaveBtn.classList.toggle('hidden', !playingOnline);
   els.rematchBtn.disabled = rematchOffered;
-  els.rematchLabel.textContent = rematchOffered ? 'Rematch offered…' : 'Rematch';
+  els.rematchLabel.textContent = rematchOffered ? '已请求再来一局…' : '再来一局';
   els.buttonRow.classList.toggle('hidden', online && !playingOnline);
   els.controlsHint.classList.toggle('hidden', !(showColor || showTime));
   els.controls.classList.toggle('hidden', online && !playingOnline && !showIdle);
 
-  els.gameoverNew.textContent = online ? 'Rematch' : 'New game';
+  els.gameoverNew.textContent = online ? '再来一局' : '新对局';
   els.gameoverNew.classList.toggle('hidden', online && !session?.connected);
   els.gameoverNew.disabled = online && rematchOffered;
 }
@@ -1463,8 +1463,8 @@ function newGame() {
   announcedPlies = 0;
   els.srStatus.textContent =
     mode === 'local'
-      ? 'New game. White to move.'
-      : `New game. You play ${colorName(myColor)}.`;
+      ? '新对局。白方先行。'
+      : `新对局。你执${colorName(myColor)}。`;
   renderAll();
   if (mode === 'computer' && game.turn() !== myColor) computerTurn();
 }
@@ -1478,9 +1478,9 @@ function requestNewGame() {
   }
   askConfirm(
     {
-      title: 'Start a new game?',
-      sub: 'The game in progress will be lost.',
-      confirmLabel: 'New game',
+      title: '开始新对局？',
+      sub: '当前正在进行的对局将会丢失。',
+      confirmLabel: '新对局',
       danger: false,
     },
     newGame,
@@ -1552,9 +1552,9 @@ function setMode(next) {
   ) {
     askConfirm(
       {
-        title: 'Leave the online game?',
-        sub: 'Leaving now counts as abandoning the game — your friend wins.',
-        confirmLabel: 'Leave',
+        title: '离开在线对局？',
+        sub: '现在离开将视为放弃对局 — 您的好友将获胜。',
+        confirmLabel: '离开',
       },
       perform,
     );
@@ -1564,11 +1564,11 @@ function setMode(next) {
     // the player meant it.
     askConfirm(
       {
-        title: `Switch to ${MODE_LABELS[next]}?`,
-        sub: `Your ${
-          mode === 'computer' ? 'game against the computer' : 'pass & play game'
-        } will be lost.`,
-        confirmLabel: 'Switch',
+        title: `切换到${MODE_LABELS[next]}？`,
+        sub: `您当前的${
+          mode === 'computer' ? '人机对战对局' : '同屏对战对局'
+        }将会丢失。`,
+        confirmLabel: '切换',
         danger: false,
       },
       perform,
@@ -1601,8 +1601,8 @@ function enterOnlineIdle({ inviteCode = null } = {}) {
   els.onlineInviteNote.hidden = !inviteCode;
   els.joinInput.value = inviteCode || '';
   els.srStatus.textContent = inviteCode
-    ? 'You have been invited to a game. Press Join to connect.'
-    : 'Online mode. Create a game or join with an invite code.';
+    ? '您收到了对局邀请。点击“加入”以连接。'
+    : '在线模式。创建对局或使用邀请码加入。';
   renderAll();
   if (inviteCode) els.joinBtn.focus();
   warmUpOnline();
@@ -1660,13 +1660,13 @@ async function createGame() {
     onlineUiState = 'hosting';
     updateModeUi();
     els.copyLinkBtn.focus();
-    els.srStatus.textContent = 'Game created. Share the invite code with your friend.';
+    els.srStatus.textContent = '对局已创建。请将邀请码分享给您的好友。';
   } catch (err) {
     if (session !== s) return;
     session = null;
     onlineUiState = fromState;
     updateModeUi();
-    setOnlineError(friendlyError(err, 'Could not create the game. Please try again.'));
+    setOnlineError(friendlyError(err, '无法创建对局，请重试。'));
   }
 }
 
@@ -1676,7 +1676,7 @@ async function joinGame(rawCode) {
   onlineReturnState = fromState;
   const code = normalizeInviteCode(rawCode);
   if (!code) {
-    setOnlineError('Enter an invite code first.');
+    setOnlineError('请先输入邀请码。');
     els.joinInput.focus();
     return;
   }
@@ -1693,7 +1693,7 @@ async function joinGame(rawCode) {
     session = null;
     onlineUiState = fromState;
     updateModeUi();
-    setOnlineError(friendlyError(err, 'Could not join — check the code and try again.'));
+    setOnlineError(friendlyError(err, '无法加入 — 请检查邀请码后重试。'));
     els.joinInput.focus();
   }
 }
@@ -1755,9 +1755,9 @@ function handleSessionStart({ myColor: assigned, opponentName: name, role, timeI
   // A guest is told the clock along with the color, since neither was theirs
   // to choose.
   startOnlineGame(
-    `Connected to ${opponentLabel()}. You play ${colorName(myColor)}${
+    `已连接到 ${opponentLabel()}。你执${colorName(myColor)}${
       control ? ` — ${control.label}` : ''
-    }.`,
+    }。`,
   );
 }
 
@@ -1766,7 +1766,7 @@ function startRematch() {
   session.swapColors();
   myColor = session.myColor;
   track('Rematch Started');
-  startOnlineGame(`Rematch started — you now play ${colorName(myColor)}.`);
+  startOnlineGame(`再来一局已开始 — 你现在执${colorName(myColor)}。`);
 }
 
 function startOnlineGame(announcement) {
@@ -1838,7 +1838,7 @@ function desync() {
   finishPromotion(null);
   clearSelection();
   closeDialogs();
-  const text = 'The game went out of sync and had to end. Please start a new one.';
+  const text = '对局失去了同步，不得不结束。请开始新对局。';
   showToast(text);
   els.srStatus.textContent = text;
   renderAll();
@@ -1865,8 +1865,8 @@ function handleOpponentResign() {
     reason: 'opponent resigned',
     result: resultFor(myColor),
     termination: 'normal',
-    title: 'You win',
-    sub: `${opponentLabel()} resigned.`,
+    title: '你赢了',
+    sub: `${opponentLabel()}认输了。`,
   });
 }
 
@@ -1874,9 +1874,9 @@ function requestResign() {
   if (!(mode === 'online' && session?.connected && !gameFinished())) return;
   askConfirm(
     {
-      title: 'Resign this game?',
-      sub: `${opponentLabel()} will win the game.`,
-      confirmLabel: 'Resign',
+      title: '确定认输？',
+      sub: `${opponentLabel()}将赢得本局。`,
+      confirmLabel: '认输',
     },
     () => {
       // The game may have ended while the dialog was open (opponent resigned
@@ -1888,8 +1888,8 @@ function requestResign() {
         reason: 'resigned',
         result: resultFor(otherColor(myColor)),
         termination: 'normal',
-        title: 'You lose',
-        sub: 'You resigned.',
+        title: '你输了',
+        sub: '你已认输。',
       });
     },
   );
@@ -1907,9 +1907,9 @@ function requestLeave() {
   if (session?.connected && !gameFinished() && game.history().length > 0) {
     askConfirm(
       {
-        title: 'Leave the game?',
-        sub: 'Leaving now counts as abandoning the game — your friend wins.',
-        confirmLabel: 'Leave',
+        title: '离开对局？',
+        sub: '现在离开将视为放弃对局 — 您的好友将获胜。',
+        confirmLabel: '离开',
       },
       perform,
     );
@@ -1926,7 +1926,7 @@ function offerRematch() {
   session.sendRematchOffer();
   if (els.gameoverDialog.open) els.gameoverDialog.close();
   clearTimeout(gameOverTimer);
-  showToast(`Rematch offered — waiting for ${opponentLabel()}.`);
+  showToast(`已请求再来一局 — 等待 ${opponentLabel()} 响应。`);
   updateModeUi();
 }
 
@@ -1940,7 +1940,7 @@ function handleRematchOffer() {
   }
   if (els.gameoverDialog.open) els.gameoverDialog.close();
   clearTimeout(gameOverTimer); // keep the delayed game-over dialog from covering this
-  els.rematchSub.textContent = `${opponentLabel()} wants to play again — colors swap.`;
+  els.rematchSub.textContent = `${opponentLabel()}想要再来一局 — 双方交换执子颜色。`;
   rematchAnswered = false;
   // A repeated offer while the dialog is already up must not throw.
   if (!els.rematchDialog.open) els.rematchDialog.showModal();
@@ -1948,7 +1948,7 @@ function handleRematchOffer() {
 
 function handleRematchDecline() {
   rematchOffered = false;
-  showToast(`${opponentLabel()} declined the rematch.`);
+  showToast(`${opponentLabel()}拒绝了再来一局。`);
   updateModeUi();
 }
 
@@ -1963,8 +1963,8 @@ function handleSessionClose({ reason, wasConnected }) {
     updateModeUi();
     setOnlineError(
       reason === 'left'
-        ? 'Your friend cancelled the game.'
-        : reason || 'Connection failed — please try again.',
+        ? '您的好友取消了对局。'
+        : reason || '连接失败 — 请重试。',
     );
     return;
   }
@@ -1979,20 +1979,20 @@ function handleSessionClose({ reason, wasConnected }) {
             reason: 'aborted',
             result: '*',
             termination: 'abandoned',
-            title: 'Game aborted',
-            sub: `${opponentLabel()} left before the first move.`,
+            title: '对局已中止',
+            sub: `${opponentLabel()}在第一步落子前离开了。`,
           }
         : {
             kind: 'win',
             reason: 'opponent left',
             result: resultFor(myColor),
             termination: 'abandoned',
-            title: 'You win',
-            sub: `${opponentLabel()} left the game.`,
+            title: '你赢了',
+            sub: `${opponentLabel()}离开了对局。`,
           },
     );
   } else {
-    showToast(`${opponentLabel()} left the game.`);
+    showToast(`${opponentLabel()}离开了对局。`);
     renderAll();
   }
 }
@@ -2031,7 +2031,7 @@ async function copyToClipboard(text) {
 async function copyInviteCode() {
   if (!session?.inviteCode) return;
   if (await copyToClipboard(session.inviteCode)) {
-    showToast('Invite code copied.');
+    showToast('邀请码已复制。');
     const copyIcon = els.copyCodeBtn.querySelector('.icon-copy');
     const checkIcon = els.copyCodeBtn.querySelector('.icon-check');
     copyIcon?.classList.add('hidden');
@@ -2042,21 +2042,21 @@ async function copyInviteCode() {
       checkIcon?.classList.add('hidden');
     }, 1600);
   } else {
-    showToast('Copy failed — select the code and copy it manually.');
+    showToast('复制失败 — 请手动选中邀请码进行复制。');
   }
 }
 
 async function copyInviteLink() {
   if (!session?.inviteCode) return;
   if (await copyToClipboard(inviteLink())) {
-    showToast('Invite link copied — send it to your friend.');
-    els.copyLinkLabel.textContent = 'Link copied!';
+    showToast('邀请链接已复制 — 快发给您的好友吧。');
+    els.copyLinkLabel.textContent = '链接已复制！';
     clearTimeout(copyLinkTimer);
     copyLinkTimer = setTimeout(() => {
-      els.copyLinkLabel.textContent = 'Copy invite link';
+      els.copyLinkLabel.textContent = '复制邀请链接';
     }, 1600);
   } else {
-    showToast('Copy failed — select the code and copy it manually.');
+    showToast('复制失败 — 请手动选中邀请码进行复制。');
   }
 }
 
@@ -2066,9 +2066,9 @@ async function copyInviteLink() {
 
 /** Player names for the export, in the language of the current mode. */
 function pgnNames() {
-  if (mode === 'local') return { w: 'Player 1', b: 'Player 2' };
-  const me = mode === 'online' ? 'You' : 'Player';
-  const them = mode === 'online' ? opponentName || 'Opponent' : `Computer (${LEVELS[level].label})`;
+  if (mode === 'local') return { w: '玩家 1', b: '玩家 2' };
+  const me = mode === 'online' ? '你' : '玩家';
+  const them = mode === 'online' ? opponentName || '对手' : `电脑 (${LEVELS[level].label})`;
   return myColor === 'w' ? { w: me, b: them } : { w: them, b: me };
 }
 
@@ -2089,9 +2089,9 @@ function currentPgn(date) {
 async function copyPgn() {
   if (game.history().length === 0) return;
   if (await copyToClipboard(currentPgn(new Date()))) {
-    showToast('Game copied as PGN.');
+    showToast('对局已复制为 PGN 棋谱。');
   } else {
-    showToast('Copy failed — your browser blocked clipboard access.');
+    showToast('复制失败 — 您的浏览器阻止了剪贴板访问。');
   }
 }
 
@@ -2111,7 +2111,7 @@ function downloadPgn() {
     link.remove();
     // Released on a later task, once the download has certainly started.
     setTimeout(() => URL.revokeObjectURL(url), 10000);
-    showToast('Game saved as a PGN file.');
+    showToast('对局已保存为 PGN 文件。');
   } catch {
     if (url) URL.revokeObjectURL(url);
     copyPgn(); // no downloads here; the clipboard still gets the player the game
@@ -2156,9 +2156,9 @@ function confirmSignOut() {
   return () =>
     askConfirm(
       {
-        title: 'Sign out and leave the game?',
-        sub: 'Leaving now counts as abandoning the game — your friend wins.',
-        confirmLabel: 'Sign out',
+        title: '退出登录并离开对局？',
+        sub: '现在离开将视为放弃对局 — 您的好友将获胜。',
+        confirmLabel: '退出登录',
       },
       () => {
         // Say goodbye while the connection is still ours, then sign out; the
@@ -2199,7 +2199,7 @@ function closeOnlineForSignOut() {
 /** The element signed out by itself. */
 function handleSignedOut() {
   if (!closeOnlineForSignOut()) return;
-  const text = 'You signed out, so the online game was closed.';
+  const text = '您已退出登录，在线对局已关闭。';
   showToast(text);
   els.srStatus.textContent = text;
 }
@@ -2425,7 +2425,7 @@ window.addEventListener('pageshow', (e) => {
     rematchOffered = false;
     if (mode === 'online') {
       onlineUiState = onlineUiState === 'playing' ? 'ended' : 'idle';
-      showToast('The connection was closed when you left the page.');
+      showToast('离开页面时连接已关闭。');
     }
   }
   renderAll();
@@ -2438,7 +2438,7 @@ window.addEventListener('hashchange', () => {
   if (!code) return;
   if (session?.connected) {
     // Never yank the player out of a live game — but don't be silent either.
-    showToast('You are in a game — finish or leave it before joining another.');
+    showToast('您正在对局中 — 请先完成或离开当前对局，再加入另一局。');
     return;
   }
   teardownForModeChange();

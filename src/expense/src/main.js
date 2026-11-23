@@ -16,13 +16,13 @@ function showError(title, message, onRetry) {
       el('div.empty-icon', { html: icon('wifiOff', 28) }),
       el('h1.auth-title', { style: { fontSize: '22px' } }, title),
       el('p.auth-sub', {}, message),
-      el('button.btn.btn-primary.auth-cta', { type: 'button', onclick: onRetry }, 'Try again'))
+      el('button.btn.btn-primary.auth-cta', { type: 'button', onclick: onRetry }, '重试'))
   ));
 }
 
 async function start() {
   if (typeof puter === 'undefined') {
-    showError('Couldn’t reach Puter', 'The Puter SDK failed to load. Check your connection and try again.', () => location.reload());
+    showError('无法连接到 Puter', 'Puter SDK 加载失败，请检查网络连接后重试。', () => location.reload());
     return;
   }
   let signedIn = false;
@@ -39,7 +39,7 @@ async function boot() {
     await store.init();
   } catch (err) {
     console.error(err);
-    showError('Couldn’t load your data', navigator.onLine ? 'Something went wrong talking to your Puter cloud.' : 'You appear to be offline.', () => location.reload());
+    showError('无法加载您的数据', navigator.onLine ? '与您的 Puter 云端通信时出现问题。' : '您当前似乎处于离线状态。', () => location.reload());
     return;
   }
   // Settings win over the pre-paint localStorage value (they sync across devices).
@@ -53,7 +53,7 @@ function setupOfflineBanner() {
   let banner = null;
   const update = () => {
     if (!navigator.onLine && !banner) {
-      banner = el('div.offline-banner', { html: icon('wifiOff', 15, 2) }, ' You’re offline. Changes can’t be saved until you reconnect');
+      banner = el('div.offline-banner', { html: icon('wifiOff', 15, 2) }, ' 您当前处于离线状态，重新连接前无法保存更改');
       document.body.append(banner);
     } else if (navigator.onLine && banner) {
       banner.remove();

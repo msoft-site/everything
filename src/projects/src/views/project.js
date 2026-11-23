@@ -20,16 +20,16 @@ import { milestonesView } from './milestones.js';
 import { listView } from './list.js';
 
 const TABS = [
-  { key: 'board', label: 'Board', icon: 'board', hash: (id) => `#/p/${id}` },
-  { key: 'list', label: 'List', icon: 'listTodo', hash: (id) => `#/p/${id}/list` },
-  { key: 'timeline', label: 'Timeline', icon: 'timeline', hash: (id) => `#/p/${id}/timeline` },
-  { key: 'milestones', label: 'Milestones', icon: 'flag', hash: (id) => `#/p/${id}/milestones` },
+  { key: 'board', label: '看板', icon: 'board', hash: (id) => `#/p/${id}` },
+  { key: 'list', label: '列表', icon: 'listTodo', hash: (id) => `#/p/${id}/list` },
+  { key: 'timeline', label: '时间线', icon: 'timeline', hash: (id) => `#/p/${id}/timeline` },
+  { key: 'milestones', label: '里程碑', icon: 'flag', hash: (id) => `#/p/${id}/milestones` },
 ];
 
 export function projectView({ id, tab, navigate }) {
   const entry = store.projectEntry(id);
   const body = el('div.project-body', {},
-    el('div.view-loading', { role: 'status', 'aria-label': 'Loading project' },
+    el('div.view-loading', { role: 'status', 'aria-label': '正在加载项目' },
       el('span.spinner'))
   );
 
@@ -50,23 +50,23 @@ export function projectView({ id, tab, navigate }) {
     const stale = store.hasConflict(id);
     const offline = !stale && store.offline;
     const failed = !stale && !offline && saveFailed && pending;
-    saveDot.textContent = stale ? 'Changed elsewhere'
-      : offline ? 'Offline'
-      : failed ? 'Not saved'
-      : pending ? 'Saving' : '';
+    saveDot.textContent = stale ? '已在别处更改'
+      : offline ? '离线'
+      : failed ? '未保存'
+      : pending ? '保存中' : '';
     saveDot.classList.toggle('busy', pending && !failed && !stale && !offline);
     saveDot.classList.toggle('failed', failed);
     saveDot.classList.toggle('stale', stale || offline);
     saveDot.title = stale
-      ? 'This project was saved somewhere else; choose which copy to keep'
+      ? '此项目已在其他位置保存；请选择要保留的副本'
       : offline
-        ? 'No connection. Changes are saved on this device and go out when there is one'
+        ? '无网络连接。更改已保存在当前设备上，将在恢复连接后同步'
         : '';
   }
 
   const menuBtn = el('button.icon-btn', {
     html: icon('more', 20, 2),
-    'aria-label': 'Project options',
+    'aria-label': '项目选项',
     'aria-haspopup': 'menu',
     'aria-expanded': 'false',
     onclick: () => {
@@ -75,53 +75,53 @@ export function projectView({ id, tab, navigate }) {
       const archived = docArchive(doc).length;
       const entry = store.projectEntry(id);
       openMenu(menuBtn, [
-        { label: 'Edit project', icon: 'pencil', onClick: () => openProjectForm({ project: entry }) },
+        { label: '编辑项目', icon: 'pencil', onClick: () => openProjectForm({ project: entry }) },
         {
-          label: entry?.pinned ? 'Unpin project' : 'Pin project',
+          label: entry?.pinned ? '取消置顶项目' : '置顶项目',
           icon: entry?.pinned ? 'unpin' : 'pin',
           onClick: () => togglePinned(!entry?.pinned),
         },
-        { label: 'Members and labels', icon: 'users', onClick: () => openMembersLabels(id) },
+        { label: '成员与标签', icon: 'users', onClick: () => openMembersLabels(id) },
         {
-          label: archived ? `Archived tasks (${archived})` : 'Archived tasks',
+          label: archived ? `已归档任务 (${archived})` : '已归档任务',
           icon: 'archive',
           disabled: !doc,
           onClick: () => openTaskArchive(id),
         },
         {
-          label: trashed ? `Trash (${trashed})` : 'Trash',
+          label: trashed ? `回收站 (${trashed})` : '回收站',
           icon: 'trashBin',
           disabled: !doc,
           onClick: () => openTaskTrash(id),
         },
         'sep',
         {
-          label: 'Duplicate project',
+          label: '复制项目',
           icon: 'copy',
           onClick: () => openDuplicateProject(id),
         },
         {
-          label: 'Save as template',
+          label: '保存为模板',
           icon: 'template',
           onClick: saveAsTemplate,
         },
         {
-          label: 'Restore points',
+          label: '还原点',
           icon: 'history',
           onClick: () => openRestorePoints({ projectId: id }),
         },
         {
-          label: 'Export project…',
+          label: '导出项目…',
           icon: 'download',
           onClick: () => openExportProject(id),
         },
         {
-          label: 'Calendar file (.ics)…',
+          label: '日历文件 (.ics)…',
           icon: 'calendarClock',
           onClick: () => openCalendarExport({ projectId: id }),
         },
         {
-          label: 'Print this view…',
+          label: '打印此视图…',
           icon: 'fileText',
           // The browser's own dialog is already a PDF writer; the app's job is
           // to hand it a page worth printing (see styles/print.css).
@@ -129,18 +129,18 @@ export function projectView({ id, tab, navigate }) {
         },
         'sep',
         {
-          label: entry?.archived ? 'Unarchive project' : 'Archive project',
+          label: entry?.archived ? '取消归档项目' : '归档项目',
           icon: entry?.archived ? 'unarchive' : 'archive',
           onClick: () => toggleArchived(!entry?.archived),
         },
-        { label: 'Delete project', icon: 'trash', danger: true, onClick: deleteProject },
+        { label: '删除项目', icon: 'trash', danger: true, onClick: deleteProject },
       ]);
     },
   });
 
   const title = el('h1.view-title.project-title', {}, entry?.name || '');
 
-  const tabsNav = el('nav.tabs', { 'aria-label': 'Project views' },
+  const tabsNav = el('nav.tabs', { 'aria-label': '项目视图' },
     TABS.map((t) => el('a.tab', {
       href: t.hash(id),
       className: `tab${t.key === tab ? ' active' : ''}`,
@@ -160,7 +160,7 @@ export function projectView({ id, tab, navigate }) {
   function renderPrintHead() {
     const current = store.projectEntry(id);
     printHead.textContent = `${current?.name ?? ''} · ${TABS.find((t) => t.key === tab)?.label ?? ''}`
-      + ` · printed ${new Date().toLocaleDateString(undefined, {
+      + ` · 打印于 ${new Date().toLocaleDateString(undefined, {
         year: 'numeric', month: 'short', day: 'numeric',
       })}`;
   }
@@ -170,7 +170,7 @@ export function projectView({ id, tab, navigate }) {
     printHead,
     el('header.view-head.project-head', {},
       menuButton(),
-      el('a.icon-btn.back-btn', { href: '#/', 'aria-label': 'All projects', html: icon('arrowL', 20, 2) }),
+      el('a.icon-btn.back-btn', { href: '#/', 'aria-label': '所有项目', html: icon('arrowL', 20, 2) }),
       el('span.dot', { style: { background: entry?.color }, 'aria-hidden': 'true' }),
       title,
       saveDot,
@@ -188,32 +188,32 @@ export function projectView({ id, tab, navigate }) {
   renderSaveState();
 
   async function saveAsTemplate() {
-    const suggested = store.projectEntry(id)?.name || 'Template';
+    const suggested = store.projectEntry(id)?.name || '模板';
     const name = await promptDialog({
-      title: 'Save as template',
-      label: 'Template name',
+      title: '保存为模板',
+      label: '模板名称',
       value: suggested,
-      confirmLabel: 'Save template',
+      confirmLabel: '保存模板',
     });
     if (!name) return;
     try {
       await store.saveTemplate(id, name);
-      toast('Template saved. Pick it when creating a project', { icon: 'template' });
+      toast('模板已保存，可在创建项目时选择', { icon: 'template' });
     } catch (err) {
       console.error(err);
-      toast('Could not save the template. Check your connection', { icon: 'cloudOff' });
+      toast('无法保存模板，请检查网络连接', { icon: 'cloudOff' });
     }
   }
 
   async function togglePinned(pinned) {
     try {
       await store.setProjectPinned(id, pinned);
-      toast(pinned ? 'Project pinned to the top' : 'Project unpinned', {
+      toast(pinned ? '项目已置顶到顶部' : '已取消置顶项目', {
         icon: pinned ? 'pin' : 'unpin',
       });
     } catch (err) {
       console.error(err);
-      toast('Could not save. Check your connection', { icon: 'cloudOff' });
+      toast('无法保存，请检查网络连接', { icon: 'cloudOff' });
     }
   }
 
@@ -223,48 +223,48 @@ export function projectView({ id, tab, navigate }) {
       if (archived) {
         // Leave the board: an archived project is out of the way by design.
         navigate('#/');
-        toast('Project archived', {
+        toast('项目已归档', {
           icon: 'archive',
           duration: 7000,
           action: {
-            label: 'Undo',
+            label: '撤销',
             onClick: () => store.setProjectArchived(id, false).catch(() => {}),
           },
         });
       } else {
-        toast('Project unarchived', { icon: 'unarchive' });
+        toast('已取消归档项目', { icon: 'unarchive' });
       }
     } catch (err) {
       console.error(err);
-      toast('Could not save. Check your connection', { icon: 'cloudOff' });
+      toast('无法保存，请检查网络连接', { icon: 'cloudOff' });
     }
   }
 
   async function deleteProject() {
     const current = store.projectEntry(id);
     const ok = await confirmDialog({
-      title: `Delete "${current?.name}"?`,
-      message: `The project moves to the trash, where it can be restored for ${TRASH_DAYS} days.`,
-      confirmLabel: 'Delete project',
+      title: `删除“${current?.name}”？`,
+      message: `该项目将移至回收站，可在 ${TRASH_DAYS} 天内恢复。`,
+      confirmLabel: '删除项目',
     });
     if (!ok) return;
     try {
       await store.deleteProject(id);
       navigate('#/');
-      toast('Project moved to trash', {
+      toast('项目已移至回收站', {
         icon: 'trash',
         duration: 7000,
         action: {
-          label: 'Undo',
+          label: '撤销',
           onClick: () => store.restoreProject(id).catch((err) => {
             console.error(err);
-            toast('Could not restore. Check your connection', { icon: 'cloudOff' });
+            toast('无法恢复，请检查网络连接', { icon: 'cloudOff' });
           }),
         },
       });
     } catch (err) {
       console.error(err);
-      toast('Could not delete. Check your connection', { icon: 'cloudOff' });
+      toast('无法删除，请检查网络连接', { icon: 'cloudOff' });
     }
   }
 
@@ -290,9 +290,9 @@ export function projectView({ id, tab, navigate }) {
     clear(body);
     body.append(el('div.empty', {},
       el('div.empty-icon', { html: icon('cloudOff', 28) }),
-      el('h3', {}, 'Could not load this project'),
-      el('p', {}, 'Check your connection and try again.'),
-      el('button.btn.btn-primary', { onclick: () => location.reload() }, 'Reload')
+      el('h3', {}, '无法加载此项目'),
+      el('p', {}, '请检查网络连接后重试。'),
+      el('button.btn.btn-primary', { onclick: () => location.reload() }, '重新加载')
     ));
   });
 

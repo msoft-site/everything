@@ -22,13 +22,13 @@ export function homeView({ navigate }) {
   const root = el('section.view.home-view', {},
     el('header.view-head', {},
       menuButton(),
-      el('h1.view-title', {}, 'Projects'),
+      el('h1.view-title', {}, '项目'),
       el('button.btn.btn-primary', {
         html: icon('plus', 16, 2.2),
         onclick: () => openProjectForm({
           onDone: (p) => navigate(projectHash(p.id), { replace: true }),
         }),
-      }, ' New project')
+      }, ' 新建项目')
     ),
     banner,
     grid,
@@ -39,40 +39,40 @@ export function homeView({ navigate }) {
     const stats = el('div.card-stats', {}, el('span.skeleton', { style: { width: '60%' } }));
     const menuBtn = el('button.icon-btn.card-menu', {
       html: icon('more', 18, 2),
-      'aria-label': `Options for ${entry.name}`,
+      'aria-label': `${entry.name} 的选项`,
       'aria-haspopup': 'menu',
       'aria-expanded': 'false',
       onclick: (e) => {
         e.preventDefault();
         e.stopPropagation();
         openMenu(menuBtn, [
-          { label: 'Edit project', icon: 'pencil', onClick: () => openProjectForm({ project: entry }) },
+          { label: '编辑项目', icon: 'pencil', onClick: () => openProjectForm({ project: entry }) },
           {
-            label: entry.pinned ? 'Unpin project' : 'Pin project',
+            label: entry.pinned ? '取消置顶项目' : '置顶项目',
             icon: entry.pinned ? 'unpin' : 'pin',
             onClick: () => togglePinned(entry),
           },
           {
-            label: 'Archive project',
+            label: '归档项目',
             icon: 'archive',
             onClick: async () => {
               try {
                 await store.setProjectArchived(entry.id, true);
-                toast('Project archived', {
+                toast('项目已归档', {
                   icon: 'archive',
                   duration: 7000,
                   action: {
-                    label: 'Undo',
+                    label: '撤销',
                     onClick: () => store.setProjectArchived(entry.id, false).catch(() => {}),
                   },
                 });
               } catch (err) {
                 console.error(err);
-                toast('Could not save. Check your connection', { icon: 'cloudOff' });
+                toast('无法保存，请检查网络连接', { icon: 'cloudOff' });
               }
             },
           },
-          { label: 'Delete project', icon: 'trash', danger: true, onClick: () => deleteProject(entry) },
+          { label: '删除项目', icon: 'trash', danger: true, onClick: () => deleteProject(entry) },
         ]);
       },
     });
@@ -88,10 +88,10 @@ export function homeView({ navigate }) {
         entry.pinned && el('span.card-pin', {
           html: icon('pin', 13, 2.2),
           role: 'img',
-          'aria-label': 'Pinned',
-          title: 'Pinned to the top',
+          'aria-label': '已置顶',
+          title: '已置顶到顶部',
         }),
-        entry.sample && el('span.nav-tag', {}, 'sample'),
+        entry.sample && el('span.nav-tag', {}, '示例'),
         menuBtn
       ),
       summary,
@@ -111,17 +111,17 @@ export function homeView({ navigate }) {
       summary.hidden = !brief;
       clear(stats);
       stats.append(
-        progressBar(done, total, { label: `${entry.name}: ${done} of ${total} tasks done` }),
+        progressBar(done, total, { label: `${entry.name}：已完成 ${done}/${total} 个任务` }),
         el('div.card-meta', {},
-          el('span', {}, total ? `${done}/${total} tasks done` : 'No tasks yet'),
-          overdue > 0 && el('span.card-overdue', {}, `${overdue} overdue`),
+          el('span', {}, total ? `已完成 ${done}/${total} 个任务` : '暂无任务'),
+          overdue > 0 && el('span.card-overdue', {}, `${overdue} 个已逾期`),
           el('span.grow'),
           avatarStack(doc.members, { size: 22 })
         )
       );
     }).catch(() => {
       clear(stats);
-      stats.append(el('span.card-meta', {}, 'Could not load this project'));
+      stats.append(el('span.card-meta', {}, '无法加载此项目'));
     });
 
     return card;
@@ -130,38 +130,38 @@ export function homeView({ navigate }) {
   async function togglePinned(entry) {
     try {
       await store.setProjectPinned(entry.id, !entry.pinned);
-      toast(entry.pinned ? 'Project unpinned' : 'Project pinned to the top', {
+      toast(entry.pinned ? '已取消置顶项目' : '项目已置顶到顶部', {
         icon: entry.pinned ? 'unpin' : 'pin',
       });
     } catch (err) {
       console.error(err);
-      toast('Could not save. Check your connection', { icon: 'cloudOff' });
+      toast('无法保存，请检查网络连接', { icon: 'cloudOff' });
     }
   }
 
   async function deleteProject(entry) {
     const ok = await confirmDialog({
-      title: `Delete "${entry.name}"?`,
-      message: `The project moves to the trash, where it can be restored for ${TRASH_DAYS} days.`,
-      confirmLabel: 'Delete project',
+      title: `删除“${entry.name}”？`,
+      message: `该项目将移至回收站，可在 ${TRASH_DAYS} 天内恢复。`,
+      confirmLabel: '删除项目',
     });
     if (!ok) return;
     try {
       await store.deleteProject(entry.id);
-      toast('Project moved to trash', {
+      toast('项目已移至回收站', {
         icon: 'trash',
         duration: 7000,
         action: {
-          label: 'Undo',
+          label: '撤销',
           onClick: () => store.restoreProject(entry.id).catch((err) => {
             console.error(err);
-            toast('Could not restore. Check your connection', { icon: 'cloudOff' });
+            toast('无法恢复，请检查网络连接', { icon: 'cloudOff' });
           }),
         },
       });
     } catch (err) {
       console.error(err);
-      toast('Could not delete. Check your connection', { icon: 'cloudOff' });
+      toast('无法删除，请检查网络连接', { icon: 'cloudOff' });
     }
   }
 
@@ -177,19 +177,19 @@ export function homeView({ navigate }) {
         type: 'button',
         html: icon('unarchive', 14, 2),
         // One "Unarchive" per row, all identical without the project name.
-        'aria-label': `Unarchive ${entry.name}`,
+        'aria-label': `取消归档 ${entry.name}`,
         onclick: async (e) => {
           e.preventDefault();
           e.stopPropagation();
           try {
             await store.setProjectArchived(entry.id, false);
-            toast('Project unarchived', { icon: 'unarchive' });
+            toast('已取消归档项目', { icon: 'unarchive' });
           } catch (err) {
             console.error(err);
-            toast('Could not save. Check your connection', { icon: 'cloudOff' });
+            toast('无法保存，请检查网络连接', { icon: 'cloudOff' });
           }
         },
-      }, ' Unarchive')
+      }, ' 取消归档')
     ));
     return el('details.archived-section', {
       // When everything is archived the section is the page, not an aside.
@@ -197,7 +197,7 @@ export function homeView({ navigate }) {
     },
       el('summary.archived-summary', {},
         el('span.archived-chevron', { html: icon('chevDown', 15, 2), 'aria-hidden': 'true' }),
-        `Archived (${entries.length})`
+        `已归档 (${entries.length})`
       ),
       el('div.archived-list', {}, rows)
     );
@@ -214,21 +214,21 @@ export function homeView({ navigate }) {
     if (!active.length && archived.length) {
       grid.append(emptyState({
         icon: 'archive',
-        title: 'Every project is archived',
-        sub: 'Unarchive one below to pick it back up, or start something new.',
+        title: '所有项目均已归档',
+        sub: '在下方取消归档一个项目以继续处理，或创建新项目。',
       }));
       return;
     }
     if (!store.projects.length) {
       grid.append(emptyState({
         icon: 'folder',
-        title: 'No projects yet',
-        sub: 'A project holds one board, its timeline, and its milestones.',
+        title: '暂无项目',
+        sub: '每个项目都包含一个看板、时间线和里程碑。',
         action: el('button.btn.btn-primary', {
           onclick: () => openProjectForm({
           onDone: (p) => navigate(projectHash(p.id), { replace: true }),
         }),
-        }, 'Create a project'),
+        }, '创建项目'),
       }));
       return;
     }

@@ -106,9 +106,9 @@ export class BottomDock {
     if (!open || !active) return;
     this.el.classList.toggle('collapsed', this.state.collapsed);
     this.el.style.setProperty('--bottom-height', `${Math.max(minHeight, this.state.height)}px`);
-    this.el.innerHTML = `<div class="bottom-resizer" aria-hidden="true"></div><div class="panel-tabs bottom-dock-tabs" role="tablist" aria-label="Bottom panels">${list
+    this.el.innerHTML = `<div class="bottom-resizer" aria-hidden="true"></div><div class="panel-tabs bottom-dock-tabs" role="tablist" aria-label="底部面板">${list
       .map((p) => `<button role="tab" data-bottom-tab="${p.id}" aria-selected="${p.id === active.id}" aria-controls="panel-${p.id}">${escapeXML(p.title)}</button>`)
-      .join('')}<span class="panel-tabs-spacer"></span>${menuButton(active, 'data-bottom-menu')}<button class="panel-menu-button" data-bottom-collapse aria-expanded="${!this.state.collapsed}" aria-label="${this.state.collapsed ? 'Expand' : 'Collapse'} ${escapeXML(active.title)}" title="${this.state.collapsed ? 'Expand' : 'Collapse'}">${svg(this.state.collapsed ? 'chevron-right' : 'chevron-down', 15)}</button><button class="panel-menu-button" data-bottom-close aria-label="Close ${escapeXML(active.title)}" title="Close">${svg('x', 15)}</button></div><div class="bottom-dock-slot"></div>`;
+      .join('')}<span class="panel-tabs-spacer"></span>${menuButton(active, 'data-bottom-menu')}<button class="panel-menu-button" data-bottom-collapse aria-expanded="${!this.state.collapsed}" aria-label="${this.state.collapsed ? '展开' : '折叠'} ${escapeXML(active.title)}" title="${this.state.collapsed ? '展开' : '折叠'}">${svg(this.state.collapsed ? 'chevron-right' : 'chevron-down', 15)}</button><button class="panel-menu-button" data-bottom-close aria-label="关闭 ${escapeXML(active.title)}" title="关闭">${svg('x', 15)}</button></div><div class="bottom-dock-slot"></div>`;
     if (this.state.collapsed) return;
     const body = this.body(active);
     this.el.querySelector('.bottom-dock-slot')!.append(body);

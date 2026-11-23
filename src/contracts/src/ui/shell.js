@@ -18,12 +18,12 @@ import { obligationsView } from '../views/obligations.js';
 import { settingsView, confirmSignOut } from '../views/settings.js';
 
 const ROUTES = [
-  { path: '/', label: 'Home', icon: 'dashboard', view: dashboardView },
-  { path: '/contracts', label: 'Contracts', icon: 'file-text', view: contractsView },
-  { path: '/renewals', label: 'Renewals', icon: 'calendar-clock', view: renewalsView },
-  { path: '/obligations', label: 'Obligations', icon: 'checklist', view: obligationsView },
-  { path: '/contacts', label: 'Contacts', icon: 'users', view: contactsView },
-  { path: '/settings', label: 'Settings', icon: 'gear', view: settingsView },
+  { path: '/', label: '首页', icon: 'dashboard', view: dashboardView },
+  { path: '/contracts', label: '合同', icon: 'file-text', view: contractsView },
+  { path: '/renewals', label: '续约', icon: 'calendar-clock', view: renewalsView },
+  { path: '/obligations', label: '义务', icon: 'checklist', view: obligationsView },
+  { path: '/contacts', label: '联系人', icon: 'users', view: contactsView },
+  { path: '/settings', label: '设置', icon: 'gear', view: settingsView },
 ];
 
 /** Contracts is ROUTES[1]; contract detail pages highlight it in the nav. */
@@ -65,13 +65,13 @@ export function mountShell(appRoot) {
     if (!store.settings.sampleData) return;
     sampleBanner.append(el('div.sample-banner', {},
       el('span.sample-banner-ic', { html: icon('sparkle', 14, 2.2) }),
-      el('span.grow', {}, 'Sample data: explore freely, nothing here is yours'),
+      el('span.grow', {}, '示例数据：欢迎随意体验，此处并非您的真实数据'),
       el('button', {
         onclick: async () => {
           const ok = await confirmDialog({
-            title: 'Start fresh?',
+            title: '重新开始？',
             message: 'Everything currently in the app is removed: the sample data and anything you added while exploring.',
-            confirmLabel: 'Wipe sample data',
+            confirmLabel: '清除示例数据',
           });
           if (!ok) return;
           try {
@@ -83,7 +83,7 @@ export function mountShell(appRoot) {
           }
           openOnboarding();
         },
-      }, 'Start fresh')
+      }, '重新开始')
     ));
   }
   store.addEventListener('change', renderSampleBanner);
@@ -130,15 +130,15 @@ export function mountShell(appRoot) {
     el('button.btn.btn-primary.sidebar-add', {
       html: icon('plus', 17, 2.2),
       onclick: () => openContractForm(),
-    }, ' New contract'),
+    }, ' 新建合同'),
     el('div.sidebar-user', {},
       el('span.avatar', { 'aria-hidden': 'true' }, username.charAt(0).toUpperCase()),
       el('span.name', { title: username }, username),
       // Inside a Puter app the platform owns the session — no sign-out.
       !isApp && el('button.icon-btn', {
         html: icon('logout', 18, 2),
-        'aria-label': 'Sign out',
-        title: 'Sign out',
+        'aria-label': '退出登录',
+        title: '退出登录',
         onclick: confirmSignOut,
       })
     )
@@ -225,7 +225,7 @@ export function mountShell(appRoot) {
   const skip = el('button.skip-link', {
     type: 'button',
     onclick: () => main.focus(),
-  }, 'Skip to content');
+  }, '跳转到主要内容');
 
   clear(appRoot);
   appRoot.append(skip, el('div.shell', {}, sidebar, main), tabbar, fab);

@@ -9,12 +9,12 @@ import { el } from './ui/dom.js';
 import { loadEngine } from './lib/engine.js';
 
 const id = location.hash.slice(1);
-const status = el('span.mirror-status', { role: 'status', 'aria-live': 'polite' }, 'Waiting for the document…');
-const title = el('strong.mirror-title', {}, 'Documents');
-const zoom = el('select', { 'aria-label': 'Zoom' }, ...[0.5, 0.75, 1, 1.25, 1.5].map(n => el('option', { value: n, selected: n === 1 }, `${n * 100}%`)));
-const host = el('div.canvas-host', { 'aria-label': 'Document pages' });
+const status = el('span.mirror-status', { role: 'status', 'aria-live': 'polite' }, '正在等待文档…');
+const title = el('strong.mirror-title', {}, '文档');
+const zoom = el('select', { 'aria-label': '缩放' }, ...[0.5, 0.75, 1, 1.25, 1.5].map(n => el('option', { value: n, selected: n === 1 }, `${n * 100}%`)));
+const host = el('div.canvas-host', { 'aria-label': '文档页面' });
 const shell = el('main.canvas-workspace.ed-workspace.mirror-shell', {},
-  el('header.mirror-bar', {}, title, el('span.mirror-note', {}, 'Second window · read only · edits in the original window appear here'), el('span.mirror-spacer'), status, el('label.mirror-zoom', {}, 'Zoom ', zoom)),
+  el('header.mirror-bar', {}, title, el('span.mirror-note', {}, '副窗口 · 只读 · 原窗口中的编辑将实时显示在此处'), el('span.mirror-spacer'), status, el('label.mirror-zoom', {}, '缩放 ', zoom)),
   el('div.canvas-document-surface', {}, host));
 const style = el('style', {}, `
   .mirror-shell { display: flex; flex-direction: column; height: 100dvh; }
@@ -34,7 +34,7 @@ async function show({ name, bytes }) {
   const mine = ++version;
   try { await render(mine, name, bytes); }
   // An update that a newer one has replaced says nothing about the document shown.
-  catch (error) { if (mine === version) status.textContent = error?.message || 'The document could not be shown.'; }
+  catch (error) { if (mine === version) status.textContent = error?.message || '无法显示该文档。'; }
 }
 
 async function render(mine, name, bytes) {
@@ -47,22 +47,22 @@ async function render(mine, name, bytes) {
   const top = host.scrollTop, left = host.scrollLeft;
   editor?.destroy();
   editor = new CanvasEditor(host, { paragraphs: pkg.paragraphs, pageSettings: pkg.pageSettings, numbering: pkg.numbering, styles: pkg.styles, tables: pkg.tables, pageStories: pkg.pageStories,
-    comments: pkg.comments, assets: pkg.assets, drawingLayouts: pkg.drawingLayouts, images, measure, readOnly: true, inputLabel: 'Document text (read only)' });
+    comments: pkg.comments, assets: pkg.assets, drawingLayouts: pkg.drawingLayouts, images, measure, readOnly: true, inputLabel: '文档文本（只读）' });
   editor.setZoom(Number(zoom.value));
   host.scrollTop = top; host.scrollLeft = left;
-  title.textContent = name || 'Document';
-  document.title = `${name || 'Document'} — second window`;
-  status.textContent = `Updated ${new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', second: '2-digit' })}`;
+  title.textContent = name || '文档';
+  document.title = `${name || '文档'} — 副窗口`;
+  status.textContent = `更新于 ${new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', second: '2-digit' })}`;
 }
 
-if (!id || typeof BroadcastChannel === 'undefined') status.textContent = 'Open this window from View → New Window.';
+if (!id || typeof BroadcastChannel === 'undefined') status.textContent = '请通过“视图 → 新建窗口”打开此窗口。';
 else {
   const channel = new BroadcastChannel(`documents-window:${id}`);
   channel.onmessage = e => {
     const message = e.data || {};
     if (message.type === 'document') show(message);
     else if (message.type === 'error') status.textContent = message.message;
-    else if (message.type === 'closed') status.textContent = 'The original window was closed. This copy no longer updates.';
+    else if (message.type === 'closed') status.textContent = '原窗口已关闭。此副本不再更新。';
   };
   channel.postMessage({ type: 'ready' });
   addEventListener('pagehide', () => channel.postMessage({ type: 'closed' }));

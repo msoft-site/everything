@@ -37,7 +37,7 @@ function waitForSdk(limit = 15000) {
         resolve();
       } else if (waited > limit) {
         clearInterval(t);
-        reject(new Error('Puter could not be loaded. Check your connection and reload.'));
+        reject(new Error('无法加载 Puter。请检查网络连接并重新加载。'));
       }
     }, 50);
   });
@@ -52,9 +52,9 @@ function alphaNotice() {
     return;
   }
   toast(
-    h('span', 'Help Desk is in early alpha. Features may change and data could be lost, so please do not rely on it for real customer support yet.'),
+    h('span', '客服工单系统目前处于早期预览阶段。功能可能会发生变化且数据可能会丢失，请勿将其用于正式的客户支持。'),
     {
-      title: 'Early preview',
+      title: '早期预览',
       kind: 'info',
       persistent: true,
       onClose: () => {
@@ -83,11 +83,11 @@ async function start() {
     mountPortal(root, route);
     return;
   }
-  loadingScreen(root, 'Starting');
+  loadingScreen(root, '正在启动');
   try {
     await waitForSdk();
   } catch (e) {
-    errorScreen(root, { title: 'Could not start', message: e.message });
+    errorScreen(root, { title: '无法启动', message: e.message });
     return;
   }
   if (!isSignedIn()) {
@@ -108,7 +108,7 @@ async function boot() {
     app.user = await currentUser();
     await app.loadDoc();
   } catch (e) {
-    errorScreen(root, { title: 'Could not load your account', message: e?.message || 'Try reloading the page.' });
+    errorScreen(root, { title: '无法加载您的账户', message: e?.message || '请尝试重新加载页面。' });
     return;
   }
   alphaNotice();
@@ -137,12 +137,12 @@ async function enterDesk(server, desk) {
   } catch (e) {
     const others = app.desks().filter((d) => !(d.server === server && d.desk === desk));
     errorScreen(root, {
-      title: e?.status === 403 ? 'You no longer have access' : 'Could not open the help desk',
-      message: e?.message || 'Try again in a moment.',
+      title: e?.status === 403 ? '您已无权访问' : '无法打开服务台',
+      message: e?.message || '请稍后再试。',
       action: h('div.stack',
-        h('button.btn.btn-primary.btn-block', { type: 'button', onclick: () => enterDesk(server, desk) }, 'Try again'),
-        others.length ? h('button.btn.btn-block', { type: 'button', onclick: () => enterDesk(others[0].server, others[0].desk) }, `Open ${others[0].name || 'another help desk'}`) : null,
-        h('button.btn.btn-ghost.btn-block', { type: 'button', onclick: createFlow }, 'Create a new help desk')),
+        h('button.btn.btn-primary.btn-block', { type: 'button', onclick: () => enterDesk(server, desk) }, '重试'),
+        others.length ? h('button.btn.btn-block', { type: 'button', onclick: () => enterDesk(others[0].server, others[0].desk) }, `打开 ${others[0].name || '其他服务台'}`) : null,
+        h('button.btn.btn-ghost.btn-block', { type: 'button', onclick: createFlow }, '创建新服务台')),
     });
     return;
   }
@@ -165,25 +165,25 @@ function createFlow() {
       const desk = await app.createDesk({ name, agentName });
       history.replaceState(null, '', '#/home');
       await enterDesk(LOCAL, desk);
-      toast('Your help desk is ready. Create a ticket, or invite your team from Admin.', { kind: 'success', title: name });
+      toast('您的服务台已就绪。您可以创建工单，或在“管理”中邀请您的团队。', { kind: 'success', title: name });
     },
   });
 }
 
 function joinFlow(server, desk, code) {
   if (!/^[a-z0-9_-]{3,63}$/.test(server)) {
-    errorScreen(root, { title: 'This invite link is not valid', message: 'Ask an administrator for a new link.' });
+    errorScreen(root, { title: '此邀请链接无效', message: '请向管理员索取新链接。' });
     return;
   }
-  loadingScreen(root, 'Opening your invitation');
+  loadingScreen(root, '正在打开您的邀请');
   serverApi.invite(server, desk, code).then(
     (invite) => showJoin(server, desk, code, invite),
     (e) => {
       if (e?.status === 404) {
         errorScreen(root, {
-          title: 'This invite link no longer works',
+          title: '此邀请链接已失效',
           message: e.message,
-          action: h('button.btn.btn-block', { type: 'button', onclick: () => { history.replaceState(null, '', '#/home'); boot(); } }, 'Continue'),
+          action: h('button.btn.btn-block', { type: 'button', onclick: () => { history.replaceState(null, '', '#/home'); boot(); } }, '继续'),
         });
       } else showJoin(server, desk, code, null);
     },
@@ -206,7 +206,7 @@ function showJoin(server, desk, code, invite) {
       app.doc.desks[`${server}/${desk}`] = { server, desk, name: res.meta?.name, role: res.me?.role, at: Date.now() };
       history.replaceState(null, '', '#/home');
       await enterDesk(server, desk);
-      toast(res.already ? 'You were already on this help desk.' : `Welcome to ${res.meta?.name || 'the team'}.`, { kind: 'success' });
+      toast(res.already ? '您已在该服务台中。' : `欢迎加入 ${res.meta?.name || '团队'}。`, { kind: 'success' });
     },
   });
 }
@@ -217,7 +217,7 @@ app.addEventListener('switch', (e) => {
 });
 app.addEventListener('create', createFlow);
 app.addEventListener('removed', () => {
-  toastError({ message: 'You no longer have access to this help desk.' });
+  toastError({ message: '您已无权访问此服务台。' });
   const others = app.desks().filter((d) => `${d.server}/${d.desk}` !== app.ref);
   if (others.length) enterDesk(others[0].server, others[0].desk);
   else createFlow();

@@ -7,12 +7,12 @@ import { openDialog } from '../ui/dialog.js';
 import * as puter from '../storage/puter.js';
 
 const LATENCY = [
-  { value: 'interactive', label: 'Lowest latency', hint: 'Best for playing live. Needs a fast device.' },
-  { value: 'balanced', label: 'Balanced', hint: 'A little more delay, fewer dropouts.' },
-  { value: 'playback', label: 'Most stable', hint: 'For slower devices and big projects. Playing live feels delayed.' },
+  { value: 'interactive', label: '最低延迟', hint: '最适合实时演奏，需要性能较好的设备。' },
+  { value: 'balanced', label: '平衡', hint: '延迟略高，减少爆音与卡顿。' },
+  { value: 'playback', label: '最稳定', hint: '适合配置较低的设备与大型工程，实时演奏会有明显延迟。' },
 ];
 const RATES = [
-  { value: 'auto', label: 'Device default' },
+  { value: 'auto', label: '设备默认' },
   { value: 44100, label: '44.1 kHz' },
   { value: 48000, label: '48 kHz' },
   { value: 96000, label: '96 kHz' },
@@ -81,29 +81,29 @@ export async function openPreferences(app, { section = 'general' } = {}) {
   // ---------------------------------------------------------------- general
   const general = h(
     'div.pref-section',
-    selectRow('Theme', [{ value: 'system', label: 'Match system' }, { value: 'light', label: 'Light' }, { value: 'dark', label: 'Dark' }], prefs.get('theme'), (v) => app.commands.run(`theme.${v}`)),
-    checkRow('Show hints in the status bar', prefs.get('hints') !== false, (v) => prefs.set('hints', v), 'Describes the control under the pointer.'),
-    buttonRow('Window layout', 'Reset layout', () => {
+    selectRow('主题', [{ value: 'system', label: '跟随系统' }, { value: 'light', label: '浅色' }, { value: 'dark', label: '深色' }], prefs.get('theme'), (v) => app.commands.run(`theme.${v}`)),
+    checkRow('在状态栏中显示提示', prefs.get('hints') !== false, (v) => prefs.set('hints', v), '描述鼠标指针下方的控件。'),
+    buttonRow('窗口布局', '重置布局', () => {
       app.commands.run('view.resetLayout');
-      app.notify('Window layout reset');
+      app.notify('窗口布局已重置');
     }),
-    buttonRow('Messages', 'Show all messages again', () => {
+    buttonRow('提示消息', '重新显示所有消息', () => {
       prefs.set('dismissedNotices', []);
       try {
         localStorage.removeItem('music-studio:alphaNoticeSeen');
       } catch {
         // Blocked storage: nothing was remembered anyway.
       }
-      app.notify('Dismissed messages will show again');
-    }, 'One-time notices, such as the alpha notice and the save tips, show again.'),
+      app.notify('已关闭的提示消息将重新显示');
+    }, '重新显示内测提示和保存技巧等一次性通知。'),
   );
 
   // ---------------------------------------------------------------- audio
   const latencyHint = h('div.pref-hint');
   const syncLatencyHint = (v) => {
-    latencyHint.textContent = `${LATENCY.find((l) => l.value === v)?.hint || ''} Applies the next time audio starts.`;
+    latencyHint.textContent = `${LATENCY.find((l) => l.value === v)?.hint || ''} 将在下次启动音频时生效。`;
   };
-  const latency = selectRow('Latency', LATENCY, prefs.get('latencyHint'), (v) => {
+  const latency = selectRow('延迟', LATENCY, prefs.get('latencyHint'), (v) => {
     prefs.set('latencyHint', v);
     syncLatencyHint(v);
     engine.restart?.();
@@ -111,23 +111,23 @@ export async function openPreferences(app, { section = 'general' } = {}) {
   latency.querySelector('.pref-control').append(latencyHint);
   syncLatencyHint(prefs.get('latencyHint'));
 
-  const rate = selectRow('Sample rate', RATES, prefs.get('sampleRate') ?? 'auto', (v) => {
+  const rate = selectRow('采样率', RATES, prefs.get('sampleRate') ?? 'auto', (v) => {
     prefs.set('sampleRate', v === 'auto' ? 'auto' : Number(v));
     engine.restart?.();
-  }, 'Applies the next time audio starts. Exports choose their own rate.');
+  }, '将在下次启动音频时生效。导出音频时可单独选择采样率。');
 
   const audio = h('div.pref-section', latency, rate);
   const canSink = typeof AudioContext !== 'undefined' && 'setSinkId' in AudioContext.prototype;
   if (canSink && navigator.mediaDevices?.enumerateDevices) {
     const id = nid('pref');
-    const sel = h('select.select', { id }, h('option', { value: '' }, 'System default'));
-    const row = h('div.pref-row', h('label', { for: id }, 'Output device'), h('div.pref-control', sel, h('div.pref-hint', 'Device names appear once the browser has allowed audio input.')));
+    const sel = h('select.select', { id }, h('option', { value: '' }, '系统默认'));
+    const row = h('div.pref-row', h('label', { for: id }, '输出设备'), h('div.pref-control', sel, h('div.pref-hint', '浏览器允许音频输入后将显示设备名称。')));
     audio.append(row);
     navigator.mediaDevices
       .enumerateDevices()
       .then((list) => {
         const outs = list.filter((d) => d.kind === 'audiooutput' && d.deviceId && d.deviceId !== 'default');
-        outs.forEach((d, i) => sel.append(h('option', { value: d.deviceId, selected: d.deviceId === prefs.get('outputDevice') }, d.label || `Output ${i + 1}`)));
+        outs.forEach((d, i) => sel.append(h('option', { value: d.deviceId, selected: d.deviceId === prefs.get('outputDevice') }, d.label || `输出设备 ${i + 1}`)));
       })
       .catch(() => {});
     sel.addEventListener('change', async () => {
@@ -137,14 +137,14 @@ export async function openPreferences(app, { section = 'general' } = {}) {
         await changeOutput(engine, prefs, choice);
       } catch (err) {
         sel.value = prefs.get('outputDevice') || '';
-        app.notify(`That output could not be used: ${err?.message || err}`, { error: true });
+        app.notify(`无法使用该输出设备：${err?.message || err}`, { error: true });
       } finally {
         sel.disabled = false;
       }
     });
   }
   audio.append(
-    buttonRow('Test', 'Play test tone', async () => {
+    buttonRow('测试', '播放测试音', async () => {
       cancelTone();
       const request = toneRequest;
       try {
@@ -155,39 +155,39 @@ export async function openPreferences(app, { section = 'general' } = {}) {
       } catch (err) {
         if (request === toneRequest && audio.isConnected) app.reportError(err);
       }
-    }, 'A one-second A at 440 Hz through the master output.'),
+    }, '通过主输出播放持续 1 秒的 440 Hz A 音。'),
   );
   if (app.commands.has('options.midiInput')) {
-    audio.append(checkRow('MIDI keyboard input', Boolean(app.commands.checked('options.midiInput')), () => app.commands.run('options.midiInput'), 'Play instruments from a connected MIDI keyboard.'));
+    audio.append(checkRow('MIDI 键盘输入', Boolean(app.commands.checked('options.midiInput')), () => app.commands.run('options.midiInput'), '使用已连接的 MIDI 键盘演奏乐器。'));
   }
 
   // ---------------------------------------------------------------- saving
   const signedIn = puter.isSignedIn();
-  const where = h('p.pref-note', signedIn ? 'Projects save to your Puter cloud (Music Studio files, Projects). Your current session is also kept in this browser, so a reload never loses work.' : 'You are not signed in, so projects save in this browser on this device. Your current session is kept automatically, so a reload never loses work.');
+  const where = h('p.pref-note', signedIn ? '工程将保存到您的 Puter 云端（Music Studio 文件 > Projects）。当前会话也会保存在此浏览器中，因此刷新页面不会丢失工作内容。' : '您尚未登录，因此工程将保存在当前设备的此浏览器中。当前会话会自动保留，刷新页面不会丢失工作内容。');
   const saving = h(
     'div.pref-section',
     where,
-    checkRow('Autosave cloud projects', prefs.get('cloudAutosave') !== false, (v) => prefs.set('cloudAutosave', v), 'Saves a project that is in your Puter cloud a minute after you stop editing, and when you leave the page.'),
+    checkRow('自动保存云端工程', prefs.get('cloudAutosave') !== false, (v) => prefs.set('cloudAutosave', v), '在您停止编辑一分钟后以及离开页面时，自动保存位于 Puter 云端的工程。'),
   );
   if (!signedIn && puter.sdk() && puter.env() !== 'app') {
-    saving.append(buttonRow('Puter cloud', 'Sign in', () => app.signIn?.(), 'Save projects to your Puter cloud and open them on any device.'));
+    saving.append(buttonRow('Puter 云端', '登录', () => app.signIn?.(), '将工程保存到您的 Puter 云端，并在任何设备上打开。'));
   }
   const usage = h('div.pref-hint');
-  saving.append(h('div.pref-row', h('span.pref-label', 'This browser'), h('div.pref-control', usage)));
+  saving.append(h('div.pref-row', h('span.pref-label', '当前浏览器'), h('div.pref-control', usage)));
   navigator.storage
     ?.estimate?.()
     .then((e) => {
-      if (e?.usage !== undefined) usage.textContent = `${(e.usage / 1024 / 1024).toFixed(1)} MB used by Music Studio and other data for this site.`;
+      if (e?.usage !== undefined) usage.textContent = `音乐工作室及本站其他数据已使用 ${(e.usage / 1024 / 1024).toFixed(1)} MB。`;
     })
     .catch(() => {});
 
   // ---------------------------------------------------------------- tabs
   const sections = [
-    { id: 'general', label: 'General', el: general },
-    { id: 'audio', label: 'Audio', el: audio },
-    { id: 'saving', label: 'Saving', el: saving },
+    { id: 'general', label: '常规', el: general },
+    { id: 'audio', label: '音频', el: audio },
+    { id: 'saving', label: '保存', el: saving },
   ];
-  const tabs = h('div.pref-tabs', { role: 'tablist', 'aria-label': 'Preferences', 'aria-orientation': 'vertical' });
+  const tabs = h('div.pref-tabs', { role: 'tablist', 'aria-label': '首选项', 'aria-orientation': 'vertical' });
   const panels = h('div.pref-panels');
   const select = (id, focus = false) => {
     for (const s of sections) {
@@ -222,11 +222,11 @@ export async function openPreferences(app, { section = 'general' } = {}) {
   select(sections.some((s) => s.id === section) ? section : 'general');
 
   await openDialog({
-    title: 'Preferences',
+    title: '首选项',
     wide: true,
     className: 'dlg-prefs',
     body: h('div.prefs', tabs, panels),
-    buttons: [{ label: 'Done', value: true, primary: true }],
+    buttons: [{ label: '完成', value: true, primary: true }],
     initialFocus: '.pref-tab[aria-selected="true"]',
   });
   cancelTone();

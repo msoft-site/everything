@@ -14,8 +14,8 @@ export function formatWhen(ms, now = Date.now()) {
   const day = (x) => new Date(x.getFullYear(), x.getMonth(), x.getDate()).getTime();
   const diff = Math.round((day(today) - day(d)) / 86400000);
   const time = d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  if (diff === 0) return `Today ${time}`;
-  if (diff === 1) return `Yesterday ${time}`;
+  if (diff === 0) return `今天 ${time}`;
+  if (diff === 1) return `昨天 ${time}`;
   return d.toLocaleDateString([], { day: 'numeric', month: 'short', year: d.getFullYear() === today.getFullYear() ? undefined : 'numeric' });
 }
 
@@ -25,8 +25,8 @@ export async function openLocalProjects(app) {
   const lib = app.library;
   let items = await lib.listLocal();
   let selected = items.find((m) => m.key === app.file?.local)?.key || items[0]?.key || null;
-  const list = h('div.lp-list', { role: 'listbox', 'aria-label': 'Projects saved in this browser', tabindex: '0', 'data-own-enter': '' });
-  const empty = h('div.lp-empty', h('p', 'No projects are saved in this browser yet.'), h('p.faint', 'Use File > Save to keep the current project here.'));
+  const list = h('div.lp-list', { role: 'listbox', 'aria-label': '保存在此浏览器中的工程', tabindex: '0', 'data-own-enter': '' });
+  const empty = h('div.lp-empty', h('p', '此浏览器中尚未保存任何工程。'), h('p.faint', '使用“文件 > 保存”将当前工程保存在此处。'));
   let closeDialog = null;
 
   const render = () => {
@@ -40,10 +40,10 @@ export async function openLocalProjects(app) {
         'div.lp-row',
         { role: 'option', id: `lp-${m.key}`, 'aria-selected': String(m.key === selected), dataset: { key: m.key } },
         h('span.lp-icon', icon('file-music', 16)),
-        h('span.lp-name', m.name, m.key === app.file?.local ? h('span.lp-badge', 'Open') : null),
+        h('span.lp-name', m.name, m.key === app.file?.local ? h('span.lp-badge', '当前打开') : null),
         h('span.lp-meta.faint', `${formatWhen(m.modified)}, ${size(m.size || 0)}`),
-        h('button.icon-btn.sm', { type: 'button', tabindex: '-1', 'aria-label': `Download ${m.name}`, title: 'Save to your device', onclick: (e) => (e.stopPropagation(), download(m)) }, icon('download', 14)),
-        h('button.icon-btn.sm', { type: 'button', tabindex: '-1', 'aria-label': `Delete ${m.name}`, title: 'Delete from this browser', onclick: (e) => (e.stopPropagation(), remove(m)) }, icon('trash-2', 14)),
+        h('button.icon-btn.sm', { type: 'button', tabindex: '-1', 'aria-label': `下载 ${m.name}`, title: '保存到当前设备', onclick: (e) => (e.stopPropagation(), download(m)) }, icon('download', 14)),
+        h('button.icon-btn.sm', { type: 'button', tabindex: '-1', 'aria-label': `删除 ${m.name}`, title: '从此浏览器中删除', onclick: (e) => (e.stopPropagation(), remove(m)) }, icon('trash-2', 14)),
       );
       row.addEventListener('click', () => select(m.key));
       row.addEventListener('dblclick', () => open(m.key));
@@ -72,7 +72,7 @@ export async function openLocalProjects(app) {
     }
   };
   const remove = async (m) => {
-    const ok = await confirmDialog({ title: 'Delete project', message: `Delete "${m.name}" from this browser? This cannot be undone.`, confirm: 'Delete', danger: true });
+    const ok = await confirmDialog({ title: '删除工程', message: `要从此浏览器中删除“${m.name}”吗？此操作无法撤销。`, confirm: '删除', danger: true });
     if (!ok) return;
     try {
       await lib.deleteLocal(m.key);
@@ -81,7 +81,7 @@ export async function openLocalProjects(app) {
       items = items.filter((item) => item.key !== m.key);
       if (selected === m.key) selected = items[0]?.key || null;
       render();
-      announce(`Deleted ${m.name}`);
+      announce(`已删除 ${m.name}`);
       items = await lib.listLocal();
       if (!items.some((item) => item.key === selected)) selected = items[0]?.key || null;
       render();
@@ -112,12 +112,12 @@ export async function openLocalProjects(app) {
     list,
     empty,
     canSignIn
-      ? h('div.lp-cloud', icon('cloud', 16), h('span', 'Sign in to Puter to save projects to your cloud and open them on any device.'), h('button.btn.sm', { type: 'button', onclick: () => (closeDialog?.(null), app.signIn?.()) }, 'Sign in'))
+      ? h('div.lp-cloud', icon('cloud', 16), h('span', '登录 Puter 以将工程保存到云端，并在任何设备上打开。'), h('button.btn.sm', { type: 'button', onclick: () => (closeDialog?.(null), app.signIn?.()) }, '登录'))
       : null,
   );
-  const footerStart = h('button.btn', { type: 'button', onclick: () => (closeDialog?.(null), app.commands.run('file.openLocal')) }, icon('upload', 14), h('span', 'Open from this device...'));
+  const footerStart = h('button.btn', { type: 'button', onclick: () => (closeDialog?.(null), app.commands.run('file.openLocal')) }, icon('upload', 14), h('span', '从当前设备打开...'));
   const r = await openDialog({
-    title: 'Open project',
+    title: '打开工程',
     wide: true,
     className: 'dlg-open-local',
     body: (close) => {
@@ -126,8 +126,8 @@ export async function openLocalProjects(app) {
     },
     footerStart,
     buttons: [
-      { label: 'Cancel', value: null },
-      { label: 'Open', value: 'open', primary: true, disabled: !items.length },
+      { label: '取消', value: null },
+      { label: '打开', value: 'open', primary: true, disabled: !items.length },
     ],
     initialFocus: '.lp-list',
   });

@@ -36,7 +36,7 @@ export function mountHome(root, ctx) {
   const clock = el('span', { class: 'home-clock' }, clockText());
   const themeBtn = el(
     'button',
-    { class: 'icon-btn', 'aria-label': 'Toggle theme', title: 'Toggle light/dark theme', onclick: onThemeToggle },
+    { class: 'icon-btn', 'aria-label': '切换主题', title: '切换浅色/深色主题', onclick: onThemeToggle },
     icon(effectiveTheme() === 'dark' ? 'sun' : 'moon')
   );
 
@@ -46,7 +46,7 @@ export function mountHome(root, ctx) {
   const accountMenu = userMenu({ onSignOut: signOut, onSignIn: onSignedIn, onSignedOut });
   let closeSettings = null;
   const settingsBtn = el('button', {
-    class: 'icon-btn', 'aria-label': 'Settings', title: 'Settings',
+    class: 'icon-btn', 'aria-label': '设置', title: '设置',
     onclick: () => {
       closeSettings?.();
       closeSettings = openHomeSettings(root, ctx, settingsBtn);
@@ -55,8 +55,8 @@ export function mountHome(root, ctx) {
 
   const joinInput = el('input', {
     type: 'text',
-    placeholder: 'Enter a code or link',
-    'aria-label': 'Meeting code or link',
+    placeholder: '输入会议代码或链接',
+    'aria-label': '会议代码或链接',
     autocomplete: 'off',
     autocorrect: 'off',
     autocapitalize: 'off',
@@ -68,8 +68,8 @@ export function mountHome(root, ctx) {
       joinBtn.disabled = !joinInput.value.trim();
     },
   });
-  const joinBtn = el('button', { class: 'btn home-join-btn', disabled: true, onclick: onJoin }, 'Join');
-  const newMeetingLabel = el('span', {}, 'New meeting');
+  const joinBtn = el('button', { class: 'btn home-join-btn', disabled: true, onclick: onJoin }, '加入');
+  const newMeetingLabel = el('span', {}, '新建会议');
   const newMeetingBtn = el(
     'button',
     { class: 'btn btn-primary', 'aria-haspopup': 'menu', 'aria-expanded': 'false', onclick: toggleNewMenu },
@@ -92,8 +92,8 @@ export function mountHome(root, ctx) {
       el(
         'section',
         { class: 'home-hero' },
-        el('h1', {}, 'Video meetings, ', el('span', { class: 'home-hero-accent' }, 'right in your browser.')),
-        el('p', { class: 'home-lede' }, 'Start a call in seconds, or create a link to share for later. It all runs in your browser.'),
+        el('h1', {}, '视频会议，', el('span', { class: 'home-hero-accent' }, '就在您的浏览器中。')),
+        el('p', { class: 'home-lede' }, '几秒钟内发起通话，或创建链接稍后分享。一切均在您的浏览器中运行。'),
         el(
           'div',
           { class: 'home-actions' },
@@ -103,16 +103,16 @@ export function mountHome(root, ctx) {
         el(
           'ul',
           { class: 'home-features' },
-          feature('Nothing to install'),
-          feature('Links never expire'),
-          feature('No account needed to join')
+          feature('无需安装任何软件'),
+          feature('链接永不过期'),
+          feature('无需账号即可加入')
         ),
         hasPuter() && !ctx.calendar?.supported()
           ? el(
               'p',
               { class: 'home-art-hint' },
               icon('calendar'),
-              'Open Meetings from your Puter desktop to see the day’s meetings from Calendar here.'
+              '从您的 Puter 桌面打开“视频会议”，即可在此查看日历中当天的会议。'
             )
           : null
       ),
@@ -152,7 +152,7 @@ export function mountHome(root, ctx) {
         try {
           void window.puter.ui.launchApp({ name: 'calendar' });
         } catch {
-          toast('Could not open Calendar.', { icon: 'info' });
+          toast('无法打开日历。', { icon: 'info' });
         }
       },
     });
@@ -183,12 +183,12 @@ export function mountHome(root, ctx) {
     newMenu = el(
       'div',
       { class: 'menu home-new-menu', role: 'menu' },
-      menuItem('videoCall', 'Start an instant meeting', () => {
+      menuItem('videoCall', '发起即时会议', () => {
         closeNewMenu();
         newMeetingBtn.focus();
         void onStartInstant();
       }),
-      menuItem('link', 'Create a meeting for later', () => {
+      menuItem('link', '创建稍后使用的会议', () => {
         closeNewMenu();
         // Removing the focused menu item drops focus to <body>; return it to
         // the trigger while creation runs (the dialog takes focus when ready).
@@ -255,13 +255,13 @@ export function mountHome(root, ctx) {
     if (starting) return;
     starting = true;
     newMeetingBtn.disabled = true;
-    newMeetingLabel.textContent = 'Starting…';
+    newMeetingLabel.textContent = '正在发起…';
     try {
       await ctx.startInstantMeeting();
     } finally {
       starting = false;
       newMeetingBtn.disabled = false;
-      newMeetingLabel.textContent = 'New meeting';
+      newMeetingLabel.textContent = '新建会议';
     }
   }
 
@@ -307,12 +307,12 @@ export function mountHome(root, ctx) {
     };
     const dialog = el(
       'div',
-      { class: 'dialog', role: 'dialog', 'aria-modal': 'true', 'aria-label': 'Meeting link', tabindex: '-1' },
+      { class: 'dialog', role: 'dialog', 'aria-modal': 'true', 'aria-label': '会议链接', tabindex: '-1' },
       el(
         'div',
         { class: 'dialog-header' },
-        el('h2', {}, 'Here’s your meeting link'),
-        el('button', { class: 'icon-btn', 'aria-label': 'Close', onclick: close }, icon('close'))
+        el('h2', {}, '这是您的会议链接'),
+        el('button', { class: 'icon-btn', 'aria-label': '关闭', onclick: close }, icon('close'))
       ),
       el(
         'div',
@@ -320,7 +320,7 @@ export function mountHome(root, ctx) {
         el(
           'p',
           { class: 'home-link-note' },
-          'Send this link to people you want to meet with, or drop it in a calendar invite. It never expires. When it’s time, open it to start the meeting — you, or anyone else holding the link, can. Guests who arrive early wait until someone does.'
+          '将此链接发送给您想会面的人，或将其添加到日历邀请中。该链接永不过期。到时间后，打开链接即可发起会议 —— 您或任何持有该链接的人都可以发起。提早到达的访客将等待有人发起会议。'
         ),
         el('div', { class: 'info-link-box' }, url),
         el(
@@ -328,10 +328,10 @@ export function mountHome(root, ctx) {
           {
             class: 'btn btn-primary',
             style: { alignSelf: 'flex-start' },
-            onclick: () => copyText(url, 'Meeting link copied'),
+            onclick: () => copyText(url, '已复制会议链接'),
           },
           icon('copy'),
-          'Copy meeting link'
+          '复制会议链接'
         )
       )
     );
@@ -361,7 +361,7 @@ export function mountHome(root, ctx) {
   function onJoin() {
     const code = extractCode(joinInput.value);
     if (!code) {
-      toast('Enter a meeting code or paste a meeting link.', { icon: 'info' });
+      toast('请输入会议代码或粘贴会议链接。', { icon: 'info' });
       return;
     }
     ctx.openPrejoin({ mode: 'join', code });
@@ -410,7 +410,7 @@ export function mountHome(root, ctx) {
       // username as the fallback display name.
       if (!userSlot.contains(accountMenu)) clear(userSlot).append(accountMenu);
       const user = await currentUser();
-      if (mounted && user && !ctx.getUserName?.()) ctx.setUserName?.(user.username ?? 'You');
+      if (mounted && user && !ctx.getUserName?.()) ctx.setUserName?.(user.username ?? '您');
       return;
     }
     clear(userSlot);
@@ -422,15 +422,15 @@ export function mountHome(root, ctx) {
         userSlot.append(avatar);
         const user = await currentUser();
         if (!mounted || !userSlot.contains(avatar)) return;
-        const name = user?.username ?? 'You';
+        const name = user?.username ?? '您';
         userSlot.append(
           avatar,
           el(
             'button',
             {
               class: 'icon-btn',
-              title: 'Sign out',
-              'aria-label': 'Sign out',
+              title: '退出登录',
+              'aria-label': '退出登录',
               onclick: signOut,
             },
             icon('logout')
@@ -455,7 +455,7 @@ export function mountHome(root, ctx) {
                 }
               },
             },
-            'Sign in'
+            '登录'
           )
         );
       }

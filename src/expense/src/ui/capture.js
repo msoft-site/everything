@@ -23,7 +23,7 @@ export function openCapture({ onSaved = null } = {}) {
   cameraInput.addEventListener('change', () => { start([...cameraInput.files]); cameraInput.value = ''; });
 
   const drop = el('div.dropzone', {
-    role: 'button', tabindex: 0, 'aria-label': 'Choose receipt files',
+    role: 'button', tabindex: 0, 'aria-label': '选择票据文件',
     onclick: () => fileInput.click(),
     onkeydown: (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fileInput.click(); } },
     ondragover: (e) => { e.preventDefault(); drop.classList.add('over'); },
@@ -31,21 +31,21 @@ export function openCapture({ onSaved = null } = {}) {
     ondrop: (e) => { e.preventDefault(); drop.classList.remove('over'); start([...(e.dataTransfer?.files || [])]); },
   },
     el('div.empty-icon', { html: icon('scan', 26) }),
-    el('h3', {}, 'Drop receipts here'),
-    el('p', {}, 'Photos, scans, or PDFs up to 10 MB. Several at once is fine.'),
+    el('h3', {}, '将票据拖放到此处'),
+    el('p', {}, '支持最大 10 MB 的照片、扫描件或 PDF，可一次上传多个文件。'),
     el('div.dropzone-actions', {},
-      el('button.btn.btn-primary', { type: 'button', html: icon('camera', 16, 2.2), onclick: (e) => { e.stopPropagation(); cameraInput.click(); } }, 'Take photo'),
-      el('button.btn.btn-outline', { type: 'button', html: icon('upload', 16, 2.2), onclick: (e) => { e.stopPropagation(); fileInput.click(); } }, 'Choose files')
+      el('button.btn.btn-primary', { type: 'button', html: icon('camera', 16, 2.2), onclick: (e) => { e.stopPropagation(); cameraInput.click(); } }, '拍照'),
+      el('button.btn.btn-outline', { type: 'button', html: icon('upload', 16, 2.2), onclick: (e) => { e.stopPropagation(); fileInput.click(); } }, '选择文件')
     )
   );
 
   const manual = el('button.btn.btn-ghost.btn-block', {
     type: 'button', style: { marginTop: '12px' },
     onclick: () => { modal.close(); openExpenseForm({ onSaved }); },
-  }, 'Enter an expense without a receipt');
+  }, '无票据手动录入费用');
 
   const body = el('div', {}, fileInput, cameraInput, drop, manual);
-  const modal = openModal({ title: 'Capture receipt', content: body });
+  const modal = openModal({ title: '采集票据', content: body });
 
   // Pasting an image from the clipboard also works.
   const onPaste = (e) => {
@@ -60,8 +60,8 @@ export function openCapture({ onSaved = null } = {}) {
     const ok = files.filter((f) => ACCEPT.test(f.type || '') || /\.(jpe?g|png|webp|heic|gif|pdf)$/i.test(f.name));
     const tooBig = ok.filter((f) => f.size > MAX_BYTES);
     const usable = ok.filter((f) => f.size <= MAX_BYTES);
-    if (files.length && !ok.length) { toast('Only images and PDFs can be read', { icon: 'warn' }); return; }
-    if (tooBig.length) toast(`${tooBig.length} file${tooBig.length === 1 ? ' is' : 's are'} over 10 MB and skipped`, { icon: 'warn' });
+    if (files.length && !ok.length) { toast('仅支持读取图片和 PDF 文件', { icon: 'warn' }); return; }
+    if (tooBig.length) toast(`${tooBig.length} 个文件超过 10 MB，已跳过`, { icon: 'warn' });
     if (!usable.length) return;
     modal.close();
     await processQueue(usable, { onSaved });
@@ -73,7 +73,7 @@ async function processQueue(files, { onSaved }) {
   let index = 0;
   for (const file of files) {
     index += 1;
-    const label = files.length > 1 ? ` (${index} of ${files.length})` : '';
+    const label = files.length > 1 ? `（第 ${index}/${files.length} 张）` : '';
     // eslint-disable-next-line no-await-in-loop
     await captureOne(file, { label, onSaved });
   }
@@ -85,15 +85,15 @@ function captureOne(file, { label, onSaved }) {
       /pdf$/i.test(file.type) ? el('span.receipt-pdf-mark', { html: icon('file', 34, 1.5) }) : el('img', { src: previewURL(file), alt: '' }),
       el('div.capture-scan', { 'aria-hidden': 'true' })
     );
-    const status = el('p.capture-status', { role: 'status' }, 'Reading the receipt with AI');
-    const skip = el('button.btn.btn-ghost', { type: 'button' }, 'Skip AI, fill in manually');
-    const cancel = el('button.btn.btn-outline', { type: 'button' }, 'Cancel');
+    const status = el('p.capture-status', { role: 'status' }, '正在通过 AI 识别票据…');
+    const skip = el('button.btn.btn-ghost', { type: 'button' }, '跳过 AI，手动填写');
+    const cancel = el('button.btn.btn-outline', { type: 'button' }, '取消');
     const body = el('div.capture-body', {}, preview, status, el('div.row', { style: { justifyContent: 'center', marginTop: '14px' } }, cancel, skip));
 
     let settled = false;
     let aborted = false;
     const finish = () => { if (!settled) { settled = true; resolve(); } };
-    const modal = openModal({ title: `Reading receipt${label}`, content: body, onClose: () => { if (!settled) { aborted = true; finish(); } } });
+    const modal = openModal({ title: `正在识别票据${label}`, content: body, onClose: () => { if (!settled) { aborted = true; finish(); } } });
 
     skip.onclick = () => {
       aborted = true;
@@ -122,10 +122,10 @@ function captureOne(file, { label, onSaved }) {
       .catch((err) => {
         if (aborted) return;
         console.error(err);
-        status.textContent = err.message || 'Couldn’t read the receipt.';
+        status.textContent = err.message || '无法读取票据。';
         status.classList.add('is-error');
         preview.classList.add('done');
-        skip.textContent = 'Fill in manually';
+        skip.textContent = '手动填写';
         skip.classList.remove('btn-ghost');
         skip.classList.add('btn-primary');
       });

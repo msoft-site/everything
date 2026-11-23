@@ -218,13 +218,13 @@ function showWin() {
   saveLocalStats(stats);
   if (game.scoring === 'vegas') {
     settleVegas();
-    winStatsEl.textContent = `${game.moves} moves, ${money(game.score)} this game. `
-      + `Bank: ${money(vegasBank(stats))}.`;
+    winStatsEl.textContent = `共 ${game.moves} 步，本局得分 ${money(game.score)}。`
+      + `总资金：${money(vegasBank(stats))}。`;
     updateStats();
   } else {
     const best = modeStats(stats, mode).bestMoves;
-    winStatsEl.textContent = `${game.moves} moves. Nicely done.`
-      + (best === game.moves ? ' New best.' : ` Best: ${best}.`);
+    winStatsEl.textContent = `共 ${game.moves} 步。干得漂亮。`
+      + (best === game.moves ? ' 创造了新纪录！' : ` 最佳纪录：${best} 步。`);
   }
   winEl.classList.add('show');
   if (signedIn) syncStats(); // pull, merge, push — same guard as everywhere else; fire-and-forget
@@ -266,8 +266,8 @@ function flyCompletedRuns(kingIds) {
 }
 
 const REFUSED_DRAW = {
-  'no-redeals': 'No passes left through the deck.',
-  'empty-column': 'Fill every empty column before dealing.',
+  'no-redeals': '发牌堆翻牌次数已用尽。',
+  'empty-column': '发牌前请先填满所有空列。',
 };
 
 function onStockTap() {
@@ -533,7 +533,7 @@ mountUserMenu(document.querySelector('header .actions'), {
   onSignIn: () => {
     remoteSaveTrusted = false;
     startCloudSync();
-    toast('Signed in. Your game and records now sync to your account.');
+    toast('已登录。您的牌局和战绩记录现已同步至账户。');
   },
   // Signed out: nothing more goes to the account that was left, and whatever
   // was still on its way back from it is dropped. The game on the table and
@@ -542,6 +542,6 @@ mountUserMenu(document.querySelector('header .actions'), {
     cloudEpoch++;
     signedIn = false;
     remoteSaveTrusted = false;
-    toast('Signed out. Your game stays on this device.');
+    toast('已退出登录。您的牌局仍保存在当前设备上。');
   },
 });

@@ -98,8 +98,8 @@ export function bindCanvas(e: Editor) {
       r = Math.max(1, (v.size * e.zoom) / 2),
       color = e.preferences.brushPreviewColor;
     const inner = Math.round(Math.min(0.999, v.hardness) * 100);
-    const label = e.preferences.altDragHardness ? `Hardness ${Math.round(v.hardness * 100)}%` : `Opacity ${Math.round(v.opacity * 100)}%`;
-    e.screenOverlayContent = `<defs><radialGradient id="brush-adjust-fill"><stop offset="0%" stop-color="${color}" stop-opacity="0.55"/><stop offset="${inner}%" stop-color="${color}" stop-opacity="0.55"/><stop offset="100%" stop-color="${color}" stop-opacity="0"/></radialGradient></defs><ellipse cx="${x}" cy="${y}" rx="${r}" ry="${r * g.from.roundness}" fill="url(#brush-adjust-fill)" class="brush-adjust-preview"/><ellipse cx="${x}" cy="${y}" rx="${r}" ry="${r * g.from.roundness}" class="brush-cursor"/><text x="${x}" y="${y + r * g.from.roundness + 16}" text-anchor="middle" class="brush-adjust-label">Size ${Math.round(v.size)} px · ${label}</text>`;
+    const label = e.preferences.altDragHardness ? `硬度 ${Math.round(v.hardness * 100)}%` : `不透明度 ${Math.round(v.opacity * 100)}%`;
+    e.screenOverlayContent = `<defs><radialGradient id="brush-adjust-fill"><stop offset="0%" stop-color="${color}" stop-opacity="0.55"/><stop offset="${inner}%" stop-color="${color}" stop-opacity="0.55"/><stop offset="100%" stop-color="${color}" stop-opacity="0"/></radialGradient></defs><ellipse cx="${x}" cy="${y}" rx="${r}" ry="${r * g.from.roundness}" fill="url(#brush-adjust-fill)" class="brush-adjust-preview"/><ellipse cx="${x}" cy="${y}" rx="${r}" ry="${r * g.from.roundness}" class="brush-cursor"/><text x="${x}" y="${y + r * g.from.roundness + 16}" text-anchor="middle" class="brush-adjust-label">大小 ${Math.round(v.size)} px · ${label}</text>`;
     e.screenOverlay();
   };
   let flick = 0;

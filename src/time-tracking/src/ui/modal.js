@@ -29,7 +29,7 @@ export function openModal({ title, content, onClose }) {
     el('div.sheet-handle'),
     el('div.modal-head', {},
       el('h2.modal-title', {}, title),
-      el('button.icon-btn', { html: icon('x', 20), 'aria-label': 'Close', onclick: () => close() })
+      el('button.icon-btn', { html: icon('x', 20), 'aria-label': '关闭', onclick: () => close() })
     ),
     content
   );
@@ -98,12 +98,12 @@ export function openModal({ title, content, onClose }) {
 }
 
 /** Simple confirm dialog. Resolves true/false (false on Escape/scrim too). */
-export function confirmDialog({ title, message, confirmLabel = 'Delete', danger = true }) {
+export function confirmDialog({ title, message, confirmLabel = '删除', danger = true }) {
   return new Promise((resolve) => {
     const content = el('div', {},
       el('p.confirm-message', {}, message),
       el('div.row.row-end', {},
-        el('button.btn.btn-ghost', { onclick: () => modal.close() }, 'Cancel'),
+        el('button.btn.btn-ghost', { onclick: () => modal.close() }, '取消'),
         el(`button.btn.${danger ? 'btn-danger' : 'btn-primary'}`, {
           // Resolve before close(): close fires onClose, which resolves false.
           onclick: () => { resolve(true); modal.close(); },

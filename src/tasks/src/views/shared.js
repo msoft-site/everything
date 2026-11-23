@@ -84,7 +84,7 @@ export function sharedView() {
           el('p', {}, 'No open tasks in this list right now.')
         )),
       done.length ? el('div', {},
-        el('div.section-label', {}, 'Completed', el('span.count', {}, plural(done.length, 'task'))),
+        el('div.section-label', {}, '已完成', el('span.count', {}, plural(done.length, 'task'))),
         taskCard(done, { readonly: true })
       ) : null,
       el('p.small.muted', { style: { margin: '26px 2px', textAlign: 'center' } },

@@ -49,8 +49,8 @@ export function nextHint(game) {
       focus: cells,
       message:
         cells.length === 1
-          ? `${cellName(cells[0])} cannot be ${game.values[cells[0]]}. Clear it and the logic opens up again.`
-          : `${cells.length} cells hold a digit that cannot be right. Clear them to carry on.`,
+          ? `${cellName(cells[0])} 不能填 ${game.values[cells[0]]}。清除该格即可继续逻辑推理。`
+          : `有 ${cells.length} 个单元格填入的数字不正确。请先清除它们再继续。`,
     };
   }
 
@@ -59,10 +59,10 @@ export function nextHint(game) {
   if (!step) {
     const empty = countEmpty(game);
     return empty === 0
-      ? { kind: 'solved', message: 'The grid is complete.' }
+      ? { kind: 'solved', message: '盘面已完成。' }
       : {
           kind: 'stuck',
-          message: 'No single step stands out from here. Try filling in pencil marks to see further.',
+          message: '当前没有明显的单步推理。尝试填写候选数标记以进一步观察。',
         };
   }
 

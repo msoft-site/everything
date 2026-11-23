@@ -135,7 +135,7 @@ export function contactsView({ param = null } = {}) {
               message: n
                 ? `${contact.name} moves to the trash and drops off ${n === 1 ? 'the linked contract' : `all ${n} linked contracts`}. Restoring the contact puts the link${n === 1 ? '' : 's'} back.`
                 : `${contact.name} moves to the trash. You can restore them there for ${TRASH_DAYS} days.`,
-              confirmLabel: 'Delete',
+              confirmLabel: '删除',
             });
             if (!ok) return;
             try {

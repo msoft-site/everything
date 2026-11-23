@@ -16,7 +16,7 @@
 
 import { PEERS, SIZE, colOf, digitsOf, rowOf } from '../engine/grid.js';
 
-const DIGIT_LABEL = ['empty', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+const DIGIT_LABEL = ['空', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
 
 export function createBoardView(root, { onSelect }) {
   const cells = [];
@@ -130,18 +130,18 @@ export function createBoardView(root, { onSelect }) {
   }
 
   function labelFor(i, digit, given, noteMask, view) {
-    const where = `row ${rowOf(i) + 1}, column ${colOf(i) + 1}`;
+    const where = `第 ${rowOf(i) + 1} 行，第 ${colOf(i) + 1} 列`;
     if (digit) {
-      const kind = given ? 'clue' : view.wrong.has(i) ? 'wrong' : 'your entry';
+      const kind = given ? '提示数' : view.wrong.has(i) ? '错误' : '已填数字';
       // A duplicate is drawn as a red wash and nothing else, so leaving it out
       // of the name would be the one thing on this board said in colour alone.
       // It is reported on both cells involved, the clue among them, which is
       // what tells a player which digit theirs is clashing with.
-      const clash = view.conflicts.has(i) ? ', duplicate' : '';
-      return `${where}, ${digit}, ${kind}${clash}`;
+      const clash = view.conflicts.has(i) ? '，重复冲突' : '';
+      return `${where}，${digit}，${kind}${clash}`;
     }
-    if (noteMask) return `${where}, pencil marks ${digitsOf(noteMask).join(', ')}`;
-    return `${where}, ${DIGIT_LABEL[0]}`;
+    if (noteMask) return `${where}，候选数标记 ${digitsOf(noteMask).join('、')}`;
+    return `${where}，${DIGIT_LABEL[0]}`;
   }
 
   /** Move focus to the cell the roving tabindex is on. */

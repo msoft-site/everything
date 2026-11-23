@@ -105,13 +105,13 @@ export function loadPuter() {
           announceLoaded(window.puter);
           resolve(window.puter);
         } else {
-          reject(new Error('Puter SDK loaded but is unavailable.'));
+          reject(new Error('Puter SDK 已加载但不可用。'));
         }
       };
       script.onerror = () => {
         puterPromise = null; // allow a retry after transient network failures
         script.remove();
-        reject(new Error('Could not load the Puter SDK. Check your connection.'));
+        reject(new Error('无法加载 Puter SDK，请检查您的网络连接。'));
       };
       document.head.appendChild(script);
     });
@@ -245,7 +245,7 @@ export class OnlineSession {
         // The server may outlive leave() (close() support varies); tell late
         // joiners why instead of letting them wait out the open timeout.
         try {
-          event.conn.close?.('This game is no longer available.');
+          event.conn.close?.('该对局已失效。');
         } catch {
           // Nothing to clean up.
         }
@@ -253,7 +253,7 @@ export class OnlineSession {
       }
       if (this._conn) {
         // Private 1v1: turn away anyone else using the same invite code.
-        event.conn.close('This game already has two players.');
+        event.conn.close('该对局已有两名玩家。');
         return;
       }
       this.opponentName = cleanName(event.user?.username);
@@ -270,7 +270,7 @@ export class OnlineSession {
     if (this._ended) return;
     const conn = await puter.peer.connect(inviteCode);
     if (this._ended) {
-      conn.close('Cancelled.');
+      conn.close('已取消。');
       return;
     }
     this._fetchMyName(puter);
@@ -294,7 +294,7 @@ export class OnlineSession {
     // longer affect it.
     this._conn = conn;
     this._openTimer = setTimeout(() => {
-      this._connFailed(conn, 'Could not reach the other player.');
+      this._connFailed(conn, '无法连接到另一位玩家。');
     }, OPEN_TIMEOUT_MS);
 
     conn.addEventListener('open', () => {
@@ -344,14 +344,14 @@ export class OnlineSession {
     if (this.role === 'host' && !this.connected) {
       clearTimeout(this._openTimer);
       try {
-        conn.close?.('Connection failed.');
+        conn.close?.('连接失败。');
       } catch {
         // Already closed.
       }
       this._conn = null;
       this.opponentName = null;
       this.handlers.onError(
-        "That join attempt didn't complete — still waiting for your friend.",
+        "对方的加入请求未完成 — 仍在等待您的好友。",
       );
       return;
     }
@@ -473,7 +473,7 @@ export class OnlineSession {
         if (this.role !== 'guest' || this.connected) return;
         if (msg.v !== PROTOCOL_VERSION) {
           this._sendBye();
-          this._end('Your friend is on a different version of the app — reload and try again.');
+          this._end('您的好友使用的是不同版本的应用 — 请刷新页面后重试。');
           return;
         }
         this.myColor = msg.color === 'w' ? 'w' : 'b';
@@ -511,7 +511,7 @@ export class OnlineSession {
           // surface it rather than silently dropping the message, which would
           // otherwise leave the mover's board advanced and this side's waiting
           // forever with no explanation.
-          this.handlers.onError('Received an invalid move from your opponent.');
+          this.handlers.onError('收到来自对手的无效着法。');
         }
         break;
       }

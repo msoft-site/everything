@@ -7,36 +7,36 @@
 
 export const STATUSES = ['new', 'open', 'pending', 'hold', 'solved', 'closed'];
 export const STATUS_LABEL = {
-  new: 'New',
-  open: 'Open',
-  pending: 'Pending',
-  hold: 'On hold',
-  solved: 'Solved',
-  closed: 'Closed',
+  new: '新建',
+  open: '处理中',
+  pending: '待回复',
+  hold: '挂起',
+  solved: '已解决',
+  closed: '已关闭',
 };
 /** Statuses an agent can submit a ticket as (closed is reached by automation). */
 export const SUBMIT_STATUSES = ['new', 'open', 'pending', 'hold', 'solved'];
 export const UNSOLVED = new Set(['new', 'open', 'pending', 'hold']);
 
 export const PRIORITIES = ['low', 'normal', 'high', 'urgent'];
-export const PRIORITY_LABEL = { low: 'Low', normal: 'Normal', high: 'High', urgent: 'Urgent' };
+export const PRIORITY_LABEL = { low: '低', normal: '普通', high: '高', urgent: '紧急' };
 export const PRIORITY_RANK = { low: 1, normal: 2, high: 3, urgent: 4 };
 
 export const TYPES = ['question', 'incident', 'problem', 'task'];
-export const TYPE_LABEL = { question: 'Question', incident: 'Incident', problem: 'Problem', task: 'Task' };
+export const TYPE_LABEL = { question: '问题咨询', incident: '突发事件', problem: '故障问题', task: '任务' };
 
 export const CHANNELS = ['web', 'portal', 'email', 'phone', 'chat', 'api'];
 export const CHANNEL_LABEL = {
-  web: 'Agent',
-  portal: 'Help center',
-  email: 'Email',
-  phone: 'Phone',
-  chat: 'Chat',
+  web: '客服坐席',
+  portal: '帮助中心',
+  email: '邮件',
+  phone: '电话',
+  chat: '在线聊天',
   api: 'API',
 };
 
 export const ROLES = ['admin', 'agent'];
-export const ROLE_LABEL = { owner: 'Owner', admin: 'Administrator', agent: 'Agent' };
+export const ROLE_LABEL = { owner: '所有者', admin: '管理员', agent: '客服人员' };
 
 export const FIELD_TYPES = ['text', 'textarea', 'number', 'date', 'checkbox', 'dropdown'];
 

@@ -42,7 +42,7 @@ export class Compute {
       case 'lastModifiedBy':
         return rec.mb || rec.cb || null;
       case 'button':
-        return field.options?.label || 'Open';
+        return field.options?.label || '打开';
       default: {
         const v = rec.c[field.id];
         return v === undefined ? null : v;
@@ -60,7 +60,7 @@ export class Compute {
     }
     if (entry.values.has(rec.id)) return entry.values.get(rec.id);
     const key = `${field.id}:${rec.id}`;
-    if (this.stack.has(key)) return ERR('#CYCLE', 'This formula refers back to itself.');
+    if (this.stack.has(key)) return ERR('#CYCLE', '此公式存在循环引用。');
     const top = !this.stack.size;
     if (top) this.deepest = null;
     this.stack.set(key, [table, rec, field]);
@@ -91,7 +91,7 @@ export class Compute {
     const path = this.deepest;
     this.deepest = null;
     if (!path || path.length < 2) {
-      const v = ERR('#ERROR', 'This value is nested too deeply to compute.');
+      const v = ERR('#ERROR', '此值嵌套层级过深，无法计算。');
       entry.values.set(rec.id, v);
       return v;
     }
@@ -106,18 +106,18 @@ export class Compute {
         return this.formula(table, rec, field);
       case 'count': {
         const link = table.field(o.linkFieldId);
-        if (!link || link.type !== 'link') return ERR('#CONFIG', 'Choose a linked field to count.');
+        if (!link || link.type !== 'link') return ERR('#CONFIG', '请选择要计数的关联字段。');
         const ids = rec.c[link.id];
         return Array.isArray(ids) ? ids.filter((id) => this.base.table(link.options.tableId)?.record(id)).length : 0;
       }
       case 'lookup': {
         const values = this.linkedValues(table, rec, o.linkFieldId, o.targetFieldId);
-        return values === null ? ERR('#CONFIG', 'Choose a linked field and a field to look up.') : cycleIn(values) || values;
+        return values === null ? ERR('#CONFIG', '请选择关联字段和要查找的字段。') : cycleIn(values) || values;
       }
       case 'rollup': {
         // Empty values count: an unchecked box makes "All true" false.
         const values = this.linkedValues(table, rec, o.linkFieldId, o.targetFieldId, { blanks: true });
-        if (values === null) return ERR('#CONFIG', 'Choose a linked field and a field to summarize.');
+        if (values === null) return ERR('#CONFIG', '请选择关联字段和要汇总的字段。');
         const target = this.rollupTarget(table, field);
         // Looked-up options and records by name, not id.
         const items = target.type === 'lookup' ? values.map((v) => (Array.isArray(v) ? this.lookupItems(target, v) : v)) : values;
@@ -192,13 +192,13 @@ export class Compute {
       now: () => new Date(base.now()),
       get(id) {
         const f = table.field(id);
-        if (!f) throw Object.assign(new Error('A field this formula uses was deleted.'), { code: '#REF' });
+        if (!f) throw Object.assign(new Error('此公式使用的某个字段已被删除。'), { code: '#REF' });
         return self.formulaValue(table, rec, f);
       },
     };
     try {
       let v = p.run(ctx);
-      if (typeof v === 'number' && !Number.isFinite(v)) return ERR('#NUM', 'The result is not a finite number.');
+      if (typeof v === 'number' && !Number.isFinite(v)) return ERR('#NUM', '计算结果不是有限数值。');
       if (v && typeof v === 'object' && v.error) return v;
       if (Array.isArray(v)) v = v.map((x) => (x && typeof x === 'object' && x.error ? x.error : x));
       return v === undefined ? null : v;

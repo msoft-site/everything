@@ -59,8 +59,8 @@ function safeName(name) {
 export async function saveFile(file, folder = 'files') {
   // Checked after shrinking: a 40 MB phone photo becomes a few hundred KB.
   const blob = await shrinkImage(file);
-  if (blob.size > MAX_BYTES) throw new Error(`${file.name} is larger than 25 MB.`);
-  if (app.team?.url && blob.size > TEAM_MAX_BYTES) throw new Error(`${file.name} is larger than 8 MB, the limit for files in a shared business.`);
+  if (blob.size > MAX_BYTES) throw new Error(`${file.name} 超过 25 MB。`);
+  if (app.team?.url && blob.size > TEAM_MAX_BYTES) throw new Error(`${file.name} 超过 8 MB（共享企业的文件大小上限）。`);
   const id = newId();
   const name = safeName(file.name);
   const path = `${folder}/${id}-${name}`;
@@ -87,7 +87,7 @@ export async function fileUrl(att) {
 async function loadUrl(att) {
   let blob = memory.get(att.path);
   if (!blob) {
-    if (app.demo || typeof puter === 'undefined') throw new Error('File not available');
+    if (app.demo || typeof puter === 'undefined') throw new Error('文件不可用');
     if (app.team?.url) {
       const out = await call(app.team.url, 'fileRead', { path: att.path }, { timeoutMs: 120000 });
       blob = new Blob([fromBase64(out.data)], { type: att.type || out.type || '' });

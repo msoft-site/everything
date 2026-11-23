@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -11,7 +11,7 @@
 <link rel="icon" href="/favicon-32x32.png" type="image/png" sizes="32x32">
 <link rel="icon" href="/favicon-16x16.png" type="image/png" sizes="16x16">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180">
-<title>RSVP — Puter Calendar</title>
+<title>日程邀请回复 — Puter 日历</title>
 <style>
   /* Status colors are picked per scheme for WCAG AA contrast (≥4.5:1) as
      16px text on the card and banner backgrounds — not shared across modes. */
@@ -101,8 +101,8 @@
 </head>
 <body>
 <main class="card" id="rsvp-root">
-  <p class="kicker">Invitation</p>
-  <h1>Loading…</h1>
+  <p class="kicker">日程邀请</p>
+  <h1>加载中…</h1>
 </main>
 <script>
 /**
@@ -118,11 +118,11 @@
   'use strict';
 
   var STATUSES = ['accepted', 'declined', 'tentative'];
-  var LABEL = { accepted: 'Yes', declined: 'No', tentative: 'Maybe' };
+  var LABEL = { accepted: '参加', declined: '不参加', tentative: '待定' };
   var SENTENCE = {
-    accepted: 'You said you are going.',
-    declined: 'You said you are not going.',
-    tentative: 'You said maybe.',
+    accepted: '您已选择参加。',
+    declined: '您已选择不参加。',
+    tentative: '您已选择待定。',
   };
 
   function el(tag, cls, text) {
@@ -195,7 +195,7 @@
         banner.setAttribute('role', 'alert');
         box.insertBefore(banner, box.firstChild);
       }
-      banner.textContent = "Couldn't save your response — check your connection and try again.";
+      banner.textContent = '无法保存您的回复 — 请检查网络连接后重试。';
     }
 
     function clearSubmitError() {
@@ -211,7 +211,7 @@
       for (var i = 0; i < buttons.length; i++) buttons[i].disabled = true;
       var restLabel = sourceBtn ? sourceBtn.textContent : '';
       if (sourceBtn) {
-        sourceBtn.textContent = 'Saving…';
+        sourceBtn.textContent = '保存中…';
         sourceBtn.setAttribute('aria-busy', 'true');
       }
       clearSubmitError();
@@ -260,17 +260,17 @@
     function render(data, saved) {
       var ev = data.event || {};
       var answer = data.response || { status: 'needs-action', comment: '' };
-      if (ev.title) document.title = ev.title + ' — RSVP';
+      if (ev.title) document.title = ev.title + ' — 邀请回复';
       root.replaceChildren();
-      root.append(el('p', 'kicker', "You're invited"));
-      root.append(el('h1', null, ev.title || '(Untitled event)'));
+      root.append(el('p', 'kicker', '诚邀您参加'));
+      root.append(el('h1', null, ev.title || '（无标题日程）'));
 
       if (ev.ended) {
         var suffix = SENTENCE[answer.status] ? ' — ' + SENTENCE[answer.status].toLowerCase() : '';
-        root.append(el('div', 'banner banner--ended', 'This event has ended' + suffix));
+        root.append(el('div', 'banner banner--ended', '此日程已结束' + suffix));
       } else if (saved) {
         var confirmText =
-          'Response saved.' + (SENTENCE[answer.status] ? ' ' + SENTENCE[answer.status] : '');
+          '回复已保存。' + (SENTENCE[answer.status] ? ' ' + SENTENCE[answer.status] : '');
         var confirm = el('div', 'banner', confirmText);
         // The card is rebuilt on every save — role="status" makes the
         // confirmation audible to screen readers, not just visible.
@@ -279,26 +279,26 @@
       }
 
       // The date is what the guest decides on — it carries the extra weight.
-      row('When', ev.when, ev.recurrence, true);
-      row('Where', ev.location);
+      row('时间', ev.when, ev.recurrence, true);
+      row('地点', ev.location);
       joinRow(ev.meetingUrl);
-      row('Invited by', ev.organizer);
+      row('邀请人', ev.organizer);
       if (ev.description) {
         var details = el('div', 'row');
-        details.append(el('b', null, 'Details'));
+        details.append(el('b', null, '详情'));
         details.append(el('div', 'desc', ev.description));
         root.append(details);
       }
 
       if (!ev.ended) {
         var box = el('div', 'answer');
-        box.append(el('p', 'ask', 'Are you going?'));
+        box.append(el('p', 'ask', '您是否参加？'));
         var choices = el('div', 'choices');
         var note = el('textarea');
         note.maxLength = 500;
-        note.placeholder = 'Add a note for the organizer (optional)';
+        note.placeholder = '给组织者留言（可选）';
         note.value = answer.comment || '';
-        note.setAttribute('aria-label', 'Note for the organizer (optional)');
+        note.setAttribute('aria-label', '给组织者留言（可选）');
         STATUSES.forEach(function (status) {
           var btn = el('button', null, LABEL[status] + (answer.status === status ? ' ✓' : ''));
           btn.type = 'button';
@@ -318,7 +318,7 @@
         // stored one (only once an answer exists; before that, the note
         // rides along with whichever status button they press).
         var noteBar = el('div', 'notebar');
-        var noteSave = el('button', null, 'Save note');
+        var noteSave = el('button', null, '保存留言');
         noteSave.type = 'button';
         noteBar.hidden = true;
         noteSave.addEventListener('click', function () {
@@ -334,9 +334,9 @@
         var who = el('p', 'who');
         var guestEmail = (data.guest && data.guest.email) || '';
         var guestName = (data.guest && data.guest.name) || '';
-        who.append(document.createTextNode('Responding as '));
+        who.append(document.createTextNode('当前回复身份：'));
         who.append(el('b', null, guestName ? guestName + ' (' + guestEmail + ')' : guestEmail));
-        who.append(document.createTextNode(". This link is personal — please don't forward it."));
+        who.append(document.createTextNode('。此链接为个人专属链接 — 请勿转发。'));
         root.append(who);
         // `suggestions` is the v11 tell: a worker that hasn't been upgraded
         // yet (each host's worker upgrades when THEY next open the calendar)
@@ -356,18 +356,18 @@
      */
     function suggestSection(data, note) {
       var section = el('div', 'suggest');
-      section.append(el('p', 'ask', 'Want to bring someone?'));
+      section.append(el('p', 'ask', '想邀请其他人一起参加？'));
       section.append(
         el(
           'p',
           'suggest__hint',
-          'Suggest a guest — the organizer reviews suggestions and sends the invitations.',
+          '推荐参与者 — 组织者审核通过后会向其发送正式邀请。',
         ),
       );
       (data.suggestions || []).forEach(function (s) {
         var sugRow = el('div', 'suggest__row');
         sugRow.append(el('span', null, s.name ? s.name + ' (' + s.email + ')' : s.email));
-        sugRow.append(el('span', 'suggest__wait', 'Waiting for the organizer'));
+        sugRow.append(el('span', 'suggest__wait', '等待组织者审核'));
         section.append(sugRow);
       });
 
@@ -375,16 +375,16 @@
       email.type = 'email';
       email.maxLength = 254;
       email.autocomplete = 'off';
-      email.placeholder = 'Their email';
-      email.setAttribute('aria-label', 'Email of the guest to suggest');
+      email.placeholder = '对方邮箱';
+      email.setAttribute('aria-label', '要推荐的参与者邮箱');
       var name = el('input');
       name.type = 'text';
       name.maxLength = 200;
       name.autocomplete = 'off';
-      name.placeholder = 'Their name (optional)';
-      name.setAttribute('aria-label', 'Name of the guest to suggest (optional)');
+      name.placeholder = '对方姓名（可选）';
+      name.setAttribute('aria-label', '要推荐的参与者姓名（可选）');
       var bar = el('div', 'suggest__bar');
-      var send = el('button', null, 'Suggest guest');
+      var send = el('button', null, '推荐参与者');
       send.type = 'button';
       bar.append(send);
       // Seed a draft the last render carried over (see submit), once: a later
@@ -419,17 +419,17 @@
         // address should fail here, not after a network round trip.
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(address)) {
           email.setAttribute('aria-invalid', 'true');
-          say('Enter a valid email address.', false);
+          say('请输入有效的电子邮箱地址。', false);
           return;
         }
         inFlight = true;
         send.disabled = true;
-        send.textContent = 'Sending…';
+        send.textContent = '发送中…';
         send.setAttribute('aria-busy', 'true');
         var reset = function () {
           inFlight = false;
           send.disabled = false;
-          send.textContent = 'Suggest guest';
+          send.textContent = '推荐参与者';
           send.removeAttribute('aria-busy');
         };
         fetchFn(api + '/guests', {
@@ -445,7 +445,7 @@
               if (res.status === 404) {
                 if (out && out.error === 'not_found') return renderGone();
                 reset();
-                say("This invitation doesn't support suggestions yet.", false);
+                say('此邀请暂不支持推荐参与者。', false);
                 return;
               }
               if (res.ok && out && out.ok && out.suggestion) {
@@ -459,7 +459,7 @@
                 var confirm = el(
                   'p',
                   'suggest__msg suggest__msg--ok',
-                  'Suggestion sent — the organizer will take it from here.',
+                  '推荐已发送 — 组织者将进行后续处理。',
                 );
                 confirm.setAttribute('role', 'status');
                 var next = suggestSection(data, confirm);
@@ -471,20 +471,20 @@
                 return;
               }
               reset();
-              if (out && out.error === 'already_invited') say('They are already invited.', false);
+              if (out && out.error === 'already_invited') say('对方已在受邀名单中。', false);
               else if (out && out.error === 'invalid_email') {
                 email.setAttribute('aria-invalid', 'true');
-                say('Enter a valid email address.', false);
+                say('请输入有效的电子邮箱地址。', false);
               } else if (out && out.error === 'suggestion_limit') {
-                say('The suggestion list for this event is full — contact the organizer directly.', false);
+                say('此日程的推荐人数已达上限 — 请直接联系组织者。', false);
               } else {
-                say("Couldn't send your suggestion — check your connection and try again.", false);
+                say('无法发送您的推荐 — 请检查网络连接后重试。', false);
               }
             });
           })
           .catch(function () {
             reset();
-            say("Couldn't send your suggestion — check your connection and try again.", false);
+            say('无法发送您的推荐 — 请检查网络连接后重试。', false);
           });
       }
 
@@ -518,7 +518,7 @@
       if (typeof url !== 'string' || url.length > 100) return;
       if (!/^https:\/\/meetings\.puter\.com\/#\/m\/(?:[a-z]{3}-[a-z]{4}-[a-z]{3}|[a-z]{4}-[a-z]{4}-[a-z]{4})$/.test(url)) return;
       var node = el('div', 'row');
-      node.append(el('b', null, 'Join'));
+      node.append(el('b', null, '加入会议'));
       var a = el('a', null, url);
       a.href = url;
       a.target = '_blank';
@@ -529,13 +529,13 @@
 
     function renderGone() {
       root.replaceChildren();
-      root.append(el('p', 'kicker', 'Invitation'));
-      root.append(el('h1', null, "This link isn't active"));
+      root.append(el('p', 'kicker', '日程邀请'));
+      root.append(el('h1', null, '此链接已失效'));
       root.append(
         el(
           'div',
           'row',
-          "This invitation link is invalid or has been withdrawn. If you think that's a mistake, ask the event organizer for a fresh link.",
+          '此邀请链接无效或已被撤回。如果您认为有误，请联系日程组织者获取新链接。',
         ),
       );
       foot();
@@ -543,10 +543,10 @@
 
     function renderError() {
       root.replaceChildren();
-      root.append(el('p', 'kicker', 'Invitation'));
-      root.append(el('h1', null, 'Could not load the invitation'));
-      root.append(el('div', 'banner banner--err', 'Check your connection and try again.'));
-      var retry = el('button', 'retry', 'Try again');
+      root.append(el('p', 'kicker', '日程邀请'));
+      root.append(el('h1', null, '无法加载邀请'));
+      root.append(el('div', 'banner banner--err', '请检查您的网络连接后重试。'));
+      var retry = el('button', 'retry', '重试');
       retry.type = 'button';
       retry.addEventListener('click', function () {
         load(false);
@@ -557,7 +557,7 @@
 
     function foot() {
       var foot = el('p', 'foot');
-      foot.append(document.createTextNode('Sent with'));
+      foot.append(document.createTextNode('发送自'));
       var link = el('a');
       // The app icon ships alongside this page (public/), so the path is
       // same-origin wherever the page is hosted. Decorative: the link's own
@@ -568,7 +568,7 @@
       mark.width = 18;
       mark.height = 18;
       link.append(mark);
-      link.append(document.createTextNode('Puter Calendar'));
+      link.append(document.createTextNode('Puter 日历'));
       link.href = 'https://calendar.puter.com/';
       link.rel = 'noopener';
       foot.append(link);

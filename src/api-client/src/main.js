@@ -71,7 +71,7 @@ async function session(puter) {
 }
 
 async function boot() {
-  splash('Opening API Client...');
+  splash('正在打开 API 客户端...');
   loadEditor().catch(() => {}); // warm the editor chunk while we load data
   const puter = await waitForPuter();
   const s = await session(puter);
@@ -83,7 +83,7 @@ async function boot() {
   } catch (err) {
     console.error(err);
     root.replaceChildren(
-      h('main.splash', h('h1', { style: { fontSize: '18px', margin: 0 } }, 'Storage is unavailable'), h('p.splash-sub', 'This browser blocked local storage (private mode can do this). Allow site data and reload.')),
+      h('main.splash', h('h1', { style: { fontSize: '18px', margin: 0 } }, '本地存储不可用'), h('p.splash-sub', '当前浏览器阻止了本地存储（隐私模式可能会导致此问题）。请允许保存站点数据并刷新页面。')),
     );
     return;
   }
@@ -132,9 +132,9 @@ async function boot() {
   window.apiClient = app;
   root.removeAttribute('aria-busy');
   await app.start();
-  if (moved.count) toast({ kind: 'success', title: 'Your work moved to your account', text: `${moved.count} item${moved.count > 1 ? 's' : ''} from this browser now sync with Puter.` });
-  if (moveFailed) toast({ kind: 'error', title: 'Some work could not be moved to your account', text: 'Work done while signed out is still in this browser. Sign out to see it.' });
-  if (s.offline) toast({ kind: 'warning', title: 'Working offline', text: 'Changes are saved on this device and will sync when you are back online.' });
+  if (moved.count) toast({ kind: 'success', title: '您的内容已迁移至账户', text: `来自此浏览器的 ${moved.count} 项内容现已与 Puter 同步。` });
+  if (moveFailed) toast({ kind: 'error', title: '部分内容未能迁移至您的账户', text: '未登录时所做的工作仍保留在此浏览器中。退出登录即可查看。' });
+  if (s.offline) toast({ kind: 'warning', title: '离线工作模式', text: '更改已保存在此设备上，恢复在线后将自动同步。' });
   sync
     ?.start()
     .catch((err) => console.warn('Sync failed to start', err))
@@ -148,8 +148,8 @@ async function boot() {
   if (!seen) {
     toast({
       kind: 'info',
-      title: 'Early preview',
-      text: 'API Client is in alpha. Features may change and data could be lost, so please do not rely on it for important work yet.',
+      title: '早期预览版',
+      text: 'API 客户端目前处于 Alpha 阶段。功能可能会发生变更且数据可能会丢失，请勿将其用于重要工作。',
       duration: 0,
     });
   }

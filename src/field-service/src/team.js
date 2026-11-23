@@ -45,7 +45,7 @@ export function normalizeWorkerUrl(url) {
 /** One API call to a team worker. Throws TeamError with a readable message. */
 export async function call(url, op, payload = {}, { timeoutMs = 30000, getPuter = () => globalThis.puter } = {}) {
   const p = getPuter();
-  if (!p?.workers?.exec) throw new TeamError(0, 'no_sdk', 'Team access needs Puter. Reload and try again.');
+  if (!p?.workers?.exec) throw new TeamError(0, 'no_sdk', '团队访问需要 Puter。请刷新页面后重试。');
   const ctl = typeof AbortController === 'function' ? new AbortController() : null;
   const timer = setTimeout(() => ctl?.abort(), timeoutMs);
   let res;
@@ -57,7 +57,7 @@ export async function call(url, op, payload = {}, { timeoutMs = 30000, getPuter 
       ...(ctl ? { signal: ctl.signal } : {}),
     });
   } catch {
-    throw new TeamError(0, 'network', 'Could not reach the team server. Check your connection.');
+    throw new TeamError(0, 'network', '无法连接团队服务器，请检查您的网络连接。');
   } finally {
     clearTimeout(timer);
   }
@@ -71,7 +71,7 @@ export async function call(url, op, payload = {}, { timeoutMs = 30000, getPuter 
     globalThis.dispatchEvent?.(new CustomEvent('fieldservice:removed', { detail: { url } }));
   }
   if (!res.ok || !data?.ok) {
-    throw new TeamError(res.status, data?.error || `http_${res.status}`, data?.message || (res.status >= 500 ? 'The team server did not answer. Try again in a moment.' : `Request failed (${res.status})`));
+    throw new TeamError(res.status, data?.error || `http_${res.status}`, data?.message || (res.status >= 500 ? '团队服务器未响应，请稍后重试。' : `请求失败 (${res.status})`));
   }
   return data;
 }
@@ -152,7 +152,7 @@ export function activeWorker(ws) {
 
 async function fetchBundle() {
   const res = await fetch(WORKER_BUNDLE_URL, { cache: 'no-cache' });
-  if (!res.ok) throw new Error('The team server code is missing from this build of the app.');
+  if (!res.ok) throw new Error('当前应用构建版本中缺少团队服务器代码。');
   const source = await res.text();
   const m = /field-service-team-worker build=(\w+)/.exec(source.slice(0, 120));
   return { source, build: m ? m[1] : null };
@@ -184,7 +184,7 @@ async function waitForHealth(url, build, attempts = 30) {
  * onProgress(text) reports each step. Resolves { url, name, path }.
  */
 export async function enableTeam({ store, onProgress = () => {} }) {
-  onProgress('Preparing your team server');
+  onProgress('正在准备您的团队服务器');
   const { source, build } = await fetchBundle();
   const blob = new Blob([source], { type: 'application/javascript' });
   const item = await puter.fs.write(WORKER_FILE, blob, { overwrite: true, dedupeName: false, createMissingParents: true });
@@ -194,18 +194,18 @@ export async function enableTeam({ store, onProgress = () => {} }) {
   let lastErr = null;
   for (let attempt = 0; attempt < 4 && !dep; attempt++) {
     name = randomName();
-    onProgress(attempt ? 'Trying another server name' : 'Starting your team server');
+    onProgress(attempt ? '正在尝试另一个服务器名称' : '正在启动您的团队服务器');
     try {
       dep = await puter.workers.create(name, path);
       if (dep && dep.success === false) {
-        lastErr = new Error((dep.errors || []).join(', ') || 'The worker could not be created.');
+        lastErr = new Error((dep.errors || []).join(', ') || '无法创建 Worker。');
         dep = null;
       }
     } catch (err) {
       lastErr = err;
     }
   }
-  if (!dep) throw new Error(`Could not create the team server in your Puter account. ${lastErr?.message || ''}`.trim());
+  if (!dep) throw new Error(`无法在您的 Puter 账户中创建团队服务器。${lastErr?.message || ''}`.trim());
   const url = normalizeWorkerUrl(dep.url || `https://${name}.puter.work`);
   // A setup that fails from here on removes the half-made server, so a
   // retry does not leave another one behind in the owner's account.
@@ -215,10 +215,10 @@ export async function enableTeam({ store, onProgress = () => {} }) {
     } catch {}
     throw err;
   };
-  onProgress('Waiting for the server to come online');
-  if (!(await waitForHealth(url, build))) await discard(new Error('The team server did not come online. Nothing was changed; try again in a few minutes.'));
+  onProgress('正在等待服务器上线');
+  if (!(await waitForHealth(url, build))) await discard(new Error('团队服务器未能上线。未做任何更改，请几分钟后重试。'));
 
-  onProgress('Copying your business data');
+  onProgress('正在复制您的企业数据');
   const backend = createWorkerBackend(url);
   try {
     await store.flush();
@@ -226,7 +226,7 @@ export async function enableTeam({ store, onProgress = () => {} }) {
     // since this one last synced, and after the switch nobody reads the old
     // storage again.
     await store.sync();
-    if (!store.state.online) throw new Error('Your latest data could not be read.');
+    if (!store.state.online) throw new Error('无法读取您的最新数据。');
     for (const coll of COLLECTIONS) {
       const recs = store.all(coll);
       if (recs.length) await backend.putRecords(coll, recs);
@@ -234,7 +234,7 @@ export async function enableTeam({ store, onProgress = () => {} }) {
     await backend.saveSettings(store.state.settings);
     await backend.bumpVersions([...COLLECTIONS, 'settings']);
   } catch (err) {
-    await discard(new Error(`Your data could not be copied to the team server, so team sign-in was not turned on. ${err?.message || ''}`.trim()));
+    await discard(new Error(`无法将您的数据复制到团队服务器，因此未开启团队登录。${err?.message || ''}`.trim()));
   }
 
   // Files move too: the worker serves them from the owner's drive.
@@ -248,11 +248,11 @@ export async function enableTeam({ store, onProgress = () => {} }) {
   let copied = 0;
   const skipped = [];
   for (const att of files) {
-    onProgress(`Copying files (${++copied} of ${files.length})`);
+    onProgress(`正在复制文件 (${++copied} / ${files.length})`);
     try {
       const blob = await puter.fs.read(att.path);
       if (blob.size > 8 * 1024 * 1024) {
-        skipped.push(`${att.name} (over 8 MB)`);
+        skipped.push(`${att.name}（超过 8 MB）`);
         continue;
       }
       const bytes = new Uint8Array(await blob.arrayBuffer());
@@ -261,7 +261,7 @@ export async function enableTeam({ store, onProgress = () => {} }) {
       await call(url, 'fileWrite', { path: att.path, data: btoa(bin), type: att.type || blob.type || '' }, { timeoutMs: 120000 });
     } catch (err) {
       console.warn('[field-service] could not copy file', att.path, err);
-      skipped.push(`${att.name} (could not be copied)`);
+      skipped.push(`${att.name}（无法复制）`);
     }
   }
   return { own: { url, name, path, build, enabledAt: new Date().toISOString() }, skipped };
@@ -341,7 +341,7 @@ async function saveOrReport(ws) {
   } catch (err) {
     console.warn('[field-service] could not save the business list', err);
     const { toast } = await import('./ui/toast.js');
-    toast('Could not reach Puter, so nothing was changed. Check your connection and try again.', { type: 'error' });
+    toast('无法连接 Puter，未做任何更改。请检查网络连接后重试。', { type: 'error' });
     return false;
   }
 }

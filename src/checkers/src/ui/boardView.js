@@ -33,8 +33,8 @@ const pressed = (e) => {
 };
 
 export function pieceLabel(piece) {
-  const color = colorOf(piece) === 'b' ? 'Black' : 'White';
-  return `${color} ${isKing(piece) ? 'king' : 'man'}`;
+  const color = colorOf(piece) === 'b' ? '黑' : '白';
+  return `${color}${isKing(piece) ? '王' : '兵'}`;
 }
 
 export class BoardView {
@@ -268,9 +268,9 @@ export class BoardView {
       squareEl.classList.toggle('hint', target === false);
       squareEl.classList.toggle('capture-hint', target === true);
 
-      let label = piece ? `${square}, ${pieceLabel(piece)}` : `${square}, empty`;
-      if (target === true) label += ', capture';
-      else if (target === false) label += ', legal move';
+      let label = piece ? `${square}，${pieceLabel(piece)}` : `${square}，空`;
+      if (target === true) label += '，可吃子';
+      else if (target === false) label += '，合法着法';
       squareEl.setAttribute('aria-label', label);
       if (state.selected === square) squareEl.setAttribute('aria-selected', 'true');
       else squareEl.removeAttribute('aria-selected');

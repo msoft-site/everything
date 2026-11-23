@@ -34,10 +34,10 @@ async function loadCredential(puter, parent, refused) {
   const token = url.searchParams.get('token');
   const claims = tokenClaims(token);
   if (url.origin !== new URL(puter.APIOrigin).origin || url.pathname !== '/token-read' || !token || token === parent || claims.type !== 'access-token' || claims.full_access || !Number.isFinite(claims.exp)) {
-    throw new Error('Could not create a review credential.');
+    throw new Error('无法创建审阅凭证。');
   }
   const credential = { keys, path: file.path, token, expires: Math.min(issued + LIFETIME, claims.exp * 1000) };
-  if (puter.authToken !== parent) throw new Error('Your Puter account changed. Reload the page.');
+  if (puter.authToken !== parent) throw new Error('您的 Puter 账号已更改，请重新加载页面。');
   await puter.kv.set(key, credential);
   return credential;
 }
@@ -60,7 +60,7 @@ export function refuseCredential(puter, headers) {
 /** Headers that authenticate one request body to one worker. */
 export async function authorize(puter, server, body) {
   const parent = puter.authToken;
-  if (!parent) throw new Error('Sign in with Puter to continue.');
+  if (!parent) throw new Error('请先登录 Puter 以继续操作。');
   let entry = credentials.get(puter);
   if (entry?.parent !== parent || entry.stale || (entry.value && entry.value.expires <= Date.now() + 60_000)) {
     const refused = entry?.stale && entry.parent === parent && entry.refused;
@@ -76,7 +76,7 @@ export async function authorize(puter, server, body) {
   }
   const credential = await entry.pending;
   const signature = await sign(credential.keys.privateKey, [server, credential.path, await hash(body)]);
-  if (puter.authToken !== parent) throw new Error('Your Puter account changed. Reload the page.');
+  if (puter.authToken !== parent) throw new Error('您的 Puter 账号已更改，请重新加载页面。');
   return {
     'puter-auth': credential.token,
     [PROOF_HEADER]: JSON.stringify({ version: 1, path: credential.path, signature }),

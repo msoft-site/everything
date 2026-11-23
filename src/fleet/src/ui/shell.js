@@ -26,10 +26,10 @@ const OPEN_KEY = 'fleet.navOpen';
  * lists the route sections (first path segment) that belong to an item.
  */
 export const NAV = [
-  { id: 'dashboard', label: 'Dashboard', icon: 'dashboard', href: '#/', key: 'd', match: [''] },
+  { id: 'dashboard', label: '仪表盘', icon: 'dashboard', href: '#/', key: 'd', match: [''] },
   {
     id: 'vehicles-group',
-    label: 'Vehicles',
+    label: '车辆资产',
     icon: 'truck',
     key: 'v',
     children: [
@@ -41,7 +41,7 @@ export const NAV = [
   },
   {
     id: 'inspections-group',
-    label: 'Inspections',
+    label: '车辆巡检',
     icon: 'clipboard-check',
     key: 'i',
     children: [
@@ -75,8 +75,8 @@ export const NAV = [
       { id: 'service-programs', label: 'Service programs', href: '#/service-programs', match: ['service-programs'] },
     ],
   },
-  { id: 'contacts', label: 'Contacts', icon: 'users', href: '#/contacts', key: 'c', match: ['contacts'] },
-  { id: 'vendors', label: 'Vendors', icon: 'store', href: '#/vendors', key: 'e', match: ['vendors'] },
+  { id: 'contacts', label: '联系人', icon: 'users', href: '#/contacts', key: 'c', match: ['contacts'] },
+  { id: 'vendors', label: '供应商', icon: 'store', href: '#/vendors', key: 'e', match: ['vendors'] },
   {
     id: 'parts-group',
     label: 'Parts and inventory',
@@ -88,14 +88,14 @@ export const NAV = [
     ],
   },
   { id: 'fuel', label: 'Fuel and energy', icon: 'fuel', href: '#/fuel', key: 'f', match: ['fuel'] },
-  { id: 'documents', label: 'Documents', icon: 'folder', href: '#/documents', key: 'o', match: ['documents'] },
-  { id: 'reports', label: 'Reports', icon: 'chart', href: '#/reports', key: 't', match: ['reports'] },
+  { id: 'documents', label: '文档', icon: 'folder', href: '#/documents', key: 'o', match: ['documents'] },
+  { id: 'reports', label: '报表', icon: 'chart', href: '#/reports', key: 't', match: ['reports'] },
 ];
 
 const LEAVES = NAV.flatMap((n) => (n.children ? n.children.map((c) => ({ ...c, parent: n })) : [n]));
 const TABBAR = [
-  { id: 'dashboard', label: 'Home', icon: 'dashboard', href: '#/' },
-  { id: 'vehicles', label: 'Vehicles', icon: 'truck', href: '#/vehicles' },
+  { id: 'dashboard', label: '首页', icon: 'dashboard', href: '#/' },
+  { id: 'vehicles', label: '车辆资产', icon: 'truck', href: '#/vehicles' },
   { id: 'inspect', label: 'Inspect', icon: 'clipboard-check', href: '#/inspections/start' },
   { id: 'issues', label: 'Issues', icon: 'warning', href: '#/issues' },
 ];
@@ -211,11 +211,11 @@ export function buildShell({ onSignIn } = {}) {
   const rail = h(
     'aside.rail',
     { 'aria-label': 'Sidebar' },
-    h('a.rail-brand', { href: '#/', 'aria-label': 'Dashboard' }, h('img.brand-mark', { src: './icons/icon-192.png', alt: '' }), h('span.brand-text', fleetName, fleetSub)),
+    h('a.rail-brand', { href: '#/', 'aria-label': '仪表盘' }, h('img.brand-mark', { src: './icons/icon-192.png', alt: '' }), h('span.brand-text', fleetName, fleetSub)),
     nav,
     h(
       'div.rail-foot',
-      h('a.nav-link.foot-link', { href: '#/settings', title: 'Settings', 'data-nav': 'settings' }, icon('settings', 18), h('span.label', 'Settings')),
+      h('a.nav-link.foot-link', { href: '#/settings', title: '设置', 'data-nav': 'settings' }, icon('settings', 18), h('span.label', '设置')),
       h(
         'div.rail-foot-row',
         h(
@@ -241,7 +241,7 @@ export function buildShell({ onSignIn } = {}) {
 
   const topbar = h(
     'header.topbar',
-    h('a.mobile-brand', { href: '#/', 'aria-label': 'Dashboard' }, h('img', { src: './icons/icon-192.png', alt: '' })),
+    h('a.mobile-brand', { href: '#/', 'aria-label': '仪表盘' }, h('img', { src: './icons/icon-192.png', alt: '' })),
     pageTitle,
     h(
       'button.search-trigger',
@@ -277,13 +277,13 @@ export function buildShell({ onSignIn } = {}) {
       tabLinks.set(t.id, a);
       return a;
     }),
-    h('button', { type: 'button', onClick: () => openMoreSheet(), 'aria-haspopup': 'dialog' }, icon('menu', 22), h('span', 'More')),
+    h('button', { type: 'button', onClick: () => openMoreSheet(), 'aria-haspopup': 'dialog' }, icon('menu', 22), h('span', '更多')),
   );
 
   const root = h(
     'div.app',
     { dataset: { rail: railMode } },
-    h('a.skip-link', { href: '#main', onClick: (e) => (e.preventDefault(), main.focus()) }, 'Skip to content'),
+    h('a.skip-link', { href: '#main', onClick: (e) => (e.preventDefault(), main.focus()) }, '跳转到主要内容'),
     rail,
     h('div.main-col', topbar, banner, main),
     tabbar,
@@ -319,7 +319,7 @@ export function buildShell({ onSignIn } = {}) {
       if (id === tabId) a.setAttribute('aria-current', 'page');
       else a.removeAttribute('aria-current');
     }
-    pageTitle.textContent = route.path.startsWith('/inspections/start') ? 'Inspect' : leaf?.label || (route.path.startsWith('/settings') ? 'Settings' : 'Fleet');
+    pageTitle.textContent = route.path.startsWith('/inspections/start') ? 'Inspect' : leaf?.label || (route.path.startsWith('/settings') ? '设置' : 'Fleet');
   }
 
   function updateBrand() {
@@ -466,14 +466,14 @@ function openAccountMenu(anchor, onSignIn) {
     ({ close }) => {
       const link = (label, ic, attrs) => h(attrs.href ? 'a.menu-item' : 'button.menu-item', { type: attrs.href ? null : 'button', ...attrs }, icon(ic, 16), h('span.grow', label));
       const items = [
-        link('Settings', 'settings', { href: '#/settings', onClick: () => close() }),
+        link('设置', 'settings', { href: '#/settings', onClick: () => close() }),
         link('Keyboard shortcuts', 'keyboard', { onClick: () => (close(), showShortcuts()) }),
         link('Source code on GitHub', 'github', { href: REPO_URL, target: '_blank', rel: 'noopener noreferrer', onClick: () => close() }),
       ];
       let footer = null;
       if (app.demo) footer = link('Sign in with Puter', 'log-in', { onClick: () => (close(), onSignIn?.()) });
       else if (canSignOut())
-        footer = link('Sign out', 'log-out', {
+        footer = link('退出登录', 'log-out', {
           onClick: async () => {
             close();
             if (app.store.pendingCount()) {
@@ -579,7 +579,7 @@ function openMoreSheet() {
             ? h('section', h('h3.more-head', icon(n.icon, 16), n.label), h('ul.list', n.children.map((c) => h('li', h('a.list-item', { href: c.href, onClick: () => close() }, h('span.title.grow', c.label), icon('chevron-right', 16))))))
             : h('a.list-item.more-top', { href: n.href, onClick: () => close() }, icon(n.icon, 18), h('span.title.grow', n.label), icon('chevron-right', 16)),
         ),
-        h('a.list-item.more-top', { href: '#/settings', onClick: () => close() }, icon('settings', 18), h('span.title.grow', 'Settings'), icon('chevron-right', 16)),
+        h('a.list-item.more-top', { href: '#/settings', onClick: () => close() }, icon('settings', 18), h('span.title.grow', '设置'), icon('chevron-right', 16)),
         h('a.list-item.more-top', { href: REPO_URL, target: '_blank', rel: 'noopener noreferrer' }, icon('github', 18), h('span.title.grow', 'Source code on GitHub'), icon('external', 16)),
       ),
   });

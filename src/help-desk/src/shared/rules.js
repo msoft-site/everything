@@ -10,37 +10,37 @@ const STATUS_RANK = Object.fromEntries(STATUSES.map((s, i) => [s, i]));
 
 /** Fields a condition can test, with the operators each supports. */
 export const CONDITION_FIELDS = {
-  status: { label: 'Status', ops: ['is', 'is_not', 'less_than', 'greater_than', 'changed_to'] },
-  priority: { label: 'Priority', ops: ['is', 'is_not', 'less_than', 'greater_than'] },
-  type: { label: 'Type', ops: ['is', 'is_not'] },
-  assignee: { label: 'Assignee', ops: ['is', 'is_not', 'changed'] },
-  group: { label: 'Group', ops: ['is', 'is_not'] },
-  requester: { label: 'Requester', ops: ['is', 'is_not'] },
-  organization: { label: 'Organization', ops: ['is', 'is_not'] },
-  channel: { label: 'Channel', ops: ['is', 'is_not'] },
-  tags: { label: 'Tags', ops: ['includes', 'excludes'] },
-  subject: { label: 'Subject', ops: ['contains', 'not_contains'] },
-  followers: { label: 'Followers', ops: ['includes_me'] },
-  created: { label: 'Hours since created', ops: ['less_than', 'greater_than'] },
-  updated: { label: 'Hours since updated', ops: ['less_than', 'greater_than'] },
-  solved: { label: 'Hours since solved', ops: ['less_than', 'greater_than'] },
-  satisfaction: { label: 'Satisfaction', ops: ['is'] },
-  actor: { label: 'Updated by', ops: ['is'] },
-  comment: { label: 'Comment', ops: ['is'] },
+  status: { label: '状态', ops: ['is', 'is_not', 'less_than', 'greater_than', 'changed_to'] },
+  priority: { label: '优先级', ops: ['is', 'is_not', 'less_than', 'greater_than'] },
+  type: { label: '类型', ops: ['is', 'is_not'] },
+  assignee: { label: '负责人', ops: ['is', 'is_not', 'changed'] },
+  group: { label: '分组', ops: ['is', 'is_not'] },
+  requester: { label: '请求人', ops: ['is', 'is_not'] },
+  organization: { label: '组织', ops: ['is', 'is_not'] },
+  channel: { label: '渠道', ops: ['is', 'is_not'] },
+  tags: { label: '标签', ops: ['includes', 'excludes'] },
+  subject: { label: '主题', ops: ['contains', 'not_contains'] },
+  followers: { label: '关注者', ops: ['includes_me'] },
+  created: { label: '创建后经过小时数', ops: ['less_than', 'greater_than'] },
+  updated: { label: '更新后经过小时数', ops: ['less_than', 'greater_than'] },
+  solved: { label: '解决后经过小时数', ops: ['less_than', 'greater_than'] },
+  satisfaction: { label: '满意度', ops: ['is'] },
+  actor: { label: '更新人', ops: ['is'] },
+  comment: { label: '回复', ops: ['is'] },
 };
 
 export const OP_LABEL = {
-  is: 'Is',
-  is_not: 'Is not',
-  less_than: 'Less than',
-  greater_than: 'Greater than',
-  changed_to: 'Changed to',
-  changed: 'Changed',
-  includes: 'Contains at least one of',
-  excludes: 'Contains none of',
-  contains: 'Contains',
-  not_contains: 'Does not contain',
-  includes_me: 'Includes me',
+  is: '等于',
+  is_not: '不等于',
+  less_than: '小于',
+  greater_than: '大于',
+  changed_to: '变更为',
+  changed: '已变更',
+  includes: '包含以下至少一项',
+  excludes: '不包含以下任何一项',
+  contains: '包含',
+  not_contains: '不包含',
+  includes_me: '包含我',
 };
 
 function hoursSince(ts, now) {
@@ -151,37 +151,37 @@ export function matches(conditions, ticket, ctx) {
 export const SYSTEM_VIEWS = [
   {
     id: 'sys-mine',
-    title: 'Your unsolved tickets',
+    title: '您未解决的工单',
     conditions: { all: [{ field: 'assignee', op: 'is', value: 'me' }, { field: 'status', op: 'less_than', value: 'solved' }] },
     sort: { field: 'updatedAt', dir: 'desc' },
   },
   {
     id: 'sys-unassigned',
-    title: 'Unassigned tickets',
+    title: '未分配的工单',
     conditions: { all: [{ field: 'assignee', op: 'is', value: '' }, { field: 'status', op: 'less_than', value: 'solved' }] },
     sort: { field: 'createdAt', dir: 'asc' },
   },
   {
     id: 'sys-unsolved',
-    title: 'All unsolved tickets',
+    title: '所有未解决的工单',
     conditions: { all: [{ field: 'status', op: 'less_than', value: 'solved' }] },
     sort: { field: 'updatedAt', dir: 'desc' },
   },
   {
     id: 'sys-recent',
-    title: 'Recently updated tickets',
+    title: '最近更新的工单',
     conditions: { all: [{ field: 'updated', op: 'less_than', value: 168 }] },
     sort: { field: 'updatedAt', dir: 'desc' },
   },
   {
     id: 'sys-pending',
-    title: 'Pending tickets',
+    title: '待回复的工单',
     conditions: { all: [{ field: 'status', op: 'is', value: 'pending' }] },
     sort: { field: 'updatedAt', dir: 'desc' },
   },
   {
     id: 'sys-solved',
-    title: 'Recently solved tickets',
+    title: '最近解决的工单',
     conditions: { all: [{ field: 'status', op: 'greater_than', value: 'hold' }, { field: 'solved', op: 'less_than', value: 168 }] },
     sort: { field: 'solvedAt', dir: 'desc' },
   },
@@ -189,8 +189,8 @@ export const SYSTEM_VIEWS = [
 
 /** Hidden views reached from the bottom of the views list. */
 export const SPECIAL_VIEWS = [
-  { id: 'sys-spam', title: 'Suspended tickets', special: 'spam' },
-  { id: 'sys-deleted', title: 'Deleted tickets', special: 'deleted' },
+  { id: 'sys-spam', title: '已拦截工单', special: 'spam' },
+  { id: 'sys-deleted', title: '已删除工单', special: 'deleted' },
 ];
 
 export const DEFAULT_COLUMNS = ['status', 'subject', 'requester', 'updatedAt', 'priority', 'assignee'];
@@ -282,14 +282,14 @@ export function renderPlaceholders(text, data, { escape = (v) => v } = {}) {
 }
 
 export const PLACEHOLDERS = [
-  ['{{requester.first_name}}', "Requester's first name"],
-  ['{{requester.name}}', "Requester's full name"],
-  ['{{agent.first_name}}', 'Your first name'],
-  ['{{agent.name}}', 'Your full name'],
-  ['{{ticket.id}}', 'Ticket number'],
-  ['{{ticket.subject}}', 'Ticket subject'],
-  ['{{ticket.link}}', 'Link to the request in the help center'],
-  ['{{desk.name}}', 'Help desk name'],
+  ['{{requester.first_name}}', '请求人的名字'],
+  ['{{requester.name}}', '请求人的全名'],
+  ['{{agent.first_name}}', '您的名字'],
+  ['{{agent.name}}', '您的全名'],
+  ['{{ticket.id}}', '工单编号'],
+  ['{{ticket.subject}}', '工单主题'],
+  ['{{ticket.link}}', '帮助中心里的请求链接'],
+  ['{{desk.name}}', '服务台名称'],
 ];
 
 /** Default service level targets, in minutes, per priority. */
@@ -303,7 +303,7 @@ export const DEFAULT_SLA = {
   },
 };
 
-export const SLA_METRIC_LABEL = { first: 'First reply', next: 'Next reply', resolve: 'Resolution' };
+export const SLA_METRIC_LABEL = { first: '首次回复', next: '后续回复', resolve: '解决耗时' };
 
 /**
  * The service level target that is due soonest for a ticket, or null when

@@ -25,7 +25,7 @@ import { avatarStack, labelChip, priorityBadge, dueBadge } from '../ui/bits.js';
 let emptyTipShown = false;
 
 export function boardView({ projectId }) {
-  const board = el('div.board', { 'aria-label': 'Kanban board' });
+  const board = el('div.board', { 'aria-label': '看板' });
   const live = el('div.sr-only', { 'aria-live': 'polite' });
 
   const doc = () => store.getDoc(projectId);
@@ -91,22 +91,22 @@ export function boardView({ projectId }) {
       priorityBadge(task.priority),
       dueBadge(task, isDone),
       task.comments.length > 0 && el('span.card-count', {
-        html: icon('comment', 12, 2), title: `${task.comments.length} comments`,
+        html: icon('comment', 12, 2), title: `${task.comments.length} 条评论`,
       }, ` ${task.comments.length}`),
       task.attachments.length > 0 && el('span.card-count', {
-        html: icon('paperclip', 12, 2), title: `${task.attachments.length} attachments`,
+        html: icon('paperclip', 12, 2), title: `${task.attachments.length} 个附件`,
       }, ` ${task.attachments.length}`),
       checks.total > 0 && el('span.card-count', {
         className: `card-count${checks.done === checks.total ? ' complete' : ''}`,
         html: icon('taskDone', 12, 2),
-        title: `Checklist: ${checks.done} of ${checks.total} done`,
+        title: `检查清单：已完成 ${checks.done}/${checks.total}`,
       }, ` ${checks.done}/${checks.total}`),
       milestone && el('span.card-count', {
-        html: icon('flag', 12, 2), title: `Milestone: ${milestone.name}`,
+        html: icon('flag', 12, 2), title: `里程碑：${milestone.name}`,
       }),
       isRecurring(task) && el('span.card-count', {
         html: icon('repeat', 12, 2),
-        title: `${describeRecurrence(task.recurrence)}. Repeats when done`,
+        title: `${describeRecurrence(task.recurrence)}。完成后重复`,
         role: 'img',
         'aria-label': describeRecurrence(task.recurrence),
       }),
@@ -145,24 +145,24 @@ export function boardView({ projectId }) {
     const status = dueStatus(task.dueDate, isDone);
     const priorityLabel = (value) => {
       const info = PRIORITIES.find((prio) => prio.value === value);
-      return info ? `${info.label} priority.` : null;
+      return info ? `${info.label}优先级。` : null;
     };
     const parts = [
-      `${task.title || 'Untitled task'}.`,
-      `${column}, position ${position}.`,
+      `${task.title || '无标题任务'}。`,
+      `${column}，位置 ${position}。`,
       priorityLabel(task.priority),
       task.dueDate
-        ? `Due ${fmtShort(task.dueDate)}${status === 'overdue' ? ', overdue' : ''}.`
+        ? `截止于 ${fmtShort(task.dueDate)}${status === 'overdue' ? '，已逾期' : ''}。`
         : null,
-      assignees.length ? `Assigned to ${assignees.map((m) => m.name).join(', ')}.` : null,
-      labels.length ? `Labels: ${labels.map((l) => l.name).join(', ')}.` : null,
-      checks.total ? `Checklist ${checks.done} of ${checks.total} done.` : null,
+      assignees.length ? `指派给 ${assignees.map((m) => m.name).join('、')}。` : null,
+      labels.length ? `标签：${labels.map((l) => l.name).join('、')}。` : null,
+      checks.total ? `检查清单已完成 ${checks.done}/${checks.total}。` : null,
       // "Every week" on its own says nothing about what repeats; in speech it
       // has to name the behaviour the icon stands for.
       isRecurring(task)
-        ? `Repeats ${describeRecurrence(task.recurrence).toLowerCase()}, when done.`
+        ? `完成后${describeRecurrence(task.recurrence).toLowerCase()}重复。`
         : null,
-      'Enter to open, Alt plus arrows to move.',
+      '按 Enter 打开，按 Alt 加方向键移动。',
     ];
     return parts.filter(Boolean).join(' ');
   }
@@ -223,15 +223,15 @@ export function boardView({ projectId }) {
     announceMove(task, toColumnId, visibleIndex);
     /* One entry per gesture, whatever it rewrote inside the column. The
        inverse is the same mutation, aimed backwards. */
-    const toName = d.columns.find((c) => c.id === toColumnId)?.name ?? 'another column';
+    const toName = d.columns.find((c) => c.id === toColumnId)?.name ?? '另一个分栏';
     const complete = () => {
       spawned = spawnedBy(projectId,
         () => store.moveTask(projectId, task.id, toColumnId, toIndex)).spawned;
     };
     record(projectId, {
       label: from.columnId === toColumnId
-        ? `move of “${task.title}”`
-        : `move of “${task.title}” to ${toName}`,
+        ? `移动“${task.title}”`
+        : `将“${task.title}”移动到 ${toName}`,
       undo: () => {
         store.moveTask(projectId, task.id, from.columnId, Math.max(0, from.index));
         dropSpawned(projectId, spawned);
@@ -246,7 +246,7 @@ export function boardView({ projectId }) {
     const d = doc();
     const col = d.columns.find((c) => c.id === toColumnId);
     const count = visible(toColumnId).length;
-    announce(`Moved "${task.title}" to ${col.name}, position ${index + 1} of ${count}`);
+    announce(`已将“${task.title}”移动到 ${col.name}，位置 ${index + 1}/${count}`);
   }
 
   function refocusCard(taskId) {
@@ -269,7 +269,7 @@ export function boardView({ projectId }) {
           render();
           focusComposer(column.id);
         },
-      }, ' Add task'));
+      }, ' 添加任务'));
       return wrap;
     }
 
@@ -278,9 +278,9 @@ export function boardView({ projectId }) {
       // Titles are capped at 200; the extra room is for the tokens that get
       // parsed back out of the text before it becomes one.
       maxLength: 300,
-      placeholder: 'Task title. Try "tomorrow", "!high", "#label"',
+      placeholder: '任务标题。试试输入 "tomorrow"、"!high"、"#标签"',
       value: composerDraft,
-      'aria-label': `New task in ${column.name}`,
+      'aria-label': `在 ${column.name} 中新建任务`,
       oninput: () => { composerDraft = input.value; chips.update(composerDraft); },
       onkeydown: (e) => {
         // Enter/Escape while an IME composition is open confirm or cancel
@@ -292,7 +292,7 @@ export function boardView({ projectId }) {
     });
 
     function submit() {
-      if (!requireValue(input, 'A task needs a title.')) return;
+      if (!requireValue(input, '任务需要填写标题。')) return;
       const parsed = chips.parse(input.value);
       composerDraft = '';
       chips.reset();
@@ -303,9 +303,9 @@ export function boardView({ projectId }) {
       // Silently dropping the new card behind the filter would read as a
       // failure to add it.
       if (isFilterActive(filter) && !matchesFilter(task, filter, filterCtx())) {
-        toast('Task added, but the current filter hides it', {
+        toast('已添加任务，但被当前筛选条件隐藏', {
           icon: 'search',
-          action: { label: 'Clear filters', onClick: () => bar.reset() },
+          action: { label: '清除筛选', onClick: () => bar.reset() },
         });
       }
       focusComposer(column.id, true);
@@ -324,15 +324,15 @@ export function boardView({ projectId }) {
       input,
       chips.node,
       el('div.row', {},
-        el('button.btn.btn-primary.btn-sm', { onclick: submit }, 'Add task'),
+        el('button.btn.btn-primary.btn-sm', { onclick: submit }, '添加任务'),
         el('button.icon-btn', {
           html: icon('help', 18),
-          'aria-label': 'What can I type here?',
+          'aria-label': '这里可以输入什么？',
           'aria-expanded': showComposerHint ? 'true' : 'false',
           onclick: () => { showComposerHint = !showComposerHint; render(); focusComposer(column.id); },
         }),
         el('span.grow'),
-        el('button.icon-btn', { html: icon('x', 18), 'aria-label': 'Cancel', onclick: closeComposer })
+        el('button.icon-btn', { html: icon('x', 18), 'aria-label': '取消', onclick: closeComposer })
       ),
       showComposerHint && quickAddHint()
     ));
@@ -348,12 +348,12 @@ export function boardView({ projectId }) {
       tasks.map((t, i) => cardEl(t, colIdx, i)),
       // Only when a filter emptied the column: a genuinely empty column
       // reads fine with just its composer.
-      !tasks.length && total > 0 && el('p.col-empty-hint', {}, 'No matches')
+      !tasks.length && total > 0 && el('p.col-empty-hint', {}, '无匹配项')
     );
 
     const menuBtn = el('button.icon-btn.small', {
       html: icon('more', 17, 2),
-      'aria-label': `Options for ${column.name}`,
+      'aria-label': `${column.name} 的选项`,
       'aria-haspopup': 'menu',
       'aria-expanded': 'false',
       onclick: () => openColumnMenu(menuBtn, column, colIdx),
@@ -364,27 +364,26 @@ export function boardView({ projectId }) {
        urgent of the two — it explains why cards are missing — so it wins the
        label, and the limit moves into the tooltip behind it. */
     const wip = wipState(column, total);
-    const limitNote = wip.limit === null ? '' : `Limit ${wip.limit}`;
+    const limitNote = wip.limit === null ? '' : `上限 ${wip.limit}`;
     const countLabel = hidden ? `${tasks.length}/${total}`
       : wip.limit !== null ? `${total} / ${wip.limit}`
       : String(total);
 
     const head = el('div.col-head', {},
       el('h2.col-name', {}, column.name),
-      column.done && el('span.col-done-ic', { html: icon('check', 13, 2.6), title: 'Tasks here count as done', role: 'img', 'aria-label': 'Done column' }),
+      column.done && el('span.col-done-ic', { html: icon('check', 13, 2.6), title: '此处的任务视为已完成', role: 'img', 'aria-label': '已完成分栏' }),
       column.autoArchiveDays > 0 && column.done && el('span.col-auto-ic', {
         html: icon('archive', 12, 2),
         role: 'img',
-        title: `Tasks that have sat here for ${column.autoArchiveDays} `
-          + `day${column.autoArchiveDays === 1 ? '' : 's'} are archived on project open`,
-        'aria-label': `Archives tasks after ${column.autoArchiveDays} days`,
+        title: `在此停留满 ${column.autoArchiveDays} 天的任务将在打开项目时自动归档`,
+        'aria-label': `${column.autoArchiveDays} 天后自动归档任务`,
       }),
       el('span.col-count', {
         className: `col-count${hidden ? ' filtered' : ''}${wip.over && !hidden ? ' over' : ''}`,
         title: hidden
-          ? `${tasks.length} of ${total} tasks match the filter`
-            + (limitNote ? `. ${limitNote}` : '')
-          : wip.over ? `${total} tasks, over the limit of ${wip.limit}`
+          ? `${tasks.length}/${total} 个任务符合筛选条件`
+            + (limitNote ? `。${limitNote}` : '')
+          : wip.over ? `${total} 个任务，超出上限 ${wip.limit}`
           : limitNote || null,
       }, countLabel),
       el('span.grow'),
@@ -395,10 +394,10 @@ export function boardView({ projectId }) {
       dataset: { colId: column.id },
       role: 'group',
       'aria-label': hidden
-        ? `${column.name}, ${tasks.length} of ${total} tasks shown`
+        ? `${column.name}，已显示 ${tasks.length}/${total} 个任务`
         : wip.over
-          ? `${column.name}, ${total} tasks, over its limit of ${wip.limit}`
-          : `${column.name}, ${total} tasks`,
+          ? `${column.name}，${total} 个任务，超出上限 ${wip.limit}`
+          : `${column.name}，${total} 个任务`,
     }, head, body, composer(column));
   }
 
@@ -411,7 +410,7 @@ export function boardView({ projectId }) {
   function sortColumn(column, sort) {
     const rewrites = planColumnSort(doc().tasks, column.id, sort.key);
     if (!rewrites.length) {
-      toast(`${column.name} is already sorted by ${sort.label.toLowerCase()}`,
+      toast(`${column.name} 已按${sort.label}排序`,
         { icon: 'check' });
       return;
     }
@@ -419,16 +418,16 @@ export function boardView({ projectId }) {
       id, order: doc().tasks.find((t) => t.id === id)?.order ?? 0,
     }));
     store.setTaskOrders(projectId, rewrites);
-    announce(`${column.name} sorted by ${sort.label.toLowerCase()}`);
+    announce(`${column.name} 已按${sort.label}排序`);
     record(projectId, {
-      label: `sort of ${column.name} by ${sort.label.toLowerCase()}`,
+      label: `将 ${column.name} 按${sort.label}排序`,
       undo: () => store.setTaskOrders(projectId, before),
       redo: () => store.setTaskOrders(projectId, rewrites),
     });
-    toast(`${column.name} sorted by ${sort.label.toLowerCase()}`, {
+    toast(`${column.name} 已按${sort.label}排序`, {
       icon: 'listTodo',
       duration: 7000,
-      action: { label: 'Undo', onClick: () => store.setTaskOrders(projectId, before) },
+      action: { label: '撤销', onClick: () => store.setTaskOrders(projectId, before) },
     });
   }
 
@@ -436,30 +435,30 @@ export function boardView({ projectId }) {
     const d = doc();
     openMenu(anchor, [
       {
-        label: 'Rename column', icon: 'pencil',
+        label: '重命名分栏', icon: 'pencil',
         onClick: async () => {
-          const name = await promptDialog({ title: 'Rename column', label: 'Column name', value: column.name });
+          const name = await promptDialog({ title: '重命名分栏', label: '分栏名称', value: column.name });
           if (!name || name === column.name) return;
           const before = column.name;
           store.updateColumn(projectId, column.id, { name });
           record(projectId, {
-            label: `rename of ${before}`,
+            label: `重命名 ${before}`,
             undo: () => store.updateColumn(projectId, column.id, { name: before }),
             redo: () => store.updateColumn(projectId, column.id, { name }),
           });
         },
       },
       {
-        label: column.done ? 'Unmark as done column' : 'Mark as done column',
+        label: column.done ? '取消标记为已完成分栏' : '标记为已完成分栏',
         icon: 'taskDone',
         onClick: () => store.updateColumn(projectId, column.id, { done: !column.done }),
       },
       {
-        label: 'Column settings…', icon: 'gear',
+        label: '分栏设置…', icon: 'gear',
         onClick: () => openColumnSettings(projectId, column.id),
       },
       {
-        label: 'Sort tasks by…',
+        label: '任务排序依据…',
         icon: 'arrowDown',
         disabled: columnTasks(d.tasks, column.id).length < 2,
         onClick: () => openMenu(anchor, COLUMN_SORTS.map((s) => ({
@@ -470,18 +469,18 @@ export function boardView({ projectId }) {
       // Clearing out finished work is the everyday reason to archive, so the
       // action lives on the done column that accumulates it.
       column.done && {
-        label: `Archive tasks here${columnTasks(d.tasks, column.id).length
+        label: `归档此处的任务${columnTasks(d.tasks, column.id).length
           ? ` (${columnTasks(d.tasks, column.id).length})` : ''}`,
         icon: 'archive',
         disabled: !columnTasks(d.tasks, column.id).length,
         onClick: () => {
           const ids = store.archiveTasksIn(projectId, column.id);
           if (!ids?.length) return;
-          toast(`${ids.length} task${ids.length === 1 ? '' : 's'} archived`, {
+          toast(`已归档 ${ids.length} 个任务`, {
             icon: 'archive',
             duration: 7000,
             action: {
-              label: 'Undo',
+              label: '撤销',
               onClick: () => { for (const id of ids) store.unarchiveTask(projectId, id); },
             },
           });
@@ -489,16 +488,16 @@ export function boardView({ projectId }) {
       },
       'sep',
       colIdx > 0 && {
-        label: 'Move left', icon: 'arrowL',
+        label: '向左移动', icon: 'arrowL',
         onClick: () => store.moveColumn(projectId, column.id, colIdx - 1),
       },
       colIdx < d.columns.length - 1 && {
-        label: 'Move right', icon: 'arrowR',
+        label: '向右移动', icon: 'arrowR',
         onClick: () => store.moveColumn(projectId, column.id, colIdx + 1),
       },
       'sep',
       {
-        label: 'Delete column', icon: 'trash', danger: true,
+        label: '删除分栏', icon: 'trash', danger: true,
         disabled: d.columns.length <= 1,
         // No confirm: the toast says where the tasks went and undoes it.
         onClick: () => {
@@ -506,12 +505,12 @@ export function boardView({ projectId }) {
           if (!removed) return;
           const n = removed.moved.length;
           toast(n
-            ? `Column deleted. ${n} task${n === 1 ? '' : 's'} moved to ${removed.fallbackName}`
-            : 'Column deleted', {
+            ? `分栏已删除。${n} 个任务已移动到 ${removed.fallbackName}`
+            : '分栏已删除', {
             icon: 'trash',
             duration: 7000,
             action: {
-              label: 'Undo',
+              label: '撤销',
               onClick: () => store.restoreColumn(projectId, removed),
             },
           });
@@ -534,10 +533,10 @@ export function boardView({ projectId }) {
       el('button.add-col-btn', {
         html: icon('plus', 16, 2.2),
         onclick: async () => {
-          const name = await promptDialog({ title: 'Add column', label: 'Column name', placeholder: 'e.g. In review', confirmLabel: 'Add column' });
+          const name = await promptDialog({ title: '添加分栏', label: '分栏名称', placeholder: '例如：审核中', confirmLabel: '添加分栏' });
           if (name) store.addColumn(projectId, name);
         },
-      }, ' Add column')
+      }, ' 添加分栏')
     ));
     if (focusedId) board.querySelector(`.card[data-task-id="${focusedId}"]`)?.focus();
 
@@ -574,7 +573,7 @@ export function boardView({ projectId }) {
     onDropColumn(columnId, toIndex) {
       store.moveColumn(projectId, columnId, toIndex);
       const col = doc().columns.find((c) => c.id === columnId);
-      if (col) announce(`Moved column "${col.name}" to position ${toIndex + 1}`);
+      if (col) announce(`已将分栏“${col.name}”移动到位置 ${toIndex + 1}`);
     },
   });
 
@@ -596,7 +595,7 @@ export function boardView({ projectId }) {
   // Nudge first-time users somewhere obvious, once per session.
   if (!doc().tasks.length && !emptyTipShown) {
     emptyTipShown = true;
-    toast('Tip: add your first task with the button under a column', { icon: 'listTodo', duration: 4000 });
+    toast('提示：点击分栏下方的按钮即可添加第一个任务', { icon: 'listTodo', duration: 4000 });
   }
   return root;
 }

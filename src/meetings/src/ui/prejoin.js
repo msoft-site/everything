@@ -100,14 +100,14 @@ export function mountPrejoin(root, params, ctx) {
   const video = el('video', { autoplay: true, playsinline: true, muted: true });
   video.muted = true; // attribute alone isn't always honored
 
-  const videoNote = el('div', { class: 'video-off-note' }, 'Camera is starting…');
+  const videoNote = el('div', { class: 'video-off-note' }, '摄像头正在启动…');
   const nameTag = el('div', { class: 'prejoin-name-tag' });
 
-  const micBtn = roundCtl('mic', 'microphone', async () => {
+  const micBtn = roundCtl('mic', '麦克风', async () => {
     await media.setMicOn(!media.micOn);
     setPref('joinMuted', !media.micOn);
   });
-  const camBtn = roundCtl('cam', 'camera', async () => {
+  const camBtn = roundCtl('cam', '摄像头', async () => {
     await media.setCamOn(!media.camOn);
     setPref('joinCamOff', !media.camOn);
   });
@@ -124,21 +124,21 @@ export function mountPrejoin(root, params, ctx) {
     'button',
     {
       class: 'round-ctl',
-      title: 'Change background',
-      'aria-label': 'Change background',
+      title: '更改背景',
+      'aria-label': '更改背景',
       onclick: () => openBackgroundDialog({ media }),
     },
     icon('sparkle')
   );
 
-  const micSelect = el('select', { 'aria-label': 'Microphone', onchange: () => onDevicePick('mic') });
-  const camSelect = el('select', { 'aria-label': 'Camera', onchange: () => onDevicePick('cam') });
+  const micSelect = el('select', { 'aria-label': '麦克风', onchange: () => onDevicePick('mic') });
+  const camSelect = el('select', { 'aria-label': '摄像头', onchange: () => onDevicePick('cam') });
 
   const nameInput = el('input', {
     type: 'text',
-    placeholder: 'Your name',
+    placeholder: '您的姓名',
     maxlength: '60',
-    'aria-label': 'Your name',
+    'aria-label': '您的姓名',
     value: ctx.getUserName() ?? '',
     onkeydown: (e) => {
       if (e.key === 'Enter') onJoin();
@@ -159,12 +159,12 @@ export function mountPrejoin(root, params, ctx) {
   const startRoomBtn = el(
     'button',
     { class: 'btn btn-outline', style: { display: 'none' }, onclick: onStartRoom },
-    'Start this meeting'
+    '发起此会议'
   );
   const cancelWaitBtn = el(
     'button',
     { class: 'btn btn-text', style: { display: 'none' }, onclick: onCancelWait },
-    'Stop waiting'
+    '停止等待'
   );
   // While a running meeting is out of reach the lobby decides on its own
   // when to dial the same invite again; when its guess is wrong (a dial that
@@ -175,10 +175,10 @@ export function mountPrejoin(root, params, ctx) {
     {
       class: 'btn btn-text',
       style: { display: 'none' },
-      'aria-label': 'Try connecting to the meeting again',
+      'aria-label': '再次尝试连接到会议',
       onclick: onRetry,
     },
-    'Try again'
+    '重试'
   );
   const sideTitle = el('h1', {}, sideTitleText());
   // A live region: entering/leaving the waiting room otherwise changes the
@@ -223,7 +223,7 @@ export function mountPrejoin(root, params, ctx) {
           'button',
           { class: 'btn btn-text prejoin-back', onclick: () => ctx.goHome() },
           icon('back'),
-          'Back to home'
+          '返回首页'
         )
       )
     )
@@ -339,15 +339,15 @@ export function mountPrejoin(root, params, ctx) {
     camBtn.set(media.camOn);
     fxBtn.classList.toggle('active', media.background.type !== 'none');
     video.style.display = media.camOn ? '' : 'none';
-    videoNote.textContent = media.camOn ? '' : 'Camera is off';
+    videoNote.textContent = media.camOn ? '' : '摄像头已关闭';
     videoNote.style.display = media.camOn ? 'none' : '';
   }
 
   async function refreshDevices() {
     try {
       const { mics, cams } = await media.listDevices();
-      fillSelect(micSelect, mics, media.micId, 'Microphone');
-      fillSelect(camSelect, cams, media.camId, 'Camera');
+      fillSelect(micSelect, mics, media.micId, '麦克风');
+      fillSelect(camSelect, cams, media.camId, '摄像头');
     } catch {
       /* enumeration unavailable */
     }
@@ -367,7 +367,7 @@ export function mountPrejoin(root, params, ctx) {
   async function onJoin() {
     if (joining) return;
     if (!nameInput.value.trim()) {
-      errorLine.textContent = 'Please enter your name.';
+      errorLine.textContent = '请输入您的姓名。';
       nameInput.focus();
       return;
     }
@@ -385,11 +385,11 @@ export function mountPrejoin(root, params, ctx) {
     // The name is captured now; leaving the field editable through a long
     // waiting-room stay would invite edits that silently never apply.
     nameInput.disabled = true;
-    joinBtn.textContent = params.mode === 'create' ? 'Starting…' : 'Joining…';
+    joinBtn.textContent = params.mode === 'create' ? '正在发起…' : '正在加入…';
 
     try {
       if (!hasPuter()) {
-        throw new Error('Puter.js failed to load. Check your connection and reload.');
+        throw new Error('Puter.js 加载失败。请检查您的网络连接并刷新页面。');
       }
       // Starting a meeting takes a Puter account: the host serves the room,
       // publishes its link and pays for its relays. Joining a room takes
@@ -398,7 +398,7 @@ export function mountPrejoin(root, params, ctx) {
       // needs a session, having no room to carry a grant; Puter makes that
       // guest an account on the spot (see src/lib/account.js).
       if (params.mode === 'create') {
-        if (isAnonymous()) toast('Sign in with Puter to continue', { icon: 'info' });
+        if (isAnonymous()) toast('请登录 Puter 以继续', { icon: 'info' });
         await ensureSession();
       } else if (!roomCode) {
         await ensureSession({ autoCreate: true });
@@ -534,7 +534,7 @@ export function mountPrejoin(root, params, ctx) {
         // connection does. Said up front, so a network that blocks it does
         // not come as a mystery twenty seconds later.
         if (!room.grant && isAnonymous()) {
-          const note = 'This meeting was started on an older version — joining may not work from every network.';
+          const note = '此会议是在旧版本上发起的 —— 并非所有网络环境下都能成功加入。';
           if (sideSub.textContent !== note) sideSub.textContent = note;
         }
         const dialedAt = Date.now();
@@ -672,7 +672,7 @@ export function mountPrejoin(root, params, ctx) {
       claim = await withDeadline(claimRoom(code, { secret, host: name }), ROOM_SETUP_TIMEOUT_MS);
     } catch (error) {
       console.warn('[prejoin] could not claim the meeting link', error);
-      toast('Could not reach the meeting service to start this meeting. It will be tried again in a moment.', {
+      toast('无法连接到会议服务以发起此会议。稍后将重试。', {
         icon: 'info',
       });
       return {};
@@ -715,7 +715,7 @@ export function mountPrejoin(root, params, ctx) {
       // The claim landed, the invite did not (yet): the lease keeps trying,
       // and the shell says how the link is doing.
       console.warn('[prejoin] could not write the invite to the meeting link', first.error);
-      toast('The meeting link couldn’t be updated just now. Guests may not find this meeting until it can be.', {
+      toast('刚才无法更新会议链接。在更新成功之前，访客可能无法找到此会议。', {
         icon: 'info',
       });
     }
@@ -738,27 +738,27 @@ export function mountPrejoin(root, params, ctx) {
     // we cannot reach, say that instead of blaming the host's link. And a
     // meeting someone is starting this very moment is neither: connecting.
     const running = unreachableSince !== null;
-    const title = starting ? 'The meeting is starting' : running ? 'The meeting is running' : 'Waiting for the host';
+    const title = starting ? '会议正在启动' : running ? '会议正在进行中' : '正在等待主持人';
     const sub = starting
-      ? 'Someone is starting the meeting right now. Connecting you — this usually takes a few seconds.'
+      ? '有人正在发起会议。正在为您连接 —— 通常只需几秒钟。'
       : running
         ? unreachableReason === 'network'
-          ? 'Your network is blocking the connection. Try another network or a phone hotspot, or ask the host to check that guests can use relays.'
+          ? '您的网络阻止了连接。请尝试切换其他网络或使用手机热点，或者请主持人检查访客是否可以使用中继服务。'
           : Date.now() - unreachableSince >= UNREACHABLE_HELP_AFTER_MS
-            ? 'Still trying to get you in. Ask the host to check their connection, or to share the link again.'
+            ? '仍在尝试为您接入。请让主持人检查其网络连接，或重新分享链接。'
             : unreachableReason === 'signaller'
-              ? 'Can’t reach Puter’s connection service — retrying…'
-              : 'The host is here, but their link is being refreshed. Connecting you — this usually takes a few seconds.'
+              ? '无法连接到 Puter 连接服务 —— 正在重试…'
+              : '主持人已在线，但其链接正在刷新。正在为您连接 —— 通常只需几秒钟。'
         : !sawRoom && attempt >= ROOM_MISSING_HINT_AFTER
-          ? 'We can’t reach the meeting service right now. Check your connection — you’ll join automatically once it’s back.'
+          ? '目前无法连接到会议服务。请检查您的网络连接 —— 恢复后您将自动加入。'
           : isAnonymous()
-            ? 'The meeting hasn’t started yet. You’ll join automatically when it starts — or sign in with Puter to start it yourself.'
-            : 'The meeting hasn’t started yet. You’ll join automatically when it starts, or you can start it now.';
+            ? '会议尚未开始。会议开始后您将自动加入 —— 或者登录 Puter 亲自发起会议。'
+            : '会议尚未开始。会议开始后您将自动加入，或者您也可以立即发起会议。';
     if (sideTitle.textContent !== title) sideTitle.textContent = title;
     // Rewriting the live region with identical text would re-announce it to
     // screen readers on every poll — only touch it when it actually changes.
     if (sideSub.textContent !== sub) sideSub.textContent = sub;
-    const label = starting || running ? 'Connecting…' : 'Waiting for the host…';
+    const label = starting || running ? '正在连接…' : '正在等待主持人…';
     if (joinBtn.textContent !== label) joinBtn.textContent = label;
     // Anyone holding the link may start the meeting when none is running.
     // Offering that only to the room's creator is what used to leave
@@ -798,7 +798,7 @@ export function mountPrejoin(root, params, ctx) {
   async function onStartRoom() {
     if (startRequested || startRoomBtn.disabled) return;
     startRoomBtn.disabled = true;
-    startRoomBtn.textContent = 'Starting…';
+    startRoomBtn.textContent = '正在发起…';
     errorLine.textContent = '';
     // Starting a meeting takes a Puter account, here as on the home page:
     // the host serves the room, publishes its link and pays for its relays.
@@ -807,7 +807,7 @@ export function mountPrejoin(root, params, ctx) {
     // is asked for now rather than from the waiting loop; declined, the
     // button is theirs to try again.
     if (isAnonymous()) {
-      toast('Sign in with Puter to continue', { icon: 'info' });
+      toast('请登录 Puter 以继续', { icon: 'info' });
       try {
         await ensureSession();
       } catch (err) {
@@ -825,7 +825,7 @@ export function mountPrejoin(root, params, ctx) {
 
   function resetStartRoomBtn() {
     startRoomBtn.disabled = false;
-    startRoomBtn.textContent = 'Start this meeting';
+    startRoomBtn.textContent = '发起此会议';
   }
 
   function onCancelWait() {
@@ -867,16 +867,16 @@ export function mountPrejoin(root, params, ctx) {
   }
 
   function joinLabel() {
-    return params.mode === 'create' ? 'Start meeting' : 'Join now';
+    return params.mode === 'create' ? '发起会议' : '立即加入';
   }
 
   function sideTitleText() {
-    return params.mode === 'create' ? 'Ready to start?' : 'Ready to join?';
+    return params.mode === 'create' ? '准备好开始了吗？' : '准备好加入了吗？';
   }
 
   function sideSubText() {
-    if (params.mode === 'create') return 'You’ll get a reusable link that works every time this meeting runs.';
-    return `Joining meeting ${displayCode(roomCode ?? params.code ?? '')}`;
+    if (params.mode === 'create') return '您将获得一个可重复使用的链接，每次举行此会议时均可使用。';
+    return `正在加入会议 ${displayCode(roomCode ?? params.code ?? '')}`;
   }
 
   function refreshSideText() {
@@ -903,7 +903,7 @@ function roundCtl(kind, noun, onclick) {
     clear(node).append(icon(on ? kind : `${kind}Off`));
     node.classList.toggle('off', !on);
     node.setAttribute('aria-pressed', on ? 'true' : 'false');
-    const label = `Turn ${on ? 'off' : 'on'} ${noun}`;
+    const label = `${on ? '关闭' : '开启'}${noun}`;
     node.title = label;
     node.setAttribute('aria-label', label);
   };
@@ -914,7 +914,7 @@ function roundCtl(kind, noun, onclick) {
 function fillSelect(select, devices, currentId, fallbackLabel) {
   clear(select);
   if (!devices.length) {
-    select.append(el('option', { value: '' }, `No ${fallbackLabel.toLowerCase()} found`));
+    select.append(el('option', { value: '' }, `未找到${fallbackLabel}`));
     select.disabled = true;
     return;
   }
@@ -938,18 +938,18 @@ export function friendlyError(err) {
   const code = err?.error ?? '';
   const msg = err?.message ?? err?.msg ?? String(err);
   if (code === 'popup_blocked')
-    return 'Your browser blocked the Puter window. Allow pop-ups for this site, then try again.';
+    return '您的浏览器拦截了 Puter 窗口。请允许此网站的弹出窗口，然后重试。';
   if (code === 'auth_window_closed' || /cancel|dismiss|denied/i.test(msg))
-    return 'The Puter window closed before we could get you in. Try again.';
+    return 'Puter 窗口在完成登录前已关闭。请重试。';
   if (/version-mismatch/i.test(msg))
-    return 'You and the host are on different versions of Puter Meetings. Both of you should hard-refresh the page (⌘/Ctrl+Shift+R) and try again with a new meeting link.';
+    return '您与主持人使用的 Puter 视频会议版本不同。请双方强制刷新页面（⌘/Ctrl+Shift+R），并使用新的会议链接重试。';
   if (isSignallerUnreachableError(err))
-    return 'Can’t reach Puter’s connection service. Check your connection and try again.';
+    return '无法连接到 Puter 连接服务。请检查您的网络连接并重试。';
   if (err?.kind === 'no-media-path')
-    return 'Your network is blocking the connection. Try another network or a phone hotspot, or ask the host to check that guests can use relays.';
+    return '您的网络阻止了连接。请尝试切换其他网络或使用手机热点，或者请主持人检查访客是否可以使用中继服务。';
   if (/handshake-timeout/i.test(msg))
-    return 'Connected, but the meeting never answered. Make sure the host still has the meeting open. If this keeps happening, both of you should hard-refresh the page (⌘/Ctrl+Shift+R) to get the latest version.';
-  if (/timed out/i.test(msg)) return 'Could not reach the meeting. Check the code and try again.';
-  if (/closed/i.test(msg)) return 'The meeting is unavailable. The host may have left.';
+    return '已连接，但会议未响应。请确保主持人仍保持会议开启。如果问题持续存在，请双方强制刷新页面（⌘/Ctrl+Shift+R）以获取最新版本。';
+  if (/timed out/i.test(msg)) return '无法连接到会议。请检查会议代码并重试。';
+  if (/closed/i.test(msg)) return '会议不可用，主持人可能已离开。';
   return msg;
 }
