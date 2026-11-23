@@ -120,7 +120,20 @@ cd "$BUILD_DIR"
 npm install electron electron-builder --save-dev --prefer-offline --no-audit
 
 echo "==> [4/4] 正在针对 Apple Silicon (arm64) 架构生成 DMG 安装包..."
-npx electron-builder --mac dmg --arm64 --config.directories.output="$OUTPUT_DIR"
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  npx electron-builder --mac dmg --arm64 --config.directories.output="$OUTPUT_DIR"
+else
+  # 在 Linux 环境下生成 macOS arm64 应用包并制成 DMG
+  npx electron-builder --mac dir --arm64 --config.directories.output="$OUTPUT_DIR"
+  APP_BUNDLE=$(find "$OUTPUT_DIR/mac-arm64" -maxdepth 1 -name "*.app" | head -n 1)
+  if [ -d "$APP_BUNDLE" ]; then
+    STAGE_DIR=$(mktemp -d)
+    cp -r "$APP_BUNDLE" "$STAGE_DIR/"
+    ln -sf /Applications "$STAGE_DIR/Applications"
+    genisoimage -D -V "$DISPLAY_TITLE" -no-pad -r -apple -o "$OUTPUT_DIR/${DISPLAY_TITLE}-1.0.0-arm64.dmg" "$STAGE_DIR"
+    rm -rf "$STAGE_DIR"
+  fi
+fi
 
 echo "=========================================================="
 echo " 构建成功！"
