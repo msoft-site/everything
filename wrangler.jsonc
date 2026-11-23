@@ -1,0 +1,6 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "everything",
+  "pages_build_output_dir": ".cf-deploy-dist",
+  "compatibility_date": "2026-11-23"
+}
