@@ -4,7 +4,7 @@
 # Perfect for Synology / QNAP / Unraid / TrueNAS / Docker desktop
 # ==============================================================================
 
-FROM node:22-bullseye-slim AS builder
+FROM node:22-bookworm-slim AS builder
 
 WORKDIR /build
 

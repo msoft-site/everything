@@ -102,11 +102,15 @@ cat << EOF > "$BUILD_DIR/package.json"
 }
 EOF
 
-# 如果有 icon 则复制
-if [ -f "$DIR/src/$APP_NAME/icon-128.png" ]; then
+# 如果有 512x512 icon 则优先使用，以符合 macOS / Windows 要求
+if [ -f "$DIR/src/$APP_NAME/public/icon-512.png" ]; then
+  cp "$DIR/src/$APP_NAME/public/icon-512.png" "$BUILD_DIR/icon.png"
+elif [ -f "$DIR/src/$APP_NAME/public/icons/icon-512.png" ]; then
+  cp "$DIR/src/$APP_NAME/public/icons/icon-512.png" "$BUILD_DIR/icon.png"
+elif [ -f "$DIR/assets/icons/icon-512.png" ]; then
+  cp "$DIR/assets/icons/icon-512.png" "$BUILD_DIR/icon.png"
+elif [ -f "$DIR/src/$APP_NAME/icon-128.png" ]; then
   cp "$DIR/src/$APP_NAME/icon-128.png" "$BUILD_DIR/icon.png"
-elif [ -f "$DIR/assets/everything.png" ]; then
-  cp "$DIR/assets/everything.png" "$BUILD_DIR/icon.png"
 fi
 
 echo "==> [3/4] 安装 electron & electron-builder 打包工具..."
