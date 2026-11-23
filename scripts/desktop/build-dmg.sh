@@ -48,6 +48,8 @@ if [ "$APP_NAME" = "all-in-one" ]; then
       cp -r "$d/"* "$BUILD_DIR/dist/app/$app/" 2>/dev/null || true
     fi
   done
+  rm -rf "$BUILD_DIR/dist/app/whiteboard/tmp" 2>/dev/null || true
+  find "$BUILD_DIR/dist" -xtype l -delete 2>/dev/null || true
   DISPLAY_TITLE="Everything"
 else
   APP_SRC="$DIR/src/$APP_NAME"
