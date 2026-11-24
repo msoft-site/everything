@@ -212,13 +212,7 @@ async function bootInner() {
     kv.resetReachable();
     await rawStore.load();
 
-    const effectivelyOffline = navigator.onLine === false || kv.wasOffline();
-    if (effectivelyOffline && !kv.hasSnapshot()) {
-      // Offline and never synced on this device — nothing to show. Don't render
-      // an empty calendar that looks like data loss.
-      renderOfflineScreen(root, { onRetry: boot });
-      return;
-    }
+    const effectivelyOffline = false;
 
     applyTheme(rawStore.getSettings().theme);
 

@@ -29,17 +29,16 @@ function prepareHtml(html) {
   // 2. Remove external js.puter.com script tag if present
   html = html.replace(/<script\s+src=["']https:\/\/js\.puter\.com\/v2\/?["'][^>]*><\/script>/gi, '<!-- [Internal Puter Runtime Active] -->');
 
-  // 3. Remove external runtime tag if present to favor inline
+  // 3. Remove old inline or external runtime tags to ensure latest version is injected
+  html = html.replace(/<script id="everything-internal-runtime-inline">[\s\S]*?<\/script>/gi, '');
   html = html.replace(/<script\s+src=["']\/assets\/everything-internal-runtime\.js["']><\/script>/gi, '');
 
   // 4. Inject runtime code inline at the very top of <head>
-  if (!html.includes('id="everything-internal-runtime-inline"')) {
-    const inlineTag = `<script id="everything-internal-runtime-inline">\n${RUNTIME_CODE}\n</script>`;
-    if (html.includes('<head>')) {
-      html = html.replace('<head>', `<head>\n  ${inlineTag}`);
-    } else {
-      html = `${inlineTag}\n${html}`;
-    }
+  const inlineTag = `<script id="everything-internal-runtime-inline">\n${RUNTIME_CODE}\n</script>`;
+  if (html.includes('<head>')) {
+    html = html.replace('<head>', `<head>\n  ${inlineTag}`);
+  } else {
+    html = `${inlineTag}\n${html}`;
   }
 
   // 5. Inject back button if not present

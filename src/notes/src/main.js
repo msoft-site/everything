@@ -23,38 +23,38 @@ function screen(...children) {
   root.replaceChildren(h('main.splash', { id: 'main' }, ...children));
 }
 
-function loading(text = 'Opening your notebooks...') {
+function loading(text = '正在打开您的笔记本…') {
   root.setAttribute('aria-busy', 'true');
   root.replaceChildren(h('div.splash', { role: 'status' }, h('img.splash-logo', { src: './favicon.svg', alt: '' }), h('div.spinner'), h('p', text)));
 }
 
 function signInScreen(onSignedIn) {
-  const btn = h('button.btn.primary.splash-cta', { type: 'button' }, 'Sign in');
+  const btn = h('button.btn.primary.splash-cta', { type: 'button' }, '进入笔记本');
   const error = h('p.field-error', { role: 'alert' });
   btn.addEventListener('click', async () => {
     btn.disabled = true;
-    btn.textContent = 'Waiting for Puter...';
+    btn.textContent = '正在进入…';
     error.textContent = '';
     try {
       await puter.auth.signIn();
       onSignedIn();
     } catch (err) {
       btn.disabled = false;
-      btn.textContent = 'Sign in';
-      if (err?.error === 'popup_blocked') error.textContent = 'Your browser blocked the sign-in window. Allow pop-ups for this site and try again.';
-      else if (err?.error !== 'auth_window_closed') error.textContent = "Couldn't sign in. Try again.";
+      btn.textContent = '进入笔记本';
+      if (err?.error === 'popup_blocked') error.textContent = '浏览器拦截了弹窗，请允许弹窗后重试。';
+      else if (err?.error !== 'auth_window_closed') error.textContent = '无法登录，请重试。';
     }
   });
   const feature = (ic, text) => h('li', icon(ic, 18, undefined, { plain: true }), h('span', text));
   screen(
     h('img.splash-logo', { src: './favicon.svg', alt: '' }),
-    h('h1.splash-title', 'Notes'),
-    h('p.splash-sub', 'A free-form digital notebook for everything you want to remember.'),
+    h('h1.splash-title', '笔记便签'),
+    h('p.splash-sub', '自由随心的数字笔记本，记录您想留存的一切。'),
     h('ul.splash-features',
-      feature('container', 'Write anywhere on the page, with notebooks, sections and pages'),
-      feature('todo', 'Tag to-dos and ideas, then find them all in one place'),
-      feature('pen', 'Draw and handwrite with pens and highlighters'),
-      feature('cloud', 'Saved as files in your own Puter cloud'),
+      feature('container', '在页面任意位置书写，灵活管理笔记本、分区与页面'),
+      feature('todo', '标记待办与灵感碎片，一站式集中查看'),
+      feature('pen', '使用画笔与荧光笔随心手写涂鸦与绘图'),
+      feature('cloud', '数据完全独立安全保存在本地存储中'),
     ),
     btn,
     error,
@@ -67,7 +67,7 @@ function errorScreen(title, message, retry) {
     h('div.splash-icon', icon('cloudOff', 32)),
     h('h1.splash-title', title),
     h('p.splash-sub', message),
-    retry ? h('button.btn.primary.splash-cta', { type: 'button', onclick: retry }, 'Try again') : null,
+    retry ? h('button.btn.primary.splash-cta', { type: 'button', onclick: retry }, '重试') : null,
   );
 }
 
@@ -80,10 +80,10 @@ async function startApp(backend, user, env) {
   loading();
   const store = new Store(backend);
   try {
-    await store.load({ defaultName: user?.username ? `${user.username}'s Notebook` : 'My Notebook' });
+    await store.load({ defaultName: user?.username ? `${user.username} 的笔记本` : '我的笔记本' });
   } catch (err) {
     console.error(err);
-    errorScreen("Couldn't open your notebooks", 'Check your connection and try again.', () => location.reload());
+    errorScreen('无法打开笔记本', '请重试。', () => location.reload());
     return;
   }
   const app = new App(root, {
@@ -184,7 +184,7 @@ async function boot() {
     return;
   }
   if (typeof puter === 'undefined') {
-    errorScreen("Couldn't reach Puter", 'Notes needs Puter to store your notebooks. Check your connection and try again.', () => location.reload());
+    errorScreen('无法初始化运行时', '笔记便签需要本地存储运行时环境，请刷新重试。', () => location.reload());
     return;
   }
   const env = puter.env;
