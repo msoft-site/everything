@@ -168,8 +168,7 @@ addTranslations({
     "Décrivez ce que montre le dessin et pourquoi il est utile sur ce tableau. Laissez vide pour un dessin purement décoratif.",
   "This drawing is no longer on the board.":
     "Ce dessin n’est plus sur le tableau.",
-  "Select one image or drawing first.":
-    "Sélectionnez d’abord une image ou un dessin.",
+  "Select one image or drawing first.": "选择one image or drawing first.",
   "Suggest a description with AI": "Proposer une description avec l’IA",
   "Save alternative text": "Enregistrer le texte de remplacement",
   "Describing the image…": "Description de l’image…",
@@ -199,5 +198,5 @@ addTranslations({
     "Les objets d’un cadre masqué restent masqués jusqu’à ce que le cadre soit affiché.",
   "Read by screen readers. Leave empty for decorative images. The command palette's Alternative text can suggest one with AI.":
     "Lu par les lecteurs d’écran. Laissez vide pour une image décorative. La commande Texte de remplacement de la palette peut en proposer un avec l’IA.",
-  "Select one image first.": "Sélectionnez d’abord une image.",
+  "Select one image first.": "选择one image first.",
 });

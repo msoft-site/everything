@@ -17,7 +17,7 @@ const BACK_BUTTON_HTML = `
 const runtimePath = path.join(ROOT_DIR, 'scripts/shared/everything-internal-runtime.js');
 const RUNTIME_CODE = fs.readFileSync(runtimePath, 'utf8');
 
-function prepareHtml(html) {
+function prepareHtml(html, currentApp = '') {
   // 1. Force lang="zh-CN"
   html = html.replace(/<html(\s+[^>]*)?>/i, (m) => {
     if (m.includes('lang=')) {
@@ -35,7 +35,16 @@ function prepareHtml(html) {
   html = html.replace(/<script id="everything-internal-runtime-inline">[\s\S]*?<\/script>/gi, '');
   html = html.replace(/<script\s+src=["']\/assets\/everything-internal-runtime\.js["']><\/script>/gi, '');
 
-  // 4. Inject runtime code inline at the very top of <head>
+  // 4. Rewrite absolute root asset links to app subpath if currentApp is provided
+  if (currentApp) {
+    html = html.replace(/(src|href)=["']\/icon(-[0-9]+|\.png|\.svg)/gi, `$1="/app/${currentApp}/icon$2`);
+    html = html.replace(/(src|href)=["']\/app-icon(\.png|\.svg)?/gi, `$1="/app/${currentApp}/app-icon$2`);
+    html = html.replace(/(src|href)=["']\/icons\//gi, `$1="/app/${currentApp}/icons/`);
+    html = html.replace(/(src|href)=["']\/screenshots\//gi, `$1="/app/${currentApp}/screenshots/`);
+    html = html.replace(/(src|href)=["']\/favicon(\.ico|-|\.png)/gi, `$1="/app/${currentApp}/favicon$2`);
+  }
+
+  // 5. Inject runtime code inline at the very top of <head>
   const inlineTag = `<script id="everything-internal-runtime-inline">\n${RUNTIME_CODE}\n</script>`;
   if (html.includes('<head>')) {
     html = html.replace('<head>', `<head>\n  ${inlineTag}`);
@@ -43,7 +52,7 @@ function prepareHtml(html) {
     html = `${inlineTag}\n${html}`;
   }
 
-  // 5. Inject back button if not present
+  // 6. Inject back button if not present
   if (!html.includes('everything-back-home')) {
     html = html.replace('</body>', `${BACK_BUTTON_HTML}</body>`);
   }
@@ -77,10 +86,33 @@ async function main() {
   if (fs.existsSync(photoWasm)) {
     fs.copyFileSync(photoWasm, path.join(DIST_DIR, 'photo-engine.wasm'));
   }
+
+  // 3. 根目录全局兜底图标资源（确保根路径请求 /icon-128.png, /icon.png, /favicon.ico 等永远 200 OK）
+  const fallbackIconSrc = path.join(SRC_DIR, 'spreadsheet/icon-128.png');
+  if (fs.existsSync(fallbackIconSrc)) {
+    const rootIconTargets = [
+      'icon-128.png', 'icon.png', 'icon.svg', 'icon-192.png', 'icon-512.png',
+      'app-icon.png', 'favicon.ico', 'favicon-32x32.png', 'favicon-16x16.png'
+    ];
+    for (const tgt of rootIconTargets) {
+      const dst = path.join(DIST_DIR, tgt);
+      if (!fs.existsSync(dst)) {
+        fs.copyFileSync(fallbackIconSrc, dst);
+      }
+    }
+    const rootIconsDir = path.join(DIST_DIR, 'icons');
+    if (!fs.existsSync(rootIconsDir)) {
+      fs.mkdirSync(rootIconsDir, { recursive: true });
+    }
+    ['icon-128.png', 'icon-64.png', 'icon-192.png'].forEach(f => {
+      const dst = path.join(rootIconsDir, f);
+      if (!fs.existsSync(dst)) fs.copyFileSync(fallbackIconSrc, dst);
+    });
+  }
   
-  // 3. 拷贝并增强聚合主页
+  // 4. 拷贝并增强聚合主页
   let portalHtml = fs.readFileSync(path.join(ROOT_DIR, 'scripts/docker/portal.html'), 'utf8');
-  portalHtml = prepareHtml(portalHtml);
+  portalHtml = prepareHtml(portalHtml, '');
   fs.writeFileSync(path.join(DIST_DIR, 'index.html'), portalHtml, 'utf8');
 
   const apps = fs.readdirSync(SRC_DIR).filter(name => {
@@ -131,7 +163,7 @@ async function main() {
         if (fs.existsSync(appDist) && fs.existsSync(path.join(appDist, 'index.html'))) {
           // 处理 index.html
           let html = fs.readFileSync(path.join(appDist, 'index.html'), 'utf8');
-          html = prepareHtml(html);
+          html = prepareHtml(html, currentApp);
           fs.writeFileSync(path.join(appDist, 'index.html'), html, 'utf8');
 
           // 复制到目标目录
@@ -141,13 +173,58 @@ async function main() {
           fs.mkdirSync(path.dirname(targetDist), { recursive: true });
           execSync(`cp -r "${appDist}" "${targetDist}"`);
 
-          // 再次确保目标目录的 index.html 带有注入
+          // 拷贝并补全该应用的所有图标与截图静态文件
+          const iconCandidates = [
+            'icon-128.png', 'icon.png', 'icon.svg', 'icon-192.png', 'icon-512.png',
+            'app-icon.png', 'favicon.ico', 'favicon-32x32.png', 'favicon-16x16.png'
+          ];
+          for (const iconFile of iconCandidates) {
+            const srcIcon = path.join(appDir, iconFile);
+            const srcPubIcon = path.join(appDir, 'public', iconFile);
+            const dstIcon = path.join(targetDist, iconFile);
+            if (fs.existsSync(srcIcon) && !fs.existsSync(dstIcon)) {
+              fs.copyFileSync(srcIcon, dstIcon);
+            } else if (fs.existsSync(srcPubIcon) && !fs.existsSync(dstIcon)) {
+              fs.copyFileSync(srcPubIcon, dstIcon);
+            }
+          }
+          // 确保 targetDist/icon-128.png 必定存在（供门户首页卡片展示）
+          const target128 = path.join(targetDist, 'icon-128.png');
+          if (!fs.existsSync(target128)) {
+            for (const alt of ['icon.png', 'icon-192.png', 'app-icon.png', 'icon-512.png']) {
+              const altP = path.join(targetDist, alt);
+              if (fs.existsSync(altP)) {
+                fs.copyFileSync(altP, target128);
+                break;
+              }
+            }
+          }
+          // 复制 icons 目录
+          const iconsDir = path.join(appDir, 'icons');
+          const pubIconsDir = path.join(appDir, 'public', 'icons');
+          const dstIconsDir = path.join(targetDist, 'icons');
+          if (fs.existsSync(iconsDir) && !fs.existsSync(dstIconsDir)) {
+            execSync(`cp -r "${iconsDir}" "${dstIconsDir}"`);
+          } else if (fs.existsSync(pubIconsDir) && !fs.existsSync(dstIconsDir)) {
+            execSync(`cp -r "${pubIconsDir}" "${dstIconsDir}"`);
+          }
+          // 复制 screenshots 目录
+          const scrDir = path.join(appDir, 'screenshots');
+          const pubScrDir = path.join(appDir, 'public', 'screenshots');
+          const dstScrDir = path.join(targetDist, 'screenshots');
+          if (fs.existsSync(scrDir) && !fs.existsSync(dstScrDir)) {
+            execSync(`cp -r "${scrDir}" "${dstScrDir}"`);
+          } else if (fs.existsSync(pubScrDir) && !fs.existsSync(dstScrDir)) {
+            execSync(`cp -r "${pubScrDir}" "${dstScrDir}"`);
+          }
+
+          // 再次确保目标目录的 index.html 带有注入与正确的路径重定向
           const targetHtmlPath = path.join(targetDist, 'index.html');
           if (fs.existsSync(targetHtmlPath)) {
             fs.writeFileSync(targetHtmlPath, html, 'utf8');
           }
 
-          console.log(`  ✓ [${currentApp}] 准备就绪并已注入内置账号/中文运行时`);
+          console.log(`  ✓ [${currentApp}] 准备就绪并已注入内置账号/中文运行时及全套图标`);
           successCount++;
         } else {
           console.warn(`  ⚠️ [${currentApp}] 未生成 dist 产物`);

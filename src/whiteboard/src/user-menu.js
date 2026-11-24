@@ -1,15 +1,15 @@
 import { addTranslations, t } from "./i18n.js";
 
 addTranslations({
-  "Sign in": "Se connecter",
-  "Sign out": "Se déconnecter",
-  Apps: "Applications",
-  Close: "Fermer",
-  Account: "Compte",
-  "Manage account": "Gérer le compte",
-  Usage: "Utilisation",
-  "Open Puter": "Ouvrir Puter",
-  "Send feedback": "Envoyer la rétroaction",
+  "Sign in": "登录",
+  "Sign out": "退出登录",
+  Apps: "应用",
+  Close: "关闭",
+  Account: "账户",
+  "Manage account": "管理账户",
+  Usage: "用量",
+  "Open Puter": "打开本地存储",
+  "Send feedback": "发送反馈",
 });
 
 export const USER_MENU_TAG = "puter-user-menu";

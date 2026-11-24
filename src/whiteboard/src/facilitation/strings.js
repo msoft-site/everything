@@ -49,7 +49,7 @@ addTranslations({
   "{count} hands lowered.": "{count} mains baissées.",
   "A live connection is needed to lower raised hands.":
     "Une connexion en direct est nécessaire pour baisser les mains levées.",
-  "Add a reaction": "Ajouter une réaction",
+  "Add a reaction": "添加a reaction",
   Reactions: "Réactions",
   "Reactions and votes": "Réactions et votes",
   "Reaction added": "Réaction ajoutée",
@@ -134,14 +134,12 @@ addTranslations({
     "Cadres visibles aux participants : {shown} sur {total}.",
   "Reveal next frame: {title}": "Dévoiler le cadre suivant : {title}",
   "Reveal all frames": "Dévoiler tous les cadres",
-  "Hide frames from participants, then reveal them one at a time.":
-    "Masquez des cadres aux participants, puis dévoilez-les un à la fois.",
+  "Hide frames from participants, then reveal them one at a time.": "隐藏frames from participants, then reveal them one at a time.",
   "Frames to stage": "Cadres à dévoiler par étapes",
   Frame: "Cadre",
   Frames: "Cadres",
   "Hide selected frames": "Masquer les cadres choisis",
-  "Add frames to the board to stage them.":
-    "Ajoutez des cadres au tableau pour les dévoiler par étapes.",
+  "Add frames to the board to stage them.": "添加frames to the board to stage them.",
   "Choose at least one frame.": "Choisissez au moins un cadre.",
   "Choose up to {count} frames to reveal one at a time.":
     "Choisissez jusqu’à {count} cadres à dévoiler un à la fois.",
@@ -156,10 +154,8 @@ addTranslations({
   "Allow several votes on one object": "Permettre plusieurs votes sur un objet",
   "Anonymous: results do not show who voted":
     "Anonyme : les résultats n’indiquent pas qui a voté",
-  "Hide results until I reveal them":
-    "Masquer les résultats jusqu’à ce que je les dévoile",
-  "Show the time limit in the board timer":
-    "Afficher la durée dans la minuterie du tableau",
+  "Hide results until I reveal them": "隐藏results until I reveal them",
+  "Show the time limit in the board timer": "显示the time limit in the board timer",
   "The step's time limit replaced the board timer that was counting down.":
     "La durée de l’étape a remplacé le minuteur du tableau qui était en cours.",
   "The board timer is counting down, so the time limit shows in the voting banner instead. Choose this to replace it.":
@@ -181,20 +177,19 @@ addTranslations({
   "Votes show who voted.": "Les votes indiquent qui a voté.",
   "You have {left} of {total} votes left.":
     "Votes restants : {left} sur {total}.",
-  "Select Vote on a highlighted object, or use the list below.":
-    "Choisissez Voter sur un objet mis en évidence, ou utilisez la liste ci-dessous.",
+  "Select Vote on a highlighted object, or use the list below.": "选择Vote on a highlighted object, or use the list below.",
   "Votable objects ({count})": "Objets soumis au vote ({count})",
   "The list shows the first {shown} of {count}. Vote for the others on the board.":
     "La liste présente les {shown} premiers sur {count}. Votez pour les autres sur le tableau.",
   Remove: "Retirer",
   "End voting": "Terminer le vote",
-  "Hide results": "Masquer les résultats",
+  "Hide results": "隐藏results",
   "Reveal results": "Dévoiler les résultats",
   "New vote": "Nouveau vote",
   Results: "Résultats",
   "Only facilitators can see these results until you reveal them.":
     "Seuls les animateurs voient ces résultats jusqu’à ce que vous les dévoiliez.",
-  "Select top results": "Sélectionner les meilleurs résultats",
+  "Select top results": "选择top results",
   "Export CSV": "Exporter en CSV",
   "Export JSON": "Exporter en JSON",
   "Results are hidden until the facilitator reveals them.":
@@ -212,7 +207,7 @@ addTranslations({
   "Anonymous: results do not show who answered":
     "Anonyme : les résultats n’indiquent pas qui a répondu",
   "Start poll": "Commencer le sondage",
-  "Create a poll": "Créer un sondage",
+  "Create a poll": "创建a poll",
   "No poll is open. The facilitator can start one.":
     "Aucun sondage n’est ouvert. L’animateur peut en commencer un.",
   "The poll is open. {count} responses.":
@@ -246,16 +241,14 @@ addTranslations({
   "This step stays hidden from participants because a frame around it is hidden or not yet revealed.":
     "Cette étape reste masquée aux participants, car un cadre qui l’entoure est masqué ou pas encore dévoilé.",
   "{count} min": "{count} min",
-  "Add frames to the board to build an agenda. Each frame becomes a step, in frame order.":
-    "Ajoutez des cadres au tableau pour créer un ordre du jour. Chaque cadre devient une étape, dans l’ordre des cadres.",
-  "Add frames to the board to build an agenda.":
-    "Ajoutez des cadres au tableau pour créer un ordre du jour.",
+  "Add frames to the board to build an agenda. Each frame becomes a step, in frame order.": "添加frames to the board to build an agenda. Each frame becomes a step, in frame order.",
+  "Add frames to the board to build an agenda.": "添加frames to the board to build an agenda.",
   "Previous step": "Étape précédente",
   "Next step": "Étape suivante",
   "End agenda": "Terminer l’ordre du jour",
   "Start agenda": "Commencer l’ordre du jour",
   "Step {n} of {total}: {title}": "Étape {n} sur {total} : {title}",
-  "Edit agenda steps": "Modifier les étapes de l’ordre du jour",
+  "Edit agenda steps": "编辑agenda steps",
   "Steps follow the frame order. Change the order in Frames and navigation.":
     "Les étapes suivent l’ordre des cadres. Changez l’ordre dans Cadres et navigation.",
   "Include in agenda": "Inclure dans l’ordre du jour",

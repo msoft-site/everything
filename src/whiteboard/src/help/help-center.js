@@ -11,7 +11,7 @@ import {
 export const GUIDES = [
   {
     role: "start",
-    title: ["Create your first board", "Créer votre premier tableau"],
+    title: ["Create your first board", "新建 votre premier tableau"],
     body: [
       "Choose New board or a template from the library. Add sticky notes (N), text (T), shapes (S), arrows (A), and frames (F) from the toolbar, or drop images and files onto the board. Everything saves automatically; the status next to the board name shows when changes are saved.",
       "Choisissez Nouveau tableau ou un modèle de la bibliothèque. Ajoutez des notes adhésives (N), du texte (T), des formes (S), des flèches (A) et des cadres (F) à partir de la barre d’outils, ou déposez des images et des fichiers sur le tableau. Tout est enregistré automatiquement; l’état à côté du nom du tableau indique quand les modifications sont enregistrées.",
@@ -169,7 +169,7 @@ export const GUIDES = [
     title: ["Set up your organization", "Configurer votre organisation"],
     body: [
       "Choose Set up an organization in the library. Your Puter account becomes the account owner. In Organization settings, add your email domains and turn on domain capture so colleagues who verify a work email join automatically, or send invitation links.",
-      "Choisissez Créer une organisation dans la bibliothèque. Votre compte Puter devient le compte titulaire. Dans les paramètres de l’organisation, ajoutez vos domaines de courriel et activez la capture de domaine pour que les collègues qui vérifient un courriel professionnel se joignent automatiquement, ou envoyez des liens d’invitation.",
+      "Choisissez 新建 une organisation dans la bibliothèque. Votre compte Puter devient le compte titulaire. Dans les paramètres de l’organisation, ajoutez vos domaines de courriel et activez la capture de domaine pour que les collègues qui vérifient un courriel professionnel se joignent automatiquement, ou envoyez des liens d’invitation.",
     ],
   },
   {
@@ -242,7 +242,7 @@ const ROLES = [
 // "tableau" in French. Case, accents, and the kind of apostrophe typed do
 // not matter.
 export function searchGuides(query = "", role = "all", lang = language) {
-  const l = lang === "fr" ? 1 : 0;
+  const l = lang === "en" ? 0 : 1;
   const words = searchTerms(query);
   return GUIDES.filter((g) => role === "all" || g.role === role)
     .filter((g) => {
@@ -364,30 +364,29 @@ export function createHelpCenter({
 }
 
 addTranslations({
-  "Help and training": "Aide et formation",
-  "Rate your experience": "Évaluez votre expérience",
-  "How easy is Whiteboard to use?": "Whiteboard est-il facile à utiliser?",
-  "1 is very hard, 5 is very easy. Ratings are anonymous.":
-    "1 signifie très difficile, 5 très facile. Les évaluations sont anonymes.",
+  "Help and training": "帮助与培训",
+  "Rate your experience": "评价您的使用体验",
+  "How easy is Whiteboard to use?": "Whiteboard 易用性如何？",
+  "1 is very hard, 5 is very easy. Ratings are anonymous.": "1 为非常困难，5 为非常容易。评分为匿名进行。",
   "What would make it better? (optional)":
-    "Qu’est-ce qui l’améliorerait? (facultatif)",
-  "Send feedback": "Envoyer la rétroaction",
-  "Send rating": "Envoyer l’évaluation",
+    "有什么可以改进的地方？（可选）",
+  "Send feedback": "发送反馈",
+  "Send rating": "提交评价",
   "Tell the people who make Whiteboard what to improve":
-    "Dites aux créateurs de Whiteboard ce qu’ils pourraient améliorer",
-  "Invalid feedback language.": "Langue de rétroaction invalide.",
-  "Thank you for your feedback.": "Merci de votre rétroaction.",
-  "Search help": "Chercher dans l’aide",
-  guide: "guide",
-  guides: "guides",
-  "Guides for": "Guides pour",
-  "All guides": "Tous les guides",
-  "Getting started": "Premiers pas",
-  Participants: "Participants",
-  Facilitators: "Animateurs",
-  Administrators: "Administrateurs",
-  "Take the tour": "Faire la visite",
-  "Keyboard shortcuts": "Raccourcis clavier",
+    "向开发团队提出您的宝贵改进建议",
+  "Invalid feedback language.": "无效的反馈语言。",
+  "Thank you for your feedback.": "感谢您的反馈与支持！",
+  "Search help": "搜索帮助文档",
+  guide: "指南",
+  guides: "指南",
+  "Guides for": "适用对象",
+  "All guides": "全部指南",
+  "Getting started": "新手入门",
+  Participants: "参与者",
+  Facilitators: "主持人",
+  Administrators: "管理员",
+  "Take the tour": "功能导览",
+  "Keyboard shortcuts": "快捷键",
   "No guides match your search.":
-    "Aucun guide ne correspond à votre recherche.",
+    "未找到与您搜索匹配的指南。",
 });

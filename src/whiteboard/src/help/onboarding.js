@@ -270,7 +270,7 @@ export function createOnboarding({
 }
 
 addTranslations({
-  "Add sticky notes": "Ajouter des notes adhésives",
+  "Add sticky notes": "添加sticky notes",
   "Press N, or choose Sticky note and click the board. Type right away; Tab goes on to the next note, and clicking outside finishes.":
     "Appuyez sur N, ou choisissez Note adhésive et cliquez sur le tableau. Tapez tout de suite; Tab passe à la note suivante, et un clic ailleurs termine.",
   "Select, move, and connect": "Sélectionner, déplacer et relier",

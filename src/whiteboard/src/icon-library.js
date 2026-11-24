@@ -204,30 +204,30 @@ import {
 // Pictograms are drawn from lucide outlines to PNG images, so they remain
 // ordinary image objects that validate, export, and synchronize everywhere.
 export const ICON_CATEGORIES = [
-  { id: "people", name: ["People and roles", "Personnes et rôles"] },
-  { id: "communication", name: ["Communication", "Communication"] },
-  { id: "documents", name: ["Documents and data", "Documents et données"] },
+  { id: "people", name: ["People and roles", "人员与角色"] },
+  { id: "communication", name: ["Communication", "沟通协作"] },
+  { id: "documents", name: ["Documents and data", "文档与数据"] },
   {
     id: "technology",
-    name: ["Devices and technology", "Appareils et technologie"],
+    name: ["Devices and technology", "设备与技术"],
   },
-  { id: "delivery", name: ["Process and delivery", "Processus et livraison"] },
-  { id: "ideas", name: ["Ideas and facilitation", "Idées et animation"] },
-  { id: "status", name: ["Status and feedback", "État et rétroaction"] },
+  { id: "delivery", name: ["Process and delivery", "流程与交付"] },
+  { id: "ideas", name: ["Ideas and facilitation", "创意与引导"] },
+  { id: "status", name: ["Status and feedback", "状态与反馈"] },
   {
     id: "places",
-    name: ["Places and public services", "Lieux et services publics"],
+    name: ["Places and public services", "地点与公共服务"],
   },
-  { id: "security", name: ["Security and access", "Sécurité et accès"] },
-  { id: "time", name: ["Time and money", "Temps et argent"] },
+  { id: "security", name: ["Security and access", "安全与权限"] },
+  { id: "time", name: ["Time and money", "时间与资产"] },
   {
     id: "navigation",
-    name: ["Navigation and arrows", "Navigation et flèches"],
+    name: ["Navigation and arrows", "导航与箭头"],
   },
-  { id: "accessibility", name: ["Accessibility", "Accessibilité"] },
+  { id: "accessibility", name: ["Accessibility", "无障碍访问"] },
   {
     id: "stickers",
-    name: ["Facilitation stickers", "Autocollants d’animation"],
+    name: ["Facilitation stickers", "活动贴纸"],
   },
 ];
 // [id, node, English name, French name, English keywords, French keywords]
@@ -1927,7 +1927,7 @@ const searchable = [...ICONS, ...STICKERS].map((entry) => ({
       entry.id,
       ...entry.name,
       ...entry.keywords,
-      ...categoryNames.get(entry.category),
+      ...(categoryNames.get(entry.category) || []),
     ].join(" "),
   ),
 }));

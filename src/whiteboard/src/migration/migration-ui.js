@@ -63,14 +63,14 @@ addTranslations({
   "Unknown owner": "Propriétaire inconnu",
   Batch: "Lot",
   "Filter boards": "Filtrer les tableaux",
-  "Select shown": "Sélectionner les tableaux affichés",
-  "Clear selection": "Effacer la sélection",
+  "Select shown": "选择shown",
+  "Clear selection": "清除selection",
   "{selected} of {total} boards selected":
     "{selected} tableaux sélectionnés sur {total}",
   "Showing {shown} of {total} boards. Refine the filter to see more.":
     "{shown} tableaux affichés sur {total}. Précisez le filtre pour en voir davantage.",
   "No boards match this filter.": "Aucun tableau ne correspond à ce filtre.",
-  "Import as template": "Importer comme modèle",
+  "Import as template": "导入as template",
   "unsupported resource URL": "adresse de ressource non prise en charge",
   "missing resource URL": "adresse de ressource manquante",
   "file too large": "fichier trop volumineux",
@@ -148,7 +148,7 @@ addTranslations({
   "Reading board content": "Lecture du contenu du tableau",
   "Converting and copying images": "Conversion et copie des images",
   "Saving board": "Enregistrement du tableau",
-  "Select at least one board.": "Sélectionnez au moins un tableau.",
+  "Select at least one board.": "选择at least one board.",
   "Migration cancelled. Completed boards remain in the log.":
     "Migration annulée. Les tableaux terminés restent dans le journal.",
   "Dry run complete: {ok} ready, {failed} with errors.":
@@ -222,7 +222,7 @@ addTranslations({
   Connectors: "Connecteurs",
   Tags: "Étiquettes",
   Docs: "Documents Miro",
-  "Mind map nodes": "Nœuds de carte mentale",
+  "Mind map nodes": "思维导图节点",
   "Not copied from Miro. Open the link to see it on the Miro board.":
     "Non copié depuis Miro. Ouvrez le lien pour le voir sur le tableau Miro.",
   Assignee: "Responsable",

@@ -273,8 +273,7 @@ addTranslations({
   Rendering: "Rendu",
   "Image (matches the board exactly)": "Image (identique au tableau)",
   "Vector (text and shapes)": "Vectoriel (texte et formes)",
-  "Show page boundaries and labels":
-    "Afficher les limites et les libellés des pages",
+  "Show page boundaries and labels": "显示page boundaries and labels",
   "Spreadsheet content": "Contenu de la feuille de calcul",
   "Text objects and tasks": "Objets texte et tâches",
   "Estimated length: 1 page.": "Longueur estimée : 1 page.",
@@ -282,13 +281,12 @@ addTranslations({
   "Detail is shown at {percent}% to keep the export to a reasonable length. Export frames or a selected region for more detail.":
     "Le détail est affiché à {percent} % pour que l’exportation garde une longueur raisonnable. Exportez des cadres ou une région sélectionnée pour plus de détail.",
   "Exporting image {n} of {total}…": "Exportation de l’image {n} sur {total}…",
-  "Export up to 50 frames as images at a time, or use PDF.":
-    "Exportez au plus 50 cadres en images à la fois, ou utilisez le PDF.",
+  "Export up to 50 frames as images at a time, or use PDF.": "导出up to 50 frames as images at a time, or use PDF.",
   "Preparing export…": "Préparation de l’exportation…",
   "Exporting page {n} of {total}…": "Exportation de la page {n} sur {total}…",
   "Exporting slide {n} of {total}…":
     "Exportation de la diapositive {n} sur {total}…",
-  "Export ready.": "Exportation prête.",
+  "Export ready.": "导出ready.",
 });
 // Feature modules add More tools entries ([action, label, run]) and shape
 // library choices ({ key, name, hint, icon, run }).
@@ -2833,7 +2831,7 @@ export function createFeatures(api) {
   }
   async function templateLibrary(tab = "templates") {
     const custom = await api.local.templates(),
-      l = language === "fr" ? 1 : 0,
+      l = language === "en" ? 0 : 1,
       onBoard = !!api.board();
     library.tab = onBoard ? tab : "templates";
     const tabs = [

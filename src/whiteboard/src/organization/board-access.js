@@ -398,7 +398,7 @@ addTranslations({
   "Untitled frame": "Cadre sans titre",
   "Only the board owner or a facilitator can change board settings.":
     "Seuls le propriétaire du tableau ou un animateur peuvent modifier les paramètres du tableau.",
-  "Board settings": "Paramètres du tableau",
+  "Board settings": "白板设置",
   "Who can open this board": "Qui peut ouvrir ce tableau",
   "Only invited people": "Seulement les personnes invitées",
   "Everyone in the organization": "Tout le monde dans l’organisation",
@@ -439,10 +439,8 @@ addTranslations({
     "Tableau archivé. Il est maintenant en lecture seule.",
   "Board unarchived. It can be edited again.":
     "Tableau désarchivé. Il peut de nouveau être modifié.",
-  "Select again to transfer ownership to {name}":
-    "Sélectionnez de nouveau pour transférer la propriété à {name}",
-  "Select again to delete for everyone":
-    "Sélectionnez de nouveau pour supprimer pour tout le monde",
+  "Select again to transfer ownership to {name}": "选择again to transfer ownership to {name}",
+  "Select again to delete for everyone": "选择again to delete for everyone",
   "Board deleted. An administrator can restore it during the retention period.":
     "Tableau supprimé. Un administrateur peut le restaurer pendant la période de conservation.",
   Guest: "Invité",

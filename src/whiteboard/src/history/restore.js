@@ -295,7 +295,7 @@ export function recoverDeleted(current, version, ids = null) {
 addTranslations({
   "Everyone's edits to this shared board are kept, so any earlier version can be restored. Restoring saves a new version and never removes history.":
     "Les modifications de tous les participants à ce tableau partagé sont conservées; toute version antérieure peut donc être restaurée. La restauration enregistre une nouvelle version et ne supprime jamais l’historique.",
-  "Shared board history": "Historique du tableau partagé",
+  "Shared board history": "共享白板历史记录",
   "Show older versions": "Afficher les versions plus anciennes",
   "Versions on this device": "Versions sur cet appareil",
   "Restore options": "Options de restauration",
@@ -306,8 +306,7 @@ addTranslations({
   "The first {shown} are listed; the other {rest} are recovered with them.":
     "Les {shown} premiers sont listés; les {rest} autres sont récupérés avec eux.",
   "Open as a copy": "Ouvrir une copie",
-  "You can view earlier versions and open one as a copy. Only people who can edit this board restore versions.":
-    "Vous pouvez consulter les versions antérieures et en ouvrir une copie. Seules les personnes qui peuvent modifier ce tableau restaurent des versions.",
+  "You can view earlier versions and open one as a copy. Only people who can edit this board restore versions.": "您可以查看早期版本并另存为副本。仅具有编辑权限的成员可恢复版本。",
   Frame: "Cadre",
   "Untitled frame": "Cadre sans titre",
   "Restore this frame": "Restaurer ce cadre",
@@ -326,10 +325,9 @@ addTranslations({
   "That frame is not in this version.":
     "Ce cadre ne figure pas dans cette version.",
   "How long versions are kept": "Durée de conservation des versions",
-  "Versions of this board are saved on this device as you edit. Restoring one keeps the current version first, and Undo takes it back.":
-    "Les versions de ce tableau sont enregistrées sur cet appareil à mesure que vous le modifiez. Une restauration conserve d’abord la version actuelle, et Annuler la défait.",
+  "Versions of this board are saved on this device as you edit. Restoring one keeps the current version first, and Undo takes it back.": "编辑时白板版本会自动保存在本地。恢复历史版本前会先保留当前版本，且支持随时撤销。",
   "Name the current version": "Nommer la version actuelle",
-  "Named versions only": "Versions nommées seulement",
+  "Named versions only": "仅显示命名版本",
   "No named versions yet.": "Aucune version nommée pour le moment.",
   "Original version": "Version d’origine",
   Rename: "Renommer",

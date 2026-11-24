@@ -74,7 +74,7 @@ export function searchTemplates(query = "", category = "") {
     words.every((word) => matchesWord(nameText.get(def.id), word));
   return [...found.filter(named), ...found.filter((def) => !named(def))];
 }
-const languageIndex = (lang) => (lang === "fr" ? 1 : 0);
+const languageIndex = (lang) => (lang === "en" ? 0 : 1);
 // Text without its own color follows the theme and turns light in dark
 // mode; on a light shape, note, or table it keeps dark ink instead.
 const lightFill = (hex) => {

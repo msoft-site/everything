@@ -18,27 +18,27 @@ export const PALETTE = {
   red: "#f4c7c3",
 };
 export const CATEGORIES = [
-  { id: "agile", name: ["Agile", "Agile"] },
+  { id: "agile", name: ["Agile", "敏捷开发"] },
   {
     id: "product",
-    name: ["Product planning", "Planification de produit"],
+    name: ["Product planning", "产品规划"],
   },
-  { id: "ux", name: ["UX/UI design", "Conception UX/UI"] },
+  { id: "ux", name: ["UX/UI design", "UX/UI 设计"] },
   {
     id: "service",
-    name: ["Service design", "Conception de services"],
+    name: ["Service design", "服务设计"],
   },
-  { id: "strategy", name: ["Strategy", "Stratégie"] },
+  { id: "strategy", name: ["Strategy", "战略分析"] },
   {
     id: "workshops",
-    name: ["Workshops and facilitation", "Ateliers et animation"],
+    name: ["Workshops and facilitation", "工作坊与引导"],
   },
-  { id: "analysis", name: ["Analysis", "Analyse"] },
+  { id: "analysis", name: ["Analysis", "业务分析"] },
   {
     id: "project",
-    name: ["Project management", "Gestion de projet"],
+    name: ["Project management", "项目管理"],
   },
-  { id: "diagramming", name: ["Diagramming", "Diagrammes"] },
+  { id: "diagramming", name: ["Diagramming", "图表与架构"] },
 ];
 // French keeps guillemets and the space before a colon with their words,
 // so « or : never wraps onto a line of its own.

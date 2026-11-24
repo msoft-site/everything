@@ -895,8 +895,7 @@ addTranslations({
   "The selected objects": "Les objets sélectionnés",
   "The whole board": "Le tableau entier",
   "Group into themes": "Regrouper par thème",
-  "Select two or more sticky notes":
-    "Sélectionnez au moins deux notes adhésives",
+  "Select two or more sticky notes": "选择two or more sticky notes",
   "Photo to sticky notes": "Photo en notes adhésives",
   "Turn handwritten notes into digital ones": "Numériser des notes manuscrites",
   "Generate ideas": "Générer des idées",
@@ -905,7 +904,7 @@ addTranslations({
     "Autoriser les fonctions d’IA sur cet appareil",
   "There is no text to summarize.": "Il n’y a aucun texte à résumer.",
   "Summarizing…": "Résumé en cours…",
-  "ai|Summary": "Résumé",
+  "ai|Summary": "Summary",
   Copy: "Copier",
   "Add to board": "Ajouter au tableau",
   "Summary ready. Review it before adding it to the board.":
@@ -914,10 +913,8 @@ addTranslations({
     "Une partie du texte source a été raccourcie ou omise pour respecter la limite du résumé. Vérifiez le contenu original avant d’utiliser ce résumé.",
   "Copied.": "Copié.",
   "Summary added.": "Résumé ajouté.",
-  "Select two or more sticky notes with text.":
-    "Sélectionnez au moins deux notes adhésives contenant du texte.",
-  "Select up to 300 sticky notes at a time.":
-    "Sélectionnez jusqu’à 300 notes adhésives à la fois.",
+  "Select two or more sticky notes with text.": "选择two or more sticky notes with text.",
+  "Select up to 300 sticky notes at a time.": "选择up to 300 sticky notes at a time.",
   "Finding themes…": "Recherche de thèmes…",
   Theme: "Thème",
   Other: "Autre",
@@ -943,7 +940,7 @@ addTranslations({
   "Review the ideas before adding them.":
     "Examinez les idées avant de les ajouter.",
   "One sticky note per line": "Une note adhésive par ligne",
-  "Add sticky notes": "Ajouter des notes adhésives",
+  "Add sticky notes": "添加sticky notes",
   "{count} sticky note added.": "{count} note adhésive ajoutée.",
   "{count} sticky notes added.": "{count} notes adhésives ajoutées.",
   "Enter at least one line to add.": "Saisissez au moins une ligne à ajouter.",

@@ -5,21 +5,21 @@ import { SHAPE_COLORS } from "./shape-specs.js";
 // Reusable composite components are ordinary objects inserted as one group,
 // so they can be moved together, ungrouped, restyled, and edited in place.
 export const COMPONENT_GROUPS = [
-  { id: "web", name: ["Web design system", "Système de design Web"] },
-  { id: "wireframe", name: ["Wireframe kits", "Trousses de maquettes"] },
+  { id: "web", name: ["Web design system", "Web 设计系统"] },
+  { id: "wireframe", name: ["Wireframe kits", "线框图套件"] },
   {
     id: "diagram",
-    name: ["Diagram building blocks", "Éléments de diagramme"],
+    name: ["Diagram building blocks", "图表基础构件"],
   },
   {
     id: "facilitation",
-    name: ["Facilitation kits", "Trousses d’animation"],
+    name: ["Facilitation kits", "引导与工作坊套件"],
   },
   {
     id: "delivery",
     name: [
       "Service design and delivery kits",
-      "Trousses de conception et de livraison",
+      "服务设计与交付套件",
     ],
   },
 ];
@@ -826,7 +826,7 @@ export const COMPONENTS = [
     keywords: ["register create account", "inscription créer un compte"],
     build(k) {
       panel(k, 0, 0, 360, 500, wire.surface);
-      strong(k, 30, 24, 300, k.t("Create an account", "Créer un compte"), {
+      strong(k, 30, 24, 300, k.t("Create an account", "新建 un compte"), {
         fontSize: 24,
       });
       [
@@ -857,7 +857,7 @@ export const COMPONENTS = [
         396,
         300,
         48,
-        k.t("Create account", "Créer le compte"),
+        k.t("Create account", "新建 le compte"),
         {
           color: wire.primary,
           fontSize: 16,

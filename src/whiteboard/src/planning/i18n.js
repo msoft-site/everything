@@ -6,21 +6,20 @@ addTranslations({
   tasks: "tâches",
   task: "tâche",
   Task: "Tâche",
-  "Task card": "Carte de tâche",
-  "Task details": "Détails de la tâche",
-  "Task timeline": "Chronologie des tâches",
-  "Sticky note with status, owner, and dates":
-    "Note adhésive avec statut, responsable et dates",
-  "To do": "À faire",
+  "Task card": "任务卡片",
+  "Task details": "任务详情",
+  "Task timeline": "任务时间轴",
+  "Sticky note with status, owner, and dates": "带状态、负责人与日期的便签",
+  "To do": "待办",
   "In progress": "En cours",
   Blocked: "Bloquée",
   // Core strings already translate these for other uses; a task's status
   // and priority are feminine.
-  "task|Done": "Terminée",
+  "task|Done": "已完成",
   "priority|None": "Aucune",
   "dependency|None": "Aucune",
-  "one|{count} done": "{count} terminée",
-  "{count} done": "{count} terminées",
+  "one|{count} done": "{count} 项已完成",
+  "{count} done": "{count} 项已完成",
   Low: "Basse",
   Medium: "Moyenne",
   High: "Haute",
@@ -29,12 +28,11 @@ addTranslations({
   Unassigned: "Non assignée",
   "On this board": "Sur ce tableau",
   "Not on this board": "Pas sur ce tableau",
-  "Not on this board, so they are not notified and cannot open it. Share the board with them first.":
-    "Cette personne n’est pas sur ce tableau : elle n’est pas avisée et ne peut pas l’ouvrir. Partagez d’abord le tableau avec elle.",
+  "Not on this board, so they are not notified and cannot open it. Share the board with them first.": "该成员未在此白板上，因此无法接收通知或打开。请先向其共享此白板。",
   Start: "Début",
   Due: "Échéance",
-  "Start date": "Date de début",
-  "Due date": "Date d’échéance",
+  "Start date": "开始日期",
+  "Due date": "截止日期",
   Priority: "Priorité",
   Mixed: "Mixte",
   Frame: "Cadre",
@@ -45,28 +43,26 @@ addTranslations({
   ID: "ID",
   Yes: "Oui",
   Overdue: "En retard",
-  "Blocked by": "Bloquée par",
+  "Blocked by": "受阻于",
   Predecessors: "Prédécesseurs",
-  "Blocked by other tasks": "Bloquées par d’autres tâches",
-  "Make task": "Convertir en tâche",
-  "Remove task details": "Retirer les détails de la tâche",
-  "Task details added.": "Détails de la tâche ajoutés.",
-  "Task details removed.": "Détails de la tâche retirés.",
-  "{count} selected object": "{count} objet sélectionné",
-  "{count} selected objects": "{count} objets sélectionnés",
-  "{count} task": "{count} tâche",
-  "{count} tasks": "{count} tâches",
-  "Task details apply to every selected sticky note, shape, or text. Each change can be undone.":
-    "Les détails de la tâche s’appliquent à chaque note adhésive, forme ou texte sélectionné. Chaque modification peut être annulée.",
+  "Blocked by other tasks": "受阻于其他任务",
+  "Make task": "设为任务",
+  "Remove task details": "移除任务详情",
+  "Task details added.": "已添加任务详情。",
+  "Task details removed.": "已移除任务详情。",
+  "{count} selected object": "{count} 个选中对象",
+  "{count} selected objects": "{count} 个选中对象",
+  "{count} task": "{count} 个任务",
+  "{count} tasks": "{count} 个任务",
+  "Task details apply to every selected sticky note, shape, or text. Each change can be undone.": "任务详情将应用于每个选中的便签、形状或文本。所有更改均可撤销。",
   "You can view these task details but not change them.":
     "Vous pouvez consulter ces détails de tâche, mais pas les modifier.",
   "The start date must be on or before the due date.":
     "La date de début doit précéder ou égaler la date d’échéance.",
   "Enter a valid date, with a year from 100 to 9999.":
     "Entrez une date valide, dont l’année va de 100 à 9999.",
-  "This selection is protected.": "Cette sélection est protégée.",
-  "Select sticky notes, shapes, or text to plan tasks.":
-    "Sélectionnez des notes adhésives, des formes ou du texte pour planifier des tâches.",
+  "This selection is protected.": "此选择区域受保护。",
+  "Select sticky notes, shapes, or text to plan tasks.": "选择sticky notes, shapes, or text to plan tasks.",
   "Send to Jira": "Envoyer vers Jira",
   "Send selected tasks to Jira": "Envoyer les tâches sélectionnées vers Jira",
   "Refresh Jira status": "Actualiser le statut Jira",
@@ -92,9 +88,8 @@ addTranslations({
   "Could not reach Jira.": "Impossible de joindre Jira.",
   "Jira took too long. Send to Jira again to create the rest.":
     "Jira a mis trop de temps. Envoyez de nouveau à Jira pour créer le reste.",
-  "Select tasks that are not linked to Jira yet.":
-    "Sélectionnez des tâches qui ne sont pas encore liées à Jira.",
-  "Select tasks first.": "Sélectionnez d’abord des tâches.",
+  "Select tasks that are not linked to Jira yet.": "选择tasks that are not linked to Jira yet.",
+  "Select tasks first.": "选择tasks first.",
   "Jira sync is available on organization boards. Share this board on your organization's server to use it.":
     "La synchronisation Jira est offerte sur les tableaux d’organisation. Partagez ce tableau sur le serveur de votre organisation pour l’utiliser.",
   "Join an organization to send tasks to Jira.":
@@ -107,11 +102,10 @@ addTranslations({
     "Jira n’est pas configuré pour votre organisation. Demandez à un administrateur de l’activer dans les paramètres de l’organisation.",
   "Jira is not set up for your organization.":
     "Jira n’est pas configuré pour votre organisation.",
-  "Select items to send to Jira.":
-    "Sélectionnez des éléments à envoyer vers Jira.",
+  "Select items to send to Jira.": "选择items to send to Jira.",
   "Tasks are created in your organization's Jira project.":
     "Les tâches sont créées dans le projet Jira de votre organisation.",
-  "planning|Summary": "Résumé",
+  "planning|Summary": "Summary",
   Completion: "Avancement",
   "Completion (%)": "Avancement (%)",
   "Tasks per assignee": "Tâches par responsable",
@@ -133,7 +127,7 @@ addTranslations({
   "{count} task shown": "{count} tâche affichée",
   "{count} tasks shown": "{count} tâches affichées",
   "Showing {shown} of {total} tasks.": "{shown} tâches affichées sur {total}.",
-  "Show more tasks": "Afficher plus de tâches",
+  "Show more tasks": "显示more tasks",
   "No tasks match these filters.": "Aucune tâche ne correspond à ces filtres.",
   "No tasks yet. Select sticky notes, shapes, or text and choose Task details, or add a task card.":
     "Aucune tâche pour l’instant. Sélectionnez des notes adhésives, des formes ou du texte et choisissez Détails de la tâche, ou ajoutez une carte de tâche.",
@@ -158,18 +152,15 @@ addTranslations({
   "Refresh timeline": "Actualiser la chronologie",
   "Timeline refreshed from the board’s tasks.":
     "Chronologie actualisée à partir des tâches du tableau.",
-  "Select a timeline placed from the Tasks view.":
-    "Sélectionnez une chronologie placée depuis la vue Tâches.",
+  "Select a timeline placed from the Tasks view.": "选择a timeline placed from the Tasks view.",
   "This dependency would make these tasks wait for each other in a loop, so none of them could start.":
     "Cette dépendance ferait attendre ces tâches les unes les autres en boucle; aucune ne pourrait donc commencer.",
   "Tasks hidden from participants are left out.":
     "Les tâches masquées aux participants sont laissées de côté.",
   "These tasks are hidden from participants, so they are not placed on the board.":
     "Ces tâches sont masquées aux participants; elles ne sont donc pas placées sur le tableau.",
-  "Add start or due dates to tasks first.":
-    "Ajoutez d’abord des dates de début ou d’échéance aux tâches.",
-  "Add start or due dates to tasks to see them on the timeline.":
-    "Ajoutez des dates de début ou d’échéance aux tâches pour les voir dans la chronologie.",
+  "Add start or due dates to tasks first.": "添加start or due dates to tasks first.",
+  "Add start or due dates to tasks to see them on the timeline.": "添加start or due dates to tasks to see them on the timeline.",
   "task has no dates and is not shown.":
     "tâche n’a pas de dates et n’est pas affichée.",
   "tasks have no dates and are not shown.":

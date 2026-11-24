@@ -238,21 +238,19 @@ export function createVersionPreview(stage) {
 }
 
 addTranslations({
-  "Choose a version to see the board as it was then, with what has changed since.":
-    "Choisissez une version pour voir le tableau tel qu’il était alors, avec ce qui a changé depuis.",
-  "Preview of the version": "Aperçu de la version",
-  "Zoom in on the preview": "Zoomer dans l’aperçu",
-  "Zoom out of the preview": "Dézoomer l’aperçu",
-  "Fit the version in the preview": "Ajuster la version dans l’aperçu",
+  "Choose a version to see the board as it was then, with what has changed since.": "选择一个版本以查看白板历史状态及后续变动。",
+  "Preview of the version": "版本预览",
+  "Zoom in on the preview": "放大预览",
+  "Zoom out of the preview": "缩小预览",
+  "Fit the version in the preview": "自适应预览大小",
   "Loading this version…": "Chargement de cette version…",
-  "one|{count} deleted since": "{count} supprimé depuis",
+  "one|{count} deleted since": "{count} deleted since",
   "{count} deleted since": "{count} supprimés depuis",
-  "one|{count} changed since": "{count} modifié depuis",
+  "one|{count} changed since": "{count} changed since",
   "{count} changed since": "{count} modifiés depuis",
-  "one|{count} added since": "{count} ajouté depuis",
+  "one|{count} added since": "{count} added since",
   "{count} added since": "{count} ajoutés depuis",
   "Same as the board now.": "Identique au tableau actuel.",
   "Highlight changes": "Surligner les changements",
-  "Drag to move around this version. Ctrl/Cmd + scroll, a pinch or the + and - keys zoom.":
-    "Faites glisser pour parcourir cette version. Ctrl/Cmd + défilement, un pincement ou les touches + et - zooment.",
+  "Drag to move around this version. Ctrl/Cmd + scroll, a pinch or the + and - keys zoom.": "拖动以平移查看。Ctrl/Cmd + 滚轮或 +/- 键可进行缩放。",
 });

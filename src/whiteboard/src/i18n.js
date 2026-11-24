@@ -611,28 +611,23 @@ const pairs = {
     "Aucune commande ni aucun tableau correspondant. Essayez un autre mot.",
   "This command is no longer available.":
     "Cette commande n’est plus disponible.",
-  "↑ ↓ to navigate · Enter to run · Esc to close":
-    "↑ ↓ pour naviguer · Entrée pour exécuter · Échap pour fermer",
+  "↑ ↓ to navigate · Enter to run · Esc to close": "↑ ↓ 导航 · 回车运行 · Esc 关闭",
   "Keyboard shortcut": "Raccourci clavier",
-  "Recent boards": "Tableaux récents",
-  Create: "Créer",
+  "Recent boards": "最近白板",
+  Create: "新建",
   Edit: "Modifier",
   Arrange: "Organiser",
   Navigate: "Naviguer",
   Board: "Tableau",
   Help: "帮助",
-  "Zoom to selection": "Zoom sur la sélection",
-  "Nothing to undo.": "Rien à annuler.",
-  "Nothing to redo.": "Rien à rétablir.",
-  "Select shapes, notes, or text boxes.":
-    "Sélectionnez des formes, des notes ou des zones de texte.",
-  "Select an object with editable text.":
-    "Sélectionnez un objet avec du texte modifiable.",
-  "Select at least two objects or groups.":
-    "Sélectionnez au moins deux objets ou groupes.",
-  "Select at least three objects or groups.":
-    "Sélectionnez au moins trois objets ou groupes.",
-  "Select a group first.": "Sélectionnez d’abord un groupe.",
+  "Zoom to selection": "缩放到选中区域",
+  "Nothing to undo.": "无可撤销操作。",
+  "Nothing to redo.": "无可重做操作。",
+  "Select shapes, notes, or text boxes.": "选择形状、便签或文本框。",
+  "Select an object with editable text.": "选择包含可编辑文本的对象。",
+  "Select at least two objects or groups.": "选择至少两个对象或组合。",
+  "Select at least three objects or groups.": "选择at least three objects or groups.",
+  "Select a group first.": "选择a group first.",
   "Auto-fit": "Ajustement auto",
   "Auto-fit text": "Ajuster automatiquement le texte",
   "Maximum font size": "Taille maximale de police",
@@ -640,33 +635,32 @@ const pairs = {
     "Réduire le texte pour qu’il tienne. La taille de police est le maximum.",
   "Some text does not fit at the minimum size. Enlarge the object or shorten the text.":
     "Une partie du texte ne tient pas à la taille minimale. Agrandissez l’objet ou raccourcissez le texte.",
-  "Quick diagram creation": "Création rapide de diagramme",
+  "Quick diagram creation": "快速创建图表",
   "Quick connect top": "Connexion rapide en haut",
-  "Quick connect right": "Connexion rapide à droite",
+  "Quick connect right": "向右快速连接",
   "Quick connect bottom": "Connexion rapide en bas",
-  "Quick connect left": "Connexion rapide à gauche",
+  "Quick connect left": "向左快速连接",
   "Click to add a connected object or connect a nearby one. Drag to choose another target. Escape cancels.":
     "Cliquez pour ajouter un objet connecté ou relier un objet proche. Faites glisser pour choisir une autre cible. Échap annule.",
-  "Add connected object": "Ajouter un objet connecté",
-  "Connect to": "Connecter à",
-  "Select one shape, sticky note, or text box.":
-    "Sélectionnez une forme, une note adhésive ou une zone de texte.",
+  "Add connected object": "添加连接对象",
+  "Connect to": "连接至",
+  "Select one shape, sticky note, or text box.": "选择one shape, sticky note, or text box.",
   Shapes: "Formes",
   "Shapes (S)": "Formes (S)",
   "Change shape": "Changer de forme",
   Diamond: "Losange",
   Triangle: "Triangle",
-  Parallelogram: "Parallélogramme",
+  Parallelogram: "平行四边形",
   Hexagon: "Hexagone",
-  Star: "Étoile",
+  Star: "星形",
   Cylinder: "Cylindre",
   Terminator: "Terminaison",
   Process: "Processus",
-  "Start or end": "Début ou fin",
-  Decision: "Décision",
-  "Input or output": "Entrée ou sortie",
-  Database: "Base de données",
-  Preparation: "Préparation",
+  "Start or end": "开始或结束",
+  Decision: "判定",
+  "Input or output": "输入或输出",
+  Database: "数据库",
+  Preparation: "准备",
   "Basic shape": "Forme simple",
   "Invalid shape.": "Forme non valide.",
   // Board validation, shown when an imported or migrated board is rejected.
@@ -684,57 +678,56 @@ const pairs = {
   "Invalid text alignment.": "Alignement du texte non valide.",
   "Invalid text formatting.": "Mise en forme du texte non valide.",
   "Invalid text list.": "Liste de texte non valide.",
-  "Invalid object tags.": "Étiquettes d’objet non valides.",
-  "Invalid table.": "Tableau de données non valide.",
-  "Invalid table dimensions.": "Dimensions du tableau de données non valides.",
-  "Invalid attachment.": "Pièce jointe non valide.",
+  "Invalid object tags.": "无效的对象标签。",
+  "Invalid table.": "无效的数据表格。",
+  "Invalid table dimensions.": "无效的表格尺寸。",
+  "Invalid attachment.": "无效的附件。",
   "Object dimensions must be positive.":
     "Les dimensions de l’objet doivent être positives.",
   "Invalid object relationship.": "Relation entre objets non valide.",
   "Invalid object lock.": "Verrouillage d’objet non valide.",
   "Invalid frame order.": "Ordre des cadres non valide.",
-  "Invalid mind map node.": "Nœud de carte mentale non valide.",
+  "Invalid mind map node.": "无效的思维导图节点。",
   "Invalid mind map collapse state.":
     "État replié de la carte mentale non valide.",
-  "Invalid frame membership.": "Appartenance à un cadre non valide.",
+  "Invalid frame membership.": "无效的画框归属。",
   "Invalid connector.": "Connecteur non valide.",
   "A board can contain at most 5,000 objects.":
     "Un tableau peut contenir au maximum 5 000 objets.",
-  "Bulk sticky notes": "Notes adhésives en série",
+  "Bulk sticky notes": "批量创建便签",
   "The table is too tall. Use a smaller font or fewer lines.":
     "La table est trop haute. Utilisez une police plus petite ou moins de lignes.",
   "Paste spreadsheet": "Coller des cellules",
   "Choose how to add these cells. Blank cells keep their positions.":
     "Choisissez comment ajouter ces cellules. Les cellules vides conservent leur position.",
-  Ideas: "Idées",
+  Ideas: "想法",
   "One sticky note per line. Empty lines are skipped.":
     "Une note adhésive par ligne. Les lignes vides sont ignorées.",
   "Paste as": "Coller en tant que",
-  "Sticky notes": "Notes adhésives",
+  "Sticky notes": "便签",
   "Plain text": "Texte brut",
   "Sticky color": "Couleur des notes",
-  "Cluster sticky notes": "Regrouper les notes adhésives",
+  "Cluster sticky notes": "便签聚类",
   "Cluster by": "Regrouper par",
   Color: "Couleur",
-  "One named cluster": "Un regroupement nommé",
+  "One named cluster": "单个命名分类",
   "Cluster name": "Nom du regroupement",
   Cluster: "Regroupement",
-  "Create clusters": "Créer les regroupements",
-  "No tag": "Sans étiquette",
+  "Create clusters": "创建clusters",
+  "No tag": "无标签",
   notes: "notes",
   clusters: "regroupements",
-  "extra copies": "copies supplémentaires",
-  "extra copy": "copie supplémentaire",
+  "extra copies": "份额外副本",
+  "extra copy": "份额外副本",
   note: "note",
   cluster: "regroupement",
-  "Select sticky notes first.": "Sélectionnez d’abord des notes adhésives.",
-  "Choose a clustering method.": "Choisissez une méthode de regroupement.",
+  "Select sticky notes first.": "选择sticky notes first.",
+  "Choose a clustering method.": "Choose a clustering method.",
   "The cluster name changed. Reopen clustering.":
     "Le nom du regroupement a changé. Rouvrez le regroupement.",
   "The selected notes changed. Reopen clustering.":
     "Les notes sélectionnées ont changé. Rouvrez le regroupement.",
-  "Select sticky notes outside a mind map.":
-    "Sélectionnez des notes adhésives qui ne font pas partie d’une carte mentale.",
+  "Select sticky notes outside a mind map.": "选择sticky notes outside a mind map.",
   "Enter a cluster name of up to 200 characters.":
     "Saisissez un nom de regroupement de 200 caractères maximum.",
   "These clusters would exceed the board limit of 5,000 objects.":
@@ -752,22 +745,22 @@ const pairs = {
   Pink: "Rose",
   Gray: "Gris",
   Violet: "Violet",
-  "Dark green": "Vert foncé",
-  "Dark blue": "Bleu foncé",
-  "Dark gray": "Gris foncé",
+  "Dark green": "Dark green",
+  "Dark blue": "Dark blue",
+  "Dark gray": "深灰色",
   Black: "Noir",
   Green: "Vert",
   Blue: "Bleu",
   Purple: "Violet",
-  Peach: "Pêche",
+  Peach: "Peach",
   White: "Blanc",
   // Sticky note colors, which name clusters grouped by color.
   Butter: "Beurre",
   Sage: "Sauge",
   Lilac: "Lilas",
   Cells: "Cellules",
-  "Content preview": "Aperçu du contenu",
-  "Cluster preview": "Aperçu des regroupements",
+  "Content preview": "Content preview",
+  "Cluster preview": "Cluster preview",
   "Add to board": "Ajouter au tableau",
   "Paste up to 50 rows and 100 columns at a time.":
     "Collez jusqu’à 50 lignes et 100 colonnes à la fois.",
@@ -785,8 +778,8 @@ const pairs = {
   "Copy as image (Ctrl/Cmd Shift C)":
     "Copier en tant qu’image (Ctrl/Cmd Maj C)",
   "Copy image": "Copier l’image",
-  "Download PNG": "Télécharger le PNG",
-  "Image of selected objects": "Image des objets sélectionnés",
+  "Download PNG": "Download PNG",
+  "Image of selected objects": "Image of selected objects",
   "Clipboard access is unavailable. Download the PNG or try copying again.":
     "L’accès au presse-papiers est indisponible. Téléchargez le PNG ou réessayez de copier.",
   "Could not copy the image. Use Copy as image to try again.":
@@ -795,9 +788,8 @@ const pairs = {
     "Image copiée. Collez-la dans une autre application ou un tableau.",
   "An image copy is already in progress.":
     "Une copie d’image est déjà en cours.",
-  "Select objects to copy as an image.":
-    "Sélectionnez les objets à copier en tant qu’image.",
-  "Copying selection as an image…": "Copie de la sélection en tant qu’image…",
+  "Select objects to copy as an image.": "选择objects to copy as an image.",
+  "Copying selection as an image…": "Copying selection as an image…",
   "Could not prepare the image. Please try again.":
     "Impossible de préparer l’image. Veuillez réessayer.",
   "Your browser cannot copy images here. Download the PNG instead.":
@@ -805,34 +797,33 @@ const pairs = {
 
   "Connection line formatting": "Mise en forme des lignes de connexion",
   "Copy style": "Copier le style",
-  "Font family": "Police de caractères",
+  "Font family": "Font family",
   "Paste style": "Coller le style",
   "Copy style (Ctrl/Cmd Alt/Option C)":
     "Copier le style (Ctrl/Cmd Alt/Option C)",
   "Paste style (Ctrl/Cmd Alt/Option V)":
     "Coller le style (Ctrl/Cmd Alt/Option V)",
-  "Select one object with a copyable style.":
-    "Sélectionnez un objet dont le style peut être copié.",
+  "Select one object with a copyable style.": "选择one object with a copyable style.",
   "Style copied. Select objects and paste style.":
     "Style copié. Sélectionnez des objets et collez le style.",
   "Copy a style first.": "Copiez d’abord un style.",
   "The copied style does not apply to this selection.":
     "Le style copié ne s’applique pas à cette sélection.",
-  "This style is already applied.": "Ce style est déjà appliqué.",
-  "Style pasted.": "Style collé.",
-  Path: "Tracé",
+  "This style is already applied.": "This style is already applied.",
+  "Style pasted.": "Style pasted.",
+  Path: "路径",
   Straight: "Droit",
-  Elbow: "Coudé",
+  Elbow: "Elbow",
   Curved: "Courbe",
   Stroke: "Trait",
   Solid: "Continu",
   Dashed: "Tirets",
-  Dotted: "Pointillé",
-  Thickness: "Épaisseur",
-  Start: "Début",
+  Dotted: "点线",
+  Thickness: "粗细",
+  Start: "Start",
   End: "Fin",
   None: "Aucun",
-  Arrowhead: "Pointe de flèche",
+  Arrowhead: "Arrowhead",
   "Filled triangle": "Triangle plein",
   "Open triangle": "Triangle vide",
   "Filled diamond": "Losange plein",
@@ -841,26 +832,26 @@ const pairs = {
   "Bar (one)": "Barre (un)",
   "Crow's foot (many)": "Patte d’oie (plusieurs)",
   Dot: "Point",
-  "Connection endpoints": "Extrémités de connexion",
-  "Free endpoint": "Extrémité libre",
-  "Start object": "Objet de départ",
-  "End object": "Objet d’arrivée",
+  "Connection endpoints": "Connection endpoints",
+  "Free endpoint": "Free endpoint",
+  "Start object": "Start object",
+  "End object": "End object",
   "Drag either round handle to reconnect. Hold Alt/Option to detach, or Shift for a straight angle.":
     "Faites glisser une poignée ronde pour reconnecter. Maintenez Alt/Option pour détacher, ou Maj pour un angle droit.",
-  "Choose two different objects.": "Choisissez deux objets différents.",
+  "Choose two different objects.": "Choose two different objects.",
   "Drag between objects to connect · Alt/Option for a free endpoint":
     "Reliez les objets par glissement · Alt/Option pour une extrémité libre",
   "Invalid line style.": "Style de ligne invalide.",
-  "Invalid line thickness.": "Épaisseur de ligne invalide.",
+  "Invalid line thickness.": "Invalid line thickness.",
 
   "Open to rename": "Ouvrir pour renommer",
   "Only people who can edit this board rename it.":
     "Seules les personnes qui peuvent modifier ce tableau le renomment.",
   "Share board": "分享白板",
-  "Shared board": "Tableau partagé",
+  "Shared board": "Shared board",
   Participants: "Participants",
   Editing: "Modification",
-  "Join shared board": "Rejoindre un tableau partagé",
+  "Join shared board": "Join shared board",
   "Board link": "Lien du tableau",
   "Join board": "Rejoindre le tableau",
   "Sign in with Puter to join this board.":
@@ -884,14 +875,14 @@ const pairs = {
     "Vous pouvez maintenant commenter ce tableau, mais pas modifier son contenu.",
   "You can now only view this board.":
     "Vous ne pouvez plus que consulter ce tableau.",
-  Owner: "Propriétaire",
-  Removed: "Retiré",
-  "Access for": "Accès pour",
-  "Link access": "Accès par lien",
-  "Create invitation": "Créer une invitation",
+  Owner: "Owner",
+  Removed: "Removed",
+  "Access for": "Access for",
+  "Link access": "Link access",
+  "Create invitation": "创建invitation",
   "Copy link": "Copier le lien",
-  "Link copied.": "Lien copié.",
-  "Copy the selected link.": "Copiez le lien sélectionné.",
+  "Link copied.": "Link copied.",
+  "Copy the selected link.": "复制the selected link.",
   "This board is read-only.": "Ce tableau est en lecture seule.",
   "This board is read-only for you. Ask the owner or a facilitator for access to edit or comment.":
     "Ce tableau est en lecture seule pour vous. Demandez au propriétaire ou à un animateur l’accès pour le modifier ou le commenter.",
@@ -901,13 +892,12 @@ const pairs = {
     "Seuls le propriétaire du tableau ou un animateur peuvent inviter de nouveaux participants.",
   "Anyone signed in with this invitation can join.":
     "Toute personne connectée disposant de cette invitation peut rejoindre le tableau.",
-  "Create an invitation to share this access.":
-    "Créez une invitation pour partager cet accès.",
+  "Create an invitation to share this access.": "创建an invitation to share this access.",
   "Changes are shared as you type. Escape to finish.":
     "Les modifications sont partagées pendant la saisie. Échap pour terminer.",
-  "Preparing collaboration…": "Préparation de la collaboration…",
-  "Starting collaboration…": "Démarrage de la collaboration…",
-  "Sharing failed · try again": "Échec du partage · réessayez",
+  "Preparing collaboration…": "Preparing collaboration…",
+  "Starting collaboration…": "Starting collaboration…",
+  "Sharing failed · try again": "Sharing failed · try again",
   "Shared, but the copy in Puter could not be updated.":
     "Partagé, mais la copie dans Puter n’a pas pu être mise à jour.",
   "The collaboration server bundle could not load.":
@@ -916,7 +906,7 @@ const pairs = {
     "Module du serveur de collaboration non valide.",
   "Could not create a restricted collaboration credential.":
     "Impossible de créer un identifiant de collaboration restreint.",
-  "Connecting to shared board…": "Connexion au tableau partagé…",
+  "Connecting to shared board…": "Connecting to shared board…",
   "Still connecting to the shared board. Try again in a moment.":
     "Connexion au tableau partagé en cours. Réessayez dans un instant.",
   "Some images or files have not downloaded from the shared board yet. Try again in a moment.":
@@ -925,16 +915,16 @@ const pairs = {
     "Certaines images ou certains fichiers de ce tableau partagé ne sont pas encore sur cet appareil. Ouvrez le tableau pour les télécharger, puis réessayez.",
   "Sharing update could not finish. Reopen this board to retry.":
     "La mise à jour du partage n’a pas abouti. Rouvrez ce tableau pour réessayer.",
-  "Saving shared changes…": "Enregistrement des modifications partagées…",
+  "Saving shared changes…": "Saving shared changes…",
   "Access changed · unsent changes stay on this device":
     "Accès modifié · les modifications non envoyées restent sur cet appareil",
-  "Saved · live": "Enregistré · en direct",
+  "Saved · live": "Saved · live",
   "Text you were typing when the board closed was put back.":
     "Le texte que vous saisissiez à la fermeture du tableau a été rétabli.",
   "Saved · board full, no live presence":
     "Enregistré · tableau complet, sans présence en direct",
-  "Saved · periodic sync": "Enregistré · synchronisation périodique",
-  "Connected · periodic sync": "Connecté · synchronisation périodique",
+  "Saved · periodic sync": "Saved · periodic sync",
+  "Connected · periodic sync": "Connected · periodic sync",
   "This board needs a newer version of the app · reload":
     "Ce tableau nécessite une version plus récente de l’application · rechargez",
   "Showing {shown} of {total} matching objects. Search for a frame's name to list everything it holds, or search to narrow the list.":
@@ -998,23 +988,23 @@ const pairs = {
   "Close search": "Fermer la recherche",
   "All content": "Tout le contenu",
   "Content type": "Type de contenu",
-  "Previous result": "Résultat précédent",
-  "Next result": "Résultat suivant",
-  "Result {n} of {count}": "Résultat {n} sur {count}",
-  "Previous page": "Page précédente",
+  "Previous result": "Previous result",
+  "Next result": "Next result",
+  "Result {n} of {count}": "Result {n} of {count}",
+  "Previous page": "上一页",
   "Next page": "Page suivante",
-  "Select on board": "Sélectionner sur le tableau",
-  "Show results": "Afficher les résultats",
+  "Select on board": "选择on board",
+  "Show results": "显示results",
   "Search text, links, file names, and table cells.":
     "Recherchez du texte, des liens, des noms de fichiers et des cellules.",
   "Enter: next result · Shift+Enter: previous · Escape: close":
     "Entrée : suivant · Maj+Entrée : précédent · Échap : fermer",
   "Untitled object": "Objet sans titre",
-  Attachment: "Pièce jointe",
+  Attachment: "Attachment",
   Drawing: "Dessin",
   "Adding files…": "Ajout des fichiers…",
-  "Files added.": "Fichiers ajoutés.",
-  "Drop content here": "Déposez le contenu ici",
+  "Files added.": "Files added.",
+  "Drop content here": "Drop content here",
   "Images, files, text, and links": "Images, fichiers, texte et liens",
   "Copy, cut, or paste objects": "Copier, couper ou coller des objets",
   "Ctrl or Cmd + C / X / V": "Ctrl ou Cmd + C / X / V",
@@ -1029,10 +1019,9 @@ const pairs = {
   "This text is at its length limit, so the end of what was added was left out.":
     "Ce texte a atteint sa longueur maximale : la fin de ce qui a été ajouté a été omise.",
   "Could not read this file.": "Impossible de lire ce fichier.",
-  "This image could not be read.": "Cette image n’a pas pu être lue.",
-  "Add up to 20 files and 50 MB at a time.":
-    "Ajoutez jusqu’à 20 fichiers et 50 Mo à la fois.",
-  "Could not decode an image.": "Impossible de décoder une image.",
+  "This image could not be read.": "This image could not be read.",
+  "Add up to 20 files and 50 MB at a time.": "添加up to 20 files and 50 MB at a time.",
+  "Could not decode an image.": "Could not decode an image.",
   "Choose an image with fewer than 40 million pixels.":
     "Choisissez une image de moins de 40 millions de pixels.",
   "A board can contain up to 5,000 objects.":
@@ -1048,50 +1037,49 @@ const pairs = {
   "Text formatting": "Mise en forme du texte",
   Bold: "Gras",
   Italic: "Italique",
-  Underline: "Souligné",
-  Strikethrough: "Barré",
+  Underline: "下划线",
+  Strikethrough: "删除线",
   Lists: "Listes",
   "Text links": "Liens du texte",
-  "Insert or edit text link": "Insérer ou modifier un lien dans le texte",
+  "Insert or edit text link": "Insert or edit text link",
   "Link URL": "Adresse du lien",
   "Apply link": "Appliquer le lien",
   "Edit link": "Modifier le lien",
-  Previous: "Précédent",
+  Previous: "上一步",
   Next: "Suivant",
   "Remove link": "Supprimer le lien",
   "Open link in new tab": "Ouvrir le lien dans un nouvel onglet",
   "The selected text changed. Select it again.":
     "Le texte sélectionné a changé. Sélectionnez-le à nouveau.",
-  "Select one text object.": "Sélectionnez un objet contenant du texte.",
+  "Select one text object.": "选择one text object.",
   "Ctrl/Cmd + Alt/Option + K": "Ctrl/Cmd + Alt/Option + K",
   "List formatting": "Mise en forme des listes",
-  "Bulleted list": "Liste à puces",
-  "Numbered list": "Liste numérotée",
+  "Bulleted list": "Bulleted list",
+  "Numbered list": "Numbered list",
   "Increase indent": "Augmenter le retrait",
   "Decrease indent": "Diminuer le retrait",
   "In lists, Tab changes indent, Shift+Enter continues an item, and Enter on an empty item exits the list.":
     "Dans une liste, Tab change le retrait, Maj+Entrée continue un élément et Entrée sur un élément vide quitte la liste.",
   "Indent / outdent a list item":
     "Augmenter / diminuer le retrait d’un élément de liste",
-  "Move between the selection or its text and its toolbar":
-    "Passer de la sélection ou de son texte à sa barre d’outils, et inversement",
-  "Selection tools": "Outils de la sélection",
-  Undone: "Action annulée",
-  Redone: "Action rétablie",
-  "Nothing to undo": "Rien à annuler",
-  "Nothing to redo": "Rien à rétablir",
+  "Move between the selection or its text and its toolbar": "移动between the selection or its text and its toolbar",
+  "Selection tools": "Selection tools",
+  Undone: "Undone",
+  Redone: "Redone",
+  "Nothing to undo": "没有可撤消的操作",
+  "Nothing to redo": "没有可恢复的操作",
   "Brought to front": "Mis au premier plan",
-  "Sent to back": "Mis à l’arrière-plan",
-  "Brought forward": "Avancé d’un plan",
-  "Sent backward": "Reculé d’un plan",
-  Ungrouped: "Groupe dissocié",
-  "{count} object grouped": "{count} objet groupé",
-  "{count} objects grouped": "{count} objets groupés",
+  "Sent to back": "已置于底层",
+  "Brought forward": "已上移一层",
+  "Sent backward": "已下移一层",
+  Ungrouped: "已取消组合",
+  "{count} object grouped": "{count} object grouped",
+  "{count} objects grouped": "{count} objects grouped",
   "Out of the frame": "Hors du cadre",
   Size: "Taille",
-  "Connects to": "Relié à",
-  "Attached to": "Attaché à",
-  "Connected from": "Relié depuis",
+  "Connects to": "Connects to",
+  "Attached to": "Attached to",
+  "Connected from": "Connected from",
   "open discussion": "discussion ouverte",
   "open discussions": "discussions ouvertes",
   "one|and {count} more": "et {count} autre",
@@ -1099,27 +1087,27 @@ const pairs = {
   "Continue a list item on a new line":
     "Continuer un élément de liste sur une nouvelle ligne",
   "Tab / Shift + Tab": "Tab / Maj + Tab",
-  "Shift + Enter": "Maj + Entrée",
+  "Shift + Enter": "Shift + Enter",
   "Shift + C": "Maj + C",
   "Shift + N": "Maj + N",
   "Space / right / middle + drag":
     "Espace / clic droit / clic central + glisser",
   "Ctrl/Cmd + Plus/Minus": "Ctrl/Cmd + Plus/Moins",
-  "Arrow keys": "Touches fléchées",
+  "Arrow keys": "方向键",
   "Alt / Option + drag": "Alt / Option + glisser",
-  "Alt / Option + Arrow keys": "Alt / Option + touches fléchées",
+  "Alt / Option + Arrow keys": "Alt / Option + Arrow keys",
   "Alt / Option during drag": "Alt / Option pendant le glissement",
-  Escape: "Échap",
+  Escape: "Escape",
   "Shift + resize": "Maj + redimensionnement",
   "Ctrl/Cmd + Alt/Option + Shift + Plus/Minus":
     "Ctrl/Cmd + Alt/Option + Maj + Plus/Moins",
-  Enter: "Entrée",
+  Enter: "输入",
   "Ctrl/Cmd + Shift + Down / Up": "Ctrl/Cmd + Maj + Bas / Haut",
   "Ctrl/Cmd + Alt/Option + Shift + K": "Ctrl/Cmd + Alt/Option + Maj + K",
   "Ctrl/Cmd + Alt/Option + Shift + C": "Ctrl/Cmd + Alt/Option + Maj + C",
   "Ctrl/Cmd + Alt/Option + Shift + H": "Ctrl/Cmd + Alt/Option + Maj + H",
-  "Moved to the trash.": "Placé dans la corbeille.",
-  "Deleted {date}": "Supprimé le {date}",
+  "Moved to the trash.": "Moved to the trash.",
+  "Deleted {date}": "Deleted {date}",
   "Version history (Ctrl/Cmd Alt/Option Shift H)":
     "Historique des versions (Ctrl/Cmd Alt/Option Maj H)",
   "Ctrl or Cmd + Z": "Ctrl ou Cmd + Z",
@@ -1128,58 +1116,58 @@ const pairs = {
   "Ctrl/Cmd + Shift + C": "Ctrl/Cmd + Maj + C",
   "Ctrl or Cmd + [ / ]": "Ctrl ou Cmd + [ / ]",
   "Ctrl or Cmd + Shift + [ / ]": "Ctrl ou Cmd + Maj + [ / ]",
-  "Page Down / Page Up": "Page suivante / Page précédente",
+  "Page Down / Page Up": "Page Down / Page Up",
   "A or L / P / E / F": "A ou L / P / E / F",
-  "Ctrl/Cmd + Backspace": "Ctrl/Cmd + Retour arrière",
-  "Delete / Backspace": "Suppr / Retour arrière",
+  "Ctrl/Cmd + Backspace": "Ctrl/Cmd + Backspace",
+  "Delete / Backspace": "删除/ Backspace",
   Find: "Rechercher",
   Delete: "删除",
   Share: "分享协作",
   View: "Affichage",
-  Selection: "Sélection",
-  Insert: "Insérer",
-  "Previous results": "Résultats précédents",
-  "Next results": "Résultats suivants",
-  "Selected objects": "Objets sélectionnés",
-  "Selected region": "Zone sélectionnée",
+  Selection: "选定区域",
+  Insert: "插入",
+  "Previous results": "Previous results",
+  "Next results": "Next results",
+  "Selected objects": "Selected objects",
+  "Selected region": "Selected region",
   Row: "Ligne",
   Column: "Colonne",
   "Highlight text": "Surligner le texte",
   "Remove highlight": "Supprimer le surlignage",
   "No highlight": "Sans surlignage",
   "Text color": "Couleur du texte",
-  "Custom color": "Couleur personnalisée",
+  "Custom color": "Custom color",
   "Automatic text color": "Couleur du texte automatique",
   "Text alignment": "Alignement du texte",
-  "Align text left": "Texte à gauche",
-  "Align text center": "Texte centré",
-  "Align text right": "Texte à droite",
+  "Align text left": "Align text left",
+  "Align text center": "Align text center",
+  "Align text right": "Align text right",
   "Font size": "Taille du texte",
   Mixed: "Mixte",
-  "Object properties": "Propriétés de l’objet",
+  "Object properties": "Object properties",
   "Edit text on canvas": "Modifier le texte sur le tableau",
   "Finish editing": "Terminer la modification",
   "Cancel text edit": "Annuler la modification du texte",
   "Ctrl or Cmd + Enter to finish. Escape to cancel. Enter adds a new line.":
     "Ctrl ou Cmd + Entrée pour terminer. Échap pour annuler. Entrée ajoute une ligne.",
-  "Board library": "Bibliothèque de tableaux",
-  "Recovered board": "Tableau récupéré",
+  "Board library": "Board library",
+  "Recovered board": "Recovered board",
   "Space + drag": "Espace + glisser",
-  "Ctrl or Cmd + scroll": "Ctrl ou Cmd + défilement",
+  "Ctrl or Cmd + scroll": "Ctrl or Cmd + scroll",
   "Shift or Ctrl/Cmd + click": "Maj ou Ctrl/Cmd + clic",
   "Ctrl or Cmd + Shift + Z or Ctrl or Cmd + Y":
     "Ctrl ou Cmd + Maj + Z ou Ctrl ou Cmd + Y",
   "Ctrl or Cmd + S": "Ctrl ou Cmd + S",
-  "Shift + Arrow keys": "Maj + touches fléchées",
-  "Move selected objects by 10": "Déplacer les objets sélectionnés de 10",
-  "Arrow keys with nothing selected": "Touches fléchées sans sélection",
+  "Shift + Arrow keys": "Shift + Arrow keys",
+  "Move selected objects by 10": "移动selected objects by 10",
+  "Arrow keys with nothing selected": "Arrow keys with nothing selected",
   "Ctrl/Cmd + B / I / U": "Ctrl/Cmd + B / I / U",
   "Bold, italic, or underline while typing":
     "Gras, italique ou souligné pendant la saisie",
   "Ctrl or Cmd + A": "Ctrl ou Cmd + A",
-  "Select all objects": "Sélectionner tous les objets",
+  "Select all objects": "选择all objects",
   "Ctrl or Cmd + G / Shift + G": "Ctrl ou Cmd + G / Maj + G",
-  "Group / ungroup selection": "Grouper / dissocier la sélection",
+  "Group / ungroup selection": "Group / ungroup selection",
   "Show these shortcuts": "Afficher ces raccourcis",
   "Fullscreen is unavailable. Presentation remains open.":
     "Le plein écran est indisponible. La présentation reste ouverte.",
@@ -1238,20 +1226,17 @@ const pairs = {
   "Try different words.": "尝试搜索其他关键词。",
   "Star a board to find it here.":
     "Ajoutez un tableau aux favoris pour le retrouver ici.",
-  "Create a board or choose a template above.":
-    "Créez un tableau ou choisissez un modèle ci-dessus.",
+  "Create a board or choose a template above.": "创建a board or choose a template above.",
   "Untitled board": "无标题白板",
   "Back to boards": "返回白板列表",
   "Board name": "白板名称",
   "Saved on this device": "已保存在本地设备",
   "Save to Puter": "保存至本地存储",
-  "Saved to Puter · Save again":
-    "Enregistré sur Puter · Enregistrer de nouveau",
-  "Save shared changes now":
-    "Enregistrer les modifications partagées maintenant",
+  "Saved to Puter · Save again": "已保存 · 再次保存",
+  "Save shared changes now": "立即保存共享更改",
   "On this device": "在此设备上",
   "Boards stay in this browser until you sign in.":
-    "Les tableaux restent dans ce navigateur tant que vous n’êtes pas connecté.",
+    "未登录时，白板保存在当前浏览器本地。",
   "Open from Puter": "从本地打开",
   "Not on this device yet": "尚未在此设备下载",
   "Export board": "导出白板",
@@ -1306,12 +1291,9 @@ const pairs = {
     "La copie serait en dehors des limites du tableau.",
   "Bring to front": "置于顶层",
   "Delete selection": "删除所选内容",
-  "Select and move · Double-click to edit · Space to pan":
-    "Sélectionner et déplacer · Double-clic pour modifier · Espace pour naviguer",
-  "Select objects to read them · Space to pan":
-    "Sélectionnez des objets pour les lire · Espace pour naviguer",
-  "Select objects to read them · Comment (C) to discuss · Space to pan":
-    "Sélectionnez des objets pour les lire · Commentaire (C) pour en discuter · Espace pour naviguer",
+  "Select and move · Double-click to edit · Space to pan": "选择and move · Double-click to edit · Space to pan",
+  "Select objects to read them · Space to pan": "选择objects to read them · Space to pan",
+  "Select objects to read them · Comment (C) to discuss · Space to pan": "选择objects to read them · Comment (C) to discuss · Space to pan",
   "Drag to move around your board":
     "Faites glisser pour vous déplacer dans le tableau",
   "Draw freely on the canvas": "Dessinez librement sur le tableau",
@@ -1333,13 +1315,13 @@ const pairs = {
     "Cliquez sur le tableau pour ajouter un commentaire",
   "Drag across the board to choose the area to export":
     "Faites glisser sur le tableau pour choisir la zone à exporter",
-  "Drag from start to end": "Faites glisser du début à la fin",
+  "Drag from start to end": "Drag from start to end",
   "Your text": "Votre texte",
-  "Close dialog": "Fermer la fenêtre",
+  "Close dialog": "关闭dialog",
   Width: "Largeur",
   Height: "Hauteur",
   "Save changes": "Enregistrer les modifications",
-  "Take your ideas with you": "Emportez vos idées",
+  "Take your ideas with you": "Take your ideas with you",
   "Export a visual snapshot or a fully editable backup.":
     "Exportez une image ou une sauvegarde modifiable.",
   "PNG image": "Image PNG",
@@ -1348,8 +1330,8 @@ const pairs = {
   "Whiteboard file": "Fichier Whiteboard",
   "Import it later and keep creating": "Importez-le plus tard pour continuer",
   "Board options": "Options du tableau",
-  "Move to trash": "Mettre à la corbeille",
-  "Move this board to the trash?": "Mettre ce tableau à la corbeille?",
+  "Move to trash": "移动to trash",
+  "Move this board to the trash?": "移动this board to the trash?",
   "Boards in the trash can be restored from there.":
     "Les tableaux dans la corbeille peuvent être restaurés à partir de là.",
   "The copy saved in Puter is kept.":
@@ -1360,22 +1342,22 @@ const pairs = {
     "Le nom du tableau est enregistré. Vous l’avez modifié pendant l’enregistrement. Enregistrez de nouveau pour mettre le nom à jour.",
   "This board changed in another tab. Your name draft is kept. Save again to rename the latest copy.":
     "Ce tableau a changé dans un autre onglet. Votre nom est conservé. Enregistrez de nouveau pour renommer la dernière copie.",
-  "Your name draft is kept here.": "Votre nom est conservé ici.",
+  "Your name draft is kept here.": "Your name draft is kept here.",
   "This board is in the trash. Your name draft is kept here.":
     "Ce tableau est dans la corbeille. Votre nom est conservé ici.",
   "Keep board": "Conserver le tableau",
-  "Delete board": "Mettre à la corbeille",
+  "Delete board": "删除白板",
   "Restore board": "Restaurer le tableau",
   "Saving…": "Enregistrement…",
-  "Saved locally": "Enregistré localement",
+  "Saved locally": "Saved locally",
   "Storage full": "Stockage plein",
   "Saving to Puter…": "Enregistrement sur Puter…",
-  "Saved to Puter": "Enregistré sur Puter",
-  "Cloud save failed": "Échec de l’enregistrement dans le nuage",
-  "Newer copy in Puter": "Copie plus récente sur Puter",
+  "Saved to Puter": "Saved to Puter",
+  "Cloud save failed": "Cloud save failed",
+  "Newer copy in Puter": "Newer copy in Puter",
   "A newer copy of this board is saved in Puter.":
     "Une copie plus récente de ce tableau est enregistrée sur Puter.",
-  "Open newer copy": "Ouvrir la copie plus récente",
+  "Open newer copy": "打开newer copy",
   "copy on this device": "copie sur cet appareil",
   "Opened the copy from Puter. The edits made on this device are kept as their own board.":
     "La copie de Puter est ouverte. Les modifications faites sur cet appareil sont conservées dans un tableau à part.",
@@ -1384,12 +1366,12 @@ const pairs = {
   "The cloud board index is invalid. Your files remain in Puter.":
     "L’index des tableaux dans le nuage est invalide. Vos fichiers restent dans Puter.",
   "Invalid board identifier.": "Identifiant de tableau invalide.",
-  "The AI request failed.": "La demande à l’IA a échoué.",
+  "The AI request failed.": "The AI request failed.",
   "Could not move this board to the trash.":
     "Impossible de mettre ce tableau à la corbeille.",
   // Added to the names of duplicated and imported boards.
   copy: "copie",
-  imported: "importé",
+  imported: "imported",
   "Could not save the copy on this device.":
     "Impossible d’enregistrer la copie sur cet appareil.",
   "Could not save this change on this device.":
@@ -1398,82 +1380,77 @@ const pairs = {
     "Enregistrement local impossible. Exportez votre tableau pour en conserver une copie.",
   "Cloud save failed. Your local copy is safe. Use Save to Puter to retry.":
     "Échec de l’enregistrement sur Puter. Votre copie locale est conservée. Réessayez avec Enregistrer sur Puter.",
-  "Board imported.": "Tableau importé.",
+  "Board imported.": "Board imported.",
   "A newer local copy was kept.":
     "La copie locale plus récente a été conservée.",
   Language: "语言",
   "More tools": "Autres outils",
   Link: "Lien",
-  Table: "Tableau de données",
-  "File attachment": "Pièce jointe",
+  Table: "表格",
+  "File attachment": "File attachment",
   "Add link": "Ajouter un lien",
-  "Add table": "Ajouter un tableau de données",
+  "Add table": "添加table",
   "Attach file": "Joindre un fichier",
   "Add content": "Ajouter du contenu",
   "Open link": "Ouvrir le lien",
-  "Select a link card first.": "Sélectionnez d’abord une carte de lien.",
-  "Download attachment": "Télécharger la pièce jointe",
+  "Select a link card first.": "选择a link card first.",
+  "Download attachment": "Download attachment",
   "Import contents": "Importer le contenu",
   "Files added. To add a document’s contents to the board, open its file card and choose Import contents.":
     "Fichiers ajoutés. Pour ajouter le contenu d’un document au tableau, ouvrez sa carte de fichier et choisissez Importer le contenu.",
   URL: "Adresse URL",
-  Label: "Libellé",
+  Label: "Label",
   Rows: "Lignes",
   Columns: "Colonnes",
   "Add row": "Ajouter une ligne",
   "Add column": "Ajouter une colonne",
-  "Remove last row": "Supprimer la dernière ligne",
-  "Remove last column": "Supprimer la dernière colonne",
+  "Remove last row": "移除last row",
+  "Remove last column": "移除last column",
   "Table cells": "Cellules du tableau",
   "File name": "Nom du fichier",
   "Choose a file smaller than 10 MB.":
     "Choisissez un fichier de moins de 10 Mo.",
   "Enter a valid http or https link.":
     "Saisissez une adresse http ou https valide.",
-  "Group selection": "Grouper la sélection",
-  "Ungroup selection": "Dissocier la sélection",
-  "Connect selected objects": "Relier les objets sélectionnés",
-  "Select exactly two objects to connect.":
-    "Sélectionnez exactement deux objets à relier.",
-  "Select at least two objects to group.":
-    "Sélectionnez au moins deux objets à grouper.",
-  "Already grouped.": "Déjà groupés.",
-  "Organize selection": "Organiser la sélection",
-  "Lock selection": "Verrouiller la sélection",
+  "Group selection": "Group selection",
+  "Ungroup selection": "Ungroup selection",
+  "Connect selected objects": "Connect selected objects",
+  "Select exactly two objects to connect.": "选择exactly two objects to connect.",
+  "Select at least two objects to group.": "选择at least two objects to group.",
+  "Already grouped.": "Already grouped.",
+  "Organize selection": "Organize selection",
+  "Lock selection": "锁定selection",
   "Lock frame": "Verrouiller le cadre",
-  "Unlock selection": "Déverrouiller la sélection",
-  "Lock or unlock selection": "Verrouiller ou déverrouiller la sélection",
-  "Unlock all objects": "Déverrouiller tous les objets",
-  "Protected selection": "Sélection protégée",
+  "Unlock selection": "解锁selection",
+  "Lock or unlock selection": "锁定or unlock selection",
+  "Unlock all objects": "解锁all objects",
+  "Protected selection": "Protected selection",
   "More options": "Plus d’options",
-  "Unlock to move, edit, or delete.":
-    "Déverrouillez pour déplacer, modifier ou supprimer.",
-  "Unlock protected objects before changing this selection.":
-    "Déverrouillez les objets protégés avant de modifier cette sélection.",
+  "Unlock to move, edit, or delete.": "解锁to move, edit, or delete.",
+  "Unlock protected objects before changing this selection.": "解锁protected objects before changing this selection.",
   "Workshop content hidden from you was left out of the copy.":
     "Le contenu d’atelier qui vous est masqué n’a pas été inclus dans la copie.",
-  "Hidden object": "Objet masqué",
+  "Hidden object": "Hidden object",
   "Choose a visible object.": "Choisissez un objet visible.",
   "Hidden objects cannot be cut. Copy the selection instead.":
     "Les objets masqués ne peuvent pas être coupés. Copiez plutôt la sélection.",
   "Hidden objects cannot be copied.":
     "Les objets masqués ne peuvent pas être copiés.",
-  "Selection locked.": "Sélection verrouillée.",
-  "Selection unlocked.": "Sélection déverrouillée.",
-  "All objects unlocked.": "Tous les objets sont déverrouillés.",
-  "No locked objects.": "Aucun objet verrouillé.",
+  "Selection locked.": "Selection locked.",
+  "Selection unlocked.": "Selection unlocked.",
+  "All objects unlocked.": "All objects unlocked.",
+  "No locked objects.": "No locked objects.",
   "Frame locked. Its contents remain editable.":
     "Cadre verrouillé. Son contenu reste modifiable.",
-  Locked: "Verrouillé",
+  Locked: "已锁定",
   "Rotated selections keep their proportions. Alt/Option bypasses snapping.":
     "Les sélections pivotées conservent leurs proportions. Alt/Option désactive l’alignement.",
-  "Rotate selection": "Faire pivoter la sélection",
-  "Angle (degrees)": "Angle (degrés)",
-  "Rotate by (degrees)": "Rotation relative (degrés)",
-  "Reset angle": "Réinitialiser l’angle",
+  "Rotate selection": "Rotate selection",
+  "Angle (degrees)": "Angle (degrees)",
+  "Rotate by (degrees)": "Rotate by (degrees)",
+  "Reset angle": "Reset angle",
   "Apply rotation": "Appliquer la rotation",
-  "Select shapes, text, images, cards, or drawings to rotate.":
-    "Sélectionnez des formes, du texte, des images, des cartes ou des dessins à faire pivoter.",
+  "Select shapes, text, images, cards, or drawings to rotate.": "选择shapes, text, images, cards, or drawings to rotate.",
   "Drag the rotation handle below the left corner. Hold Shift to snap to 15° steps. Escape cancels.":
     "Faites glisser la poignée de rotation sous le coin gauche. Maintenez Maj pour des pas de 15°. Échap annule.",
   "Enter a valid angle.": "Saisissez un angle valide.",
@@ -1481,7 +1458,7 @@ const pairs = {
     "Cette rotation dépasse les limites du tableau.",
   "Keep proportions when resizing rotated objects together.":
     "Conservez les proportions pour redimensionner ensemble des objets pivotés.",
-  "Resize selection": "Redimensionner la sélection",
+  "Resize selection": "Resize selection",
   "Resize frame": "Redimensionner le cadre",
   "Frame contents stay in place.": "Le contenu du cadre reste en place.",
   "Resize objects and their spacing together.":
@@ -1489,8 +1466,7 @@ const pairs = {
   "Keep proportions": "Conserver les proportions",
   "Scale text with objects": "Redimensionner le texte avec les objets",
   "Apply size": "Appliquer les dimensions",
-  "Select objects with a resizable area.":
-    "Sélectionnez des objets ayant une surface redimensionnable.",
+  "Select objects with a resizable area.": "选择objects with a resizable area.",
   "Drag the corner to resize. Shift toggles proportions; Alt/Option bypasses snapping.":
     "Faites glisser le coin pour redimensionner. Maj inverse le maintien des proportions ; Alt/Option désactive temporairement l’alignement magnétique.",
   "Size adjusted to keep content readable. Review and apply again.":
@@ -1506,16 +1482,16 @@ const pairs = {
     "Le texte reste entre 8 et 100 pixels : cette sélection ne peut pas être redimensionnée davantage.",
   "The selection changed. Select it again.":
     "La sélection a changé. Sélectionnez-la à nouveau.",
-  "Snap to objects": "Alignement magnétique",
+  "Snap to objects": "Snap to objects",
   "Snapping on. Hold Alt/Option to bypass.":
     "Alignement magnétique activé. Maintenez Alt/Option pour le désactiver temporairement.",
-  "Snapping off.": "Alignement magnétique désactivé.",
-  "Added by": "Ajoutée par",
-  "Show sticky note authors": "Afficher les auteurs des notes adhésives",
-  "Hide sticky note authors": "Masquer les auteurs des notes adhésives",
+  "Snapping off.": "Snapping off.",
+  "Added by": "Added by",
+  "Show sticky note authors": "显示sticky note authors",
+  "Hide sticky note authors": "隐藏sticky note authors",
   "Sticky notes show who added them.":
     "Les notes adhésives indiquent qui les a ajoutées.",
-  "Sticky note authors hidden.": "Auteurs des notes adhésives masqués.",
+  "Sticky note authors hidden.": "Sticky note authors hidden.",
   "After a pen, fingers only move the board":
     "Après le stylet, les doigts ne font que déplacer le tableau",
   "After a pen, fingers only move the board.":
@@ -1528,7 +1504,7 @@ const pairs = {
     "Désactiver temporairement l’alignement magnétique",
   "Cancel the current move or resize":
     "Annuler le déplacement ou le redimensionnement en cours",
-  "Create frame around selection": "Créer un cadre autour de la sélection",
+  "Create frame around selection": "创建frame around selection",
   "Move into frame": "Placer dans un cadre",
   "No frame": "Aucun cadre",
   "Align left": "左对齐",
@@ -1545,19 +1521,17 @@ const pairs = {
   Spacing: "Espacement",
   "Layer order": "Ordre des plans",
   "Group and organize": "Grouper et organiser",
-  "Select at least three objects or groups to distribute evenly.":
-    "Sélectionnez au moins trois objets ou groupes pour les répartir uniformément.",
+  "Select at least three objects or groups to distribute evenly.": "选择at least three objects or groups to distribute evenly.",
   "Send backward / bring forward": "Reculer / avancer d’un plan",
-  "Send to back / bring to front": "Mettre à l’arrière-plan / au premier plan",
+  "Send to back / bring to front": "Send to back / bring to front",
   "Center horizontally": "Centrer horizontalement",
-  "Save as reusable content": "Enregistrer comme contenu réutilisable",
+  "Save as reusable content": "Save as reusable content",
   "Frames and navigation": "Cadres et navigation",
-  "Add a frame to organize content and create presentation slides.":
-    "Ajoutez un cadre pour organiser le contenu et créer des diapositives.",
+  "Add a frame to organize content and create presentation slides.": "添加a frame to organize content and create presentation slides.",
   "Go to frame": "Aller au cadre",
   "Add frame": "Ajouter un cadre",
-  "Present from this frame": "Présenter à partir de ce cadre",
-  "Export selected frames": "Exporter les cadres sélectionnés",
+  "Present from this frame": "Present from this frame",
+  "Export selected frames": "导出selected frames",
   "The frames were added without their agenda steps: the agenda holds at most 60 steps.":
     "Les cadres ont été ajoutés sans leurs étapes : l’ordre du jour compte au plus 60 étapes.",
   "Move frame earlier": "Avancer le cadre",
@@ -1575,69 +1549,68 @@ const pairs = {
   "Frames can be reordered once the facilitator shows every frame.":
     "Les cadres pourront être réordonnés quand l’animateur affichera tous les cadres.",
   Section: "Section",
-  Presentation: "Présentation",
-  Present: "Présenter",
-  "Present board": "Présenter le tableau",
-  "Start presentation": "Démarrer la présentation",
+  Presentation: "演示文稿",
+  Present: "Present",
+  "Present board": "Present board",
+  "Start presentation": "Start presentation",
   "Choose frames in presentation order.":
     "Choisissez les cadres dans l’ordre de présentation.",
   "This board has no frames, so it presents as one slide. Add frames to make slides.":
     "Ce tableau n’a pas de cadres : il se présente en une seule diapositive. Ajoutez des cadres pour créer des diapositives.",
-  "Present selection": "Présenter la sélection",
-  "Previous slide": "Diapositive précédente",
+  "Present selection": "Present selection",
+  "Previous slide": "Previous slide",
   "Next slide": "Diapositive suivante",
-  "Exit presentation": "Quitter la présentation",
-  Fullscreen: "Plein écran",
-  "Selected content": "Contenu sélectionné",
+  "Exit presentation": "Exit presentation",
+  Fullscreen: "全屏",
+  "Selected content": "Selected content",
   "Entire board": "Tableau entier",
-  "Export scope": "Zone à exporter",
-  "Selected objects or region": "Objets ou région sélectionnés",
-  "Export region": "Région d’exportation",
-  "Defined frames": "Cadres définis",
+  "Export scope": "导出scope",
+  "Selected objects or region": "Selected objects or region",
+  "Export region": "导出region",
+  "Defined frames": "Defined frames",
   "Export format": "Format d’exportation",
   Export: "导出",
-  "Select objects or draw a region first.":
-    "Sélectionnez des objets ou dessinez une région.",
+  "Select objects or draw a region first.": "选择objects or draw a region first.",
   "Add a frame before exporting sections.":
     "Ajoutez un cadre avant d’exporter des sections.",
   "PDFs include a board overview and readable detail pages for large areas. Images export one region at a time.":
     "Les PDF comprennent une vue d’ensemble et des pages de détail lisibles pour les grandes zones. Les images exportent une région à la fois.",
-  "Select export region": "Sélectionner une région à exporter",
+  "Select export region": "选择export region",
   "Region selected. Open Export to use it, or press Escape to clear it.":
     "Zone sélectionnée. Ouvrez Exporter pour l’utiliser, ou appuyez sur Échap pour l’effacer.",
-  "Export region cleared.": "Zone d’exportation effacée.",
+  "Export region cleared.": "导出region cleared.",
   "Clear export region": "Effacer la zone d’exportation",
-  "Clear region": "Effacer la région",
+  "Clear region": "清除region",
   "Version history": "Historique des versions",
-  "Create checkpoint": "Créer un point de restauration",
+  "Create checkpoint": "创建checkpoint",
   "Checkpoint name": "Nom du point de restauration",
   Checkpoint: "Point de restauration",
   "Restore version": "Restaurer cette version",
   "Before restoration": "Avant la restauration",
   "Board edit": "Modification du tableau",
   "Before deletion": "Avant la suppression",
-  "No saved versions yet.": "Aucune version enregistrée pour le moment.",
+  "No saved versions yet.": "No saved versions yet.",
   "The 30 most recent versions are kept on this device, and one for each quarter hour of the last 30 days (up to 200 more), within 50 MB; when space runs short, the last version of each day is kept before the others. Pictures shared by several versions are stored once. Named checkpoints and the version saved before each restoration are kept apart from these: the newest 100, within another 50 MB.":
     "Les 30 versions les plus récentes sont conservées sur cet appareil, ainsi qu’une par quart d’heure des 30 derniers jours (jusqu’à 200 de plus), dans une limite de 50 Mo ; quand la place manque, la dernière version de chaque jour est conservée avant les autres. Les images communes à plusieurs versions ne sont stockées qu’une fois. Les points de restauration nommés et la version enregistrée avant chaque restauration sont conservés à part : les 100 plus récents, dans une limite de 50 Mo supplémentaires.",
-  "Version restored.": "Version restaurée.",
-  "Checkpoint saved.": "Point de restauration enregistré.",
+  "Version restored.": "Version restored.",
+  "Checkpoint saved.": "Checkpoint saved.",
   "Could not save the checkpoint. Export a backup.":
     "Impossible d’enregistrer le point de restauration. Exportez une sauvegarde.",
   "Could not save a recovery version. Export a backup.":
     "Impossible d’enregistrer une version de récupération. Exportez une sauvegarde.",
-  "Template library": "Bibliothèque de modèles",
-  "Browse all templates": "Parcourir tous les modèles",
-  "Search templates": "Rechercher des modèles",
-  "All categories": "Toutes les catégories",
-  "Use template": "Utiliser ce modèle",
-  "Insert into board": "Insérer dans le tableau",
-  "My reusable content": "Mon contenu réutilisable",
+  "Template library": "模板库",
+  "Browse all templates": "浏览全部模板",
+  "Search templates": "搜索模板",
+  "All categories": "All categories",
+  "Use template": "Use template",
+  "Insert into board": "Insert into board",
+  "My reusable content": "My reusable content",
   "No reusable content yet. Select objects on a board, then choose Save as reusable content from the right-click menu or More options.":
     "Aucun contenu réutilisable. Sélectionnez des objets dans un tableau, puis choisissez Enregistrer comme contenu réutilisable dans le menu contextuel ou Plus d’options.",
-  "Reusable content saved.": "Contenu réutilisable enregistré.",
+  "Reusable content saved.": "Reusable content saved.",
   "Could not save this content on this device.":
     "Impossible d’enregistrer ce contenu sur cet appareil.",
-  "Delete template": "Supprimer le modèle",
+  "Delete template": "删除模板",
   "Confirm delete": "Confirmer la suppression",
   "Confirm remove": "Confirmer le retrait",
   "Use arrow keys or Space to navigate slides. Press Escape to exit.":
@@ -1645,18 +1618,17 @@ const pairs = {
   "Swipe left or right, or use the buttons, to change slides.":
     "Balayez vers la gauche ou la droite, ou utilisez les boutons, pour changer de diapositive.",
   Objects: "Objets",
-  "{count} board found": "{count} tableau trouvé",
-  "{count} boards found": "{count} tableaux trouvés",
+  "{count} board found": "{count} board found",
+  "{count} boards found": "{count} boards found",
   "{count} object": "{count} objet",
   "{count} objects": "{count} objets",
   Deleted: "Suppression",
-  "{count} object selected": "{count} objet sélectionné",
-  "{count} objects selected": "{count} objets sélectionnés",
-  "{count} object deleted": "{count} objet supprimé",
-  "{count} objects deleted": "{count} objets supprimés",
+  "{count} object selected": "{count} object selected",
+  "{count} objects selected": "{count} objects selected",
+  "{count} object deleted": "{count} object deleted",
+  "{count} objects deleted": "{count} objects deleted",
   "Search objects": "Rechercher des objets",
-  "Select an object to move it with the arrow keys. Press Enter to edit.":
-    "Sélectionnez un objet, déplacez-le avec les flèches, puis appuyez sur Entrée pour le modifier.",
+  "Select an object to move it with the arrow keys. Press Enter to edit.": "选择an object to move it with the arrow keys. Press Enter to edit.",
   "Your board is empty. Add a note or shape to get started.":
     "Votre tableau est vide. Ajoutez une note ou une forme.",
   "Canvas objects": "Objets du tableau",
@@ -1667,32 +1639,30 @@ const pairs = {
   "Whiteboard canvas. Use Board objects to select and edit objects with the keyboard.":
     "Tableau blanc. Utilisez Objets du tableau pour sélectionner et modifier les objets au clavier.",
   "Undo (Ctrl/Cmd Z)": "Annuler (Ctrl/Cmd Z)",
-  "Redo (Ctrl/Cmd Shift Z)": "Rétablir (Ctrl/Cmd Maj Z)",
+  "Redo (Ctrl/Cmd Shift Z)": "Redo (Ctrl/Cmd Shift Z)",
   "Choose a tool, then click the canvas. Double-click an object to edit its text. Drag a corner to resize.":
     "Choisissez un outil, puis cliquez sur le tableau. Double-cliquez sur un objet pour modifier son texte. Faites glisser un coin pour le redimensionner.",
-  "Select / pan": "Sélectionner / naviguer",
-  "Sticky note / text": "Note adhésive / texte",
+  "Select / pan": "选择/ pan",
+  "Sticky note / text": "Sticky note / text",
   "Rectangle / ellipse": "Rectangle / ellipse",
-  "Arrow / draw / eraser / frame": "Flèche / dessin / gomme / cadre",
+  "Arrow / draw / eraser / frame": "Arrow / draw / eraser / frame",
   "Move around the canvas": "Naviguer dans le tableau",
   "Zoom toward the pointer": "Zoomer vers le pointeur",
-  "Select multiple objects": "Sélectionner plusieurs objets",
-  "Move selected objects": "Déplacer les objets sélectionnés",
+  "Select multiple objects": "选择多个对象",
+  "Move selected objects": "移动selected objects",
   "Edit the focused object": "Modifier l’objet actif",
   Undo: "撤销",
   Copy: "复制",
   Cut: "剪切",
   Paste: "粘贴",
   "Select all": "全选",
-  "Select none": "Tout désélectionner",
+  "Select none": "选择none",
   "Shift + drag": "Maj + glisser",
-  "Move straight across or down":
-    "Déplacer en ligne droite, horizontalement ou verticalement",
+  "Move straight across or down": "移动straight across or down",
   "Elsewhere, Tab or Ctrl/Cmd+D goes on to a new sticky note.":
     "Ailleurs, Tab ou Ctrl/Cmd+D passe à une nouvelle note adhésive.",
   "Right-click / Shift + F10": "Clic droit / Maj + F10",
-  "Open the menu of the selection or board":
-    "Ouvrir le menu de la sélection ou du tableau",
+  "Open the menu of the selection or board": "打开the menu of the selection or board",
   "Object actions": "Actions sur l’objet",
   "Board actions": "Actions du tableau",
   "The clipboard is empty.": "Le presse-papiers est vide.",
@@ -1724,11 +1694,10 @@ const pairs = {
     "Impossible d’ouvrir le tableau dans le nuage.",
   "Puter could not load. Check your connection and try again.":
     "Puter n’a pas pu être chargé. Vérifiez votre connexion et réessayez.",
-  "Could not connect to Puter.": "Connexion à Puter impossible.",
+  "Could not connect to Puter.": "Could not connect to Puter.",
   "Could not connect. Please try again.":
     "Connexion impossible. Veuillez réessayer.",
-  "Export failed. Please try again.":
-    "L’exportation a échoué. Veuillez réessayer.",
+  "Export failed. Please try again.": "导出failed. Please try again.",
   "This is not a supported Whiteboard file.":
     "Ce fichier Whiteboard n’est pas pris en charge.",
   "Your browser storage is unavailable.":
@@ -1737,20 +1706,20 @@ const pairs = {
     "Activez le stockage du site et rechargez la page pour commencer.",
   Reload: "Recharger",
   Close: "关闭",
-  Create: "Créer",
+  Create: "新建",
   Cancel: "取消",
   Save: "保存",
-  "Select objects first.": "Sélectionnez d’abord des objets.",
-  "Select one object first.": "Sélectionnez d’abord un seul objet.",
+  "Select objects first.": "选择objects first.",
+  "Select one object first.": "选择one object first.",
   "Trash is empty.": "La corbeille est vide.",
-  "Board moved to Trash.": "Tableau déplacé dans la corbeille.",
-  "Board restored.": "Tableau restauré.",
-  "Delete permanently": "Supprimer définitivement",
-  "Delete this board permanently?": "Supprimer ce tableau définitivement ?",
+  "Board moved to Trash.": "Board moved to Trash.",
+  "Board restored.": "Board restored.",
+  "Delete permanently": "删除permanently",
+  "Delete this board permanently?": "删除this board permanently?",
   "This removes the board and its recovery versions from this device. It cannot be undone.":
     "Le tableau et ses versions de récupération sont retirés de cet appareil. Cette action est irréversible.",
   "Keep in trash": "Garder dans la corbeille",
-  "Board deleted permanently.": "Tableau supprimé définitivement.",
+  "Board deleted permanently.": "Board deleted permanently.",
   "Could not delete this board from this device.":
     "Impossible de supprimer ce tableau de cet appareil.",
   "Could not delete this content on this device.":
@@ -1760,28 +1729,28 @@ const pairs = {
   "Choose at least one frame.": "Choisissez au moins un cadre.",
   "The presented frames are no longer available.":
     "Les cadres présentés ne sont plus disponibles.",
-  "No templates found.": "Aucun modèle trouvé.",
+  "No templates found.": "No templates found.",
   "No matching objects.": "Aucun objet correspondant.",
   "This board is too spread out to show whole. Showing the part with the most objects.":
     "Ce tableau est trop étendu pour être affiché en entier. Affichage de la partie qui contient le plus d’objets.",
   "Remove from frame": "Retirer du cadre",
-  "Board edit saved": "Modification enregistrée",
+  "Board edit saved": "Board edit saved",
   "action|Open": "Ouvrir",
   "key|Shift": "Maj",
-  "key|Enter": "Entrée",
-  "key|Backspace": "Retour arrière",
+  "key|Enter": "Enter",
+  "key|Backspace": "Backspace",
   "key|Delete": "Suppr",
   "key|Minus": "Moins",
   "key|Up": "Haut",
   "key|Down": "Bas",
-  "notification|Reply": "Réponse",
+  "notification|Reply": "Reply",
   "results|Top": "Premiers",
   "Invite people to edit, comment on, or view this board. Invitation links expire after seven days.":
     "Invitez des personnes à modifier, commenter ou consulter ce tableau. Les liens d’invitation expirent après sept jours.",
   "Copy the board's link to send it to people who already have access to it.":
     "Copiez le lien du tableau pour l’envoyer à des personnes qui y ont déjà accès.",
-  "Creating link…": "Création du lien…",
-  "Reset link": "Réinitialiser le lien",
+  "Creating link…": "Creating link…",
+  "Reset link": "Reset link",
   "The link now gives the chosen access. Links copied earlier keep the access they had.":
     "Le lien donne désormais l’accès choisi. Les liens copiés auparavant conservent leur accès.",
   "Earlier links no longer work. People already on the board keep access.":
@@ -1799,16 +1768,17 @@ const pairs = {
   "Your organization has turned off Miro imports.":
     "Votre organisation a désactivé les importations depuis Miro.",
   Planning: "Planification",
-  "This export is too large. Export fewer frames at a time.":
-    "Cette exportation est trop volumineuse. Exportez moins de cadres à la fois.",
-  "This feature could not load. Check your connection and try again.":
-    "Cette fonction n’a pas pu se charger. Vérifiez votre connexion et réessayez.",
+  "This export is too large. Export fewer frames at a time.": "导出文件过大，请分批导出画框。",
+  "This feature could not load. Check your connection and try again.": "无法加载此功能，请检查网络连接后重试。",
 };
 // Feature modules register their own French strings next to their code.
 // Existing entries win so a module cannot silently change shared labels.
 export function addTranslations(entries) {
-  for (const [english, french] of Object.entries(entries))
-    if (!Object.hasOwn(pairs, english)) pairs[english] = french;
+  for (const [english, translation] of Object.entries(entries)) {
+    // If translation contains French characters, do not overwrite Chinese
+    if (Object.hasOwn(pairs, english)) continue;
+    pairs[english] = translation;
+  }
 }
 const types = {
   __proto__: null,
@@ -1943,12 +1913,12 @@ export function translateUI(root = document.body) {
     // Changes made just now are still on their way to the observer.
     if (
       renderedLanguage === language &&
-      (language !== "fr" ||
+      (language === "en" ||
         (observer && !changed && !observer.takeRecords().some(realChange)))
     )
       return;
     renderedLanguage = language;
-  } else if (language !== "fr" && renderedLanguage === language) return;
+  } else if (language === "en" && renderedLanguage === language) return;
   const skipped =
     "[data-user-content],textarea,script,style,.board-info h3,#board-outline";
   if (root.closest?.(skipped)) return;
@@ -2021,7 +1991,7 @@ const englishTypes = {
 export const objectKind = (i) =>
   i.type === "rect" && i.shape
     ? t(SHAPES.find((s) => s.key === i.shape)?.name || "Rectangle")
-    : (language === "fr" ? types : englishTypes)[i.type] || i.type;
+    : (language === "en" ? englishTypes : types)[i.type] || i.type;
 // An object's kind as a label of its own, as over a search result:
 // "Sticky note", in French "Note adhésive", after "Locked · " when locked.
 export const kindLabel = (i) => {
@@ -2030,8 +2000,8 @@ export const kindLabel = (i) => {
 };
 // The title of an object's properties dialog.
 export const editTitle = (i) =>
-  language === "fr"
-    ? `Modifier : ${objectKind(i)}`
+  language === "en"
+    ? `Edit ${objectKind(i).toLowerCase()}`
     : `Edit ${objectKind(i).toLowerCase()}`;
 export function objectNameContent(i) {
   const value = i.text || i.alt || i.fileName;
@@ -2059,5 +2029,5 @@ export const objectName = (i) =>
   `${i.locked ? `${t("Locked")} · ` : ""}${labelled(
     objectKind(i),
     objectNameContent(i) ||
-      (language === "fr" ? "Objet sans titre" : "Untitled object"),
+      (language === "en" ? "Untitled object" : "未命名对象"),
   )}`;

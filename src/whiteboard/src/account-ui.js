@@ -8,7 +8,7 @@ addTranslations({
   "Account menu": "Menu du compte",
   "Signed in with Puter": "Connecté avec Puter",
   "Loading your account…": "Chargement de votre compte…",
-  "Sign out": "Se déconnecter",
+  "Sign out": "退出登录",
   "Signed in as {name}.": "Connecté en tant que {name}.",
   "Signed in with Puter.": "Connecté avec Puter.",
   "Signed out. Your local boards are still available.":

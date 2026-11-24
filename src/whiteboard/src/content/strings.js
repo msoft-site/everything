@@ -6,10 +6,9 @@ addTranslations({
   "Import document": "Importer un document",
   "Embed content": "Intégrer du contenu",
   "Google Workspace": "Google Workspace",
-  "Import Google Sheet as table":
-    "Importer une feuille Google Sheets comme tableau de données",
+  "Import Google Sheet as table": "导入Google Sheet as table",
   "Refresh from Google Sheets": "Actualiser depuis Google Sheets",
-  "Open live embed": "Ouvrir l’intégration en direct",
+  "Open live embed": "打开live embed",
   Embed: "Intégrer",
   "Embedded content": "Contenu intégré",
   Embeds: "Intégrations",
@@ -48,16 +47,16 @@ addTranslations({
   "Embed it as live content or add a link card.":
     "Intégrez-le comme contenu en direct ou ajoutez une carte de lien.",
   "Link card": "Carte de lien",
-  "Import as table": "Importer comme tableau de données",
-  "Import as sticky notes": "Importer en notes adhésives",
+  "Import as table": "导入as table",
+  "Import as sticky notes": "导入as sticky notes",
   "Import as frames": "Importer en cadres",
   // Live embeds
   "Open live": "Ouvrir en direct",
   "Live embed": "Intégration en direct",
   "Open in new tab": "Ouvrir dans un nouvel onglet",
   Close: "Fermer",
-  "Close live embed": "Fermer l’intégration en direct",
-  "Select an embed first.": "Sélectionnez d’abord une intégration.",
+  "Close live embed": "关闭live embed",
+  "Select an embed first.": "选择an embed first.",
   "This embed link is no longer supported.":
     "Ce lien d’intégration n’est plus pris en charge.",
   "Your organization has turned off Google Workspace integrations.":
@@ -105,8 +104,7 @@ addTranslations({
   "All sheets": "Toutes les feuilles",
   "Split large ranges into several tables":
     "Répartir les grandes plages sur plusieurs tableaux de données",
-  "Import only the first 20 rows and 12 columns":
-    "Importer seulement les 20 premières lignes et les 12 premières colonnes",
+  "Import only the first 20 rows and 12 columns": "导入only the first 20 rows and 12 columns",
   "Board tables hold up to 20 rows, 12 columns, and 2,000 characters per cell.":
     "Les tableaux de données du tableau contiennent au plus 20 lignes, 12 colonnes et 2 000 caractères par cellule.",
   "Keep the original file as an attachment":
@@ -138,15 +136,12 @@ addTranslations({
   Images: "Images",
   Tables: "Tableaux de données",
   Attachments: "Pièces jointes",
-  "Import complete. Undo removes it.":
-    "Importation terminée. Annulez pour la retirer.",
+  "Import complete. Undo removes it.": "导入complete. Undo removes it.",
   "Nothing was imported.": "Rien n’a été importé.",
-  "Import cancelled. The board is unchanged.":
-    "Importation annulée. Le tableau est inchangé.",
+  "Import cancelled. The board is unchanged.": "导入cancelled. The board is unchanged.",
   "Could not import this document.": "Impossible d’importer ce document.",
   "An import is already in progress.": "Une importation est déjà en cours.",
-  "Import one document at a time. The first document is ready to import.":
-    "Importez un document à la fois. Le premier document est prêt à être importé.",
+  "Import one document at a time. The first document is ready to import.": "导入one document at a time. The first document is ready to import.",
   "Speaker notes": "Notes de l’orateur",
   Slide: "Diapositive",
   Document: "Document",
@@ -275,8 +270,7 @@ addTranslations({
     "Ce lien Google n’est pas pris en charge.",
   "Use the presentation’s sharing link rather than a published link.":
     "Utilisez le lien de partage de la présentation plutôt qu’un lien publié.",
-  "Select a table imported from Google Sheets.":
-    "Sélectionnez un tableau de données importé depuis Google Sheets.",
+  "Select a table imported from Google Sheets.": "选择a table imported from Google Sheets.",
   "Refreshing from Google Sheets…": "Actualisation depuis Google Sheets…",
   "This table is already up to date.": "Ce tableau de données est déjà à jour.",
   "Table refreshed from Google Sheets. Undo restores the previous cells.":
