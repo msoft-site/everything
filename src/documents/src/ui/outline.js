@@ -36,10 +36,10 @@ export function createOutline({ onJump = () => {} } = {}) {
   let headings = [];
   let active = null;
   const list = el('div.outline-list', { role: 'list' });
-  const empty = el('p.outline-empty', {}, 'Headings you add will appear here. Use the Style menu to make one.');
-  const root = el('aside.outline', { 'aria-label': 'Document outline', hidden: true },
-    el('div.outline-head', {}, el('h2.outline-title', {}, 'Outline'),
-      el('button.icon-btn', { type: 'button', 'aria-label': 'Close outline', html: icon('x', 18), onclick: () => close() })),
+  const empty = el('p.outline-empty', {}, '添加的标题将显示在此处。使用“样式”菜单可设置标题。');
+  const root = el('aside.outline', { 'aria-label': '文档大纲', hidden: true },
+    el('div.outline-head', {}, el('h2.outline-title', {}, '大纲'),
+      el('button.icon-btn', { type: 'button', 'aria-label': '关闭大纲', html: icon('x', 18), onclick: () => close() })),
     // The list takes the panel's height, so the hint sits above it to stay under the title.
     empty, list);
 

@@ -25,10 +25,11 @@ export function createCanvasRulers({ host, surface, editor, openParagraph, openP
   let unit = recallUnit(), visible = phone?.matches ? false : storedRuler() ?? true, chosen = false, drag = null, frame = 0, signature = '', tabType = 'left';
   const abort = new AbortController();
   const listen = (node, event, fn) => node.addEventListener(event, fn, { signal: abort.signal });
-  const horizontal = el('div.canvas-ruler.canvas-ruler-horizontal', { role: 'group', 'aria-label': 'Horizontal ruler' });
-  const vertical = el('div.canvas-ruler.canvas-ruler-vertical', { role: 'group', 'aria-label': 'Vertical ruler' });
+  const horizontal = el('div.canvas-ruler.canvas-ruler-horizontal', { role: 'group', 'aria-label': '水平标尺' });
+  const vertical = el('div.canvas-ruler.canvas-ruler-vertical', { role: 'group', 'aria-label': '垂直标尺' });
   const top = el('div.canvas-ruler-top', {}, horizontal);
   const side = el('div.canvas-ruler-side', {}, vertical);
+  const TAB_NAMES = { left: '左对齐', center: '居中', right: '右对齐', decimal: '小数点对齐', bar: '竖线' };
   const selector = el('button.canvas-tab-selector', { type: 'button', onclick: () => {
     const types = Object.keys(SYMBOLS); tabType = types[(types.indexOf(tabType) + 1) % types.length]; updateSelector();
   } });
@@ -37,7 +38,7 @@ export function createCanvasRulers({ host, surface, editor, openParagraph, openP
   surface.prepend(top, side, selector); surface.append(guide, value);
   function updateSelector() {
     selector.textContent = SYMBOLS[tabType];
-    selector.title = `${tabType[0].toUpperCase() + tabType.slice(1)} tab stop · Click to change type; click the ruler to add`;
+    selector.title = `${TAB_NAMES[tabType] || tabType}制表位 · 点击可切换类型；点击标尺可添加`;
     selector.setAttribute('aria-label', selector.title);
   }
   updateSelector();
@@ -86,7 +87,7 @@ export function createCanvasRulers({ host, surface, editor, openParagraph, openP
     const h = el('button.canvas-ruler-handle', { type: 'button', role: 'slider', 'aria-label': label,
       'aria-valuenow': amount, 'aria-valuemin': -31680, 'aria-valuemax': 31680,
       'aria-valuetext': measurement(amount), 'aria-orientation': axis === 'x' ? 'horizontal' : 'vertical',
-      title: `${label}: ${measurement(amount)} · Drag or use arrow keys${tab ? '; Delete removes' : ''}`,
+      title: `${label}：${measurement(amount)} · 拖动或使用方向键${tab ? '；按 Delete 键删除' : ''}`,
       disabled, dataset: { kind, axis, ...(tab ? { position: tab.position, alignment: tab.alignment } : {}) } });
     h.style[axis === 'x' ? 'left' : 'top'] = `${position}px`;
     if (tab) h.textContent = SYMBOLS[tab.alignment];
@@ -114,8 +115,9 @@ export function createCanvasRulers({ host, surface, editor, openParagraph, openP
     const readonly = e.readOnly;
     const multipleSections = e.model.paragraphs.some(p => p.sectionEnd);
     selector.disabled = readonly || e.model.selectedParagraphs.some(p => p.cellId) || f.tabs === null;
+    const MARGIN_NAMES = { left: '左边距', right: '右边距', top: '上边距', bottom: '下边距' };
     for (const [kind, pos, axis] of [['left', p.left, 'x'], ['right', p.width - p.right, 'x'], ['top', p.top, 'y'], ['bottom', p.height - p.bottom, 'y']]) {
-      handle(axis === 'x' ? horizontal : vertical, kind, `${kind[0].toUpperCase() + kind.slice(1)} margin`, pos * e.zoom, axis, multipleSections ? Math.round(p[kind] * 15) : s[marginSource(p, s, kind).key], readonly || multipleSections);
+      handle(axis === 'x' ? horizontal : vertical, kind, MARGIN_NAMES[kind], pos * e.zoom, axis, multipleSections ? Math.round(p[kind] * 15) : s[marginSource(p, s, kind).key], readonly || multipleSections);
     }
     // Cell boundaries/column resizing have their own geometry; do not show body indents there.
     if (!e.model.selectedParagraphs.some(p => p.cellId)) {
@@ -123,14 +125,14 @@ export function createCanvasRulers({ host, surface, editor, openParagraph, openP
       const lead = amount => (mirrored ? p.width - p.right - amount / 15 : p.left + amount / 15) * e.zoom;
       const trail = amount => (mirrored ? p.left + amount / 15 : p.width - p.right - amount / 15) * e.zoom;
       if (f.indentLeft !== null) {
-        handle(horizontal, 'indentLeft', mirrored ? 'Right indent' : 'Left indent', lead(f.indentLeft), 'x', f.indentLeft, readonly);
+        handle(horizontal, 'indentLeft', mirrored ? '右侧缩进' : '左侧缩进', lead(f.indentLeft), 'x', f.indentLeft, readonly);
         if (f.firstLine !== null) {
-          handle(horizontal, 'hanging', 'Hanging indent', lead(f.indentLeft), 'x', f.indentLeft, readonly);
-          handle(horizontal, 'firstLine', 'First line indent', lead(f.indentLeft + f.firstLine), 'x', f.firstLine, readonly);
+          handle(horizontal, 'hanging', '悬挂缩进', lead(f.indentLeft), 'x', f.indentLeft, readonly);
+          handle(horizontal, 'firstLine', '首行缩进', lead(f.indentLeft + f.firstLine), 'x', f.firstLine, readonly);
         }
       }
-      if (f.indentRight !== null) handle(horizontal, 'indentRight', mirrored ? 'Left indent' : 'Right indent', trail(f.indentRight), 'x', f.indentRight, readonly);
-      for (const tab of f.tabs || []) if (!tab.numberingOnly) handle(horizontal, 'tab', `${tab.alignment} tab stop`, lead(tab.position), 'x', tab.position, readonly, tab);
+      if (f.indentRight !== null) handle(horizontal, 'indentRight', mirrored ? '左侧缩进' : '右侧缩进', trail(f.indentRight), 'x', f.indentRight, readonly);
+      for (const tab of f.tabs || []) if (!tab.numberingOnly) handle(horizontal, 'tab', `${TAB_NAMES[tab.alignment] || tab.alignment}制表位`, lead(tab.position), 'x', tab.position, readonly, tab);
     }
     if (focusKey) [...surface.querySelectorAll('.canvas-ruler-handle')].find(h => h.dataset.kind === focusKey[0] && h.dataset.position === focusKey[1])?.focus({ preventScroll: true });
   }

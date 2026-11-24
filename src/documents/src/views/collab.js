@@ -58,7 +58,7 @@ export function createCollaboration({ editor, pkg, doc, local, error, onChange =
   const remembered = !local && doc.path && !doc.collab ? rememberedRoom(doc.path) : null;
 
   /* ---- Title bar: who is here ---- */
-  const avatars = el('div.cl-presence', { hidden: true, role: 'group', 'aria-label': 'People in this document' });
+  const avatars = el('div.cl-presence', { hidden: true, role: 'group', 'aria-label': '当前文档中的协作人员' });
   const chip = el('span.cl-chip', { hidden: true });
   const banner = el('div.cl-banner', { role: 'status', hidden: true });
 
@@ -72,25 +72,25 @@ export function createCollaboration({ editor, pkg, doc, local, error, onChange =
     avatars.hidden = !live;
     if (!live) { avatars.replaceChildren(); return; }
     const shown = list.slice(0, narrow?.matches ? 2 : 4), extra = list.length - shown.length;
-    avatars.replaceChildren(...shown.map(p => el('button.cl-avatar', { type: 'button', style: `--cl-color: ${p.color || colorFor(p.name)}`, title: `${p.name}${p.me ? ' (you)' : ''} · ${roleLabel(p.role || 'editor')}`,
-      'aria-label': `${p.name}${p.me ? ' (you)' : ''}, ${roleLabel(p.role || 'editor')}`, onclick: e => peopleMenu(e.currentTarget, !!e.detail) }, initials(p.name))),
-    ...(extra > 0 ? [el('button.cl-avatar.cl-more', { type: 'button', 'aria-label': `${extra} more`, onclick: e => peopleMenu(e.currentTarget, !!e.detail) }, `+${extra}`)] : []), chip);
+    avatars.replaceChildren(...shown.map(p => el('button.cl-avatar', { type: 'button', style: `--cl-color: ${p.color || colorFor(p.name)}`, title: `${p.name}${p.me ? ' (您)' : ''} · ${roleLabel(p.role || 'editor')}`,
+      'aria-label': `${p.name}${p.me ? ' (您)' : ''}, ${roleLabel(p.role || 'editor')}`, onclick: e => peopleMenu(e.currentTarget, !!e.detail) }, initials(p.name))),
+    ...(extra > 0 ? [el('button.cl-avatar.cl-more', { type: 'button', 'aria-label': `${extra} 位更多`, onclick: e => peopleMenu(e.currentTarget, !!e.detail) }, `+${extra}`)] : []), chip);
     renderChip();
   }
   function renderChip() {
     if (!live) { chip.hidden = true; return; }
     const offline = live.status === 'offline', pending = live.pending;
-    const text = offline ? (pending ? `Offline · ${pending} waiting` : 'Offline') : live.role === 'viewer' ? 'View only' : live.role === 'commenter' ? 'Comment only' : '';
+    const text = offline ? (pending ? `脱机 · ${pending} 项等待中` : '脱机') : live.role === 'viewer' ? '仅查看' : live.role === 'commenter' ? '仅批注' : '';
     chip.textContent = text; chip.hidden = !text;
     chip.classList.toggle('is-offline', offline);
   }
   function peopleMenu(anchor, pointer) {
     const list = people();
-    openMenu({ anchor, label: 'People in this document', minWidth: 240, align: 'end', pointer, items: [
-      { header: `${list.length} ${list.length === 1 ? 'person' : 'people'} here` },
-      ...list.map(p => ({ label: `${p.name}${p.me ? ' (you)' : ''}`, hint: roleLabel(p.role || 'editor'), disabled: p.me, onSelect: () => { if (!live.follow(p.session)) toast(`${p.name} is not in the document text right now.`, { icon: 'info' }); } })),
+    openMenu({ anchor, label: '当前文档中的协作人员', minWidth: 240, align: 'end', pointer, items: [
+      { header: `${list.length} 人在此` },
+      ...list.map(p => ({ label: `${p.name}${p.me ? ' (您)' : ''}`, hint: roleLabel(p.role || 'editor'), disabled: p.me, onSelect: () => { if (!live.follow(p.session)) toast(`${p.name} 当前不在正文中。`, { icon: 'info' }); } })),
       { separator: true },
-      { label: 'Share…', icon: 'share', onSelect: () => share() },
+      { label: '共享…', icon: 'share', onSelect: () => share() },
     ] });
   }
 
@@ -102,17 +102,17 @@ export function createCollaboration({ editor, pkg, doc, local, error, onChange =
   function renderBanner(event) {
     if (!live) return;
     const binding = live.binding, role = live.role;
-    if (binding.conflict) return setBanner('Two changes to the same table could not be combined. You see the last version that fits together; an editor’s next change restores it for everyone.');
+    if (binding.conflict) return setBanner('对同一表格的两处更改无法合并。显示的是最后可吻合的版本；编辑者的下一处更改将为所有人恢复。');
     if (binding.mode === 'single' && !binding.holdsLock()) {
       const lock = binding.meta.get('lock');
       const holderHere = lock && live.client.roster.some(p => p.session === lock.session);
-      const why = 'This document has content that only one person can edit at a time';
-      if (holderHere) return setBanner(`${why}. ${lock.name} is editing; you see their changes as they make them.`);
-      return setBanner(`${why}. Nobody is editing it now.`, role === 'viewer' || role === 'commenter' ? [] : [el('button.btn.btn-sm.btn-primary', { type: 'button', onclick: () => { live.binding.takeLock(); renderBanner(); editor()?.focus(); } }, 'Edit Now')]);
+      const why = '此文档包含一次只能由一人编辑的内容';
+      if (holderHere) return setBanner(`${why}。${lock.name} 正在编辑；其更改将实时显示。`);
+      return setBanner(`${why}。当前无人编辑。`, role === 'viewer' || role === 'commenter' ? [] : [el('button.btn.btn-sm.btn-primary', { type: 'button', onclick: () => { live.binding.takeLock(); renderBanner(); editor()?.focus(); } }, '立即编辑')]);
     }
-    if (binding.mode === 'single' && event?.type === 'single') return setBanner(`Others see this document read-only while you edit: it now has ${MODE_REASONS[event.detail?.reason] || 'content'} that only one person can change at a time.`);
-    if (role === 'viewer') return setBanner('You can view this document. Ask its owner if you need to edit it.');
-    if (role === 'commenter') return setBanner('You can read and comment on this document. Ask its owner if you need to edit it.');
+    if (binding.mode === 'single' && event?.type === 'single') return setBanner(`您编辑期间其他人将以只读方式查看此文档：它现在包含一次只能由一人更改的内容。`);
+    if (role === 'viewer') return setBanner('您可以查看此文档。如需编辑，请联系其所有者。');
+    if (role === 'commenter') return setBanner('您可以阅读和批注此文档。如需编辑，请联系其所有者。');
     setBanner('');
   }
 
@@ -132,18 +132,18 @@ export function createCollaboration({ editor, pkg, doc, local, error, onChange =
     // what the file has: a change made outside it (another app, a session that could not reach the room). The file as it
     // was is kept as a version before anything writes over it.
     if (reopened && fileText !== undefined && engine.session.body.text !== fileText && doc.keepFileVersion) {
-      doc.keepFileVersion({ label: 'Before the shared changes' })
-        .then(v => { if (v && !destroyed) toast('The shared document had changes this file did not, and they are shown now. The file as it was is kept in Version History.', { icon: 'info', duration: 10000 }); })
+      doc.keepFileVersion({ label: '合并共享更改前' })
+        .then(v => { if (v && !destroyed) toast('共享文档中存在本地文件未包含的更改，现已显示。之前的文件状态已保存在“版本历史记录”中。', { icon: 'info', duration: 10000 }); })
         .catch(e => console.warn('[documents] the file could not be kept as a version', e));
     }
     for (const name of ['people', 'status', 'saver']) live.addEventListener(name, () => { renderPeople(); onChange(); });
     for (const name of ['role', 'mode', 'single', 'conflict']) live.addEventListener(name, e => { renderBanner(e); renderPeople(); onChange(); });
-    live.addEventListener('refused-undo', e => toast(e.detail?.direction === 'redo' ? 'This cannot be redone: someone else has changed that table since.' : 'This cannot be undone: someone else has changed that table since.', { icon: 'info' }));
+    live.addEventListener('refused-undo', e => toast(e.detail?.direction === 'redo' ? '无法恢复：此后其他人已更改该表格。' : '无法撤消：此后其他人已更改该表格。', { icon: 'info' }));
     live.addEventListener('ended', e => {
       const reason = e.detail?.reason;
       const session = live; live = null;
       renderPeople();
-      if (reason) setBanner(`${reason} The document stays open here as your own copy.`, session.role !== 'owner' ? [el('button.btn.btn-sm.btn-outline', { type: 'button', onclick: async () => { doc.setSaving?.(true); doc.changed?.(); setBanner(''); try { await saveFirst(); } catch (err) { error(err); } } }, local ? 'Keep a Copy' : 'Save a Copy')] : []);
+      if (reason) setBanner(`${reason} 文档仍在此作为您的个人副本保持打开。`, session.role !== 'owner' ? [el('button.btn.btn-sm.btn-outline', { type: 'button', onclick: async () => { doc.setSaving?.(true); doc.changed?.(); setBanner(''); try { await saveFirst(); } catch (err) { error(err); } } }, local ? '保留副本' : '保存副本')] : []);
       else setBanner('');
       onChange();
     });
@@ -160,7 +160,7 @@ export function createCollaboration({ editor, pkg, doc, local, error, onChange =
   const onPath = e => {
     if (!live || !e.detail?.savedAs) return;
     live.end(null);
-    setBanner('You are editing your own copy now, which is not shared. Everyone else goes on with the shared document.');
+    setBanner('您现在正在编辑未共享的个人副本。其他人继续在共享文档中操作。');
     onChange();
   };
   doc.addEventListener?.('path', onPath);
@@ -171,7 +171,7 @@ export function createCollaboration({ editor, pkg, doc, local, error, onChange =
       if (doc.collab) {
         const { client, link } = doc.collab;
         if (!await begin(client, link)) return;
-        toast(roleSentence(client.role) || 'You joined the shared document.', { icon: 'info' });
+        toast(roleSentence(client.role) || '您已加入共享文档。', { icon: 'info' });
         return;
       }
       if (!local && doc.path && !readOnly() && remembered) {
@@ -183,7 +183,7 @@ export function createCollaboration({ editor, pkg, doc, local, error, onChange =
         const release = holdEditing(editor());
         let found;
         for (;;) {
-          setBanner('Connecting to the shared document… You can edit it once it has opened.');
+          setBanner('正在连接到共享文档… 打开后即可编辑。');
           try {
             const { reconnect } = await loadLive();
             found = await reconnect(doc.path, user(), saved);
@@ -193,8 +193,8 @@ export function createCollaboration({ editor, pkg, doc, local, error, onChange =
             console.warn('[documents] could not reach the shared document', e);
             // The room is still the document's: changes made here now would not reach the others, and its state
             // replaces the editor's once it is joined. The document reads only until it has been.
-            await new Promise(resolve => setBanner('Could not connect to the shared document, so it is open read-only. Check your connection and try again.',
-              [el('button.btn.btn-sm.btn-primary', { type: 'button', onclick: () => resolve() }, 'Try Again')]));
+            await new Promise(resolve => setBanner('无法连接到共享文档，已作为只读打开。请检查网络连接并重试。',
+              [el('button.btn.btn-sm.btn-primary', { type: 'button', onclick: () => resolve() }, '重试')]));
             if (destroyed) return;
           }
         }
@@ -212,24 +212,24 @@ export function createCollaboration({ editor, pkg, doc, local, error, onChange =
     if (live) return Promise.resolve(live);
     return (starting ||= (async () => {
       const engine = editor();
-      if (!engine) throw new Error('The document is still opening.');
-      if (readOnly()) throw new Error('This document is open read-only, so it cannot be edited together. Save a copy first.');
+      if (!engine) throw new Error('文档正在打开。');
+      if (readOnly()) throw new Error('此文档以只读方式打开，无法协同编辑。请先另存副本。');
       engine.finishComposition();
       if (!local) {
-        if (!await signIn()) throw new Error('Sign in to Puter to share this document.');
+        if (!await signIn()) throw new Error('登录到云端以共享此文档。');
         // A template or other file whose edits go to a new .docx (inside the Puter desktop, at the first Save) is
         // shared as that .docx, as a new document is: the room must not be the template's, nor the file it writes.
-        if (!doc.path || doc.waitsForPlace) { progress('Saving the document first…'); await saveFirst(); }
-        if (!doc.path || doc.waitsForPlace) throw new Error('Save the document before sharing it.');
+        if (!doc.path || doc.waitsForPlace) { progress('正在先保存文档…'); await saveFirst(); }
+        if (!doc.path || doc.waitsForPlace) throw new Error('共享前请先保存文档。');
       }
       const { shareDocument } = await loadLive();
       const p = pkg();
       const baseBytes = p?.parts ? zipSync(p.parts) : new Uint8Array(await exportDocx().arrayBuffer());
-      const { client, link, reason } = await shareDocument({ engine, doc, user: user(), name: documentName() || 'Untitled document', baseBytes, local, progress });
-      if (!await begin(client, link)) throw new Error('The document was closed.');
+      const { client, link, reason } = await shareDocument({ engine, doc, user: user(), name: documentName() || '无标题文档', baseBytes, local, progress });
+      if (!await begin(client, link)) throw new Error('文档已关闭。');
       // Pictures added since the file was opened are not in the document the room starts from.
       live.binding.shareOwnAssets();
-      if (reason) toast('Others will see this document read-only while you edit it: it has content only one person can change at a time.', { icon: 'info', duration: 8000 });
+      if (reason) toast('您编辑期间其他人将以只读方式查看此文档：它包含一次只能由一人更改的内容。', { icon: 'info', duration: 8000 });
       progress('');
       return live;
     })().finally(() => { starting = null; }));
@@ -237,16 +237,17 @@ export function createCollaboration({ editor, pkg, doc, local, error, onChange =
 
   async function emailInvitation(address, role, note) {
     const url = await live.inviteLink(role);
-    const name = documentName() || 'a document';
+    const name = documentName() || '文档';
     const who = user().name;
-    const text = `${note ? `${note}\n\n` : ''}${who} invited you to ${role === 'editor' ? 'edit' : role === 'commenter' ? 'comment on' : 'view'} “${name}” in Documents.\n\nOpen it: ${url}\n\nYou will be asked to sign in to Puter. The invitation expires in seven days.`;
-    return sendMail({ to: address, subject: `${who} shared “${name}” with you`, text, username: who });
+    const roleText = role === 'editor' ? '编辑' : role === 'commenter' ? '批注' : '查看';
+    const text = `${note ? `${note}\n\n` : ''}${who} 邀请您在“文档”中${roleText}“${name}”。\n\n打开链接: ${url}\n\n您需要登录云端。邀请链接将在七天后过期。`;
+    return sendMail({ to: address, subject: `${who} 与您共享了“${name}”`, text, username: who });
   }
   async function sendCopy(address, format, note) {
-    const name = (documentName() || 'Document').replace(/[\\/:*?"<>|]+/g, ' ').trim() || 'Document';
+    const name = (documentName() || '文档').replace(/[\\/:*?"<>|]+/g, ' ').trim() || '文档';
     const blob = format === 'pdf' ? await exportPdf() : await exportDocx();
     const bytes = new Uint8Array(await blob.arrayBuffer());
-    return sendMail({ to: address, subject: `“${name}” from ${user().name}`, text: `${note ? `${note}\n\n` : ''}${user().name} sent you a copy of “${name}”. It is attached as ${format === 'pdf' ? 'a PDF' : 'a Word document'}.`, username: user().name,
+    return sendMail({ to: address, subject: `来自 ${user().name} 的“${name}”`, text: `${note ? `${note}\n\n` : ''}${user().name} 向您发送了“${name}”的副本。附件格式为 ${format === 'pdf' ? 'PDF' : 'Word 文档'}。`, username: user().name,
       attachments: [{ filename: `${name}.${format}`, bytes, contentType: format === 'pdf' ? 'application/pdf' : 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' }] });
   }
 
@@ -262,17 +263,17 @@ export function createCollaboration({ editor, pkg, doc, local, error, onChange =
   // Share and Version History sit in the title bar and the File menu; the Review tab is full already.
   const extendTab = () => [];
   function extendMenu(id) {
-    if (id === 'tools') return [{ separator: true }, { label: 'Share…', icon: 'share', disabled: !editor(), onSelect: share }, ...(live ? [{ label: 'Co-authors', icon: 'coauthors', items: people().map(p => ({ label: `${p.name}${p.me ? ' (you)' : ''}`, hint: roleLabel(p.role || 'editor'), disabled: p.me, onSelect: () => live?.follow(p.session) })) }] : [])];
+    if (id === 'tools') return [{ separator: true }, { label: '共享…', icon: 'share', disabled: !editor(), onSelect: share }, ...(live ? [{ label: '共同作者', icon: 'coauthors', items: people().map(p => ({ label: `${p.name}${p.me ? ' (您)' : ''}`, hint: roleLabel(p.role || 'editor'), disabled: p.me, onSelect: () => live?.follow(p.session) })) }] : [])];
     return [];
   }
   const shareItems = () => [
-    { label: 'Invite People…', icon: 'invitePeople', disabled: !editor(), onSelect: share },
+    { label: '邀请人员…', icon: 'invitePeople', disabled: !editor(), onSelect: share },
     // Only the owner makes links to a document on Puter (the room refuses anyone else).
-    { label: 'Copy Link', icon: 'link', disabled: !editor() || readOnly() || (!!live && !live.local && !live.canManage), onSelect: async () => {
-      try { await ensureShared(); const url = await live.inviteLink('editor'); await navigator.clipboard?.writeText(url); toast('Link copied: anyone who opens it can edit'); }
+    { label: '复制链接', icon: 'link', disabled: !editor() || readOnly() || (!!live && !live.local && !live.canManage), onSelect: async () => {
+      try { await ensureShared(); const url = await live.inviteLink('editor'); await navigator.clipboard?.writeText(url); toast('已复制链接：任何打开此链接的人都可以编辑'); }
       catch (e) { error(e); }
     } },
-    ...(live ? [{ label: 'Manage Access…', icon: 'coauthors', onSelect: share }] : []),
+    ...(live ? [{ label: '管理访问权限…', icon: 'coauthors', onSelect: share }] : []),
     { separator: true },
   ];
 

@@ -20,7 +20,7 @@ export const INVITE_ROLES = ['editor', 'commenter', 'viewer'];
 export const canEdit = role => role === 'owner' || role === 'editor';
 export const canComment = role => canEdit(role) || role === 'commenter';
 export const canManage = role => role === 'owner';
-export const roleLabel = role => ({ owner: 'Owner', editor: 'Can edit', commenter: 'Can comment', viewer: 'Can view' })[role] ?? role;
+export const roleLabel = role => ({ owner: '所有者', editor: '可编辑', commenter: '可批注', viewer: '可查看' })[role] ?? role;
 
 export function encode(bytes) {
   let text = '';

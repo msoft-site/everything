@@ -18,9 +18,9 @@ export function createNoteCommands(ctx) {
       engine.finishComposition();
       const notes = await import('../engine/footnotes.js');
       if (engine.session.path !== null) {
-        if (notes.isNoteStoryKind(engine.pageStories?.stories[engine.session.path]?.kind)) throw new Error('Notes cannot contain other notes.');
+        if (notes.isNoteStoryKind(engine.pageStories?.stories[engine.session.path]?.kind)) throw new Error('备注中不能再包含其他备注。');
         // The shortcut pressed in a header or footer used to leave it and put the note wherever the caret was last in the text.
-        throw new Error('Footnotes and endnotes go in the text of the document. Close the header or footer first.');
+        throw new Error('脚注和尾注应插入到正文中。请先关闭页眉或页脚。');
       }
       ctx.trackableStories?.();
       unshared(`New ${kind}s`);
@@ -68,7 +68,7 @@ export function createNoteCommands(ctx) {
     const engine = ready() || editor(); if (!engine) return;
     engine.finishComposition();
     const refs = (await references()).filter(r => r.kind === kind);
-    if (!refs.length) { error(new Error(`This document has no ${kind}s.`)); return; }
+    if (!refs.length) { error(new Error(`本文档没有${kind === 'footnote' ? '脚注' : '尾注'}。`)); return; }
     let at;
     if (engine.session.path !== null) {
       const story = engine.pageStories?.stories[engine.session.path];
@@ -88,7 +88,7 @@ export function createNoteCommands(ctx) {
     const engine = editor(); if (!engine) return;
     engine.finishComposition();
     const [notes, refs] = await Promise.all([import('../engine/footnotes.js'), references()]);
-    if (!refs.length) { error(new Error('This document has no footnotes or endnotes yet.')); return; }
+    if (!refs.length) { error(new Error('本文档尚未包含脚注或尾注。')); return; }
     if (engine.session.path !== null) {
       const story = engine.pageStories?.stories[engine.session.path];
       if (!notes.isNoteStoryKind(story?.kind)) { engine.editStory(null); return; }
@@ -103,7 +103,7 @@ export function createNoteCommands(ctx) {
     const definition = engine.pageStories, part = definition?.[settingsKey(ref.kind)]?.part;
     const path = part && notes.footnoteStoryPath(part, ref.id);
     const area = [...(engine.layout.footnoteAreas || []), ...(engine.layout.endnoteAreas || [])].find(a => a.notes.some(n => n.path === path));
-    if (!path || !definition.stories[path]?.editable || !engine.editStory(path, area?.page ?? 0)) { error(new Error('This note cannot be edited here.')); return; }
+    if (!path || !definition.stories[path]?.editable || !engine.editStory(path, area?.page ?? 0)) { error(new Error('此备注无法在此处编辑。')); return; }
     engine.model.select(engine.model.text.length);
     engine.focus(); engine.revealCaret?.(); onChange();
   }
@@ -111,11 +111,11 @@ export function createNoteCommands(ctx) {
   function nextNoteItems() {
     const disabled = !editor();
     return [
-      { label: 'Next Footnote', icon: 'nextFootnote', disabled, onSelect: () => goToNote('footnote', 1) },
-      { label: 'Previous Footnote', disabled, onSelect: () => goToNote('footnote', -1) },
+      { label: '下一条脚注', icon: 'nextFootnote', disabled, onSelect: () => goToNote('footnote', 1) },
+      { label: '上一条脚注', disabled, onSelect: () => goToNote('footnote', -1) },
       { separator: true },
-      { label: 'Next Endnote', disabled, onSelect: () => goToNote('endnote', 1) },
-      { label: 'Previous Endnote', disabled, onSelect: () => goToNote('endnote', -1) },
+      { label: '下一条尾注', disabled, onSelect: () => goToNote('endnote', 1) },
+      { label: '上一条尾注', disabled, onSelect: () => goToNote('endnote', -1) },
     ];
   }
 
@@ -144,12 +144,12 @@ export function createNoteCommands(ctx) {
     let kind = inNote === 'endnote' ? 'endnote' : 'footnote';
     const footRadio = el('input', { type: 'radio', name: 'ref-note-kind', value: 'footnote', checked: kind === 'footnote', onchange: () => switchKind('footnote') });
     const endRadio = el('input', { type: 'radio', name: 'ref-note-kind', value: 'endnote', checked: kind === 'endnote', onchange: () => switchKind('endnote') });
-    const footPosition = select('Footnote position', [['pageBottom', 'Bottom of page'], ['beneathText', 'Below text']], settings.footnote.position, () => remember());
-    const endPosition = select('Endnote position', [['docEnd', 'End of document'], ['sectEnd', 'End of section']], settings.endnote.position, () => remember());
-    const format = select('Number format', NOTE_FORMAT_CHOICES, settings[kind].format, () => remember());
-    const custom = text('Custom mark', '', { placeholder: 'Optional, such as *', maxLength: 10 });
-    const start = number('Start at', settings[kind].start, { min: 1, max: 32767, oninput: () => remember() });
-    const restart = select('Numbering', [], null, () => remember());
+    const footPosition = select('脚注位置', [['pageBottom', '页面底端'], ['beneathText', '文字下方']], settings.footnote.position, () => remember());
+    const endPosition = select('尾注位置', [['docEnd', '文档结尾'], ['sectEnd', '节的结尾']], settings.endnote.position, () => remember());
+    const format = select('编号格式', NOTE_FORMAT_CHOICES, settings[kind].format, () => remember());
+    const custom = text('自定义标记', '', { placeholder: '可选，例如 *', maxLength: 10 });
+    const start = number('起始编号', settings[kind].start, { min: 1, max: 32767, oninput: () => remember() });
+    const restart = select('编号方式', [], null, () => remember());
     const pending = { footnote: { ...settings.footnote }, endnote: { ...settings.endnote } };
     // What the document has now: only settings that differ from it are written, so Apply with nothing changed
     // leaves settings.xml as it was, and a footnote change adds no endnote settings.
@@ -171,22 +171,22 @@ export function createNoteCommands(ctx) {
       remember(); kind = next;
       footPosition.disabled = kind !== 'footnote'; endPosition.disabled = kind !== 'endnote';
       format.value = pending[kind].format; start.value = pending[kind].start;
-      restart.replaceChildren(...[['continuous', 'Continuous'], ['eachSect', 'Restart each section'], ...(kind === 'footnote' ? [['eachPage', 'Restart each page']] : [])].map(([v, l]) => el('option', { value: v }, l)));
+      restart.replaceChildren(...[['continuous', '连续编号'], ['eachSect', '每节重新编号'], ...(kind === 'footnote' ? [['eachPage', '每页重新编号']] : [])].map(([v, l]) => el('option', { value: v }, l)));
       restart.value = pending[kind].restart;
     }
     switchKind(kind);
-    const convert = el('button.btn.btn-outline', { type: 'button', onclick: () => convertDialog() }, 'Convert…');
-    const apply = el('button.btn.btn-outline', { type: 'button', onclick: () => { if (!dialog.form.reportValidity()) return; remember(); try { applyChanged(); dialog.showError(''); } catch (e) { dialog.showError(e.message); } } }, 'Apply');
-    const dialog = openDialog({ title: 'Footnote and Endnote', className: 'ref-notes-dialog', submitLabel: 'Insert', actions: [apply], body: [
-      el('fieldset.ref-section', {}, el('legend', {}, 'Location'),
-        el('div.ref-location-row', {}, el('label.ed-check', {}, footRadio, 'Footnotes'), footPosition),
-        el('div.ref-location-row', {}, el('label.ed-check', {}, endRadio, 'Endnotes'), endPosition),
+    const convert = el('button.btn.btn-outline', { type: 'button', onclick: () => convertDialog() }, '转换…');
+    const apply = el('button.btn.btn-outline', { type: 'button', onclick: () => { if (!dialog.form.reportValidity()) return; remember(); try { applyChanged(); dialog.showError(''); } catch (e) { dialog.showError(e.message); } } }, '应用');
+    const dialog = openDialog({ title: '脚注和尾注', className: 'ref-notes-dialog', submitLabel: '插入', actions: [apply], body: [
+      el('fieldset.ref-section', {}, el('legend', {}, '位置'),
+        el('div.ref-location-row', {}, el('label.ed-check', {}, footRadio, '脚注'), footPosition),
+        el('div.ref-location-row', {}, el('label.ed-check', {}, endRadio, '尾注'), endPosition),
         el('div.row', {}, convert)),
-      el('fieldset.ref-section', {}, el('legend', {}, 'Format'),
-        field('Number format', format),
-        field('Custom mark', custom, 'Leave empty to number the note automatically.'),
-        el('div.ref-two-column.ref-tight', {}, field('Start at', start), field('Numbering', restart))),
-      el('p.field-hint', {}, 'Changes apply to the whole document.'),
+      el('fieldset.ref-section', {}, el('legend', {}, '格式'),
+        field('编号格式', format),
+        field('自定义标记', custom, '留空将自动为备注编号。'),
+        el('div.ref-two-column.ref-tight', {}, field('起始编号', start), field('编号方式', restart))),
+      el('p.field-hint', {}, '更改将应用于整个文档。'),
     ], onSubmit: async () => {
       remember();
       applyChanged();
@@ -197,11 +197,11 @@ export function createNoteCommands(ctx) {
   function convertDialog() {
     const choice = value => el('input', { type: 'radio', name: 'ref-convert', value, checked: value === 'toEnd' });
     const toEnd = choice('toEnd'), toFoot = choice('toFoot'), swap = choice('swap');
-    openDialog({ title: 'Convert Notes', submitLabel: 'Convert', body: [
-      el('div.ref-radio-group', { role: 'radiogroup', 'aria-label': 'Convert' },
-        el('label.ed-check', {}, toEnd, 'Convert all footnotes to endnotes'),
-        el('label.ed-check', {}, toFoot, 'Convert all endnotes to footnotes'),
-        el('label.ed-check', {}, swap, 'Swap footnotes and endnotes')),
+    openDialog({ title: '转换备注', submitLabel: '转换', body: [
+      el('div.ref-radio-group', { role: 'radiogroup', 'aria-label': '转换' },
+        el('label.ed-check', {}, toEnd, '将所有脚注转换成尾注'),
+        el('label.ed-check', {}, toFoot, '将所有尾注转换成脚注'),
+        el('label.ed-check', {}, swap, '互换脚注和尾注')),
     ], onSubmit: () => convertNotes(toEnd.checked ? 'toEnd' : toFoot.checked ? 'toFoot' : 'swap') });
   }
 
@@ -222,11 +222,11 @@ export function createNoteCommands(ctx) {
         const story = part && definition.stories[notes.footnoteStoryPath(part, id)];
         if (!story) continue;
         // A note shown read-only (a table, a bookmark, a field the editor keeps as it is) cannot be copied into a new one.
-        if (!story.editable || story.tables?.length || story.paragraphs.some(p => p.bookmarks?.length)) { error(new Error(`A ${kind} in this document holds content that cannot be converted (a table, bookmark or field). Nothing was changed.`)); return false; }
+        if (!story.editable || story.tables?.length || story.paragraphs.some(p => p.bookmarks?.length)) { error(new Error(`本文档中的某个${kind === 'footnote' ? '脚注' : '尾注'}包含无法转换的内容 (表格、书签或字段)。未做任何更改。`)); return false; }
         plans.push({ kind, to, id, paragraphs: story.paragraphs });
       }
     }
-    if (!plans.length) { error(new Error(mode === 'toFoot' ? 'This document has no endnotes to convert.' : 'This document has no footnotes to convert.')); return false; }
+    if (!plans.length) { error(new Error(mode === 'toFoot' ? '本文档没有要转换的尾注。' : '本文档没有要转换的脚注。')); return false; }
     const styles = body.styles.definitions || {};
     const named = (type, name) => Object.values(styles).find(s => s.type === type && s.name?.toLowerCase() === name)?.id;
     const mapping = new Map();

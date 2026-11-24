@@ -50,25 +50,25 @@ export function parseLookup(answer) {
 }
 
 export function createSmartLookup({ editor }) {
-  const heading = el('h2', {}, 'Smart Lookup');
-  const query = el('input.input.ref-lookup-query', { type: 'search', 'aria-label': 'Look up', placeholder: 'Type a word or phrase', onkeydown: e => { if (e.key === 'Enter' && !isComposing(e)) { e.preventDefault(); run({ phrase: query.value.trim(), sentence: query.value.trim() }); } } });
+  const heading = el('h2', {}, '智能查找');
+  const query = el('input.input.ref-lookup-query', { type: 'search', 'aria-label': '查找', placeholder: '输入单词或短语', onkeydown: e => { if (e.key === 'Enter' && !isComposing(e)) { e.preventDefault(); run({ phrase: query.value.trim(), sentence: query.value.trim() }); } } });
   const status = el('p.ref-lookup-status', { role: 'status', 'aria-live': 'polite' });
   const result = el('div.ref-lookup-result');
-  const pane = el('aside.canvas-outline-panel.ed-proof-pane.ref-lookup-pane', { 'aria-label': 'Smart Lookup', hidden: true },
-    el('div.canvas-panel-heading', {}, heading, el('button.icon-btn', { type: 'button', 'aria-label': 'Close Smart Lookup pane', onclick: () => close() }, iconEl('x', 18))),
+  const pane = el('aside.canvas-outline-panel.ed-proof-pane.ref-lookup-pane', { 'aria-label': '智能查找', hidden: true },
+    el('div.canvas-panel-heading', {}, heading, el('button.icon-btn', { type: 'button', 'aria-label': '关闭智能查找窗格', onclick: () => close() }, iconEl('x', 18))),
     el('div.canvas-panel-scroll', {},
-      el('div.ref-lookup-search', {}, query, el('button.btn.btn-outline', { type: 'button', onclick: () => run({ phrase: query.value.trim(), sentence: query.value.trim() }) }, 'Look up')),
+      el('div.ref-lookup-search', {}, query, el('button.btn.btn-outline', { type: 'button', onclick: () => run({ phrase: query.value.trim(), sentence: query.value.trim() }) }, '查找')),
       status, result,
-      el('p.field-hint.ref-lookup-note', {}, 'Looks up the selected text and its sentence with Puter AI. Answers can be wrong; check important facts.')));
+      el('p.field-hint.ref-lookup-note', {}, '使用 Puter AI 查找选中的文本及其所在句子。结果仅供参考，请核对重要事实。')));
   pane.addEventListener('keydown', e => { if (e.key === 'Escape' && !isComposing(e)) { e.preventDefault(); close(); } });
   let request = 0;
   function close() { pane.hidden = true; request++; editor()?.focus(); }
 
   async function run(target) {
-    if (!target.phrase) { status.textContent = 'Select a word or phrase, or type one above.'; result.replaceChildren(); return; }
+    if (!target.phrase) { status.textContent = '请选择单词或短语，或在上方输入。'; result.replaceChildren(); return; }
     const id = ++request;
     query.value = target.phrase;
-    status.textContent = `Looking up “${target.phrase}”…`;
+    status.textContent = `正在查找“${target.phrase}”…`;
     result.replaceChildren(el('div.ref-lookup-skeleton', { 'aria-hidden': 'true' }));
     try {
       const answer = parseLookup(responseText(await aiChat(lookupPrompt(target))));
@@ -77,16 +77,16 @@ export function createSmartLookup({ editor }) {
       // replaceChildren would write a missing part out as the word "null": only the parts there are go in.
       result.replaceChildren(...[
         el('h3.ref-lookup-term', {}, target.phrase),
-        el('p.ref-lookup-definition', {}, answer.definition || 'No definition came back.'),
-        answer.related.length ? el('h3', {}, 'Related topics') : null,
+        el('p.ref-lookup-definition', {}, answer.definition || '未返回释义。'),
+        answer.related.length ? el('h3', {}, '相关主题') : null,
         answer.related.length ? el('ul.ref-lookup-related', {}, ...answer.related.map(topic => el('li', {}, el('button.ref-lookup-topic', { type: 'button', onclick: () => run({ phrase: topic, sentence: `${topic} (related to ${target.phrase})` }) }, topic)))) : null,
-        el('a.ref-lookup-web', { href: `https://duckduckgo.com/?q=${encodeURIComponent(target.phrase)}`, target: '_blank', rel: 'noopener noreferrer' }, 'Search the web')].filter(Boolean));
+        el('a.ref-lookup-web', { href: `https://duckduckgo.com/?q=${encodeURIComponent(target.phrase)}`, target: '_blank', rel: 'noopener noreferrer' }, '在 Web 上搜索')].filter(Boolean));
     } catch (e) {
       if (id !== request) return;
       // The pane says what went wrong; the SDK's error (often an object, not an Error) is for the console.
       const detail = `${e?.message || ''} ${e?.error?.message || ''} ${e?.error?.code || ''}`;
-      status.textContent = /insufficient|balance|credit|funds|quota|allowance|402/i.test(detail) ? 'Your Puter AI allowance has run out for now.'
-        : 'Smart Lookup could not reach Puter AI. Try again in a moment.';
+      status.textContent = /insufficient|balance|credit|funds|quota|allowance|402/i.test(detail) ? '您的 Puter AI 配额已用尽。'
+        : '智能查找无法连接 Puter AI。请稍后重试。';
       result.replaceChildren();
       console.error(e);
     }

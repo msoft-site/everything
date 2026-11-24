@@ -31,7 +31,7 @@ export function createImageInteraction(editor) {
   const dropCaret = make('div', 'canvas-drop-caret'); dropCaret.hidden = true;
   const cropPreview = make('canvas', 'canvas-crop-preview'); cropPreview.hidden = true;
   const cropFrame = make('div', 'canvas-crop-frame'); cropFrame.hidden = true;
-  const optionsButton = make('button', 'canvas-layout-options', { type: 'button', 'aria-label': 'Layout Options', title: 'Layout Options' });
+  const optionsButton = make('button', 'canvas-layout-options', { type: 'button', 'aria-label': '布局选项', title: '布局选项' });
   optionsButton.innerHTML = '<svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><rect x="5.5" y="5" width="5" height="5" rx="1" fill="currentColor" opacity=".55"/><path d="M2 3h12M2 6.5h2M12 6.5h2M2 9.5h2M12 9.5h2M2 13h12" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>';
   optionsButton.hidden = true;
   // Positioning that must hold even before the stylesheet loads: nothing here may take part in the page flow.
@@ -510,9 +510,9 @@ export function createImageInteraction(editor) {
     overlay.append(b);
     return b;
   };
-  button('Move selected image');
-  for (const handle of HANDLES) button(`Resize image ${NAMES[handle]}`, handle);
-  const rotateButton = make('button', 'canvas-image-rotate', { type: 'button', 'aria-label': 'Rotate image', title: 'Rotate (Shift snaps to 15°)' });
+  button('移动所选图片');
+  for (const handle of HANDLES) button(`调整图片大小 ${handle}`, handle);
+  const rotateButton = make('button', 'canvas-image-rotate', { type: 'button', 'aria-label': '旋转图片', title: '旋转（按住 Shift 可按 15° 对齐）' });
   Object.assign(rotateButton.style, { position: 'absolute', left: 'calc(50% - 9px)', top: '-34px', width: '18px', height: '18px' });
   Object.assign(optionsButton.style, { position: 'absolute', width: '24px', height: '24px' });
   rotateButton.innerHTML = '<svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true" focusable="false"><path d="M12.5 8a4.5 4.5 0 1 1-1.3-3.2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M11.8 2.2v2.9H8.9" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';

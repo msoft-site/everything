@@ -30,9 +30,9 @@ import { endRoom, forgetRoom, moveRoom } from '../collab/room-memory.js';
 import { madeFiles, forgetMade, withMade, madeLocation, inAppFolder } from '../lib/made.js';
 
 export const SORTS = [
-  { id: 'modified', label: 'Last modified' },
-  { id: 'name', label: 'Name' },
-  { id: 'size', label: 'Size' },
+  { id: 'modified', label: '最近修改' },
+  { id: 'name', label: '名称' },
+  { id: 'size', label: '大小' },
 ];
 /** Lists longer than this filter after a pause in the typing rather than on every keystroke. */
 const SEARCH_AT_ONCE = 400;
@@ -77,7 +77,7 @@ export function homeView({ openPath, newDoc, newFromTemplate, importFile }) {
   // A short list filters as the user types; a long one (thousands of rows to rebuild) waits for a pause in the typing.
   let searchTimer = 0;
   const search = el('input.input.home-search', {
-    type: 'search', placeholder: 'Search documents', 'aria-label': 'Search documents',
+    type: 'search', placeholder: '搜索文档', 'aria-label': '搜索文档',
     oninput: () => {
       query = search.value.trim().toLowerCase();
       clearTimeout(searchTimer); searchTimer = 0;
@@ -86,7 +86,7 @@ export function homeView({ openPath, newDoc, newFromTemplate, importFile }) {
     },
   });
 
-  const list = el('div.file-list', { role: 'region', 'aria-label': 'Documents' });
+  const list = el('div.file-list', { role: 'region', 'aria-label': '文档列表' });
   // A name cut short by a narrow list shows in full under the pointer; one that fits needs no tooltip repeating it.
   // (A document saved elsewhere always has one, saying where.)
   list.addEventListener('pointerover', (e) => {
@@ -100,19 +100,19 @@ export function homeView({ openPath, newDoc, newFromTemplate, importFile }) {
   // so many documents. A region that arrives already filled is missed by many screen readers; changes to it are read.
   const listStatus = el('span.visually-hidden', { role: 'status' });
 
-  const sortBtn = el('button.btn.btn-ghost.btn-sm.sort-btn', { type: 'button', 'aria-haspopup': 'menu', 'aria-expanded': 'false', 'aria-label': 'Sort documents', onclick: (e) => openSortMenu(e.currentTarget) });
+  const sortBtn = el('button.btn.btn-ghost.btn-sm.sort-btn', { type: 'button', 'aria-haspopup': 'menu', 'aria-expanded': 'false', 'aria-label': '排序文档', onclick: (e) => openSortMenu(e.currentTarget) });
   const renderSortBtn = () => {
-    const label = SORTS.find((s) => s.id === sort)?.label || 'Sort';
+    const label = SORTS.find((s) => s.id === sort)?.label || '排序';
     sortBtn.replaceChildren(el('span', { html: icon('sort', 15, 2) }), el('span.sort-label', {}, label));
     // The visible text is the current order; the name says what the button does with it.
-    sortBtn.setAttribute('aria-label', `Sort documents: ${label}`);
+    sortBtn.setAttribute('aria-label', `排序文档: ${label}`);
   };
   renderSortBtn();
 
   function openSortMenu(anchor) {
     openMenu({
-      anchor, align: 'end', label: 'Sort by', minWidth: 190,
-      items: [{ header: 'Sort by' }, ...SORTS.map((s) => ({ label: s.label, radio: true, checked: sort === s.id, onSelect: () => setSort(s.id) }))],
+      anchor, align: 'end', label: '排序方式', minWidth: 190,
+      items: [{ header: '排序方式' }, ...SORTS.map((s) => ({ label: s.label, radio: true, checked: sort === s.id, onSelect: () => setSort(s.id) }))],
     });
   }
 
@@ -132,27 +132,27 @@ export function homeView({ openPath, newDoc, newFromTemplate, importFile }) {
   const root = el('div.home.view', {},
     fileInput,
     el('header.home-head', {},
-      el('h1.brand', {}, el('img.brand-mark', { src: `${import.meta.env.BASE_URL}icons/icon-64.png`, width: 30, height: 30, alt: '' }), el('span', {}, 'Documents')),
+      el('h1.brand', {}, el('img.brand-mark', { src: `${import.meta.env.BASE_URL}icons/icon-64.png`, width: 30, height: 30, alt: '' }), el('span', {}, '文档')),
       el('div.grow'),
       ...account.nodes),
     el('main.home-main', {},
       el('div.home-actions', {},
-        el('button.btn.btn-primary.btn-lg', { type: 'button', html: icon('plus', 18, 2.2), onclick: newDoc }, el('span', {}, 'New document')),
-        el('button.btn.btn-outline.btn-lg', { type: 'button', 'aria-haspopup': 'menu', 'aria-expanded': 'false', html: icon('gridView', 18), onclick: (e) => openTemplateMenu(e.currentTarget) }, el('span', {}, 'Templates')),
-        el('button.btn.btn-outline.btn-lg', { type: 'button', html: icon('upload', 18), onclick: pickDevice, title: 'Import DOCX, Hanword (.hwp, .hwpx), Markdown, HTML, or text files' }, el('span', {}, 'Import')),
-        P.canPickFiles() && el('button.btn.btn-outline.btn-lg', { type: 'button', html: icon('folderOpen', 18), onclick: openFromPuter }, el('span', {}, 'Open from Puter'))),
+        el('button.btn.btn-primary.btn-lg', { type: 'button', html: icon('plus', 18, 2.2), onclick: newDoc }, el('span', {}, '新建文档')),
+        el('button.btn.btn-outline.btn-lg', { type: 'button', 'aria-haspopup': 'menu', 'aria-expanded': 'false', html: icon('gridView', 18), onclick: (e) => openTemplateMenu(e.currentTarget) }, el('span', {}, '模板')),
+        el('button.btn.btn-outline.btn-lg', { type: 'button', html: icon('upload', 18), onclick: pickDevice, title: '导入 DOCX、Hanword (.hwp, .hwpx)、Markdown、HTML 或文本文件' }, el('span', {}, '导入')),
+        P.canPickFiles() && el('button.btn.btn-outline.btn-lg', { type: 'button', html: icon('folderOpen', 18), onclick: openFromPuter }, el('span', {}, '从云端打开'))),
       el('div.home-list-head', {},
-        el('h2.home-h2', {}, 'Your documents'),
+        el('h2.home-h2', {}, '您的文档'),
         listTools),
       list, listStatus),
     // Inside the Puter desktop a new document is saved where the user chooses; the list shows those with the app folder's own.
     el('footer.home-foot', {}, ...(P.asksWhereToSave()
-      ? ['Listed here: the app’s own ', el('code', {}, `${P.FOLDER}/`), ' folder and the documents saved elsewhere on Puter from this device. Save asks where to keep a new document.']
-      : ['Saved as .docx in your Puter cloud under ', el('code', {}, `${P.FOLDER}/`)])));
+      ? ['在此列出：应用自带的 ', el('code', {}, `${P.FOLDER}/`), ' 文件夹以及从此设备保存在云端其他位置的文档。新建文档保存时会询问存储位置。']
+      : ['作为 .docx 文件保存在您的云端 ', el('code', {}, `${P.FOLDER}/`)])));
 
   /* Drag and drop anywhere on the home screen imports documents. */
   let dragDepth = 0;
-  const dropHint = el('div.drop-hint', { 'aria-hidden': 'true' }, el('div.drop-hint-card', {}, el('span', { html: icon('upload', 26) }), el('span', {}, 'Drop DOCX, Hanword, Markdown, HTML, or text files to import')));
+  const dropHint = el('div.drop-hint', { 'aria-hidden': 'true' }, el('div.drop-hint-card', {}, el('span', { html: icon('upload', 26) }), el('span', {}, '拖放 DOCX、Hanword、Markdown、HTML 或文本文件即可导入')));
   const hasFiles = (e) => [...(e.dataTransfer?.types || [])].includes('Files');
   root.addEventListener('dragenter', (e) => { if (!hasFiles(e)) return; e.preventDefault(); dragDepth += 1; root.classList.add('dragging'); });
   root.addEventListener('dragover', (e) => { if (!hasFiles(e)) return; e.preventDefault(); e.dataTransfer.dropEffect = 'copy'; });
@@ -173,7 +173,7 @@ export function homeView({ openPath, newDoc, newFromTemplate, importFile }) {
     const request = ++templateRequest;
     const builtIn = TEMPLATES.map((t) => ({ label: t.name, icon: t.icon, hint: t.description, onSelect: () => newFromTemplate?.(t.id) }));
     // The menu opens at once with the built-in templates; the user's own are a cloud read that fills in below them.
-    const pending = openMenu({ anchor, label: 'Templates', minWidth: 260, items: [{ header: 'New from template' }, ...builtIn, { separator: true }, { note: 'Loading your templates…' }] });
+    const pending = openMenu({ anchor, label: '模板', minWidth: 260, items: [{ header: '基于模板新建' }, ...builtIn, { separator: true }, { note: '正在加载您的模板…' }] });
     pending.menu?.setAttribute('aria-busy', 'true');
     let mine = [], failed = false;
     try { mine = await listCustomTemplates(); } catch (e) { console.error(e); failed = true; }
@@ -186,14 +186,14 @@ export function homeView({ openPath, newDoc, newFromTemplate, importFile }) {
     // The keyboard may have moved down the built-in templates meanwhile: the rebuilt menu keeps its place.
     const focusedLabel = pending.menu.contains(document.activeElement) ? document.activeElement.querySelector?.('.menu-label')?.firstChild?.textContent : null;
     const full = openMenu({
-      anchor, label: 'Templates', minWidth: 260, focusFirst: !focusedLabel,
+      anchor, label: '模板', minWidth: 260, focusFirst: !focusedLabel,
       items: [
-        { header: 'New from template' },
+        { header: '基于模板新建' },
         ...builtIn,
         ...customTemplateItems(mine, { onPick: (id) => newFromTemplate?.(id), onManage: () => manageTemplates(mine) }),
         (failed || !mine.length) && { separator: true },
-        failed && { note: 'Could not load your templates. Check your connection and open this menu again' },
-        !failed && !mine.length && { note: 'Save any open document as a template from its File menu' },
+        failed && { note: '无法加载您的模板。请检查网络连接并重试。' },
+        !failed && !mine.length && { note: '可从任何打开文档的“文件”菜单中将其另存为模板' },
       ],
     });
     if (focusedLabel && full.menu) {
@@ -205,19 +205,19 @@ export function homeView({ openPath, newDoc, newFromTemplate, importFile }) {
   /** The templates of your own, each with a delete button. */
   function manageTemplates(templates) {
     const pending = new Set();
-    const list = el('div.version-list', { role: 'list', 'aria-label': 'My templates' });
-    const modal = openModal({ title: 'My templates', content: el('div', {}, el('p.modal-text', {}, `Saved in ${P.FOLDER}/Templates on your Puter drive. Open a document and choose "Save as template" in its File menu to add one.`), list) });
+    const list = el('div.version-list', { role: 'list', 'aria-label': '我的模板' });
+    const modal = openModal({ title: '我的模板', content: el('div', {}, el('p.modal-text', {}, `保存在云端驱动器的 ${P.FOLDER}/Templates 中。打开文档并在“文件”菜单中选择“另存为模板”即可添加。`), list) });
     const render = (items) => {
       list.replaceChildren(...(items.length ? items.map((t) => el('div.file-row', { role: 'listitem' },
         el('span.file-main', {}, el('span.file-icon', { html: icon('brand', 20, 1.7) }), el('span.file-text', {}, el('span.file-name', {}, t.name), el('span.file-meta', {}, relativeTime(t.modified)))),
-        el('button.btn.btn-ghost.btn-sm', { type: 'button', disabled: pending.has(t.path), 'aria-label': `Delete template ${t.name}`, onclick: async (e) => {
+        el('button.btn.btn-ghost.btn-sm', { type: 'button', disabled: pending.has(t.path), 'aria-label': `删除模板 ${t.name}`, onclick: async (e) => {
           if (pending.has(t.path)) return;
           pending.add(t.path);
           const button = e.currentTarget;
-          const ok = await confirmDialog({ title: 'Delete template?', message: `"${t.name}" will be removed from your templates. Documents made from it are not affected.`, confirmLabel: 'Delete' });
+          const ok = await confirmDialog({ title: '删除模板？', message: `将从您的模板中移除“${t.name}”。基于此模板创建的文档不受影响。`, confirmLabel: '删除' });
           if (!ok) { pending.delete(t.path); return; }
           button.disabled = true;
-          button.textContent = 'Deleting…';
+          button.textContent = '正在删除…';
           try {
             await deleteTemplate(t.path);
             // Remove only this completed row. Rebuilding from the handler's
@@ -230,11 +230,11 @@ export function homeView({ openPath, newDoc, newFromTemplate, importFile }) {
             row.remove();
             if (!list.childElementCount) render([]);
             // The pressed button is gone with its row: the keyboard moves to the next template, or to the dialog's Close.
-            if (hadFocus) (neighbor?.querySelector('button') || modal.panel.querySelector('[aria-label="Close"]'))?.focus({ preventScroll: true });
-            toast('Template deleted', { icon: 'trash' });
-          } catch (e) { toast(e?.message || 'Could not delete the template', { icon: 'alert' }); }
-          finally { pending.delete(t.path); button.disabled = false; button.textContent = 'Delete'; }
-        } }, pending.has(t.path) ? 'Deleting…' : 'Delete'))) : [el('div.list-state', {}, el('span', {}, 'No templates of your own yet.'))]));
+            if (hadFocus) (neighbor?.querySelector('button') || modal.panel.querySelector('[aria-label="关闭"], [aria-label="Close"]'))?.focus({ preventScroll: true });
+            toast('已删除模板', { icon: 'trash' });
+          } catch (e) { toast(e?.message || '无法删除模板', { icon: 'alert' }); }
+          finally { pending.delete(t.path); button.disabled = false; button.textContent = '删除'; }
+        } }, pending.has(t.path) ? '正在删除…' : '删除'))) : [el('div.list-state', {}, el('span', {}, '暂无自定义模板。'))]));
     };
     render(templates);
     return modal;
@@ -269,7 +269,7 @@ export function homeView({ openPath, newDoc, newFromTemplate, importFile }) {
     } catch (e) {
       if (destroyed || request !== loadRequest) return;
       console.error(e);
-      error = navigator.onLine ? 'Could not load your files from Puter.' : 'You are offline. Connect to see your files.';
+      error = navigator.onLine ? '无法从云端加载您的文件。' : '您处于脱机状态。连接网络以查看文件。';
     }
     loading = false;
     renderList();
@@ -278,15 +278,15 @@ export function homeView({ openPath, newDoc, newFromTemplate, importFile }) {
   /** The row's actions, under the menu button or, from a right-click, at the pointer. */
   function fileMenu(file, anchor, point = null) {
     openMenu({
-      anchor, ...(point || {}), align: 'end', label: `${file.name} options`,
+      anchor, ...(point || {}), align: 'end', label: `${file.name} 选项`,
       items: [
-        { label: 'Open', icon: 'brand', onSelect: () => openPath(file.path) },
-        { label: isStarred(file.path) ? 'Unstar' : 'Star', icon: 'star', onSelect: () => star(file) },
-        { label: 'Rename', icon: 'pencil', onSelect: () => rename(file) },
-        { label: 'Duplicate', icon: 'duplicate', onSelect: () => duplicate(file) },
-        { label: 'Download', icon: 'download', onSelect: () => download(file) },
+        { label: '打开', icon: 'brand', onSelect: () => openPath(file.path) },
+        { label: isStarred(file.path) ? '取消星标' : '添加星标', icon: 'star', onSelect: () => star(file) },
+        { label: '重命名', icon: 'pencil', onSelect: () => rename(file) },
+        { label: '创建副本', icon: 'duplicate', onSelect: () => duplicate(file) },
+        { label: '下载', icon: 'download', onSelect: () => download(file) },
         { separator: true },
-        { label: 'Delete', icon: 'trash', danger: true, onSelect: () => remove(file) },
+        { label: '删除', icon: 'trash', danger: true, onSelect: () => remove(file) },
       ],
     });
   }
@@ -298,16 +298,16 @@ export function homeView({ openPath, newDoc, newFromTemplate, importFile }) {
     const stem = (value) => { const clean = P.sanitizeName(value); return ext && clean.toLowerCase().endsWith(ext.toLowerCase()) ? clean.slice(0, -ext.length).trim() : clean; };
     let renamed = false;
     const name = await promptDialog({
-      title: 'Rename', label: 'Name', value: P.stripExtension(file.name), confirmLabel: 'Rename',
+      title: '重命名', label: '名称', value: P.stripExtension(file.name), confirmLabel: '重命名',
       validate: (v) => {
         const clean = stem(v);
         // Dots alone name no file: "..docx" would show as "." and lose its version history.
-        if (!clean || /^\.+$/.test(clean)) return 'Enter a name';
+        if (!clean || /^\.+$/.test(clean)) return '请输入名称';
         // Only a file in the same folder takes the name: the list holds documents saved elsewhere on the drive too.
-        if (files.some((f) => f.name.toLowerCase() === `${clean}${ext}`.toLowerCase() && f.path !== file.path && dirOf(f.path) === dirOf(file.path))) return 'A file with that name already exists';
+        if (files.some((f) => f.name.toLowerCase() === `${clean}${ext}`.toLowerCase() && f.path !== file.path && dirOf(f.path) === dirOf(file.path))) return '已存在同名文件';
         return null;
       },
-      pendingLabel: 'Renaming…', prepare: async (name, { signal }) => {
+      pendingLabel: '正在重命名…', prepare: async (name, { signal }) => {
         await Promise.resolve();
         if (signal.aborted || destroyed) return;
         const newName = `${stem(name)}${ext}`;
@@ -315,7 +315,7 @@ export function homeView({ openPath, newDoc, newFromTemplate, importFile }) {
         if (newName === file.name) return;
         const target = `${file.path.slice(0, file.path.lastIndexOf('/') + 1)}${newName}`;
         try { await P.renameFile(file.path, newName); }
-        catch (cause) { throw new Error(cause?.message || 'Could not rename', { cause }); }
+        catch (cause) { throw new Error(cause?.message || '无法重命名', { cause }); }
         renamed = true;
         keepFocus = { path: target, control: 'file-menu-btn' };
         // The file already has its new path. Transfer local state now so a
@@ -335,7 +335,7 @@ export function homeView({ openPath, newDoc, newFromTemplate, importFile }) {
         load();
       },
     });
-    if (name != null && renamed && !destroyed) toast('Renamed');
+    if (name != null && renamed && !destroyed) toast('已重命名');
   }
 
   async function duplicate(file) {
@@ -345,25 +345,25 @@ export function homeView({ openPath, newDoc, newFromTemplate, importFile }) {
       const ext = file.name.slice(file.name.lastIndexOf('.'));
       // The copy goes in the app folder: only names there are taken.
       const names = new Set(files.filter((f) => inAppFolder(f.path)).map((f) => f.name.toLowerCase()));
-      let name = `${stem} copy${ext}`;
+      let name = `${stem} 副本${ext}`;
       let n = 2;
-      while (names.has(name.toLowerCase())) name = `${stem} copy ${n++}${ext}`;
+      while (names.has(name.toLowerCase())) name = `${stem} 副本 ${n++}${ext}`;
       const path = await P.createFile(`${P.FOLDER}/${name}`, blob);
       // A copy is a document of its own, not one that was shared and deleted under its name: it must not join that room.
       await forgetRoom(path);
       keepFocus = { path, control: 'file-menu-btn' };
-      toast('Duplicated');
+      toast('已创建副本');
       load();
     } catch (e) {
       if (gone(e)) return;
-      toast(e?.message || 'Could not duplicate', { icon: 'alert' });
+      toast(e?.message || '无法创建副本', { icon: 'alert' });
     }
   }
 
   /** A file another window deleted or renamed: say so, and show the list as it is now. */
   function gone(e) {
     if (!P.isNotFound(e)) return false;
-    toast('That file no longer exists', { icon: 'alert' });
+    toast('该文件已不存在', { icon: 'alert' });
     load();
     return true;
   }
@@ -374,17 +374,17 @@ export function homeView({ openPath, newDoc, newFromTemplate, importFile }) {
       P.downloadBlob(await P.readFile(file.path), file.name);
     } catch (e) {
       if (gone(e)) return;
-      toast(e?.message || 'Could not download', { icon: 'alert' });
+      toast(e?.message || '无法下载', { icon: 'alert' });
     }
   }
 
   async function remove(file) {
     const ok = await confirmDialog({
-      title: 'Delete document?',
+      title: '删除文档？',
       message: inAppFolder(file.path)
-        ? `"${P.stripExtension(file.name)}" will be moved out of your Documents folder and deleted. This cannot be undone.`
-        : `"${P.stripExtension(file.name)}" will be deleted from ${madeLocation(file.path)} on Puter. This cannot be undone.`,
-      confirmLabel: 'Delete',
+        ? `“${P.stripExtension(file.name)}”将从您的“文档”文件夹中移除并删除。此操作无法撤消。`
+        : `“${P.stripExtension(file.name)}”将从云端 ${madeLocation(file.path)} 中删除。此操作无法撤消。`,
+      confirmLabel: '删除',
     });
     if (!ok) return;
     try {
@@ -405,16 +405,16 @@ export function homeView({ openPath, newDoc, newFromTemplate, importFile }) {
       // a fresh snapshot and invalidate that request (or its stale error).
       if (loading || error) load();
       else renderList();
-      toast('Deleted', { icon: 'trash' });
+      toast('已删除', { icon: 'trash' });
     } catch (e) {
-      toast(e?.message || 'Could not delete', { icon: 'alert' });
+      toast(e?.message || '无法删除', { icon: 'alert' });
     }
   }
 
   /** Keep a document at the top of the list, or let it go. */
   function star(file) {
     const on = toggleStar(file.path);
-    toast(on ? 'Starred. It stays at the top of the list' : 'Unstarred', { icon: 'star' });
+    toast(on ? '已加星标并置于列表顶部' : '已取消星标', { icon: 'star' });
     renderList();
   }
 
@@ -441,22 +441,22 @@ export function homeView({ openPath, newDoc, newFromTemplate, importFile }) {
       listStatus.textContent = '';
       list.append(el('div.empty', {},
         el('div.empty-icon', { html: icon('cloud', 28) }),
-        el('h3.empty-title', {}, 'Sign in to see your documents'),
-        el('p.empty-sub', {}, 'Documents are saved as .docx files in your own Puter cloud. Sign in to open them here, or start writing without an account.'),
+        el('h3.empty-title', {}, '登录以查看您的文档'),
+        el('p.empty-sub', {}, '文档将作为 .docx 文件保存在您的云端。登录后可在此打开它们，也可以直接开始编写。'),
         el('div.row', { style: { justifyContent: 'center', marginTop: '6px' } },
-          el('button.btn.btn-primary', { type: 'button', html: icon('login', 16, 2.2), onclick: () => session.signIn() }, el('span', {}, 'Sign in to Puter')),
-          el('button.btn.btn-outline', { type: 'button', html: icon('plus', 16, 2.2), onclick: newDoc }, el('span', {}, 'New document')))));
+          el('button.btn.btn-primary', { type: 'button', html: icon('login', 16, 2.2), onclick: () => session.signIn() }, el('span', {}, '登录到云端')),
+          el('button.btn.btn-outline', { type: 'button', html: icon('plus', 16, 2.2), onclick: newDoc }, el('span', {}, '新建文档')))));
       return;
     }
     if (loading) {
       // Announced: the list emptied and nothing has taken its place yet.
-      listStatus.textContent = 'Loading your documents';
-      list.append(el('div.list-state', {}, el('span.spin', { html: icon('spinner', 22) }), el('span', {}, 'Loading your documents')));
+      listStatus.textContent = '正在加载您的文档';
+      list.append(el('div.list-state', {}, el('span.spin', { html: icon('spinner', 22) }), el('span', {}, '正在加载您的文档')));
       return;
     }
     if (error) {
       // Retried from the keyboard, the list's first row takes the focus once it loads; a failure again keeps it on the button.
-      const retry = el('button.btn.btn-sm', { type: 'button', onclick: () => { keepFocus = { index: 0 }; load(); } }, 'Retry');
+      const retry = el('button.btn.btn-sm', { type: 'button', onclick: () => { keepFocus = { index: 0 }; load(); } }, '重试');
       listStatus.textContent = error;
       list.append(el('div.list-state', {}, el('span', { html: icon('wifiOff', 22) }), el('span', {}, error), retry));
       if (pending) { retry.focus({ preventScroll: true }); keepFocus = null; }
@@ -465,7 +465,7 @@ export function homeView({ openPath, newDoc, newFromTemplate, importFile }) {
     const stars = new Set(starredPaths());
     // Match the name as shown, without the extension: "docx" is not a search for every document.
     const shown = starredFirst(sortFiles(query ? files.filter((f) => P.stripExtension(f.name).toLowerCase().includes(query)) : files, sort), stars);
-    listStatus.textContent = query ? (shown.length ? `${shown.length === 1 ? '1 document' : `${shown.length} documents`} shown` : 'No matches') : '';
+    listStatus.textContent = query ? (shown.length ? `显示 ${shown.length} 个文档` : '无匹配结果') : '';
     if (!shown.length) {
       // No row is left to take the focus (the last document deleted, or the last match of a search): it goes to
       // the search field or the New document button rather than falling to the page body.
@@ -474,11 +474,11 @@ export function homeView({ openPath, newDoc, newFromTemplate, importFile }) {
       keepFocus = null;
       list.append(el('div.empty', {},
         el('div.empty-icon', { html: icon(query ? 'search' : 'brand', 28) }),
-        el('h3.empty-title', {}, query ? 'No matches' : 'No documents yet'),
-        el('p.empty-sub', {}, query ? 'Try a different search.' : 'Create a new document or import a DOCX, Hanword (.hwp, .hwpx), Markdown, HTML, or text file to get started.'),
+        el('h3.empty-title', {}, query ? '无匹配结果' : '暂无文档'),
+        el('p.empty-sub', {}, query ? '请尝试不同的搜索词。' : '新建文档或导入 DOCX、Hanword (.hwp, .hwpx)、Markdown、HTML 或文本文件以开始。'),
         !query && el('div.row', { style: { justifyContent: 'center', marginTop: '6px' } },
-          el('button.btn.btn-primary', { type: 'button', html: icon('plus', 16, 2.2), onclick: newDoc }, el('span', {}, 'New document')),
-          el('button.btn.btn-outline', { type: 'button', html: icon('upload', 16), onclick: pickDevice }, el('span', {}, 'Import')))));
+          el('button.btn.btn-primary', { type: 'button', html: icon('plus', 16, 2.2), onclick: newDoc }, el('span', {}, '新建文档')),
+          el('button.btn.btn-outline', { type: 'button', html: icon('upload', 16), onclick: pickDevice }, el('span', {}, '导入')))));
       return;
     }
     list.setAttribute('role', 'list');
@@ -487,22 +487,22 @@ export function homeView({ openPath, newDoc, newFromTemplate, importFile }) {
     const icons = { menu: iconEl('moreV', 18), star: iconEl('star', 17, 2), brand: iconEl('brand', 20, 1.7) };
     for (const file of shown) {
       const menuBtn = el('button.icon-btn.file-menu-btn', {
-        type: 'button', 'aria-label': `Options for ${file.name}`, 'aria-haspopup': 'menu', 'aria-expanded': 'false', title: 'Options',
+        type: 'button', 'aria-label': `${file.name} 的选项`, 'aria-haspopup': 'menu', 'aria-expanded': 'false', title: '选项',
         onclick: (e) => { e.stopPropagation(); fileMenu(file, e.currentTarget); },
       }, icons.menu.cloneNode(true));
       const starred = stars.has(documentPathKey(file.path));
       const starBtn = el('button.icon-btn.file-star-btn', {
-        type: 'button', 'aria-label': starred ? `Unstar ${file.name}` : `Star ${file.name}`, 'aria-pressed': String(starred), title: starred ? 'Unstar' : 'Star: keep at the top',
+        type: 'button', 'aria-label': starred ? `取消星标 ${file.name}` : `加星标 ${file.name}`, 'aria-pressed': String(starred), title: starred ? '取消星标' : '加星标：置于顶部',
         onclick: (e) => { e.stopPropagation(); star(file); },
       }, icons.star.cloneNode(true));
       const where = madeLocation(file.path);
       const row = el('div.file-row', { role: 'listitem', dataset: { path: file.path }, className: starred ? 'file-row is-starred' : 'file-row' },
         // A document saved elsewhere on the drive says where, so two of the same name can be told apart.
-        el('button.file-main', { type: 'button', title: where ? `${file.name} in ${where}` : null, dataset: where ? { where } : {}, onclick: () => openPath(file.path) },
+        el('button.file-main', { type: 'button', title: where ? `${file.name} 在 ${where}` : null, dataset: where ? { where } : {}, onclick: () => openPath(file.path) },
           el('span.file-icon', {}, icons.brand.cloneNode(true)),
           el('span.file-text', {},
             el('span.file-name', {}, P.stripExtension(file.name)),
-            el('span.file-meta', {}, [starred ? 'Starred' : null, where || null, HANWORD_IMPORTABLE.test(file.name) ? `Hanword ${file.name.split('.').pop().toUpperCase()}` : null, relativeTime(file.modified), formatBytes(file.size)].filter(Boolean).join(' · ')))),
+            el('span.file-meta', {}, [starred ? '已加星标' : null, where || null, HANWORD_IMPORTABLE.test(file.name) ? `Hanword ${file.name.split('.').pop().toUpperCase()}` : null, relativeTime(file.modified), formatBytes(file.size)].filter(Boolean).join(' · ')))),
         starBtn, menuBtn);
       row.addEventListener('contextmenu', (e) => {
         e.preventDefault();

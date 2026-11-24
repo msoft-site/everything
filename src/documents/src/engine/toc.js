@@ -14,17 +14,17 @@ import { listMarkers } from './numbering.js';
 
 export { newBodyField };
 export const TOC_INSTRUCTION = ' TOC \\o "1-3" \\h \\z \\u ';
-export const TOC_TITLES = { contents: 'Contents', table: 'Table of Contents' };
+export const TOC_TITLES = { contents: '目录', table: '目录' };
 /** Tab leaders a table can use between an entry and its page number (§17.18.85). */
-export const TOC_LEADERS = { dot: 'Dots', hyphen: 'Dashes', underscore: 'Line', middleDot: 'Middle dots', none: 'None' };
+export const TOC_LEADERS = { dot: '点', hyphen: '短划线', underscore: '实线', middleDot: '居中点', none: '无' };
 
 /** Original table designs offered in the gallery. They differ only in direct formatting and options. */
 export const TOC_DESIGNS = [
-  { id: 'classic', name: 'Classic', title: 'Contents', leader: 'dot', levels: 3, description: 'Dotted leaders to right-aligned page numbers' },
-  { id: 'open', name: 'Open', title: 'Table of Contents', leader: 'none', levels: 3, boldTop: true, description: 'Bold chapters, page numbers at the right margin' },
-  { id: 'ruled', name: 'Ruled', title: 'Contents', leader: 'underscore', levels: 2, boldTop: true, description: 'Two levels with solid leaders' },
-  { id: 'compact', name: 'Compact', title: 'Contents', leader: 'dot', levels: 3, rightAlign: false, description: 'Numbers follow each entry; no tab' },
-  { id: 'web', name: 'Linked', title: 'Contents', leader: 'none', levels: 3, pageNumbers: false, description: 'Links only, for documents read on screen' },
+  { id: 'classic', name: '传统', title: '目录', leader: 'dot', levels: 3, description: '右对齐页码，带点前导符' },
+  { id: 'open', name: '现代', title: '目录', leader: 'none', levels: 3, boldTop: true, description: '加粗章标题，页码靠右对齐' },
+  { id: 'ruled', name: '划线', title: '目录', leader: 'underscore', levels: 2, boldTop: true, description: '两级标题，带实线前导符' },
+  { id: 'compact', name: '紧凑', title: '目录', leader: 'dot', levels: 3, rightAlign: false, description: '页码紧随条目；无制表符' },
+  { id: 'web', name: '网络', title: '目录', leader: 'none', levels: 3, pageNumbers: false, description: '仅包含链接，适合屏幕阅读' },
 ];
 
 const quote = value => `"${String(value).replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`;

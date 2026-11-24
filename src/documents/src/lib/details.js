@@ -51,19 +51,19 @@ export function detailRows({ name, path, size, created, modified, lastSaved, pag
   // The file as it is on the drive: a .dotx or .docm opened as it stands keeps
   // its own extension until the first save writes a .docx copy. Only a document
   // with nowhere to live yet is named for the file it is about to become.
-  rows.push({ label: 'Name', value: fileNameOf(path) || `${name || 'Untitled document'}.docx` });
+  rows.push({ label: '名称', value: fileNameOf(path) || `${name || '未命名文档'}.docx` });
   const folder = folderOf(path);
-  rows.push({ label: 'Location', value: path ? (folder ? `${folder}/ on your Puter drive` : 'The root of your Puter drive') : 'Not saved yet' });
-  if (path && size != null) rows.push({ label: 'Size', value: formatBytes(size) });
-  if (path && created) rows.push({ label: 'Created', value: whenText(created, now) });
-  if (path && modified) rows.push({ label: 'Modified', value: whenText(modified, now) });
-  if (path) rows.push({ label: 'Last saved here', value: lastSaved ? whenText(lastSaved, now) : (saved ? 'Unchanged since it was opened' : 'Not yet, this session') });
+  rows.push({ label: '位置', value: path ? (folder ? `${folder}/（位于 Puter 云端硬盘）` : 'Puter 云端硬盘根目录') : '尚未保存' });
+  if (path && size != null) rows.push({ label: '大小', value: formatBytes(size) });
+  if (path && created) rows.push({ label: '创建时间', value: whenText(created, now) });
+  if (path && modified) rows.push({ label: '修改时间', value: whenText(modified, now) });
+  if (path) rows.push({ label: '上次保存在此', value: lastSaved ? whenText(lastSaved, now) : (saved ? '自打开以来未更改' : '本次会话尚未保存') });
   if (pages != null || words != null) {
     const parts = [];
-    if (pages != null) parts.push(`${pages.toLocaleString()} ${pages === 1 ? 'page' : 'pages'}`);
-    if (words != null) parts.push(`${words.toLocaleString()} ${words === 1 ? 'word' : 'words'}`);
-    rows.push({ label: 'Length', value: parts.join(', ') });
+    if (pages != null) parts.push(`${pages.toLocaleString()} 页`);
+    if (words != null) parts.push(`${words.toLocaleString()} 字`);
+    rows.push({ label: '篇幅', value: parts.join('，') });
   }
-  if (publishedUrl !== undefined) rows.push({ label: 'Published', value: publishedUrl || 'Not published' });
+  if (publishedUrl !== undefined) rows.push({ label: '发布状态', value: publishedUrl || '未发布' });
   return rows;
 }

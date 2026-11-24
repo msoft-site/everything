@@ -8,7 +8,7 @@ import { closeMenu } from '../src/ui/menu.js';
 vi.mock('../src/ui/toast.js', () => ({ toast: vi.fn() }));
 let view;
 const path = (name) => `Documents/Templates/${name}.docx`;
-const deleteButton = (name) => document.querySelector(`[aria-label="Delete template ${name}"]`);
+const deleteButton = (name) => document.querySelector(`[aria-label="删除模板 ${name}"]`);
 const pending = () => {
   let resolve, reject;
   const promise = new Promise((yes, no) => { resolve = yes; reject = no; });
@@ -23,9 +23,9 @@ beforeEach(async () => {
   vi.spyOn(P, 'deleteFile').mockResolvedValue();
   view = homeView({ openPath: vi.fn(), newDoc: vi.fn(), importFile: vi.fn() });
   document.body.append(view.el);
-  [...view.el.querySelectorAll('button')].find((button) => button.textContent === 'Templates').click();
+  [...view.el.querySelectorAll('button')].find((button) => button.textContent === '模板').click();
   await vi.advanceTimersByTimeAsync(0);
-  [...document.querySelectorAll('[role="menuitem"]')].find((button) => button.textContent === 'Manage my templates').click();
+  [...document.querySelectorAll('[role="menuitem"]')].find((button) => button.textContent === '管理我的模板').click();
 });
 afterEach(() => {
   view.destroy(); closeMenu(); closeAllModals();
@@ -95,7 +95,7 @@ it('keeps the original control focused and usable after cancelling confirmation'
 
 it('shows the empty state after all template deletions finish', async () => {
   for (const name of ['A', 'B', 'C']) await confirmDelete(name);
-  expect(document.querySelector('[role="list"][aria-label="My templates"]').textContent).toBe('No templates of your own yet.');
+  expect(document.querySelector('[role="list"][aria-label="我的模板"]').textContent).toBe('暂无自定义模板。');
 });
 
 it('moves the keyboard to the next template, then to Close, as templates are deleted', async () => {
@@ -105,6 +105,6 @@ it('moves the keyboard to the next template, then to Close, as templates are del
   await confirmDelete('B');
   expect(document.activeElement).toBe(deleteButton('C'));
   await confirmDelete('C');
-  expect(document.activeElement.getAttribute('aria-label')).toBe('Close');
+  expect(document.activeElement.getAttribute('aria-label')).toBe('关闭');
   expect(document.activeElement.closest('.modal-panel')).not.toBeNull();
 });

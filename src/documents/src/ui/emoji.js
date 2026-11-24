@@ -163,20 +163,20 @@ export function openEmojiPicker({ onPick }) {
     onclick: () => pick(entry[0]),
   }, entry[0]);
 
-  const results = el('div.symbol-grid', { role: 'group', 'aria-label': 'Search results', hidden: true });
+  const results = el('div.symbol-grid', { role: 'group', 'aria-label': '搜索结果', hidden: true });
   const sections = el('div', {});
 
   const renderSections = () => {
     const recent = recentEmoji();
-    const groups = recent.length ? [['Recently used', recent.map(entryFor)], ...EMOJI_CATEGORIES] : EMOJI_CATEGORIES;
+    const groups = recent.length ? [['最近使用', recent.map(entryFor)], ...EMOJI_CATEGORIES] : EMOJI_CATEGORIES;
     sections.replaceChildren(...groups.map(([title, list]) => el('section.symbol-group', {},
       el('h3', {}, title),
       el('div.symbol-grid', { role: 'group', 'aria-label': title }, list.map(button)))));
   };
   renderSections();
 
-  const search = el('input.input', { type: 'search', placeholder: 'Search emoji', 'aria-label': 'Search emoji', autocomplete: 'off', spellcheck: false });
-  const empty = el('p.muted.small', { hidden: true, style: { padding: '4px 2px' } }, 'No emoji match that search.');
+  const search = el('input.input', { type: 'search', placeholder: '搜索表情符号', 'aria-label': '搜索表情符号', autocomplete: 'off', spellcheck: false });
+  const empty = el('p.muted.small', { hidden: true, style: { padding: '4px 2px' } }, '未找到匹配的表情符号。');
   const content = el('div.emoji-picker', {}, el('div.emoji-search', {}, search), results, empty, sections);
   search.addEventListener('input', () => {
     const q = search.value.trim();
@@ -199,7 +199,7 @@ export function openEmojiPicker({ onPick }) {
     if (e.key === 'Enter') first.click(); else first.focus();
   });
   keyboardGrids(content);
-  modal = openModal({ title: 'Emoji', content, wide: true });
+  modal = openModal({ title: '表情符号', content, wide: true });
   // On a phone the sheet leaves the keyboard closed until the search field is tapped, like every other dialog.
   if (matchMedia('(width > 640px)').matches) setTimeout(() => search.focus(), 30);
   return modal;

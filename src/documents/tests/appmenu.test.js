@@ -20,13 +20,13 @@ afterEach(() => {
   vi.unstubAllGlobals(); vi.restoreAllMocks();
 });
 
-const radios = () => [...document.querySelectorAll('.menu [role="radiogroup"][aria-label="Appearance"] [role="radio"]')];
+const radios = () => [...document.querySelectorAll('.menu [role="radiogroup"][aria-label="外观"] [role="radio"]')];
 
 it('offers the themes as one radio group reflecting the current choice', () => {
   applyTheme('dark');
   openAppMenu(anchor);
   const buttons = radios();
-  expect(buttons.map((b) => b.textContent)).toEqual(['System', 'Light', 'Dark']);
+  expect(buttons.map((b) => b.textContent)).toEqual(['跟随系统', '浅色', '深色']);
   expect(buttons.map((b) => b.getAttribute('aria-checked'))).toEqual(['false', 'false', 'true']);
   expect(buttons.map((b) => b.tabIndex)).toEqual([-1, -1, 0]);
 });
@@ -63,7 +63,7 @@ it('moves past the theme group with the up and down arrows without changing the 
 
 it('keeps the dark page option in view and enables it as soon as the dark theme is picked', () => {
   openAppMenu(anchor);
-  const item = () => [...document.querySelectorAll('.menu-item')].find((button) => button.querySelector('.menu-label')?.firstChild?.textContent === 'Dark page');
+  const item = () => [...document.querySelectorAll('.menu-item')].find((button) => button.querySelector('.menu-label')?.firstChild?.textContent === '深色页面');
   expect(item().disabled).toBe(true);
   radios()[2].click();
   expect(currentTheme()).toBe('dark');

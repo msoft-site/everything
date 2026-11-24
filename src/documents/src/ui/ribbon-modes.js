@@ -74,17 +74,17 @@ export function createRibbonModes({ workspace, header, toolbar, ribbon, tabs, ti
   collapse.addEventListener('mousedown', e => e.preventDefault());
   // Both are reachable from View > Ribbon and the chord; they stay out of the Tab order between the tabs and the commands.
   collapse.tabIndex = -1;
-  const options = el('button.ed-ribbon-options', { type: 'button', 'aria-label': 'Ribbon display options', title: 'Ribbon display options', 'aria-haspopup': 'menu',
-    onclick: e => openMenu({ anchor: options, label: 'Ribbon display options', align: 'end', minWidth: 240, pointer: !!e.detail, onClose: e.detail ? focusEditor : null, items: [
-      { label: 'Always Show the Ribbon', radio: true, checked: effective() === 'always', onSelect: () => setMode('always') },
-      { label: 'Show Tabs Only', radio: true, checked: effective() === 'tabs', onSelect: () => setMode('tabs') },
-      { label: 'Auto-hide the Ribbon', radio: true, checked: effective() === 'auto', onSelect: () => setMode('auto') },
-      { separator: true }, { label: 'Show KeyTips', hint: IS_MAC ? 'Option' : 'Alt', onSelect: () => keyTips.show() }] }) }, commandIconEl('more', 16));
+  const options = el('button.ed-ribbon-options', { type: 'button', 'aria-label': '功能区显示选项', title: '功能区显示选项', 'aria-haspopup': 'menu',
+    onclick: e => openMenu({ anchor: options, label: '功能区显示选项', align: 'end', minWidth: 240, pointer: !!e.detail, onClose: e.detail ? focusEditor : null, items: [
+      { label: '始终显示功能区', radio: true, checked: effective() === 'always', onSelect: () => setMode('always') },
+      { label: '仅显示选项卡', radio: true, checked: effective() === 'tabs', onSelect: () => setMode('tabs') },
+      { label: '自动隐藏功能区', radio: true, checked: effective() === 'auto', onSelect: () => setMode('auto') },
+      { separator: true }, { label: '显示按键提示', hint: IS_MAC ? 'Option' : 'Alt', onSelect: () => keyTips.show() }] }) }, commandIconEl('more', 16));
   options.addEventListener('mousedown', e => e.preventDefault());
   options.tabIndex = -1;
   // Both sit at the right end of the tab row, where they take no room from the commands.
   tabRow.append(options, collapse);
-  const reveal = el('button.ed-ribbon-reveal', { type: 'button', 'aria-label': 'Show the ribbon', title: 'Show the ribbon', onclick: () => { peek(true); tabRow.querySelector('.ribbon-tab[aria-selected="true"]')?.focus(); } }, commandIconEl('more', 16));
+  const reveal = el('button.ed-ribbon-reveal', { type: 'button', 'aria-label': '显示功能区', title: '显示功能区', onclick: () => { peek(true); tabRow.querySelector('.ribbon-tab[aria-selected="true"]')?.focus(); } }, commandIconEl('more', 16));
   titleBar.querySelector('.canvas-title-actions')?.prepend(reveal);
 
   function apply() {
@@ -95,8 +95,8 @@ export function createRibbonModes({ workspace, header, toolbar, ribbon, tabs, ti
     // Shown over the document, the commands sit right under the tabs.
     toolbar.style.top = peeking ? `${header.offsetTop + header.offsetHeight}px` : '';
     const collapsed = mode !== 'always';
-    collapse.setAttribute('aria-label', collapsed ? 'Always show the ribbon' : 'Collapse the ribbon');
-    collapse.title = collapsed ? 'Always show the ribbon' : `Collapse the ribbon (${IS_MAC ? 'Cmd+Option+R' : 'Ctrl+F1'})`;
+    collapse.setAttribute('aria-label', collapsed ? '始终显示功能区' : '折叠功能区');
+    collapse.title = collapsed ? '始终显示功能区' : `折叠功能区 (${IS_MAC ? 'Cmd+Option+R' : 'Ctrl+F1'})`;
     collapse.replaceChildren(iconEl(collapsed ? 'chevD' : 'chevU', 14));
     collapse.classList.toggle('is-pin', collapsed);
     reveal.hidden = mode !== 'auto' || peeking;
@@ -155,7 +155,7 @@ export function createRibbonModes({ workspace, header, toolbar, ribbon, tabs, ti
     function render(targets) {
       layer?.remove();
       codes = targets;
-      layer = el('div.ed-keytips', { role: 'status', 'aria-live': 'polite' }, el('span.visually-hidden', {}, 'KeyTips shown. Type a letter to choose, Escape to go back.'),
+      layer = el('div.ed-keytips', { role: 'status', 'aria-live': 'polite' }, el('span.visually-hidden', {}, '已显示按键提示。键入字母以选择，按 Escape 返回。'),
         ...targets.filter(t => visible(t.node)).map(t => badge(t.node, t.code, t.disabled)));
       document.body.append(layer);
     }

@@ -78,7 +78,7 @@ export function createMailings({ editor, pkg, error, onChange = () => {}, markDi
     refreshHighlight();
   }
   function setPreview(on) {
-    if (on && !records().length) { if (state().list) toast('No recipients are included in the merge', { icon: 'info' }); else error(new Error('Select recipients to preview the merge.')); return; }
+    if (on && !records().length) { if (state().list) toast('邮件合并中未包含任何收件人', { icon: 'info' }); else error(new Error('请选择收件人以预览合并结果。')); return; }
     setState({ preview: !!on }); refreshPreview();
   }
   function goToRecord(n) {
@@ -95,10 +95,10 @@ export function createMailings({ editor, pkg, error, onChange = () => {}, markDi
 
   /* ---- Fields ---- */
   async function insertField(instruction) {
-    const engine = ready(); if (!engine) throw new Error('This document is open read-only.');
+    const engine = ready(); if (!engine) throw new Error('此文档以只读方式打开。');
     const m = await modules();
     engine.finishComposition();
-    if (engine.session.path !== null) throw new Error('Merge fields go in the document body. Close the header or footer first.');
+    if (engine.session.path !== null) throw new Error('合并域只能放在正文中。请先关闭页眉或页脚。');
     if (!engine.execute(() => { m.model.insertMergeField(engine.model, instruction); return true; })) return;
     if (!state().type) setState({ type: 'formLetters' });
     if (state().preview) refreshPreview(); else refreshHighlight();
@@ -113,7 +113,7 @@ export function createMailings({ editor, pkg, error, onChange = () => {}, markDi
   };
   async function typeNewList() {
     const m = await modules();
-    openRecipientGrid({ list: state().source?.kind === 'typed' && state().list ? state().list : { ...m.fields.emptyRecipientList(), rows: [] }, title: state().source?.kind === 'typed' && state().list ? 'Edit Address List' : 'New Address List',
+    openRecipientGrid({ list: state().source?.kind === 'typed' && state().list ? state().list : { ...m.fields.emptyRecipientList(), rows: [] }, title: state().source?.kind === 'typed' && state().list ? '编辑地址列表' : '新建地址列表',
       onSave: list => applyList(list, { source: { kind: 'typed', name: '' }, mapping: {} }) });
   }
   const fileInput = el('input', { type: 'file', accept: RECIPIENT_FILES.join(','), hidden: true, onchange: () => { const file = fileInput.files[0]; fileInput.value = ''; if (file) loadListFile(file); } });
@@ -126,10 +126,10 @@ export function createMailings({ editor, pkg, error, onChange = () => {}, markDi
         if (sheet === null) return;
         if (sheet !== list.sheet) list = await readRecipientFile(file, { sheet });
       }
-      if (!list.rows.length) throw new Error('That list has column names but no recipients.');
+      if (!list.rows.length) throw new Error('该列表包含列名但没有收件人。');
       const { sheets, sheet, ...clean } = list; void sheets; void sheet;
       applyList(clean, { source: { kind: /\.xlsx$/i.test(file.name) ? 'xlsx' : 'csv', name: file.name }, mapping: {} });
-      toast(`${clean.rows.length} ${clean.rows.length === 1 ? 'recipient' : 'recipients'} from ${file.name}`);
+      toast(`从 ${file.name} 读取了 ${clean.rows.length} 位收件人`);
       editRecipients();
     } catch (e) { fail(e); }
   }
@@ -144,9 +144,9 @@ export function createMailings({ editor, pkg, error, onChange = () => {}, markDi
   }
   async function editRecipients() {
     const m = await modules();
-    if (!state().list) { error(new Error('Select recipients first: type a new list or use an existing one.')); return; }
+    if (!state().list) { error(new Error('请先选择收件人：键入新列表或使用现有列表。')); return; }
     openRecipientList({ state: state(), onApply: (list, map) => { setState({ list, mapping: map, activeRecord: Math.min(state().activeRecord, Math.max(1, m.fields.mergeRecords(list).length)) }); if (state().preview) refreshPreview(); },
-      onEditEntries: (list, done) => openRecipientGrid({ list, title: 'Edit Entries', onSave: done }) });
+      onEditEntries: (list, done) => openRecipientGrid({ list, title: '编辑条目', onSave: done }) });
   }
   function excludeCurrent() {
     const s = state(), data = records(); if (!data.length) return;
@@ -160,7 +160,7 @@ export function createMailings({ editor, pkg, error, onChange = () => {}, markDi
   async function startMerge(type, { quiet = false } = {}) {
     if (type === 'normal') {
       const s = state();
-      if (s.list && !await confirmDialog({ title: 'Make this a normal document?', message: 'The recipient list and merge settings are removed from this document. The fields stay in place.', confirmLabel: 'Remove' })) return;
+      if (s.list && !await confirmDialog({ title: '将此文档设为普通文档？', message: '收件人列表和合并设置将从此文档中删除，但域代码仍将保留。', confirmLabel: '删除' })) return;
       if (s.preview) { setState({ preview: false }); refreshPreview(); }
       const p = pkg(); if (p && !p.readOnly) { p.mailMerge = null; markDirty(); refreshUi(); }
       return;
@@ -183,7 +183,7 @@ export function createMailings({ editor, pkg, error, onChange = () => {}, markDi
     } });
   }
   async function openNew(blob, name) {
-    if (!importFile) throw new Error('New documents cannot be opened from here.');
+    if (!importFile) throw new Error('无法在此打开新文档。');
     await importFile(new File([blob], `${name}.docx`, { type: blob.type }));
   }
 
@@ -194,11 +194,11 @@ export function createMailings({ editor, pkg, error, onChange = () => {}, markDi
     const selected = engine ? engine.model.text.slice(...engine.model.range).replace(/\v/g, '\n').trim() : '';
     openEnvelopes({ delivery: selected.length < 400 ? selected : '',
       onAdd: options => {
-        const e = ready(); if (!e) throw new Error('This document is open read-only.');
+        const e = ready(); if (!e) throw new Error('此文档以只读方式打开。');
         e.finishComposition();
         if (e.session.path !== null) e.editStory(null);
         if (!e.execute(() => m.model.insertEnvelope(e.model, options))) return false;
-        toast('Envelope added as the first page'); e.focus();
+        toast('信封已作为第一页添加'); e.focus();
       },
       onNew: async options => openNew(await m.documents.envelopeDocx(options), 'Envelope') });
   }
@@ -297,25 +297,25 @@ export function createMailings({ editor, pkg, error, onChange = () => {}, markDi
       const choice = await chooseDelivery(messages.length, note);
       if (!choice) return;
       if (choice === 'send') { await sendWithPuter(p, messages); return; }
-    } else if (skipped.length) toast(`${skipped.length} ${skipped.length === 1 ? 'recipient has' : 'recipients have'} no valid email address and ${skipped.length === 1 ? 'was' : 'were'} left out`, { icon: 'info', duration: 5000 });
+    } else if (skipped.length) toast(`${skipped.length} 位收件人没有有效的电子邮件地址，已忽略`, { icon: 'info', duration: 5000 });
     // Downloadable messages open in any mail client as unsent drafts.
     if (messages.length === 1) P.downloadBlob(new Blob([emlMessage(messages[0])], { type: 'message/rfc822' }), emlName(1, messages[0].to));
     else {
       const files = Object.fromEntries(messages.map((msg, i) => [emlName(i + 1, msg.to), new TextEncoder().encode(emlMessage(msg))]));
-      P.downloadBlob(new Blob([job.m.zip.zipSync(files)], { type: 'application/zip' }), `${(documentTitle() || 'Mail merge').replace(/\.docx$/i, '')} – messages.zip`);
+      P.downloadBlob(new Blob([job.m.zip.zipSync(files)], { type: 'application/zip' }), `${(documentTitle() || '邮件合并').replace(/\.docx$/i, '')} – messages.zip`);
     }
-    toast(`Saved ${messages.length} ${messages.length === 1 ? 'message' : 'messages'} to open in your mail app`);
+    toast(`已保存 ${messages.length} 封邮件，可在邮件客户端中打开`);
   }
   function chooseDelivery(count, note) {
     return new Promise(resolve => {
       let choice = null;
-      const modal = dialog({ title: 'Send Email Messages', submit: `Send ${count} ${count === 1 ? 'Message' : 'Messages'}`, body: el('p.modal-text', {}, `Each recipient gets a separate message from your Puter email address.${note} You can also download them as files to send from another mail app.`),
-        actions: [button('Download Instead', () => { choice = 'download'; modal.close(); })], onSubmit: () => { choice = 'send'; }, onClose: () => resolve(choice) });
+      const modal = dialog({ title: '发送电子邮件', submit: `发送 ${count} 封邮件`, body: el('p.modal-text', {}, `每位收件人都将收到来自您的邮箱的单独邮件。${note} 您也可以将其下载为文件，通过其他邮件应用发送。`),
+        actions: [button('下载邮件', () => { choice = 'download'; modal.close(); })], onSubmit: () => { choice = 'send'; }, onClose: () => resolve(choice) });
     });
   }
   async function sendWithPuter(p, messages) {
     let sent = 0, failed = 0, retried = false;
-    const progress = toast(`Sending 0 of ${messages.length}…`, { icon: 'info', duration: 600000 });
+    const progress = toast(`正在发送 0 / ${messages.length}…`, { icon: 'info', duration: 600000 });
     for (const message of messages) {
       let body;
       try { body = await p.email.send({ to: message.to, subject: message.subject, text: message.text, ...(message.html ? { html: message.html } : {}) }); }
@@ -327,11 +327,11 @@ export function createMailings({ editor, pkg, error, onChange = () => {}, markDi
       if (body?.code === 'too_many_requests') { failed += messages.length - sent - failed; break; }
       const delivered = Array.isArray(body?.delivered) ? body.delivered.map(a => String(a).toLowerCase()) : null;
       if (delivered ? delivered.includes(message.to.toLowerCase()) : !body?.code && !body?.error) sent++; else failed++;
-      progress?.update?.(`Sending ${sent + failed} of ${messages.length}…`);
+      progress?.update?.(`正在发送 ${sent + failed} / ${messages.length}…`);
     }
     progress?.dismiss?.();
-    if (failed) error(new Error(`Sent ${sent} of ${messages.length} messages. ${failed} could not be sent; try again later or download them instead.`));
-    else toast(`Sent ${sent} ${sent === 1 ? 'message' : 'messages'}`);
+    if (failed) error(new Error(`已发送 ${messages.length} 封邮件中的 ${sent} 封。${failed} 封发送失败；请稍后重试或下载后发送。`));
+    else toast(`已发送 ${sent} 封邮件`);
   }
 
   /* ---- Ribbon, menus and pane ---- */
@@ -348,28 +348,28 @@ export function createMailings({ editor, pkg, error, onChange = () => {}, markDi
 
   const typeItems = () => [
     ...DOCUMENT_TYPES.map(([id, label]) => ({ label: ['envelopes', 'mailingLabels'].includes(id) ? `${label}…` : label, checked: state().type === id, radio: true, disabled: !ready(), onSelect: () => mm.startMerge(id) })),
-    { label: 'Normal Document', checked: !state().type, radio: true, disabled: !ready(), onSelect: () => mm.startMerge('normal') },
+    { label: '普通文档', checked: !state().type, radio: true, disabled: !ready(), onSelect: () => mm.startMerge('normal') },
     { separator: true },
-    { label: 'Step-by-Step Mail Merge Wizard…', icon: 'mergeWizard', disabled: !ready(), onSelect: () => wizard.show() },
+    { label: '邮件合并分步向导…', icon: 'mergeWizard', disabled: !ready(), onSelect: () => wizard.show() },
   ];
   const recipientItems = () => [
-    { label: 'Type a New List…', disabled: !ready(), onSelect: () => mm.typeNewList() },
-    { label: 'Use an Existing List…', hint: 'CSV, TSV or Excel workbook', disabled: !ready(), onSelect: () => mm.useExistingList() },
-    ...(P.canPickFiles() ? [{ label: 'Choose from Puter…', disabled: !ready(), onSelect: () => mm.useExistingList({ cloud: true }) }] : []),
-    ...(state().list ? [{ separator: true }, { label: 'Export List as CSV', onSelect: async () => { const { listToCsv } = await import('../lib/recipient-files.js'); P.downloadBlob(new Blob([listToCsv(state().list)], { type: 'text/csv' }), 'Recipients.csv'); } },
-      { label: 'Remove Recipient List', disabled: !ready(), onSelect: () => { if (state().preview) { setState({ preview: false }); refreshPreview(); } setState({ list: null, mapping: {}, source: null, activeRecord: 1 }); } }] : []),
+    { label: '键入新列表…', disabled: !ready(), onSelect: () => mm.typeNewList() },
+    { label: '使用现有列表…', hint: 'CSV、TSV 或 Excel 工作簿', disabled: !ready(), onSelect: () => mm.useExistingList() },
+    ...(P.canPickFiles() ? [{ label: '从云端选择…', disabled: !ready(), onSelect: () => mm.useExistingList({ cloud: true }) }] : []),
+    ...(state().list ? [{ separator: true }, { label: '导出列表为 CSV', onSelect: async () => { const { listToCsv } = await import('../lib/recipient-files.js'); P.downloadBlob(new Blob([listToCsv(state().list)], { type: 'text/csv' }), 'Recipients.csv'); } },
+      { label: '移除收件人列表', disabled: !ready(), onSelect: () => { if (state().preview) { setState({ preview: false }); refreshPreview(); } setState({ list: null, mapping: {}, source: null, activeRecord: 1 }); } }] : []),
   ];
   const fieldItems = () => {
     const columns = state().list?.columns || [];
     return [...columns.map(c => ({ label: c, disabled: !ready(), onSelect: () => insertField(mergeFieldInstruction(c)).catch(fail) })),
-      ...(columns.length ? [{ separator: true }] : [{ label: 'Select recipients to list their fields', disabled: true }]),
-      { label: 'Insert Merge Field…', disabled: !ready(), onSelect: () => mm.insertFieldDialog() }];
+      ...(columns.length ? [{ separator: true }] : [{ label: '请先选择收件人以列出其字段', disabled: true }]),
+      { label: '插入合并字段…', disabled: !ready(), onSelect: () => mm.insertFieldDialog() }];
   };
   const ruleItems = () => RULES.map(([id, label]) => ({ label, disabled: !ready(), onSelect: () => modules().then(() => openRule(id, mm)).catch(fail) }));
   const finishItems = () => [
-    { label: 'Edit Individual Documents…', disabled: !ready() || !records().length, onSelect: () => finish('document') },
-    { label: 'Print Documents…', disabled: !ready() || !records().length, onSelect: () => finish('print') },
-    { label: 'Send Email Messages…', disabled: !ready() || !records().length, onSelect: () => finish('email') },
+    { label: '编辑单个文档…', disabled: !ready() || !records().length, onSelect: () => finish('document') },
+    { label: '打印文档…', disabled: !ready() || !records().length, onSelect: () => finish('print') },
+    { label: '发送电子邮件…', disabled: !ready() || !records().length, onSelect: () => finish('email') },
   ];
 
   function extraTabs(kit) {
@@ -378,27 +378,27 @@ export function createMailings({ editor, pkg, error, onChange = () => {}, markDi
     const has = () => !!ready();
     const hasList = () => !!ready() && !!state().list;
     const hasRecords = () => !!ready() && records().length > 0;
-    const envelopesButton = command('Envelopes', 'envelope', () => envelopes().catch(fail), { size: 'large', text: 'Envelopes' });
-    const labelsButton = command('Labels', 'labels', () => labels().catch(fail), { size: 'large', text: 'Labels' });
-    const start = menuButton('Start Mail Merge', 'startMerge', typeItems, { text: 'Start Mail Merge' });
-    const select = menuButton('Select Recipients', 'selectRecipients', recipientItems, { text: 'Select Recipients' });
-    const edit = command('Edit Recipient List', 'editRecipients', () => mm.editRecipients(), { size: 'large', text: 'Edit Recipient List' });
-    const highlight = command('Highlight Merge Fields', 'highlightFields', () => { highlighted = !highlighted; refreshHighlight(); onChange(); }, { size: 'large', text: 'Highlight Merge Fields', attrs: { 'aria-pressed': 'false' } });
-    const address = command('Address Block', 'addressBlock', () => mm.addressBlock(), { size: 'large', text: 'Address Block' });
-    const greeting = command('Greeting Line', 'greetingLine', () => mm.greetingLine(), { size: 'large', text: 'Greeting Line' });
-    const insert = menuButton('Insert Merge Field', 'mergeField', fieldItems, { text: 'Insert Merge Field' });
-    const rules = menuButton('Rules', 'rules', ruleItems, { size: 'small', text: 'Rules' });
-    const match = command('Match Fields', 'matchFields', () => mm.matchFields(), { text: 'Match Fields' });
-    const update = command('Update Labels', 'updateLabels', () => mm.updateLabels(), { text: 'Update Labels' });
-    const preview = command('Preview Results', 'previewResults', () => setPreview(!state().preview), { size: 'large', text: 'Preview Results', attrs: { 'aria-pressed': 'false' } });
-    const first = command('First Record', 'firstRecord', () => goToRecord(1));
-    const previous = command('Previous Record', 'previousRecord', () => goToRecord((state().activeRecord || 1) - 1));
-    const next = command('Next Record', 'nextRecord', () => goToRecord((state().activeRecord || 1) + 1));
-    const last = command('Last Record', 'lastRecord', () => goToRecord(records().length));
-    const record = el('input.canvas-spacing.ribbon-number.mm-record', { type: 'number', min: 1, 'aria-label': 'Go to record', title: 'Go to record', onkeydown: e => { if (e.key === 'Enter') { e.preventDefault(); goToRecord(Number(record.value)); focus(); } }, onchange: () => goToRecord(Number(record.value)) });
-    const find = command('Find Recipient', 'findRecipient', () => mm.findRecipient(), { text: 'Find Recipient' });
-    const check = command('Check for Errors', 'checkErrors', () => mm.checkErrors(), { text: 'Check for Errors' });
-    const finishButton = menuButton('Finish & Merge', 'finishMerge', finishItems, { text: 'Finish & Merge' });
+    const envelopesButton = command('信封', 'envelope', () => envelopes().catch(fail), { size: 'large', text: '信封' });
+    const labelsButton = command('标签', 'labels', () => labels().catch(fail), { size: 'large', text: '标签' });
+    const start = menuButton('开始邮件合并', 'startMerge', typeItems, { text: '开始邮件合并' });
+    const select = menuButton('选择收件人', 'selectRecipients', recipientItems, { text: '选择收件人' });
+    const edit = command('编辑收件人列表', 'editRecipients', () => mm.editRecipients(), { size: 'large', text: '编辑收件人列表' });
+    const highlight = command('高亮合并字段', 'highlightFields', () => { highlighted = !highlighted; refreshHighlight(); onChange(); }, { size: 'large', text: '高亮合并字段', attrs: { 'aria-pressed': 'false' } });
+    const address = command('地址块', 'addressBlock', () => mm.addressBlock(), { size: 'large', text: '地址块' });
+    const greeting = command('问候语', 'greetingLine', () => mm.greetingLine(), { size: 'large', text: '问候语' });
+    const insert = menuButton('插入合并字段', 'mergeField', fieldItems, { text: '插入合并字段' });
+    const rules = menuButton('规则', 'rules', ruleItems, { size: 'small', text: '规则' });
+    const match = command('匹配字段', 'matchFields', () => mm.matchFields(), { text: '匹配字段' });
+    const update = command('更新标签', 'updateLabels', () => mm.updateLabels(), { text: '更新标签' });
+    const preview = command('预览结果', 'previewResults', () => setPreview(!state().preview), { size: 'large', text: '预览结果', attrs: { 'aria-pressed': 'false' } });
+    const first = command('第一条记录', 'firstRecord', () => goToRecord(1));
+    const previous = command('上一条记录', 'previousRecord', () => goToRecord((state().activeRecord || 1) - 1));
+    const next = command('下一条记录', 'nextRecord', () => goToRecord((state().activeRecord || 1) + 1));
+    const last = command('最后一条记录', 'lastRecord', () => goToRecord(records().length));
+    const record = el('input.canvas-spacing.ribbon-number.mm-record', { type: 'number', min: 1, 'aria-label': '转到记录', title: '转到记录', onkeydown: e => { if (e.key === 'Enter') { e.preventDefault(); goToRecord(Number(record.value)); focus(); } }, onchange: () => goToRecord(Number(record.value)) });
+    const find = command('查找收件人', 'findRecipient', () => mm.findRecipient(), { text: '查找收件人' });
+    const check = command('检查错误', 'checkErrors', () => mm.checkErrors(), { text: '检查错误' });
+    const finishButton = menuButton('完成并合并', 'finishMerge', finishItems, { text: '完成并合并' });
     // Longer labels take two lines on a wider button.
     for (const b of [edit, highlight, insert]) b.classList.add('ribbon-wide');
     noSteal(envelopesButton, labelsButton, edit, highlight, address, greeting, match, update, preview, first, previous, next, last, find, check);
@@ -412,13 +412,13 @@ export function createMailings({ editor, pkg, error, onChange = () => {}, markDi
     when(next, () => hasRecords() && at() < records().length); when(last, () => hasRecords() && at() < records().length);
     when(record, () => { if (document.activeElement !== record) record.value = hasRecords() ? String(at()) : ''; record.max = String(records().length || 1); return hasRecords(); });
     when(finishButton, hasRecords);
-    const navigator = el('div.mm-ribbon-nav', { role: 'group', 'aria-label': 'Go to recipient' }, first, previous, record, next, last);
-    return [{ id: 'mailings', label: 'Mailings', after: 'references', groups: [
-      { id: 'mailCreate', label: 'Create', icon: 'envelope', priority: 4, items: [envelopesButton, labelsButton] },
-      { id: 'mailStart', label: 'Start Mail Merge', icon: 'startMerge', priority: 8, items: [start, select, edit] },
-      { id: 'mailFields', label: 'Write & Insert Fields', icon: 'mergeField', priority: 7, items: [highlight, address, greeting, insert, rows([rules], [match], [update])] },
-      { id: 'mailPreview', label: 'Preview Results', icon: 'previewResults', priority: 6, items: [preview, rows([navigator], [find], [check])] },
-      { id: 'mailFinish', label: 'Finish', icon: 'finishMerge', priority: 9, items: [finishButton] },
+    const navigator = el('div.mm-ribbon-nav', { role: 'group', 'aria-label': '转到收件人' }, first, previous, record, next, last);
+    return [{ id: 'mailings', label: '邮件', after: 'references', groups: [
+      { id: 'mailCreate', label: '创建', icon: 'envelope', priority: 4, items: [envelopesButton, labelsButton] },
+      { id: 'mailStart', label: '开始邮件合并', icon: 'startMerge', priority: 8, items: [start, select, edit] },
+      { id: 'mailFields', label: '编写和插入字段', icon: 'mergeField', priority: 7, items: [highlight, address, greeting, insert, rows([rules], [match], [update])] },
+      { id: 'mailPreview', label: '预览结果', icon: 'previewResults', priority: 6, items: [preview, rows([navigator], [find], [check])] },
+      { id: 'mailFinish', label: '完成', icon: 'finishMerge', priority: 9, items: [finishButton] },
     ] }];
   }
 
@@ -426,9 +426,9 @@ export function createMailings({ editor, pkg, error, onChange = () => {}, markDi
   function extendMenu(id) {
     if (id !== 'tools') return [];
     return [{ separator: true },
-      { label: 'Envelopes…', icon: 'envelope', disabled: !ready(), onSelect: () => envelopes().catch(fail) },
-      { label: 'Labels…', icon: 'labels', disabled: !ready(), onSelect: () => labels().catch(fail) },
-      { label: 'Mail Merge…', icon: 'mergeWizard', disabled: !ready(), onSelect: () => wizard.show() }];
+      { label: '信封…', icon: 'envelope', disabled: !ready(), onSelect: () => envelopes().catch(fail) },
+      { label: '标签…', icon: 'labels', disabled: !ready(), onSelect: () => labels().catch(fail) },
+      { label: '邮件合并…', icon: 'mergeWizard', disabled: !ready(), onSelect: () => wizard.show() }];
   }
 
   return {

@@ -29,9 +29,9 @@ it('names the file that could not be imported even after the user moved on', asy
   const openFile = vi.fn();
   await importFiles([docx('Good.docx'), docx('broken.docx')], { openFile, stillHere: () => calls.here });
   expect(openFile).not.toHaveBeenCalled();
-  expect(calls.toasts.map(([message]) => message)).toEqual(['Imported 1 of 2 files']);
+  expect(calls.toasts.map(([message]) => message)).toEqual(['已导入 1 / 2 个文件']);
   expect(calls.modals.length).toBe(1);
-  expect(calls.modals[0].title).toBe('Import details');
+  expect(calls.modals[0].title).toBe('导入详情');
   expect(calls.modals[0].content.textContent).toBe('broken.docx: Disk full');
 });
 
@@ -44,7 +44,7 @@ it('keeps the extension of templates and macro-enabled documents written into th
 it('reports the same details when the user stayed', async () => {
   const onImported = vi.fn();
   await importFiles([docx('Good.docx'), docx('broken.docx')], { openFile: vi.fn(), onImported });
-  expect(calls.toasts.map(([message]) => message)).toEqual(['Imported 1 of 2 documents']);
+  expect(calls.toasts.map(([message]) => message)).toEqual(['已导入 1 / 2 个文档']);
   expect(calls.modals.map((m) => m.content.textContent)).toEqual(['broken.docx: Disk full']);
   expect(onImported).toHaveBeenCalled();
 });
@@ -65,17 +65,17 @@ it('opens the first of several text files without asking a signed-out user to si
     signIn.mockResolvedValue(false);
     await importFiles([docx('Good.docx'), text('c.md')], { openFile });
     expect(signIn).toHaveBeenCalled();
-    expect(calls.toasts.map(([message]) => message)).toContain('Sign in to Puter to import several files at once');
+    expect(calls.toasts.map(([message]) => message)).toContain('登录 Puter 可同时导入多个文件');
   } finally { session.signedOut = false; signIn.mockRestore(); }
 });
 
 it('words the "nothing importable" message for a drop or for the file dialog', async () => {
   const log = new File(['x'], 'photo.png', { type: 'image/png' });
-  expect(nothingImportable([log])).toBe('Drop DOCX, Hanword (.hwp, .hwpx), Markdown, HTML, or text files to open them');
-  expect(nothingImportable([log], { picked: true })).toBe('That file cannot be imported. Choose DOCX, Hanword (.hwp, .hwpx), Markdown, HTML, or text files');
-  expect(nothingImportable([log, log], { picked: true })).toBe('Those files cannot be imported. Choose DOCX, Hanword (.hwp, .hwpx), Markdown, HTML, or text files');
+  expect(nothingImportable([log])).toBe('拖放 DOCX、Hanword (.hwp, .hwpx)、Markdown、HTML 或文本文件 即可打开');
+  expect(nothingImportable([log], { picked: true })).toBe('该文件无法导入。请选择 DOCX、Hanword (.hwp, .hwpx)、Markdown、HTML 或文本文件');
+  expect(nothingImportable([log, log], { picked: true })).toBe('这些文件无法导入。请选择 DOCX、Hanword (.hwp, .hwpx)、Markdown、HTML 或文本文件');
   await importFiles([log], { openFile: vi.fn(), nothingMessage: nothingImportable([log], { picked: true }) });
-  expect(calls.toasts.map(([message]) => message)).toEqual(['That file cannot be imported. Choose DOCX, Hanword (.hwp, .hwpx), Markdown, HTML, or text files']);
+  expect(calls.toasts.map(([message]) => message)).toEqual(['该文件无法导入。请选择 DOCX、Hanword (.hwp, .hwpx)、Markdown、HTML 或文本文件']);
 });
 
 it('forgets the room of a shared document deleted elsewhere under the name each written file got', async () => {

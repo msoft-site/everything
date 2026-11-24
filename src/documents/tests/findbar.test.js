@@ -6,11 +6,11 @@ import { fakeUi } from './helpers/fake-ui.js';
 describe('matchLabel', () => {
   it('describes the match position', () => {
     expect(matchLabel({ query: '', total: 0 })).toBe('');
-    expect(matchLabel({ query: 'x', total: 0 })).toBe('No matches');
+    expect(matchLabel({ query: 'x', total: 0 })).toBe('无匹配项');
     // The engine stops counting at a thousand: that many is at least that many.
-    expect(matchLabel({ query: 'x', total: 999, activeIndex: 0 })).toBe('1 of 999');
-    expect(matchLabel({ query: 'x', total: 1000, activeIndex: 0 })).toBe('1 of 1,000+');
-    expect(matchLabel({ query: 'x', total: 4, activeIndex: 1 })).toBe('2 of 4');
+    expect(matchLabel({ query: 'x', total: 999, activeIndex: 0 })).toBe('1 / 999');
+    expect(matchLabel({ query: 'x', total: 1000, activeIndex: 0 })).toBe('1 / 1,000+');
+    expect(matchLabel({ query: 'x', total: 4, activeIndex: 1 })).toBe('2 / 4');
   });
 });
 
@@ -30,7 +30,7 @@ describe('createFindbar', () => {
   it('closes on Escape from any of its controls, returning to the document', () => {
     fb.open();
     const press = (target) => target.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }));
-    const button = [...fb.el.querySelectorAll('button')].find((b) => /match case/i.test(b.getAttribute('aria-label') || b.textContent));
+    const button = [...fb.el.querySelectorAll('button')].find((b) => /区分大小写|match case/i.test(b.getAttribute('aria-label') || b.textContent));
     button.focus();
     expect(press(button)).toBe(false);
     expect(fb.el.hidden).toBe(true);
@@ -64,8 +64,8 @@ describe('createFindbar', () => {
     q.dispatchEvent(new Event('input'));
     vi.advanceTimersByTime(150);
     expect(ui.searchCalls.at(-1)).toEqual(['search', 'test', { caseSensitive: false, regex: false }]);
-    expect(fb.el.querySelector('.find-count').textContent).toBe('1 of 3');
-    expect(fb.el.querySelector('[aria-label="Next match"]').disabled).toBe(false);
+    expect(fb.el.querySelector('.find-count').textContent).toBe('1 / 3');
+    expect(fb.el.querySelector('[aria-label="下一个匹配项"]').disabled).toBe(false);
   });
 
   it('flags no matches and disables replace', () => {
@@ -75,14 +75,14 @@ describe('createFindbar', () => {
     q.dispatchEvent(new Event('input'));
     vi.advanceTimersByTime(150);
     expect(fb.el.classList.contains('no-match')).toBe(true);
-    expect(fb.el.querySelector('.find-count').textContent).toBe('No matches');
+    expect(fb.el.querySelector('.find-count').textContent).toBe('无匹配项');
     expect([...fb.el.querySelectorAll('.btn-sm')].every((b) => b.disabled)).toBe(true);
     // Enter in the replacement field does nothing either, rather than asking the engine to replace nothing.
     const replace = vi.spyOn(ui.search, 'replace');
     const replaceInput = fb.el.querySelector('input[type="text"]');
     replaceInput.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true }));
     expect(replace).not.toHaveBeenCalled();
-    expect(fb.el.querySelector('.find-count').textContent).toBe('No matches');
+    expect(fb.el.querySelector('.find-count').textContent).toBe('无匹配项');
   });
 
   it('Enter moves to the next match and Shift+Enter to the previous', () => {
@@ -96,7 +96,7 @@ describe('createFindbar', () => {
     expect(kinds).toEqual(['open', 'search', 'next', 'previous']);
   });
 
-  it.each([['Next match', 'next'], ['Previous match', 'previous']])('uses the latest typed query when clicking %s', (label, direction) => {
+  it.each([['下一个匹配项', 'next'], ['上一个匹配项', 'previous']])('uses the latest typed query when clicking %s', (label, direction) => {
     fb.open('old');
     const query = fb.el.querySelector('input[type="search"]');
     query.value = 'new';
@@ -143,7 +143,7 @@ describe('createFindbar', () => {
     ui.search.replace = vi.fn().mockRejectedValue(new Error('Replace failed'));
     fb.el.querySelector('.btn-sm').click();
     await Promise.resolve();
-    expect(fb.el.querySelector('.find-count').textContent).toBe('Could not replace. Try again');
+    expect(fb.el.querySelector('.find-count').textContent).toBe('无法替换。请重试');
     expect(fb.el.querySelector('.btn-sm').disabled).toBe(false);
   });
 
@@ -156,13 +156,13 @@ describe('createFindbar', () => {
     fb.open('new');
     finish({ ok: false, reason: 'document-readonly' });
     await Promise.resolve();
-    expect(fb.el.querySelector('.find-count').textContent).toBe('1 of 3');
+    expect(fb.el.querySelector('.find-count').textContent).toBe('1 / 3');
   });
 
   it('toggles case sensitivity and closes back to the editor', () => {
     fb.open();
-    fb.el.querySelector('[aria-label="Match case"]').click();
-    expect(fb.el.querySelector('[aria-label="Match case"]').getAttribute('aria-pressed')).toBe('true');
+    fb.el.querySelector('[aria-label="区分大小写"]').click();
+    expect(fb.el.querySelector('[aria-label="区分大小写"]').getAttribute('aria-pressed')).toBe('true');
     fb.close();
     expect(fb.el.hidden).toBe(true);
     expect(ui.searchCalls.at(-1)).toEqual(['close']);
@@ -221,7 +221,7 @@ describe('regular expressions', () => {
     query.dispatchEvent(new Event('input'));
     vi.advanceTimersByTime(200);
     expect(ui.searchCalls.at(-1)[0]).toBe('clear');
-    expect(bar.el.querySelector('.find-count').textContent).toBe('Invalid pattern');
+    expect(bar.el.querySelector('.find-count').textContent).toBe('无效的模式');
   });
 
   it('reports a pattern the engine itself refused instead of "No matches"', () => {
@@ -230,8 +230,8 @@ describe('regular expressions', () => {
     bar.bind(ui);
     bar.open();
     ui.search.set({ query: 'a\\-b', total: 0, activeIndex: -1, reason: 'search-invalid-pattern' });
-    expect(bar.el.querySelector('.find-count').textContent).toBe('Invalid pattern');
+    expect(bar.el.querySelector('.find-count').textContent).toBe('无效的模式');
     ui.search.set({ query: 'zzz', total: 0, activeIndex: -1, reason: undefined });
-    expect(bar.el.querySelector('.find-count').textContent).toBe('No matches');
+    expect(bar.el.querySelector('.find-count').textContent).toBe('无匹配项');
   });
 });

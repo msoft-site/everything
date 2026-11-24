@@ -7,40 +7,40 @@
 export const BIB_NS = 'http://schemas.openxmlformats.org/officeDocument/2006/bibliography';
 
 /** Name roles of CT_AuthorType this editor edits, with labels. */
-export const NAME_ROLES = { Author: 'Author', Editor: 'Editor', Translator: 'Translator', BookAuthor: 'Book author', Director: 'Director', ProducerName: 'Producer', Writer: 'Writer', Interviewee: 'Interviewee', Interviewer: 'Interviewer', Inventor: 'Inventor', Counsel: 'Counsel', Performer: 'Performer', Compiler: 'Compiler' };
+export const NAME_ROLES = { Author: '作者', Editor: '编者', Translator: '译者', BookAuthor: '书籍作者', Director: '导演', ProducerName: '制片人', Writer: '编剧', Interviewee: '受访者', Interviewer: '采访者', Inventor: '发明人', Counsel: '法律顾问', Performer: '表演者', Compiler: '汇编者' };
 /** Text fields of CT_SourceType this editor edits (all ST_String in the schema), with labels. */
 export const TEXT_FIELDS = {
-  Title: 'Title', ShortTitle: 'Short title', Year: 'Year', Month: 'Month', Day: 'Day', City: 'City', StateProvince: 'State/Province', CountryRegion: 'Country/Region',
-  Publisher: 'Publisher', Edition: 'Edition', Volume: 'Volume', NumberVolumes: 'Number of volumes', Pages: 'Pages', ChapterNumber: 'Chapter',
-  BookTitle: 'Book title', JournalName: 'Journal name', Issue: 'Issue', PeriodicalTitle: 'Periodical title', ConferenceName: 'Conference name',
-  PublicationTitle: 'Publication title', Institution: 'Institution', Department: 'Department', ThesisType: 'Thesis type', Type: 'Type',
-  InternetSiteTitle: 'Website name', URL: 'URL or DOI', YearAccessed: 'Year accessed', MonthAccessed: 'Month accessed', DayAccessed: 'Day accessed',
-  ProductionCompany: 'Production company', Distributor: 'Distributor', Medium: 'Medium', PatentNumber: 'Patent number', CaseNumber: 'Case number',
-  AbbreviatedCaseNumber: 'Abbreviated case number', Court: 'Court', Reporter: 'Reporter', StandardNumber: 'Standard number', Comments: 'Comments',
-  Version: 'Version', Station: 'Station', Broadcaster: 'Broadcaster', BroadcastTitle: 'Broadcast title', AlbumTitle: 'Album title', Theater: 'Theater', RecordingNumber: 'Recording number',
+  Title: '题名', ShortTitle: '简短题名', Year: '年份', Month: '月份', Day: '日期', City: '城市', StateProvince: '省/州', CountryRegion: '国家/地区',
+  Publisher: '出版商', Edition: '版次', Volume: '卷', NumberVolumes: '总卷数', Pages: '页码', ChapterNumber: '章节',
+  BookTitle: '书名', JournalName: '期刊名称', Issue: '期号', PeriodicalTitle: '期刊标题', ConferenceName: '会议名称',
+  PublicationTitle: '出版物标题', Institution: '机构', Department: '部门', ThesisType: '学位论文类型', Type: '类型',
+  InternetSiteTitle: '网站名称', URL: 'URL 或 DOI', YearAccessed: '访问年份', MonthAccessed: '访问月份', DayAccessed: '访问日期',
+  ProductionCompany: '制作公司', Distributor: '发行商', Medium: '介质', PatentNumber: '专利号', CaseNumber: '案件编号',
+  AbbreviatedCaseNumber: '简写案件编号', Court: '法院', Reporter: '判例汇编', StandardNumber: '标准号', Comments: '备注',
+  Version: '版本', Station: '电台/电视台', Broadcaster: '广播公司', BroadcastTitle: '广播节目名称', AlbumTitle: '唱片标题', Theater: '剧院', RecordingNumber: '录音编号',
 };
 // Element names the reader recognises; anything else stays in the retained source XML.
 const KNOWN = new Set(['Tag', 'SourceType', 'Guid', 'LCID', 'RefOrder', 'Author', ...Object.keys(TEXT_FIELDS)]);
 
 /** Source types (ST_SourceType) and the fields the source dialog asks for, most important first. */
 export const SOURCE_TYPES = {
-  Book: { label: 'Book', names: ['Author', 'Editor', 'Translator'], fields: ['Title', 'Year', 'City', 'Publisher', 'Edition', 'Volume', 'NumberVolumes', 'URL'] },
-  BookSection: { label: 'Book section', names: ['Author', 'Editor', 'BookAuthor'], fields: ['Title', 'BookTitle', 'Year', 'Pages', 'City', 'Publisher', 'Edition', 'URL'] },
-  JournalArticle: { label: 'Journal article', names: ['Author'], fields: ['Title', 'JournalName', 'Year', 'Volume', 'Issue', 'Pages', 'URL'] },
-  ArticleInAPeriodical: { label: 'Article in a periodical', names: ['Author'], fields: ['Title', 'PeriodicalTitle', 'Year', 'Month', 'Day', 'Volume', 'Issue', 'Pages', 'URL'] },
-  ConferenceProceedings: { label: 'Conference proceedings', names: ['Author', 'Editor'], fields: ['Title', 'ConferenceName', 'Year', 'City', 'Publisher', 'Pages', 'URL'] },
-  Report: { label: 'Report', names: ['Author'], fields: ['Title', 'Year', 'Publisher', 'Institution', 'City', 'Type', 'StandardNumber', 'URL'] },
-  InternetSite: { label: 'Website', names: ['Author'], fields: ['Title', 'InternetSiteTitle', 'Year', 'Month', 'Day', 'URL', 'YearAccessed', 'MonthAccessed', 'DayAccessed'] },
-  DocumentFromInternetSite: { label: 'Document from website', names: ['Author'], fields: ['Title', 'InternetSiteTitle', 'Year', 'Month', 'Day', 'Publisher', 'URL', 'YearAccessed', 'MonthAccessed', 'DayAccessed'] },
-  Film: { label: 'Film', names: ['Director', 'ProducerName', 'Writer'], fields: ['Title', 'Year', 'ProductionCompany', 'Distributor', 'Medium', 'CountryRegion', 'URL'] },
-  Interview: { label: 'Interview', names: ['Interviewee', 'Interviewer'], fields: ['Title', 'Year', 'Month', 'Day', 'PublicationTitle', 'Publisher', 'Medium', 'URL'] },
-  Patent: { label: 'Patent', names: ['Inventor'], fields: ['Title', 'PatentNumber', 'CountryRegion', 'Type', 'Year', 'Month', 'Day', 'URL'] },
-  Case: { label: 'Case', names: ['Counsel'], fields: ['Title', 'CaseNumber', 'AbbreviatedCaseNumber', 'Court', 'Reporter', 'Year', 'Month', 'Day', 'URL'] },
-  Misc: { label: 'Miscellaneous', names: ['Author'], fields: ['Title', 'PublicationTitle', 'Year', 'Month', 'Day', 'City', 'Publisher', 'Medium', 'URL'] },
-  SoundRecording: { label: 'Sound recording', names: ['Performer', 'Composer'], fields: ['Title', 'AlbumTitle', 'Year', 'ProductionCompany', 'Medium', 'City', 'URL'] },
-  Performance: { label: 'Performance', names: ['Writer', 'Director', 'Performer'], fields: ['Title', 'Theater', 'City', 'Year', 'Month', 'Day', 'URL'] },
-  Art: { label: 'Art', names: ['Author'], fields: ['Title', 'Institution', 'City', 'Year', 'Medium', 'URL'] },
-  ElectronicSource: { label: 'Electronic source', names: ['Author'], fields: ['Title', 'PublicationTitle', 'Year', 'Month', 'Day', 'Publisher', 'Medium', 'URL'] },
+  Book: { label: '书籍', names: ['Author', 'Editor', 'Translator'], fields: ['Title', 'Year', 'City', 'Publisher', 'Edition', 'Volume', 'NumberVolumes', 'URL'] },
+  BookSection: { label: '书籍章节', names: ['Author', 'Editor', 'BookAuthor'], fields: ['Title', 'BookTitle', 'Year', 'Pages', 'City', 'Publisher', 'Edition', 'URL'] },
+  JournalArticle: { label: '期刊文章', names: ['Author'], fields: ['Title', 'JournalName', 'Year', 'Volume', 'Issue', 'Pages', 'URL'] },
+  ArticleInAPeriodical: { label: '定期刊物中的文章', names: ['Author'], fields: ['Title', 'PeriodicalTitle', 'Year', 'Month', 'Day', 'Volume', 'Issue', 'Pages', 'URL'] },
+  ConferenceProceedings: { label: '会议论文集', names: ['Author', 'Editor'], fields: ['Title', 'ConferenceName', 'Year', 'City', 'Publisher', 'Pages', 'URL'] },
+  Report: { label: '报告', names: ['Author'], fields: ['Title', 'Year', 'Publisher', 'Institution', 'City', 'Type', 'StandardNumber', 'URL'] },
+  InternetSite: { label: '网站', names: ['Author'], fields: ['Title', 'InternetSiteTitle', 'Year', 'Month', 'Day', 'URL', 'YearAccessed', 'MonthAccessed', 'DayAccessed'] },
+  DocumentFromInternetSite: { label: '网站上的文档', names: ['Author'], fields: ['Title', 'InternetSiteTitle', 'Year', 'Month', 'Day', 'Publisher', 'URL', 'YearAccessed', 'MonthAccessed', 'DayAccessed'] },
+  Film: { label: '电影', names: ['Director', 'ProducerName', 'Writer'], fields: ['Title', 'Year', 'ProductionCompany', 'Distributor', 'Medium', 'CountryRegion', 'URL'] },
+  Interview: { label: '访谈', names: ['Interviewee', 'Interviewer'], fields: ['Title', 'Year', 'Month', 'Day', 'PublicationTitle', 'Publisher', 'Medium', 'URL'] },
+  Patent: { label: '专利', names: ['Inventor'], fields: ['Title', 'PatentNumber', 'CountryRegion', 'Type', 'Year', 'Month', 'Day', 'URL'] },
+  Case: { label: '案例', names: ['Counsel'], fields: ['Title', 'CaseNumber', 'AbbreviatedCaseNumber', 'Court', 'Reporter', 'Year', 'Month', 'Day', 'URL'] },
+  Misc: { label: '杂项', names: ['Author'], fields: ['Title', 'PublicationTitle', 'Year', 'Month', 'Day', 'City', 'Publisher', 'Medium', 'URL'] },
+  SoundRecording: { label: '录音', names: ['Performer', 'Composer'], fields: ['Title', 'AlbumTitle', 'Year', 'ProductionCompany', 'Medium', 'City', 'URL'] },
+  Performance: { label: '演出', names: ['Writer', 'Director', 'Performer'], fields: ['Title', 'Theater', 'City', 'Year', 'Month', 'Day', 'URL'] },
+  Art: { label: '艺术品', names: ['Author'], fields: ['Title', 'Institution', 'City', 'Year', 'Medium', 'URL'] },
+  ElectronicSource: { label: '电子源', names: ['Author'], fields: ['Title', 'PublicationTitle', 'Year', 'Month', 'Day', 'Publisher', 'Medium', 'URL'] },
 };
 /** The source types offered first in the dialog. */
 export const COMMON_SOURCE_TYPES = ['Book', 'BookSection', 'JournalArticle', 'ArticleInAPeriodical', 'ConferenceProceedings', 'Report', 'InternetSite', 'DocumentFromInternetSite', 'Film', 'Interview', 'Patent', 'Case', 'Misc'];

@@ -25,16 +25,16 @@ export function createAssistantPane({ editor, pkg, error, available = () => P.ca
   let scope = 'selection', history = [], busy = false, stopped = null;
   // Each reply's Undo button, with whether the reply's step is still the latest one.
   const undoSteps = new Map();
-  const pane = sidePane({ title: 'Assistant', label: 'Assistant pane', className: 'as-pane', onOpen: () => { renderContext(); renderEmpty(); fab.setAttribute('aria-expanded', 'true'); titleButton.setAttribute('aria-pressed', 'true'); }, onClose: () => { fab.setAttribute('aria-expanded', 'false'); titleButton.setAttribute('aria-pressed', 'false'); editor()?.focus(); } });
+  const pane = sidePane({ title: '助手', label: '助手窗格', className: 'as-pane', onOpen: () => { renderContext(); renderEmpty(); fab.setAttribute('aria-expanded', 'true'); titleButton.setAttribute('aria-pressed', 'true'); }, onClose: () => { fab.setAttribute('aria-expanded', 'false'); titleButton.setAttribute('aria-pressed', 'false'); editor()?.focus(); } });
   pane.heading.prepend(el('span.as-mark', { 'aria-hidden': 'true' }, commandIconEl('assistant', 16)));
-  const newChat = el('button.btn.btn-ghost.btn-sm.as-new', { type: 'button', onclick: () => { stopped = null; busy = false; send.disabled = false; history = []; log.replaceChildren(); renderEmpty(); input.focus(); } }, 'New chat');
+  const newChat = el('button.btn.btn-ghost.btn-sm.as-new', { type: 'button', onclick: () => { stopped = null; busy = false; send.disabled = false; history = []; log.replaceChildren(); renderEmpty(); input.focus(); } }, '新建对话');
   pane.heading.after(newChat);
 
-  const log = el('div.as-log', { role: 'log', 'aria-label': 'Conversation with the assistant', tabIndex: -1 });
+  const log = el('div.as-log', { role: 'log', 'aria-label': '与助手的对话', tabIndex: -1 });
   const empty = el('div.as-empty');
-  const scopeSelection = el('button.as-scope-option', { type: 'button', role: 'radio', onclick: () => setScope('selection') }, 'Selection');
-  const scopeDocument = el('button.as-scope-option', { type: 'button', role: 'radio', onclick: () => setScope('document') }, 'Whole document');
-  const scopeGroup = el('div.as-scope', { role: 'radiogroup', 'aria-label': 'Send with your message' }, scopeSelection, scopeDocument);
+  const scopeSelection = el('button.as-scope-option', { type: 'button', role: 'radio', onclick: () => setScope('selection') }, '所选内容');
+  const scopeDocument = el('button.as-scope-option', { type: 'button', role: 'radio', onclick: () => setScope('document') }, '整篇文档');
+  const scopeGroup = el('div.as-scope', { role: 'radiogroup', 'aria-label': '随消息一起发送' }, scopeSelection, scopeDocument);
   // A radio group is one Tab stop, on the checked choice; the arrow keys switch between the choices that are available.
   scopeGroup.addEventListener('keydown', e => {
     const step = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key];
@@ -46,9 +46,9 @@ export function createAssistantPane({ editor, pkg, error, available = () => P.ca
     scope = next === scopeSelection ? 'selection' : 'document'; renderContext(); renderEmpty(); next.focus();
   });
   const context = el('p.as-context', { 'aria-live': 'polite' });
-  const input = el('textarea.input.as-input', { rows: 3, placeholder: 'Ask about this document, or ask for a draft or a rewrite…', 'aria-label': 'Message the assistant', enterKeyHint: 'send' });
-  const send = el('button.btn.btn-primary.as-send', { type: 'submit', 'aria-label': 'Send', title: 'Send (Enter)' }, 'Send');
-  const form = el('form.as-form', { onsubmit: e => { e.preventDefault(); submit(input.value); } }, scopeGroup, context, el('div.as-box', {}, input, send), el('p.as-disclaimer', {}, 'Only the text shown above is sent to Puter’s AI. Replies can be wrong: check them before you use them.'));
+  const input = el('textarea.input.as-input', { rows: 3, placeholder: '咨询关于此文档的问题，或要求起草/改写…', 'aria-label': '给助手发消息', enterKeyHint: 'send' });
+  const send = el('button.btn.btn-primary.as-send', { type: 'submit', 'aria-label': '发送', title: '发送 (Enter)' }, '发送');
+  const form = el('form.as-form', { onsubmit: e => { e.preventDefault(); submit(input.value); } }, scopeGroup, context, el('div.as-box', {}, input, send), el('p.as-disclaimer', {}, '仅上方显示的文本会发送给 AI。AI 回复可能不准确，请在使用前核对。'));
   input.addEventListener('keydown', e => {
     if (isComposing(e)) return;
     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); submit(input.value); }
@@ -57,9 +57,9 @@ export function createAssistantPane({ editor, pkg, error, available = () => P.ca
 
   // A small button at the edge of the pages opens the pane (where Puter's AI is available).
   // In the title bar beside Comments, as the other apps' assistants sit in their top bars.
-  const titleButton = el('button.ed-pill.as-title-button', { type: 'button', 'aria-label': 'Assistant', title: `Assistant (${MOD_KEY}+Shift+I)`, 'aria-pressed': 'false', hidden: true, onclick: () => toggle() }, commandIconEl('assistant', 16));
+  const titleButton = el('button.ed-pill.as-title-button', { type: 'button', 'aria-label': '助手', title: `助手 (${MOD_KEY}+Shift+I)`, 'aria-pressed': 'false', hidden: true, onclick: () => toggle() }, commandIconEl('assistant', 16));
   titleButton.addEventListener('mousedown', e => e.preventDefault());
-  const fab = el('button.as-fab', { type: 'button', 'aria-label': 'Assistant', title: `Assistant (${MOD_KEY}+Shift+I)`, 'aria-expanded': 'false', hidden: true, onclick: () => toggle() }, commandIconEl('assistant', 20));
+  const fab = el('button.as-fab', { type: 'button', 'aria-label': '助手', title: `助手 (${MOD_KEY}+Shift+I)`, 'aria-expanded': 'false', hidden: true, onclick: () => toggle() }, commandIconEl('assistant', 20));
   fab.addEventListener('mousedown', e => e.preventDefault());
   // Mod+Shift+I opens and closes the pane from anywhere in the editor.
   const keys = new AbortController();
@@ -92,15 +92,15 @@ export function createAssistantPane({ editor, pkg, error, available = () => P.ca
     scopeSelection.disabled = !s;
     const p = payload();
     const count = p ? words(p.text) : 0;
-    context.textContent = !p ? 'Nothing selected.' : scope === 'selection' ? `Sends the ${plural(count, 'word')} you selected.` : `Sends the whole document (${plural(count, 'word')}).`;
+    context.textContent = !p ? '未选择任何内容。' : scope === 'selection' ? `发送所选的 ${count} 个字词。` : `发送整篇文档 (${count} 个字词)。`;
     context.classList.toggle('is-over', !!p && p.text.length > MAX_ASSISTANT_CHARS);
   }
   function renderEmpty() {
     if (log.querySelector('.as-message')) { empty.remove(); return; }
     const list = scope === 'selection' && selection() ? SUGGESTIONS.selection : SUGGESTIONS.document;
-    empty.replaceChildren(el('p.as-empty-title', {}, 'How can I help with this document?'),
+    empty.replaceChildren(el('p.as-empty-title', {}, '关于这篇文档，我可以为您提供什么帮助？'),
       el('div.as-suggestions', {}, ...list.map(s => el('button.as-suggestion', { type: 'button', onclick: () => (s.id ? runAction(s.id, s.label) : submit(s.ask)) }, s.label))),
-      hint('The assistant sees only the selection or the whole document, as you choose below.'));
+      hint('助手仅能看到您在下方选择的选中文本或整篇文档。'));
     log.append(empty);
   }
 
@@ -118,10 +118,10 @@ export function createAssistantPane({ editor, pkg, error, available = () => P.ca
     const request = String(text || '').trim();
     if (!request || busy) return;
     const p = payload();
-    if (!p) { toast('Select some text, or choose Whole document.', { icon: 'info' }); return; }
-    if (p.text.length > MAX_ASSISTANT_CHARS) { toast('That is more text than the assistant takes at once. Select a shorter passage.', { icon: 'alert' }); return; }
+    if (!p) { toast('请选择一些文本，或选择“整篇文档”。', { icon: 'info' }); return; }
+    if (p.text.length > MAX_ASSISTANT_CHARS) { toast('超出助手一次能处理的文本上限，请选择较短的段落。', { icon: 'alert' }); return; }
     input.value = '';
-    message('me', el('p', {}, request), el('p.as-sent', {}, scope === 'selection' ? `With ${plural(words(p.text), 'selected word')}` : 'With the whole document'));
+    message('me', el('p', {}, request), el('p.as-sent', {}, scope === 'selection' ? `包含选中的 ${words(p.text)} 个字词` : '包含整篇文档'));
     await reply(() => chat(assistantPrompt({ request, text: p.text, scope: p.scope, history })).then(readReply), p, request);
   }
 
@@ -129,7 +129,7 @@ export function createAssistantPane({ editor, pkg, error, available = () => P.ca
   async function runAction(id, label) {
     const action = aiActionById(id); const p = payload();
     if (!action || !p || busy) return;
-    message('me', el('p', {}, label), el('p.as-sent', {}, scope === 'selection' ? `With ${plural(words(p.text), 'selected word')}` : 'With the whole document'));
+    message('me', el('p', {}, label), el('p.as-sent', {}, scope === 'selection' ? `包含选中的 ${words(p.text)} 个字词` : '包含整篇文档'));
     await reply(async () => { const text = await askAi(action, p.text, { chat }); return { kind: 'text', text, paragraphs: answerParagraphs(text), mode: action.mode }; }, p, label);
   }
 
@@ -141,10 +141,10 @@ export function createAssistantPane({ editor, pkg, error, available = () => P.ca
     const stop = el('button.btn.btn-ghost.btn-sm.as-stop', { type: 'button', onclick: () => {
       if (stopped !== token) return;
       stopped = null; busy = false; send.disabled = false;
-      waiting.replaceChildren(el('p.as-sent', { role: 'status' }, 'Stopped.'));
+      waiting.replaceChildren(el('p.as-sent', { role: 'status' }, '已停止。'));
       input.focus();
-    } }, 'Stop');
-    const waiting = message('assistant', el('p.as-thinking', {}, 'Thinking…'), el('div.as-actions', {}, stop));
+    } }, '停止');
+    const waiting = message('assistant', el('p.as-thinking', {}, '思考中…'), el('div.as-actions', {}, stop));
     try {
       const answer = await ask();
       if (stopped !== token) return;
@@ -166,21 +166,21 @@ export function createAssistantPane({ editor, pkg, error, available = () => P.ca
     const body = el('div.as-answer', {}, ...answer.paragraphs.map(t => el('p', {}, t)));
     if (answer.kind !== 'text') return [body, actions(answer, p, false)];
     const replacing = p.scope === 'selection' && answer.mode !== 'append';
-    const original = replacing ? el('p.as-replaces', {}, `Replaces “${p.text.length > 140 ? `${clipText(p.text, 140).trim()}…` : p.text}”`) : null;
+    const original = replacing ? el('p.as-replaces', {}, `替换 “${p.text.length > 140 ? `${clipText(p.text, 140).trim()}…` : p.text}”`) : null;
     // replaceChildren would write a missing line out as the word "null": only the parts there are go in.
-    return [el('p.as-kind', {}, replacing ? 'Suggested replacement' : 'Suggested text'), body, original, actions(answer, p, true)].filter(Boolean);
+    return [el('p.as-kind', {}, replacing ? '建议的替换内容' : '建议的文字'), body, original, actions(answer, p, true)].filter(Boolean);
   }
 
   function actions(answer, p, insertable) {
     const row = el('div.as-actions');
-    const copy = el('button.btn.btn-ghost.btn-sm', { type: 'button', onclick: () => navigator.clipboard?.writeText(answer.text).then(() => toast('Copied')).catch(() => error(new Error('The clipboard is not available.'))) }, 'Copy');
+    const copy = el('button.btn.btn-ghost.btn-sm', { type: 'button', onclick: () => navigator.clipboard?.writeText(answer.text).then(() => toast('已复制')).catch(() => error(new Error('剪贴板不可用。'))) }, '复制');
     const canEdit = () => { const engine = editor(); return !!engine && !pkg()?.readOnly && !engine.viewOnly; };
     const apply = (label, how) => el(`button.btn.btn-sm${how === 'replace' ? '.btn-primary' : '.btn-outline'}`, { type: 'button', disabled: !canEdit(), onclick: e => insert(answer, p, how, row, e.currentTarget) }, label);
     if (insertable) {
-      if (p.scope === 'selection' && p.start !== undefined && answer.mode !== 'append') row.append(apply('Replace Selection', 'replace'), apply('Insert Below', 'below'));
-      else if (p.scope === 'selection' && p.start !== undefined) row.append(apply('Insert After Selection', 'after'));
-      else row.append(apply('Insert at Cursor', 'cursor'));
-    } else row.append(apply('Insert at Cursor', 'cursor'));
+      if (p.scope === 'selection' && p.start !== undefined && answer.mode !== 'append') row.append(apply('替换所选内容', 'replace'), apply('在下方插入', 'below'));
+      else if (p.scope === 'selection' && p.start !== undefined) row.append(apply('在所选内容后插入', 'after'));
+      else row.append(apply('在光标处插入', 'cursor'));
+    } else row.append(apply('在光标处插入', 'cursor'));
     row.append(copy);
     return row;
   }
@@ -192,7 +192,7 @@ export function createAssistantPane({ editor, pkg, error, available = () => P.ca
     if (engine.session.path !== null) engine.editStory(null);
     const model = engine.model;
     if (p.start !== undefined && (how === 'replace' || how === 'below' || how === 'after') && model.text.slice(p.start, p.end) !== p.original) {
-      error(new Error('The selected text changed since you asked. Select it again and ask once more.')); return;
+      error(new Error('提问后所选文本已更改。请重新选择并再次提问。')); return;
     }
     // A reply's "- " and "1. " items go in as bulleted and numbered list paragraphs, not as text with a marker.
     const items = listItems(answer.paragraphs).map(item => ({ ...item, text: insertableText(item.text) }));
@@ -220,10 +220,10 @@ export function createAssistantPane({ editor, pkg, error, available = () => P.ca
     const step = engine.session.history.at(-1), latest = () => editor() === engine && !!step && engine.session.history.at(-1) === step;
     const undo = el('button.btn.btn-ghost.btn-sm', { type: 'button', onclick: () => {
       if (!latest()) { undo.disabled = true; return; }
-      engine.undo(); undoSteps.delete(undo); undo.disabled = true; applied.textContent = 'Undone';
-    } }, 'Undo');
+      engine.undo(); undoSteps.delete(undo); undo.disabled = true; applied.textContent = '已撤销';
+    } }, '撤销');
     undoSteps.set(undo, latest);
-    const applied = el('span.as-applied', { role: 'status' }, how === 'replace' ? 'Replaced' : 'Inserted');
+    const applied = el('span.as-applied', { role: 'status' }, how === 'replace' ? '已替换' : '已插入');
     row.replaceChildren(applied, undo);
   }
 
@@ -269,7 +269,7 @@ export function createAssistantPane({ editor, pkg, error, available = () => P.ca
     },
     extendMenu(id) {
       if (!['tools', 'view'].includes(id) || !available()) return [];
-      return [{ separator: true }, { label: 'Assistant', icon: 'assistant', shortcut: `${MOD_KEY}+Shift+I`, checked: id === 'view' ? pane.isOpen : undefined, disabled: !editor(), onSelect: () => toggle() }];
+      return [{ separator: true }, { label: '助手', icon: 'assistant', shortcut: `${MOD_KEY}+Shift+I`, checked: id === 'view' ? pane.isOpen : undefined, disabled: !editor(), onSelect: () => toggle() }];
     },
     destroy() { stopped = null; keys.abort(); pane.destroy(); },
   };

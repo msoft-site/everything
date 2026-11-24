@@ -6,16 +6,16 @@
  */
 
 export const RULES = {
-  altText: { severity: 'error', title: 'Missing alternative text', why: 'Screen readers announce a picture by its description. Without one, its meaning is lost.' },
-  tableHeader: { severity: 'error', title: 'Table has no header row', why: 'A header row tells assistive technology what each column holds.' },
-  lowContrast: { severity: 'error', title: 'Low text contrast', why: 'Text that barely stands out from its background is hard to read for many people.' },
-  hardColors: { severity: 'warning', title: 'Hard-to-read highlight', why: 'The highlight or shading makes the text color hard to distinguish.' },
-  headingOrder: { severity: 'warning', title: 'Skipped heading level', why: 'Headings that skip levels make the outline hard to follow.' },
-  mergedCells: { severity: 'warning', title: 'Merged or split table cells', why: 'Merged cells change the grid that screen readers use to announce position.' },
-  blankRows: { severity: 'warning', title: 'Blank table row', why: 'Empty rows used for spacing read as missing data.' },
-  emptyParagraphs: { severity: 'tip', title: 'Empty paragraphs used for spacing', why: 'Use paragraph spacing instead of blank lines; screen readers announce each one.' },
-  repeatedBlanks: { severity: 'tip', title: 'Repeated spaces or tabs', why: 'Runs of blank characters used to position text read as noise.' },
-  unclearLinks: { severity: 'warning', title: 'Unclear link text', why: 'Link text should say where the link goes, not "click here" or a bare address.' },
+  altText: { severity: 'error', title: '缺少替代文字', why: '屏幕阅读器通过说明朗读图片。如果缺少说明，图片含义将会丢失。' },
+  tableHeader: { severity: 'error', title: '表格无标题行', why: '标题行可告知辅助技术各列所包含的内容。' },
+  lowContrast: { severity: 'error', title: '文字对比度过低', why: '与背景对比不明显的文字对许多人来说难以阅读。' },
+  hardColors: { severity: 'warning', title: '不易辨认的突出显示', why: '突出显示或底纹导致文字颜色难以分辨。' },
+  headingOrder: { severity: 'warning', title: '跳级标题级别', why: '跳过级别的标题会使文档大纲难以理解。' },
+  mergedCells: { severity: 'warning', title: '合并或拆分的表格单元格', why: '合并的单元格会改变屏幕阅读器用于播报位置的网格。' },
+  blankRows: { severity: 'warning', title: '空白表格行', why: '用于间距的空行会被朗读为缺失数据。' },
+  emptyParagraphs: { severity: 'tip', title: '使用空段落设置间距', why: '请使用段落间距代替空行；屏幕阅读器会朗读每一个空行。' },
+  repeatedBlanks: { severity: 'tip', title: '重复的空格或制表符', why: '用于排列文字的连续空白字符会被朗读为杂音。' },
+  unclearLinks: { severity: 'warning', title: '超链接文字不明确', why: '超链接文字应指明目标，而不是“点击此处”或单纯的网址。' },
 };
 
 /* ---- Colors ---- */
@@ -60,7 +60,7 @@ export function checkAccessibility({ paragraphs, tables = [], pageSettings = {} 
 
   let lastLevel = 0, emptyRun = [];
   const flushEmpty = () => {
-    if (emptyRun.length >= 2) add('emptyParagraphs', starts[emptyRun[0]], starts[emptyRun.at(-1)] + 1, `${emptyRun.length} empty paragraphs in a row`, { kind: 'removeEmpty', paragraphs: emptyRun.map(i => paragraphs[i].id) });
+    if (emptyRun.length >= 2) add('emptyParagraphs', starts[emptyRun[0]], starts[emptyRun.at(-1)] + 1, `${emptyRun.length} 个连续的空段落`, { kind: 'removeEmpty', paragraphs: emptyRun.map(i => paragraphs[i].id) });
     emptyRun = [];
   };
   paragraphs.forEach((p, index) => {
@@ -71,25 +71,25 @@ export function checkAccessibility({ paragraphs, tables = [], pageSettings = {} 
     // Heading levels that skip.
     const level = headingLevel(p);
     if (level && on('headingOrder')) {
-      if (lastLevel && level > lastLevel + 1) add('headingOrder', start, start + length(p), `Heading ${level} follows heading ${lastLevel}`);
+      if (lastLevel && level > lastLevel + 1) add('headingOrder', start, start + length(p), `标题 ${level} 紧随标题 ${lastLevel}`);
       lastLevel = level;
     }
     let at = start;
     for (const run of p.runs) {
       const end = at + run.text.length;
-      if (run.image && !run.image.alt?.trim() && !run.image.decorative && on('altText')) add('altText', at, end, run.image.name || 'Picture', run.image.retainedDrawing ? null : { kind: 'altText' });
+      if (run.image && !run.image.alt?.trim() && !run.image.decorative && on('altText')) add('altText', at, end, run.image.name || '图片', run.image.retainedDrawing ? null : { kind: 'altText' });
       if (run.text.trim() && !run.image && !run.revision?.type?.startsWith?.('del')) {
         const background = runBackground(run, page), color = textColor(run, background);
         const ratio = contrastRatio(color, background);
         const large = (run.fontSize || 12) >= 18 || run.bold && (run.fontSize || 12) >= 14;
         if (ratio !== null && ratio < (large ? 3 : 4.5)) {
           const highlighted = background !== page;
-          if (highlighted ? on('hardColors') : on('lowContrast')) add(highlighted ? 'hardColors' : 'lowContrast', at, end, `Contrast ${ratio.toFixed(1)}:1 (needs ${large ? 3 : 4.5}:1)`, highlighted ? { kind: 'clearHighlight' } : { kind: 'autoColor' });
+          if (highlighted ? on('hardColors') : on('lowContrast')) add(highlighted ? 'hardColors' : 'lowContrast', at, end, `对比度 ${ratio.toFixed(1)}:1 (需要 ${large ? 3 : 4.5}:1)`, highlighted ? { kind: 'clearHighlight' } : { kind: 'autoColor' });
         }
       }
       at = end;
     }
-    if (on('repeatedBlanks')) for (const match of body.matchAll(/ {3,}|\t{2,}/g)) add('repeatedBlanks', start + match.index, start + match.index + match[0].length, match[0][0] === '\t' ? `${match[0].length} tabs in a row` : `${match[0].length} spaces in a row`, { kind: 'collapseBlanks' });
+    if (on('repeatedBlanks')) for (const match of body.matchAll(/ {3,}|\t{2,}/g)) add('repeatedBlanks', start + match.index, start + match.index + match[0].length, match[0][0] === '\t' ? `${match[0].length} 个连续制表符` : `${match[0].length} 个连续空格`, { kind: 'collapseBlanks' });
     if (on('unclearLinks')) {
       // Contiguous runs of one link form its text.
       let linkAt = start, current = null, from = start;
@@ -122,12 +122,12 @@ export function checkAccessibility({ paragraphs, tables = [], pageSettings = {} 
     const first = tableFirst.get(table) ?? -1;
     if (first < 0) continue;
     const tableStart = starts[first];
-    if (!table.rows.some(row => row.header) && table.rows.length > 1 && on('tableHeader')) add('tableHeader', tableStart, tableStart, `Table with ${table.rows.length} rows`, { kind: 'headerRow', cellId: paragraphs[first].cellId });
-    if (on('mergedCells') && table.rows.some(row => row.cells.some(cell => (cell.span || 1) > 1 || cell.vMerge))) add('mergedCells', tableStart, tableStart, 'Merged cells');
+    if (!table.rows.some(row => row.header) && table.rows.length > 1 && on('tableHeader')) add('tableHeader', tableStart, tableStart, `包含 ${table.rows.length} 行的表格`, { kind: 'headerRow', cellId: paragraphs[first].cellId });
+    if (on('mergedCells') && table.rows.some(row => row.cells.some(cell => (cell.span || 1) > 1 || cell.vMerge))) add('mergedCells', tableStart, tableStart, '合并的单元格');
     if (on('blankRows')) for (const row of table.rows) {
       const ids = new Set(row.cells.map(c => c.id));
       const own = [...ids].flatMap(id => cellParagraphs.get(id) || []).sort((a, b) => a - b).map(i => [paragraphs[i], i]);
-      if (own.length && own.every(([p]) => !text(p).trim() && !p.runs.some(r => r.image))) add('blankRows', starts[own[0][1]], starts[own[0][1]], 'All cells in this row are empty', { kind: 'deleteRow', cellId: own[0][0].cellId });
+      if (own.length && own.every(([p]) => !text(p).trim() && !p.runs.some(r => r.image))) add('blankRows', starts[own[0][1]], starts[own[0][1]], '此行中所有单元格均为空', { kind: 'deleteRow', cellId: own[0][0].cellId });
     }
   }
   return issues.sort((a, b) => a.start - b.start || a.end - b.end);

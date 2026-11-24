@@ -6,8 +6,8 @@
 import { el } from '../ui/dom.js';
 import { check, field, galleryItem, number, openDialog, section, select, tablePreview, text } from './references-ui.js';
 
-const LEADER_OPTIONS = [['dot', 'Dots ......'], ['hyphen', 'Dashes ------'], ['underscore', 'Line ______'], ['middleDot', 'Middle dots ····'], ['none', '(none)']];
-const SAMPLE = [{ text: 'Introduction', page: 1, level: 1 }, { text: 'Background', page: 2, level: 2 }, { text: 'Prior work', page: 3, level: 3 }, { text: 'Method', page: 5, level: 1 }];
+const LEADER_OPTIONS = [['dot', '点 ......'], ['hyphen', '短划线 ------'], ['underscore', '实线 ______'], ['middleDot', '居中点 ····'], ['none', '(无)']];
+const SAMPLE = [{ text: '引言', page: 1, level: 1 }, { text: '背景', page: 2, level: 2 }, { text: '先前工作', page: 3, level: 3 }, { text: '方法', page: 5, level: 1 }];
 
 export function createTocCommands(ctx) {
   const { editor, ready, runBody, error } = ctx;
@@ -37,7 +37,7 @@ export function createTocCommands(ctx) {
   function galleryItems(focusEditor) {
     const designs = tocModule?.TOC_DESIGNS || [];
     return [
-      { header: 'Automatic tables' },
+      { header: '自动目录' },
       ...designs.map(design => galleryItem({ label: design.name, description: design.description, disabled: !bodyReady(), focusEditor, onSelect: () => insertDesign(design),
         preview: tablePreview(SAMPLE.filter(r => r.level <= design.levels).map(r => ({ ...r, bold: design.boldTop && r.level === 1 })), { title: design.title, leader: design.leader, rightAlign: design.rightAlign !== false, pageNumbers: design.pageNumbers !== false }) })),
     ];
@@ -48,9 +48,9 @@ export function createTocCommands(ctx) {
     return [
       ...galleryItems(focusEditor),
       { separator: true },
-      { label: 'Custom Table of Contents…', icon: 'toc', disabled: !bodyReady(), onSelect: () => customDialog() },
-      { label: 'Update Table…', icon: 'updateTable', disabled: !ready() || !has, onSelect: () => updateDialog(false) },
-      { label: 'Remove Table of Contents', icon: 'delete', disabled: !ready() || !has, onSelect: removeTable },
+      { label: '自定义目录…', icon: 'toc', disabled: !bodyReady(), onSelect: () => customDialog() },
+      { label: '更新目录…', icon: 'updateTable', disabled: !ready() || !has, onSelect: () => updateDialog(false) },
+      { label: '删除目录', icon: 'delete', disabled: !ready() || !has, onSelect: removeTable },
     ];
   }
 
@@ -69,22 +69,22 @@ export function createTocCommands(ctx) {
     const options = existing ? existing.options : toc.parseTocInstruction(toc.TOC_INSTRUCTION);
     const look = existing ? toc.tocAppearance(body, existing) : { leader: 'dot', rightAlign: true, boldTop: false };
     const levelsHigh = options.headingRange?.[1] ?? Math.max(3, ...options.styles.map(s => s.level));
-    const pageNumbers = check('Show page numbers', !options.omitPageNumbers, sync);
-    const rightAlign = check('Right align page numbers', look.rightAlign, sync);
-    const leader = select('Tab leader', LEADER_OPTIONS, look.leader, sync);
-    const links = check('Use hyperlinks instead of page numbers on screen', options.hyperlinks, sync);
-    const levels = number('Show levels', levelsHigh, { min: 1, max: 9, oninput: sync });
-    const headings = check('Heading styles', !!options.headingRange || !existing, sync);
-    const outline = check('Outline levels', options.outline || !existing, sync);
-    const title = text('Title', existing ? '' : 'Contents', { placeholder: 'No title' });
+    const pageNumbers = check('显示页码', !options.omitPageNumbers, sync);
+    const rightAlign = check('页码右对齐', look.rightAlign, sync);
+    const leader = select('制表符前导符', LEADER_OPTIONS, look.leader, sync);
+    const links = check('在屏幕上使用超链接替代页码', options.hyperlinks, sync);
+    const levels = number('显示级别', levelsHigh, { min: 1, max: 9, oninput: sync });
+    const headings = check('标题样式', !!options.headingRange || !existing, sync);
+    const outline = check('大纲级别', options.outline || !existing, sync);
+    const title = text('标题', existing ? '' : '目录', { placeholder: '无标题' });
     // Custom styles: each paragraph style can map to a level (the \t switch).
     const styles = Object.values(body.styles?.definitions || {}).filter(s => s.type === 'paragraph' && !/^(toc|heading) \d$/i.test(s.name || '') && s.name);
     const mapped = new Map(options.styles.map(s => [s.name.toLowerCase(), s.level]));
     const styleRows = styles.map(style => {
-      const input = el('input.input.ref-level-input', { type: 'number', min: 1, max: 9, step: 1, value: mapped.get(style.name.toLowerCase()) ?? '', 'aria-label': `TOC level for ${style.name}`, oninput: sync });
+      const input = el('input.input.ref-level-input', { type: 'number', min: 1, max: 9, step: 1, value: mapped.get(style.name.toLowerCase()) ?? '', 'aria-label': `样式 ${style.name} 的目录级别`, oninput: sync });
       return { style, input, row: el('div.ref-style-row', {}, el('span.ref-style-name', {}, style.name), input) };
     });
-    const preview = el('div.ref-preview-frame', { 'aria-label': 'Preview', role: 'img' });
+    const preview = el('div.ref-preview-frame', { 'aria-label': '预览', role: 'img' });
     const styleList = el('div.ref-style-list', {}, ...styleRows.map(r => r.row));
     function sync() {
       rightAlign.box.disabled = !pageNumbers.box.checked;
@@ -93,21 +93,21 @@ export function createTocCommands(ctx) {
       preview.replaceChildren(tablePreview(SAMPLE.filter(r => r.level <= high), { leader: leader.value, rightAlign: rightAlign.box.checked, pageNumbers: pageNumbers.box.checked }));
     }
     sync();
-    openDialog({ title: 'Table of Contents', wide: true, className: 'ref-toc-dialog', submitLabel: existing ? 'Replace' : 'Insert', body: [
+    openDialog({ title: '目录', wide: true, className: 'ref-toc-dialog', submitLabel: existing ? '替换' : '插入', body: [
       el('div.ref-two-column', {},
         el('div.ref-column', {},
-          el('span.field-label', {}, 'Print preview'), preview,
-          pageNumbers, rightAlign, field('Tab leader', leader),
-          !existing && field('Title', title)),
+          el('span.field-label', {}, '打印预览'), preview,
+          pageNumbers, rightAlign, field('制表符前导符', leader),
+          !existing && field('标题', title)),
         el('div.ref-column', {},
           links,
-          field('Show levels', levels),
-          section('Build table from', headings, outline,
-            styleRows.length ? el('details.ref-details', {}, el('summary', {}, 'Other styles…'), el('p.field-hint', {}, 'Give a style a level from 1 to 9 to list its paragraphs.'), styleList) : null))),
+          field('显示级别', levels),
+          section('有效样式来自', headings, outline,
+            styleRows.length ? el('details.ref-details', {}, el('summary', {}, '其他样式…'), el('p.field-hint', {}, '为样式指定 1 到 9 的级别以列出其段落。'), styleList) : null))),
     ], onSubmit: async () => {
       const high = Math.min(9, Math.max(1, Number(levels.value) || 3));
       const custom = styleRows.filter(r => r.input.value).map(r => ({ name: r.style.name, level: Math.min(9, Math.max(1, Number(r.input.value))) }));
-      if (!headings.box.checked && !outline.box.checked && !custom.length) throw new Error('Choose at least one source for the table: heading styles, outline levels or another style.');
+      if (!headings.box.checked && !outline.box.checked && !custom.length) throw new Error('请至少为目录选择一个来源：标题样式、大纲级别或其他样式。');
       // Outline levels alone still honour the level limit, so either source keeps the \o range.
       const next = toc.contentsOptions({ levels: high, hyperlinks: links.box.checked, pageNumbers: pageNumbers.box.checked, rightAlign: rightAlign.box.checked,
         headingStyles: headings.box.checked || outline.box.checked, outline: outline.box.checked, styles: custom });
@@ -123,14 +123,14 @@ export function createTocCommands(ctx) {
     const engine = ready(); if (!engine) return;
     const toc = await engineToc();
     const target = tableFor(toc, engine.session.body, figures);
-    if (!target) { error(new Error(figures ? 'This document has no table of figures yet.' : 'This document has no table of contents yet.')); return; }
+    if (!target) { error(new Error(figures ? '本文档尚未包含图表目录。' : '本文档尚未包含目录。')); return; }
     const pages = el('input', { type: 'radio', name: 'ref-update-mode', value: 'pages', checked: true });
     const entire = el('input', { type: 'radio', name: 'ref-update-mode', value: 'entire' });
-    openDialog({ title: figures ? 'Update Table of Figures' : 'Update Table of Contents', submitLabel: 'Update', body: [
-      el('p.field-hint', {}, 'Choose what to bring up to date.'),
-      el('div.ref-radio-group', { role: 'radiogroup', 'aria-label': 'Update' },
-        el('label.ed-check', {}, pages, 'Update page numbers only'),
-        el('label.ed-check', {}, entire, 'Update entire table (new entries and text)')),
+    openDialog({ title: figures ? '更新图表目录' : '更新目录', submitLabel: '更新', body: [
+      el('p.field-hint', {}, '请选择要更新的内容。'),
+      el('div.ref-radio-group', { role: 'radiogroup', 'aria-label': '更新' },
+        el('label.ed-check', {}, pages, '只更新页码'),
+        el('label.ed-check', {}, entire, '更新整个目录 (包含新条目和文本)')),
     ], onSubmit: () => updateTable(figures, entire.checked ? 'entire' : 'pages') });
   }
 
@@ -147,7 +147,7 @@ export function createTocCommands(ctx) {
         return { only };
       }, { modules: ['toc'], scopedRefresh: true });
       // Shown in the Update dialog, which stays open for the other choice.
-      if (plain) throw new Error(`This table of ${figures ? 'figures' : 'contents'} has no page-number fields to update. Choose Update entire table to rebuild it with its page numbers.`);
+      if (plain) throw new Error(`此${figures ? '图表目录' : '目录'}没有可更新的页码字段。请选择“更新整个目录”以重新生成带有页码的目录。`);
       return result;
     }
     return runBody((body, toc) => {
@@ -169,14 +169,14 @@ export function createTocCommands(ctx) {
     const toc = tables().find(t => !t.figures), shown = Math.max(3, toc?.options.headingRange?.[1] ?? 3);
     const level = currentLevel(), disabled = !ready() || editor()?.session.path !== null;
     return [
-      { label: 'Do Not Show in Table of Contents', checked: level === 9, radio: true, disabled, onSelect: () => setLevel(0) },
-      ...Array.from({ length: shown }, (_, i) => ({ label: `Level ${i + 1}`, checked: level === i, radio: true, disabled, onSelect: () => setLevel(i + 1) })),
+      { label: '不在目录中显示', checked: level === 9, radio: true, disabled, onSelect: () => setLevel(0) },
+      ...Array.from({ length: shown }, (_, i) => ({ label: `级别 ${i + 1}`, checked: level === i, radio: true, disabled, onSelect: () => setLevel(i + 1) })),
     ];
   }
   function setLevel(level) {
     const engine = ready(); if (!engine) return;
     engine.finishComposition();
-    if (engine.session.path !== null) { error(new Error('Add Text applies to paragraphs in the document body.')); return; }
+    if (engine.session.path !== null) { error(new Error('“添加文本”仅适用于正文中的段落。')); return; }
     const model = engine.model, styles = model.styles?.definitions || {};
     const named = name => Object.values(styles).find(s => s.type === 'paragraph' && s.name?.toLowerCase() === name)?.id;
     engine.execute(() => {
@@ -203,25 +203,25 @@ export function createTocCommands(ctx) {
     const look = existing ? toc.tocAppearance(body, existing) : { leader: 'dot', rightAlign: true };
     // A table of figures names its captions' SEQ identifier ("My_Chart"); show the label it stands for.
     const current = options?.caption || options?.captionNoLabel;
-    const label = select('Caption label', labels.map(l => [l, l]), (current && labels.find(l => captions.sequenceId(l).toLowerCase() === captions.sequenceId(current).toLowerCase())) || current || labels[0], sync);
-    const includeLabel = check('Include label and number', !options?.captionNoLabel, sync);
-    const pageNumbers = check('Show page numbers', !options?.omitPageNumbers, sync);
-    const rightAlign = check('Right align page numbers', look.rightAlign, sync);
-    const leader = select('Tab leader', LEADER_OPTIONS, look.leader, sync);
-    const links = check('Use hyperlinks instead of page numbers on screen', options ? options.hyperlinks : true);
-    const preview = el('div.ref-preview-frame', { role: 'img', 'aria-label': 'Preview' });
+    const label = select('题注标签', labels.map(l => [l, l]), (current && labels.find(l => captions.sequenceId(l).toLowerCase() === captions.sequenceId(current).toLowerCase())) || current || labels[0], sync);
+    const includeLabel = check('包含标签和编号', !options?.captionNoLabel, sync);
+    const pageNumbers = check('显示页码', !options?.omitPageNumbers, sync);
+    const rightAlign = check('页码右对齐', look.rightAlign, sync);
+    const leader = select('制表符前导符', LEADER_OPTIONS, look.leader, sync);
+    const links = check('在屏幕上使用超链接替代页码', options ? options.hyperlinks : true);
+    const preview = el('div.ref-preview-frame', { role: 'img', 'aria-label': '预览' });
     function sync() {
       rightAlign.box.disabled = !pageNumbers.box.checked;
       leader.disabled = !pageNumbers.box.checked || !rightAlign.box.checked;
-      const name = label.value || 'Figure', prefix = n => includeLabel.box.checked ? `${name} ${n}: ` : '';
-      preview.replaceChildren(tablePreview([{ text: `${prefix(1)}Sample one`, page: 1, level: 1 }, { text: `${prefix(2)}Sample two`, page: 3, level: 1 }, { text: `${prefix(3)}Sample three`, page: 5, level: 1 }],
+      const name = label.value || '图表', prefix = n => includeLabel.box.checked ? `${name} ${n}: ` : '';
+      preview.replaceChildren(tablePreview([{ text: `${prefix(1)}示例一`, page: 1, level: 1 }, { text: `${prefix(2)}示例二`, page: 3, level: 1 }, { text: `${prefix(3)}示例三`, page: 5, level: 1 }],
         { leader: leader.value, rightAlign: rightAlign.box.checked, pageNumbers: pageNumbers.box.checked }));
     }
     sync();
-    openDialog({ title: 'Table of Figures', wide: true, className: 'ref-toc-dialog', submitLabel: existing ? 'Replace' : 'Insert', body: [
+    openDialog({ title: '图表目录', wide: true, className: 'ref-toc-dialog', submitLabel: existing ? '替换' : '插入', body: [
       el('div.ref-two-column', {},
-        el('div.ref-column', {}, el('span.field-label', {}, 'Print preview'), preview, pageNumbers, rightAlign, field('Tab leader', leader)),
-        el('div.ref-column', {}, field('Caption label', label), includeLabel, links)),
+        el('div.ref-column', {}, el('span.field-label', {}, '打印预览'), preview, pageNumbers, rightAlign, field('制表符前导符', leader)),
+        el('div.ref-column', {}, field('题注标签', label), includeLabel, links)),
     ], onSubmit: () => runBody((doc, t) => {
       const target = tableFor(t, doc, true);
       const next = t.figuresOptions({ label: label.value || 'Figure', includeLabel: includeLabel.box.checked, hyperlinks: links.box.checked, pageNumbers: pageNumbers.box.checked, rightAlign: rightAlign.box.checked });

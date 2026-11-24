@@ -31,9 +31,9 @@ export function announce(message) {
 }
 
 /**
- * toast('Saved')
- * toast('Deleted', { icon: 'trash', action: { label: 'Undo', onClick } })
- * toast('Working…', { duration: Infinity }) stays until dismissed; `update(text)` changes its words.
+ * toast('已保存')
+ * toast('已删除', { icon: 'trash', action: { label: '撤销', onClick } })
+ * toast('正在处理…', { duration: Infinity }) 持续显示直到关闭；`update(text)` 可更改文案。
  */
 export function toast(message, { icon: name = 'check', duration, action = null } = {}) {
   const ms = duration ?? (action ? 6000 : 2600);

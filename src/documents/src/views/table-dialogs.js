@@ -22,17 +22,17 @@ function radios(name, label, options, value, onChange) {
 }
 
 /** A form dialog: `submit` returns false or throws to keep it open with a message. */
-export function formDialog({ title, body, submit, onClose, wide = false, ok = 'OK', className = '' }) {
+export function formDialog({ title, body, submit, onClose, wide = false, ok = '确定', className = '' }) {
   const error = el('p.field-error', { role: 'alert', hidden: true });
   let modal;
   const form = el('form.table-dialog', { onsubmit: e => {
     e.preventDefault();
     try {
-      if (submit() === false) throw new Error('The table could not be changed that way.');
+      if (submit() === false) throw new Error('无法以该方式修改表格。');
       modal.close();
     } catch (err) { error.textContent = err.message; error.hidden = false; }
   } }, ...body, error,
-  el('div.row.row-end', {}, el('button.btn.btn-ghost', { type: 'button', onclick: () => modal.close() }, 'Cancel'), el('button.btn.btn-primary', { type: 'submit' }, ok)));
+  el('div.row.row-end', {}, el('button.btn.btn-ghost', { type: 'button', onclick: () => modal.close() }, '取消'), el('button.btn.btn-primary', { type: 'submit' }, ok)));
   modal = openModal({ title, content: form, wide, onClose: () => {
     const root = modal.panel.closest('.modal-root'); root?.setAttribute('inert', ''); root?.setAttribute('aria-hidden', 'true'); onClose?.();
   } });
@@ -52,9 +52,9 @@ export function rememberedTableSize() {
 /** Insert Table: size, AutoFit behavior, and whether to remember them for next time. */
 export function openInsertTableDialog(apply, { onClose } = {}) {
   const saved = rememberedTableSize() || { rows: 2, columns: 5, autofit: 'fixed', width: '' };
-  const columns = number('Number of columns', saved.columns), rows = number('Number of rows', saved.rows, { max: 500 });
-  const width = el('input.input', { type: 'number', min: 0.1, max: 22, step: 0.01, value: saved.width || '', placeholder: 'Auto', 'aria-label': 'Fixed column width (in)' });
-  const autofit = radios('table-autofit', 'AutoFit behavior', [['fixed', 'Fixed column width', width], ['contents', 'AutoFit to contents'], ['window', 'AutoFit to window']], saved.autofit || 'fixed', v => { width.disabled = v !== 'fixed'; preview(); });
+  const columns = number('列数', saved.columns), rows = number('行数', saved.rows, { max: 500 });
+  const width = el('input.input', { type: 'number', min: 0.1, max: 22, step: 0.01, value: saved.width || '', placeholder: '自动', 'aria-label': '固定列宽 (英寸)' });
+  const autofit = radios('table-autofit', '“自动调整”操作', [['fixed', '固定列宽', width], ['contents', '根据内容调整表格'], ['window', '根据窗口调整表格']], saved.autofit || 'fixed', v => { width.disabled = v !== 'fixed'; preview(); });
   width.disabled = (saved.autofit || 'fixed') !== 'fixed';
   const remember = el('input', { type: 'checkbox', checked: !!rememberedTableSize() });
   const sketch = el('div.table-dialog-preview', { 'aria-hidden': 'true' });
@@ -67,14 +67,14 @@ export function openInsertTableDialog(apply, { onClose } = {}) {
   columns.addEventListener('input', preview); rows.addEventListener('input', preview); preview();
   // The fields are checked on OK, with the message in words: the width's arrows step by hundredths, but any width
   // in range is taken, as Word takes 1.125 in.
-  const dialog = formDialog({ title: 'Insert Table', onClose, className: 'table-insert-dialog', body: [
-    el('div.table-dialog-grid', {}, field('Columns', columns), field('Rows', rows)),
+  const dialog = formDialog({ title: '插入表格', onClose, className: 'table-insert-dialog', body: [
+    el('div.table-dialog-grid', {}, field('列数', columns), field('行数', rows)),
     autofit, sketch,
-    el('label.table-check', {}, remember, 'Remember these settings for new tables'),
+    el('label.table-check', {}, remember, '为新表格记忆此尺寸'),
   ], submit: () => {
     const choice = { rows: Number(rows.value), columns: Number(columns.value), autofit: autofit.value(), width: autofit.value() === 'fixed' && width.value ? Number(width.value) : null };
-    if (!Number.isInteger(choice.rows) || !Number.isInteger(choice.columns) || choice.rows < 1 || choice.columns < 1 || choice.columns > 32 || choice.rows > 500) throw new Error('Choose 1–32 columns and 1–500 rows.');
-    if (choice.width !== null && !amountInRange(width)) throw new Error('Enter a column width from 0.1 to 22 in, or leave it blank for Auto.');
+    if (!Number.isInteger(choice.rows) || !Number.isInteger(choice.columns) || choice.rows < 1 || choice.columns < 1 || choice.columns > 32 || choice.rows > 500) throw new Error('请选择 1–32 列和 1–500 行。');
+    if (choice.width !== null && !amountInRange(width)) throw new Error('请输入 0.1 到 22 英寸之间的列宽，或留空表示“自动”。');
     try { if (remember.checked) localStorage.setItem(REMEMBER_KEY, JSON.stringify({ ...choice, width: choice.width ?? '' })); else localStorage.removeItem(REMEMBER_KEY); } catch { /* storage may be unavailable */ }
     return apply(choice);
   } });
@@ -84,15 +84,15 @@ export function openInsertTableDialog(apply, { onClose } = {}) {
 
 /* ---- Converting ---- */
 
-function separatorChoice(name, label, value, onChange, paragraphLabel = 'Paragraphs') {
-  const other = el('input.input.table-other', { type: 'text', maxLength: 1, value: '-', 'aria-label': 'Other separator', oninput: () => onChange?.() });
-  const group = radios(name, label, [['paragraph', paragraphLabel], ['tab', 'Tabs'], ['comma', 'Commas'], ['other', 'Other', other]], value, () => onChange?.());
+function separatorChoice(name, label, value, onChange, paragraphLabel = '段落标记') {
+  const other = el('input.input.table-other', { type: 'text', maxLength: 1, value: '-', 'aria-label': '其他字符', oninput: () => onChange?.() });
+  const group = radios(name, label, [['paragraph', paragraphLabel], ['tab', '制表符'], ['comma', '逗号'], ['other', '其他字符', other]], value, () => onChange?.());
   return { group, other };
 }
 
 /** Convert Text to Table: separator, columns (counted from the text), AutoFit. */
 export function openConvertTextDialog({ shape, separator = 'tab' }, apply, { onClose } = {}) {
-  const columns = number('Number of columns', 1), rowsText = el('output.table-dialog-count', {});
+  const columns = number('列数', 1), rowsText = el('output.table-dialog-count', {});
   let touched = false;
   const update = () => {
     try {
@@ -100,42 +100,42 @@ export function openConvertTextDialog({ shape, separator = 'tab' }, apply, { onC
       if (!touched) columns.value = s.columns;
       columns.min = choice.group.value() === 'paragraph' ? 1 : s.columns;
       const rows = choice.group.value() === 'paragraph' ? Math.ceil(s.rows / Math.max(1, Number(columns.value) || 1)) : s.rows;
-      rowsText.textContent = `${rows} ${rows === 1 ? 'row' : 'rows'}`;
+      rowsText.textContent = `${rows} 行`;
     } catch (e) { rowsText.textContent = e.message; }
   };
-  const choice = separatorChoice('table-separator', 'Separate text at', separator, () => { touched = false; update(); });
+  const choice = separatorChoice('table-separator', '文字分隔位置', separator, () => { touched = false; update(); });
   columns.addEventListener('input', () => { touched = true; update(); });
-  const autofit = radios('convert-autofit', 'AutoFit behavior', [['fixed', 'Fixed column width'], ['contents', 'AutoFit to contents'], ['window', 'AutoFit to window']], 'fixed');
+  const autofit = radios('convert-autofit', '“自动调整”操作', [['fixed', '固定列宽'], ['contents', '根据内容调整表格'], ['window', '根据窗口调整表格']], 'fixed');
   update();
-  return formDialog({ title: 'Convert Text to Table', onClose, body: [
-    el('div.table-dialog-grid', {}, field('Columns', columns), el('div.field', {}, el('span.field-label', {}, 'Rows'), rowsText)), choice.group, autofit,
+  return formDialog({ title: '将文字转换成表格', onClose, body: [
+    el('div.table-dialog-grid', {}, field('列数', columns), el('div.field', {}, el('span.field-label', {}, '行数'), rowsText)), choice.group, autofit,
   ], submit: () => apply({ separator: choice.group.value(), other: choice.other.value, columns: Number(columns.value), autofit: autofit.value() }) });
 }
 
 /** Convert Table to Text: what separates the cells' text. */
 export function openConvertTableDialog(apply, { onClose } = {}) {
-  const choice = separatorChoice('table-to-text', 'Separate text with', 'tab', null, 'Paragraph marks');
-  return formDialog({ title: 'Convert Table to Text', onClose, body: [choice.group, el('p.field-hint', {}, 'Each row becomes a paragraph; with paragraph marks, each cell keeps its own paragraphs.')],
+  const choice = separatorChoice('table-to-text', '文字分隔符', 'tab', null, '段落标记');
+  return formDialog({ title: '表格转换成文本', onClose, body: [choice.group, el('p.field-hint', {}, '每一行将成为一个段落；选择段落标记时，每个单元格将作为独立段落保留。')],
     submit: () => apply({ separator: choice.group.value(), other: choice.other.value }) });
 }
 
 /* ---- Cells ---- */
 
 export function openSplitCellsDialog({ several = false } = {}, apply, { onClose } = {}) {
-  const columns = number('Number of columns', 2), rows = number('Number of rows', 1);
+  const columns = number('列数', 2), rows = number('行数', 1);
   const merge = el('input', { type: 'checkbox', checked: true });
-  return formDialog({ title: 'Split Cells', onClose, body: [
-    el('div.table-dialog-grid', {}, field('Columns', columns), field('Rows', rows)),
-    several && el('label.table-check', {}, merge, 'Merge cells before splitting'),
+  return formDialog({ title: '拆分单元格', onClose, body: [
+    el('div.table-dialog-grid', {}, field('列数', columns), field('行数', rows)),
+    several && el('label.table-check', {}, merge, '拆分前合并单元格'),
   ], submit: () => apply({ rows: Number(rows.value), columns: Number(columns.value), merge: !several || merge.checked }) });
 }
 
 export function openCellsDialog(kind, apply, { onClose } = {}) {
   const options = kind === 'delete'
-    ? [['left', 'Shift cells left'], ['up', 'Shift cells up'], ['row', 'Delete entire row'], ['column', 'Delete entire column']]
-    : [['right', 'Shift cells right'], ['down', 'Shift cells down'], ['row', 'Insert entire row'], ['column', 'Insert entire column']];
-  const group = radios(`cells-${kind}`, kind === 'delete' ? 'After deleting' : 'After inserting', options, options[kind === 'delete' ? 0 : 1][0]);
-  return formDialog({ title: kind === 'delete' ? 'Delete Cells' : 'Insert Cells', onClose, body: [group], submit: () => apply(group.value()) });
+    ? [['left', '单元格左移'], ['up', '单元格上移'], ['row', '删除整行'], ['column', '删除整列']]
+    : [['right', '活动单元格右移'], ['down', '活动单元格下移'], ['row', '插入整行'], ['column', '插入整列']];
+  const group = radios(`cells-${kind}`, kind === 'delete' ? '删除后操作' : '插入后操作', options, options[kind === 'delete' ? 0 : 1][0]);
+  return formDialog({ title: kind === 'delete' ? '删除单元格' : '插入单元格', onClose, body: [group], submit: () => apply(group.value()) });
 }
 
 /* ---- Sort ---- */
@@ -143,13 +143,13 @@ export function openCellsDialog(kind, apply, { onClose } = {}) {
 /** Sort: up to three keys over the table's columns. `columns`: [{ label, column }]. */
 export function openSortDialog({ columns, header }, apply, { onClose } = {}) {
   const keyRow = (index, value) => {
-    const by = select(`${index === 0 ? 'Sort by' : 'Then by'} column`, [...(index ? [['', '(none)']] : []), ...columns.map(c => [String(c.column), c.label])], value);
-    const type = select(`${index === 0 ? 'Sort by' : 'Then by'} type`, [['text', 'Text'], ['number', 'Number'], ['date', 'Date']], 'text');
-    const order = select(`${index === 0 ? 'Sort by' : 'Then by'} order`, [['asc', 'Ascending'], ['desc', 'Descending']], 'asc');
-    return { by, type, order, node: el('div.table-sort-key', {}, el('span.field-label', {}, index === 0 ? 'Sort by' : 'Then by'), by, type, order) };
+    const by = select(`${index === 0 ? '主要关键字' : '次要关键字'}`, [...(index ? [['', '(无)']] : []), ...columns.map(c => [String(c.column), c.label])], value);
+    const type = select('类型', [['text', '拼音/笔画/文本'], ['number', '数字'], ['date', '日期']], 'text');
+    const order = select('排序方式', [['asc', '升序'], ['desc', '降序']], 'asc');
+    return { by, type, order, node: el('div.table-sort-key', {}, el('span.field-label', {}, index === 0 ? '主要关键字' : '次要关键字'), by, type, order) };
   };
   const keys = [keyRow(0, String(columns[0]?.column ?? 0)), keyRow(1, ''), keyRow(2, '')];
-  const hasHeader = radios('sort-header', 'My table has', [['yes', 'A header row'], ['no', 'No header row']], header ? 'yes' : 'no', v => relabel(v === 'yes'));
+  const hasHeader = radios('sort-header', '我的列表', [['yes', '有标题行'], ['no', '无标题行']], header ? 'yes' : 'no', v => relabel(v === 'yes'));
   const caseSensitive = el('input', { type: 'checkbox' });
   function relabel(on) {
     for (const key of keys) for (const option of key.by.options) {
@@ -158,7 +158,7 @@ export function openSortDialog({ columns, header }, apply, { onClose } = {}) {
     }
   }
   relabel(header);
-  return formDialog({ title: 'Sort', onClose, wide: true, className: 'table-sort-dialog', body: [...keys.map(k => k.node), hasHeader, el('label.table-check', {}, caseSensitive, 'Case sensitive')],
+  return formDialog({ title: '排序', onClose, wide: true, className: 'table-sort-dialog', body: [...keys.map(k => k.node), hasHeader, el('label.table-check', {}, caseSensitive, '区分大小写')],
     submit: () => apply({ header: hasHeader.value() === 'yes', caseSensitive: caseSensitive.checked,
       keys: keys.filter(k => k.by.value !== '').map(k => ({ column: Number(k.by.value), type: k.type.value, descending: k.order.value === 'desc' })) }) });
 }
@@ -167,11 +167,11 @@ export function openSortDialog({ columns, header }, apply, { onClose } = {}) {
 
 /** Formula: the expression, a number format and a function to paste, with the result previewed as you type. */
 export function openFormulaDialog({ suggested, formats, functions, preview }, apply, { onClose } = {}) {
-  const formula = el('input.input.table-formula', { type: 'text', value: suggested, required: true, spellcheck: false, 'aria-label': 'Formula', autocomplete: 'off' });
+  const formula = el('input.input.table-formula', { type: 'text', value: suggested, required: true, spellcheck: false, 'aria-label': '公式', autocomplete: 'off' });
   const listId = fieldId('formats');
-  const format = el('input.input', { type: 'text', 'aria-label': 'Number format', placeholder: 'General', list: listId, spellcheck: false });
+  const format = el('input.input', { type: 'text', 'aria-label': '数字格式', placeholder: '常规', list: listId, spellcheck: false });
   const datalist = el('datalist', { id: listId }, ...formats.map(f => el('option', { value: f })));
-  const paste = select('Paste function', [['', 'Paste function…'], ...functions.map(f => [f, f])], '');
+  const paste = select('粘贴函数', [['', '粘贴函数…'], ...functions.map(f => [f, f])], '');
   paste.addEventListener('change', () => {
     if (!paste.value) return;
     const at = formula.selectionStart ?? formula.value.length, insert = `${paste.value}()`;
@@ -181,12 +181,12 @@ export function openFormulaDialog({ suggested, formats, functions, preview }, ap
   });
   const result = el('output.table-formula-result', { 'aria-live': 'polite' });
   function show() {
-    try { result.textContent = `Result: ${preview(formula.value, format.value)}`; result.classList.remove('is-error'); }
+    try { result.textContent = `计算结果: ${preview(formula.value, format.value)}`; result.classList.remove('is-error'); }
     catch (e) { result.textContent = e.message; result.classList.add('is-error'); }
   }
   formula.addEventListener('input', show); format.addEventListener('input', show); show();
-  return formDialog({ title: 'Formula', onClose, className: 'table-formula-dialog', body: [
-    field('Formula', formula, 'Directions: ABOVE, BELOW, LEFT, RIGHT. Cells: A1, B2:C4.'), result,
-    el('div.table-dialog-grid', {}, field('Number format', format), field('Function', paste)), datalist,
+  return formDialog({ title: '公式', onClose, className: 'table-formula-dialog', body: [
+    field('公式', formula, '方位: ABOVE, BELOW, LEFT, RIGHT。单元格: A1, B2:C4。'), result,
+    el('div.table-dialog-grid', {}, field('数字格式', format), field('粘贴函数', paste)), datalist,
   ], submit: () => apply(formula.value, format.value.trim() || null) });
 }

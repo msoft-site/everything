@@ -79,9 +79,9 @@ export function customTemplateItems(templates, { onPick, onManage = null, icon =
   if (!templates?.length) return [];
   const items = [
     { separator: true },
-    { header: 'My templates' },
+    { header: '我的模板' },
     ...templates.map((t) => ({ label: t.name, icon, onSelect: () => onPick(t.id) })),
   ];
-  if (onManage) items.push({ label: 'Manage my templates', icon: 'settings', onSelect: onManage });
+  if (onManage) items.push({ label: '管理我的模板', icon: 'settings', onSelect: onManage });
   return items;
 }

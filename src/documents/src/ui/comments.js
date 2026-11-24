@@ -55,19 +55,19 @@ export function createCommentsPanel({ onAction = () => {} } = {}) {
   let openThreadReply = null;
   const replyEditors = new Map();
 
-  const addBtn = el('button.btn.btn-primary.btn-sm', { type: 'button', disabled: true, title: 'Select some text, then add a comment', onclick: () => onAction('add') },
-    el('span', { html: icon('suggest', 15, 2) }), el('span', {}, 'Add comment'));
+  const addBtn = el('button.btn.btn-primary.btn-sm', { type: 'button', disabled: true, title: '请先选择文本，然后添加批注', onclick: () => onAction('add') },
+    el('span', { html: icon('suggest', 15, 2) }), el('span', {}, '添加批注'));
   const list = el('div.comments-list', { role: 'list' });
-  const empty = el('p.comments-empty', {}, 'Select text and add a comment to start a conversation about it.');
+  const empty = el('p.comments-empty', {}, '选择文本并添加批注，即可就此展开讨论。');
   const countEl = el('span.badge', { hidden: true });
-  const root = el('aside.comments', { 'aria-label': 'Comments', hidden: true },
-    el('div.comments-head', {}, el('h2.comments-title', {}, 'Comments', countEl),
-      el('button.icon-btn', { type: 'button', 'aria-label': 'Close comments', html: icon('x', 18), onclick: () => close() })),
+  const root = el('aside.comments', { 'aria-label': '批注', hidden: true },
+    el('div.comments-head', {}, el('h2.comments-title', {}, '批注', countEl),
+      el('button.icon-btn', { type: 'button', 'aria-label': '关闭批注', html: icon('x', 18), onclick: () => close() })),
     el('div.comments-actions', {}, addBtn),
     // The list takes the panel's height, so the hint sits above it to stay under the button.
     empty, list);
 
-  const author = (c) => c.creatorName || 'Someone';
+  const author = (c) => c.creatorName || '某人';
   /** The start of a comment for the card's name; the whole text is read inside the card. */
   const clip = (text) => { const words = String(text).trim().replace(/\s+/g, ' '); return words.length > 80 ? `${Array.from(words).slice(0, 79).join('').trimEnd()}…` : words; };
   const when = (c) => (c.createdTime ? relativeTime(c.createdTime) : '');
@@ -77,14 +77,14 @@ export function createCommentsPanel({ onAction = () => {} } = {}) {
       el('div.comment-meta', {}, el('span.comment-author', {}, author(c)), when(c) && el('span.comment-time', {}, when(c))),
       el('div.comment-text', {}, c.text || ''),
       el('div.comment-tools', {},
-        el('button.link-btn', { type: 'button', dataset: { action: 'edit' }, onclick: (e) => { e.stopPropagation(); onAction('edit', c); } }, 'Edit'),
-        el('button.link-btn.danger', { type: 'button', dataset: { action: 'delete' }, onclick: (e) => { e.stopPropagation(); onAction('delete', c); } }, 'Delete')));
+        el('button.link-btn', { type: 'button', dataset: { action: 'edit' }, onclick: (e) => { e.stopPropagation(); onAction('edit', c); } }, '编辑'),
+        el('button.link-btn.danger', { type: 'button', dataset: { action: 'delete' }, onclick: (e) => { e.stopPropagation(); onAction('delete', c); } }, '删除')));
   }
 
   function replyBox(thread) {
     const id = thread.root.commentId;
     if (replyEditors.has(id)) return replyEditors.get(id);
-    const input = el('textarea.input.comment-input', { rows: 2, placeholder: 'Reply', 'aria-label': 'Reply' });
+    const input = el('textarea.input.comment-input', { rows: 2, placeholder: '回复', 'aria-label': '回复' });
     let sending = false;
     const cancel = () => {
       // A completed request must not dismiss a newer draft or another thread.
@@ -98,10 +98,10 @@ export function createCommentsPanel({ onAction = () => {} } = {}) {
       sending = true; submit.disabled = true; input.readOnly = true; error.hidden = true;
       try {
         // Only a confirmed write clears the draft; an unavailable host must not swallow it.
-        if (await onAction('reply', thread.root, v) !== true) throw new Error('Could not send the reply. Try again.');
+        if (await onAction('reply', thread.root, v) !== true) throw new Error('无法发送回复。请重试。');
         cancel();
       } catch {
-        error.textContent = 'Could not send the reply. Try again.'; error.hidden = false;
+        error.textContent = '无法发送回复。请重试。'; error.hidden = false;
       } finally { sending = false; submit.disabled = false; input.readOnly = false; }
     };
     input.addEventListener('keydown', (e) => {
@@ -109,10 +109,10 @@ export function createCommentsPanel({ onAction = () => {} } = {}) {
       if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); }
       if (e.key === 'Escape') cancel();
     });
-    const submit = el('button.btn.btn-primary.btn-sm', { type: 'button', onclick: send }, 'Reply');
+    const submit = el('button.btn.btn-primary.btn-sm', { type: 'button', onclick: send }, '回复');
     const box = el('div.comment-reply-box', { onclick: (e) => e.stopPropagation() }, input, error,
       el('div.row.row-end', {},
-        el('button.btn.btn-ghost.btn-sm', { type: 'button', onclick: cancel }, 'Cancel'), submit));
+        el('button.btn.btn-ghost.btn-sm', { type: 'button', onclick: cancel }, '取消'), submit));
     replyEditors.set(id, box);
     return box;
   }
@@ -135,8 +135,8 @@ export function createCommentsPanel({ onAction = () => {} } = {}) {
         role: 'listitem', tabindex: 0, dataset: { id: t.root.commentId },
         className: `comment-card${resolved ? ' resolved' : ''}${active ? ' active' : ''}`,
         'aria-current': active ? 'true' : null,
-        'aria-label': `${resolved ? 'Resolved comment' : 'Comment'} by ${author(t.root)}${t.root.anchoredText ? ` on “${t.root.anchoredText}”` : ''}${t.root.text ? `: ${clip(t.root.text)}` : ''}${t.replies.length ? `, ${t.replies.length} ${t.replies.length === 1 ? 'reply' : 'replies'}` : ''}`,
-        'aria-description': 'Press Enter to go to the commented text',
+        'aria-label': `${resolved ? '已解决的批注' : '批注'}（由 ${author(t.root)} 添加）${t.root.anchoredText ? `，针对“${t.root.anchoredText}”` : ''}${t.root.text ? `：${clip(t.root.text)}` : ''}${t.replies.length ? `，${t.replies.length} 条回复` : ''}`,
+        'aria-description': '按 Enter 键跳转到批注文本',
         onclick: () => onAction('jump', t.root),
         onkeydown: (e) => { if ((e.key === 'Enter' || e.key === ' ') && e.target === card) { e.preventDefault(); onAction('jump', t.root); } },
       },
@@ -147,8 +147,8 @@ export function createCommentsPanel({ onAction = () => {} } = {}) {
           !resolved && el('button.link-btn', { type: 'button', dataset: { action: 'reply' }, onclick: (e) => {
             e.stopPropagation(); openThreadReply = t.root.commentId; render();
             replyEditors.get(openThreadReply)?.querySelector('textarea').focus();
-          } }, 'Reply'),
-          el('button.link-btn', { type: 'button', dataset: { action: 'status' }, onclick: (e) => { e.stopPropagation(); onAction(resolved ? 'reopen' : 'resolve', t.root); } }, resolved ? 'Reopen' : 'Resolve')));
+          } }, '回复'),
+          el('button.link-btn', { type: 'button', dataset: { action: 'status' }, onclick: (e) => { e.stopPropagation(); onAction(resolved ? 'reopen' : 'resolve', t.root); } }, resolved ? '重新打开' : '解决')));
       list.append(card);
     }
     if (focused) {
@@ -160,7 +160,7 @@ export function createCommentsPanel({ onAction = () => {} } = {}) {
       const control = action && card && [...card.querySelectorAll('[data-action]')].find((button) =>
         button.dataset.action === action && button.closest('.comment-msg')?.dataset.commentId === commentId);
       const target = (focused.isConnected && focused) || control || card
-        || cards[Math.min(previousIndex, cards.length - 1)] || root.querySelector('[aria-label="Close comments"]');
+        || cards[Math.min(previousIndex, cards.length - 1)] || root.querySelector('[aria-label="关闭批注"]');
       target.focus({ preventScroll: true });
     }
   }
@@ -191,7 +191,7 @@ export function createCommentsPanel({ onAction = () => {} } = {}) {
       }
     }
     if (ids) activeIds = new Set(ids);
-    if (canAdd != null) { addBtn.disabled = !canAdd; addBtn.title = canAdd ? 'Add a comment on the selected text' : 'Select some text, then add a comment'; }
+    if (canAdd != null) { addBtn.disabled = !canAdd; addBtn.title = canAdd ? '为选中文本添加批注' : '请先选择文本，然后添加批注'; }
     if (changed) render();
     else if (ids) renderActive();
   }

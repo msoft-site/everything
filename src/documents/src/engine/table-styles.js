@@ -17,7 +17,7 @@ import { resolveCellBorders } from './cell-borders.js';
 import { cellShadingFill } from './backgrounds.js';
 
 export const STYLE_REGIONS = Object.freeze(['firstRow', 'lastRow', 'firstCol', 'lastCol', 'band1Horz', 'band1Vert']);
-export const REGION_LABELS = Object.freeze({ whole: 'Whole table', firstRow: 'Header row', lastRow: 'Total row', firstCol: 'First column', lastCol: 'Last column', band1Horz: 'Banded rows', band1Vert: 'Banded columns' });
+export const REGION_LABELS = Object.freeze({ whole: '整个表格', firstRow: '标题行', lastRow: '汇总行', firstCol: '首列', lastCol: '末列', band1Horz: '奇数行条纹', band1Vert: '奇数列条纹' });
 export const DEFAULT_LOOK = Object.freeze(tableStyleLook());
 
 /** Accent palettes: [name, dark, light, medium]. */
@@ -71,7 +71,7 @@ export const TABLE_STYLE_LIBRARY = Object.freeze([
   ...gridFamily(ACCENTS[0]).flatMap((_, i) => ACCENTS.map(a => gridFamily(a)[i])),
   ...listFamily(ACCENTS[0]).flatMap((_, i) => ACCENTS.map(a => listFamily(a)[i])),
 ].map(spec => Object.freeze({ rowBands: 1, columnBands: 1, ...spec })));
-export const TABLE_STYLE_FAMILIES = Object.freeze([['plain', 'Plain Tables'], ['grid', 'Grid Tables'], ['list', 'List Tables'], ['custom', 'Custom']]);
+export const TABLE_STYLE_FAMILIES = Object.freeze([['plain', '普通表格'], ['grid', '网格型'], ['list', '列表型'], ['custom', '自定义']]);
 
 const border = value => checkedCellBorder(value === NIL || !value ? { style: 'nil' } : { style: value.style || 'single', size: value.size ?? 4, color: value.color || 'auto' });
 function borders(value = {}) {

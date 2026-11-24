@@ -18,9 +18,9 @@ const THUMB_WIDTH = 132;
  */
 export function createNavigationPane(api) {
   let tab = 'headings', entries = [], position = 0, signature = '', matches = [], collapsed = new Set();
-  const search = el('input.input.nav-search', { type: 'search', 'aria-label': 'Search document', placeholder: 'Search document', autocomplete: 'off', spellcheck: false });
+  const search = el('input.input.nav-search', { type: 'search', 'aria-label': '搜索文档', placeholder: '搜索文档', autocomplete: 'off', spellcheck: false });
   const status = el('p.nav-status', { role: 'status', 'aria-live': 'polite' });
-  const tabs = [['headings', 'Headings'], ['pages', 'Pages'], ['results', 'Results']];
+  const tabs = [['headings', '标题'], ['pages', '页面'], ['results', '结果']];
   const tabButtons = tabs.map(([id, label], i) => el('button.nav-tab', { type: 'button', role: 'tab', id: `nav-tab-${id}`, 'aria-controls': `nav-panel-${id}`, 'aria-selected': String(!i), tabindex: i ? -1 : 0,
     onclick: () => select(id),
     onkeydown: e => {
@@ -28,7 +28,7 @@ export function createNavigationPane(api) {
       if (!step) return;
       e.preventDefault(); const next = tabs[(i + step + tabs.length) % tabs.length][0]; select(next); tabButtons.find(b => b.id === `nav-tab-${next}`).focus();
     } }, label));
-  const headingList = el('ol.nav-headings', { role: 'tree', 'aria-label': 'Headings' });
+  const headingList = el('ol.nav-headings', { role: 'tree', 'aria-label': '标题' });
   // The tree is one Tab stop, as a tree is: the heading the keyboard was last on, else the current one, else the first.
   let treeStop = null;
   headingList.addEventListener('focusin', e => {
@@ -37,20 +37,20 @@ export function createNavigationPane(api) {
     treeStop = id;
     for (const button of headingList.querySelectorAll('.nav-heading')) button.tabIndex = button.dataset.paragraph === id ? 0 : -1;
   });
-  const headingEmpty = el('p.field-hint', {}, 'Create an interactive outline of your document. It is a great way to keep track of where you are or quickly move your content around. To get started, apply heading styles to the headings in your document.');
-  const pageGrid = el('div.nav-pages', { role: 'list', 'aria-label': 'Pages' });
-  const resultList = el('ol.nav-results', { 'aria-label': 'Search results' });
+  const headingEmpty = el('p.field-hint', {}, '为文档创建交互式大纲。这是一种跟踪所在位置或快速移动内容的绝佳方式。若要开始，请对文档中的标题应用标题样式。');
+  const pageGrid = el('div.nav-pages', { role: 'list', 'aria-label': '页面' });
+  const resultList = el('ol.nav-results', { 'aria-label': '搜索结果' });
   const resultEmpty = el('p.field-hint');
   const panels = {
     headings: el('div.nav-panel', { role: 'tabpanel', id: 'nav-panel-headings', 'aria-labelledby': 'nav-tab-headings' }, headingEmpty, headingList),
     pages: el('div.nav-panel', { role: 'tabpanel', id: 'nav-panel-pages', 'aria-labelledby': 'nav-tab-pages', hidden: true }, pageGrid),
     results: el('div.nav-panel', { role: 'tabpanel', id: 'nav-panel-results', 'aria-labelledby': 'nav-tab-results', hidden: true }, resultEmpty, resultList),
   };
-  const node = el('aside.canvas-outline-panel.nav-pane', { 'aria-label': 'Navigation', hidden: true },
-    el('div.canvas-panel-heading', {}, el('h2', {}, 'Navigation'),
-      el('button.icon-btn', { type: 'button', 'aria-label': 'Close Navigation pane', onclick: () => api.close() }, iconEl('x', 18))),
+  const node = el('aside.canvas-outline-panel.nav-pane', { 'aria-label': '导航', hidden: true },
+    el('div.canvas-panel-heading', {}, el('h2', {}, '导航'),
+      el('button.icon-btn', { type: 'button', 'aria-label': '关闭“导航”窗格', onclick: () => api.close() }, iconEl('x', 18))),
     el('div.nav-search-row', {}, search), status,
-    el('div.nav-tabs', { role: 'tablist', 'aria-label': 'Browse by' }, ...tabButtons),
+    el('div.nav-tabs', { role: 'tablist', 'aria-label': '浏览方式' }, ...tabButtons),
     el('div.canvas-panel-scroll.nav-scroll', {}, ...Object.values(panels)));
   node.addEventListener('keydown', e => {
     if (e.key !== 'Escape' || isComposing(e)) return;
@@ -85,7 +85,7 @@ export function createNavigationPane(api) {
     matches = find(text);
     current = -1;
     api.highlight(matches);
-    status.textContent = !text ? '' : matches.length ? `${matches.length} result${matches.length === 1 ? '' : 's'}` : 'No matches';
+    status.textContent = !text ? '' : matches.length ? `${matches.length} 个结果` : '未找到匹配项';
     if (text && tab === 'headings' && matches.length) select('results'); else render();
   }
   // An input method's partial text (pinyin letters before they become characters) is not searched: what it commits is.
@@ -97,7 +97,7 @@ export function createNavigationPane(api) {
     // From a fresh search, Shift+Enter goes to the last result (it went to the one before the last).
     current = current < 0 ? (e.shiftKey ? matches.length - 1 : 0) : (current + (e.shiftKey ? -1 : 1) + matches.length) % matches.length;
     api.selectMatch(matches[current]);
-    status.textContent = `Result ${current + 1} of ${matches.length}`;
+    status.textContent = `第 ${current + 1} 个结果，共 ${matches.length} 个`;
     renderResults();
   });
 
@@ -125,10 +125,10 @@ export function createNavigationPane(api) {
         const parent = entries[i + 1] && entries[i + 1].level > entry.level;
         const closed = collapsed.has(entry.id);
         if (parent && closed) hiddenBelow = entry.level;
-        const toggle = parent ? el('button.nav-twisty', { type: 'button', tabindex: -1, 'aria-label': closed ? `Expand ${entry.text}` : `Collapse ${entry.text}`,
+        const toggle = parent ? el('button.nav-twisty', { type: 'button', tabindex: -1, 'aria-label': closed ? `展开 ${entry.text}` : `折叠 ${entry.text}`,
           onclick: e => { e.stopPropagation(); closed ? collapsed.delete(entry.id) : collapsed.add(entry.id); renderHeadings(); } }, el('span.nav-caret', { 'aria-hidden': 'true', dataset: { closed: String(closed) } })) : el('span.nav-twisty-space');
         const heading = el('button.canvas-outline-entry.nav-heading', { type: 'button', role: 'treeitem', 'aria-level': entry.level, ...(parent ? { 'aria-expanded': String(!closed) } : {}),
-          dataset: { paragraph: entry.id }, 'aria-label': `Level ${entry.level}: ${entry.text}, page ${entry.page}`, onclick: () => api.navigate(entry.id),
+          dataset: { paragraph: entry.id }, 'aria-label': `${entry.level} 级: ${entry.text}，第 ${entry.page} 页`, onclick: () => api.navigate(entry.id),
           oncontextmenu: e => { e.preventDefault(); headingMenu(entry, heading, e); },
           onkeydown: e => {
             if (e.key === 'ContextMenu' || e.shiftKey && e.key === 'F10') { e.preventDefault(); headingMenu(entry, heading, null); }
@@ -209,20 +209,20 @@ export function createNavigationPane(api) {
     // A heading in a table stays with its table: the commands that move, add or delete sections are off, and say why.
     const act = actions(), can = editable() && !entry.inTable;
     const run = fn => () => { fn(); refocus(entry.id); };
-    openMenu({ anchor, x: event?.clientX ?? null, y: event?.clientY ?? null, label: `${entry.text} heading`, pointer: !!event, items: [
-      ...(entry.inTable ? [{ note: 'This heading is in a table. Move or delete it with its table, in the document.' }] : []),
-      { label: 'Promote', icon: 'promote', disabled: !can || entry.level <= 1, onSelect: run(() => act.promote(entry.id)) },
-      { label: 'Demote', icon: 'demote', disabled: !can || entry.level >= 9, onSelect: run(() => act.demote(entry.id)) },
+    openMenu({ anchor, x: event?.clientX ?? null, y: event?.clientY ?? null, label: `${entry.text} 标题`, pointer: !!event, items: [
+      ...(entry.inTable ? [{ note: '此标题位于表格中。请在文档中随表格一起移动或删除它。' }] : []),
+      { label: '升级', icon: 'promote', disabled: !can || entry.level <= 1, onSelect: run(() => act.promote(entry.id)) },
+      { label: '降级', icon: 'demote', disabled: !can || entry.level >= 9, onSelect: run(() => act.demote(entry.id)) },
       { separator: true },
-      { label: 'New Heading Before', disabled: !can, onSelect: () => act.insert(entry.id, 'before') },
-      { label: 'New Heading After', disabled: !can, onSelect: () => act.insert(entry.id, 'after') },
-      { label: 'New Subheading', disabled: !can || entry.level >= 9, onSelect: () => act.insert(entry.id, 'sub') },
+      { label: '在前面添加新标题', disabled: !can, onSelect: () => act.insert(entry.id, 'before') },
+      { label: '在后面添加新标题', disabled: !can, onSelect: () => act.insert(entry.id, 'after') },
+      { label: '添加新子标题', disabled: !can || entry.level >= 9, onSelect: () => act.insert(entry.id, 'sub') },
       { separator: true },
-      { label: 'Select Heading and Content', disabled: !act || entry.inTable, onSelect: () => act.select(entry.id) },
-      { label: 'Delete', icon: 'deleteComment', danger: true, disabled: !can, onSelect: () => act.remove(entry.id) },
+      { label: '选择标题和内容', disabled: !act || entry.inTable, onSelect: () => act.select(entry.id) },
+      { label: '删除', icon: 'deleteComment', danger: true, disabled: !can, onSelect: () => act.remove(entry.id) },
       { separator: true },
-      { label: 'Expand All', onSelect: () => { collapsed.clear(); signature = ''; renderHeadings(); refocus(entry.id); } },
-      { label: 'Collapse All', onSelect: () => { collapsed = new Set(entries.filter((e, i) => entries[i + 1]?.level > e.level).map(e => e.id)); signature = ''; renderHeadings(); refocus(entries.findLast(e => e.start <= entry.start && e.level === 1)?.id || entry.id); } },
+      { label: '全部展开', onSelect: () => { collapsed.clear(); signature = ''; renderHeadings(); refocus(entry.id); } },
+      { label: '全部折叠', onSelect: () => { collapsed = new Set(entries.filter((e, i) => entries[i + 1]?.level > e.level).map(e => e.id)); signature = ''; renderHeadings(); refocus(entries.findLast(e => e.start <= entry.start && e.level === 1)?.id || entry.id); } },
     ] });
   }
   // Thumbnails draw the screen pages scaled down, so they show exactly what the document shows. Shown
@@ -248,7 +248,7 @@ export function createNavigationPane(api) {
         }
         const item = pageGrid.children[i].firstChild;
         item.dataset.index = i;
-        item.setAttribute('aria-label', `Page ${i + 1}`);
+        item.setAttribute('aria-label', `第 ${i + 1} 页`);
         item.lastChild.textContent = String(i + 1);
         if (i === currentPage) item.setAttribute('aria-current', 'page'); else item.removeAttribute('aria-current');
         const thumb = item.firstChild, ratio = source.height / source.width || 1.294, scale = window.devicePixelRatio || 1;
@@ -267,7 +267,7 @@ export function createNavigationPane(api) {
   function renderResults() {
     const text = search.value;
     resultEmpty.hidden = !!matches.length;
-    resultEmpty.textContent = text ? `We couldn't find what you're looking for. Check the spelling, or try another search.` : 'Search for text in the box above. Matches appear here in context.';
+    resultEmpty.textContent = text ? '找不到你要查找的内容。请检查拼写，或尝试其他搜索。' : '在上方框中搜索文本。匹配项将在此处显示上下文。';
     const body = matches.length ? api.text() : '';
     // Choosing a result redraws the list; keyboard focus stays on the same row instead of dropping to the page.
     const focused = [...resultList.querySelectorAll('.nav-result')].indexOf(document.activeElement);
@@ -287,7 +287,7 @@ export function createNavigationPane(api) {
         return;
       }
       // The row chooses the match at its place in the list when clicked, so a kept row chooses the moved match.
-      const next = el('li', { dataset: { key } }, el('button.nav-result', { type: 'button', 'aria-current': i === current ? 'true' : null, onclick: () => { current = i; api.selectMatch(matches[i]); status.textContent = `Result ${i + 1} of ${matches.length}`; renderResults(); } },
+      const next = el('li', { dataset: { key } }, el('button.nav-result', { type: 'button', 'aria-current': i === current ? 'true' : null, onclick: () => { current = i; api.selectMatch(matches[i]); status.textContent = `第 ${i + 1} 个结果，共 ${matches.length} 个`; renderResults(); } },
         parts[0], el('mark', {}, parts[1]), parts[2]));
       if (row) row.replaceWith(next); else resultList.append(next);
     });
@@ -311,7 +311,7 @@ export function createNavigationPane(api) {
         matches = find(search.value); api.highlight(matches);
         // The count and the current result follow edits to the document.
         if (current >= matches.length) current = -1;
-        status.textContent = !matches.length ? 'No matches' : current >= 0 ? `Result ${current + 1} of ${matches.length}` : `${matches.length} result${matches.length === 1 ? '' : 's'}`;
+        status.textContent = !matches.length ? '未找到匹配项' : current >= 0 ? `第 ${current + 1} 个结果，共 ${matches.length} 个` : `${matches.length} 个结果`;
       }
       render();
     },

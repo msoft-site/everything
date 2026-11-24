@@ -340,14 +340,14 @@ const amountOf = amount => clamp(Number.isFinite(+amount) ? +amount : 0.5, 0, 1)
  * effect beside the original picture (MS-ODRAWXML picture effect layers); `amount` is 0..1.
  */
 export const ARTISTIC_EFFECTS = Object.freeze([
-  { id: 'blur', name: 'Soft Focus', a14: 'artisticBlur', apply(image, amount) {
+  { id: 'blur', name: '虚化', a14: 'artisticBlur', apply(image, amount) {
     check(image); return blurImage(image, Math.round((1 + amountOf(amount) * 8) * scaleFor(image)));
   } },
-  { id: 'pencilGray', name: 'Graphite Sketch', a14: 'artisticPencilGrayscale', apply(image, amount) {
+  { id: 'pencilGray', name: '铅笔灰度', a14: 'artisticPencilGrayscale', apply(image, amount) {
     check(image); const shade = pencilShade(image, amountOf(amount));
     return mapPixels(image, (r, g, b, i) => [shade[i], shade[i], shade[i]]);
   } },
-  { id: 'pencilSketch', name: 'Colored Pencil', a14: 'artisticPencilSketch', apply(image, amount) {
+  { id: 'pencilSketch', name: '彩色铅笔', a14: 'artisticPencilSketch', apply(image, amount) {
     check(image); const shade = pencilShade(image, amountOf(amount));
     return mapPixels(image, (r, g, b, i) => {
       const y = luma(r, g, b), k = shade[i] / 255;
@@ -355,18 +355,18 @@ export const ARTISTIC_EFFECTS = Object.freeze([
       return [r, g, b].map(c => clamp((y + (c - y) * 0.55) * k + 255 * (1 - k) * 0.08));
     });
   } },
-  { id: 'lineDrawing', name: 'Ink Outline', a14: 'artisticLineDrawing', apply(image, amount) {
+  { id: 'lineDrawing', name: '线条图', a14: 'artisticLineDrawing', apply(image, amount) {
     check(image); const { width, height } = image, a = amountOf(amount);
     const edge = edges(blurPlane(grayPlane(image), width, height, Math.round(scaleFor(image))), width, height);
     const threshold = 220 - a * 160;
     return mapPixels(image, (r, g, b, i) => { const v = edge[i] > threshold ? clamp(255 - (edge[i] - threshold) * 2.5) : 255; return [v, v, v]; });
   } },
-  { id: 'cutout', name: 'Paper Cutout', a14: 'artisticCutout', apply(image, amount) {
+  { id: 'cutout', name: '剪纸', a14: 'artisticCutout', apply(image, amount) {
     check(image); const levels = Math.round(6 - amountOf(amount) * 3), step = 255 / (levels - 1);
     const smooth = calmestQuadrant(image, Math.round(2 * scaleFor(image)));
     return mapPixels(smooth, (r, g, b) => [r, g, b].map(c => Math.round(Math.round(c / step) * step)));
   } },
-  { id: 'glowEdges', name: 'Neon Edges', a14: 'artisticGlowEdges', apply(image, amount) {
+  { id: 'glowEdges', name: '发光边缘', a14: 'artisticGlowEdges', apply(image, amount) {
     check(image); const { width, height } = image, a = amountOf(amount);
     const edge = blurPlane(edges(grayPlane(image), width, height), width, height, 1), gain = (1.5 + a * 3) / 255;
     return mapPixels(image, (r, g, b, i) => {
@@ -374,7 +374,7 @@ export const ARTISTIC_EFFECTS = Object.freeze([
       return [r, g, b].map(c => clamp(c * boost * k * (0.6 + 0.4 * c / y) * 0.9));
     });
   } },
-  { id: 'filmGrain', name: 'Film Grain', a14: 'artisticFilmGrain', apply(image, amount) {
+  { id: 'filmGrain', name: '胶片颗粒', a14: 'artisticFilmGrain', apply(image, amount) {
     check(image); const a = amountOf(amount), next = random(0x5EED + image.width * 31 + image.height), strength = 12 + a * 48;
     return mapPixels(image, (r, g, b) => {
       // Two uniform draws average to a softer, roughly bell-shaped grain.
@@ -382,7 +382,7 @@ export const ARTISTIC_EFFECTS = Object.freeze([
       return [r, g, b].map(c => clamp((c - 128) * 1.08 + 128 + grain));
     });
   } },
-  { id: 'photocopy', name: 'Photocopy', a14: 'artisticPhotocopy', apply(image, amount) {
+  { id: 'photocopy', name: '影印', a14: 'artisticPhotocopy', apply(image, amount) {
     check(image); const { width, height } = image, a = amountOf(amount), gray = grayPlane(image);
     const local = blurPlane(gray, width, height, Math.round((3 + a * 6) * scaleFor(image)));
     return mapPixels(image, (r, g, b, i) => {
@@ -391,10 +391,10 @@ export const ARTISTIC_EFFECTS = Object.freeze([
       return [v, v, v];
     });
   } },
-  { id: 'paintStrokes', name: 'Oil Paint', a14: 'artisticPaintStrokes', apply(image, amount) {
+  { id: 'paintStrokes', name: '油画', a14: 'artisticPaintStrokes', apply(image, amount) {
     check(image); return calmestQuadrant(image, Math.round((2 + amountOf(amount) * 5) * scaleFor(image)));
   } },
-  { id: 'mosaicBubbles', name: 'Bubble Mosaic', a14: 'artisticMosiaicBubbles', apply(image, amount) {
+  { id: 'mosaicBubbles', name: '马赛克气泡', a14: 'artisticMosiaicBubbles', apply(image, amount) {
     check(image); const { width, height } = image, cell = Math.max(3, Math.round((5 + amountOf(amount) * 12) * scaleFor(image)));
     const out = copy(image), d = image.data, o = out.data;
     for (let cy = 0; cy < height; cy += cell) for (let cx = 0; cx < width; cx += cell) {
@@ -410,7 +410,7 @@ export const ARTISTIC_EFFECTS = Object.freeze([
     }
     return out;
   } },
-  { id: 'watercolor', name: 'Watercolor Wash', a14: 'artisticWatercolorSponge', apply(image, amount) {
+  { id: 'watercolor', name: '水彩海绵', a14: 'artisticWatercolorSponge', apply(image, amount) {
     check(image); const { width, height } = image, a = amountOf(amount), scale = scaleFor(image);
     const washed = blurImage(calmestQuadrant(image, Math.round((2 + a * 3) * scale)), Math.round(scale));
     const edge = edges(grayPlane(washed), width, height), next = random(0xA11E + width * 7 + height * 13);

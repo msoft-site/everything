@@ -9,14 +9,14 @@ import { LANGUAGES } from './review-ui.js';
 const STORE = 'documents:statusbar';
 
 /** "English (United States)" for "en-US", in the user's language. */
-export function languageName(tag, locale) {
-  if (!tag) return 'No language';
+export function languageName(tag, locale = 'zh-CN') {
+  if (!tag) return '无语言';
   try { return new Intl.DisplayNames(locale ? [locale] : undefined, { type: 'language', languageDisplay: 'standard' }).of(tag) || tag; } catch { return tag; }
 }
 
 export const STATUS_ITEMS = [
-  ['page', 'Page Number'], ['words', 'Word Count'], ['proofing', 'Spelling Check'], ['language', 'Language'], ['accessibility', 'Accessibility Checker'], ['track', 'Track Changes'],
-  ['area', 'Editing Area'], ['textMode', 'Text Mode'], ['focus', 'Focus'], ['views', 'View Shortcuts'], ['zoomSlider', 'Zoom Slider'], ['zoom', 'Zoom'],
+  ['page', '页码'], ['words', '字数统计'], ['proofing', '拼写检查'], ['language', '语言'], ['accessibility', '无障碍检查器'], ['track', '修订状态'],
+  ['area', '编辑区域'], ['textMode', '纯文本模式'], ['focus', '专注模式'], ['views', '视图快捷方式'], ['zoomSlider', '缩放滑块'], ['zoom', '显示比例'],
 ];
 const HIDDEN_BY_DEFAULT = ['track'];
 
@@ -32,16 +32,16 @@ function readHidden() {
 export function createStatusBar({ w, a, parts, help }) {
   const { stats, words, proofingButton, editingArea, textMode, focusButton, zoomOut, zoomSlider, zoomIn, zoomLabel } = parts;
   stats.className = ''; // its button carries the status-item look
-  const pageButton = el('button.ed-status-item.ed-page-count', { type: 'button', title: `Go To (${MOD_KEY === 'Cmd' ? 'Cmd+Option+G' : 'Ctrl+G'})`, onclick: () => (w.goTo ? w.goTo() : a.toggleNavigation?.()) }, stats);
-  const wordsButton = el('button.ed-status-item.ed-word-count', { type: 'button', title: 'Word Count', onclick: () => w.wordCount?.() }, words);
-  const languageLabel = el('span', {}, languageName('en-US'));
-  const language = el('button.ed-status-item.ed-status-language', { type: 'button', title: 'Language', 'aria-haspopup': 'dialog', onclick: () => openLanguageDialog() }, languageLabel);
-  const accessibilityLabel = el('span', {}, 'Accessibility');
-  const accessibility = w.accessibilitySummary ? el('button.ed-status-item.ed-status-accessibility', { type: 'button', title: 'Check Accessibility',
+  const pageButton = el('button.ed-status-item.ed-page-count', { type: 'button', title: `转到 (${MOD_KEY === 'Cmd' ? 'Cmd+Option+G' : 'Ctrl+G'})`, onclick: () => (w.goTo ? w.goTo() : a.toggleNavigation?.()) }, stats);
+  const wordsButton = el('button.ed-status-item.ed-word-count', { type: 'button', title: '字数统计', onclick: () => w.wordCount?.() }, words);
+  const languageLabel = el('span', {}, languageName('zh-CN'));
+  const language = el('button.ed-status-item.ed-status-language', { type: 'button', title: '语言', 'aria-haspopup': 'dialog', onclick: () => openLanguageDialog() }, languageLabel);
+  const accessibilityLabel = el('span', {}, '无障碍');
+  const accessibility = w.accessibilitySummary ? el('button.ed-status-item.ed-status-accessibility', { type: 'button', title: '检查无障碍',
     onclick: () => (w.accessibilitySummary()?.open ? w.accessibilitySummary().open() : w.checkAccessibility?.()) }, commandIconEl('accessibility', 14), accessibilityLabel) : null;
-  const trackLabel = el('span', {}, 'Track Changes: Off');
-  const track = w.toggleTracking ? el('button.ed-status-item.ed-status-track', { type: 'button', title: `Track Changes (${MOD_KEY}+Shift+E)`, onclick: () => w.toggleTracking() }, commandIconEl('trackChanges', 14), trackLabel) : null;
-  const views = el('div.ed-status-views', { role: 'group', 'aria-label': 'Views' });
+  const trackLabel = el('span', {}, '修订: 关');
+  const track = w.toggleTracking ? el('button.ed-status-item.ed-status-track', { type: 'button', title: `修订 (${MOD_KEY}+Shift+E)`, onclick: () => w.toggleTracking() }, commandIconEl('trackChanges', 14), trackLabel) : null;
+  const views = el('div.ed-status-views', { role: 'group', 'aria-label': '视图' });
   let viewSignature = '';
   function renderViews() {
     const modes = w.documentViewModes?.() || ['print'];
@@ -63,15 +63,15 @@ export function createStatusBar({ w, a, parts, help }) {
   let hidden = new Set(readHidden());
   const left = el('div.ed-status-left', {}, ...['page', 'words', 'proofing', 'language', 'accessibility', 'track', 'area'].map(id => items[id]).filter(Boolean));
   const right = el('div.ed-status-right', {}, items.textMode, items.focus, items.views, el('div.ed-zoom', {}, items.zoomSlider, items.zoom));
-  const footer = el('footer.canvas-statusbar.ed-statusbar', { 'aria-label': 'Status bar' }, left, right, help);
+  const footer = el('footer.canvas-statusbar.ed-statusbar', { 'aria-label': '状态栏' }, left, right, help);
   // Its buttons (the zoom steps, the counts, a right-click for the menu) leave the keyboard in the document.
   keepDocumentFocus(footer, { buttons: true });
   footer.addEventListener('contextmenu', e => {
     if (e.target.closest('input, select')) return;
     e.preventDefault();
     // The ContextMenu key (Chrome reports no button, -1) starts on the first item; a right-click on none.
-    openMenu({ anchor: footer, x: e.clientX, y: e.clientY, label: 'Customize Status Bar', minWidth: 230, pointer: e.button !== -1, items: [
-      { header: 'Show in the status bar' },
+    openMenu({ anchor: footer, x: e.clientX, y: e.clientY, label: '自定义状态栏', minWidth: 230, pointer: e.button !== -1, items: [
+      { header: '在状态栏显示' },
       ...STATUS_ITEMS.filter(([id]) => items[id]).map(([id, label]) => ({ label, checked: !hidden.has(id), onSelect: () => toggle(id) })),
     ] });
   });
@@ -86,9 +86,9 @@ export function createStatusBar({ w, a, parts, help }) {
 
   /** The proofing language for the selection (w:lang); with the engine's support it is written to the document. */
   function openLanguageDialog() {
-    const current = w.currentLanguage?.() ?? 'en-US';
-    const list = el('div.ed-choice-list.ed-language-list', { role: 'listbox', 'aria-label': 'Languages' });
-    const filter = el('input.input', { type: 'search', placeholder: 'Search languages', 'aria-label': 'Search languages' });
+    const current = w.currentLanguage?.() ?? 'zh-CN';
+    const list = el('div.ed-choice-list.ed-language-list', { role: 'listbox', 'aria-label': '语言' });
+    const filter = el('input.input', { type: 'search', placeholder: '搜索语言', 'aria-label': '搜索语言' });
     const noProof = el('input', { type: 'checkbox', checked: !!w.noProofing?.() });
     const tags = [...new Set([current, ...LANGUAGES].filter(Boolean))];
     let chosen = current;
@@ -126,14 +126,14 @@ export function createStatusBar({ w, a, parts, help }) {
     filter.addEventListener('input', render);
     filter.addEventListener('keydown', e => { if (e.key === 'ArrowDown' && !isComposing(e)) { e.preventDefault(); mark()?.focus(); } });
     const editable = !!w.setLanguage && !!a.hasDocument?.() && !w.documentReadOnly?.();
-    const empty = el('p.field-hint', { role: 'status', hidden: true }, 'No languages match.');
-    const ok = el('button.btn.btn-primary', { type: 'submit', disabled: !editable }, 'OK');
+    const empty = el('p.field-hint', { role: 'status', hidden: true }, '未找到匹配的语言。');
+    const ok = el('button.btn.btn-primary', { type: 'submit', disabled: !editable }, '确定');
     const apply = () => { modal.close(); w.setLanguage?.(chosen, { noProof: noProof.checked }); };
-    const modal = openModal({ title: 'Language', onClose: () => queueMicrotask(() => a.focusEditor?.()), content: el('form.ed-dialog-body', { onsubmit: e => { e.preventDefault(); if (ok.disabled && editable) return; if (editable) apply(); else modal.close(); } },
-      el('p.field-hint', {}, editable ? 'Mark the selected text as:' : 'The language of the text at the cursor:'), filter, list, empty,
-      el('label.ed-check', {}, noProof, 'Do not check spelling or grammar'),
-      el('p.field-hint', {}, 'Spelling checks English text. Other languages are marked in the document so other editors check them with their dictionaries.'),
-      el('div.modal-actions', {}, el('button.btn.btn-ghost', { type: 'button', onclick: () => modal.close() }, 'Cancel'), ok)) });
+    const modal = openModal({ title: '语言', onClose: () => queueMicrotask(() => a.focusEditor?.()), content: el('form.ed-dialog-body', { onsubmit: e => { e.preventDefault(); if (ok.disabled && editable) return; if (editable) apply(); else modal.close(); } },
+      el('p.field-hint', {}, editable ? '将所选文字标记为：' : '光标处文字的语言：'), filter, list, empty,
+      el('label.ed-check', {}, noProof, '不检查拼写或语法'),
+      el('p.field-hint', {}, '拼写检查适用于英文文本。其他语言会在文档中标记，以便其他编辑器使用其词典进行检查。'),
+      el('div.modal-actions', {}, el('button.btn.btn-ghost', { type: 'button', onclick: () => modal.close() }, '取消'), ok)) });
     noProof.disabled = !editable;
     render();
     filter.focus();
@@ -142,15 +142,15 @@ export function createStatusBar({ w, a, parts, help }) {
   function refresh() {
     if (accessibility) {
       const summary = a.hasDocument?.() ? w.accessibilitySummary() : null;
-      const label = summary?.label || 'Accessibility: check';
-      if (accessibilityLabel.textContent !== label) { accessibilityLabel.textContent = label; accessibility.title = summary ? `${label.replace(/…$/, '')}. Open the Accessibility pane.` : 'Check Accessibility'; }
+      const label = summary?.label || '无障碍: 检查';
+      if (accessibilityLabel.textContent !== label) { accessibilityLabel.textContent = label; accessibility.title = summary ? `${label.replace(/…$/, '')}。打开无障碍窗格。` : '检查无障碍'; }
       accessibility.dataset.state = !summary ? 'unchecked' : summary.checking ? 'checking' : summary.errors ? 'errors' : summary.warnings || summary.tips ? 'warnings' : 'clean';
       accessibility.disabled = !a.hasDocument?.();
     }
     const tag = w.currentLanguage?.();
-    const name = tag === null ? 'Mixed languages' : languageName(tag || 'en-US');
-    if (languageLabel.textContent !== name) { languageLabel.textContent = name; language.title = `Language: ${name}`; }
-    if (track) { const on = !!w.isTracking?.(); trackLabel.textContent = `Track Changes: ${on ? 'On' : 'Off'}`; track.setAttribute('aria-pressed', String(on)); track.disabled = !w.canTrack?.(); apply(); }
+    const name = tag === null ? '多种语言' : languageName(tag || 'zh-CN');
+    if (languageLabel.textContent !== name) { languageLabel.textContent = name; language.title = `语言: ${name}`; }
+    if (track) { const on = !!w.isTracking?.(); trackLabel.textContent = `修订: ${on ? '开' : '关'}`; track.setAttribute('aria-pressed', String(on)); track.disabled = !w.canTrack?.(); apply(); }
     pageButton.disabled = wordsButton.disabled = !a.hasDocument?.();
     renderViews();
   }

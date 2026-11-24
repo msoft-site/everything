@@ -31,7 +31,7 @@ export function openAppMenu(anchor, { extraItems = [], account = true } = {}) {
   let opened = null;
   // One radio group, like the dialogs' choices: Left and Right move between the themes.
   const themeRow = el('div.menu-theme', {},
-    segmented([['system', 'monitor', 'System'], ['light', 'sun', 'Light'], ['dark', 'moon', 'Dark']]
+    segmented([['system', 'monitor', '跟随系统'], ['light', 'sun', '浅色'], ['dark', 'moon', '深色']]
       .map(([mode, ic, label]) => [mode, [el('span', { html: icon(ic, 15, 2) }), label]]),
     currentTheme(), (mode) => {
       session.setTheme(mode);
@@ -39,28 +39,28 @@ export function openAppMenu(anchor, { extraItems = [], account = true } = {}) {
       darkPageItem.disabled = !isDark();
       const button = [...(opened?.menu?.querySelectorAll('.menu-item') || [])].find((node) => node.querySelector('.menu-label')?.firstChild?.textContent === darkPageItem.label);
       if (button) button.disabled = darkPageItem.disabled;
-    }, 'Appearance'));
-  const darkPageItem = { label: 'Dark page', icon: 'brand', checked: darkPage(), disabled: !isDark(), hint: 'Dark paper with the dark theme', onSelect: () => setDarkPage(!darkPage()) };
+    }, '外观'));
+  const darkPageItem = { label: '深色页面', icon: 'brand', checked: darkPage(), disabled: !isDark(), hint: '深色主题下的深色纸张', onSelect: () => setDarkPage(!darkPage()) };
 
   const items = [
-    account && { header: session.signedOut ? 'Not signed in' : session.username },
+    account && { header: session.signedOut ? '未登录' : session.username },
     { custom: themeRow },
     darkPageItem,
     { separator: true },
     ...extraItems,
-    { label: 'Measurement units', icon: 'ruler', hint: unitLabel(recallUnit()), onSelect: () => openUnitsMenu(anchor) },
-    { label: 'Autocorrect as you type', checked: autocorrectEnabled(), hint: 'Smart quotes, dashes, ellipses, symbols, fractions, capital I', onSelect: () => setAutocorrectEnabled(!autocorrectEnabled()) },
-    { label: 'Capitalize the first letter of sentences', checked: capitalizeSentencesEnabled(), onSelect: () => setCapitalizeSentencesEnabled(!capitalizeSentencesEnabled()) },
-    { label: 'Link web addresses as you type', checked: autolinkEnabled(), hint: 'URLs and emails become links on space or return', onSelect: () => setAutolinkEnabled(!autolinkEnabled()) },
-    { label: 'Keyboard shortcuts', icon: 'keyboard', onSelect: openShortcuts },
-    { label: 'About Documents', icon: 'info', onSelect: openAbout },
+    { label: '度量单位', icon: 'ruler', hint: unitLabel(recallUnit()), onSelect: () => openUnitsMenu(anchor) },
+    { label: '键入时自动更正', checked: autocorrectEnabled(), hint: '直引号替换为弯引号、破折号、省略号、符号、分数等', onSelect: () => setAutocorrectEnabled(!autocorrectEnabled()) },
+    { label: '句首字母大写', checked: capitalizeSentencesEnabled(), onSelect: () => setCapitalizeSentencesEnabled(!capitalizeSentencesEnabled()) },
+    { label: '键入时将网址转为超链接', checked: autolinkEnabled(), hint: '在空格或回车时将网址和邮箱设为链接', onSelect: () => setAutolinkEnabled(!autolinkEnabled()) },
+    { label: '键盘快捷键', icon: 'keyboard', onSelect: openShortcuts },
+    { label: '关于 Documents', icon: 'info', onSelect: openAbout },
   ];
   if (account && !P.isApp()) {
     items.push({ separator: true });
-    if (session.signedOut) items.push({ label: 'Sign in to Puter', icon: 'login', hint: 'Save documents to your own cloud', onSelect: () => session.signIn() });
-    else items.push({ label: 'Sign out', icon: 'logout', onSelect: confirmSignOut });
+    if (session.signedOut) items.push({ label: '登录 Puter', icon: 'login', hint: '将文档保存到您的云端空间', onSelect: () => session.signIn() });
+    else items.push({ label: '退出登录', icon: 'logout', onSelect: confirmSignOut });
   }
-  opened = openMenu({ anchor, items: items.filter(Boolean), align: 'end', label: account ? 'Account' : 'Settings', minWidth: 250 });
+  opened = openMenu({ anchor, items: items.filter(Boolean), align: 'end', label: account ? '账户' : '设置', minWidth: 250 });
 }
 
 /**
@@ -68,11 +68,11 @@ export function openAppMenu(anchor, { extraItems = [], account = true } = {}) {
  * or, where puter.js has it, a Settings button and <puter-user-menu>, which holds both. `refresh` redraws the
  * account button's face after the session changed.
  */
-export function accountControls({ label = 'Account menu', buttonClass = 'icon-btn.user-btn' } = {}) {
+export function accountControls({ label = '账户菜单', buttonClass = 'icon-btn.user-btn' } = {}) {
   const sdkMenu = userMenu({ onSignOut: confirmSignOut });
   if (sdkMenu) {
     const settings = el('button.icon-btn.settings-btn', {
-      type: 'button', html: icon('settings', 20), title: 'Settings', 'aria-label': 'Settings', 'aria-haspopup': 'menu',
+      type: 'button', html: icon('settings', 20), title: '设置', 'aria-label': '设置', 'aria-haspopup': 'menu',
       onclick: (e) => openAppMenu(e.currentTarget, { account: false }),
     });
     return { nodes: [settings, sdkMenu], refresh() {} };
@@ -90,8 +90,8 @@ const accountFaces = new WeakMap();
 /** Keep the initial visible until an optional profile picture has actually loaded. */
 export function renderAccountButton(button) {
   const signedOut = session.signedOut;
-  button.title = signedOut ? 'Not signed in' : session.username;
-  button.setAttribute('aria-label', signedOut ? 'Account menu. Not signed in' : `Account menu for ${session.username}`);
+  button.title = signedOut ? '未登录' : session.username;
+  button.setAttribute('aria-label', signedOut ? '账户菜单。未登录' : `${session.username} 的账户菜单`);
   const id = session.accountId;
   const key = `${session.state}:${id}:${session.username}`;
   let face = accountFaces.get(button);
@@ -121,21 +121,21 @@ export function renderAccountButton(button) {
 export function openUnitsMenu(anchor) {
   const current = recallUnit();
   openMenu({
-    anchor, align: 'end', label: 'Measurement units', minWidth: 220,
+    anchor, align: 'end', label: '度量单位', minWidth: 220,
     items: [
-      { header: 'Measurement units' },
+      { header: '度量单位' },
       ...UNITS.map((u) => ({ label: u.label, radio: true, checked: current === u.id, onSelect: () => rememberUnit(u.id) })),
       { separator: true },
-      { note: 'Used by the ruler, page setup, indentation, and tables' },
+      { note: '用于标尺、页面设置、缩进和表格' },
     ],
   });
 }
 
 export async function confirmSignOut() {
   const ok = await confirmDialog({
-    title: 'Sign out?',
-    message: 'Your documents stay in your Puter account. Any unsaved change in an open document is saved first.',
-    confirmLabel: 'Sign out', danger: false,
+    title: '退出登录？',
+    message: '您的文档保存在您的 Puter 账户中。打开文档中的任何未保存更改将首先保存。',
+    confirmLabel: '退出登录', danger: false,
   });
   if (!ok) return;
   const pending = [];
@@ -145,26 +145,26 @@ export async function confirmSignOut() {
   try {
     // Signing out would lose what the open document could not save: stay, and say why.
     if ((await Promise.all(pending)).some((saved) => saved === false)) {
-      toast('The open document could not be saved, so you are still signed in. Save or download it first', { icon: 'alert', duration: 8000 });
+      toast('当前打开的文档无法保存，因此您仍处于登录状态。请先保存或下载。', { icon: 'alert', duration: 8000 });
       return;
     }
     await P.signOut();
     location.hash = '';
     location.reload();
   } catch (e) {
-    toast(e?.message || 'Could not sign out. Please try again', { icon: 'alert', duration: 8000 });
+    toast(e?.message || '无法退出登录。请重试', { icon: 'alert', duration: 8000 });
   }
 }
 
 export function openAbout() {
   openModal({
-    title: 'Documents',
+    title: '文档 (Documents)',
     content: el('div', {},
-      el('p.modal-text', {}, 'A private word processor with an original canvas editor. Files are saved as .docx in your own Puter cloud.'),
-      el('p.modal-text', {}, 'This version supports text and paragraph formatting, selection, undo, and DOCX downloads. Advanced document features are not supported yet.'),
-      el('p.small.muted', {}, 'Built with vanilla JavaScript, Vite, Lucide icons, fflate, Noto Sans, and ',
-        el('a', { href: 'https://developer.puter.com', target: '_blank', rel: 'noopener' }, 'Puter'), '.'),
-      el('p.small.muted', {}, el('a', { href: `${import.meta.env.BASE_URL}licenses/THIRD_PARTY.txt`, target: '_blank', rel: 'noopener' }, 'Third-party licenses')),
+      el('p.modal-text', {}, '基于原生 Canvas 编辑器的私有文字处理软件。文件以 .docx 格式保存在您自己的 Puter 云端。'),
+      el('p.modal-text', {}, '当前版本支持文本和段落格式设置、选区、撤销/重做以及 DOCX 导出下载。'),
+      el('p.small.muted', {}, '基于原生 JavaScript、Vite、Lucide 图标、fflate、思源黑体与 ',
+        el('a', { href: 'https://developer.puter.com', target: '_blank', rel: 'noopener' }, 'Puter'), ' 构建。'),
+      el('p.small.muted', {}, el('a', { href: `${import.meta.env.BASE_URL}licenses/THIRD_PARTY.txt`, target: '_blank', rel: 'noopener' }, '第三方开源许可')),
       el('p.small.muted', { lang: 'ko' }, '본 제품은 한글과컴퓨터의 한글 문서 파일(.hwp) 공개 문서를 참고하여 개발하였습니다.')),
   });
 }

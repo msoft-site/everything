@@ -9,43 +9,44 @@ export function openParagraphGeometry(format, defaultTabStop, apply) {
   const originals = new WeakMap();
   const distance = (label, value, { required = false, min = -22 } = {}) => {
     const text = value == null ? '' : String(Number((value / 1440).toFixed(5)));
-    const input = el('input.input', { type: 'number', step: 'any', min, max: 22, required, value: text, placeholder: value == null ? 'Mixed' : '', 'aria-label': `${label} (in)` });
+    const input = el('input.input', { type: 'number', step: 'any', min, max: 22, required, value: text, placeholder: value == null ? '多种' : '', 'aria-label': `${label} (英寸)` });
     originals.set(input, { text, value });
     return input;
   };
   const read = input => input.value === originals.get(input).text ? originals.get(input).value : input.value === '' ? null : Math.round(Number(input.value) * 1440);
   const field = (label, input) => el('label.field', {}, el('span.field-label', {}, label), input);
-  const left = distance('Left indent', format.indentLeft), right = distance('Right indent', format.indentRight);
-  const by = distance('Special indent', format.firstLine == null ? null : Math.abs(format.firstLine), { min: 0 });
-  const special = el('select.input', { 'aria-label': 'Special indent', onchange: () => {
+  const left = distance('左侧缩进', format.indentLeft), right = distance('右侧缩进', format.indentRight);
+  const by = distance('缩进值', format.firstLine == null ? null : Math.abs(format.firstLine), { min: 0 });
+  const special = el('select.input', { 'aria-label': '特殊格式', onchange: () => {
     by.disabled = !special.value || special.value === 'none';
     by.required = !by.disabled;
     if (by.required && by.value === '') by.value = '0.5';
-  } }, ...[['', 'Mixed — keep unchanged'], ['none', 'None'], ['firstLine', 'First line'], ['hanging', 'Hanging']].map(([value, label]) => el('option', { value }, label)));
+  } }, ...[['', '多种 — 保持不变'], ['none', '(无)'], ['firstLine', '首行缩进'], ['hanging', '悬挂缩进']].map(([value, label]) => el('option', { value }, label)));
   special.value = format.firstLine == null ? '' : format.firstLine < 0 ? 'hanging' : format.firstLine > 0 ? 'firstLine' : 'none';
   by.disabled = !special.value || special.value === 'none';
   by.required = !by.disabled;
-  const interval = distance('Default tab spacing', defaultTabStop, { required: true, min: 1 / 1440 });
+  const interval = distance('默认制表位间隔', defaultTabStop, { required: true, min: 1 / 1440 });
   const error = el('p.field-error', { role: 'alert', hidden: true });
   const rows = [], list = el('div.canvas-tab-list');
   let tabsChanged = false;
-  const empty = el('p.field-hint', {}, format.tabs === null ? 'Tab stops vary across the selection. Adding or clearing stops replaces them for every selected paragraph.' : 'No custom stops. Tabs use the default spacing and any hanging indent.');
+  const empty = el('p.field-hint', {}, format.tabs === null ? '选定内容中的制表位不一致。添加或清除制表位将应用于每个选定的段落。' : '无自定义制表位。制表位将使用默认间距和悬挂缩进。');
   const refresh = () => {
     list.replaceChildren(...rows.map((row, i) => {
-      row.position.setAttribute('aria-label', `Tab ${i + 1} position (in)`);
-      row.alignment.setAttribute('aria-label', `Tab ${i + 1} alignment`);
-      row.leader.setAttribute('aria-label', `Tab ${i + 1} leader`);
-      row.remove.setAttribute('aria-label', `Remove tab ${i + 1}`);
+      row.position.setAttribute('aria-label', `制表位 ${i + 1} 位置 (英寸)`);
+      row.alignment.setAttribute('aria-label', `制表位 ${i + 1} 对齐方式`);
+      row.leader.setAttribute('aria-label', `制表位 ${i + 1} 前导符`);
+      row.remove.setAttribute('aria-label', `删除制表位 ${i + 1}`);
       return row.el;
     }));
     empty.hidden = rows.length > 0;
   };
+  const TAB_ALIGN_NAMES = { left: '左对齐', center: '居中', right: '右对齐', decimal: '小数点对齐' };
   const add = stop => {
-    const position = distance('Tab position', stop.position, { required: true });
-    const alignment = el('select.input', {}, ...['left', 'center', 'right', 'decimal'].map(value => el('option', { value, selected: value === stop.alignment }, value[0].toUpperCase() + value.slice(1))));
+    const position = distance('制表位位置', stop.position, { required: true });
+    const alignment = el('select.input', {}, ...['left', 'center', 'right', 'decimal'].map(value => el('option', { value, selected: value === stop.alignment }, TAB_ALIGN_NAMES[value])));
     const leader = el('select.input', {}, ...Object.entries(TAB_LEADERS).map(([value, label]) => el('option', { value, selected: value === (stop.leader || 'none') }, label)));
     const row = { position, alignment, leader, numberingOnly: stop.numberingOnly };
-    row.remove = el('button.icon-btn', { type: 'button', title: 'Remove tab stop', onclick: () => {
+    row.remove = el('button.icon-btn', { type: 'button', title: '删除制表位', onclick: () => {
       tabsChanged = true; rows.splice(rows.indexOf(row), 1); refresh();
       (rows[0]?.position || addButton).focus();
     } }, iconEl('trash', 18));
@@ -60,7 +61,7 @@ export function openParagraphGeometry(format, defaultTabStop, apply) {
     tabsChanged = true;
     const last = Math.max(0, ...rows.map(row => read(row.position) || 0));
     add({ position: Math.min(31680, last + 720), alignment: 'left' }).focus();
-  } }, iconEl('plus', 16), 'Add tab stop');
+  } }, iconEl('plus', 16), '添加制表位');
   for (const tab of format.tabs || []) add(tab);
   const content = el('form.canvas-geometry-form', { onsubmit: e => {
     e.preventDefault();
@@ -78,22 +79,22 @@ export function openParagraphGeometry(format, defaultTabStop, apply) {
         const tabs = normalizeTabStops(rows.map(row => ({ position: read(row.position), alignment: row.alignment.value, leader: row.leader.value, ...(row.numberingOnly ? { numberingOnly: true } : {}) })));
         if (!sameValue(tabs, format.tabs)) patch.tabs = tabs;
       }
-      if (apply(patch, read(interval)) === false) throw new Error('These settings cannot fit the current text. Adjust the indents or tab stops.');
+      if (apply(patch, read(interval)) === false) throw new Error('这些设置无法适应当前文本。请调整缩进或制表位。');
       modal.close();
     } catch (e) { error.textContent = e.message; error.hidden = false; }
   } },
-  el('section', {}, el('h3.canvas-dialog-heading', {}, 'Indents'),
-    el('div.canvas-page-fields', {}, field('Left indent (in)', left), field('Right indent (in)', right), field('Special indent', special), field('By (in)', by)),
-    field('Default tab spacing (in) · whole document', interval)),
-  el('section', {}, el('h3.canvas-dialog-heading', {}, 'Tab stops'),
-  el('div.canvas-tab-head', { 'aria-hidden': 'true' }, el('span', {}, 'Position (in)'), el('span', {}, 'Alignment'), el('span', {}, 'Leader')),
+  el('section', {}, el('h3.canvas-dialog-heading', {}, '缩进'),
+    el('div.canvas-page-fields', {}, field('左侧缩进 (英寸)', left), field('右侧缩进 (英寸)', right), field('特殊格式', special), field('磅值/距离 (英寸)', by)),
+    field('默认制表位间隔 (英寸) · 整个文档', interval)),
+  el('section', {}, el('h3.canvas-dialog-heading', {}, '制表位'),
+  el('div.canvas-tab-head', { 'aria-hidden': 'true' }, el('span', {}, '位置 (英寸)'), el('span', {}, '对齐方式'), el('span', {}, '前导符')),
   list, empty,
   el('div.row', {}, addButton, el('button.btn.btn-ghost', { type: 'button', onclick: () => {
-    tabsChanged = true; rows.length = 0; empty.textContent = 'Custom stops will be cleared. Default spacing and any hanging indent still apply.'; refresh();
-  } }, 'Clear all tab stops'))),
-  el('p.field-hint', {}, 'Indents and custom stops apply to selected paragraphs. Tab positions start at the text margin. Decimal tabs use a period.'),
-  error, el('div.row.row-end', {}, el('button.btn.btn-ghost', { type: 'button', onclick: () => modal.close() }, 'Cancel'), el('button.btn.btn-primary', { type: 'submit' }, 'Apply')));
-  const modal = openModal({ title: 'Indents and tabs', content, wide: true, onClose: () => {
+    tabsChanged = true; rows.length = 0; empty.textContent = '自定义制表位将被清除。默认间距和悬挂缩进仍将适用。'; refresh();
+  } }, '全部清除'))),
+  el('p.field-hint', {}, '缩进和自定义制表位应用于选定的段落。制表位位置从文本边距开始计算。小数点对齐使用英文句点。'),
+  error, el('div.row.row-end', {}, el('button.btn.btn-ghost', { type: 'button', onclick: () => modal.close() }, '取消'), el('button.btn.btn-primary', { type: 'submit' }, '应用')));
+  const modal = openModal({ title: '缩进和制表位', content, wide: true, onClose: () => {
     const root = modal.panel.closest('.modal-root');
     root?.setAttribute('inert', ''); root?.setAttribute('aria-hidden', 'true');
   } });

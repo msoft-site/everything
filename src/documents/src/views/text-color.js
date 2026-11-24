@@ -13,8 +13,8 @@ export const TEXT_COLORS = [
 const recent = [];
 
 export function openTextColor(value, apply, options) {
-  return openColorPalette({ ...options, label: 'Text color', value, choices: TEXT_COLORS,
-    reset: { value: 'auto', label: 'Automatic', indicator: 'A' }, custom: true, recent,
+  return openColorPalette({ ...options, label: '字体颜色', value, choices: TEXT_COLORS,
+    reset: { value: 'auto', label: '自动', indicator: 'A' }, custom: true, recent,
     onPick: color => {
       if (color !== 'auto' && !TEXT_COLORS.some(choice => choice.value === color)) {
         const at = recent.findIndex(choice => choice.value === color);

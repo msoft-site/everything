@@ -56,7 +56,7 @@ describe('createToolbar', () => {
     expect(q('bold').getAttribute('aria-pressed')).toBe('true');
     expect(q('italic').getAttribute('aria-pressed')).toBe('false');
     expect(q('superscript').getAttribute('aria-pressed')).toBe('false');
-    expect(q('subscript').getAttribute('aria-label')).toBe('Subscript');
+    expect(q('subscript').getAttribute('aria-label')).toBe('下标');
     expect(q('text-color').querySelector('.tb-color-bar').style.background).toBe('rgb(255, 0, 0)');
     expect(q('text-align').querySelector('svg')).toBeTruthy();
   });
@@ -101,7 +101,7 @@ describe('createToolbar', () => {
     expect(font.value).toBe('');
     expect(font.querySelector('option[data-ph]').textContent).toBe('Garamond');
     ui.styles.set({ mixedSelection: true, activeParagraphStyleId: null });
-    expect(tb.el.querySelector('.tb-style').querySelector('option[data-ph]').textContent).toBe('Mixed');
+    expect(tb.el.querySelector('.tb-style').querySelector('option[data-ph]').textContent).toBe('多种');
   });
 
   it('disables editing controls in viewing mode and re-enables them after', () => {
@@ -271,13 +271,13 @@ describe('table options', () => {
     expect(btn.disabled).toBe(false);
 
     const m = tb.openTableMenu({ anchor: btn });
-    const menu = document.querySelector('.menu[aria-label="Table"]');
+    const menu = document.querySelector('.menu[aria-label="表格"]');
     expect(menu).toBeTruthy();
     expect(menu.querySelector('.menu-header').textContent).toContain('2 × 3');
     const labels = [...menu.querySelectorAll('.menu-item')].map((b) => b.textContent.trim());
     expect(labels).toEqual(TABLE_ACTIONS.filter((a) => !a.separator).map((a) => a.label));
-    expect([...menu.querySelectorAll('.menu-item')].find((b) => b.textContent.includes('Split cell')).disabled).toBe(true);
-    [...menu.querySelectorAll('.menu-item')].find((b) => b.textContent.includes('Delete row')).click();
+    expect([...menu.querySelectorAll('.menu-item')].find((b) => b.textContent.includes('拆分单元格')).disabled).toBe(true);
+    [...menu.querySelectorAll('.menu-item')].find((b) => b.textContent.includes('删除行')).click();
     await Promise.resolve();
     expect(ui.executed.at(-1).id).toBe('table-delete-row');
     m?.close();
@@ -307,7 +307,7 @@ describe('line spacing menu', () => {
     document.body.append(plain.el);
     plain.bind(ui);
     plain.el.querySelector('[data-cmd="line-height"]').click();
-    expect([...document.querable?.('x') || document.querySelectorAll('.menu .menu-item')].map((b) => b.textContent.trim())).toEqual(['Single', '1.15', '1.5', 'Double']);
+    expect([...document.querable?.('x') || document.querySelectorAll('.menu .menu-item')].map((b) => b.textContent.trim())).toEqual(['单倍行距', '1.15', '1.5', '双倍行距']);
     document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
     plain.el.remove();
 
@@ -317,7 +317,7 @@ describe('line spacing menu', () => {
     withCustom.bind(ui);
     withCustom.el.querySelector('[data-cmd="line-height"]').click();
     const items = [...document.querySelectorAll('.menu .menu-item')];
-    expect(items.map((b) => b.textContent.trim())).toEqual(['Single', '1.15', '1.5', 'Double', 'Custom spacing']);
+    expect(items.map((b) => b.textContent.trim())).toEqual(['单倍行距', '1.15', '1.5', '双倍行距', '自定义间距']);
     items.at(-1).click();
     expect(opened).toBe(1);
     withCustom.el.remove();
@@ -434,7 +434,7 @@ describe('table options from a right-click', () => {
     expect(tb.el.hasAttribute('aria-expanded')).toBe(false);
     expect(onTableExtras).toHaveBeenCalledWith(expect.objectContaining({ tableNodeId: 't1' }), { anchor: null, x: 120, y: 80 });
     tb.unbind();
-    expect(document.querySelector('.menu[aria-label="Table"]')).toBeNull();
+    expect(document.querySelector('.menu[aria-label="表格"]')).toBeNull();
 
     // From the toolbar button, the button stays the anchor.
     tb.bind(ui);

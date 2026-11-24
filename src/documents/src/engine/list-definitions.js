@@ -13,9 +13,9 @@ import { validateIndent } from './paragraph-geometry.js';
  */
 
 export const LIST_ALIGNMENTS = Object.freeze(['left', 'center', 'right']);
-export const LIST_SUFFIXES = Object.freeze({ tab: 'Tab character', space: 'Space', nothing: 'Nothing' });
+export const LIST_SUFFIXES = Object.freeze({ tab: '制表符', space: '空格', nothing: '不特别标注' });
 /** Number styles offered for new formats: the numeral formats the preview renders. */
-export const NUMBER_STYLES = Object.freeze([['decimal', '1, 2, 3'], ['decimalZero', '01, 02, 03'], ['upperRoman', 'I, II, III'], ['lowerRoman', 'i, ii, iii'], ['upperLetter', 'A, B, C'], ['lowerLetter', 'a, b, c'], ['none', '(none)']]);
+export const NUMBER_STYLES = Object.freeze([['decimal', '1, 2, 3'], ['decimalZero', '01, 02, 03'], ['upperRoman', 'I, II, III'], ['lowerRoman', 'i, ii, iii'], ['upperLetter', 'A, B, C'], ['lowerLetter', 'a, b, c'], ['none', '(无)']]);
 
 /** The list the selection is in when every selected paragraph shares one list and level, else null. */
 export function selectedListLevel(model) {

@@ -10,50 +10,50 @@ import { toast } from '../ui/toast.js';
 import { engineApi } from '../lib/engine-api.js';
 import { sidePane, section, button, hint, preference, reveal } from './review-ui.js';
 
-const EDIT_LABELS = { readOnly: 'No changes (Read only)', trackedChanges: 'Tracked changes', comments: 'Comments', forms: 'Filling in forms' };
+const EDIT_LABELS = { readOnly: '未作任何更改(只读)', trackedChanges: '修订', comments: '批注', forms: '填写窗体' };
 const EXPLAIN = {
-  readOnly: 'This document is protected from unintentional editing.',
-  trackedChanges: 'This document is protected: all changes are tracked.',
-  comments: 'This document is protected: you may only add comments.',
-  forms: 'This document is protected: you may only fill in form fields.',
-  none: 'Formatting in this document is restricted to the allowed styles.',
+  readOnly: '此文档已被保护，以防无意中进行编辑。',
+  trackedChanges: '此文档已被保护: 所有更改均作为修订记录。',
+  comments: '此文档已被保护: 你只能添加批注。',
+  forms: '此文档已被保护: 你只能填写窗体域。',
+  none: '此文档中的格式设置已限制为允许的样式。',
 };
 const EXTRA_EDITORS = preference('documents:restrict-editors', []);
 const HIGHLIGHT = preference('documents:restrict-highlight', true);
 const REGION_TINT = 'rgba(255, 214, 92, .32)', DRAFT_TINT = 'rgba(120, 160, 230, .22)';
 
 /** Password and confirmation; resolves the password ('' for none) or null when cancelled. */
-export function passwordDialog({ title, intro, confirmLabel = 'OK', requireMatch = true, allowEmpty = true, check }) {
+export function passwordDialog({ title, intro, confirmLabel = '确定', requireMatch = true, allowEmpty = true, check }) {
   return new Promise(resolve => {
     let done = false;
     const finish = value => { if (!done) { done = true; resolve(value); } };
-    const first = el('input.input', { type: 'password', autocomplete: 'new-password', 'aria-label': 'Password' });
-    const second = el('input.input', { type: 'password', autocomplete: 'new-password', 'aria-label': 'Reenter password' });
+    const first = el('input.input', { type: 'password', autocomplete: 'new-password', 'aria-label': '密码' });
+    const second = el('input.input', { type: 'password', autocomplete: 'new-password', 'aria-label': '重新输入密码' });
     const problem = el('p.field-error', { role: 'alert', hidden: true });
     const confirm = el('button.btn.btn-primary', { type: 'submit' }, confirmLabel);
     const content = el('form.ed-dialog-body', { onsubmit: async e => {
       e.preventDefault();
       const value = first.value;
       const fail = message => { problem.textContent = message; problem.hidden = false; first.focus(); };
-      if (!value && !allowEmpty) return fail('Enter the password.');
-      if (requireMatch && value !== second.value) return fail('The passwords do not match.');
+      if (!value && !allowEmpty) return fail('请输入密码。');
+      if (requireMatch && value !== second.value) return fail('两次输入的密码不一致。');
       if (check) {
-        confirm.disabled = true; confirm.textContent = 'Checking…';
+        confirm.disabled = true; confirm.textContent = '检查中…';
         // Let the button repaint before the hash runs.
         await new Promise(r => setTimeout(r, 30));
         const ok = await check(value).catch(err => { fail(err.message); return null; });
         confirm.disabled = false; confirm.textContent = confirmLabel;
         if (ok === null) return;
-        if (!ok) return fail('The password is incorrect.');
+        if (!ok) return fail('密码不正确。');
       }
       finish(value); modal.close();
     } },
       intro ? el('p.field-hint', {}, intro) : null,
-      el('label.field', {}, el('span.field-label', {}, requireMatch ? 'New password (optional)' : 'Password'), first),
-      requireMatch ? el('label.field', {}, el('span.field-label', {}, 'Reenter password'), second) : null,
+      el('label.field', {}, el('span.field-label', {}, requireMatch ? '新密码(可选)' : '密码'), first),
+      requireMatch ? el('label.field', {}, el('span.field-label', {}, '重新输入密码以确认'), second) : null,
       problem,
-      requireMatch ? hint('A password stops others from turning protection off by accident. It is not encryption: the document can still be read.') : null,
-      el('div.modal-actions', {}, el('button.btn.btn-ghost', { type: 'button', onclick: () => modal.close() }, 'Cancel'), confirm));
+      requireMatch ? hint('密码可防止他人意外关闭保护。这不是加密: 文档仍可被读取。') : null,
+      el('div.modal-actions', {}, el('button.btn.btn-ghost', { type: 'button', onclick: () => modal.close() }, '取消'), confirm));
     const modal = openModal({ title, content, onClose: () => finish(null) });
     first.focus();
   });
@@ -81,7 +81,7 @@ export function createRestrictEditing({ editor, pkg, error, author, onChange = (
   }
 
   /* ---- The pane ---- */
-  const pane = sidePane({ title: 'Restrict Editing', label: 'Restrict Editing pane', className: 'rv-restrict-pane', onOpen: () => { render(); queueMicrotask(onChange); }, onClose: () => { onChange(); editor()?.focus(); } });
+  const pane = sidePane({ title: '限制编辑', label: '限制编辑窗格', className: 'rv-restrict-pane', onOpen: () => { render(); queueMicrotask(onChange); }, onClose: () => { onChange(); editor()?.focus(); } });
   let draft = { formatting: false, edit: 'readOnly', editing: false };
   function syncDraft() {
     const p = protection();
@@ -112,7 +112,7 @@ export function createRestrictEditing({ editor, pkg, error, author, onChange = (
     const readOnly = !!pkg()?.readOnly;
     const formattingBox = el('input', { type: 'checkbox', checked: draft.formatting, disabled: readOnly, onchange: () => { draft.formatting = formattingBox.checked; saveDraft(); } });
     const editingBox = el('input', { type: 'checkbox', checked: draft.editing, disabled: readOnly, onchange: () => { draft.editing = editingBox.checked; saveDraft(); render(); } });
-    const kind = el('select.input', { 'aria-label': 'Type of editing allowed', disabled: !draft.editing || readOnly, onchange: () => { draft.edit = kind.value; saveDraft(); render(); } },
+    const kind = el('select.input', { 'aria-label': '允许的编辑类型', disabled: !draft.editing || readOnly, onchange: () => { draft.edit = kind.value; saveDraft(); render(); } },
       ...Object.entries(EDIT_LABELS).map(([value, label]) => el('option', { value, selected: value === draft.edit }, label)));
     const [a, b] = engine?.model.range || [0, 0];
     const selectionRegions = regions().filter(r => r.start <= a && b <= r.end || a < r.end && b > r.start);
@@ -122,33 +122,33 @@ export function createRestrictEditing({ editor, pkg, error, author, onChange = (
         onchange: () => toggleException(who, box.checked) });
       return el('label.rv-check', {}, box, label);
     };
-    const exceptions = draft.editing && ['readOnly', 'comments'].includes(draft.edit) ? section('Exceptions (optional)',
-      hint('Select parts of the document and choose who may edit them freely.'),
-      exceptionRow('everyone', 'Everyone'),
+    const exceptions = draft.editing && ['readOnly', 'comments'].includes(draft.edit) ? section('例外项(可选)',
+      hint('选择文档的各部分并选取允许自由编辑的人员。'),
+      exceptionRow('everyone', '每个人'),
       ...editorsList().map(name => exceptionRow(name, name)),
-      el('div.rv-actions', {}, button('More users…', async () => {
-        const names = await promptDialog({ title: 'Add users', label: 'Names or e-mail addresses', hint: 'Separate several with commas or semicolons.', confirmLabel: 'Add' });
+      el('div.rv-actions', {}, button('更多用户…', async () => {
+        const names = await promptDialog({ title: '添加用户', label: '用户名或电子邮件地址', hint: '多个用户请用逗号或分号分隔。', confirmLabel: '添加' });
         if (!names) return;
         EXTRA_EDITORS.set([...new Set([...EXTRA_EDITORS.get(), ...names.split(/[;,]/).map(s => s.trim()).filter(Boolean)])]);
         render();
       })),
       regionList()) : null;
-    const start = button('Yes, Start Enforcing Protection', () => startEnforcing(), { primary: true, small: false, disabled: readOnly || !draft.formatting && !draft.editing });
+    const start = button('是，启动强制保护', () => startEnforcing(), { primary: true, small: false, disabled: readOnly || !draft.formatting && !draft.editing });
     return el('div', {},
-      section('1. Formatting restrictions', el('label.rv-check', {}, formattingBox, 'Limit formatting to a selection of styles'), button('Choose styles…', () => chooseStyles(), { disabled: readOnly })),
-      section('2. Editing restrictions', el('label.rv-check', {}, editingBox, 'Allow only this type of editing in the document:'), kind),
+      section('1. 格式设置限制', el('label.rv-check', {}, formattingBox, '限制对选定的样式进行格式设置'), button('设置…', () => chooseStyles(), { disabled: readOnly })),
+      section('2. 编辑限制', el('label.rv-check', {}, editingBox, '仅允许在文档中进行此类编辑:'), kind),
       exceptions,
-      section('3. Start enforcement', hint('Are you ready to apply these settings? You can turn them off later.'), start),
-      readOnly ? hint('This document is open read-only.') : null);
+      section('3. 启动强制保护', hint('准备好应用这些设置了吗? 以后可以将其关闭。'), start),
+      readOnly ? hint('此文档以只读方式打开。') : null);
   }
   function regionList() {
     const list = regions();
     if (!list.length) return null;
     const engine = editor();
-    return el('div.rv-list.rv-regions', { role: 'list', 'aria-label': 'Editable regions' }, ...list.map(r => el('div.rv-item', { role: 'listitem' },
-      el('button.rv-issue-target', { type: 'button', onclick: () => reveal(engine, r.start, r.end) }, `${r.edGrp === 'everyone' ? 'Everyone' : r.ed || r.edGrp}: “${engine.session.body.text.slice(r.start, Math.min(r.end, r.start + 40)).replace(/\n/g, ' ')}${r.end - r.start > 40 ? '…' : ''}”`),
+    return el('div.rv-list.rv-regions', { role: 'list', 'aria-label': '可编辑区域' }, ...list.map(r => el('div.rv-item', { role: 'listitem' },
+      el('button.rv-issue-target', { type: 'button', onclick: () => reveal(engine, r.start, r.end) }, `${r.edGrp === 'everyone' ? '每个人' : r.ed || r.edGrp}: “${engine.session.body.text.slice(r.start, Math.min(r.end, r.start + 40)).replace(/\n/g, ' ')}${r.end - r.start > 40 ? '…' : ''}”`),
       // Regions are the body's: leave a header, footer or note being edited, so the body loses the region (one undo step).
-      button('Remove', () => { engine.finishComposition(); if (engine.session.path !== null) engine.editStory(null); engine.execute(() => api().removePermissionRanges(engine.session.body, [r.id])); render(); }))));
+      button('删除', () => { engine.finishComposition(); if (engine.session.path !== null) engine.editStory(null); engine.execute(() => api().removePermissionRanges(engine.session.body, [r.id])); render(); }))));
   }
   function saveDraft() {
     // Unenforced choices are kept in the file (enforcement off), as word processors do.
@@ -173,21 +173,21 @@ export function createRestrictEditing({ editor, pkg, error, author, onChange = (
     const styles = Object.values(engine.model.styles.definitions || {}).filter(s => ['paragraph', 'character'].includes(s.type)).sort((x, y) => String(x.name).localeCompare(String(y.name)));
     const locked = new Set(settings().lockedStyles || []);
     const boxes = styles.map(s => ({ id: s.id, input: el('input', { type: 'checkbox', checked: !locked.has(s.id) }), label: s.name || s.id }));
-    const modal = openModal({ title: 'Formatting Restrictions', content: el('form.ed-dialog-body', { onsubmit: e => {
+    const modal = openModal({ title: '格式设置限制', content: el('form.ed-dialog-body', { onsubmit: e => {
       e.preventDefault();
       setSettings({ lockedStyles: boxes.filter(b => !b.input.checked).map(b => b.id) });
       modal.close(); render();
     } },
-      hint('Checked styles may be used. Direct formatting is not allowed while the restriction is enforced.'),
+      hint('勾选的样式可以使用。启用限制后不允许直接设置格式。'),
       el('div.rv-style-list', {}, ...boxes.map(b => el('label.rv-check', {}, b.input, b.label))),
-      el('div.rv-actions', {}, button('All', () => boxes.forEach(b => { b.input.checked = true; })), button('None', () => boxes.forEach(b => { b.input.checked = false; }))),
-      el('div.modal-actions', {}, el('button.btn.btn-ghost', { type: 'button', onclick: () => modal.close() }, 'Cancel'), el('button.btn.btn-primary', { type: 'submit' }, 'OK'))) });
+      el('div.rv-actions', {}, button('全选', () => boxes.forEach(b => { b.input.checked = true; })), button('全不选', () => boxes.forEach(b => { b.input.checked = false; }))),
+      el('div.modal-actions', {}, el('button.btn.btn-ghost', { type: 'button', onclick: () => modal.close() }, '取消'), el('button.btn.btn-primary', { type: 'submit' }, '确定'))) });
   }
 
   async function startEnforcing(choice = null) {
     const engine = editor(); if (!engine || pkg()?.readOnly) return false;
     const edit = choice?.edit ?? (draft.editing ? draft.edit : 'none'), formatting = choice?.formatting ?? draft.formatting;
-    const password = await passwordDialog({ title: choice?.title || 'Start Enforcing Protection', intro: choice?.intro || 'Enter a password to keep others from removing the protection, or leave it empty.' });
+    const password = await passwordDialog({ title: choice?.title || '启动强制保护', intro: choice?.intro || '输入密码以防他人解除保护，或者留空。' });
     if (password === null) return false;
     const verifier = password ? await api().createPasswordVerifier(password) : null;
     engine.finishComposition();
@@ -195,15 +195,15 @@ export function createRestrictEditing({ editor, pkg, error, author, onChange = (
     // Earlier edits cannot be undone past the point protection began.
     engine.session.history = []; engine.session.future = [];
     applyGuard(); render();
-    toast(edit === 'trackedChanges' && !formatting ? 'Tracking is locked' : 'Protection is on');
+    toast(edit === 'trackedChanges' && !formatting ? '已锁定修订跟踪' : '已启用保护');
     return true;
   }
-  async function stopEnforcing({ title = 'Stop Protection' } = {}) {
+  async function stopEnforcing({ title = '停止保护' } = {}) {
     const p = protection(); if (!p?.enforcement) { if (readOnlyView) { readOnlyView = false; applyGuard(); render(); } return true; }
     if (api().hasPassword(p)) {
-      const ok = await passwordDialog({ title, requireMatch: false, allowEmpty: false, confirmLabel: 'Unprotect', check: value => api().verifyPassword(value, p) });
+      const ok = await passwordDialog({ title, requireMatch: false, allowEmpty: false, confirmLabel: '解除保护', check: value => api().verifyPassword(value, p) });
       if (ok === null) return false;
-    } else if (!await confirmDialog({ title, message: 'Turn off protection for this document?', confirmLabel: 'Stop Protection', danger: false })) return false;
+    } else if (!await confirmDialog({ title, message: '关闭对此文档的保护?', confirmLabel: '停止保护', danger: false })) return false;
     setSettings({ protection: { edit: p.edit, formatting: p.formatting, enforcement: false } });
     applyGuard(); render();
     return true;
@@ -211,7 +211,7 @@ export function createRestrictEditing({ editor, pkg, error, author, onChange = (
 
   function nextRegion() {
     const engine = editor(); if (!engine) return;
-    const list = myRegions(); if (!list.length) { toast('There is no region you can edit.', { icon: 'info' }); return; }
+    const list = myRegions(); if (!list.length) { toast('没有你可以编辑的区域。', { icon: 'info' }); return; }
     const [, b] = engine.model.range;
     const next = list.find(r => r.start > b) || list[0];
     reveal(engine, next.start, next.end); engine.focus();
@@ -221,12 +221,12 @@ export function createRestrictEditing({ editor, pkg, error, author, onChange = (
     const mine = myRegions();
     const highlight = el('input', { type: 'checkbox', checked: HIGHLIGHT.get(), onchange: () => { HIGHLIGHT.set(highlight.checked); onChange(); } });
     return el('div', {},
-      section('Your permissions', el('p.rv-status', {}, readOnlyView ? 'You opened this document read-only, as its author recommends.' : EXPLAIN[p.edit] || EXPLAIN.readOnly),
+      section('你的权限', el('p.rv-status', {}, readOnlyView ? '你已按作者建议以只读方式打开此文档。' : EXPLAIN[p.edit] || EXPLAIN.readOnly),
         p.formatting && p.edit !== 'none' ? el('p.rv-status', {}, EXPLAIN.none) : null,
-        ['readOnly', 'comments', 'forms'].includes(p.edit) && mine.length ? el('div', {}, hint('You may edit in the highlighted regions.'),
-          el('div.rv-actions', {}, button('Find Next Region I Can Edit', () => nextRegion(), { primary: true }), button('Show All Regions I Can Edit', () => { const engine = editor(); if (mine.length) reveal(engine, mine[0].start, mine.at(-1).end); })),
-          el('label.rv-check', {}, highlight, 'Highlight the regions I can edit')) : null),
-      el('div.rv-actions', {}, button(readOnlyView ? 'Edit Anyway' : 'Stop Protection', () => stopEnforcing(), { small: false })));
+        ['readOnly', 'comments', 'forms'].includes(p.edit) && mine.length ? el('div', {}, hint('你可以在突出显示的区域中进行编辑。'),
+          el('div.rv-actions', {}, button('查找我可以编辑的下一个区域', () => nextRegion(), { primary: true }), button('显示我可以编辑的所有区域', () => { const engine = editor(); if (mine.length) reveal(engine, mine[0].start, mine.at(-1).end); })),
+          el('label.rv-check', {}, highlight, '突出显示我可以编辑的区域')) : null),
+      el('div.rv-actions', {}, button(readOnlyView ? '仍然编辑' : '停止保护', () => stopEnforcing(), { small: false })));
   }
 
   return {
@@ -249,12 +249,12 @@ export function createRestrictEditing({ editor, pkg, error, author, onChange = (
       // The setting also holds the password to modify the document (§17.15.1.93), which stays.
       const current = settings().writeProtection, recommended = !current?.recommended;
       setSettings({ writeProtection: recommended || current?.hashValue || current?.hash ? { ...current, recommended } : null });
-      toast(recommended ? 'This document will suggest opening read-only' : 'The read-only suggestion is off');
+      toast(recommended ? '此文档将建议以只读方式打开' : '已关闭只读建议');
     },
     /** On opening a document whose author recommends read-only, ask how to open it. */
     async offerReadOnly() {
       if (!settings().writeProtection?.recommended || pkg()?.readOnly) return;
-      const readOnly = await confirmDialog({ title: 'Open read-only?', message: 'The author suggests opening this document read-only unless you need to change it.', confirmLabel: 'Open Read-Only', cancelLabel: 'Edit', danger: false });
+      const readOnly = await confirmDialog({ title: '以只读方式打开?', message: '除非你需要更改，否则作者建议以只读方式打开此文档。', confirmLabel: '以只读方式打开', cancelLabel: '编辑', danger: false });
       if (readOnly) { readOnlyView = true; applyGuard(); pane.open({ focus: false }); render(); }
     },
     destroy() { pane.destroy(); },

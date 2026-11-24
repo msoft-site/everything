@@ -5,8 +5,8 @@ import { conditionalFromSpec, specTableBorders, DEFAULT_LOOK, TABLE_STYLE_FAMILI
 
 // Table Style Options, in the two-column order of the ribbon group.
 export const LOOK_OPTIONS = Object.freeze([
-  ['firstRow', 'Header Row', false], ['firstColumn', 'First Column', false], ['lastRow', 'Total Row', false],
-  ['lastColumn', 'Last Column', false], ['noHBand', 'Banded Rows', true], ['noVBand', 'Banded Columns', true],
+  ['firstRow', '标题行', false], ['firstColumn', '首列', false], ['lastRow', '汇总行', false],
+  ['lastColumn', '末列', false], ['noHBand', '镶边行', true], ['noVBand', '镶边列', true],
 ]);
 
 /** How each cell of a small table looks in a style: the engine's own region and border resolution. */
@@ -69,7 +69,7 @@ export function createTableStyleGallery({ styles, current, look, setLook, apply,
     return { key, inverted, input, node: el('label.ribbon-check', {}, input, label) };
   });
   const optionsGrid = el('div.ribbon-check-grid', {}, ...boxes.map(b => b.node));
-  const gallery = el('div.ribbon-gallery.table-design-gallery', { role: 'listbox', 'aria-label': 'Table Styles', 'aria-orientation': 'horizontal', dataset: { shrinkMin: '2', shrinkMax: '520' } });
+  const gallery = el('div.ribbon-gallery.table-design-gallery', { role: 'listbox', 'aria-label': '表格样式', 'aria-orientation': 'horizontal', dataset: { shrinkMin: '2', shrinkMax: '520' } });
   const thumbnails = new Map();
   const item = (spec, { menu = false } = {}) => {
     const canvas = el('canvas', { 'aria-hidden': 'true' });

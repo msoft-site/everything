@@ -35,7 +35,7 @@ const accountKey = () => session.accountId || '';
 export function appsButton() {
   if (P.isApp() || hasUserMenu()) return null;
   return el('button.icon-btn.apps-btn', {
-    type: 'button', html: GRID_SVG, title: 'Apps', 'aria-label': 'Apps',
+    type: 'button', html: GRID_SVG, title: '应用', 'aria-label': '应用',
     'aria-haspopup': 'dialog', 'aria-expanded': 'false',
     onclick: (e) => {
       e.preventDefault();
@@ -78,23 +78,23 @@ export function closeAppsPanel({ focus = false } = {}) {
 
 function build() {
   const close = el('button.icon-btn.apps-panel-action.apps-panel-close', {
-    type: 'button', html: icon('x', 16, 2), title: 'Close', 'aria-label': 'Close',
+    type: 'button', html: icon('x', 16, 2), title: '关闭', 'aria-label': '关闭',
     onclick: () => closeAppsPanel({ focus: true }),
   });
   const newTab = el('a.icon-btn.apps-panel-action.apps-panel-newtab', {
     href: APPS_NEWTAB_URL, target: '_blank', rel: 'noopener noreferrer', html: icon('external', 16, 2),
-    title: 'Open in new tab', 'aria-label': 'Open apps in a new tab',
+    title: '在新标签页中打开', 'aria-label': '在新标签页中打开应用',
   });
   frame = el('iframe.apps-frame', {
-    title: 'Your Puter apps', referrerpolicy: 'strict-origin-when-cross-origin', allow: 'clipboard-read; clipboard-write',
+    title: '您的 Puter 应用', referrerpolicy: 'strict-origin-when-cross-origin', allow: 'clipboard-read; clipboard-write',
   });
   const body = el('div.apps-panel-body.is-loading', {},
-    el('div.apps-panel-loading', { role: 'status', 'aria-label': 'Loading apps' },
+    el('div.apps-panel-loading', { role: 'status', 'aria-label': '正在加载应用' },
       el('span.spin', { html: icon('spinner', 22, 2), 'aria-hidden': 'true' })),
     frame);
-  panel = el('div.apps-panel', { role: 'dialog', 'aria-label': 'Apps', tabindex: '-1', hidden: true },
+  panel = el('div.apps-panel', { role: 'dialog', 'aria-label': '应用', tabindex: '-1', hidden: true },
     el('div.apps-panel-header', {},
-      el('span.apps-panel-title', {}, 'Apps'),
+      el('span.apps-panel-title', {}, '应用'),
       el('div.apps-panel-actions', {}, newTab, close)),
     body);
   panel.addEventListener('keydown', (e) => {

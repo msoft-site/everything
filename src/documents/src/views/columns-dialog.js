@@ -7,7 +7,7 @@ const PER_UNIT = { in: 1440, cm: 1440 / 2.54 };
 /** Half an inch between columns, the usual default. */
 export const COLUMN_SPACE = 720;
 export const MAX_COLUMNS = 12;
-export const COLUMN_PRESETS = [['one', 'One', 'columnsOne'], ['two', 'Two', 'columnsTwo'], ['three', 'Three', 'columnsThree'], ['left', 'Left', 'columnsLeft'], ['right', 'Right', 'columnsRight']];
+export const COLUMN_PRESETS = [['one', '一栏', 'columnsOne'], ['two', '两栏', 'columnsTwo'], ['three', '三栏', 'columnsThree'], ['left', '偏左', 'columnsLeft'], ['right', '偏右', 'columnsRight']];
 
 /** The section columns a preset describes for a writing width in twips; null for one column. */
 export function presetColumns(id, available, space = COLUMN_SPACE) {
@@ -42,26 +42,26 @@ export function columnEntries(columns, available) {
  * The Columns dialog: presets, the number of columns, each column's width and spacing, a line
  * between them, and where they apply. apply(columns | null, scope) returns false when they cannot fit.
  */
-export function openColumns({ columns, available, unit = recallUnit(), scopes = [['document', 'Whole document']], scope: initialScope, apply, onClose }) {
+export function openColumns({ columns, available, unit = recallUnit(), scopes = [['document', '整篇文档']], scope: initialScope, apply, onClose }) {
   const per = PER_UNIT[unit] || 1440, step = unit === 'cm' ? 0.01 : 0.01;
   const min = Math.round(per * (unit === 'cm' ? 0.5 : 0.2));
   let count = columns?.count || 1, equal = columns?.equalWidth !== false, entries = columnEntries(columns, available);
   const separator = el('input', { type: 'checkbox', checked: !!columns?.separator, onchange: render });
   const equalBox = el('input', { type: 'checkbox', checked: equal, onchange: () => { equal = equalBox.checked; if (equal) entries = columnEntries({ count, space: entries[0]?.space ?? COLUMN_SPACE, equalWidth: true }, available); render(); } });
-  const number = el('input.input', { type: 'number', min: 1, max: MAX_COLUMNS, step: 1, value: count, 'aria-label': 'Number of columns', onchange: () => {
+  const number = el('input.input', { type: 'number', min: 1, max: MAX_COLUMNS, step: 1, value: count, 'aria-label': '栏数', onchange: () => {
     const next = Math.max(1, Math.min(MAX_COLUMNS, Math.round(Number(number.value)) || 1));
     number.value = next; setCount(next);
   } });
   const error = el('p.field-error', { role: 'alert', hidden: true });
-  const presets = el('div.ps-presets', { role: 'group', 'aria-label': 'Presets' }, ...COLUMN_PRESETS.map(([id, label, icon]) => el('button.ps-preset', { type: 'button', dataset: { preset: id }, 'aria-pressed': 'false',
+  const presets = el('div.ps-presets', { role: 'group', 'aria-label': '预设' }, ...COLUMN_PRESETS.map(([id, label, icon]) => el('button.ps-preset', { type: 'button', dataset: { preset: id }, 'aria-pressed': 'false',
     onclick: () => {
       const next = presetColumns(id, available, entries[0]?.space || COLUMN_SPACE);
       count = next?.count || 1; equal = next?.equalWidth !== false; entries = columnEntries(next, available);
       number.value = count; equalBox.checked = equal; render();
     } }, commandIconEl(icon, 32), el('span', {}, label))));
-  const table = el('div.ps-columns', { role: 'table', 'aria-label': 'Width and spacing' });
+  const table = el('div.ps-columns', { role: 'table', 'aria-label': '宽度和间距' });
   const sheet = el('div.ps-preview-sheet', { 'aria-hidden': 'true' });
-  const scope = el('select.input', { 'aria-label': 'Apply to' }, ...scopes.map(([value, label]) => el('option', { value }, label)));
+  const scope = el('select.input', { 'aria-label': '应用于' }, ...scopes.map(([value, label]) => el('option', { value }, label)));
   scope.value = initialScope && scopes.some(([v]) => v === initialScope) ? initialScope : scopes[0][0];
   const show = twips => String(Number((twips / per).toFixed(2)));
   let fields = [];
@@ -102,7 +102,7 @@ export function openColumns({ columns, available, unit = recallUnit(), scopes = 
       : { count, space, equalWidth: false, separator: separator.checked, entries: entries.map((e, i) => ({ width: Math.round(e.width), space: i === count - 1 ? 0 : Math.round(e.space) })) };
   }
   function problem() {
-    if (count > 1 && entries.some(e => e.width < min)) return `Each column must be at least ${show(min)} ${unit} wide. Use fewer columns or less spacing.`;
+    if (count > 1 && entries.some(e => e.width < min)) return `每栏的宽度必须至少为 ${show(min)} ${unit}。请减少栏数或减小间距。`;
     return null;
   }
   function render() {
@@ -111,8 +111,8 @@ export function openColumns({ columns, available, unit = recallUnit(), scopes = 
     // The rows are rebuilt only when the number of columns changes. A change to one field (committed by Tab or a
     // click elsewhere) updates the others in place, so the field the keyboard just moved to is still there.
     if (fields.length !== entries.length) {
-      const header = el('div.ps-columns-row.is-head', { role: 'row' }, ...['Column', `Width (${unit})`, `Spacing (${unit})`].map(text => el('span', { role: 'columnheader' }, text)));
-      fields = entries.map((entry, i) => ['width', 'space'].map(key => el('input.input', { type: 'number', min: 0, step, 'aria-label': `${key === 'width' ? 'Width' : 'Spacing'} of column ${i + 1} (${unit})`,
+      const header = el('div.ps-columns-row.is-head', { role: 'row' }, ...['栏', `宽度 (${unit})`, `间距 (${unit})`].map(text => el('span', { role: 'columnheader' }, text)));
+      fields = entries.map((entry, i) => ['width', 'space'].map(key => el('input.input', { type: 'number', min: 0, step, 'aria-label': `${key === 'width' ? '宽度' : '间距'} (第 ${i + 1} 栏, ${unit})`,
         onchange: e => edit(i, key, Math.round(Number(e.target.value) * per)),
         onkeydown: e => { if (e.key === 'Enter' && !isComposing(e)) { e.preventDefault(); e.target.dispatchEvent(new Event('change')); } } })));
       table.replaceChildren(header, ...fields.map(([width, space], i) => el('div.ps-columns-row', { role: 'row' }, el('span', { role: 'cell' }, `${i + 1}:`),
@@ -143,19 +143,19 @@ export function openColumns({ columns, available, unit = recallUnit(), scopes = 
     const message = problem();
     if (message) { error.textContent = message; error.hidden = false; return; }
     const ok = apply(result(), scope.value);
-    if (ok === false) { error.textContent = 'These columns cannot be applied here. Try fewer columns or another section.'; error.hidden = false; return; }
+    if (ok === false) { error.textContent = '无法在此处应用这些分栏设置。请尝试减少栏数或选择其他节。'; error.hidden = false; return; }
     modal.close();
   } },
   el('div.ps-body', {}, el('div.ps-panels', {}, presets,
-    el('div.ps-columns-options', {}, el('label.field', {}, el('span.field-label', {}, 'Number of columns'), number),
-      el('label.ed-check', {}, separator, 'Line between'), el('label.ed-check', {}, equalBox, 'Equal column width')),
-    el('fieldset.ps-group', {}, el('legend', {}, 'Width and spacing'), table)),
-  el('div.ps-side', {}, el('span.field-label', {}, 'Preview'), el('div.ps-preview.is-columns', { role: 'img', 'aria-label': 'Columns preview' }, sheet),
-    el('label.field', {}, el('span.field-label', {}, 'Apply to'), scope))),
+    el('div.ps-columns-options', {}, el('label.field', {}, el('span.field-label', {}, '栏数'), number),
+      el('label.ed-check', {}, separator, '偏栏分界线'), el('label.ed-check', {}, equalBox, '栏宽相等')),
+    el('fieldset.ps-group', {}, el('legend', {}, '宽度和间距'), table)),
+  el('div.ps-side', {}, el('span.field-label', {}, '预览'), el('div.ps-preview.is-columns', { role: 'img', 'aria-label': '分栏预览' }, sheet),
+    el('label.field', {}, el('span.field-label', {}, '应用于'), scope))),
   error,
-  el('div.row.row-end', {}, el('button.btn.btn-ghost', { type: 'button', onclick: () => modal.close() }, 'Cancel'), el('button.btn.btn-primary', { type: 'submit' }, 'OK')));
+  el('div.row.row-end', {}, el('button.btn.btn-ghost', { type: 'button', onclick: () => modal.close() }, '取消'), el('button.btn.btn-primary', { type: 'submit' }, '确定')));
   render();
-  modal = openModal({ title: 'Columns', content, wide: true, onClose });
+  modal = openModal({ title: '分栏', content, wide: true, onClose });
   number.focus(); number.select();
   return modal;
 }

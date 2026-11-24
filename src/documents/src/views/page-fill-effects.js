@@ -5,28 +5,28 @@
  */
 
 export const GRADIENT_STYLES = [
-  ['horizontal', 'Horizontal'], ['vertical', 'Vertical'], ['diagonalUp', 'Diagonal up'], ['diagonalDown', 'Diagonal down'], ['center', 'From center'], ['corner', 'From corner'],
+  ['horizontal', '横向'], ['vertical', '纵向'], ['diagonalUp', '对角向上'], ['diagonalDown', '对角向下'], ['center', '从中心'], ['corner', '从角部'],
 ];
 /** Patterns on an 8 × 8 cell: each is a list of [x, y, w, h] foreground rectangles. */
 export const PATTERNS = [
-  ['dots10', '10% dots', [[1, 1, 1, 1], [5, 5, 1, 1]]],
-  ['dots25', '25% dots', [[0, 0, 2, 2], [4, 4, 2, 2]]],
-  ['horizontal', 'Horizontal lines', [[0, 3, 8, 1], [0, 7, 8, 1]]],
-  ['vertical', 'Vertical lines', [[3, 0, 1, 8], [7, 0, 1, 8]]],
-  ['grid', 'Grid', [[0, 0, 8, 1], [0, 0, 1, 8]]],
-  ['checker', 'Checkerboard', [[0, 0, 4, 4], [4, 4, 4, 4]]],
-  ['diagonalUp', 'Diagonal up', Array.from({ length: 8 }, (_, i) => [i, 7 - i, 1, 1])],
-  ['diagonalDown', 'Diagonal down', Array.from({ length: 8 }, (_, i) => [i, i, 1, 1])],
-  ['cross', 'Diagonal cross', Array.from({ length: 8 }, (_, i) => [[i, i, 1, 1], [i, 7 - i, 1, 1]]).flat()],
-  ['bricks', 'Bricks', [[0, 0, 8, 1], [0, 4, 8, 1], [0, 0, 1, 4], [4, 4, 1, 4]]],
-  ['weave', 'Weave', [[0, 0, 3, 1], [4, 2, 1, 3], [5, 4, 3, 1], [1, 6, 1, 2]]],
-  ['confetti', 'Confetti', [[1, 0, 1, 1], [6, 1, 1, 1], [3, 3, 1, 1], [0, 5, 1, 1], [5, 6, 1, 1]]],
+  ['dots10', '10% 点', [[1, 1, 1, 1], [5, 5, 1, 1]]],
+  ['dots25', '25% 点', [[0, 0, 2, 2], [4, 4, 2, 2]]],
+  ['horizontal', '横线', [[0, 3, 8, 1], [0, 7, 8, 1]]],
+  ['vertical', '竖线', [[3, 0, 1, 8], [7, 0, 1, 8]]],
+  ['grid', '网格', [[0, 0, 8, 1], [0, 0, 1, 8]]],
+  ['checker', '棋盘格', [[0, 0, 4, 4], [4, 4, 4, 4]]],
+  ['diagonalUp', '对角线向上', Array.from({ length: 8 }, (_, i) => [i, 7 - i, 1, 1])],
+  ['diagonalDown', '对角线向下', Array.from({ length: 8 }, (_, i) => [i, i, 1, 1])],
+  ['cross', '对角交叉线', Array.from({ length: 8 }, (_, i) => [[i, i, 1, 1], [i, 7 - i, 1, 1]]).flat()],
+  ['bricks', '砖形', [[0, 0, 8, 1], [0, 4, 8, 1], [0, 0, 1, 4], [4, 4, 1, 4]]],
+  ['weave', '编织', [[0, 0, 3, 1], [4, 2, 1, 3], [5, 4, 3, 1], [1, 6, 1, 2]]],
+  ['confetti', '彩色纸屑', [[1, 0, 1, 1], [6, 1, 1, 1], [3, 3, 1, 1], [0, 5, 1, 1], [5, 6, 1, 1]]],
 ];
 /** Textures generated from a seed: a base color and how its grain is drawn. */
 export const TEXTURES = [
-  ['paper', 'Paper', 'F6F1E6', 'grain'], ['linen', 'Linen', 'EFE9DD', 'threads'], ['parchment', 'Parchment', 'F3E6C9', 'clouds'],
-  ['slate', 'Slate', 'D9DDE1', 'clouds'], ['sand', 'Sand', 'EADBC0', 'grain'], ['denim', 'Denim', 'C7D3E3', 'threads'],
-  ['sage', 'Sage', 'DCE6D3', 'clouds'], ['blush', 'Blush', 'F4DCDC', 'grain'],
+  ['paper', '普通纸', 'F6F1E6', 'grain'], ['linen', '亚麻布', 'EFE9DD', 'threads'], ['parchment', '羊皮纸', 'F3E6C9', 'clouds'],
+  ['slate', '板岩', 'D9DDE1', 'clouds'], ['sand', '沙粒', 'EADBC0', 'grain'], ['denim', '牛仔布', 'C7D3E3', 'threads'],
+  ['sage', '浅灰绿', 'DCE6D3', 'clouds'], ['blush', '浅粉红', 'F4DCDC', 'grain'],
 ];
 
 const hex = value => `#${value}`;
@@ -107,15 +107,15 @@ export async function renderFill(effect, page) {
   if (effect.kind === 'gradient') {
     const scale = 4, width = Math.max(1, Math.ceil(page.width / scale)), height = Math.max(1, Math.ceil(page.height / scale));
     const canvas = makeCanvas(width, height); drawGradient(canvas.getContext('2d'), width, height, effect);
-    return { bytes: withResolution(await pngBytes(canvas), 96 / scale), mime: 'image/png', title: 'Gradient' };
+    return { bytes: withResolution(await pngBytes(canvas), 96 / scale), mime: 'image/png', title: '渐变' };
   }
   if (effect.kind === 'pattern') {
     const canvas = makeCanvas(16, 16); drawPattern(canvas.getContext('2d'), 16, 16, effect, 1);
-    return { bytes: withResolution(await pngBytes(canvas), 96), mime: 'image/png', title: PATTERNS.find(p => p[0] === effect.pattern)?.[1] || 'Pattern' };
+    return { bytes: withResolution(await pngBytes(canvas), 96), mime: 'image/png', title: PATTERNS.find(p => p[0] === effect.pattern)?.[1] || '图案' };
   }
   if (effect.kind === 'texture') {
     const canvas = makeCanvas(256, 256); drawTexture(canvas.getContext('2d'), 256, 256, effect);
-    return { bytes: withResolution(await pngBytes(canvas), 96), mime: 'image/png', title: TEXTURES.find(t => t[0] === effect.texture)?.[1] || 'Texture' };
+    return { bytes: withResolution(await pngBytes(canvas), 96), mime: 'image/png', title: TEXTURES.find(t => t[0] === effect.texture)?.[1] || '纹理' };
   }
-  return { bytes: effect.bytes, mime: effect.mime, title: effect.name || 'Picture' };
+  return { bytes: effect.bytes, mime: effect.mime, title: effect.name || '图片' };
 }

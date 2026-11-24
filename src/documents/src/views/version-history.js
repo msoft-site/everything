@@ -20,31 +20,31 @@ import { sidePane, hint } from './review-ui.js';
 const DAY = 86_400_000;
 const dayLabel = (time, now = Date.now()) => {
   const start = new Date(now); start.setHours(0, 0, 0, 0);
-  if (time >= start.getTime()) return 'Today';
-  if (time >= start.getTime() - DAY) return 'Yesterday';
-  return new Date(time).toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric', year: new Date(time).getFullYear() === new Date(now).getFullYear() ? undefined : 'numeric' });
+  if (time >= start.getTime()) return '今天';
+  if (time >= start.getTime() - DAY) return '昨天';
+  return new Date(time).toLocaleDateString('zh-CN', { weekday: 'long', month: 'long', day: 'numeric', year: new Date(time).getFullYear() === new Date(now).getFullYear() ? undefined : 'numeric' });
 };
-const timeLabel = time => new Date(time).toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
+const timeLabel = time => new Date(time).toLocaleTimeString('zh-CN', { hour: 'numeric', minute: '2-digit' });
 
 export function createVersionHistory({ editor, pkg, doc, error, author, live = () => null, restoreFile, compare, onChange = () => {}, onPreview = () => {} }) {
   let versions = [], preview = null, loading = null;
-  const pane = sidePane({ title: 'Version History', label: 'Version History pane', className: 'vh-pane', onOpen: () => load(), onClose: () => { closePreview(); editor()?.focus(); } });
-  const list = el('div.vh-list', { role: 'list', 'aria-label': 'Saved versions' });
-  const saveNow = el('button.btn.btn-primary.btn-sm', { type: 'button', onclick: () => saveVersion() }, 'Save a Version Now');
+  const pane = sidePane({ title: '版本历史记录', label: '版本历史记录窗格', className: 'vh-pane', onOpen: () => load(), onClose: () => { closePreview(); editor()?.focus(); } });
+  const list = el('div.vh-list', { role: 'list', 'aria-label': '已保存的版本' });
+  const saveNow = el('button.btn.btn-primary.btn-sm', { type: 'button', onclick: () => saveVersion() }, '立即保存版本');
   const status = el('p.vh-status', { role: 'status', 'aria-live': 'polite' });
-  pane.body.append(el('div.vh-actions', {}, saveNow), status, list, hint('Versions are kept as you work: one every ten minutes of editing, and whenever you save one. The newest 30 are kept, and every version with a name.'));
+  pane.body.append(el('div.vh-actions', {}, saveNow), status, list, hint('版本将在编辑时自动保存：每编辑十分钟保存一次，并在手动保存时记录。最多保留最新的 30 个版本，命名版本将永久保留。'));
 
   /* ---- The read-only preview beside the document ---- */
-  const previewHost = el('div.vh-preview-host', { 'aria-label': 'Version pages' });
-  const previewTitle = el('h2.vh-preview-title', {}, 'Version');
+  const previewHost = el('div.vh-preview-host', { 'aria-label': '版本页面' });
+  const previewTitle = el('h2.vh-preview-title', {}, '版本');
   // The note is filled only while a version is shown, so a hidden pane never reads as the document's own "Read only" state.
   const previewNote = el('p.vh-preview-note');
-  const previewNode = el('aside.vh-preview', { hidden: true, 'aria-label': 'Earlier version (read only)' },
+  const previewNode = el('aside.vh-preview', { hidden: true, 'aria-label': '早期版本（只读）' },
     el('div.vh-preview-head', {}, el('div', {}, previewTitle, previewNote),
       el('div.vh-preview-actions', {},
-        el('button.btn.btn-outline.btn-sm', { type: 'button', onclick: () => preview && compareWith(preview.version) }, 'Compare'),
-        el('button.btn.btn-primary.btn-sm', { type: 'button', onclick: () => preview && restore(preview.version) }, 'Restore'),
-        el('button.icon-btn', { type: 'button', 'aria-label': 'Close version', title: 'Close', onclick: () => closePreview() }, '×'))),
+        el('button.btn.btn-outline.btn-sm', { type: 'button', onclick: () => preview && compareWith(preview.version) }, '比较'),
+        el('button.btn.btn-primary.btn-sm', { type: 'button', onclick: () => preview && restore(preview.version) }, '还原'),
+        el('button.icon-btn', { type: 'button', 'aria-label': '关闭版本', title: '关闭', onclick: () => closePreview() }, '×'))),
     previewHost);
   previewNode.addEventListener('keydown', e => { if (e.key === 'Escape') { e.preventDefault(); closePreview(); } });
 
@@ -54,20 +54,20 @@ export function createVersionHistory({ editor, pkg, doc, error, author, live = (
 
   async function load() {
     status.textContent = '';
-    if (!doc.path) { list.replaceChildren(el('p.rv-empty', {}, 'Versions are kept once the document is saved to Puter.')); saveNow.disabled = true; return; }
+    if (!doc.path) { list.replaceChildren(el('p.rv-empty', {}, '文档保存到云端后将记录版本历史。')); saveNow.disabled = true; return; }
     saveNow.disabled = !!pkg()?.readOnly;
-    list.replaceChildren(el('p.rv-status', {}, 'Loading versions…'));
+    list.replaceChildren(el('p.rv-status', {}, '正在加载版本…'));
     const request = loading = listVersions(doc.path, { uid: doc.uid }).then(async found => Promise.all(found.map(async v => ({ ...v, ...await readVersionMeta(v) }))));
     try {
       const found = await request;
       if (loading !== request) return;
       versions = found;
       render();
-    } catch { if (loading === request) list.replaceChildren(el('p.rv-status', {}, 'The version history could not be loaded.')); }
+    } catch { if (loading === request) list.replaceChildren(el('p.rv-status', {}, '无法加载版本历史记录。')); }
   }
 
   function render() {
-    if (!versions.length) { list.replaceChildren(el('p.rv-empty', {}, 'No earlier versions yet.')); return; }
+    if (!versions.length) { list.replaceChildren(el('p.rv-empty', {}, '暂无早期版本。')); return; }
     const groups = new Map();
     for (const v of versions) { const label = dayLabel(v.time); if (!groups.has(label)) groups.set(label, []); groups.get(label).push(v); }
     list.replaceChildren(...[...groups].map(([label, items]) => el('section.vh-day', {}, el('h3.vh-day-label', {}, label), ...items.map(item))));
@@ -75,30 +75,30 @@ export function createVersionHistory({ editor, pkg, doc, error, author, live = (
   function item(v) {
     const shown = preview?.version.path === v.path;
     return el(`div.vh-item${shown ? '.is-open' : ''}`, { role: 'listitem' },
-      el('button.vh-item-main', { type: 'button', 'aria-label': `${v.label || timeLabel(v.time)}${v.author ? `, saved by ${v.author}` : ''}. Open read-only.`, onclick: () => open(v) },
+      el('button.vh-item-main', { type: 'button', 'aria-label': `${v.label || timeLabel(v.time)}${v.author ? `，保存者: ${v.author}` : ''}。只读打开。`, onclick: () => open(v) },
         el('span.vh-item-title', {}, v.label || timeLabel(v.time)),
-        el('span.vh-item-meta', {}, [v.label ? timeLabel(v.time) : null, v.author ? `by ${v.author}` : null].filter(Boolean).join(' · ') || ' ')),
+        el('span.vh-item-meta', {}, [v.label ? timeLabel(v.time) : null, v.author ? `保存者: ${v.author}` : null].filter(Boolean).join(' · ') || ' ')),
       el('div.vh-item-actions', {},
-        el('button.btn.btn-ghost.btn-sm', { type: 'button', onclick: () => compareWith(v) }, 'Compare'),
-        el('button.btn.btn-ghost.btn-sm', { type: 'button', onclick: () => nameVersion(v) }, v.label ? 'Rename' : 'Name'),
-        el('button.btn.btn-ghost.btn-sm', { type: 'button', disabled: !!pkg()?.readOnly, onclick: () => restore(v) }, 'Restore')));
+        el('button.btn.btn-ghost.btn-sm', { type: 'button', onclick: () => compareWith(v) }, '比较'),
+        el('button.btn.btn-ghost.btn-sm', { type: 'button', onclick: () => nameVersion(v) }, v.label ? '重命名' : '命名'),
+        el('button.btn.btn-ghost.btn-sm', { type: 'button', disabled: !!pkg()?.readOnly, onclick: () => restore(v) }, '还原')));
   }
 
   async function saveVersion() {
     saveNow.disabled = true;
     try {
-      const label = await promptDialog({ title: 'Save a version', label: 'Name (optional)', placeholder: 'For example: Draft for review', confirmLabel: 'Save Version' });
+      const label = await promptDialog({ title: '保存版本', label: '名称（可选）', placeholder: '例如：审阅草稿', confirmLabel: '保存版本' });
       if (label === null) return;
       const v = await doc.saveVersionNow({ author: author(), label: label.trim() });
-      if (!v) throw new Error('The version could not be saved.');
-      toast(label.trim() ? `Saved “${label.trim()}”` : 'Version saved');
+      if (!v) throw new Error('无法保存版本。');
+      toast(label.trim() ? `已保存“${label.trim()}”` : '版本已保存');
       await load();
     } catch (e) { error(e); }
     finally { saveNow.disabled = !doc.path || !!pkg()?.readOnly; }
   }
 
   async function nameVersion(v) {
-    const label = await promptDialog({ title: v.label ? 'Rename version' : 'Name version', label: 'Name', value: v.label || '', confirmLabel: 'Save' });
+    const label = await promptDialog({ title: v.label ? '重命名版本' : '命名版本', label: '名称', value: v.label || '', confirmLabel: '保存' });
     if (label === null) return;
     try { const meta = await writeVersionMeta(v, { author: v.author, label: label.trim() }); Object.assign(v, meta); render(); }
     catch (e) { error(e); }
@@ -111,9 +111,9 @@ export function createVersionHistory({ editor, pkg, doc, error, author, live = (
     const api = engineApi(); if (!api) return;
     closePreview();
     previewTitle.textContent = versionName(v);
-    previewNote.textContent = 'Read only';
+    previewNote.textContent = '只读';
     previewNode.hidden = false;
-    previewHost.replaceChildren(el('p.rv-status', {}, 'Opening…'));
+    previewHost.replaceChildren(el('p.rv-status', {}, '正在打开…'));
     const token = preview = { version: v, engine: null };
     onPreview(true);
     render(); onChange();
@@ -122,10 +122,10 @@ export function createVersionHistory({ editor, pkg, doc, error, author, live = (
       if (preview !== token) { for (const image of opened.images.values()) image.close?.(); return; }
       const p = opened.pkg;
       previewHost.replaceChildren();
-      token.engine = new api.CanvasEditor(previewHost, { paragraphs: p.paragraphs, pageSettings: p.pageSettings, numbering: p.numbering, styles: p.styles, tables: p.tables, pageStories: p.pageStories, comments: p.comments, assets: p.assets, drawingLayouts: p.drawingLayouts, images: opened.images, readOnly: true, inputLabel: `Version ${versionName(v)}` });
+      token.engine = new api.CanvasEditor(previewHost, { paragraphs: p.paragraphs, pageSettings: p.pageSettings, numbering: p.numbering, styles: p.styles, tables: p.tables, pageStories: p.pageStories, comments: p.comments, assets: p.assets, drawingLayouts: p.drawingLayouts, images: opened.images, readOnly: true, inputLabel: `版本 ${versionName(v)}` });
       fit(token.engine);
     } catch (e) {
-      if (preview === token) previewHost.replaceChildren(el('p.rv-status', {}, `This version could not be opened: ${e.message}`));
+      if (preview === token) previewHost.replaceChildren(el('p.rv-status', {}, `无法打开此版本: ${e.message}`));
     }
   }
   function fit(engine) {
@@ -146,14 +146,14 @@ export function createVersionHistory({ editor, pkg, doc, error, author, live = (
   }
 
   function compareWith(v) {
-    compare?.({ name: `Version: ${versionName(v)}`, read: () => readBytes(v) });
+    compare?.({ name: `版本: ${versionName(v)}`, read: () => readBytes(v) });
   }
 
   async function restore(v) {
     const engine = editor(); if (!engine || pkg()?.readOnly) return;
     const shared = !!live();
-    const ok = await confirmDialog({ title: 'Restore this version?', danger: false, confirmLabel: 'Restore',
-      message: shared ? `The document goes back to “${versionName(v)}” for everyone editing it. You can undo this.` : `The document goes back to “${versionName(v)}”. The current version is kept in the history.` });
+    const ok = await confirmDialog({ title: '还原此版本？', danger: false, confirmLabel: '还原',
+      message: shared ? `正在协同编辑的所有人文档都将返回到“${versionName(v)}”。您可以撤消此操作。` : `文档将返回到“${versionName(v)}”。当前版本将保存在历史记录中。` });
     if (!ok) return false;
     try {
       if (!shared) { closePreview(); pane.close({ quiet: true }); await restoreFile(v); return; }
@@ -162,10 +162,10 @@ export function createVersionHistory({ editor, pkg, doc, error, author, live = (
       // document needs its own decoded ones (a picture or drawing only the version has would otherwise not draw).
       const opened = await api.openCanvasDocument(await readBytes(v));
       const p = opened.pkg;
-      if (p.readOnly) throw new Error('This version uses features that can only be displayed, so it cannot be restored while others edit with you.');
+      if (p.readOnly) throw new Error('此版本使用了仅支持查看的功能，因此无法在多人共同编辑时还原。');
       // Its pictures, charts and notes are those of its own file: ones the document no longer has, or has changed,
       // would come back broken or as the document's current ones.
-      if (api.unportableContent?.(p, pkg())) throw new Error('This version has pictures, charts or notes the current document no longer has as they were, so it cannot be restored while others edit with you. Compare it with the document instead, and copy what you need.');
+      if (api.unportableContent?.(p, pkg())) throw new Error('此版本包含当前文档不再具有的图片、图表或批注，因此无法在多人共同编辑时还原。建议与文档进行比较，然后复制所需内容。');
       engine.finishComposition();
       if (engine.session.path !== null) engine.editStory(null);
       let renames = new Map();
@@ -183,7 +183,7 @@ export function createVersionHistory({ editor, pkg, doc, error, author, live = (
       // would undo that edit and keep the version. (A shared document's own steps are counted, not others'.)
       const history = engine.session.history, steps = history.length, step = history.at(-1);
       const latest = () => editor() === engine && engine.session.history.length === steps && engine.session.history.at(-1) === step;
-      toast(`Restored “${versionName(v)}”`, { action: { label: 'Undo', onClick: () => { if (latest()) engine.undo(); else toast('Other changes were made since. Use Undo to step back through them first.', { icon: 'info' }); } } });
+      toast(`已还原“${versionName(v)}”`, { action: { label: '撤消', onClick: () => { if (latest()) engine.undo(); else toast('此后已产生其他更改。请先通过“撤消”逐步回退这些更改。', { icon: 'info' }); } } });
       closePreview();
       return true;
     } catch (e) { error(e); }

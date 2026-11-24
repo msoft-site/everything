@@ -23,7 +23,7 @@ function fitStrokes(strokes, width, height, margin = 16) {
 
 export function openInkMath({ strokes: initial = [], recognize, onInsert, onClose }) {
   let strokes = fitStrokes(initial, PAD_WIDTH, PAD_HEIGHT), current = null, busy = false;
-  const pad = el('canvas.draw-math-pad', { width: PAD_WIDTH, height: PAD_HEIGHT, 'aria-label': 'Writing area: write an equation with a pen, finger or mouse', role: 'img' });
+  const pad = el('canvas.draw-math-pad', { width: PAD_WIDTH, height: PAD_HEIGHT, 'aria-label': '书写区域：使用触控笔、手指或鼠标在此书写公式', role: 'img' });
   const ratio = window.devicePixelRatio || 1;
   pad.width = PAD_WIDTH * ratio; pad.height = PAD_HEIGHT * ratio;
   const paint = () => {
@@ -40,33 +40,33 @@ export function openInkMath({ strokes: initial = [], recognize, onInsert, onClos
   const end = () => { if (!current) return; strokes.push(current); current = null; paint(); };
   pad.addEventListener('pointerup', end); pad.addEventListener('pointercancel', end);
 
-  const input = el('textarea.input.draw-math-input', { rows: 2, 'aria-label': 'Recognized equation', spellcheck: false, placeholder: 'The equation appears here; you can correct it before inserting.' });
+  const input = el('textarea.input.draw-math-input', { rows: 2, 'aria-label': '识别的公式', spellcheck: false, placeholder: '公式将显示在此处；插入前可进行修改。' });
   const preview = el('div.insert-equation-preview.draw-math-preview', { 'aria-live': 'polite' });
   const status = el('span.field-hint', { 'aria-live': 'polite' });
   const render = () => {
     const text = input.value.trim();
-    if (!text) { preview.replaceChildren(el('span.field-hint', {}, 'Write an equation above, then choose Recognize.')); return; }
+    if (!text) { preview.replaceChildren(el('span.field-hint', {}, '在上方书写公式，然后点击“识别”。')); return; }
     try { preview.innerHTML = ommlToMathml(linearToOmml(text, { display: true })); } catch { preview.textContent = text; }
   };
   input.addEventListener('input', render);
-  const clear = el('button.btn.btn-ghost.btn-sm', { type: 'button', onclick: () => { strokes = []; paint(); } }, 'Clear');
-  const undo = el('button.btn.btn-ghost.btn-sm', { type: 'button', onclick: () => { strokes.pop(); paint(); } }, 'Undo Stroke');
+  const clear = el('button.btn.btn-ghost.btn-sm', { type: 'button', onclick: () => { strokes = []; paint(); } }, '清除');
+  const undo = el('button.btn.btn-ghost.btn-sm', { type: 'button', onclick: () => { strokes.pop(); paint(); } }, '撤消笔划');
   const read = el('button.btn.btn-outline.btn-sm', { type: 'button', onclick: async () => {
     if (busy) return;
-    if (!strokes.length) { status.textContent = 'Write an equation first.'; return; }
-    busy = true; read.disabled = true; status.textContent = 'Reading your handwriting…';
-    try { input.value = await recognize(pad.toDataURL('image/png')); render(); status.textContent = 'Check the equation, then insert it.'; input.focus(); }
+    if (!strokes.length) { status.textContent = '请先书写公式。'; return; }
+    busy = true; read.disabled = true; status.textContent = '正在识别手写公式…';
+    try { input.value = await recognize(pad.toDataURL('image/png')); render(); status.textContent = '请检查公式，然后插入。'; input.focus(); }
     catch (e) { status.textContent = e.message || String(e); }
     finally { busy = false; read.disabled = false; }
-  } }, 'Recognize');
-  const dialog = formDialog({ title: 'Ink to Math', submit: 'Insert', wide: true, className: 'draw-math', onClose, content: [
+  } }, '识别');
+  const dialog = formDialog({ title: '将墨迹转换为数学公式', submit: '插入', wide: true, className: 'draw-math', onClose, content: [
     el('div.draw-math-pad-wrap', {}, pad),
     el('div.row.draw-math-tools', {}, read, undo, clear, status),
-    el('label.field-label', {}, 'Equation'), input,
-    el('div', {}, el('span.field-label', {}, 'Preview'), preview)],
+    el('label.field-label', {}, '公式'), input,
+    el('div', {}, el('span.field-label', {}, '预览'), preview)],
   onSubmit: () => {
     const text = input.value.trim();
-    if (!text) throw new Error('Recognize the handwriting or type the equation first.');
+    if (!text) throw new Error('请先识别手写内容或输入公式。');
     onInsert(text);
   } });
   paint(); render();

@@ -85,11 +85,11 @@ export function createReviewTools({ editor, pkg, error, author, review, proofing
     revisionView.options.trackMoves = !settings.doNotTrackMoves;
   }
   async function lockTracking() {
-    if (restrict.trackingLocked) { await restrict.stopEnforcing({ title: 'Unlock Tracking' }); return; }
-    if (restrict.enforced) { error(new Error('Stop the document\'s protection before locking tracking.')); return; }
+    if (restrict.trackingLocked) { await restrict.stopEnforcing({ title: '解除修订锁定' }); return; }
+    if (restrict.enforced) { error(new Error('锁定修订前请先解除文档保护。')); return; }
     const wasTracking = review.commands.tracking;
     review.commands.toggleTracking(true);
-    const locked = await restrict.startEnforcing({ edit: 'trackedChanges', formatting: false, title: 'Lock Tracking', intro: 'Others will not be able to turn off Track Changes, or accept or reject changes. Enter a password to keep them from unlocking it, or leave it empty.' });
+    const locked = await restrict.startEnforcing({ edit: 'trackedChanges', formatting: false, title: '锁定修订', intro: '其他人将无法关闭修订，也无法接受或拒绝修订。输入密码以防止其解除锁定，或将其留空。' });
     // Cancelled: Track Changes goes back to how it was, as nothing was locked.
     if (!locked && !wasTracking) review.commands.toggleTracking(false);
   }
@@ -99,39 +99,39 @@ export function createReviewTools({ editor, pkg, error, author, review, proofing
     spelling: () => editorPane.open(),
     editorPane: () => editorPane.open(),
     spellingItems: () => [
-      { label: 'Editor', icon: 'spelling', onSelect: () => editorPane.open() },
-      { label: 'Check Spelling One by One', icon: 'spell', shortcut: 'F7', onSelect: () => proofing.openPane() },
-      { label: 'Check Spelling as You Type', checked: proofing.enabled, onSelect: () => proofing.setEnabled(!proofing.enabled) },
+      { label: '编辑器', icon: 'spelling', onSelect: () => editorPane.open() },
+      { label: '逐一检查拼写', icon: 'spell', shortcut: 'F7', onSelect: () => proofing.openPane() },
+      { label: '键入时检查拼写', checked: proofing.enabled, onSelect: () => proofing.setEnabled(!proofing.enabled) },
       { separator: true },
-      { label: 'Hide Spelling Errors in This Document', checked: !!pkg()?.hideSpellingErrors, disabled: !!pkg()?.readOnly, onSelect: () => commands.toggleHideSpelling() },
-      { label: 'Hide Grammar Errors in This Document', checked: !!pkg()?.reviewSettings?.hideGrammaticalErrors, disabled: !!pkg()?.readOnly, onSelect: () => commands.toggleHideGrammar() },
+      { label: '在此文档中隐藏拼写错误', checked: !!pkg()?.hideSpellingErrors, disabled: !!pkg()?.readOnly, onSelect: () => commands.toggleHideSpelling() },
+      { label: '在此文档中隐藏语法错误', checked: !!pkg()?.reviewSettings?.hideGrammaticalErrors, disabled: !!pkg()?.readOnly, onSelect: () => commands.toggleHideGrammar() },
       { separator: true },
-      { label: 'Recheck Document', disabled: !proofing.enabled, onSelect: () => proofing.recheck() },
-      { label: 'Reset Ignored Words', onSelect: () => commands.resetIgnoredWords() },
+      { label: '重新检查文档', disabled: !proofing.enabled, onSelect: () => proofing.recheck() },
+      { label: '重置忽略的单词', onSelect: () => commands.resetIgnoredWords() },
     ],
     toggleHideSpelling() { const p = pkg(); if (!p || p.readOnly) return; p.hideSpellingErrors = !p.hideSpellingErrors; editor()?.paint(); markDirty(); },
     toggleHideGrammar() { setSettings({ hideGrammaticalErrors: !pkg()?.reviewSettings?.hideGrammaticalErrors }); editor()?.paint(); editorPane.refresh(); },
-    resetIgnoredWords() { proofing.resetIgnored(); toast('Ignored words will be checked again'); editorPane.refresh(); },
+    resetIgnoredWords() { proofing.resetIgnored(); toast('将再次检查已忽略的单词'); editorPane.refresh(); },
     thesaurus: () => { if (editor()) thesaurus.open(); },
     wordCount: () => { const engine = editor(); if (engine) openWordCount(engine, { onClose: () => queueMicrotask(() => editor()?.focus()), onChange }); },
     checkAccessibility: () => accessibility.open(),
     accessibilitySummary: () => accessibility.summary(),
     language: languageDialog,
     languageItems: () => [
-      { label: 'Set Proofing Language…', onSelect: languageDialog, disabled: !ready() },
-      { label: 'Detect Language Automatically', checked: DETECT_LANGUAGE.get(), onSelect: () => { DETECT_LANGUAGE.set(!DETECT_LANGUAGE.get()); proofing.recheck(); } },
+      { label: '设置校对语言…', onSelect: languageDialog, disabled: !ready() },
+      { label: '自动检测语言', checked: DETECT_LANGUAGE.get(), onSelect: () => { DETECT_LANGUAGE.set(!DETECT_LANGUAGE.get()); proofing.recheck(); } },
       { separator: true },
-      { label: 'Set Default Proofing Language', disabled: !ready(), items: LANGUAGES.map(tag => ({ label: languageName(tag), radio: true, checked: (pkg()?.reviewSettings?.defaultLanguage || 'zh-CN') === tag, onSelect: () => setSettings({ defaultLanguage: tag }) })) },
+      { label: '设置默认校对语言', disabled: !ready(), items: LANGUAGES.map(tag => ({ label: languageName(tag), radio: true, checked: (pkg()?.reviewSettings?.defaultLanguage || 'zh-CN') === tag, onSelect: () => setSettings({ defaultLanguage: tag }) })) },
     ],
     /** For the status bar: the proofing language at the caret. */
     proofingLanguage() { const engine = editor(); const tag = engine?.model.runFormatting?.fontLanguage || pkg()?.reviewSettings?.defaultLanguage || 'zh-CN'; return { tag, name: languageName(tag), open: languageDialog }; },
     translateSelection: () => translator.open(),
     translateDocument: () => translator.open(),
     translateItems: () => [
-      { label: 'Translate Selection', onSelect: () => translator.open() },
-      { label: 'Translate Document', onSelect: () => translator.open() },
+      { label: '翻译所选文字', onSelect: () => translator.open() },
+      { label: '翻译文档', onSelect: () => translator.open() },
       { separator: true },
-      { label: 'Set Document Translation Language', items: LANGUAGES.map(tag => ({ label: languageName(tag), radio: true, checked: TRANSLATION_LANGUAGE.get() === tag, onSelect: () => TRANSLATION_LANGUAGE.set(tag) })) },
+      { label: '设置文档翻译语言', items: LANGUAGES.map(tag => ({ label: languageName(tag), radio: true, checked: TRANSLATION_LANGUAGE.get() === tag, onSelect: () => TRANSLATION_LANGUAGE.set(tag) })) },
     ],
     compareDocuments: () => openCompareDialog({ mode: 'compare', editor, pkg, documentName, author, openDocument, currentBytes, error }),
     combineDocuments: () => openCompareDialog({ mode: 'combine', editor, pkg, documentName, author, openDocument, currentBytes, error }),
@@ -150,30 +150,30 @@ export function createReviewTools({ editor, pkg, error, author, review, proofing
     if (tabId !== 'review') return [];
     const { command, menuButton, split, rows, when } = kit;
     const quiet = (...buttons) => { for (const b of buttons) b.addEventListener('mousedown', e => e.preventDefault()); return buttons[0]; };
-    const accessibilityButton = quiet(command('Check Accessibility', 'accessibility', () => accessibility.open(), { size: 'large', text: 'Check Accessibility' }));
+    const accessibilityButton = quiet(command('检查辅助功能', 'accessibility', () => accessibility.open(), { size: 'large', text: '检查辅助功能' }));
     when(accessibilityButton, () => !!editor());
-    const translate = menuButton('Translate', 'translate', commands.translateItems, { size: 'large', text: 'Translate' });
-    const language = menuButton('Language', 'language', commands.languageItems, { size: 'large', text: 'Language' });
+    const translate = menuButton('翻译', 'translate', commands.translateItems, { size: 'large', text: '翻译' });
+    const language = menuButton('语言', 'language', commands.languageItems, { size: 'large', text: '语言' });
     when(translate, () => !!editor()); when(language, () => !!editor());
-    const compare = menuButton('Compare', 'compare', () => [
-      { label: 'Compare…', icon: 'compare', onSelect: commands.compareDocuments },
-      { label: 'Combine…', icon: 'combine', onSelect: commands.combineDocuments },
-    ], { size: 'large', text: 'Compare' });
+    const compare = menuButton('比较', 'compare', () => [
+      { label: '比较…', icon: 'compare', onSelect: commands.compareDocuments },
+      { label: '合并…', icon: 'combine', onSelect: commands.combineDocuments },
+    ], { size: 'large', text: '比较' });
     when(compare, () => !!editor());
-    const protect = quiet(command('Restrict Editing', 'protect', () => restrict.open(), { size: 'large', text: 'Restrict Editing' }));
+    const protect = quiet(command('限制编辑', 'protect', () => restrict.open(), { size: 'large', text: '限制编辑' }));
     when(protect, () => !!editor() && !pkg()?.readOnly, () => String(restrict.enforced));
     // One-command groups fold to a button as wide as the command, so they never fold; groups that
     // gain room by folding (Language, and the comment and change groups) fold instead.
     const groups = [
-      { id: 'accessibility', label: 'Accessibility', icon: 'accessibility', priority: 3, after: 'speech', items: [accessibilityButton] },
-      { id: 'language', label: 'Language', icon: 'language', priority: 2.5, after: 'speech', items: [translate, language] },
-      { id: 'compare', label: 'Compare', icon: 'compare', priority: 3.5, after: 'changes', items: [compare] },
-      { id: 'protect', label: 'Protect', icon: 'protect', priority: 3, after: 'changes', items: [protect] },
+      { id: 'accessibility', label: '辅助功能', icon: 'accessibility', priority: 3, after: 'speech', items: [accessibilityButton] },
+      { id: 'language', label: '语言', icon: 'language', priority: 2.5, after: 'speech', items: [translate, language] },
+      { id: 'compare', label: '比较', icon: 'compare', priority: 3.5, after: 'changes', items: [compare] },
+      { id: 'protect', label: '保护', icon: 'protect', priority: 3, after: 'changes', items: [protect] },
     ];
     if (w.toggleInk) {
-      const ink = quiet(command('Hide Ink', 'hideInk', () => w.toggleInk(), { size: 'large', text: 'Hide Ink' }));
+      const ink = quiet(command('隐藏墨迹', 'hideInk', () => w.toggleInk(), { size: 'large', text: '隐藏墨迹' }));
       when(ink, () => !!editor(), () => String(!!w.inkHidden?.()));
-      groups.push({ id: 'ink', label: 'Ink', icon: 'hideInk', priority: 1, after: 'changes', items: [ink] });
+      groups.push({ id: 'ink', label: '墨迹', icon: 'hideInk', priority: 1, after: 'changes', items: [ink] });
     }
     void split; void rows;
     return groups;
@@ -183,37 +183,37 @@ export function createReviewTools({ editor, pkg, error, author, review, proofing
   function extendMenu(menuId) {
     const has = !!editor();
     if (menuId === 'tools') return [
-      { label: 'Spelling and Grammar', icon: 'spelling', items: commands.spellingItems() },
-      { label: 'Thesaurus…', icon: 'thesaurus', shortcut: 'Shift+F7', disabled: !has, onSelect: commands.thesaurus },
-      { label: 'Translate', icon: 'translate', disabled: !has, items: commands.translateItems() },
-      { label: 'Language…', icon: 'language', disabled: !ready(), onSelect: languageDialog },
+      { label: '拼写和语法', icon: 'spelling', items: commands.spellingItems() },
+      { label: '同义词库…', icon: 'thesaurus', shortcut: 'Shift+F7', disabled: !has, onSelect: commands.thesaurus },
+      { label: '翻译', icon: 'translate', disabled: !has, items: commands.translateItems() },
+      { label: '语言…', icon: 'language', disabled: !ready(), onSelect: languageDialog },
       { separator: true },
       // On a Mac Cmd+Shift+G is Find Previous (editor.js), so Word Count has its chord only elsewhere.
-      { label: 'Word Count…', icon: 'wordCount', shortcut: MOD_KEY === 'Cmd' ? null : 'Ctrl+Shift+G', disabled: !has, onSelect: commands.wordCount },
+      { label: '字数统计…', icon: 'wordCount', shortcut: MOD_KEY === 'Cmd' ? null : 'Ctrl+Shift+G', disabled: !has, onSelect: commands.wordCount },
       { separator: true },
-      { label: 'Check Accessibility', icon: 'accessibility', disabled: !has, onSelect: commands.checkAccessibility },
+      { label: '检查辅助功能', icon: 'accessibility', disabled: !has, onSelect: commands.checkAccessibility },
       { separator: true },
-      { label: 'Track Changes', icon: 'trackChanges', disabled: !has, items: [
-        { label: 'Track Changes', checked: review.commands.tracking, disabled: !review.commands.canTrack() || restrict.trackingLocked, onSelect: () => review.commands.toggleTracking() },
-        { label: restrict.trackingLocked ? 'Unlock Tracking…' : 'Lock Tracking…', disabled: !ready(), onSelect: lockTracking },
-        { label: 'Tracking Options…', onSelect: trackingOptions },
+      { label: '修订', icon: 'trackChanges', disabled: !has, items: [
+        { label: '修订', checked: review.commands.tracking, disabled: !review.commands.canTrack() || restrict.trackingLocked, onSelect: () => review.commands.toggleTracking() },
+        { label: restrict.trackingLocked ? '解除修订锁定…' : '锁定修订…', disabled: !ready(), onSelect: lockTracking },
+        { label: '修订选项…', onSelect: trackingOptions },
         { separator: true },
-        { label: 'Compare Documents…', icon: 'compare', onSelect: commands.compareDocuments },
+        { label: '比较文档…', icon: 'compare', onSelect: commands.compareDocuments },
       ] },
-      { label: 'Combine Documents…', icon: 'combine', disabled: !has, onSelect: commands.combineDocuments },
+      { label: '合并文档…', icon: 'combine', disabled: !has, onSelect: commands.combineDocuments },
       { separator: true },
-      { label: 'Protect Document…', icon: 'protect', disabled: !has || !!pkg()?.readOnly, onSelect: commands.restrictEditing },
+      { label: '保护文档…', icon: 'protect', disabled: !has || !!pkg()?.readOnly, onSelect: commands.restrictEditing },
     ];
     if (menuId === 'file') return fileItems();
     if (menuId === 'view') return [
       { separator: true },
-      { label: 'Markup', icon: 'markup', disabled: !has, items: [
-        ...['all', 'simple', 'none', 'original'].map(mode => ({ label: { all: 'All Markup', simple: 'Simple Markup', none: 'No Markup', original: 'Original' }[mode], radio: true, checked: revisionView.mode === mode, onSelect: () => review.commands.setMarkupView(mode) })),
+      { label: '标记', icon: 'markup', disabled: !has, items: [
+        ...['all', 'simple', 'none', 'original'].map(mode => ({ label: { all: '所有标记', simple: '简单标记', none: '无标记', original: '原始状态' }[mode], radio: true, checked: revisionView.mode === mode, onSelect: () => review.commands.setMarkupView(mode) })),
         { separator: true }, ...markupMenu()] },
-      { label: 'Reviewing Pane', icon: 'reviewingPane', checked: !!review.commands.paneShown, disabled: !has, onSelect: () => review.commands.toggleReviewingPane() },
-      { label: 'Comments Pane', icon: 'showComments', disabled: !has, onSelect: () => commentsPane.open() },
+      { label: '审阅窗格', icon: 'reviewingPane', checked: !!review.commands.paneShown, disabled: !has, onSelect: () => review.commands.toggleReviewingPane() },
+      { label: '批注窗格', icon: 'showComments', disabled: !has, onSelect: () => commentsPane.open() },
     ];
-    if (menuId === 'insert') return [{ label: 'Comment', icon: 'newComment', shortcut: MOD_KEY === 'Cmd' ? 'Cmd+Option+A' : 'Ctrl+Alt+M', disabled: !review.commands.canComment(), onSelect: () => review.commands.newComment() }];
+    if (menuId === 'insert') return [{ label: '批注', icon: 'newComment', shortcut: MOD_KEY === 'Cmd' ? 'Cmd+Option+A' : 'Ctrl+Alt+M', disabled: !review.commands.canComment(), onSelect: () => review.commands.newComment() }];
     return [];
   }
 
@@ -224,14 +224,14 @@ export function createReviewTools({ editor, pkg, error, author, review, proofing
     const engine = editor(); if (!engine) return [];
     const items = [];
     if (engine.session.path === null || context === 'text') {
-      items.push({ label: 'Synonyms', icon: 'thesaurus', disabled: !ready(), submenu: async (anchor, { focusFirst } = {}) => {
+      items.push({ label: '同义词', icon: 'thesaurus', disabled: !ready(), submenu: async (anchor, { focusFirst } = {}) => {
         const found = await thesaurus.synonymsAt(8);
         const list = found?.synonyms || [];
-        openMenu({ anchor, label: 'Synonyms', focusFirst, items: [
-          ...(list.length ? list.map(s => ({ label: s.text, onSelect: () => thesaurus.insert(s.word) })) : [{ note: found ? 'No synonyms found.' : 'Select a word first.' }]),
-          { separator: true }, { label: 'Thesaurus…', onSelect: commands.thesaurus }] });
+        openMenu({ anchor, label: '同义词', focusFirst, items: [
+          ...(list.length ? list.map(s => ({ label: s.text, onSelect: () => thesaurus.insert(s.word) })) : [{ note: found ? '未找到同义词。' : '请先选择一个词。' }]),
+          { separator: true }, { label: '同义词库…', onSelect: commands.thesaurus }] });
       } });
-      items.push({ label: 'Translate', icon: 'translate', disabled: engine.model.range[0] === engine.model.range[1], onSelect: () => translator.open() });
+      items.push({ label: '翻译', icon: 'translate', disabled: engine.model.range[0] === engine.model.range[1], onSelect: () => translator.open() });
     }
     return [...items, ...review.contextItems()];
   }
@@ -248,8 +248,8 @@ export function createReviewTools({ editor, pkg, error, author, review, proofing
   /** Items for the File menu: the read-only recommendation and protection. */
   const fileItems = () => [
     { separator: true },
-    { label: 'Always Open Read-Only', icon: 'readOnly', checked: restrict.alwaysReadOnly, disabled: !editor() || !!pkg()?.readOnly, onSelect: commands.alwaysOpenReadOnly },
-    { label: 'Protect Document…', icon: 'protect', disabled: !editor() || !!pkg()?.readOnly, onSelect: commands.restrictEditing },
+    { label: '始终以只读方式打开', icon: 'readOnly', checked: restrict.alwaysReadOnly, disabled: !editor() || !!pkg()?.readOnly, onSelect: commands.alwaysOpenReadOnly },
+    { label: '保护文档…', icon: 'protect', disabled: !editor() || !!pkg()?.readOnly, onSelect: commands.restrictEditing },
   ];
 
   return {

@@ -11,18 +11,18 @@ import { el, isComposing, MOD_KEY, shortcutCode, typesCharacter } from '../ui/do
 import { outlineRows, outlineUnits, subtreeEnd, moveOutlineBlock, moveOutlineSelection, setOutlineLevels, promotedLevel, demotedLevel, BODY_LEVEL } from '../engine/outline-editing.js';
 
 const INDENT = 26;
-const LEVEL_NAMES = [...Array.from({ length: 9 }, (_, i) => `Level ${i + 1}`), 'Body Text'];
+const LEVEL_NAMES = [...Array.from({ length: 9 }, (_, i) => `${i + 1} 级`), '正文文本'];
 /** Paragraphs whose text holds objects (pictures, fields, controls, notes) or tracked changes are shown, not typed into, here. */
 const plainParagraph = p => !p.fieldMarkers?.length && !p.blockControls?.length && p.runs.every(r => !r.image && !r.field && !r.noteMark && !r.contentControl && !r.revision && !r.bodySymbol && !/[￼\f\v\u000e]/.test(r.text));
-const displayText = p => p.runs.map(r => r.image ? '[Picture]' : r.text.replace(/￼/g, '').replace(/[\f\v\u000e]/g, ' ')).join('');
+const displayText = p => p.runs.map(r => r.image ? '[图片]' : r.text.replace(/￼/g, '').replace(/[\f\v\u000e]/g, ' ')).join('');
 
 export function createOutlineView({ editor, readOnly, error, onState = () => {} }) {
   let active = false, showLevel = BODY_LEVEL, firstLineOnly = false, formatting = true;
   const collapsed = new Set();
   let rows = [], rowNodes = new Map(), focusedId = null, selectedIds = new Set();
-  const list = el('div.outline-list', { role: 'tree', 'aria-label': 'Document outline', 'aria-multiselectable': 'true' });
-  const empty = el('p.outline-empty', { hidden: true }, 'This document is empty. Start typing to add a heading.');
-  const node = el('section.outline-view', { 'aria-label': 'Outline view', hidden: true }, el('div.outline-page', {}, list, empty));
+  const list = el('div.outline-list', { role: 'tree', 'aria-label': '文档大纲', 'aria-multiselectable': 'true' });
+  const empty = el('p.outline-empty', { hidden: true }, '此文档为空。开始键入以添加标题。');
+  const node = el('section.outline-view', { 'aria-label': '大纲视图', hidden: true }, el('div.outline-page', {}, list, empty));
 
   const engine = () => editor();
   const editable = () => !readOnly() && !!engine();
@@ -107,11 +107,11 @@ export function createOutlineView({ editor, readOnly, error, onState = () => {} 
     const [symbol, text] = item.children, p = row.paragraph;
     const level = row.table ? BODY_LEVEL : row.level, isCollapsed = row.parent && collapsed.has(row.id);
     const indent = indentOf(row, row.index);
-    const label = row.table ? 'Table' : row.text.trim() || (level < BODY_LEVEL ? 'Empty heading' : 'Empty paragraph');
+    const label = row.table ? '表格' : row.text.trim() || (level < BODY_LEVEL ? '空标题' : '空段落');
     const canType = editable() && !row.table && plainParagraph(p);
-    const value = row.table ? 'Table' : canType ? row.text : displayText(p);
+    const value = row.table ? '表格' : canType ? row.text : displayText(p);
     const mode = canType ? 'plaintext-only' : 'false';
-    const style = row.table ? {} : textStyle(p), placeholder = !value && level < BODY_LEVEL ? 'Heading' : '';
+    const style = row.table ? {} : textStyle(p), placeholder = !value && level < BODY_LEVEL ? '标题' : '';
     // A row drawn from the same values keeps its attributes and styles: typing redraws the outline after
     // every keystroke, and writing them again for every row of a long document took most of that.
     const drawn = JSON.stringify([indent, level, !!isCollapsed, !!row.table, !!row.parent, label, mode, style, placeholder]);
@@ -125,8 +125,8 @@ export function createOutlineView({ editor, readOnly, error, onState = () => {} 
       item.classList.toggle('is-table', !!row.table);
       if (row.parent) item.setAttribute('aria-expanded', String(!isCollapsed)); else item.removeAttribute('aria-expanded');
       symbol.dataset.kind = row.table ? 'table' : level >= BODY_LEVEL ? 'body' : row.parent ? 'parent' : 'leaf';
-      symbol.setAttribute('aria-label', row.parent ? `${isCollapsed ? 'Expand' : 'Select'} ${label}` : `Select ${label}`);
-      symbol.title = row.parent ? 'Click to select this heading and its text. Double-click to expand or collapse.' : level < BODY_LEVEL ? 'Heading without text under it' : 'Body text';
+      symbol.setAttribute('aria-label', row.parent ? `${isCollapsed ? '展开' : '选择'} ${label}` : `选择 ${label}`);
+      symbol.title = row.parent ? '单击以选择此标题及其下方内容。双击以展开或折叠。' : level < BODY_LEVEL ? '下方无内容的标题' : '正文文本';
       if (text.getAttribute('contenteditable') !== mode) text.setAttribute('contenteditable', mode);
       text.tabIndex = 0;
       text.setAttribute('aria-label', `${LEVEL_NAMES[Math.min(level, BODY_LEVEL) - 1]}: ${label}`);

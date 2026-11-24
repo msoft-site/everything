@@ -12,12 +12,12 @@ import { advancedFind } from './advanced-search.js';
  * Also the "similar formatting" condition used by Select → Select All Text With Similar Formatting.
  */
 
-const pt = n => `${Math.round(n * 100) / 100} pt`;
-const inches = twips => `${Math.round(twips / 1440 * 100) / 100}″`;
-const yes = value => value ? 'Yes' : 'No';
-const caps = { normal: 'None', caps: 'All caps', smallCaps: 'Small caps' };
-const strikes = { none: 'None', single: 'Single', double: 'Double' };
-const lineRules = { auto: 'Multiple', exact: 'Exactly', atLeast: 'At least' };
+const pt = n => `${Math.round(n * 100) / 100} 磅`;
+const inches = twips => `${Math.round(twips / 1440 * 100) / 100} 英寸`;
+const yes = value => value ? '是' : '否';
+const caps = { normal: '无', caps: '全部大写', smallCaps: '小型大写字母' };
+const strikes = { none: '无', single: '单删除线', double: '双删除线' };
+const lineRules = { auto: '多倍', exact: '固定值', atLeast: '最小值' };
 
 /** The paragraph and run at the start of the selection. */
 function anchor(model) {
@@ -30,58 +30,58 @@ function anchor(model) {
  * Sections of { title, entries: [{ label, value, direct, target }] }. `target` names the dialog that edits
  * the value ('font', 'paragraph', 'tabs', 'borders', 'numbering', 'page', 'style').
  */
-export function revealFormatting(model, { styleName = id => model.styles.definitions[id]?.name || id || 'Default' } = {}) {
+export function revealFormatting(model, { styleName = id => model.styles.definitions[id]?.name || id || '默认' } = {}) {
   const { p, run } = anchor(model);
   const f = runFormat(run), direct = model.stylesEnabled ? directRun(model, run, p) : {};
   const format = paragraphFormat(p, model.numbering, model.pageSettings), directP = model.stylesEnabled ? directParagraph(model, p) : {};
   const runEntry = (label, value, keys, target = 'font') => ({ label, value, direct: keys.some(k => Object.hasOwn(direct, k)), target });
   const paraEntry = (label, value, keys, target = 'paragraph') => ({ label, value, direct: keys.some(k => Object.hasOwn(directP, k)), target });
   const font = [
-    runEntry('Font', f.fontAscii || 'Default', ['fontAscii', 'fontHAnsi']),
-    runEntry('Size', pt(f.fontSize), ['fontSize']),
-    runEntry('Style', [f.bold && 'Bold', f.italic && 'Italic'].filter(Boolean).join(' ') || 'Regular', ['bold', 'italic']),
-    runEntry('Color', f.color === 'auto' ? 'Automatic' : `#${f.color}`, ['color']),
-    runEntry('Underline', f.underlineStyle === 'none' ? 'None' : f.underlineStyle, ['underline', 'underlineStyle', 'underlineColor']),
-    runEntry('Strikethrough', strikes[f.strikethrough] || f.strikethrough, ['strikethrough']),
-    runEntry('Capitals', caps[f.capitalization] || f.capitalization, ['capitalization']),
-    runEntry('Position', f.verticalAlign === 'baseline' ? (f.baselineShift ? `${f.baselineShift > 0 ? 'Raised' : 'Lowered'} ${pt(Math.abs(f.baselineShift))}` : 'Normal') : f.verticalAlign === 'superscript' ? 'Superscript' : 'Subscript', ['verticalAlign', 'baselineShift']),
-    runEntry('Spacing', f.characterSpacing ? `${f.characterSpacing > 0 ? 'Expanded' : 'Condensed'} ${pt(Math.abs(f.characterSpacing))}` : 'Normal', ['characterSpacing']),
-    runEntry('Scale', `${f.textScale}%`, ['textScale']),
-    runEntry('Kerning', f.kerning ? `From ${pt(f.kerning)}` : 'Off', ['kerning']),
-    runEntry('Highlight', f.highlight === 'none' ? 'None' : f.highlight, ['highlight'], 'font'),
-    runEntry('Hidden', yes(f.vanish), ['vanish']),
-    { label: 'Character style', value: run.styleId ? styleName(run.styleId) : 'Default characters', direct: false, target: 'style' },
+    runEntry('字体', f.fontAscii || '默认', ['fontAscii', 'fontHAnsi']),
+    runEntry('字号', pt(f.fontSize), ['fontSize']),
+    runEntry('字形', [f.bold && '加粗', f.italic && '倾斜'].filter(Boolean).join(' ') || '常规', ['bold', 'italic']),
+    runEntry('颜色', f.color === 'auto' ? '自动' : `#${f.color}`, ['color']),
+    runEntry('下划线', f.underlineStyle === 'none' ? '无' : f.underlineStyle, ['underline', 'underlineStyle', 'underlineColor']),
+    runEntry('删除线', strikes[f.strikethrough] || f.strikethrough, ['strikethrough']),
+    runEntry('字母大小写', caps[f.capitalization] || f.capitalization, ['capitalization']),
+    runEntry('位置', f.verticalAlign === 'baseline' ? (f.baselineShift ? `${f.baselineShift > 0 ? '上升' : '下降'} ${pt(Math.abs(f.baselineShift))}` : '标准') : f.verticalAlign === 'superscript' ? '上标' : '下标', ['verticalAlign', 'baselineShift']),
+    runEntry('间距', f.characterSpacing ? `${f.characterSpacing > 0 ? '加宽' : '紧缩'} ${pt(Math.abs(f.characterSpacing))}` : '标准', ['characterSpacing']),
+    runEntry('缩放', `${f.textScale}%`, ['textScale']),
+    runEntry('字距调整', f.kerning ? `从 ${pt(f.kerning)} 起` : '关闭', ['kerning']),
+    runEntry('突出显示', f.highlight === 'none' ? '无' : f.highlight, ['highlight'], 'font'),
+    runEntry('隐藏', yes(f.vanish), ['vanish']),
+    { label: '字符样式', value: run.styleId ? styleName(run.styleId) : '默认字符', direct: false, target: 'style' },
   ];
-  if (f.textOutline || f.textShadow) font.push(runEntry('Text effects', [f.textOutline && 'Outline', f.textShadow && 'Shadow'].filter(Boolean).join(', '), ['textOutline', 'textShadow'], 'effects'));
+  if (f.textOutline || f.textShadow) font.push(runEntry('文本效果', [f.textOutline && '轮廓', f.textShadow && '阴影'].filter(Boolean).join('，'), ['textOutline', 'textShadow'], 'effects'));
   const styleId = effectiveStyleId(p, model.styles);
-  const special = format.firstLine > 0 ? `First line ${inches(format.firstLine)}` : format.firstLine < 0 ? `Hanging ${inches(-format.firstLine)}` : 'None';
+  const special = format.firstLine > 0 ? `首行缩进 ${inches(format.firstLine)}` : format.firstLine < 0 ? `悬挂缩进 ${inches(-format.firstLine)}` : '无';
   const paragraph = [
-    { label: 'Paragraph style', value: styleId ? styleName(styleId) : 'Default paragraph', direct: false, target: 'style' },
-    paraEntry('Alignment', { left: 'Left', center: 'Centered', right: 'Right', both: 'Justified' }[physicalAlignment(format.alignment, format.bidi)] || format.alignment, ['alignment']),
-    paraEntry('Outline level', format.outlineLevel === 9 ? 'Body text' : `Level ${format.outlineLevel + 1}`, ['outlineLevel']),
-    paraEntry('Indentation', `Left ${inches(format.indentLeft)}, right ${inches(format.indentRight)}`, ['indentLeft', 'indentRight']),
-    paraEntry('Special indent', special, ['firstLine']),
-    paraEntry('Spacing', `Before ${pt(format.spaceBefore)}, after ${pt(format.spaceAfter)}`, ['spaceBefore', 'spaceAfter']),
-    paraEntry('Line spacing', format.lineRule === 'auto' ? (format.lineSpacing === 1 ? 'Single' : `${lineRules.auto} ${Math.round(format.lineSpacing * 100) / 100} lines`) : `${lineRules[format.lineRule]} ${pt(format.lineSpacing)}`, ['lineSpacing', 'lineRule']),
-    paraEntry('Pagination', [format.widowControl && 'Widow/orphan control', format.keepNext && 'Keep with next', format.keepLines && 'Keep lines together', format.pageBreakBefore && 'Page break before'].filter(Boolean).join(', ') || 'None', ['widowControl', 'keepNext', 'keepLines', 'pageBreakBefore']),
-    paraEntry('Tabs', format.tabs.length ? format.tabs.map(t => `${inches(t.position)} ${t.alignment}`).join(', ') : 'Default stops', ['tabs'], 'tabs'),
-    paraEntry('Borders', visibleParagraphBorders(format.paragraphBorders) ? 'Custom' : 'None', ['paragraphBorders'], 'borders'),
-    paraEntry('Shading', format.paragraphShading === 'auto' ? 'None' : format.paragraphShading === 'foreground' ? 'Automatic' : `#${format.paragraphShading}`, ['paragraphShading'], 'borders'),
+    { label: '段落样式', value: styleId ? styleName(styleId) : '默认段落', direct: false, target: 'style' },
+    paraEntry('对齐方式', { left: '左对齐', center: '居中', right: '右对齐', both: '两端对齐' }[physicalAlignment(format.alignment, format.bidi)] || format.alignment, ['alignment']),
+    paraEntry('大纲级别', format.outlineLevel === 9 ? '正文文本' : `${format.outlineLevel + 1} 级`, ['outlineLevel']),
+    paraEntry('缩进', `左 ${inches(format.indentLeft)}，右 ${inches(format.indentRight)}`, ['indentLeft', 'indentRight']),
+    paraEntry('特殊缩进', special, ['firstLine']),
+    paraEntry('段落间距', `段前 ${pt(format.spaceBefore)}，段后 ${pt(format.spaceAfter)}`, ['spaceBefore', 'spaceAfter']),
+    paraEntry('行距', format.lineRule === 'auto' ? (format.lineSpacing === 1 ? '单倍行距' : `多倍行距 ${Math.round(format.lineSpacing * 100) / 100} 行`) : `${lineRules[format.lineRule]} ${pt(format.lineSpacing)}`, ['lineSpacing', 'lineRule']),
+    paraEntry('换行和分页', [format.widowControl && '孤行控制', format.keepNext && '与下段同页', format.keepLines && '段中不分页', format.pageBreakBefore && '段前分页'].filter(Boolean).join('，') || '无', ['widowControl', 'keepNext', 'keepLines', 'pageBreakBefore']),
+    paraEntry('制表位', format.tabs.length ? format.tabs.map(t => `${inches(t.position)} ${t.alignment}`).join('，') : '默认制表位', ['tabs'], 'tabs'),
+    paraEntry('边框', visibleParagraphBorders(format.paragraphBorders) ? '自定义' : '无', ['paragraphBorders'], 'borders'),
+    paraEntry('底纹', format.paragraphShading === 'auto' ? '无' : format.paragraphShading === 'foreground' ? '自动' : `#${format.paragraphShading}`, ['paragraphShading'], 'borders'),
   ];
-  if (format.mirrorIndents) paragraph.push(paraEntry('Mirror indents', 'Yes', ['mirrorIndents']));
-  if (format.bidi) paragraph.push(paraEntry('Direction', 'Right-to-left', ['bidi']));
+  if (format.mirrorIndents) paragraph.push(paraEntry('对称缩进', '是', ['mirrorIndents']));
+  if (format.bidi) paragraph.push(paraEntry('文字方向', '从右向左', ['bidi']));
   if (p.list) {
-    let value = 'List';
-    try { const level = levelFor(model.numbering, p.list); value = `${listKind(model.numbering, p.list) === 'bullet' ? 'Bulleted' : 'Numbered'}, level ${p.list.level + 1}${level.format === 'bullet' ? ` (${level.text})` : ''}`; } catch { /* keep the generic label */ }
-    paragraph.push({ label: 'Bullets and numbering', value, direct: !!p.list.direct, target: 'numbering' });
+    let value = '列表';
+    try { const level = levelFor(model.numbering, p.list); value = `${listKind(model.numbering, p.list) === 'bullet' ? '项目符号' : '编号'}，级别 ${p.list.level + 1}${level.format === 'bullet' ? ` (${level.text})` : ''}`; } catch { /* keep the generic label */ }
+    paragraph.push({ label: '项目符号和编号', value, direct: !!p.list.direct, target: 'numbering' });
   }
   const page = model.sectionPageSettings;
   const section = [
-    { label: 'Paper', value: `${inches(page.width)} × ${inches(page.height)} (${page.orientation === 'landscape' ? 'landscape' : 'portrait'})`, direct: false, target: 'page' },
-    { label: 'Margins', value: `Top ${inches(page.top)}, bottom ${inches(page.bottom)}, left ${inches(page.left)}, right ${inches(page.right)}`, direct: false, target: 'page' },
-    { label: 'Columns', value: String(page.columns?.count || 1), direct: false, target: 'page' },
+    { label: '纸张', value: `${inches(page.width)} × ${inches(page.height)} (${page.orientation === 'landscape' ? '横向' : '纵向'})`, direct: false, target: 'page' },
+    { label: '页边距', value: `上 ${inches(page.top)}，下 ${inches(page.bottom)}，左 ${inches(page.left)}，右 ${inches(page.right)}`, direct: false, target: 'page' },
+    { label: '分栏', value: String(page.columns?.count || 1), direct: false, target: 'page' },
   ];
-  return [{ title: 'Font', entries: font }, { title: 'Paragraph', entries: paragraph }, { title: 'Section', entries: section }];
+  return [{ title: '字体', entries: font }, { title: '段落', entries: paragraph }, { title: '节', entries: section }];
 }
 
 /** The Style Inspector summary: paragraph and character styles plus whether direct formatting is present. */

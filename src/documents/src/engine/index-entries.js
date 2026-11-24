@@ -32,7 +32,7 @@ export function parseEntry(instruction) {
 /** An XE instruction from entry options. */
 export function entryInstruction({ main, sub = '', third = '', bold = false, italic = false, crossReference = null, bookmark = null, type = null }) {
   const text = [main, sub, third].map(s => String(s || '').trim()).filter(Boolean).map(escapeLevel).join(':');
-  if (!text) throw new Error('Type the main entry for the index.');
+  if (!text) throw new Error('请输入索引的主索引项。');
   const parts = ['XE', quote(text)];
   if (crossReference !== null && crossReference !== undefined) parts.push('\\t', quote(crossReference));
   if (bookmark) parts.push('\\r', bookmark);

@@ -9,7 +9,7 @@ import { newBodyField, nextMarkerOrder } from './generated-fields.js';
 import { sequenceInstruction, updateSequenceFields } from './field-update.js';
 import { noteReferences } from './footnotes.js';
 
-export const CAPTION_LABELS = ['Figure', 'Table', 'Equation'];
+export const CAPTION_LABELS = ['图表', '表格', '公式'];
 /** Caption number formats and their SEQ general-formatting switch (§17.16.4.3). */
 export const CAPTION_FORMATS = { ARABIC: '1, 2, 3, …', alphabetic: 'a, b, c, …', ALPHABETIC: 'A, B, C, …', roman: 'i, ii, iii, …', ROMAN: 'I, II, III, …' };
 const length = p => p.runs.reduce((n, r) => n + r.text.length, 0);
@@ -40,11 +40,11 @@ export function captionLabels(doc, custom = []) {
  * paragraph. `format` is a SEQ general format (ARABIC, alphabetic, ALPHABETIC, roman, ROMAN); `excludeLabel`
  * leaves only the number visible.
  */
-export function insertCaption(doc, { label = 'Figure', text = '', above = false, format = 'ARABIC', excludeLabel = false } = {}) {
+export function insertCaption(doc, { label = '图表', text = '', above = false, format = 'ARABIC', excludeLabel = false } = {}) {
   const id = sequenceId(label);
   // Letters of any script: localized word processors number captions as SEQ Рисунок, SEQ Abbildung, SEQ 図.
-  if (!/^\p{L}[\p{L}\p{M}\p{N}_]{0,39}$/u.test(id)) throw new Error('Use a label of letters and numbers, such as Figure or Table.');
-  if (!Object.hasOwn(CAPTION_FORMATS, format)) throw new Error('Choose a caption number format.');
+  if (!/^\p{L}[\p{L}\p{M}\p{N}_]{0,39}$/u.test(id)) throw new Error('请使用字母、汉字或数字作为标签，例如“图表”或“表格”。');
+  if (!Object.hasOwn(CAPTION_FORMATS, format)) throw new Error('请选择题注编号格式。');
   let index;
   if (doc.tableContext && !doc.selectedImage) {
     doc.insertTableParagraph(!above);
@@ -104,7 +104,7 @@ export function referenceTargets(doc, { notes = [] } = {}) {
   for (const kind of ['footnote', 'endnote']) {
     for (const ref of noteReferences(doc.paragraphs, kind)) {
       const note = notes.find(n => n.kind === kind && n.id === ref.id);
-      noteTargets[kind].push({ kind, id: ref.id, display: note?.display || '', label: `${note?.display ?? ''} ${note?.text ?? ''}`.trim() || `${kind === 'footnote' ? 'Footnote' : 'Endnote'} ${ref.id}`,
+      noteTargets[kind].push({ kind, id: ref.id, display: note?.display || '', label: `${note?.display ?? ''} ${note?.text ?? ''}`.trim() || `${kind === 'footnote' ? '脚注' : '尾注'} ${ref.id}`,
         start: ref.position, end: ref.position + 1, paragraphId: ref.paragraphId });
     }
   }
@@ -113,10 +113,10 @@ export function referenceTargets(doc, { notes = [] } = {}) {
 
 /** The reference choices each kind of target offers. */
 export function referenceChoices(kind) {
-  if (kind === 'heading') return [['text', 'Heading text'], ['page', 'Page number'], ['position', 'Above/below']];
-  if (kind === 'bookmark') return [['text', 'Bookmark text'], ['page', 'Page number'], ['position', 'Above/below']];
-  if (kind === 'footnote' || kind === 'endnote') { const name = kind === 'footnote' ? 'Footnote' : 'Endnote'; return [['number', `${name} number`], ['formatted', `${name} number (formatted)`], ['page', 'Page number'], ['position', 'Above/below']]; }
-  return [['entire', 'Entire caption'], ['label', 'Only label and number'], ['caption', 'Only caption text'], ['page', 'Page number'], ['position', 'Above/below']];
+  if (kind === 'heading') return [['text', '标题文字'], ['page', '页码'], ['position', '见上方/下方']];
+  if (kind === 'bookmark') return [['text', '书签文字'], ['page', '页码'], ['position', '见上方/下方']];
+  if (kind === 'footnote' || kind === 'endnote') { const name = kind === 'footnote' ? '脚注' : '尾注'; return [['number', `${name}编号`], ['formatted', `${name}编号(带格式)`], ['page', '页码'], ['position', '见上方/下方']]; }
+  return [['entire', '整条题注'], ['label', '仅标签和编号'], ['caption', '仅题注文字'], ['page', '页码'], ['position', '见上方/下方']];
 }
 
 function refBookmark(doc, target, start = target.start, end = target.end) {
@@ -159,10 +159,10 @@ export function insertCrossReference(doc, target, { show = 'text', hyperlink = t
   }
   let start = target.start, end = target.end;
   if (show === 'entire' && target.paragraphEnd !== undefined) end = target.paragraphEnd;
-  if (show === 'caption' && target.textStart !== undefined) { start = target.textStart; end = target.paragraphEnd; if (start >= end) throw new Error('This caption has no text after its number.'); }
+  if (show === 'caption' && target.textStart !== undefined) { start = target.textStart; end = target.paragraphEnd; if (start >= end) throw new Error('此题注在编号后没有文字。'); }
   const name = refBookmark(doc, target, start, end);
   const h = hyperlink ? ' \\h' : '';
-  const before = doc.range[0], relativeAt = () => (before < start ? 'below' : 'above');
+  const before = doc.range[0], relativeAt = () => (before < start ? '见下方' : '见上方');
   if (show === 'page') insertReferenceField(doc, ` PAGEREF ${name}${h} `, '1', name, hyperlink);
   else if (show === 'position') insertReferenceField(doc, ` REF ${name} \\p${h} `, relativeAt(), name, hyperlink);
   else if (show === 'number' || show === 'formatted') {

@@ -10,20 +10,20 @@ import { xmlAttributeText } from '../engine/text-limits.js';
  */
 export function createPane(context) {
   const { selected, describe, commands, onClose, kind } = context;
-  const description = el('textarea.input.pic-alt-text', { rows: 6, maxLength: 2000, 'aria-label': 'Description', placeholder: 'Describe the object and its context for someone who cannot see it (one or two sentences).' });
-  const title = el('input.input', { type: 'text', maxLength: 255, 'aria-label': 'Title (optional)' });
+  const description = el('textarea.input.pic-alt-text', { rows: 6, maxLength: 2000, 'aria-label': '说明', placeholder: '为无法看到该对象的人员描述此对象及其上下文(一到两句话)。' });
+  const title = el('input.input', { type: 'text', maxLength: 255, 'aria-label': '标题(可选)' });
   const decorative = el('input', { type: 'checkbox', id: 'pic-alt-decorative' });
   const counter = el('span.pic-hint', { 'aria-live': 'polite' });
   const target = el('p.pic-hint');
-  const node = el('aside.pic-pane.pic-alt-pane', { 'aria-label': 'Alt Text pane' },
-    el('div.canvas-panel-heading', {}, el('h2', {}, 'Alt Text'), el('button.icon-btn', { type: 'button', 'aria-label': 'Close Alt Text pane', onclick: () => close() }, iconEl('x', 18))),
+  const node = el('aside.pic-pane.pic-alt-pane', { 'aria-label': '替代文字窗格' },
+    el('div.canvas-panel-heading', {}, el('h2', {}, '替代文字'), el('button.icon-btn', { type: 'button', 'aria-label': '关闭替代文字窗格', onclick: () => close() }, iconEl('x', 18))),
     el('div.canvas-panel-scroll', {},
       target,
-      el('label.pic-field', {}, el('span', {}, 'Description'), description, counter),
-      el('label.pic-field', {}, el('span', {}, 'Title (optional)'), title),
-      el('label.pic-check', { htmlFor: 'pic-alt-decorative' }, decorative, 'Mark as decorative'),
-      el('p.pic-hint', {}, 'Decorative objects add visual interest but are not informative, like stylistic borders. Screen readers skip them.'),
-      el('div.pic-actions', {}, el('button.btn.btn-primary.btn-sm', { type: 'button', onclick: () => save() }, 'Save'))));
+      el('label.pic-field', {}, el('span', {}, '说明'), description, counter),
+      el('label.pic-field', {}, el('span', {}, '标题(可选)'), title),
+      el('label.pic-check', { htmlFor: 'pic-alt-decorative' }, decorative, '标记为装饰性内容'),
+      el('p.pic-hint', {}, '装饰性对象可增加视觉效果但没有实质信息(如装饰性边框)。屏幕阅读器将跳过它们。'),
+      el('div.pic-actions', {}, el('button.btn.btn-primary.btn-sm', { type: 'button', onclick: () => save() }, '保存'))));
   // `owner` is the object the fields describe. Selecting another object while a field still has focus
   // refreshes the pane before the field blurs, so edits are saved to their owner, never to the new selection.
   let shown = null, owner = null, saved = null;
@@ -54,7 +54,7 @@ export function createPane(context) {
     shown = key; owner = image; saved = null;
     const disabled = !image || !info;
     for (const control of [description, title, decorative]) control.disabled = disabled;
-    target.textContent = !image ? 'Select a picture or shape to describe it.' : `${image.name || 'Object'} (${{ picture: 'picture', shape: 'shape', textBox: 'text box', group: 'group', chart: 'chart', diagram: 'diagram' }[kind(image)] || 'object'})`;
+    target.textContent = !image ? '请选择图片或形状以添加说明。' : `${image.name || '对象'} (${{ picture: '图片', shape: '形状', textBox: '文本框', group: '组合', chart: '图表', diagram: '关系图' }[kind(image)] || '对象'})`;
     if (switched || document.activeElement !== description) description.value = info?.description ?? image?.alt ?? '';
     if (switched || document.activeElement !== title) title.value = info?.title || '';
     decorative.checked = !!info?.decorative;

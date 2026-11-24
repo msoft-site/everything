@@ -3,18 +3,18 @@
 // Bodies use only elements the document SVG validator accepts (see engine/svg-images.js).
 
 export const ICON_CATEGORIES = [
-  { id: 'people', label: 'People' },
-  { id: 'communication', label: 'Communication' },
-  { id: 'business', label: 'Business & Finance' },
-  { id: 'education', label: 'Education & Science' },
-  { id: 'technology', label: 'Technology' },
-  { id: 'nature', label: 'Nature & Weather' },
-  { id: 'travel', label: 'Travel & Places' },
-  { id: 'interface', label: 'Arrows & Interface' },
-  { id: 'shapes', label: 'Shapes & Symbols' },
-  { id: 'food', label: 'Food & Drink' },
-  { id: 'health', label: 'Health & Fitness' },
-  { id: 'home', label: 'Home & Tools' },
+  { id: 'people', label: '人物' },
+  { id: 'communication', label: '通讯与交流' },
+  { id: 'business', label: '商业与金融' },
+  { id: 'education', label: '教育与科学' },
+  { id: 'technology', label: '技术与设备' },
+  { id: 'nature', label: '自然与天气' },
+  { id: 'travel', label: '旅行与地点' },
+  { id: 'interface', label: '箭头与界面' },
+  { id: 'shapes', label: '形状与符号' },
+  { id: 'food', label: '餐饮' },
+  { id: 'health', label: '健康与健身' },
+  { id: 'home', label: '居家与工具' },
 ];
 
 const num = v => String(Math.round(v * 100) / 100);

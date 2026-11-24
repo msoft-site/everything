@@ -5,7 +5,7 @@
  */
 import { textFence, responseText } from './ai.js';
 
-export const SUGGESTION_KINDS = { grammar: 'Grammar', punctuation: 'Punctuation', clarity: 'Clarity', conciseness: 'Conciseness', formality: 'Formality', inclusive: 'Inclusive language', style: 'Style' };
+export const SUGGESTION_KINDS = { grammar: '语法', punctuation: '标点', clarity: '清晰度', conciseness: '简洁度', formality: '正式程度', inclusive: '包容性语言', style: '样式' };
 
 /** The request for one batch of numbered paragraphs. */
 export function grammarPrompt(paragraphs, { kinds = Object.keys(SUGGESTION_KINDS), language = 'the text\'s own language' } = {}) {

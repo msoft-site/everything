@@ -11,7 +11,7 @@ import { segmented } from '../ui/segmented.js';
  *   { type: 'button', label, hint?, run(), closes? } (closes: the dialog goes first, for what cannot show over it)
  */
 export function openPreferences({ sections, section = null, onClose }) {
-  const nav = el('div.pref-nav', { role: 'tablist', 'aria-orientation': 'vertical', 'aria-label': 'Preference sections' });
+  const nav = el('div.pref-nav', { role: 'tablist', 'aria-orientation': 'vertical', 'aria-label': '首选项分类' });
   const body = el('div.pref-body', { role: 'tabpanel', tabindex: -1 });
   const tabs = sections.map(s => el('button.pref-tab', { type: 'button', role: 'tab', id: `pref-tab-${s.id}`, 'aria-selected': 'false', tabIndex: -1, onclick: () => show(s.id) }, s.label));
   nav.append(...tabs);
@@ -54,7 +54,7 @@ export function openPreferences({ sections, section = null, onClose }) {
     }
     if (def.type === 'button') {
       return el('div.pref-row', {}, el('span.pref-text', {}, el('span.pref-label', {}, def.label), hint),
-        el('button.btn.btn-outline.btn-sm', { type: 'button', onclick: () => { if (def.closes) modal.close(); def.run(); } }, def.action || 'Open…'));
+        el('button.btn.btn-outline.btn-sm', { type: 'button', onclick: () => { if (def.closes) modal.close(); def.run(); } }, def.action || '打开…'));
     }
     return null;
   }
@@ -65,7 +65,7 @@ export function openPreferences({ sections, section = null, onClose }) {
     refreshers = [];
     body.replaceChildren(el('h3.pref-heading', {}, s.label), ...(s.note ? [el('p.pref-note', {}, s.note)] : []), ...s.controls.filter(Boolean).map(control).filter(Boolean));
   }
-  const modal = openModal({ title: 'Preferences', wide: true, onClose: () => { across?.removeEventListener?.('change', orient); onClose?.(); }, content: el('div.pref-dialog', {}, nav, body) });
+  const modal = openModal({ title: '首选项', wide: true, onClose: () => { across?.removeEventListener?.('change', orient); onClose?.(); }, content: el('div.pref-dialog', {}, nav, body) });
   modal.panel.classList.add('pref-panel');
   show(section || sections[0].id);
   tabs.find(t => t.getAttribute('aria-selected') === 'true')?.focus();

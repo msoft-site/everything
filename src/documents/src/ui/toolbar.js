@@ -14,34 +14,34 @@ import { openMenu, closeMenu, menuAnchor, clickClosedMenu } from './menu.js';
 import { openColorMenu, TEXT_COLORS, HIGHLIGHT_COLORS, normalizeHex } from './colors.js';
 
 export const ALIGNMENTS = [
-  { value: 'left', label: 'Align left', icon: 'alignLeft', shortcut: `${MOD_KEY}+Shift+L` },
-  { value: 'center', label: 'Align center', icon: 'alignCenter', shortcut: `${MOD_KEY}+Shift+E` },
-  { value: 'right', label: 'Align right', icon: 'alignRight', shortcut: `${MOD_KEY}+Shift+R` },
-  { value: 'justify', label: 'Justify', icon: 'alignJustify', shortcut: `${MOD_KEY}+Shift+J` },
+  { value: 'left', label: '左对齐', icon: 'alignLeft', shortcut: `${MOD_KEY}+Shift+L` },
+  { value: 'center', label: '居中对齐', icon: 'alignCenter', shortcut: `${MOD_KEY}+Shift+E` },
+  { value: 'right', label: '右对齐', icon: 'alignRight', shortcut: `${MOD_KEY}+Shift+R` },
+  { value: 'justify', label: '两端对齐', icon: 'alignJustify', shortcut: `${MOD_KEY}+Shift+J` },
 ];
 
 export const LINE_SPACINGS = [
-  { value: 1, label: 'Single' },
+  { value: 1, label: '单倍行距' },
   { value: 1.15, label: '1.15' },
   { value: 1.5, label: '1.5' },
-  { value: 2, label: 'Double' },
+  { value: 2, label: '双倍行距' },
 ];
 
 /** Actions offered while the caret is inside a table, in menu order. */
 export const TABLE_ACTIONS = [
-  { id: 'table-add-row-before', label: 'Insert row above', icon: 'arrowUp' },
-  { id: 'table-add-row-after', label: 'Insert row below', icon: 'arrowDown' },
-  { id: 'table-add-column-before', label: 'Insert column left', icon: 'back' },
-  { id: 'table-add-column-after', label: 'Insert column right', icon: 'arrowRight' },
+  { id: 'table-add-row-before', label: '在上方插入行', icon: 'arrowUp' },
+  { id: 'table-add-row-after', label: '在下方插入行', icon: 'arrowDown' },
+  { id: 'table-add-column-before', label: '在左侧插入列', icon: 'back' },
+  { id: 'table-add-column-after', label: '在右侧插入列', icon: 'arrowRight' },
   { separator: true },
-  { id: 'table-delete-row', label: 'Delete row', icon: 'rows' },
-  { id: 'table-delete-column', label: 'Delete column', icon: 'cols' },
+  { id: 'table-delete-row', label: '删除行', icon: 'rows' },
+  { id: 'table-delete-column', label: '删除列', icon: 'cols' },
   { separator: true },
-  { id: 'table-merge-cells', label: 'Merge cells', icon: 'merge' },
-  { id: 'table-split-cell', label: 'Split cell', icon: 'split' },
-  { id: 'table-remove-borders', label: 'Remove borders', icon: 'grid' },
+  { id: 'table-merge-cells', label: '合并单元格', icon: 'merge' },
+  { id: 'table-split-cell', label: '拆分单元格', icon: 'split' },
+  { id: 'table-remove-borders', label: '清除边框', icon: 'grid' },
   { separator: true },
-  { id: 'table-delete', label: 'Delete table', icon: 'trash', danger: true },
+  { id: 'table-delete', label: '删除表格', icon: 'trash', danger: true },
 ];
 
 import { FALLBACK_SIZES, stepFontSize } from '../lib/fontsize.js';
@@ -223,32 +223,32 @@ export function createToolbar({ onLink, onImage, onTable, onSpacing = null, onLi
 
   /* ---------- Controls ---------- */
 
-  const undoBtn = button({ cmd: 'undo', label: 'Undo', ic: 'undo', shortcut: `${MOD_KEY}+Z` });
-  const redoBtn = button({ cmd: 'redo', label: 'Redo', ic: 'redo', shortcut: `${MOD_KEY}+Shift+Z` });
+  const undoBtn = button({ cmd: 'undo', label: '撤销', ic: 'undo', shortcut: `${MOD_KEY}+Z` });
+  const redoBtn = button({ cmd: 'redo', label: '重做', ic: 'redo', shortcut: `${MOD_KEY}+Shift+Z` });
 
-  const styleSelect = select({ label: 'Paragraph style', cls: 'tb-style', onChange: (v, options) => exec('linked-style', v, options) });
-  const fontSelect = select({ label: 'Font', cls: 'tb-font', onChange: (v, options) => exec('font-family', v, options) });
-  const sizeSelect = select({ label: 'Font size', cls: 'tb-size', onChange: (v, options) => exec('font-size', v, options) });
+  const styleSelect = select({ label: '段落样式', cls: 'tb-style', onChange: (v, options) => exec('linked-style', v, options) });
+  const fontSelect = select({ label: '字体', cls: 'tb-font', onChange: (v, options) => exec('font-family', v, options) });
+  const sizeSelect = select({ label: '字号', cls: 'tb-size', onChange: (v, options) => exec('font-size', v, options) });
 
-  const boldBtn = button({ cmd: 'bold', label: 'Bold', ic: 'bold', toggle: true, shortcut: `${MOD_KEY}+B` });
-  const italicBtn = button({ cmd: 'italic', label: 'Italic', ic: 'italic', toggle: true, shortcut: `${MOD_KEY}+I` });
-  const underlineBtn = button({ cmd: 'underline', label: 'Underline', ic: 'underline', toggle: true, shortcut: `${MOD_KEY}+U` });
-  const strikeBtn = button({ cmd: 'strikethrough', label: 'Strikethrough', ic: 'strike', toggle: true, shortcut: `${MOD_KEY}+Shift+X` });
-  const supBtn = button({ cmd: 'superscript', label: 'Superscript', ic: 'sup', toggle: true, shortcut: `${MOD_KEY}+.` });
-  const subBtn = button({ cmd: 'subscript', label: 'Subscript', ic: 'sub', toggle: true, shortcut: `${MOD_KEY}+,` });
+  const boldBtn = button({ cmd: 'bold', label: '加粗', ic: 'bold', toggle: true, shortcut: `${MOD_KEY}+B` });
+  const italicBtn = button({ cmd: 'italic', label: '倾斜', ic: 'italic', toggle: true, shortcut: `${MOD_KEY}+I` });
+  const underlineBtn = button({ cmd: 'underline', label: '下划线', ic: 'underline', toggle: true, shortcut: `${MOD_KEY}+U` });
+  const strikeBtn = button({ cmd: 'strikethrough', label: '删除线', ic: 'strike', toggle: true, shortcut: `${MOD_KEY}+Shift+X` });
+  const supBtn = button({ cmd: 'superscript', label: '上标', ic: 'sup', toggle: true, shortcut: `${MOD_KEY}+.` });
+  const subBtn = button({ cmd: 'subscript', label: '下标', ic: 'sub', toggle: true, shortcut: `${MOD_KEY}+,` });
 
   let textColor = null;
   let highlightColor = null;
   const colorBtn = button({
-    cmd: 'text-color', label: 'Text color', ic: 'textColor',
-    onClick: (b) => openPalette(b, 'text-color', TEXT_COLORS, textColor, 'Text color', 'Automatic'),
+    cmd: 'text-color', label: '字体颜色', ic: 'textColor',
+    onClick: (b) => openPalette(b, 'text-color', TEXT_COLORS, textColor, '字体颜色', '自动'),
   });
   colorBtn.classList.add('tb-color');
   colorBtn.setAttribute('aria-haspopup', 'menu');
   colorBtn.append(el('span.tb-color-bar', { 'aria-hidden': 'true' }));
   const highlightBtn = button({
-    cmd: 'highlight-color', label: 'Highlight color', ic: 'highlight',
-    onClick: (b) => openPalette(b, 'highlight-color', HIGHLIGHT_COLORS, highlightColor, 'Highlight color', 'No highlight'),
+    cmd: 'highlight-color', label: '突出显示颜色', ic: 'highlight',
+    onClick: (b) => openPalette(b, 'highlight-color', HIGHLIGHT_COLORS, highlightColor, '突出显示颜色', '无颜色'),
   });
   highlightBtn.classList.add('tb-color');
   highlightBtn.setAttribute('aria-haspopup', 'menu');
@@ -261,9 +261,9 @@ export function createToolbar({ onLink, onImage, onTable, onSpacing = null, onLi
 
   let alignment = 'left';
   const alignBtn = button({
-    cmd: 'text-align', label: 'Alignment', ic: 'alignLeft',
+    cmd: 'text-align', label: '对齐方式', ic: 'alignLeft',
     onClick: (b) => openMenu({
-      anchor: b, label: 'Alignment', minWidth: 210,
+      anchor: b, label: '对齐方式', minWidth: 210,
       items: ALIGNMENTS.map((a) => ({ label: a.label, icon: a.icon, shortcut: a.shortcut, radio: true, checked: alignment === a.value, onSelect: () => exec('text-align', a.value) })),
     }),
   });
@@ -271,48 +271,48 @@ export function createToolbar({ onLink, onImage, onTable, onSpacing = null, onLi
   alignBtn.append(caret());
 
   const spacingBtn = button({
-    cmd: 'line-height', label: 'Line spacing', ic: 'rows',
+    cmd: 'line-height', label: '行距', ic: 'rows',
     onClick: (b) => openMenu({
-      anchor: b, label: 'Line spacing', minWidth: 190,
+      anchor: b, label: '行距', minWidth: 190,
       items: [
         ...LINE_SPACINGS.map((s) => ({ label: s.label, onSelect: () => exec('line-height', s.value) })),
         onSpacing && { separator: true },
-        onSpacing && { label: 'Custom spacing', icon: 'settings', onSelect: () => onSpacing() },
+        onSpacing && { label: '自定义间距', icon: 'settings', onSelect: () => onSpacing() },
       ],
     }),
   });
   spacingBtn.setAttribute('aria-haspopup', 'menu');
   spacingBtn.append(caret());
 
-  const bulletsBtn = button({ cmd: 'bullet-list', label: 'Bulleted list', ic: 'bullets', toggle: true, shortcut: `${MOD_KEY}+Shift+8` });
-  const numbersBtn = button({ cmd: 'numbered-list', label: 'Numbered list', ic: 'numbers', toggle: true, shortcut: `${MOD_KEY}+Shift+7` });
+  const bulletsBtn = button({ cmd: 'bullet-list', label: '项目符号', ic: 'bullets', toggle: true, shortcut: `${MOD_KEY}+Shift+8` });
+  const numbersBtn = button({ cmd: 'numbered-list', label: '编号', ic: 'numbers', toggle: true, shortcut: `${MOD_KEY}+Shift+7` });
   // Bullet glyph, number format, restart and continue: a narrow caret next to the list toggles.
-  const listMenuBtn = button({ cmd: 'list-options', label: 'List options', ic: 'chevD', size: 14, onClick: (b) => onListOptions?.(b) });
+  const listMenuBtn = button({ cmd: 'list-options', label: '列表选项', ic: 'chevD', size: 14, onClick: (b) => onListOptions?.(b) });
   listMenuBtn.classList.add('tb-narrow');
   listMenuBtn.setAttribute('aria-haspopup', 'menu');
   listMenuBtn.hidden = !onListOptions;
-  const outdentBtn = button({ cmd: 'indent-decrease', label: 'Decrease indent', ic: 'outdent' });
-  const indentBtn = button({ cmd: 'indent-increase', label: 'Increase indent', ic: 'indent' });
+  const outdentBtn = button({ cmd: 'indent-decrease', label: '减少缩进量', ic: 'outdent' });
+  const indentBtn = button({ cmd: 'indent-increase', label: '增加缩进量', ic: 'indent' });
 
-  const linkBtn = button({ cmd: 'link', label: 'Insert link', ic: 'link', toggle: true, shortcut: `${MOD_KEY}+K`, onClick: () => onLink?.() });
-  const imageBtn = button({ cmd: 'image', label: 'Insert image', ic: 'image', onClick: (b) => onImage?.(b) });
-  const tableBtn = button({ cmd: 'table-insert', label: 'Insert table', ic: 'table', onClick: () => onTable?.() });
+  const linkBtn = button({ cmd: 'link', label: '插入链接', ic: 'link', toggle: true, shortcut: `${MOD_KEY}+K`, onClick: () => onLink?.() });
+  const imageBtn = button({ cmd: 'image', label: '插入图片', ic: 'image', onClick: (b) => onImage?.(b) });
+  const tableBtn = button({ cmd: 'table-insert', label: '插入表格', ic: 'table', onClick: () => onTable?.() });
   // Shown only while the caret is in a table; the same menu opens on right-click there.
-  const tableMenuBtn = button({ cmd: 'table-options', label: 'Table options', ic: 'grid', onClick: (b) => openTableMenu({ anchor: b }) });
+  const tableMenuBtn = button({ cmd: 'table-options', label: '表格选项', ic: 'grid', onClick: (b) => openTableMenu({ anchor: b }) });
   tableMenuBtn.setAttribute('aria-haspopup', 'menu');
   tableMenuBtn.append(caret());
   tableMenuBtn.hidden = true;
   // Shown while the caret touches a picture: the menu a right-click on the picture opens, reachable from the keyboard.
-  const imageMenuBtn = button({ cmd: 'image-options', label: 'Image options', ic: 'image', onClick: (b) => { const image = imageAtCaret?.(); if (image) onImageOptions?.(image, b); } });
+  const imageMenuBtn = button({ cmd: 'image-options', label: '图片选项', ic: 'image', onClick: (b) => { const image = imageAtCaret?.(); if (image) onImageOptions?.(image, b); } });
   imageMenuBtn.setAttribute('aria-haspopup', 'menu');
   imageMenuBtn.append(caret());
   imageMenuBtn.hidden = true;
-  const clearBtn = button({ cmd: 'clear-formatting', label: 'Clear formatting', ic: 'clearFormat', shortcut: `${MOD_KEY}+\\` });
+  const clearBtn = button({ cmd: 'clear-formatting', label: '清除格式', ic: 'clearFormat', shortcut: `${MOD_KEY}+\\` });
   // Copies the selection's formatting onto the next selection; click twice to keep it on.
-  const paintBtn = button({ cmd: 'copy-format', label: 'Paint format', ic: 'paint', toggle: true });
-  paintBtn.title = 'Paint format: copy this formatting onto the next selection (click twice to keep painting)';
+  const paintBtn = button({ cmd: 'copy-format', label: '格式刷', ic: 'paint', toggle: true });
+  paintBtn.title = '格式刷：复制所选内容的格式并应用到其他内容（双击可连续应用）';
 
-  const root = el('div.toolbar', { role: 'toolbar', 'aria-label': 'Formatting' },
+  const root = el('div.toolbar', { role: 'toolbar', 'aria-label': '格式' },
     el('div.tb-rows', {},
       group(undoBtn, redoBtn),
       group(styleSelect),
@@ -389,8 +389,8 @@ export function createToolbar({ onLink, onImage, onTable, onSpacing = null, onLi
     const extras = onTableExtras?.(ctx, pos) || [];
     const deleteAt = actions.findIndex((a) => a.danger);
     if (extras.length) actions.splice(deleteAt < 0 ? actions.length : deleteAt - 1, 0, { separator: true }, ...extras);
-    const items = [ctx.rows && ctx.columns ? { header: `Table, ${ctx.rows} × ${ctx.columns}` } : { header: 'Table' }, ...actions];
-    const opened = openMenu({ ...pos, items, label: 'Table', minWidth: 220 });
+    const items = [ctx.rows && ctx.columns ? { header: `表格，${ctx.rows} × ${ctx.columns}` } : { header: '表格' }, ...actions];
+    const opened = openMenu({ ...pos, items, label: '表格', minWidth: 220 });
     if (atPointer) pointerTableMenu = opened;
     return opened;
   }
@@ -487,9 +487,9 @@ export function createToolbar({ onLink, onImage, onTable, onSpacing = null, onLi
       const fam = fontH.getState();
       const size = sizeH.getState();
       const families = snap.options?.length ? snap.options : [];
-      fillSelect(fontSelect, families, typeof fam.value === 'string' ? fam.value : '', { placeholder: 'Font' });
+      fillSelect(fontSelect, families, typeof fam.value === 'string' ? fam.value : '', { placeholder: '字体' });
       const sizes = snap.sizeOptions?.length ? snap.sizeOptions : FALLBACK_SIZES.map((v) => ({ value: v, label: v }));
-      fillSelect(sizeSelect, sizes, normalizeFontSize(size.value), { placeholder: 'Size' });
+      fillSelect(sizeSelect, sizes, normalizeFontSize(size.value), { placeholder: '字号' });
       fontSelect.disabled = !isUsable(fam, { editing }) || !families.length;
       sizeSelect.disabled = !isUsable(size, { editing });
     };
@@ -501,7 +501,7 @@ export function createToolbar({ onLink, onImage, onTable, onSpacing = null, onLi
       const snap = ui.styles.getSnapshot();
       const gallery = (snap.quickGallery || []).map((s) => ({ value: s.id, label: styleLabel(s.name || s.id) }));
       const current = snap.mixedSelection ? '' : (snap.activeParagraphStyleId || '');
-      fillSelect(styleSelect, gallery, current, { placeholder: snap.mixedSelection ? 'Mixed' : 'Style' });
+      fillSelect(styleSelect, gallery, current, { placeholder: snap.mixedSelection ? '多种' : '样式' });
       styleSelect.disabled = !editing || !gallery.length || !styleH.getState().supported;
     };
     renderers.push(renderStyles);

@@ -42,50 +42,50 @@ export function openDocumentMenu({ event, behind, selectBehind, engine, pkg, w, 
   const group = list => { const clean = list.filter(Boolean); if (clean.length) add(sep, ...clean); };
 
   if (has('text')) add(...x.spellingItems(engine.model.selection.focus));
-  add({ label: 'Undo', shortcut: `${MOD_KEY}+Z`, disabled: !editable || !engine.session.history.length && !w.packageHistory?.().undo, onSelect: () => engine.undo() },
-    { label: 'Redo', shortcut: `${MOD_KEY}+Shift+Z`, disabled: !editable || !engine.session.future.length && !w.packageHistory?.().redo, onSelect: () => engine.redo() });
+  add({ label: '撤消', shortcut: `${MOD_KEY}+Z`, disabled: !editable || !engine.session.history.length && !w.packageHistory?.().undo, onSelect: () => engine.undo() },
+    { label: '恢复', shortcut: `${MOD_KEY}+Shift+Z`, disabled: !editable || !engine.session.future.length && !w.packageHistory?.().redo, onSelect: () => engine.redo() });
   group([
-    { label: 'Cut', shortcut: `${MOD_KEY}+X`, icon: 'cut', disabled: !clipboard.cut, onSelect: () => x.cut() },
-    { label: 'Copy', shortcut: `${MOD_KEY}+C`, icon: 'copy', disabled: !clipboard.copy, onSelect: () => x.copy() },
-    { label: 'Paste', shortcut: `${MOD_KEY}+V`, icon: 'paste', disabled: !clipboard.paste, onSelect: () => x.paste() },
-    { label: 'Paste without formatting', shortcut: `${MOD_KEY}+Shift+V`, icon: 'pasteText', disabled: !clipboard.paste, onSelect: () => x.pastePlain() },
-    w.pasteSpecial && { label: 'Paste Special…', disabled: !clipboard.paste, onSelect: () => w.pasteSpecial() },
+    { label: '剪切', shortcut: `${MOD_KEY}+X`, icon: 'cut', disabled: !clipboard.cut, onSelect: () => x.cut() },
+    { label: '复制', shortcut: `${MOD_KEY}+C`, icon: 'copy', disabled: !clipboard.copy, onSelect: () => x.copy() },
+    { label: '粘贴', shortcut: `${MOD_KEY}+V`, icon: 'paste', disabled: !clipboard.paste, onSelect: () => x.paste() },
+    { label: '只保留文本', shortcut: `${MOD_KEY}+Shift+V`, icon: 'pasteText', disabled: !clipboard.paste, onSelect: () => x.pastePlain() },
+    w.pasteSpecial && { label: '选择性粘贴…', disabled: !clipboard.paste, onSelect: () => w.pasteSpecial() },
   ]);
 
   if (has('text') && editable) {
     group([
-      { label: 'Font…', icon: 'fontDialog', shortcut: `${MOD_KEY}+D`, onSelect: () => w.fontDialog?.() },
-      { label: 'Paragraph…', icon: 'paragraphDialog', onSelect: () => x.paragraphDialog() },
-      has('list') && { label: 'Restart Numbering at 1', disabled: engine.model.listFormatting !== 'number', onSelect: () => engine.restartNumbering() },
-      has('list') && w.multilevelItems && { label: engine.model.listFormatting === 'bullet' ? 'Bullets' : 'Numbering', items: w.multilevelItems() || [] },
-      w.copyFormat && { label: 'Copy Formatting', icon: 'formatPainter', onSelect: () => w.copyFormat() },
-      w.hasCopiedFormat?.() && { label: 'Paste Formatting', onSelect: () => w.pasteFormat() },
+      { label: '字体…', icon: 'fontDialog', shortcut: `${MOD_KEY}+D`, onSelect: () => w.fontDialog?.() },
+      { label: '段落…', icon: 'paragraphDialog', onSelect: () => x.paragraphDialog() },
+      has('list') && { label: '重新开始编号', disabled: engine.model.listFormatting !== 'number', onSelect: () => engine.restartNumbering() },
+      has('list') && w.multilevelItems && { label: engine.model.listFormatting === 'bullet' ? '项目符号' : '编号', items: w.multilevelItems() || [] },
+      w.copyFormat && { label: '复制格式', icon: 'formatPainter', onSelect: () => w.copyFormat() },
+      w.hasCopiedFormat?.() && { label: '粘贴格式', onSelect: () => w.pasteFormat() },
     ]);
   }
   if (has('link')) {
     const link = engine.model.hyperlink?.link;
     group([
-      { label: 'Edit link…', icon: 'link', shortcut: `${MOD_KEY}+K`, disabled: !editable, onSelect: () => x.editLink() },
-      { label: 'Open link', disabled: !!link && !openableHyperlink(link), onSelect: () => engine.openHyperlink() },
-      link && !internalHyperlink(link) && link.target && { label: 'Copy link', icon: 'copy', onSelect: () => navigator.clipboard?.writeText(link.target).catch(() => {}) },
-      { label: 'Remove link', icon: 'unlink', disabled: !editable, onSelect: () => engine.removeHyperlink() },
+      { label: '编辑链接…', icon: 'link', shortcut: `${MOD_KEY}+K`, disabled: !editable, onSelect: () => x.editLink() },
+      { label: '打开链接', disabled: !!link && !openableHyperlink(link), onSelect: () => engine.openHyperlink() },
+      link && !internalHyperlink(link) && link.target && { label: '复制链接', icon: 'copy', onSelect: () => navigator.clipboard?.writeText(link.target).catch(() => {}) },
+      { label: '取消链接', icon: 'unlink', disabled: !editable, onSelect: () => engine.removeHyperlink() },
     ]);
   } else if (has('text') && editable) {
-    group([{ label: 'Insert link…', icon: 'link', shortcut: `${MOD_KEY}+K`, onSelect: () => x.editLink() }]);
+    group([{ label: '插入链接…', icon: 'link', shortcut: `${MOD_KEY}+K`, onSelect: () => x.editLink() }]);
   }
-  if (has('field')) group([{ label: 'Update Field', icon: 'updateFields', shortcut: 'F9', disabled: !editable || !w.canUpdateFields?.(), onSelect: () => w.updateFields?.() }]);
+  if (has('field')) group([{ label: '更新域', icon: 'updateFields', shortcut: 'F9', disabled: !editable || !w.canUpdateFields?.(), onSelect: () => w.updateFields?.() }]);
 
   if (has('image')) group(x.imageItems());
   if (has('shape')) group([
-    w.editShapeText && { label: 'Edit Text', icon: 'drawingText', disabled: !editable, onSelect: () => w.editShapeText() },
+    w.editShapeText && { label: '编辑文字', icon: 'drawingText', disabled: !editable, onSelect: () => w.editShapeText() },
     // A drawing with text frames keeps its per-frame editor here too.
-    engine.model.selectedImage && x.imageItems().find(item => item.label === 'Edit drawing text'),
-    w.wrapItems && { label: 'Wrap Text', icon: 'wrapText', disabled: !editable, items: w.wrapItems() || [] },
-    w.arrange && { label: 'Bring Forward', icon: 'bringForward', disabled: !w.canArrange?.(), onSelect: () => w.arrange('forward') },
-    w.arrange && { label: 'Send Backward', icon: 'sendBackward', disabled: !w.canArrange?.(), onSelect: () => w.arrange('backward') },
-    { label: 'Delete Shape', icon: 'deleteShape', disabled: !editable, onSelect: () => w.deleteSelection?.() },
+    engine.model.selectedImage && (x.imageItems().find(item => item.label === '编辑绘图文字') || x.imageItems().find(item => item.label === 'Edit drawing text')),
+    w.wrapItems && { label: '自动换行', icon: 'wrapText', disabled: !editable, items: w.wrapItems() || [] },
+    w.arrange && { label: '上移一层', icon: 'bringForward', disabled: !w.canArrange?.(), onSelect: () => w.arrange('forward') },
+    w.arrange && { label: '下移一层', icon: 'sendBackward', disabled: !w.canArrange?.(), onSelect: () => w.arrange('backward') },
+    { label: '删除形状', icon: 'deleteShape', disabled: !editable, onSelect: () => w.deleteSelection?.() },
   ]);
-  if (behind) group([{ label: 'Select picture behind text', onSelect: selectBehind }]);
+  if (behind) group([{ label: '选择衬于文字下方的图片', onSelect: selectBehind }]);
   if (has('table') && editable) group(x.tableItems());
 
   const comments = x.commentItems?.() || [];
@@ -95,15 +95,15 @@ export function openDocumentMenu({ event, behind, selectBehind, engine, pkg, w, 
     try { extra = w.contextMenuItems?.(context, kit) || []; } catch (e) { console.error(e); }
     group(extra);
   }
-  if (engine.session.path === null && engine.model.hasBodyFields && !has('field')) group([{ label: 'Update page references', disabled: !editable, onSelect: () => engine.updatePageReferences() }]);
-  group([{ label: 'Print / Save as PDF', icon: 'print', onSelect: x.print }]);
+  if (engine.session.path === null && engine.model.hasBodyFields && !has('field')) group([{ label: '更新页面引用', disabled: !editable, onSelect: () => engine.updatePageReferences() }]);
+  group([{ label: '打印 / 另存为 PDF', icon: 'print', onSelect: x.print }]);
 
   const rect = engine.input.getBoundingClientRect();
   // A right-click or long press opens with no item chosen; the ContextMenu key and Shift+F10 start on the first.
   // Chrome reports the keys' menu as a mouse pointer event, with no button pressed (-1).
   const keyboard = event.button === -1 && (!event.pointerType || event.pointerType === 'mouse');
   const pointer = !keyboard && (!!event.pointerType || event.button === 2);
-  const label = has('image') ? 'Image menu' : has('shape') ? 'Shape menu' : 'Document menu';
+  const label = has('image') ? '图片菜单' : has('shape') ? '形状菜单' : '文档菜单';
   return openMenu({ anchor: engine.input, x: event.clientX || rect.left, y: event.clientY || rect.bottom, label, items: tidyMenu(items), pointer, onClose: () => engine.focus() });
 }
 

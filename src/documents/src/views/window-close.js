@@ -12,8 +12,8 @@ import * as P from '../lib/puter.js';
  * save it, as a desktop app does. Without this the window went at once, and a new document with it.
  */
 
-export const CLOSE_TITLE = 'Save before closing?';
-export const SAVE_CHANGES_TITLE = 'Save changes?';
+export const CLOSE_TITLE = '关闭前保存？';
+export const SAVE_CHANGES_TITLE = '是否保存更改？';
 
 /**
  * Whether leaving the document has to ask about its changes first: with AutoSave off only Save writes the file,
@@ -29,11 +29,11 @@ export function asksToSave(doc) {
 export function saveChangesDialog(doc) {
   return new Promise((resolve) => {
     const content = el('div', {},
-      el('p.modal-text', {}, `AutoSave is off, so your changes to “${doc.name}” have not been saved. Save them before leaving?`),
+      el('p.modal-text', {}, `自动保存已关闭，您对“${doc.name}”的更改尚未保存。离开前是否保存？`),
       el('div.row.row-end', { style: { flexWrap: 'wrap' } },
-        el('button.btn.btn-ghost', { type: 'button', onclick: () => modal.close() }, 'Cancel'),
-        el('button.btn.btn-danger', { type: 'button', onclick: () => { resolve('discard'); modal.close(); } }, 'Don’t Save'),
-        el('button.btn.btn-primary', { type: 'button', onclick: () => { resolve('save'); modal.close(); } }, 'Save')));
+        el('button.btn.btn-ghost', { type: 'button', onclick: () => modal.close() }, '取消'),
+        el('button.btn.btn-danger', { type: 'button', onclick: () => { resolve('discard'); modal.close(); } }, '不保存'),
+        el('button.btn.btn-primary', { type: 'button', onclick: () => { resolve('save'); modal.close(); } }, '保存')));
     const modal = openModal({ title: SAVE_CHANGES_TITLE, content, onClose: () => resolve('stay') });
   });
 }
@@ -44,12 +44,12 @@ export function closeDialog(doc) {
     const content = el('div', {},
       // A template or other file opened from the drive stays as it is: only the edits, which go to a new .docx, are at stake.
       el('p.modal-text', {}, doc.path
-        ? `Your changes to “${P.displayName(doc.path)}” have not been saved yet. Save them as a new document to choose where it goes on Puter, or close without saving and lose them.`
-        : `“${doc.name}” has not been saved yet. Save it to choose where it goes on Puter, or close without saving and lose it.`),
+        ? `您对“${P.displayName(doc.path)}”的更改尚未保存。另存为新文档以选择存储位置，或者不保存直接关闭（更改将丢失）。`
+        : `“${doc.name}”尚未保存。保存以选择存储位置，或者不保存直接关闭（内容将丢失）。`),
       el('div.row.row-end', { style: { flexWrap: 'wrap' } },
-        el('button.btn.btn-ghost', { type: 'button', onclick: () => modal.close() }, 'Cancel'),
-        el('button.btn.btn-danger', { type: 'button', onclick: () => { resolve('close'); modal.close(); } }, 'Close without saving'),
-        el('button.btn.btn-primary', { type: 'button', onclick: () => { resolve('save'); modal.close(); } }, 'Save…')));
+        el('button.btn.btn-ghost', { type: 'button', onclick: () => modal.close() }, '取消'),
+        el('button.btn.btn-danger', { type: 'button', onclick: () => { resolve('close'); modal.close(); } }, '不保存直接关闭'),
+        el('button.btn.btn-primary', { type: 'button', onclick: () => { resolve('save'); modal.close(); } }, '保存…')));
     const modal = openModal({ title: CLOSE_TITLE, content, onClose: () => resolve('stay') });
   });
 }
@@ -105,7 +105,7 @@ export function createCloseWindow({ open, leaveDialog, exit, asking = () => fals
   return () => {
     if (closing) return closing;
     if (asking()) {
-      toast('Answer the question about the open document first', { icon: 'info' });
+      toast('请先处理打开文档的确认提示', { icon: 'info' });
       return Promise.resolve(false);
     }
     closing = readyToClose({ open, leaveDialog })

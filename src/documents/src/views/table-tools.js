@@ -21,23 +21,23 @@ import { openTableStyleDialog } from './table-style-dialog.js';
 import { openTableProperties } from './table-properties.js';
 import { attachTablePointer } from './table-pointer.js';
 
-export const LINE_STYLES = Object.freeze([['single', 'Single'], ['double', 'Double'], ['dotted', 'Dotted'], ['dashed', 'Dashed'], ['dashSmallGap', 'Short dashes'], ['dotDash', 'Dot dash'], ['triple', 'Triple'], ['thinThickSmallGap', 'Thin-thick'], ['thickThinSmallGap', 'Thick-thin']]);
-export const LINE_WEIGHTS = Object.freeze([[2, '¼ pt'], [4, '½ pt'], [6, '¾ pt'], [8, '1 pt'], [12, '1½ pt'], [18, '2¼ pt'], [24, '3 pt'], [36, '4½ pt'], [48, '6 pt']]);
+export const LINE_STYLES = Object.freeze([['single', '单实线'], ['double', '双实线'], ['dotted', '点线'], ['dashed', '虚线'], ['dashSmallGap', '短划线'], ['dotDash', '点划线'], ['triple', '三实线'], ['thinThickSmallGap', '细粗线'], ['thickThinSmallGap', '粗细线']]);
+export const LINE_WEIGHTS = Object.freeze([[2, '¼ 磅'], [4, '½ 磅'], [6, '¾ 磅'], [8, '1 磅'], [12, '1½ 磅'], [18, '2¼ 磅'], [24, '3 磅'], [36, '4½ 磅'], [48, '6 磅']]);
 // Border Styles: ready pens, each a style, weight and color.
 export const BORDER_STYLE_PRESETS = Object.freeze([
-  ['Fine black', 'single', 4, '000000'], ['Black, 1 pt', 'single', 8, '000000'], ['Heavy black', 'single', 18, '000000'], ['Double black', 'double', 6, '000000'],
-  ['Fine gray', 'single', 4, '808080'], ['Dotted gray', 'dotted', 6, '808080'], ['Dashed gray', 'dashed', 6, '808080'], ['Fine blue', 'single', 4, '2E5E8C'],
-  ['Blue, 1½ pt', 'single', 12, '2E5E8C'], ['Double blue', 'double', 6, '2E5E8C'], ['Fine green', 'single', 4, '4A7A35'], ['Orange, 1½ pt', 'single', 12, 'B85C1E'],
+  ['细黑线', 'single', 4, '000000'], ['1 磅黑色', 'single', 8, '000000'], ['粗黑线', 'single', 18, '000000'], ['双细黑线', 'double', 6, '000000'],
+  ['细灰线', 'single', 4, '808080'], ['点状灰线', 'dotted', 6, '808080'], ['虚线灰线', 'dashed', 6, '808080'], ['细蓝线', 'single', 4, '2E5E8C'],
+  ['1½ 磅蓝色', 'single', 12, '2E5E8C'], ['双细蓝线', 'double', 6, '2E5E8C'], ['细绿线', 'single', 4, '4A7A35'], ['1½ 磅橙色', 'single', 12, 'B85C1E'],
 ].map(([name, style, size, color]) => ({ name, style, size, color })));
 const BORDER_ITEMS = [
-  ['bottom', 'Bottom Border', 'borderBottom'], ['top', 'Top Border', 'borderTop'], ['left', 'Left Border', 'borderLeft'], ['right', 'Right Border', 'borderRight'],
-  null, ['none', 'No Border', 'borderNone'], ['all', 'All Borders', 'borderAll'], ['outside', 'Outside Borders', 'borderOuter'], ['inside', 'Inside Borders', 'borderInside'],
-  null, ['insideH', 'Inside Horizontal Border', 'borderInsideH'], ['insideV', 'Inside Vertical Border', 'borderInsideV'],
-  null, ['diagonalDown', 'Diagonal Down Border', 'borderDiagonalDown'], ['diagonalUp', 'Diagonal Up Border', 'borderDiagonalUp'],
+  ['bottom', '下框线', 'borderBottom'], ['top', '上框线', 'borderTop'], ['left', '左框线', 'borderLeft'], ['right', '右框线', 'borderRight'],
+  null, ['none', '无框线', 'borderNone'], ['all', '所有框线', 'borderAll'], ['outside', '外侧框线', 'borderOuter'], ['inside', '内部框线', 'borderInside'],
+  null, ['insideH', '内部横框线', 'borderInsideH'], ['insideV', '内部竖框线', 'borderInsideV'],
+  null, ['diagonalDown', '斜下框线', 'borderDiagonalDown'], ['diagonalUp', '斜上框线', 'borderDiagonalUp'],
 ];
 const ALIGNMENTS = [['top', 'left'], ['top', 'center'], ['top', 'right'], ['center', 'left'], ['center', 'center'], ['center', 'right'], ['bottom', 'left'], ['bottom', 'center'], ['bottom', 'right']];
-const ALIGN_NAMES = { 'top-left': 'Align Top Left', 'top-center': 'Align Top Center', 'top-right': 'Align Top Right', 'center-left': 'Align Center Left', 'center-center': 'Align Center', 'center-right': 'Align Center Right', 'bottom-left': 'Align Bottom Left', 'bottom-center': 'Align Bottom Center', 'bottom-right': 'Align Bottom Right' };
-const DIRECTION_LABELS = { lrTb: 'Horizontal', tbRl: 'Rotate text 90°', btLr: 'Rotate text 270°' };
+const ALIGN_NAMES = { 'top-left': '靠上两端对齐', 'top-center': '靠上居中对齐', 'top-right': '靠上右对齐', 'center-left': '垂直居中左对齐', 'center-center': '垂直居中', 'center-right': '垂直居中右对齐', 'bottom-left': '靠下两端对齐', 'bottom-center': '靠下居中对齐', 'bottom-right': '靠下右对齐' };
+const DIRECTION_LABELS = { lrTb: '水平', tbRl: '文字旋转 90°', btLr: '文字旋转 270°' };
 let viewGridlines = true;
 
 export function createTableTools({ editor, pkg, error = () => {}, onChange = () => {}, controls = {} }) {
@@ -87,7 +87,7 @@ export function createTableTools({ editor, pkg, error = () => {}, onChange = () 
     onChange();
     return ok && !failure;
   }
-  const withTable = (fn, options) => run((m, engine) => { const b = T.selectionBlock(m); if (!b) throw new Error('Put the cursor in a table first.'); return fn(m, b, engine); }, options);
+  const withTable = (fn, options) => run((m, engine) => { const b = T.selectionBlock(m); if (!b) throw new Error('请先将光标置于表格中。'); return fn(m, b, engine); }, options);
   const closeFocus = () => queueMicrotask(() => editor()?.focus());
 
   /* ---- Insert ---- */
@@ -124,10 +124,10 @@ export function createTableTools({ editor, pkg, error = () => {}, onChange = () 
   })) }));
   /** Items below the size grid of Insert → Table. */
   const insertMenuItems = () => [
-    { label: 'Insert Table…', icon: 'table', disabled: !ready() || !!ready()?.model.selectedImage, onSelect: insertTableDialog },
-    { label: modes.draw ? 'Stop Drawing' : 'Draw Table', icon: 'drawTable', disabled: !ready(), onSelect: () => setMode('draw', !modes.draw) },
-    { label: 'Convert Text to Table…', icon: 'convertToTable', disabled: !ready() || !canConvertText(), onSelect: convertTextToTable },
-    { label: 'Quick Tables', icon: 'quickTable', disabled: !ready(), items: quickTableItems() },
+    { label: '插入表格…', icon: 'table', disabled: !ready() || !!ready()?.model.selectedImage, onSelect: insertTableDialog },
+    { label: modes.draw ? '停止绘制' : '绘制表格', icon: 'drawTable', disabled: !ready(), onSelect: () => setMode('draw', !modes.draw) },
+    { label: '文本转换成表格…', icon: 'convertToTable', disabled: !ready() || !canConvertText(), onSelect: convertTextToTable },
+    { label: '快速表格', icon: 'quickTable', disabled: !ready(), items: quickTableItems() },
   ];
   const canConvertText = () => { const m = model(); if (!m || m.range[0] === m.range[1]) return false; const cells = new Set(m.selectedParagraphs.map(p => p.cellId || null)); return cells.size === 1; };
 
@@ -164,11 +164,11 @@ export function createTableTools({ editor, pkg, error = () => {}, onChange = () 
     const imported = b.table.styleId && styles.definitions[b.table.styleId] && !styles.definitions[b.table.styleId].generated;
     const base = current || (imported ? specFromTable(styles, b.table) : tableStyleSpec(styles, 'DocsTablePlainGrid'));
     const names = new Set(Object.values(styles.definitions).filter(s => s.type === 'table').map(s => s.name.toLowerCase()));
-    let name = current || imported ? `${base.name} Copy` : 'Table Style 1';
-    for (let n = 2; names.has(name.toLowerCase()); n++) name = current || imported ? `${base.name} Copy ${n}` : `Table Style ${n}`;
+    let name = current || imported ? `${base.name} 副本` : '表格样式 1';
+    for (let n = 2; names.has(name.toLowerCase()); n++) name = current || imported ? `${base.name} 副本 ${n}` : `表格样式 ${n}`;
     const spec = mode === 'new' ? { ...structuredClone(base), id: '', name: clipText(name, 100), family: 'custom' } : structuredClone(current);
-    if (mode === 'modify' && !current) { error(new Error('This table’s style came with the document. Use New Table Style to make an editable copy of it.')); return; }
-    openTableStyleDialog({ title: mode === 'new' ? 'New Table Style' : 'Modify Table Style', spec, look: tableLook(b.table),
+    if (mode === 'modify' && !current) { error(new Error('此表格的样式随文档提供。使用“新建表格样式”可制作可编辑的副本。')); return; }
+    openTableStyleDialog({ title: mode === 'new' ? '新建表格样式' : '修改表格样式', spec, look: tableLook(b.table),
       nameTaken: name => Object.values(model().styles.definitions).some(s => s.type === 'table' && s.name.toLowerCase() === name.toLowerCase() && s.id !== (mode === 'modify' ? spec.id : null)) },
     edited => {
       const engine = ready(); if (!engine) return false;
@@ -178,26 +178,26 @@ export function createTableTools({ editor, pkg, error = () => {}, onChange = () 
     }, { onClose: closeFocus });
   }
   const styleMenuItems = () => [...gallery.panelItems(), { separator: true },
-    { label: 'Modify Table Style…', icon: 'editStyle', disabled: !inTable() || !tableStyleSpec(model().styles, block()?.table.styleId), onSelect: () => styleDialog('modify') },
-    { label: 'Clear', icon: 'clearFormat', disabled: !inTable(), onSelect: () => withTable(m => clearTableStyle(m)) },
-    { label: 'New Table Style…', icon: 'newStyle', disabled: !inTable(), onSelect: () => styleDialog('new') }];
+    { label: '修改表格样式…', icon: 'editStyle', disabled: !inTable() || !tableStyleSpec(model().styles, block()?.table.styleId), onSelect: () => styleDialog('modify') },
+    { label: '清除', icon: 'clearFormat', disabled: !inTable(), onSelect: () => withTable(m => clearTableStyle(m)) },
+    { label: '新建表格样式…', icon: 'newStyle', disabled: !inTable(), onSelect: () => styleDialog('new') }];
 
   /* ---- Shading and borders ---- */
   const shadingChoices = TEXT_COLORS;
   function shadingPalette(anchor, e) {
     const m = model();
-    openColorPalette({ anchor, label: 'Shading', value: m?.cellShading ?? null, choices: shadingChoices, reset: { value: 'auto', label: 'No Color' }, custom: true, customLabel: 'shading color', pointer: !!e?.detail,
+    openColorPalette({ anchor, label: '底纹', value: m?.cellShading ?? null, choices: shadingChoices, reset: { value: 'auto', label: '无颜色' }, custom: true, customLabel: '底纹颜色', pointer: !!e?.detail,
       onPick: color => { lastShading = color; withTable(model => model.setCellShading(color === 'auto' ? 'auto' : color)); } });
   }
   function penColorPalette(anchor) {
-    openColorPalette({ anchor, label: 'Pen Color', value: pen.color, choices: TEXT_COLORS, reset: { value: 'auto', label: 'Automatic', indicator: 'A' }, custom: true, customLabel: 'pen color',
+    openColorPalette({ anchor, label: '笔颜色', value: pen.color, choices: TEXT_COLORS, reset: { value: 'auto', label: '自动', indicator: 'A' }, custom: true, customLabel: '笔颜色',
       onPick: color => { pen.color = color; pointer?.setMode(currentMode(), pen); onChange(); } });
   }
   const currentMode = () => Object.keys(modes).find(key => modes[key]) || null;
   const applyBorders = preset => { lastPreset = preset; return withTable(m => T.applyBorderPreset(m, preset, pen)); };
   const borderItems = () => [...BORDER_ITEMS.map(item => item ? { label: item[1], icon: item[2], disabled: !inTable(), onSelect: () => applyBorders(item[0]) } : { separator: true }),
-    { separator: true }, { label: 'View Gridlines', icon: 'gridlines', checked: viewGridlines, onSelect: toggleGridlines },
-    { label: 'Borders and Shading…', icon: 'cellBorders', disabled: !inTable() || controls.cellBorders?.disabled, onSelect: () => controls.cellBorders?.click() }];
+    { separator: true }, { label: '查看网格线', icon: 'gridlines', checked: viewGridlines, onSelect: toggleGridlines },
+    { label: '边框和底纹…', icon: 'cellBorders', disabled: !inTable() || controls.cellBorders?.disabled, onSelect: () => controls.cellBorders?.click() }];
   function toggleGridlines() {
     viewGridlines = !viewGridlines;
     const engine = editor(); if (engine) { engine.showTableGridlines = viewGridlines; engine.paint(); }
@@ -258,7 +258,7 @@ export function createTableTools({ editor, pkg, error = () => {}, onChange = () 
     const grids = table.rows.map(rowGrid), starts = [...new Set(grids.flat().map(entry => entry.column))].sort((x, y) => x - y);
     const columns = starts.map((column, i) => {
       const end = starts[i + 1] ?? table.grid.length, entry = grids.flat().find(e => e.column === column && e.end === end) || grids.flat().find(e => e.column === column);
-      return { column, label: `Column ${i + 1}`, header: text(entry.cell) || `Column ${i + 1}` };
+      return { column, label: `第 ${i + 1} 列`, header: text(entry.cell) || `第 ${i + 1} 列` };
     });
     openSortDialog({ columns, header: headerRowCount(table) > 0 || !!table.conditionalStyle?.settings.look.firstRow && !!table.styleId },
       choice => { let failure; engine.execute(() => T.sortTable(engine.model, choice), e => { failure = e; }, undefined, true); if (failure) throw failure; onChange(); return true; }, { onClose: closeFocus });
@@ -315,62 +315,62 @@ export function createTableTools({ editor, pkg, error = () => {}, onChange = () 
     const button = (label, icon, onclick, options = {}) => { const b = noSteal(command(label, icon, onclick, options)); enabled(b); return b; };
 
     /* Table Design */
-    const more = command('More Table Styles', 'more', e => openMenu({ anchor: more, label: 'Table Styles', minWidth: 300, pointer: !!e?.detail, onClose: e?.detail ? focusEditor : null, className: 'table-style-menu', items: inDocument(styleMenuItems()) }));
+    const more = command('其他表格样式', 'more', e => openMenu({ anchor: more, label: '表格样式', minWidth: 300, pointer: !!e?.detail, onClose: e?.detail ? focusEditor : null, className: 'table-style-menu', items: inDocument(styleMenuItems()) }));
     more.classList.add('ribbon-gallery-more'); more.setAttribute('aria-haspopup', 'menu'); noSteal(more); enabled(more);
-    large(c.cellShading, { label: 'Shading', icon: 'cellShading' });
-    const shading = split(c.cellShading, { label: 'Shading colors', size: 'large', open: (anchor, e) => shadingPalette(anchor, e) });
+    large(c.cellShading, { label: '底纹', icon: 'cellShading' });
+    const shading = split(c.cellShading, { label: '底纹颜色', size: 'large', open: (anchor, e) => shadingPalette(anchor, e) });
     enabled(shading.arrow);
-    const borderStyles = menuButton('Border Styles', 'borderStyles', () => BORDER_STYLE_PRESETS.map(p => ({ custom: el('button.menu-item.table-pen-item', { type: 'button', role: 'menuitemradio', 'aria-checked': String(pen.style === p.style && pen.size === p.size && pen.color === p.color), 'aria-label': p.name, onclick: () => { Object.assign(pen, { style: p.style, size: p.size, color: p.color }); setMode('paint', true); } }, penSwatch(p.style, p.size, p.color), el('span.menu-label', {}, p.name)) })), { text: 'Border Styles' });
-    const lineStyle = menuButton('Line Style', 'lineStyle', () => LINE_STYLES.map(([style, name]) => ({ custom: el('button.menu-item.table-pen-item', { type: 'button', role: 'menuitemradio', 'aria-checked': String(pen.style === style), 'aria-label': name, onclick: () => { pen.style = style; pointer?.setMode(currentMode(), pen); onChange(); } }, penSwatch(style, Math.max(pen.size, 6), pen.color), el('span.menu-label', {}, name)) })), { size: 'small', text: 'Line Style' });
-    const lineWeight = menuButton('Line Weight', 'lineWeight', () => LINE_WEIGHTS.map(([size, name]) => ({ label: name, radio: true, checked: pen.size === size, onSelect: () => { pen.size = size; pointer?.setMode(currentMode(), pen); onChange(); } })), { size: 'small', text: 'Line Weight' });
-    const penColor = noSteal(command('Pen Color', 'penColor', () => penColorPalette(penColor), { caret: true, text: 'Pen Color', attrs: { 'aria-haspopup': 'menu' } }));
-    const bordersMain = button('Borders', 'borderAll', () => applyBorders(lastPreset), { size: 'large' });
-    const borders = split(bordersMain, { label: 'Border options', size: 'large', open: (anchor, e) => openMenu({ anchor, label: 'Borders', minWidth: 240, pointer: !!e?.detail, onClose: e?.detail ? focusEditor : null, items: inDocument(borderItems()) }) });
+    const borderStyles = menuButton('边框样式', 'borderStyles', () => BORDER_STYLE_PRESETS.map(p => ({ custom: el('button.menu-item.table-pen-item', { type: 'button', role: 'menuitemradio', 'aria-checked': String(pen.style === p.style && pen.size === p.size && pen.color === p.color), 'aria-label': p.name, onclick: () => { Object.assign(pen, { style: p.style, size: p.size, color: p.color }); setMode('paint', true); } }, penSwatch(p.style, p.size, p.color), el('span.menu-label', {}, p.name)) })), { text: '边框样式' });
+    const lineStyle = menuButton('线型', 'lineStyle', () => LINE_STYLES.map(([style, name]) => ({ custom: el('button.menu-item.table-pen-item', { type: 'button', role: 'menuitemradio', 'aria-checked': String(pen.style === style), 'aria-label': name, onclick: () => { pen.style = style; pointer?.setMode(currentMode(), pen); onChange(); } }, penSwatch(style, Math.max(pen.size, 6), pen.color), el('span.menu-label', {}, name)) })), { size: 'small', text: '线型' });
+    const lineWeight = menuButton('笔划粗细', 'lineWeight', () => LINE_WEIGHTS.map(([size, name]) => ({ label: name, radio: true, checked: pen.size === size, onSelect: () => { pen.size = size; pointer?.setMode(currentMode(), pen); onChange(); } })), { size: 'small', text: '笔划粗细' });
+    const penColor = noSteal(command('笔颜色', 'penColor', () => penColorPalette(penColor), { caret: true, text: '笔颜色', attrs: { 'aria-haspopup': 'menu' } }));
+    const bordersMain = button('边框', 'borderAll', () => applyBorders(lastPreset), { size: 'large' });
+    const borders = split(bordersMain, { label: '边框选项', size: 'large', open: (anchor, e) => openMenu({ anchor, label: '边框', minWidth: 240, pointer: !!e?.detail, onClose: e?.detail ? focusEditor : null, items: inDocument(borderItems()) }) });
     enabled(borders.arrow);
-    const painter = noSteal(command('Border Painter', 'borderPainter', () => setMode('paint', !modes.paint), { size: 'large', attrs: { 'aria-pressed': 'false' } }));
+    const painter = noSteal(command('边框刷', 'borderPainter', () => setMode('paint', !modes.paint), { size: 'large', attrs: { 'aria-pressed': 'false' } }));
     when(painter, () => !!ready(), () => String(modes.paint));
     for (const control of [borderStyles, lineStyle, lineWeight, penColor]) when(control, () => !!ready());
     small(c.cellBorders, { icon: 'cellBorders' });
     const design = [
-      { id: 'styleOptions', label: 'Table Style Options', icon: 'headerRow', priority: 5, items: [gallery.optionsGrid] },
-      { id: 'tableStyles', label: 'Table Styles', icon: 'table', priority: 7, items: [el('div.ribbon-gallery-frame', {}, gallery.gallery, more)] },
-      { id: 'shading', label: 'Shading', icon: 'cellShading', priority: 4, items: [shading] },
-      { id: 'borders', label: 'Borders', icon: 'cellBorders', priority: 6, items: [borderStyles, rows([lineStyle], [lineWeight], [penColor]), borders, painter, el('div.ribbon-launcher', {}, c.cellBorders)] },
+      { id: 'styleOptions', label: '表格样式选项', icon: 'headerRow', priority: 5, items: [gallery.optionsGrid] },
+      { id: 'tableStyles', label: '表格样式', icon: 'table', priority: 7, items: [el('div.ribbon-gallery-frame', {}, gallery.gallery, more)] },
+      { id: 'shading', label: '底纹', icon: 'cellShading', priority: 4, items: [shading] },
+      { id: 'borders', label: '边框', icon: 'cellBorders', priority: 6, items: [borderStyles, rows([lineStyle], [lineWeight], [penColor]), borders, painter, el('div.ribbon-launcher', {}, c.cellBorders)] },
     ];
 
     /* Table Layout */
-    const select = menuButton('Select', 'selectTable', () => [['cell', 'Select Cell', 'selectCell'], ['column', 'Select Column', 'selectColumn'], ['row', 'Select Row', 'selectRow'], ['table', 'Select Table', 'selectTable']].map(([kind, label, icon]) => ({ label, icon, disabled: !inTable(), onSelect: () => selectKind(kind) })), { size: 'small', text: 'Select' });
+    const select = menuButton('选择', 'selectTable', () => [['cell', '选择单元格', 'selectCell'], ['column', '选择列', 'selectColumn'], ['row', '选择行', 'selectRow'], ['table', '选择表格', 'selectTable']].map(([kind, label, icon]) => ({ label, icon, disabled: !inTable(), onSelect: () => selectKind(kind) })), { size: 'small', text: '选择' });
     enabled(select);
-    const gridlines = noSteal(command('View Gridlines', 'gridlines', toggleGridlines, { text: 'View Gridlines', attrs: { 'aria-pressed': 'true' } }));
+    const gridlines = noSteal(command('查看网格线', 'gridlines', toggleGridlines, { text: '查看网格线', attrs: { 'aria-pressed': 'true' } }));
     when(gridlines, () => !!editor(), () => String(viewGridlines));
-    small(c.tableProperties, { icon: 'tableProperties', label: 'Properties' });
-    const draw = noSteal(command('Draw Table', 'drawTable', () => setMode('draw', !modes.draw), { text: 'Draw Table', attrs: { 'aria-pressed': 'false' } }));
-    const eraser = noSteal(command('Eraser', 'tableEraser', () => setMode('erase', !modes.erase), { text: 'Eraser', attrs: { 'aria-pressed': 'false' } }));
+    small(c.tableProperties, { icon: 'tableProperties', label: '属性' });
+    const draw = noSteal(command('绘制表格', 'drawTable', () => setMode('draw', !modes.draw), { text: '绘制表格', attrs: { 'aria-pressed': 'false' } }));
+    const eraser = noSteal(command('擦除', 'tableEraser', () => setMode('erase', !modes.erase), { text: '擦除', attrs: { 'aria-pressed': 'false' } }));
     when(draw, () => !!ready(), () => String(modes.draw)); when(eraser, () => !!ready(), () => String(modes.erase));
-    const deleteMenu = menuButton('Delete', 'deleteTable', () => [
-      { label: 'Delete Cells…', icon: 'deleteCells', disabled: !inTable(), onSelect: cmd.deleteCells },
-      { label: 'Delete Columns', icon: 'deleteColumn', disabled: !inTable(), onSelect: cmd.deleteColumns },
-      { label: 'Delete Rows', icon: 'deleteRow', disabled: !inTable(), onSelect: cmd.deleteRows },
-      { label: 'Delete Table', icon: 'deleteTable', disabled: !inTable(), onSelect: cmd.deleteTable }]);
+    const deleteMenu = menuButton('删除', 'deleteTable', () => [
+      { label: '删除单元格…', icon: 'deleteCells', disabled: !inTable(), onSelect: cmd.deleteCells },
+      { label: '删除列', icon: 'deleteColumn', disabled: !inTable(), onSelect: cmd.deleteColumns },
+      { label: '删除行', icon: 'deleteRow', disabled: !inTable(), onSelect: cmd.deleteRows },
+      { label: '删除表格', icon: 'deleteTable', disabled: !inTable(), onSelect: cmd.deleteTable }]);
     enabled(deleteMenu);
-    const insertAbove = button('Insert Above', 'insertAbove', cmd.insertAbove, { size: 'large' });
-    const insertBelow = button('Insert Below', 'insertBelow', cmd.insertBelow, { text: 'Insert Below' });
-    const insertLeft = button('Insert Left', 'insertLeft', cmd.insertLeft, { text: 'Insert Left' });
-    const insertRight = button('Insert Right', 'insertRight', cmd.insertRight, { text: 'Insert Right' });
-    const insertCells = button('Insert Cells…', 'insertCells', cmd.insertCells);
+    const insertAbove = button('在上方插入', 'insertAbove', cmd.insertAbove, { size: 'large' });
+    const insertBelow = button('在下方插入', 'insertBelow', cmd.insertBelow, { text: '在下方插入' });
+    const insertLeft = button('在左侧插入', 'insertLeft', cmd.insertLeft, { text: '在左侧插入' });
+    const insertRight = button('在右侧插入', 'insertRight', cmd.insertRight, { text: '在右侧插入' });
+    const insertCells = button('插入单元格…', 'insertCells', cmd.insertCells);
     const tableAction = value => () => { c.tableActions.value = value; c.tableActions.dispatchEvent(new Event('change', { bubbles: true })); };
-    const paragraphBefore = button('Paragraph Before', 'paragraphBefore', tableAction('before'));
-    const paragraphAfter = button('Paragraph After', 'paragraphAfter', tableAction('after'));
-    const merge = button('Merge Cells', 'mergeCells', cmd.mergeCells, { text: 'Merge Cells' }); when(merge, canMerge);
-    const splitCells = button('Split Cells…', 'splitCells', cmd.splitCells, { text: 'Split Cells' });
-    const splitTable = button('Split Table', 'splitTable', cmd.splitTable, { text: 'Split Table' });
-    const autofit = menuButton('AutoFit', 'autofit', () => [
-      { label: 'AutoFit Contents', icon: 'autofit', disabled: !inTable(), onSelect: () => cmd.autofit('contents') },
-      { label: 'AutoFit Window', icon: 'fitWindow', disabled: !inTable(), onSelect: () => cmd.autofit('window') },
-      { label: 'Fixed Column Width', icon: 'columnWidth', disabled: !inTable(), onSelect: () => cmd.autofit('fixed') }]);
+    const paragraphBefore = button('前面添加段落', 'paragraphBefore', tableAction('before'));
+    const paragraphAfter = button('后面添加段落', 'paragraphAfter', tableAction('after'));
+    const merge = button('合并单元格', 'mergeCells', cmd.mergeCells, { text: '合并单元格' }); when(merge, canMerge);
+    const splitCells = button('拆分单元格…', 'splitCells', cmd.splitCells, { text: '拆分单元格' });
+    const splitTable = button('拆分表格', 'splitTable', cmd.splitTable, { text: '拆分表格' });
+    const autofit = menuButton('自动调整', 'autofit', () => [
+      { label: '根据内容自动调整表格', icon: 'autofit', disabled: !inTable(), onSelect: () => cmd.autofit('contents') },
+      { label: '根据窗口自动调整表格', icon: 'fitWindow', disabled: !inTable(), onSelect: () => cmd.autofit('window') },
+      { label: '固定列宽', icon: 'columnWidth', disabled: !inTable(), onSelect: () => cmd.autofit('fixed') }]);
     enabled(autofit);
     const sizeInput = (key, label) => {
-      const input = el('input.canvas-spacing.ribbon-number', { type: 'number', step: 0.01, min: 0.1, max: 22, 'aria-label': `${label} (in)`, placeholder: '',
+      const input = el('input.canvas-spacing.ribbon-number', { type: 'number', step: 0.01, min: 0.1, max: 22, 'aria-label': `${label} (英寸)`, placeholder: '',
         onchange: () => {
           if (!amountInRange(input)) { input.reportValidity(); return; }
           const twips = Math.round(Number(input.value) * 1440);
@@ -379,33 +379,33 @@ export function createTableTools({ editor, pkg, error = () => {}, onChange = () 
         onkeydown: e => { if (e.key === 'Enter' && !isComposing(e)) { e.preventDefault(); input.dispatchEvent(new Event('change')); } } });
       when(input, inTable);
       sizeInputs.push({ input, key });
-      return spin(label, key === 'height' ? 'rowHeight' : 'columnWidth', input, 'in');
+      return spin(label, key === 'height' ? 'rowHeight' : 'columnWidth', input, '英寸');
     };
-    const distributeRows = button('Distribute Rows', 'distributeRows', cmd.distributeRows);
-    const distributeColumns = button('Distribute Columns', 'distributeColumns', cmd.distributeColumns);
+    const distributeRows = button('平均分布各行', 'distributeRows', cmd.distributeRows);
+    const distributeColumns = button('平均分布各列', 'distributeColumns', cmd.distributeColumns);
     small(c.rowHeight, { icon: 'rowHeight' });
     small(c.keepRow, { icon: 'keepRow' });
-    const alignGrid = el('div.table-align-grid', { role: 'group', 'aria-label': 'Cell alignment' }, ...ALIGNMENTS.map(([v, h]) => {
+    const alignGrid = el('div.table-align-grid', { role: 'group', 'aria-label': '单元格对齐方式' }, ...ALIGNMENTS.map(([v, h]) => {
       const b = button(ALIGN_NAMES[`${v}-${h}`], `cellAlign${v[0].toUpperCase() + v.slice(1)}${h[0].toUpperCase() + h.slice(1)}`, () => cmd.align(v, h));
       when(b, inTable, () => String(alignmentState() === `${v}-${h}`));
       return b;
     }));
-    const direction = button('Text Direction', 'textDirection', cmd.textDirection, { size: 'large' });
-    large(c.cellMargins, { label: 'Cell Margins', icon: 'cellMargins' });
+    const direction = button('文字方向', 'textDirection', cmd.textDirection, { size: 'large' });
+    large(c.cellMargins, { label: '单元格边距', icon: 'cellMargins' });
     small(c.cellAlignment, { icon: 'cellAlignment' });
-    const sort = button('Sort', 'sortTable', cmd.sort, { size: 'large', text: 'Sort' });
-    const repeatHeader = button('Repeat Header Rows', 'repeatHeader', cmd.repeatHeader, { text: 'Repeat Header Rows', attrs: { 'aria-pressed': 'false' } });
+    const sort = button('排序', 'sortTable', cmd.sort, { size: 'large', text: '排序' });
+    const repeatHeader = button('重复标题行', 'repeatHeader', cmd.repeatHeader, { text: '重复标题行', attrs: { 'aria-pressed': 'false' } });
     when(repeatHeader, () => inTable() && !block()?.table.parentCellId, () => String(headerOn()));
-    const toText = button('Convert to Text', 'convertToText', cmd.convertToText, { text: 'Convert to Text' });
-    const formula = button('Formula', 'formula', cmd.formula, { text: 'Formula' });
+    const toText = button('转换为文本', 'convertToText', cmd.convertToText, { text: '转换为文本' });
+    const formula = button('公式', 'formula', cmd.formula, { text: '公式' });
     const layout = [
-      { id: 'table', label: 'Table', icon: 'tableProperties', priority: 7, items: [rows([select], [gridlines], [c.tableProperties])] },
-      { id: 'draw', label: 'Draw', icon: 'drawTable', priority: 2, items: [rows([draw], [eraser])] },
-      { id: 'rowsColumns', label: 'Rows & Columns', icon: 'insertBelow', priority: 8, items: [deleteMenu, insertAbove, rows([insertBelow], [insertLeft], [insertRight]), rows([paragraphBefore], [paragraphAfter]), el('div.ribbon-launcher', {}, insertCells)] },
-      { id: 'merge', label: 'Merge', icon: 'mergeCells', priority: 6, items: [rows([merge], [splitCells], [splitTable])] },
-      { id: 'cellSize', label: 'Cell Size', icon: 'rowHeight', priority: 7, items: [autofit, el('div.ribbon-spin-group', {}, sizeInput('height', 'Height'), sizeInput('width', 'Width')), rows([distributeRows, c.keepRow], [distributeColumns, c.rowHeight])] },
-      { id: 'alignment', label: 'Alignment', icon: 'cellAlignment', priority: 5, items: [alignGrid, direction, c.cellMargins, el('div.ribbon-launcher', {}, c.cellAlignment)] },
-      { id: 'data', label: 'Data', icon: 'repeatHeader', priority: 3, items: [sort, rows([repeatHeader], [toText], [formula])] },
+      { id: 'table', label: '表格', icon: 'tableProperties', priority: 7, items: [rows([select], [gridlines], [c.tableProperties])] },
+      { id: 'draw', label: '绘制', icon: 'drawTable', priority: 2, items: [rows([draw], [eraser])] },
+      { id: 'rowsColumns', label: '行和列', icon: 'insertBelow', priority: 8, items: [deleteMenu, insertAbove, rows([insertBelow], [insertLeft], [insertRight]), rows([paragraphBefore], [paragraphAfter]), el('div.ribbon-launcher', {}, insertCells)] },
+      { id: 'merge', label: '合并', icon: 'mergeCells', priority: 6, items: [rows([merge], [splitCells], [splitTable])] },
+      { id: 'cellSize', label: '单元格大小', icon: 'rowHeight', priority: 7, items: [autofit, el('div.ribbon-spin-group', {}, sizeInput('height', '高度'), sizeInput('width', '宽度')), rows([distributeRows, c.keepRow], [distributeColumns, c.rowHeight])] },
+      { id: 'alignment', label: '对齐方式', icon: 'cellAlignment', priority: 5, items: [alignGrid, direction, c.cellMargins, el('div.ribbon-launcher', {}, c.cellAlignment)] },
+      { id: 'data', label: '数据', icon: 'repeatHeader', priority: 3, items: [sort, rows([repeatHeader], [toText], [formula])] },
     ];
     return {
       design, layout,
@@ -423,7 +423,7 @@ export function createTableTools({ editor, pkg, error = () => {}, onChange = () 
           const v = value.length && value.every(x => Math.abs(x - value[0]) < 8) ? String(Number((value[0] / 1440).toFixed(2))) : '';
           if (input.value !== v) input.value = v;
         }
-        direction.title = `Text Direction: ${DIRECTION_LABELS[b && cellBlockPlacements(b.table, b)[0]?.cell.textDirection || 'lrTb']}`;
+        direction.title = `文字方向: ${DIRECTION_LABELS[b && cellBlockPlacements(b.table, b)[0]?.cell.textDirection || 'lrTb']}`;
         penColor.querySelector('.ribbon-pen-indicator')?.remove();
         penColor.prepend(el('span.ribbon-pen-indicator', { style: { background: pen.color === 'auto' ? 'currentColor' : `#${pen.color}` }, 'aria-hidden': 'true' }));
       },
@@ -447,60 +447,60 @@ export function createTableTools({ editor, pkg, error = () => {}, onChange = () 
   function tableMenu() {
     const on = !!inTable(), editable = !!ready();
     return [
-      { label: 'Draw Table', icon: 'drawTable', checked: modes.draw, disabled: !editable, onSelect: () => setMode('draw', !modes.draw) },
+      { label: '绘制表格', icon: 'drawTable', checked: modes.draw, disabled: !editable, onSelect: () => setMode('draw', !modes.draw) },
       { separator: true },
-      { label: 'Insert', icon: 'insertBelow', items: [
-        { label: 'Table…', icon: 'table', disabled: !editable, onSelect: insertTableDialog }, { separator: true },
-        { label: 'Columns to the Left', icon: 'insertLeft', disabled: !on, onSelect: cmd.insertLeft }, { label: 'Columns to the Right', icon: 'insertRight', disabled: !on, onSelect: cmd.insertRight }, { separator: true },
-        { label: 'Rows Above', icon: 'insertAbove', disabled: !on, onSelect: cmd.insertAbove }, { label: 'Rows Below', icon: 'insertBelow', disabled: !on, onSelect: cmd.insertBelow }, { separator: true },
-        { label: 'Cells…', icon: 'insertCells', disabled: !on, onSelect: cmd.insertCells }] },
-      { label: 'Delete', icon: 'deleteTable', items: [
-        { label: 'Table', icon: 'deleteTable', disabled: !on, onSelect: cmd.deleteTable }, { label: 'Columns', icon: 'deleteColumn', disabled: !on, onSelect: cmd.deleteColumns },
-        { label: 'Rows', icon: 'deleteRow', shortcut: MOD_KEY === 'Cmd' ? 'Cmd+Ctrl+X' : null, disabled: !on, onSelect: cmd.deleteRows }, { label: 'Cells…', icon: 'deleteCells', disabled: !on, onSelect: cmd.deleteCells }] },
-      { label: 'Select', icon: 'selectTable', items: [['table', 'Table'], ['column', 'Column'], ['row', 'Row'], ['cell', 'Cell']].map(([kind, label]) => ({ label, disabled: !on, onSelect: () => selectKind(kind) })) },
-      { label: 'Merge Cells', icon: 'mergeCells', disabled: !on || !canMerge(), onSelect: cmd.mergeCells },
-      { label: 'Split Cells…', icon: 'splitCells', disabled: !on, onSelect: cmd.splitCells },
-      { label: 'Split Table', icon: 'splitTable', disabled: !on, onSelect: cmd.splitTable },
+      { label: '插入', icon: 'insertBelow', items: [
+        { label: '表格…', icon: 'table', disabled: !editable, onSelect: insertTableDialog }, { separator: true },
+        { label: '在左侧插入列', icon: 'insertLeft', disabled: !on, onSelect: cmd.insertLeft }, { label: '在右侧插入列', icon: 'insertRight', disabled: !on, onSelect: cmd.insertRight }, { separator: true },
+        { label: '在上方插入行', icon: 'insertAbove', disabled: !on, onSelect: cmd.insertAbove }, { label: '在下方插入行', icon: 'insertBelow', disabled: !on, onSelect: cmd.insertBelow }, { separator: true },
+        { label: '插入单元格…', icon: 'insertCells', disabled: !on, onSelect: cmd.insertCells }] },
+      { label: '删除', icon: 'deleteTable', items: [
+        { label: '表格', icon: 'deleteTable', disabled: !on, onSelect: cmd.deleteTable }, { label: '列', icon: 'deleteColumn', disabled: !on, onSelect: cmd.deleteColumns },
+        { label: '行', icon: 'deleteRow', shortcut: MOD_KEY === 'Cmd' ? 'Cmd+Ctrl+X' : null, disabled: !on, onSelect: cmd.deleteRows }, { label: '单元格…', icon: 'deleteCells', disabled: !on, onSelect: cmd.deleteCells }] },
+      { label: '选择', icon: 'selectTable', items: [['table', '表格'], ['column', '列'], ['row', '行'], ['cell', '单元格']].map(([kind, label]) => ({ label, disabled: !on, onSelect: () => selectKind(kind) })) },
+      { label: '合并单元格', icon: 'mergeCells', disabled: !on || !canMerge(), onSelect: cmd.mergeCells },
+      { label: '拆分单元格…', icon: 'splitCells', disabled: !on, onSelect: cmd.splitCells },
+      { label: '拆分表格', icon: 'splitTable', disabled: !on, onSelect: cmd.splitTable },
       { separator: true },
-      { label: 'AutoFit and Distribute', icon: 'autofit', items: [
-        { label: 'AutoFit to Contents', disabled: !on, onSelect: () => cmd.autofit('contents') }, { label: 'AutoFit to Window', disabled: !on, onSelect: () => cmd.autofit('window') },
-        { label: 'Fixed Column Width', disabled: !on, onSelect: () => cmd.autofit('fixed') }, { separator: true },
-        { label: 'Distribute Rows Evenly', icon: 'distributeRows', disabled: !on, onSelect: cmd.distributeRows }, { label: 'Distribute Columns Evenly', icon: 'distributeColumns', disabled: !on, onSelect: cmd.distributeColumns }] },
-      { label: 'Repeat Header Rows', icon: 'repeatHeader', checked: headerOn(), disabled: !on || !!block()?.table.parentCellId, onSelect: cmd.repeatHeader },
+      { label: '自动调整和分布', icon: 'autofit', items: [
+        { label: '根据内容自动调整', disabled: !on, onSelect: () => cmd.autofit('contents') }, { label: '根据窗口自动调整', disabled: !on, onSelect: () => cmd.autofit('window') },
+        { label: '固定列宽', disabled: !on, onSelect: () => cmd.autofit('fixed') }, { separator: true },
+        { label: '平均分布各行', icon: 'distributeRows', disabled: !on, onSelect: cmd.distributeRows }, { label: '平均分布各列', icon: 'distributeColumns', disabled: !on, onSelect: cmd.distributeColumns }] },
+      { label: '重复标题行', icon: 'repeatHeader', checked: headerOn(), disabled: !on || !!block()?.table.parentCellId, onSelect: cmd.repeatHeader },
       { separator: true },
-      { label: 'Convert', icon: 'convertToTable', items: [
-        { label: 'Convert Text to Table…', icon: 'convertToTable', disabled: !editable || !canConvertText(), onSelect: convertTextToTable },
-        { label: 'Convert Table to Text…', icon: 'convertToText', disabled: !on, onSelect: convertToText }] },
-      { label: 'Sort…', icon: 'sortTable', disabled: !on, onSelect: sortDialog },
-      { label: 'Formula…', icon: 'formula', disabled: !editable, onSelect: formulaDialog },
-      { label: 'View Gridlines', icon: 'gridlines', checked: viewGridlines, onSelect: toggleGridlines },
+      { label: '转换', icon: 'convertToTable', items: [
+        { label: '文本转换成表格…', icon: 'convertToTable', disabled: !editable || !canConvertText(), onSelect: convertTextToTable },
+        { label: '表格转换成文本…', icon: 'convertToText', disabled: !on, onSelect: convertToText }] },
+      { label: '排序…', icon: 'sortTable', disabled: !on, onSelect: sortDialog },
+      { label: '公式…', icon: 'formula', disabled: !editable, onSelect: formulaDialog },
+      { label: '查看网格线', icon: 'gridlines', checked: viewGridlines, onSelect: toggleGridlines },
       { separator: true },
-      { label: 'Table Properties…', icon: 'tableProperties', disabled: !on, onSelect: openProperties },
+      { label: '表格属性…', icon: 'tableProperties', disabled: !on, onSelect: openProperties },
     ];
   }
   function extendMenu(id) {
     if (id === 'table') return tableMenu();
-    if (id === 'insert') return [{ label: 'Table…', icon: 'table', disabled: !ready(), onSelect: insertTableDialog }];
+    if (id === 'insert') return [{ label: '表格…', icon: 'table', disabled: !ready(), onSelect: insertTableDialog }];
     return [];
   }
   function contextMenuItems(context) {
     if (context !== 'table' || !ready() || !inTable()) return [];
     return [
       { separator: true },
-      { label: 'Insert', icon: 'insertBelow', items: [
-        { label: 'Insert Columns to the Left', icon: 'insertLeft', onSelect: cmd.insertLeft }, { label: 'Insert Columns to the Right', icon: 'insertRight', onSelect: cmd.insertRight },
-        { label: 'Insert Rows Above', icon: 'insertAbove', onSelect: cmd.insertAbove }, { label: 'Insert Rows Below', icon: 'insertBelow', onSelect: cmd.insertBelow },
-        { label: 'Insert Cells…', icon: 'insertCells', onSelect: cmd.insertCells }] },
-      { label: 'Delete', icon: 'deleteTable', items: [
-        { label: 'Delete Cells…', icon: 'deleteCells', onSelect: cmd.deleteCells }, { label: 'Delete Columns', icon: 'deleteColumn', onSelect: cmd.deleteColumns },
-        { label: 'Delete Rows', icon: 'deleteRow', onSelect: cmd.deleteRows }, { label: 'Delete Table', icon: 'deleteTable', onSelect: cmd.deleteTable }] },
-      { label: 'Merge Cells', icon: 'mergeCells', disabled: !canMerge(), onSelect: cmd.mergeCells },
-      { label: 'Split Cells…', icon: 'splitCells', onSelect: cmd.splitCells },
-      { label: 'Borders', icon: 'cellBorders', items: borderItems() },
-      { label: 'Cell Alignment', icon: 'cellAlignment', items: ALIGNMENTS.map(([v, h]) => ({ label: ALIGN_NAMES[`${v}-${h}`], icon: `cellAlign${v[0].toUpperCase() + v.slice(1)}${h[0].toUpperCase() + h.slice(1)}`, checked: alignmentState() === `${v}-${h}`, onSelect: () => cmd.align(v, h) })) },
-      { label: 'AutoFit', icon: 'autofit', items: [{ label: 'AutoFit to Contents', onSelect: () => cmd.autofit('contents') }, { label: 'AutoFit to Window', onSelect: () => cmd.autofit('window') }, { label: 'Fixed Column Width', onSelect: () => cmd.autofit('fixed') }] },
-      { label: 'Text Direction', icon: 'textDirection', items: Object.entries(DIRECTION_LABELS).map(([value, label]) => ({ label, radio: true, checked: (cellBlockPlacements(block().table, block())[0]?.cell.textDirection || 'lrTb') === value, onSelect: () => withTable(m => T.setTextDirection(m, value)) })) },
-      { label: 'Table Properties…', icon: 'tableProperties', onSelect: openProperties },
+      { label: '插入', icon: 'insertBelow', items: [
+        { label: '在左侧插入列', icon: 'insertLeft', onSelect: cmd.insertLeft }, { label: '在右侧插入列', icon: 'insertRight', onSelect: cmd.insertRight },
+        { label: '在上方插入行', icon: 'insertAbove', onSelect: cmd.insertAbove }, { label: '在下方插入行', icon: 'insertBelow', onSelect: cmd.insertBelow },
+        { label: '插入单元格…', icon: 'insertCells', onSelect: cmd.insertCells }] },
+      { label: '删除', icon: 'deleteTable', items: [
+        { label: '删除单元格…', icon: 'deleteCells', onSelect: cmd.deleteCells }, { label: '删除列', icon: 'deleteColumn', onSelect: cmd.deleteColumns },
+        { label: '删除行', icon: 'deleteRow', onSelect: cmd.deleteRows }, { label: '删除表格', icon: 'deleteTable', onSelect: cmd.deleteTable }] },
+      { label: '合并单元格', icon: 'mergeCells', disabled: !canMerge(), onSelect: cmd.mergeCells },
+      { label: '拆分单元格…', icon: 'splitCells', onSelect: cmd.splitCells },
+      { label: '边框', icon: 'cellBorders', items: borderItems() },
+      { label: '单元格对齐方式', icon: 'cellAlignment', items: ALIGNMENTS.map(([v, h]) => ({ label: ALIGN_NAMES[`${v}-${h}`], icon: `cellAlign${v[0].toUpperCase() + v.slice(1)}${h[0].toUpperCase() + h.slice(1)}`, checked: alignmentState() === `${v}-${h}`, onSelect: () => cmd.align(v, h) })) },
+      { label: '自动调整', icon: 'autofit', items: [{ label: '根据内容自动调整', onSelect: () => cmd.autofit('contents') }, { label: '根据窗口自动调整', onSelect: () => cmd.autofit('window') }, { label: '固定列宽', onSelect: () => cmd.autofit('fixed') }] },
+      { label: '文字方向', icon: 'textDirection', items: Object.entries(DIRECTION_LABELS).map(([value, label]) => ({ label, radio: true, checked: (cellBlockPlacements(block().table, block())[0]?.cell.textDirection || 'lrTb') === value, onSelect: () => withTable(m => T.setTextDirection(m, value)) })) },
+      { label: '表格属性…', icon: 'tableProperties', onSelect: openProperties },
     ];
   }
 

@@ -10,16 +10,16 @@ export const MAX_ASSISTANT_CHARS = 60000;
 /** Suggestions offered in an empty conversation, by what is selected. */
 export const SUGGESTIONS = {
   selection: [
-    { id: 'improve', label: 'Improve the writing' },
-    { id: 'grammar', label: 'Fix spelling and grammar' },
-    { id: 'shorten', label: 'Make it shorter' },
-    { id: 'summarize', label: 'Summarize' },
+    { id: 'improve', label: '润色文字' },
+    { id: 'grammar', label: '修正拼写和语法' },
+    { id: 'shorten', label: '精简内容' },
+    { id: 'summarize', label: '生成摘要' },
   ],
   document: [
-    { ask: 'Summarize this document in a few sentences.', label: 'Summarize the document' },
-    { ask: 'List the main points of this document as bullet points.', label: 'List the main points' },
-    { ask: 'What could make this document clearer? Give three concrete suggestions.', label: 'Suggest improvements' },
-    { ask: 'Draft a short introduction paragraph for this document.', label: 'Draft an introduction' },
+    { ask: '用几句话总结这篇文档。', label: '总结文档' },
+    { ask: '以项目符号列表列出本文档的核心要点。', label: '列出要点' },
+    { ask: '如何让这篇文档更清晰？请给出三条具体建议。', label: '改进建议' },
+    { ask: '为这篇文档起草一段简短的引言。', label: '起草引言' },
   ],
 };
 
@@ -47,16 +47,16 @@ export function readReply(response) {
   // Models often dress the label as Markdown ("**TEXT:**", "## Answer:"); it is the label all the same.
   const marker = /^(?:#{1,6}[ \t]*)?([*_]{0,2})[ \t]*(TEXT|ANSWER)[ \t]*:[ \t]*\1[ \t]*\n?/i.exec(text);
   if (marker) { kind = marker[2].toUpperCase() === 'TEXT' ? 'text' : 'answer'; text = cleanAnswer(text.slice(marker[0].length)); }
-  if (!text) throw new Error('The assistant returned nothing to use');
+  if (!text) throw new Error('助手未返回任何可用内容');
   return { kind, text, paragraphs: answerParagraphs(text) };
 }
 
 /** The readable message for a failed request (the provider's error stays on it as the cause). */
 export function assistantError(e) {
   const msg = String(e?.message || e?.error?.message || e || '');
-  if (/insufficient|balance|credit|funds|quota|allowance|402/i.test(msg)) return 'Your Puter AI allowance has run out for now.';
-  if (/sign.?in|unauthori[sz]ed|401/i.test(msg)) return 'Sign in to Puter to use the assistant.';
-  if (/context|too long|maximum.*length|max(?:imum)? tokens/i.test(msg)) return 'That is too much text for the assistant at once. Select a shorter passage.';
-  if (/network|failed to fetch|offline|timed? ?out/i.test(msg)) return 'The AI service could not be reached. Check your connection.';
-  return 'The assistant could not answer. Try again in a moment.';
+  if (/insufficient|balance|credit|funds|quota|allowance|402/i.test(msg)) return 'AI 配额目前已用尽。';
+  if (/sign.?in|unauthori[sz]ed|401/i.test(msg)) return '请登录以使用助手。';
+  if (/context|too long|maximum.*length|max(?:imum)? tokens/i.test(msg)) return '文本量过大，请选择较短的段落。';
+  if (/network|failed to fetch|offline|timed? ?out/i.test(msg)) return '无法连接到 AI 服务，请检查网络连接。';
+  return 'AI 助手当前无法回答。请稍后重试。';
 }

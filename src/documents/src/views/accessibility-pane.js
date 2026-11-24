@@ -8,8 +8,8 @@ import { checkAccessibility, summarize, RULES } from '../lib/accessibility.js';
 import { sidePane, button, hint, preference, reveal } from './review-ui.js';
 
 const KEEP_RUNNING = preference('documents:accessibility-live', true);
-const SEVERITY = { error: 'Errors', warning: 'Warnings', tip: 'Tips' };
-const FIX_LABEL = { altText: 'Add description…', headerRow: 'Use first row as header', autoColor: 'Use automatic color', clearHighlight: 'Remove highlight', removeEmpty: 'Remove empty paragraphs', collapseBlanks: 'Use a single space', deleteRow: 'Delete row' };
+const SEVERITY = { error: '错误', warning: '警告', tip: '提示' };
+const FIX_LABEL = { altText: '添加说明…', headerRow: '将首行设为标题行', autoColor: '使用自动颜色', clearHighlight: '清除突出显示', removeEmpty: '删除空段落', collapseBlanks: '替换为单个空格', deleteRow: '删除行' };
 
 export function createAccessibilityPane({ editor, pkg, error, onState = () => {} }) {
   // The body last checked and its edit count then: a package reopened in place (a design change) has a new body,
@@ -19,11 +19,11 @@ export function createAccessibilityPane({ editor, pkg, error, onState = () => {}
   // Quick fixes are edits: none is offered where the document cannot change (a preview, Viewing mode).
   let fixesShown = null;
   const canFix = () => { const engine = editor(); return !!engine && !pkg()?.readOnly && !engine.readOnly && !engine.viewOnly; };
-  const pane = sidePane({ title: 'Accessibility', label: 'Accessibility pane', className: 'rv-accessibility-pane', onOpen: () => run(true), onClose: () => editor()?.focus() });
+  const pane = sidePane({ title: '辅助功能', label: '辅助功能窗格', className: 'rv-accessibility-pane', onOpen: () => run(true), onClose: () => editor()?.focus() });
   const summaryLine = el('p.rv-status', { role: 'status' });
   const list = el('div.rv-groups');
   const live = el('input', { type: 'checkbox', checked: KEEP_RUNNING.get(), onchange: () => { KEEP_RUNNING.set(live.checked); schedule(); onState(); } });
-  pane.body.append(summaryLine, list, el('label.rv-check', {}, live, 'Keep checking while I work'), hint('Checks pictures, tables, headings, color contrast, links and spacing in the document body.'));
+  pane.body.append(summaryLine, list, el('label.rv-check', {}, live, '在工作时保持检查'), hint('检查文档正文中的图片、表格、标题、颜色对比度、超链接及间距。'));
 
   const headingLevel = p => { const level = p.format?.outlineLevel; return Number.isInteger(level) && level < 9 ? level + 1 : null; };
   function run(force = false) {
@@ -39,8 +39,7 @@ export function createAccessibilityPane({ editor, pkg, error, onState = () => {}
   function render() {
     fixesShown = canFix();
     const counts = summarize(issues);
-    const count = (n, one) => `${n} ${one}${n === 1 ? '' : 's'}`;
-    summaryLine.textContent = issues.length ? `${count(counts.errors, 'error')} · ${count(counts.warnings, 'warning')} · ${count(counts.tips, 'tip')}` : 'No accessibility issues found. People with disabilities should be able to read this document.';
+    summaryLine.textContent = issues.length ? `${counts.errors} 处错误 · ${counts.warnings} 处警告 · ${counts.tips} 处提示` : '未发现辅助功能问题。残障人士应能顺利阅读本文档。';
     list.replaceChildren(...Object.entries(SEVERITY).map(([severity, title]) => {
       const own = issues.filter(i => i.severity === severity);
       if (!own.length) return null;
@@ -52,7 +51,7 @@ export function createAccessibilityPane({ editor, pkg, error, onState = () => {}
           el('p.rv-why', {}, RULES[rule].why),
           ...items.map(issue => el('div.rv-item.rv-issue', { dataset: { rule } },
             el('button.rv-issue-target', { type: 'button', onclick: () => reveal(editor(), issue.start, issue.end) }, issue.detail),
-            issue.fix && fixesShown ? button(FIX_LABEL[issue.fix.kind] || 'Fix', () => fix(issue)) : null)))));
+            issue.fix && fixesShown ? button(FIX_LABEL[issue.fix.kind] || '修复', () => fix(issue)) : null)))));
     }).filter(Boolean));
   }
   function schedule() {
@@ -83,7 +82,7 @@ export function createAccessibilityPane({ editor, pkg, error, onState = () => {}
     const tableCell = cellId => { const index = engine.model.paragraphs.findIndex(p => p.cellId === cellId); let offset = 0; for (let i = 0; i < index; i++) offset += engine.model.paragraphs[i].runs.reduce((n, r) => n + r.text.length, 0) + 1; return offset; };
     try {
       if (kind === 'altText') {
-        const text = await promptDialog({ title: 'Picture description', label: 'Description', multiline: true, confirmLabel: 'Apply', hint: 'Describe what the picture shows and why it matters, in a sentence or two.' });
+        const text = await promptDialog({ title: '图片说明', label: '说明', multiline: true, confirmLabel: '应用', hint: '用一两句话描述图片展示的内容及其重要性。' });
         if (!text || editor() !== engine || !(issue = current(issue))) return;
         engine.execute(() => { at(issue.start, issue.end); engine.model.setImageProperties({ alt: text }); });
       } else if (kind === 'headerRow') engine.execute(() => { at(tableCell(issue.fix.cellId)); engine.model.setTableHeaderRows(1); });
@@ -121,9 +120,9 @@ export function createAccessibilityPane({ editor, pkg, error, onState = () => {}
       if (!checked(body)) schedule();
       // Switched to or from Viewing mode with the pane open: its quick fixes follow.
       if (pane.isOpen && fixesShown !== null && canFix() !== fixesShown) render();
-      if (body !== checkedBody) return { errors: 0, warnings: 0, tips: 0, label: 'Accessibility: checking…', checking: true, open: () => this.open() };
+      if (body !== checkedBody) return { errors: 0, warnings: 0, tips: 0, label: '辅助功能: 正在检查…', checking: true, open: () => this.open() };
       const counts = summarize(issues);
-      const label = !issues.length ? 'Accessibility: good to go' : counts.errors ? `Accessibility: ${counts.errors} ${counts.errors === 1 ? 'error' : 'errors'} to fix` : 'Accessibility: worth a look';
+      const label = !issues.length ? '辅助功能: 一切就绪' : counts.errors ? `辅助功能: 有 ${counts.errors} 处错误待修复` : '辅助功能: 建议查看';
       return { ...counts, label, open: () => this.open() };
     },
     get issues() { return run(); },

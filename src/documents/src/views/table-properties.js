@@ -18,94 +18,95 @@ export function openTableProperties(table, displayedWidths, selectedColumn, appl
   const check = (label, checked, extra = {}) => { const input = el('input', { type: 'checkbox', checked: !!checked, ...extra }); input.indeterminate = checked === null; return { input, node: el('label.table-check', {}, input, label) }; };
 
   /* Table */
-  const layout = select('Table layout', [['autofit', 'Automatically resize to fit contents'], ['fixed', 'Fixed widths']], table.layout);
+  const layout = select('表格版式', [['autofit', '根据内容自动调整'], ['fixed', '固定列宽']], table.layout);
   const originalType = ['dxa', 'pct'].includes(table.width?.type) ? table.width.type : 'auto';
-  const type = select('Table width unit', [['auto', 'Automatic'], ['dxa', 'Inches'], ['pct', 'Percent']], originalType);
+  const type = select('表格宽度度量单位', [['auto', '自动'], ['dxa', '英寸'], ['pct', '百分比']], originalType);
   const originalWidth = decimal(originalType === 'pct' ? table.width.value / 50 : originalType === 'dxa' ? table.width.value / 1440 : displayedWidths.reduce((a,b) => a+b, 0) / 1440);
-  const width = el('input.input', { type: 'number', step: 'any', min: .01, required: true, 'aria-label': 'Preferred table width', value: originalWidth, disabled: originalType === 'auto' });
+  const width = el('input.input', { type: 'number', step: 'any', min: .01, required: true, 'aria-label': '指定表格宽度', value: originalWidth, disabled: originalType === 'auto' });
   type.addEventListener('change', () => { width.disabled = type.value === 'auto'; width.value = type.value === 'pct' ? '100' : decimal(displayedWidths.reduce((a,b) => a+b, 0) / 1440); });
   const rowAlignments = new Set(table.rows.map(row => row.alignment ?? table.alignment));
   const originalAlignment = rowAlignments.size === 1 ? [...rowAlignments][0] : 'mixed';
-  const alignment = select('Table alignment', [...(originalAlignment === 'mixed' ? [['mixed', 'Mixed']] : []), ['left', 'Left'], ['center', 'Center'], ['right', 'Right']], originalAlignment);
+  const alignment = select('对齐方式', [...(originalAlignment === 'mixed' ? [['mixed', '多种']] : []), ['left', '左对齐'], ['center', '居中'], ['right', '右对齐']], originalAlignment);
   if (originalAlignment === 'mixed') alignment.querySelector('option[value="mixed"]').disabled = true;
-  const originalIndent = decimal(table.indent / 1440), indent = el('input.input', { type: 'number', step: 'any', min: -22, max: 22, required: true, 'aria-label': 'Table indent (in)', value: originalIndent, disabled: originalAlignment !== 'left' });
+  const originalIndent = decimal(table.indent / 1440), indent = el('input.input', { type: 'number', step: 'any', min: -22, max: 22, required: true, 'aria-label': '左段缩进 (英寸)', value: originalIndent, disabled: originalAlignment !== 'left' });
   alignment.addEventListener('change', () => { indent.disabled = alignment.value !== 'left'; });
-  const wrap = select('Text wrapping', [['none', 'None'], ['around', 'Around']], context.wrap || (table.floating ? 'around' : 'none'));
+  const wrap = select('文字环绕', [['none', '无'], ['around', '环绕']], context.wrap || (table.floating ? 'around' : 'none'));
   if (table.parentCellId || context.wrap === undefined) wrap.disabled = true;
   wrap.addEventListener('change', () => syncPositioning());
   // Positioning, for a table that text wraps around.
   // A table that does not float yet starts where Text wrapping: Around puts it: at its alignment or indent.
   const floating = table.floating || { horzAnchor: 'text', vertAnchor: 'text', ...(['center', 'right'].includes(table.alignment) ? { tblpXSpec: table.alignment, tblpX: 0 } : { tblpX: table.indent || 0 }), tblpY: 0, leftFromText: 180, rightFromText: 180, topFromText: 0, bottomFromText: 0 };
-  const xChoice = select('Horizontal position', [['at', 'At offset'], ['left', 'Left'], ['center', 'Center'], ['right', 'Right'], ['inside', 'Inside'], ['outside', 'Outside']], floating.tblpXSpec || 'at');
-  const xAt = el('input.input', { type: 'number', step: 'any', min: -22, max: 22, value: decimal((floating.tblpX || 0) / 1440), 'aria-label': 'Horizontal offset (in)' });
-  const xRelative = select('Horizontal position relative to', [['margin', 'Margin'], ['page', 'Page'], ['text', 'Column']], floating.horzAnchor || 'margin');
-  const yChoice = select('Vertical position', [['at', 'At offset'], ['top', 'Top'], ['center', 'Center'], ['bottom', 'Bottom'], ['inside', 'Inside'], ['outside', 'Outside']], floating.tblpYSpec && floating.tblpYSpec !== 'inline' ? floating.tblpYSpec : 'at');
-  const yAt = el('input.input', { type: 'number', step: 'any', min: -22, max: 22, value: decimal((floating.tblpY || 0) / 1440), 'aria-label': 'Vertical offset (in)' });
-  const yRelative = select('Vertical position relative to', [['text', 'Paragraph'], ['margin', 'Margin'], ['page', 'Page']], floating.vertAnchor || 'margin');
-  const fromText = Object.fromEntries(['top', 'bottom', 'left', 'right'].map(side => [side, el('input.input', { type: 'number', step: 'any', min: 0, max: 22, value: decimal((floating[`${side}FromText`] || 0) / 1440), 'aria-label': `Distance from text, ${side} (in)` })]));
-  const overlap = check('Allow overlap with other floating tables', table.overlap !== 'never');
+  const xChoice = select('水平对齐', [['at', '偏移量'], ['left', '左侧'], ['center', '居中'], ['right', '右侧'], ['inside', '内部'], ['outside', '外部']], floating.tblpXSpec || 'at');
+  const xAt = el('input.input', { type: 'number', step: 'any', min: -22, max: 22, value: decimal((floating.tblpX || 0) / 1440), 'aria-label': '水平偏移量 (英寸)' });
+  const xRelative = select('水平相对位置', [['margin', '页边距'], ['page', '页面'], ['text', '栏']], floating.horzAnchor || 'margin');
+  const yChoice = select('垂直对齐', [['at', '偏移量'], ['top', '靠上'], ['center', '居中'], ['bottom', '靠下'], ['inside', '内部'], ['outside', '外部']], floating.tblpYSpec && floating.tblpYSpec !== 'inline' ? floating.tblpYSpec : 'at');
+  const yAt = el('input.input', { type: 'number', step: 'any', min: -22, max: 22, value: decimal((floating.tblpY || 0) / 1440), 'aria-label': '垂直偏移量 (英寸)' });
+  const yRelative = select('垂直相对位置', [['text', '段落'], ['margin', '页边距'], ['page', '页面']], floating.vertAnchor || 'margin');
+  const sideLabels = { top: '上', bottom: '下', left: '左', right: '右' };
+  const fromText = Object.fromEntries(['top', 'bottom', 'left', 'right'].map(side => [side, el('input.input', { type: 'number', step: 'any', min: 0, max: 22, value: decimal((floating[`${side}FromText`] || 0) / 1440), 'aria-label': `距正文距离: ${sideLabels[side]} (英寸)` })]));
+  const overlap = check('允许与其他浮动表格重叠', table.overlap !== 'never');
   const positionFields = () => JSON.stringify([xChoice.value, xAt.value, xRelative.value, yChoice.value, yAt.value, yRelative.value, ...Object.values(fromText).map(i => i.value), overlap.input.checked]);
   const positionOriginal = positionFields();
-  const positioning = el('div.table-positioning', {}, el('div.table-properties-subhead', {}, 'Positioning'),
-    el('div.canvas-page-fields', {}, field('Horizontal', xChoice), field('Offset (in)', xAt), field('Relative to', xRelative), el('span'),
-      field('Vertical', yChoice), field('Offset (in)', yAt), field('Relative to', yRelative), el('span')),
-    el('div.table-properties-subhead', {}, 'Distance from text (in)'),
-    el('div.canvas-page-fields.table-margin-fields', {}, ...Object.entries(fromText).map(([side, input]) => field(side[0].toUpperCase() + side.slice(1), input))), overlap.node);
+  const positioning = el('div.table-positioning', {}, el('div.table-properties-subhead', {}, '定位'),
+    el('div.canvas-page-fields', {}, field('水平', xChoice), field('偏移量 (英寸)', xAt), field('相对于', xRelative), el('span'),
+      field('垂直', yChoice), field('偏移量 (英寸)', yAt), field('相对于', yRelative), el('span')),
+    el('div.table-properties-subhead', {}, '距正文距离 (英寸)'),
+    el('div.canvas-page-fields.table-margin-fields', {}, field('上', fromText.top), field('下', fromText.bottom), field('左', fromText.left), field('右', fromText.right)), overlap.node);
   const syncPositioning = () => { positioning.hidden = wrap.value !== 'around'; xAt.disabled = xChoice.value !== 'at'; yAt.disabled = yChoice.value !== 'at'; };
   for (const control of [xChoice, yChoice]) control.addEventListener('change', syncPositioning);
   syncPositioning();
   const margins = context.margins || table.margins || {};
-  const margin = side => el('input.input', { type: 'number', step: 'any', min: 0, max: 22, required: true, value: decimal((margins[side] || 0) / 1440), 'aria-label': `Default ${side} cell margin (in)` });
+  const margin = side => el('input.input', { type: 'number', step: 'any', min: 0, max: 22, required: true, value: decimal((margins[side] || 0) / 1440), 'aria-label': `默认${sideLabels[side]}边距 (英寸)` });
   const marginInputs = Object.fromEntries(['top', 'bottom', 'left', 'right'].map(side => [side, margin(side)]));
   const marginOriginal = JSON.stringify(Object.values(marginInputs).map(i => i.value));
 
   /* Column */
   const initialColumns = table.grid.map((w, i) => decimal((w || displayedWidths[i]) / 1440)), values = [...initialColumns];
-  const column = select('Table column', table.grid.map((_, i) => [String(i), String(i + 1)]), String(selectedColumn));
-  const columnWidth = el('input.input', { type: 'number', min: 0, max: 22, step: 'any', required: true, 'aria-label': 'Column width (in)', value: values[selectedColumn] });
+  const column = select('表格列', table.grid.map((_, i) => [String(i), `第 ${i + 1} 列`]), String(selectedColumn));
+  const columnWidth = el('input.input', { type: 'number', min: 0, max: 22, step: 'any', required: true, 'aria-label': '列宽 (英寸)', value: values[selectedColumn] });
   columnWidth.addEventListener('input', () => { values[Number(column.value)] = columnWidth.value; });
   column.addEventListener('change', () => { columnWidth.value = values[Number(column.value)]; });
-  const step = delta => el('button.btn.btn-ghost.btn-sm', { type: 'button', 'aria-label': delta < 0 ? 'Previous column' : 'Next column', onclick: () => {
+  const step = delta => el('button.btn.btn-ghost.btn-sm', { type: 'button', 'aria-label': delta < 0 ? '上一列' : '下一列', onclick: () => {
     const next = Math.max(0, Math.min(table.grid.length - 1, Number(column.value) + delta)); column.value = String(next); columnWidth.value = values[next];
-  } }, delta < 0 ? '‹ Previous' : 'Next ›');
+  } }, delta < 0 ? '‹ 上一列' : '下一列 ›');
 
   /* Row */
   const rows = context.rows || {};
-  const heightRule = select('Row height rule', [...(rows.height === null ? [['mixed', 'Mixed — keep']] : []), ['auto', 'Automatic'], ['atLeast', 'At least'], ['exact', 'Exactly']], rows.height === null ? 'mixed' : rows.height?.rule || 'auto');
-  const heightValue = el('input.input', { type: 'number', min: 0, max: 1584, step: 0.05, value: rows.height?.value ? rows.height.value / 20 : '', placeholder: rows.height === null ? 'Mixed' : '', 'aria-label': 'Row height (pt)' });
+  const heightRule = select('行高行距规则', [...(rows.height === null ? [['mixed', '多种 — 保留']] : []), ['auto', '自动'], ['atLeast', '最小值'], ['exact', '固定值']], rows.height === null ? 'mixed' : rows.height?.rule || 'auto');
+  const heightValue = el('input.input', { type: 'number', min: 0, max: 1584, step: 0.05, value: rows.height?.value ? rows.height.value / 20 : '', placeholder: rows.height === null ? '多种' : '', 'aria-label': '行高 (磅)' });
   const syncHeight = () => { heightValue.disabled = !['atLeast', 'exact'].includes(heightRule.value); heightValue.required = !heightValue.disabled; };
   heightRule.addEventListener('change', syncHeight); syncHeight();
-  const allowBreak = check('Allow row to break across pages', rows.allowBreak ?? true);
-  const header = check('Repeat as header row at the top of each page', rows.header ?? false, { disabled: !rows.headerAvailable });
+  const allowBreak = check('允许跨页断行', rows.allowBreak ?? true);
+  const header = check('在各页顶端以标题行形式重复出现', rows.header ?? false, { disabled: !rows.headerAvailable });
 
   /* Cell */
   const cells = context.cells || {};
-  const cellType = select('Cell width unit', [...(cells.width === null ? [['mixed', 'Mixed — keep']] : []), ['auto', 'Automatic'], ['dxa', 'Inches'], ['pct', 'Percent']], cells.width === null ? 'mixed' : cells.width?.type || 'auto');
-  const cellWidth = el('input.input', { type: 'number', min: 0.01, step: 'any', 'aria-label': 'Preferred cell width', value: cells.width?.type === 'dxa' ? decimal(cells.width.value / 1440) : cells.width?.type === 'pct' ? decimal(cells.width.value / 50) : '' });
+  const cellType = select('单元格宽度单位', [...(cells.width === null ? [['mixed', '多种 — 保留']] : []), ['auto', '自动'], ['dxa', '英寸'], ['pct', '百分比']], cells.width === null ? 'mixed' : cells.width?.type || 'auto');
+  const cellWidth = el('input.input', { type: 'number', min: 0.01, step: 'any', 'aria-label': '指定单元格宽度', value: cells.width?.type === 'dxa' ? decimal(cells.width.value / 1440) : cells.width?.type === 'pct' ? decimal(cells.width.value / 50) : '' });
   const syncCell = () => { cellWidth.disabled = !['dxa', 'pct'].includes(cellType.value); cellWidth.required = !cellWidth.disabled; };
   cellType.addEventListener('change', syncCell); syncCell();
-  const vertical = select('Vertical alignment', [...(cells.vertical === null ? [['mixed', 'Mixed — keep']] : []), ['top', 'Top'], ['center', 'Center'], ['bottom', 'Bottom']], cells.vertical === null ? 'mixed' : cells.vertical || 'top');
-  const cellWrap = check('Wrap text', cells.wrap ?? true);
+  const vertical = select('垂直对齐方式', [...(cells.vertical === null ? [['mixed', '多种 — 保留']] : []), ['top', '靠上'], ['center', '居中'], ['bottom', '靠下']], cells.vertical === null ? 'mixed' : cells.vertical || 'top');
+  const cellWrap = check('文字换行', cells.wrap ?? true);
 
   /* Alt text */
-  const altTitle = el('input.input', { type: 'text', maxLength: 255, value: context.altText?.title || '', 'aria-label': 'Table title' });
-  const altDescription = el('textarea.input', { rows: 3, maxLength: 4000, 'aria-label': 'Table description' });
+  const altTitle = el('input.input', { type: 'text', maxLength: 255, value: context.altText?.title || '', 'aria-label': '表格标题' });
+  const altDescription = el('textarea.input', { rows: 3, maxLength: 4000, 'aria-label': '表格说明' });
   altDescription.value = context.altText?.description || '';
 
   const sections = [
-    ['table', 'Table', [el('div.canvas-page-fields', {}, field('Width unit', type), field('Preferred width', width), field('Alignment', alignment), field('Indent (in)', indent), field('Layout', layout), field('Text wrapping', wrap)),
+    ['table', '表格', [el('div.canvas-page-fields', {}, field('宽度单位', type), field('指定宽度', width), field('对齐方式', alignment), field('缩进 (英寸)', indent), field('版式', layout), field('文字环绕', wrap)),
       positioning,
-      el('div.table-properties-subhead', {}, 'Default cell margins (in)'),
-      el('div.canvas-page-fields.table-margin-fields', {}, ...Object.entries(marginInputs).map(([side, input]) => field(side[0].toUpperCase() + side.slice(1), input))),
-      context.onBorders && el('button.btn.btn-outline.btn-sm', { type: 'button', onclick: () => context.onBorders() }, 'Borders and Shading…')]],
-    ['row', 'Row', [el('div.canvas-page-fields', {}, field('Height', heightRule), field('Height (pt)', heightValue)), allowBreak.node, header.node]],
-    ['column', 'Column', [el('div.canvas-page-fields', {}, field('Column', column), field('Column width (in)', columnWidth)), el('div.row', {}, step(-1), step(1))]],
-    ['cell', 'Cell', [el('div.canvas-page-fields', {}, field('Width unit', cellType), field('Preferred width', cellWidth), field('Vertical alignment', vertical)), cellWrap.node]],
-    ['alt', 'Alt Text', [field('Title', altTitle), field('Description', altDescription), el('p.field-hint', {}, 'Screen readers announce the title and description. Describe what the table shows.')]],
+      el('div.table-properties-subhead', {}, '默认单元格边距 (英寸)'),
+      el('div.canvas-page-fields.table-margin-fields', {}, field('上', marginInputs.top), field('下', marginInputs.bottom), field('左', marginInputs.left), field('右', marginInputs.right)),
+      context.onBorders && el('button.btn.btn-outline.btn-sm', { type: 'button', onclick: () => context.onBorders() }, '边框和底纹…')]],
+    ['row', '行', [el('div.canvas-page-fields', {}, field('行高规格', heightRule), field('行高 (磅)', heightValue)), allowBreak.node, header.node]],
+    ['column', '列', [el('div.canvas-page-fields', {}, field('列', column), field('列宽 (英寸)', columnWidth)), el('div.row', {}, step(-1), step(1))]],
+    ['cell', '单元格', [el('div.canvas-page-fields', {}, field('宽度单位', cellType), field('指定宽度', cellWidth), field('垂直对齐方式', vertical)), cellWrap.node]],
+    ['alt', '可选文字', [field('标题', altTitle), field('说明', altDescription), el('p.field-hint', {}, '屏幕阅读器会朗读标题和说明。请描述表格显示的内容。')]],
   ];
   const panels = sections.map(([id, label, body]) => el('section.table-properties-section', { id: `table-properties-${id}`, 'aria-label': label }, el('h3', {}, label), ...body));
   const scroller = el('div.table-properties-scroll', {}, ...panels);
-  const nav = el('nav.table-properties-nav', { 'aria-label': 'Sections' }, ...sections.map(([id, label], i) => el('button.btn.btn-ghost.btn-sm', { type: 'button', onclick: () => {
+  const nav = el('nav.table-properties-nav', { 'aria-label': '导航' }, ...sections.map(([id, label], i) => el('button.btn.btn-ghost.btn-sm', { type: 'button', onclick: () => {
     panels[i].scrollIntoView({ block: 'start', behavior: scrollBehavior() }); panels[i].querySelector('input, select, textarea')?.focus({ preventScroll: true });
   } }, label)));
 
@@ -150,9 +151,9 @@ export function openTableProperties(table, displayedWidths, selectedColumn, appl
     let ok;
     try { ok = apply(context.rows || context.cells || context.altText ? changes : patch); } catch (err) { error.textContent = err.message; error.hidden = false; return; }
     if (ok !== false) modal.close();
-    else { error.textContent = 'These settings cannot fit the table. Adjust its width, columns or indentation.'; error.hidden = false; }
+    else { error.textContent = '这些设置无法适应表格。请调整其宽度、列或缩进。'; error.hidden = false; }
   } }, nav, scroller,
-  el('p.field-hint', {}, 'Widths are preferences. AutoFit can adjust them to fit the cell text.' + (table.parentCellId ? ' Percent widths use the containing cell’s writing width. Nested tables do not repeat their own header rows; imported header flags are preserved until removed.' : '')), error,
-  el('div.row.row-end', {}, el('button.btn.btn-ghost', { type: 'button', onclick: () => modal.close() }, 'Cancel'), el('button.btn.btn-primary', { type: 'submit' }, 'Apply')));
-  const modal = openModal({ title: 'Table properties', content, wide: true }); modal.panel.classList.add('table-properties-dialog'); return modal;
+  el('p.field-hint', {}, '宽度为首选设置。“自动调整”可根据单元格文字调整宽度。' + (table.parentCellId ? ' 百分比宽度使用所在单元格的书写宽度。嵌套表格不会重复自身的标题行；导入的标题行标记在移除前保持保留。' : '')), error,
+  el('div.row.row-end', {}, el('button.btn.btn-ghost', { type: 'button', onclick: () => modal.close() }, '取消'), el('button.btn.btn-primary', { type: 'submit' }, '应用')));
+  const modal = openModal({ title: '表格属性', content, wide: true }); modal.panel.classList.add('table-properties-dialog'); return modal;
 }

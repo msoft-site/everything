@@ -18,10 +18,10 @@ export const fontChoices = () => [...new Set([...recent, ...BUNDLED, ...COMMON, 
 
 export function openFontPicker({ anchor, value, alternatives, apply, onFontsAvailable, focusFirst = true }) {
   let popup;
-  const notice = el('p.field-hint', { role: 'status' }, value === null ? 'The selection uses mixed fonts.' : `Current font: ${value}`);
+  const notice = el('p.field-hint', { role: 'status' }, value === null ? '选定内容包含多种字体。' : `当前字体：${value}`);
   const initialNotice = notice.textContent;
-  const list = el('div.font-picker-list', { role: 'group', 'aria-label': 'Available fonts' });
-  const search = el('input.input', { type: 'search', 'aria-label': 'Search fonts', placeholder: 'Search or enter a font name…', oninput: render });
+  const list = el('div.font-picker-list', { role: 'group', 'aria-label': '可用字体' });
+  const search = el('input.input', { type: 'search', 'aria-label': '搜索字体', placeholder: '搜索或输入字体名称…', oninput: render });
   search.addEventListener('keydown', e => { if (e.key === 'ArrowDown') { e.preventDefault(); list.querySelector('button')?.focus(); } });
   list.addEventListener('keydown', e => {
     if (!['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(e.key)) return;
@@ -36,7 +36,7 @@ export function openFontPicker({ anchor, value, alternatives, apply, onFontsAvai
     const request = ++selectionRequest;
     await prepareCanvasFont(name);
     if (!popup?.menu?.isConnected || request !== selectionRequest) return;
-    if (documentFontAvailable(name, alternatives) !== true) { notice.textContent = `${name} could not be loaded on this device. Choose another font.`; return; }
+    if (documentFontAvailable(name, alternatives) !== true) { notice.textContent = `无法在此设备上加载 ${name}。请选择其他字体。`; return; }
     recent.splice(0, recent.length, name, ...recent.filter(n => n !== name).slice(0, 4));
     closeMenu(); apply(name);
   }
@@ -52,45 +52,45 @@ export function openFontPicker({ anchor, value, alternatives, apply, onFontsAvai
         try { await onFontsAvailable?.(); }
         catch {
           if (popup?.menu?.isConnected) {
-            notice.textContent = 'Installed fonts are available, but the document could not refresh. Reopen it to try again.';
+            notice.textContent = '已安装的字体可用，但文档无法刷新。请重新打开文档后再试。';
             render();
           }
           return;
         }
         if (!popup?.menu?.isConnected) return;
-        notice.textContent = installed.length ? `${installed.length} installed font families available.` : 'No installed fonts were returned. You can still enter a font name.';
+        notice.textContent = installed.length ? `有 ${installed.length} 个已安装的字体系列可用。` : '未返回已安装的字体。您仍可直接输入字体名称。';
         render();
       } catch {
-        if (popup?.menu?.isConnected) notice.textContent = 'Installed fonts could not be listed. You can still enter a font name.';
+        if (popup?.menu?.isConnected) notice.textContent = '无法列出已安装的字体。您仍可直接输入字体名称。';
       } finally { installedButton.disabled = false; }
     },
-  }, 'Browse installed fonts');
+  }, '浏览已安装的字体');
   const content = el('form', { onsubmit: e => {
     e.preventDefault();
     const first = list.querySelector('button');
     if (first) first.click(); else if (!useName.hidden) useName.click();
-  } }, search, notice, installedButton || el('p.field-hint', {}, 'To use an installed font, enter its full name.'), fontFileControls({ onFontsAvailable, onLoaded: render, status: notice }), useName, list);
+  } }, search, notice, installedButton || el('p.field-hint', {}, '要使用已安装的字体，请输入其全名。'), fontFileControls({ onFontsAvailable, onLoaded: render, status: notice }), useName, list);
   function render() {
     const focused = list.contains(document.activeElement) ? document.activeElement.dataset.font : null;
     const names = [...new Map([...recent, ...BUNDLED, ...(value && documentFontAvailable(value, alternatives) === true ? [value] : []), ...COMMON.filter(name => fontAvailable(name) === true), ...installed, ...fileFontNames()].map(name => [name.toLowerCase(), name])).values()];
     const typed = search.value.trim();
     useName.hidden = !typed || names.some(name => name.toLowerCase() === typed.toLowerCase());
-    useName.textContent = `Use “${typed}”`;
+    useName.textContent = `使用“${typed}”`;
     const matches = names.filter(name => name.toLowerCase().includes(search.value.trim().toLowerCase()));
     list.replaceChildren(...matches.map(name => el('button.font-choice', {
       type: 'button', dataset: { font: name }, 'aria-pressed': String(value === name), style: { fontFamily: canvasFontFamily({ fontFamily: displayedFont({ fontFamily: name }, alternatives) }) },
       onclick: () => choose(name),
-    }, el('span', {}, name), el('small', {}, fileFontFamily(name) ? 'Loaded for this session' : isEmbeddedFont(displayedFont({ fontFamily: name }, alternatives)) ? 'In this document' : recent.includes(name) ? 'Recent' : BUNDLED.includes(name) ? 'Included' : 'On this device'))));
+    }, el('span', {}, name), el('small', {}, fileFontFamily(name) ? '本次会话已加载' : isEmbeddedFont(displayedFont({ fontFamily: name }, alternatives)) ? '此文档中内嵌' : recent.includes(name) ? '最近使用' : BUNDLED.includes(name) ? '内置' : '本地设备'))));
     if (focused) [...list.querySelectorAll('button')].find(button => button.dataset.font === focused)?.focus();
-    if (!matches.length) list.append(el('p.field-hint', {}, 'No matching fonts. Try another name.'));
+    if (!matches.length) list.append(el('p.field-hint', {}, '未找到匹配的字体。请尝试其他名称。'));
   }
   render();
-  popup = openPopover({ anchor, label: 'Font', content, focusFirst });
+  popup = openPopover({ anchor, label: '字体', content, focusFirst });
   Promise.all([...BUNDLED, ...COMMON, ...(value ? [value] : [])].map(checkFontAvailability)).then(() => {
     if (!popup.menu?.isConnected) return;
     // Availability work may finish after browsing, loading, or selecting a font.
     // Keep the result of that newer action while still refreshing the choices.
-    if (notice.textContent === initialNotice && value && documentFontAvailable(value, alternatives) === false) notice.textContent = `${value} is unavailable. Displaying ${displayedFont({ fontFamily: value }, alternatives)}; its original name stays in the file until you choose a font.`;
+    if (notice.textContent === initialNotice && value && documentFontAvailable(value, alternatives) === false) notice.textContent = `${value} 不可用。当前显示为 ${displayedFont({ fontFamily: value }, alternatives)}；在您选择新字体之前，文件中将保留其原名称。`;
     render();
     // The list grew with the fonts found on this device: keep the popover inside the window.
     popup.reposition?.();

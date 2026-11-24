@@ -105,7 +105,7 @@ export function createReferences({ editor, pkg, error, base = {}, onChange = () 
     try {
       const engine = ready(); if (!engine) return;
       if (where !== 'current') await story(where === 'top' ? 'header' : 'footer');
-      else if (engine.session.path === null) throw new Error('Page numbers can be inserted in a header or footer. Double-click the top or bottom of a page, or use Top of Page or Bottom of Page.');
+      else if (engine.session.path === null) throw new Error('页码可插入在页眉或页脚中。请双击页面顶部或底部，或使用“页码”→“页面顶端”或“页面底端”。');
       const [page, total] = await Promise.all([pageField('PAGE'), pageField('NUMPAGES')]);
       engine.execute(() => {
         const model = engine.model;
@@ -114,7 +114,7 @@ export function createReferences({ editor, pkg, error, base = {}, onChange = () 
           else model.select(0, model.text.length);
           model.setParagraphFormat({ alignment });
         }
-        if (style === 'pageOf') { model.replace('Page '); model.insertFieldRun(page); model.replace(' of '); model.insertFieldRun(total); }
+        if (style === 'pageOf') { model.replace('第 '); model.insertFieldRun(page); model.replace(' 页，共 '); model.insertFieldRun(total); model.replace(' 页'); }
         else model.insertFieldRun(page);
         return true;
       });
@@ -124,12 +124,12 @@ export function createReferences({ editor, pkg, error, base = {}, onChange = () 
 
   function pageNumberItems() {
     const placements = where => ['left', 'center', 'right'].flatMap(alignment => [
-      { label: `Plain Number ${alignment === 'left' ? '1' : alignment === 'center' ? '2' : '3'} (${alignment[0].toUpperCase() + alignment.slice(1)})`, onSelect: () => insertPageNumber(where, alignment) },
-    ]).concat([{ separator: true }, { label: 'Page X of Y', onSelect: () => insertPageNumber(where, 'center', 'pageOf') }]);
+      { label: `普通数字 ${alignment === 'left' ? '1 (左对齐)' : alignment === 'center' ? '2 (居中)' : '3 (右对齐)'}`, onSelect: () => insertPageNumber(where, alignment) },
+    ]).concat([{ separator: true }, { label: '第 X 页 共 Y 页', onSelect: () => insertPageNumber(where, 'center', 'pageOf') }]);
     return [
-      { label: 'Top of Page', items: placements('top') },
-      { label: 'Bottom of Page', items: placements('bottom') },
-      { label: 'Current Position', disabled: editor()?.session.path === null, items: [{ label: 'Plain Number', onSelect: () => insertPageNumber('current') }, { label: 'Page X of Y', onSelect: () => insertPageNumber('current', null, 'pageOf') }] },
+      { label: '页面顶端', items: placements('top') },
+      { label: '页面底端', items: placements('bottom') },
+      { label: '当前位置', disabled: editor()?.session.path === null, items: [{ label: '普通数字', onSelect: () => insertPageNumber('current') }, { label: '第 X 页 共 Y 页', onSelect: () => insertPageNumber('current', null, 'pageOf') }] },
     ];
   }
 
@@ -259,11 +259,11 @@ export function createReferences({ editor, pkg, error, base = {}, onChange = () 
     const captions = await import('../engine/captions.js');
     const body = engine.session.body;
     const labels = () => captions.captionLabels(body, customLabels());
-    const label = select('Label', labels().map(l => [l, l]), engine.model.selectedImage ? 'Figure' : engine.model.tableContext ? 'Table' : 'Figure', () => sync());
-    const caption = text('Caption text', '', { placeholder: 'Optional description' });
-    const position = select('Position', [['below', 'Below selected item'], ['above', 'Above selected item']], engine.model.tableContext && !engine.model.selectedImage ? 'above' : 'below');
-    const format = select('Numbering', Object.entries(captions.CAPTION_FORMATS).map(([id, name]) => [id, name]), 'ARABIC', () => sync());
-    const exclude = check('Exclude label from caption', false, () => sync());
+    const label = select('标签', labels().map(l => [l, l]), engine.model.selectedImage ? '图表' : engine.model.tableContext ? '表格' : '图表', () => sync());
+    const caption = text('题注文字', '', { placeholder: '可选描述' });
+    const position = select('位置', [['below', '所选项目下方'], ['above', '所选项目上方']], engine.model.tableContext && !engine.model.selectedImage ? 'above' : 'below');
+    const format = select('编号格式', Object.entries(captions.CAPTION_FORMATS).map(([id, name]) => [id, name]), 'ARABIC', () => sync());
+    const exclude = check('从题注中排除标签', false, () => sync());
     const preview = el('p.ref-caption-preview', { 'aria-live': 'polite' });
     const sample = { ARABIC: '1', alphabetic: 'a', ALPHABETIC: 'A', roman: 'i', ROMAN: 'I' };
     function sync() {
@@ -273,24 +273,24 @@ export function createReferences({ editor, pkg, error, base = {}, onChange = () 
       preview.textContent = `${exclude.box.checked ? '' : `${label.value} `}${sample[format.value]}${t ? `${/^[\s:.\-–—]/.test(t) ? '' : ': '}${t}` : ''}`;
     }
     const newLabel = el('button.btn.btn-outline', { type: 'button', onclick: () => {
-      const input = text('New label', '', { required: true, maxLength: 40, pattern: '\\p{L}[\\p{L}\\p{M}\\p{N} _]{0,39}' });
-      openDialog({ title: 'New Label', body: [field('Label', input, 'Letters, numbers and spaces, such as Chart or Plate.')], onSubmit: () => {
+      const input = text('新标签', '', { required: true, maxLength: 40, pattern: '\\p{L}[\\p{L}\\p{M}\\p{N} _]{0,39}' });
+      openDialog({ title: '新建标签', body: [field('标签', input, '支持字母、汉字、数字和空格，如“图表”或“插图”。')], onSubmit: () => {
         const value = input.value.trim().replace(/\s+/g, ' ');
-        if (!/^\p{L}[\p{L}\p{M}\p{N} _]{0,39}$/u.test(value)) throw new Error('Start the label with a letter and use letters, numbers and spaces.');
+        if (!/^\p{L}[\p{L}\p{M}\p{N} _]{0,39}$/u.test(value)) throw new Error('标签必须以字母或汉字开头，并可包含数字和空格。');
         saveLabels([...customLabels(), value]);
         label.replaceChildren(...labels().map(l => el('option', { value: l }, l))); label.value = value; sync();
       } });
-    } }, 'New Label…');
+    } }, '新建标签…');
     const deleteLabel = el('button.btn.btn-outline', { type: 'button', onclick: () => {
       saveLabels(customLabels().filter(l => l !== label.value));
       label.replaceChildren(...labels().map(l => el('option', { value: l }, l))); sync();
-    } }, 'Delete Label');
+    } }, '删除标签');
     caption.addEventListener('input', sync);
     sync();
-    openDialog({ title: 'Caption', className: 'ref-caption-dialog', body: [
-      field('Caption', caption), preview,
-      el('div.ref-two-column.ref-tight', {}, field('Label', label), field('Position', position)),
-      exclude, field('Numbering', format),
+    openDialog({ title: '题注', className: 'ref-caption-dialog', body: [
+      field('题注', caption), preview,
+      el('div.ref-two-column.ref-tight', {}, field('标签', label), field('位置', position)),
+      exclude, field('编号格式', format),
       el('div.row', {}, newLabel, deleteLabel),
     ], onSubmit: () => runBody((doc, c) => c.insertCaption(doc, { label: label.value, text: caption.value.trim(), above: position.value === 'above', format: format.value, excludeLabel: exclude.box.checked }), { modules: ['captions'], track: true }) });
     caption.focus();
@@ -316,15 +316,15 @@ export function createReferences({ editor, pkg, error, base = {}, onChange = () 
     const captions = await import('../engine/captions.js');
     const targets = captions.referenceTargets(engine.session.body, { notes: await noteTargets() });
     const captionKinds = [...new Set([...captions.CAPTION_LABELS.map(captions.sequenceId), ...targets.captions.map(c => c.kind)])];
-    const kinds = [['heading', 'Heading', targets.headings], ['bookmark', 'Bookmark', targets.bookmarks], ['footnote', 'Footnote', targets.footnotes], ['endnote', 'Endnote', targets.endnotes],
+    const kinds = [['heading', '标题', targets.headings], ['bookmark', '书签', targets.bookmarks], ['footnote', '脚注', targets.footnotes], ['endnote', '尾注', targets.endnotes],
       ...captionKinds.map(k => [k, k.replace(/_/g, ' '), targets.captions.filter(c => c.kind === k)])];
-    const type = select('Reference type', kinds.map(([id, name]) => [id, name]), kinds.find(k => k[2].length)?.[0] || 'heading', () => fill());
-    const show = select('Insert reference to', []);
-    const list = el('select.input.ed-xref-list', { 'aria-label': 'For which item', size: 8 });
-    const hyperlink = check('Insert as hyperlink', true);
-    const aboveBelow = check('Include above/below', false);
-    const empty = el('p.field-hint', { hidden: true }, 'There are no items of this type yet.');
-    const insert = el('button.btn.btn-primary', { type: 'submit' }, 'Insert');
+    const type = select('引用类型', kinds.map(([id, name]) => [id, name]), kinds.find(k => k[2].length)?.[0] || 'heading', () => fill());
+    const show = select('引用内容', []);
+    const list = el('select.input.ed-xref-list', { 'aria-label': '引用哪一个', size: 8 });
+    const hyperlink = check('插入为超链接', true);
+    const aboveBelow = check('包含“见上方/下方”', false);
+    const empty = el('p.field-hint', { hidden: true }, '当前文档中暂无此类项目。');
+    const insert = el('button.btn.btn-primary', { type: 'submit' }, '插入');
     function fill() {
       const kind = kinds.find(k => k[0] === type.value);
       show.replaceChildren(...captions.referenceChoices(['heading', 'bookmark', 'footnote', 'endnote'].includes(type.value) ? type.value : 'caption').map(([v, l]) => el('option', { value: v }, l)));
@@ -335,13 +335,13 @@ export function createReferences({ editor, pkg, error, base = {}, onChange = () 
     }
     show.addEventListener('change', () => { aboveBelow.box.disabled = show.value === 'position'; });
     let insertButton;
-    const dialog = openDialog({ title: 'Cross-reference', className: 'ref-xref-dialog', submitLabel: 'Insert', body: [
-      el('div.ref-two-column.ref-tight', {}, field('Reference type', type), field('Insert reference to', show)),
+    const dialog = openDialog({ title: '交叉引用', className: 'ref-xref-dialog', submitLabel: '插入', body: [
+      el('div.ref-two-column.ref-tight', {}, field('引用类型', type), field('引用内容', show)),
       el('div.row', {}, hyperlink, aboveBelow),
-      field('For which item', list), empty,
+      field('引用哪一个', list), empty,
     ], onSubmit: async () => {
       const target = kinds.find(k => k[0] === type.value)[2][Number(list.value)];
-      if (!target) throw new Error('Choose an item to refer to.');
+      if (!target) throw new Error('请选择要引用的项目。');
       await runBody((body, c) => { c.insertCrossReference(body, target, { show: show.value, hyperlink: hyperlink.box.checked, aboveBelow: aboveBelow.box.checked }); return true; }, { track: true });
     } });
     insertButton = dialog.submit;
@@ -356,40 +356,40 @@ export function createReferences({ editor, pkg, error, base = {}, onChange = () 
     const { command, menuButton, rows, when, focusEditor } = kit;
     const bodyReady = () => !!ready() && editor()?.session.path === null;
     // Research
-    const smart = command('Smart Lookup', 'smartLookup', () => lookup.open(), { size: 'large', text: 'Smart Lookup' });
+    const smart = command('智能查找', 'smartLookup', () => lookup.open(), { size: 'large', text: '智能查找' });
     when(smart, () => { const group = smart.closest('.ribbon-group'); const available = lookup.available(); if (group) group.hidden = !available; return available && !!editor(); });
     // Citations & Bibliography
-    const citation = menuButton('Insert Citation', 'citation', () => citations.citationItems(), { text: 'Insert Citation' });
-    const manage = command('Manage Sources', 'manageSources', () => citations.manageSources(), { text: 'Manage Sources' });
+    const citation = menuButton('插入引文', 'citation', () => citations.citationItems(), { text: '插入引文' });
+    const manage = command('管理源', 'manageSources', () => citations.manageSources(), { text: '管理源' });
     const style = citations.styleControl();
-    const styleWrap = el('label.ribbon-spin.ref-style-wrap', { title: 'Citation style' }, el('span.ribbon-spin-label', {}, 'Style:'), style.control);
-    const bibliography = menuButton('Bibliography', 'bibliography', () => citations.bibliographyItems(focusEditor), { size: 'small', text: 'Bibliography' });
+    const styleWrap = el('label.ribbon-spin.ref-style-wrap', { title: '引文样式' }, el('span.ribbon-spin-label', {}, '样式:'), style.control);
+    const bibliography = menuButton('书目', 'bibliography', () => citations.bibliographyItems(focusEditor), { size: 'small', text: '书目' });
     // A citation or bibliography goes into the text: unavailable in a header, footer or note, as Cross-reference is.
     when(citation, bodyReady); when(manage, () => !!ready()); when(bibliography, bodyReady);
     when(style.control, () => { style.sync(); return !!ready(); });
     // Captions
-    const caption = command('Insert Caption', 'caption', () => captionDialog(), { size: 'large', text: 'Insert Caption' });
-    const figures = command('Insert Table of Figures', 'tableOfFigures', () => toc.figuresDialog(), { text: 'Insert Table of Figures' });
-    const updateFigures = command('Update Table of Figures', 'updateTable', () => toc.updateDialog(true), { text: 'Update Table' });
-    const xref = command('Cross-reference', 'crossReference', () => crossReferenceDialog(), { text: 'Cross-reference' });
+    const caption = command('插入题注', 'caption', () => captionDialog(), { size: 'large', text: '插入题注' });
+    const figures = command('插入图表目录', 'tableOfFigures', () => toc.figuresDialog(), { text: '插入图表目录' });
+    const updateFigures = command('更新图表目录', 'updateTable', () => toc.updateDialog(true), { text: '更新表格' });
+    const xref = command('交叉引用', 'crossReference', () => crossReferenceDialog(), { text: '交叉引用' });
     when(caption, bodyReady); when(figures, bodyReady); when(updateFigures, () => !!ready() && toc.hasFigures()); when(xref, bodyReady);
     // Index
-    const markEntry = command('Mark Entry', 'markEntry', () => indexes.markEntryPanel(), { size: 'large', text: 'Mark Entry', shortcut: MOD_KEY === 'Cmd' ? 'Cmd+Option+Shift+X' : 'Alt+Shift+X' });
-    const insertIndex = command('Insert Index', 'index', () => indexes.insertIndexDialog(), { text: 'Insert Index' });
-    const updateIndex = command('Update Index', 'updateIndex', () => indexes.updateIndex(), { text: 'Update Index' });
+    const markEntry = command('标记索引项', 'markEntry', () => indexes.markEntryPanel(), { size: 'large', text: '标记索引项', shortcut: MOD_KEY === 'Cmd' ? 'Cmd+Option+Shift+X' : 'Alt+Shift+X' });
+    const insertIndex = command('插入索引', 'index', () => indexes.insertIndexDialog(), { text: '插入索引' });
+    const updateIndex = command('更新索引', 'updateIndex', () => indexes.updateIndex(), { text: '更新索引' });
     when(markEntry, bodyReady); when(insertIndex, bodyReady); when(updateIndex, () => !!ready() && hasField('INDEX'));
     // Table of authorities
-    const markCitation = command('Mark Citation', 'markCitation', () => indexes.markCitationPanel(), { size: 'large', text: 'Mark Citation', shortcut: MOD_KEY === 'Cmd' ? 'Cmd+Option+Shift+I' : 'Alt+Shift+I' });
-    const insertToa = command('Insert Table of Authorities', 'tableOfAuthorities', () => indexes.insertAuthoritiesDialog(), { text: 'Insert Table' });
-    const updateToa = command('Update Table of Authorities', 'updateAuthorities', () => indexes.updateAuthorities(), { text: 'Update Table' });
+    const markCitation = command('标记引文', 'markCitation', () => indexes.markCitationPanel(), { size: 'large', text: '标记引文', shortcut: MOD_KEY === 'Cmd' ? 'Cmd+Option+Shift+I' : 'Alt+Shift+I' });
+    const insertToa = command('插入引文目录', 'tableOfAuthorities', () => indexes.insertAuthoritiesDialog(), { text: '插入引文目录' });
+    const updateToa = command('更新引文目录', 'updateAuthorities', () => indexes.updateAuthorities(), { text: '更新引文目录' });
     when(markCitation, bodyReady); when(insertToa, bodyReady); when(updateToa, () => !!ready() && hasField('TOA'));
     noSteal(smart, manage, caption, figures, updateFigures, xref, markEntry, insertIndex, updateIndex, markCitation, insertToa, updateToa);
     return [
-      { id: 'research', label: 'Research', icon: 'smartLookup', priority: 2, after: 'footnotes', items: [smart] },
-      { id: 'citations', label: 'Citations & Bibliography', icon: 'citation', priority: 4, after: 'research', items: [citation, rows([manage], [styleWrap], [bibliography])] },
-      { id: 'captions', label: 'Captions', icon: 'caption', priority: 4, after: 'citations', items: [caption, rows([figures], [updateFigures], [xref])] },
-      { id: 'index', label: 'Index', icon: 'index', priority: 3, after: 'captions', items: [markEntry, rows([insertIndex], [updateIndex])] },
-      { id: 'authorities', label: 'Table of Authorities', icon: 'tableOfAuthorities', priority: 1, after: 'index', items: [markCitation, rows([insertToa], [updateToa])] },
+      { id: 'research', label: '研究', icon: 'smartLookup', priority: 2, after: 'footnotes', items: [smart] },
+      { id: 'citations', label: '引文与书目', icon: 'citation', priority: 4, after: 'research', items: [citation, rows([manage], [styleWrap], [bibliography])] },
+      { id: 'captions', label: '题注', icon: 'caption', priority: 4, after: 'citations', items: [caption, rows([figures], [updateFigures], [xref])] },
+      { id: 'index', label: '索引', icon: 'index', priority: 3, after: 'captions', items: [markEntry, rows([insertIndex], [updateIndex])] },
+      { id: 'authorities', label: '引文目录', icon: 'tableOfAuthorities', priority: 1, after: 'index', items: [markCitation, rows([insertToa], [updateToa])] },
     ];
   }
   const hasField = type => (editor()?.session.body.paragraphs || []).some(p => p.fieldMarkers?.some(m => m.field.type === type));
@@ -399,20 +399,20 @@ export function createReferences({ editor, pkg, error, base = {}, onChange = () 
     const disabled = !ready(), body = editor()?.session.path === null;
     if (menuId === 'insert') return [
       { separator: true },
-      { label: 'Bookmark…', icon: 'bookmark', disabled: disabled || !body, onSelect: () => base.openBookmarks?.() },
-      { label: 'Cross-reference…', icon: 'crossReference', disabled: disabled || !body, onSelect: () => crossReferenceDialog() },
+      { label: '书签…', icon: 'bookmark', disabled: disabled || !body, onSelect: () => base.openBookmarks?.() },
+      { label: '交叉引用…', icon: 'crossReference', disabled: disabled || !body, onSelect: () => crossReferenceDialog() },
       { separator: true },
-      { label: 'Footnote…', icon: 'footnote', disabled, onSelect: () => notes.notesDialog() },
-      { label: 'Caption…', icon: 'caption', disabled: disabled || !body, onSelect: () => captionDialog() },
-      { label: 'Index and Tables', icon: 'toc', disabled: disabled || !body, items: [
-        { label: 'Index…', icon: 'index', onSelect: () => indexes.insertIndexDialog() },
-        { label: 'Table of Contents…', icon: 'toc', onSelect: () => toc.customDialog() },
-        { label: 'Table of Figures…', icon: 'tableOfFigures', onSelect: () => toc.figuresDialog() },
-        { label: 'Table of Authorities…', icon: 'tableOfAuthorities', onSelect: () => indexes.insertAuthoritiesDialog() },
+      { label: '脚注…', icon: 'footnote', disabled, onSelect: () => notes.notesDialog() },
+      { label: '题注…', icon: 'caption', disabled: disabled || !body, onSelect: () => captionDialog() },
+      { label: '索引和目录', icon: 'toc', disabled: disabled || !body, items: [
+        { label: '索引…', icon: 'index', onSelect: () => indexes.insertIndexDialog() },
+        { label: '目录…', icon: 'toc', onSelect: () => toc.customDialog() },
+        { label: '图表目录…', icon: 'tableOfFigures', onSelect: () => toc.figuresDialog() },
+        { label: '引文目录…', icon: 'tableOfAuthorities', onSelect: () => indexes.insertAuthoritiesDialog() },
       ] },
     ];
-    if (menuId === 'view') return [{ label: 'Footnotes', icon: 'showNotes', disabled: !editor(), onSelect: () => notes.showNotes() }];
-    if (menuId === 'tools' && lookup.available()) return [{ label: 'Smart Lookup…', icon: 'smartLookup', disabled: !editor(), onSelect: () => lookup.open() }];
+    if (menuId === 'view') return [{ label: '脚注', icon: 'showNotes', disabled: !editor(), onSelect: () => notes.showNotes() }];
+    if (menuId === 'tools' && lookup.available()) return [{ label: '智能查找…', icon: 'smartLookup', disabled: !editor(), onSelect: () => lookup.open() }];
     return [];
   }
   let fieldsModule = null;
@@ -426,10 +426,10 @@ export function createReferences({ editor, pkg, error, base = {}, onChange = () 
   }
   function contextMenuItems(context) {
     const items = [];
-    if (['text', 'field', 'link'].includes(context) && lookup.available() && editor()) items.push({ label: 'Smart Lookup', icon: 'smartLookup', onSelect: () => lookup.open() });
+    if (['text', 'field', 'link'].includes(context) && lookup.available() && editor()) items.push({ label: '智能查找', icon: 'smartLookup', onSelect: () => lookup.open() });
     if (context === 'field' || context === 'text') {
       items.push(...citations.contextItems());
-      if (context === 'field' && ready()) items.push({ label: 'Update Field', icon: 'updateFields', shortcut: 'F9', onSelect: () => updateAllFields() });
+      if (context === 'field' && ready()) items.push({ label: '更新域', icon: 'updateFields', shortcut: 'F9', onSelect: () => updateAllFields() });
     }
     return items;
   }
@@ -470,13 +470,13 @@ export function createReferences({ editor, pkg, error, base = {}, onChange = () 
   function contextTabs(kit) {
     const { command, rows, when, menuButton, commandIconEl } = kit;
     const IN = 1440;
-    const header = command('Header', 'header', () => editHeader('header'), { size: 'large' });
-    const footer = command('Footer', 'footer', () => editHeader('footer'), { size: 'large' });
-    const pageNumber = menuButton('Page Number', 'pageNumber', pageNumberItems);
-    const goHeader = command('Go to Header', 'goToHeader', () => editHeader('header'), { text: 'Go to Header' });
-    const goFooter = command('Go to Footer', 'goToFooter', () => editHeader('footer'), { text: 'Go to Footer' });
-    const close = command('Close Header and Footer', 'close', () => { const engine = editor(); if (engine) { engine.editStory(null); engine.focus(); onChange(); } }, { size: 'large', text: 'Close Header and Footer' });
-    close.classList.add('ribbon-wide'); // 'Close Header and Footer' in two lines
+    const header = command('页眉', 'header', () => editHeader('header'), { size: 'large' });
+    const footer = command('页脚', 'footer', () => editHeader('footer'), { size: 'large' });
+    const pageNumber = menuButton('页码', 'pageNumber', pageNumberItems);
+    const goHeader = command('转到页眉', 'goToHeader', () => editHeader('header'), { text: '转到页眉' });
+    const goFooter = command('转到页脚', 'goToFooter', () => editHeader('footer'), { text: '转到页脚' });
+    const close = command('关闭页眉和页脚', 'close', () => { const engine = editor(); if (engine) { engine.editStory(null); engine.focus(); onChange(); } }, { size: 'large', text: '关闭页眉和页脚' });
+    close.classList.add('ribbon-wide'); // '关闭页眉和页脚' in two lines
     for (const b of [header, footer, goHeader, goFooter, close]) b.addEventListener('mousedown', e => e.preventDefault());
     when(goHeader, () => activeStoryKind() !== 'header'); when(goFooter, () => activeStoryKind() !== 'footer');
     // Header and footer distances belong to the section whose header or footer is edited (the body's last
@@ -505,7 +505,7 @@ export function createReferences({ editor, pkg, error, base = {}, onChange = () 
     const distance = (key, label) => {
       const input = document.createElement('input');
       Object.assign(input, { type: 'number', step: 0.05, min: 0, max: 22, className: 'canvas-spacing ribbon-number' });
-      input.setAttribute('aria-label', `${label} (in)`);
+      input.setAttribute('aria-label', `${label} (英寸)`);
       input.addEventListener('change', () => {
         // The arrows step by 0.05, but any distance in range is accepted, as Page Setup accepts it.
         const v = input.validity;
@@ -516,24 +516,24 @@ export function createReferences({ editor, pkg, error, base = {}, onChange = () 
       when(input, () => !!ready());
       kit.states?.push?.({ control: input, enabled: () => !!ready(), value: () => Number(shown(key)) });
       const wrap = document.createElement('label'); wrap.className = 'ribbon-spin'; wrap.title = label;
-      wrap.append(commandIconEl(key === 'header' ? 'spaceBefore' : 'spaceAfter', 16), Object.assign(document.createElement('span'), { className: 'ribbon-spin-label', textContent: label }), input, Object.assign(document.createElement('span'), { className: 'ribbon-spin-unit', textContent: 'in' }));
+      wrap.append(commandIconEl(key === 'header' ? 'spaceBefore' : 'spaceAfter', 16), Object.assign(document.createElement('span'), { className: 'ribbon-spin-label', textContent: label }), input, Object.assign(document.createElement('span'), { className: 'ribbon-spin-unit', textContent: '英寸' }));
       input.value = shown(key);
       return { wrap, input };
     };
-    const top = distance('header', 'Header from Top'), bottom = distance('footer', 'Footer from Bottom');
+    const top = distance('header', '页眉顶端距离'), bottom = distance('footer', '页脚底端距离');
     const spinGroup = Object.assign(document.createElement('div'), { className: 'ribbon-spin-group' });
     spinGroup.append(top.wrap, bottom.wrap);
     const definition = () => editor()?.pageStories;
-    const firstPage = kit.check('Different First Page', () => !!definition()?.sections[editor()?.sectionOfPage(currentPage(editor())) ?? 0]?.firstPageDifferent, on => setStoryOption('first', on));
-    const oddEven = kit.check('Different Odd & Even Pages', () => !!definition()?.evenAndOdd, on => setStoryOption('evenOdd', on));
+    const firstPage = kit.check('首页不同', () => !!definition()?.sections[editor()?.sectionOfPage(currentPage(editor())) ?? 0]?.firstPageDifferent, on => setStoryOption('first', on));
+    const oddEven = kit.check('奇偶页不同', () => !!definition()?.evenAndOdd, on => setStoryOption('evenOdd', on));
     const sync = () => { if (!editor()) return; for (const [d, key] of [[top, 'header'], [bottom, 'footer']]) if (document.activeElement !== d.input) d.input.value = shown(key); };
     when(close, () => { sync(); return true; });
-    return [{ id: 'headerFooter', label: 'Header & Footer', contextual: 'headerFooter', selectOnAppear: true, groups: [
-      { id: 'hfHeaderFooter', label: 'Header & Footer', icon: 'header', priority: 6, items: [header, footer, pageNumber] },
-      { id: 'hfNavigation', label: 'Navigation', icon: 'next', priority: 4, items: [rows([goHeader], [goFooter])] },
-      { id: 'hfOptions', label: 'Options', icon: 'header', priority: 7, items: [rows([firstPage], [oddEven])] },
-      { id: 'hfPosition', label: 'Position', icon: 'margins', priority: 5, items: [spinGroup] },
-      { id: 'hfClose', label: 'Close', icon: 'close', priority: 9, items: [close] },
+    return [{ id: 'headerFooter', label: '页眉和页脚', contextual: 'headerFooter', selectOnAppear: true, groups: [
+      { id: 'hfHeaderFooter', label: '页眉和页脚', icon: 'header', priority: 6, items: [header, footer, pageNumber] },
+      { id: 'hfNavigation', label: '导航', icon: 'next', priority: 4, items: [rows([goHeader], [goFooter])] },
+      { id: 'hfOptions', label: '选项', icon: 'header', priority: 7, items: [rows([firstPage], [oddEven])] },
+      { id: 'hfPosition', label: '位置', icon: 'margins', priority: 5, items: [spinGroup] },
+      { id: 'hfClose', label: '关闭', icon: 'close', priority: 9, items: [close] },
     ] }];
   }
 

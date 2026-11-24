@@ -27,7 +27,7 @@ afterEach(() => {
 });
 
 const names = () => [...view.el.querySelectorAll('.file-name')].map((n) => n.textContent);
-const templates = () => [...view.el.querySelectorAll('button')].find((b) => b.textContent === 'Templates');
+const templates = () => [...view.el.querySelectorAll('button')].find((b) => b.textContent === '模板');
 
 it('searches the names as shown, not the file extension', () => {
   const search = view.el.querySelector('.home-search');
@@ -71,7 +71,7 @@ it('leaves the ? shortcut to an open dialog or menu', async () => {
   expect(document.querySelector('.modal-root')).toBeNull();
   closeMenu();
   [...view.el.querySelectorAll('.file-menu-btn')][0].click();
-  [...document.querySelectorAll('[role="menuitem"]')].find((item) => item.textContent.includes('Delete')).click();
+  [...document.querySelectorAll('[role="menuitem"]')].find((item) => item.textContent.includes('删除')).click();
   await vi.advanceTimersByTimeAsync(0);
   expect(document.querySelectorAll('.modal-root')).toHaveLength(1);
   press(document.querySelector('.modal-panel button'));
@@ -80,7 +80,7 @@ it('leaves the ? shortcut to an open dialog or menu', async () => {
   await vi.advanceTimersByTimeAsync(300);
   // With nothing on top, the shortcut list opens.
   press(view.el.querySelector('.home-search').parentElement);
-  expect(document.querySelector('.modal-panel')?.getAttribute('aria-label')).toBe('Keyboard shortcuts');
+  expect(document.querySelector('.modal-panel')?.getAttribute('aria-label')).toBe('键盘快捷键');
 });
 
 it('does not open the Templates menu over a menu the user opened while the templates were being listed', async () => {
@@ -89,16 +89,16 @@ it('does not open the Templates menu over a menu the user opened while the templ
   templates().click();
   await vi.advanceTimersByTimeAsync(0);
   // The menu opens at once with the built-in templates while the user's own are listed.
-  expect(document.querySelector('.menu[aria-label="Templates"]')).not.toBeNull();
+  expect(document.querySelector('.menu[aria-label="模板"]')).not.toBeNull();
   // Meanwhile the user opens a document's options.
   view.el.querySelector('.file-menu-btn').click();
-  expect(document.querySelector('.menu[aria-label="Report.docx options"]')).not.toBeNull();
+  expect(document.querySelector('.menu[aria-label="Report.docx 选项"]')).not.toBeNull();
   resolveTemplates([]);
   await vi.advanceTimersByTimeAsync(0);
-  expect(document.querySelector('.menu[aria-label="Report.docx options"]')).not.toBeNull();
-  expect(document.querySelector('.menu[aria-label="Templates"]')).toBeNull();
+  expect(document.querySelector('.menu[aria-label="Report.docx 选项"]')).not.toBeNull();
+  expect(document.querySelector('.menu[aria-label="模板"]')).toBeNull();
 });
 
 it('names the page with a heading', () => {
-  expect(view.el.querySelector('h1.brand')?.textContent).toBe('Documents');
+  expect(view.el.querySelector('h1.brand')?.textContent).toBe('文档');
 });

@@ -15,11 +15,11 @@ import { defaultPageSettings, saveDefaultPageSettings, lastCustomMargins, saveCu
 const IN = 1440;
 /** Margin presets in inches: [id, label, top, bottom, left (inside), right (outside), mirrored]. */
 export const MARGIN_PRESETS = [
-  ['normal', 'Normal', 1, 1, 1, 1, false],
-  ['narrow', 'Narrow', 0.5, 0.5, 0.5, 0.5, false],
-  ['moderate', 'Moderate', 1, 1, 0.75, 0.75, false],
-  ['wide', 'Wide', 1, 1, 2, 2, false],
-  ['mirrored', 'Mirrored', 1, 1, 1.25, 1, true],
+  ['normal', '常规', 1, 1, 1, 1, false],
+  ['narrow', '窄', 0.5, 0.5, 0.5, 0.5, false],
+  ['moderate', '适中', 1, 1, 0.75, 0.75, false],
+  ['wide', '宽', 1, 1, 2, 2, false],
+  ['mirrored', '对称', 1, 1, 1.25, 1, true],
 ];
 /** Paper sizes in twips, portrait: [label, description, width, height]. */
 export const PAPER_PRESETS = [
@@ -37,12 +37,12 @@ export const PAPER_PRESETS = [
   ['Envelope DL', '11 cm × 22 cm', 6237, 12474],
 ];
 export const SECTION_BREAKS = [
-  ['nextPage', 'Next Page', 'breakNextPage', 'Start a new section on the next page.'],
-  ['continuous', 'Continuous', 'breakContinuous', 'Start a new section on the same page.'],
-  ['evenPage', 'Even Page', 'breakEvenPage', 'Start a new section on the next even-numbered page.'],
-  ['oddPage', 'Odd Page', 'breakOddPage', 'Start a new section on the next odd-numbered page.'],
+  ['nextPage', '下一页', 'breakNextPage', '在下一页开始新节。'],
+  ['continuous', '连续', 'breakContinuous', '在同一页开始新节。'],
+  ['evenPage', '偶数页', 'breakEvenPage', '在下一个偶数页开始新节。'],
+  ['oddPage', '奇数页', 'breakOddPage', '在下一个奇数页开始新节。'],
 ];
-const BREAK_NAMES = { nextPage: 'Section Break (Next Page)', continuous: 'Section Break (Continuous)', evenPage: 'Section Break (Even Page)', oddPage: 'Section Break (Odd Page)' };
+const BREAK_NAMES = { nextPage: '分节符 (下一页)', continuous: '分节符 (连续)', evenPage: '分节符 (偶数页)', oddPage: '分节符 (奇数页)' };
 
 const near = (a, b) => Math.abs(a - b) < 15;
 const describe = twips => {
@@ -74,11 +74,11 @@ export function createLayoutTab({ editor, pkg, error, onChange = () => {}, comma
   }
   /** Where a dialog's settings can apply, given the sections and the selection. */
   function scopes() {
-    const doc = model(); if (!doc) return [['document', 'Whole document']];
-    const [start, end] = doc.range, list = [['document', 'Whole document']];
-    if (doc.sectionCount > 1) list.push(['section', 'This section']);
-    if (start !== end && !doc.selectedParagraphs.some(p => p.cellId)) list.push(['selection', 'Selected text']);
-    else list.push(['forward', 'This point forward']);
+    const doc = model(); if (!doc) return [['document', '整篇文档']];
+    const [start, end] = doc.range, list = [['document', '整篇文档']];
+    if (doc.sectionCount > 1) list.push(['section', '本节']);
+    if (start !== end && !doc.selectedParagraphs.some(p => p.cellId)) list.push(['selection', '所选文字']);
+    else list.push(['forward', '插入点之后']);
     return list;
   }
   const defaultScope = () => (model()?.sectionCount > 1 ? 'section' : 'document');
@@ -112,7 +112,7 @@ export function createLayoutTab({ editor, pkg, error, onChange = () => {}, comma
       }), { tab, scopes: scopes(), scope: defaultScope(), firstSection: section === 0, stories,
         lineNumbers: base.lineNumberOptions || commands.lineNumberOptions ? () => (commands.lineNumberOptions || base.lineNumberOptions)() : null,
         borders: base.bordersAndShading || commands.bordersAndShading ? () => (commands.bordersAndShading || base.bordersAndShading)('page') : null,
-        setDefault: value => { if (saveDefaultPageSettings(value)) toast('New documents will use these page settings', { icon: 'check' }); else error(new Error('Page defaults could not be saved in this browser.')); } });
+        setDefault: value => { if (saveDefaultPageSettings(value)) toast('新文档将使用此页面设置', { icon: 'check' }); else error(new Error('无法在此浏览器中保存页面默认设置。')); } });
     },
     /** The Columns dialog. */
     columnsDialog() {
@@ -130,29 +130,29 @@ export function createLayoutTab({ editor, pkg, error, onChange = () => {}, comma
     },
     insertSectionBreak(type) {
       const engine = body(); if (!engine) return;
-      if (inTable()) { error(new Error('Section breaks cannot be inserted in a table.')); return; }
+      if (inTable()) { error(new Error('表格中无法插入分节符。')); return; }
       engine.insertSectionBreak(type);
     },
     sectionBreakItems() {
       const disabled = !ready() || inTable() || inStory();
-      return [{ header: 'Section Breaks' }, ...SECTION_BREAKS.map(([type, label, icon, hint]) => ({ label, picture: icon, hint, disabled, onSelect: () => commands.insertSectionBreak(type) }))];
+      return [{ header: '分节符' }, ...SECTION_BREAKS.map(([type, label, icon, hint]) => ({ label, picture: icon, hint, disabled, onSelect: () => commands.insertSectionBreak(type) }))];
     },
     marginItems() {
       const s = settings(), custom = lastCustomMargins();
       const customItem = custom && !MARGIN_PRESETS.some(preset => marginMatch(custom, preset)) ? [{
-        label: 'Last Custom Setting', picture: 'marginsCustom', radio: true, checked: !!s && MARGIN_KEYS.every(key => key === 'gutter' ? true : near(Number(s[key]), Number(custom[key])) || s[key] === custom[key]),
-        hint: `Top ${describe(custom.top)} · Bottom ${describe(custom.bottom)} · ${custom.mirrorMargins ? 'Inside' : 'Left'} ${describe(custom.left)} · ${custom.mirrorMargins ? 'Outside' : 'Right'} ${describe(custom.right)}`,
+        label: '上次自定义设置', picture: 'marginsCustom', radio: true, checked: !!s && MARGIN_KEYS.every(key => key === 'gutter' ? true : near(Number(s[key]), Number(custom[key])) || s[key] === custom[key]),
+        hint: `上 ${describe(custom.top)} · 下 ${describe(custom.bottom)} · ${custom.mirrorMargins ? '内侧' : '左侧'} ${describe(custom.left)} · ${custom.mirrorMargins ? '外侧' : '右侧'} ${describe(custom.right)}`,
         onSelect: () => setPage({ ...custom, mirrorMargins: !!custom.mirrorMargins }) }] : [];
       return [...customItem, ...MARGIN_PRESETS.map(preset => {
         const [id, label, top, bottom, left, right, mirrored] = preset;
         return { label, picture: `margins${id[0].toUpperCase()}${id.slice(1)}`, radio: true, checked: !!s && marginMatch(s, preset),
-          hint: `Top ${describe(top * IN)} · Bottom ${describe(bottom * IN)} · ${mirrored ? 'Inside' : 'Left'} ${describe(left * IN)} · ${mirrored ? 'Outside' : 'Right'} ${describe(right * IN)}`,
+          hint: `上 ${describe(top * IN)} · 下 ${describe(bottom * IN)} · ${mirrored ? '内侧' : '左侧'} ${describe(left * IN)} · ${mirrored ? '外侧' : '右侧'} ${describe(right * IN)}`,
           onSelect: () => setPage({ top: top * IN, bottom: bottom * IN, left: Math.round(left * IN), right: Math.round(right * IN), mirrorMargins: mirrored }) };
-      }), { separator: true }, { label: 'Custom Margins…', icon: 'pageSetup', disabled: !ready(), onSelect: () => commands.openPageSetup('page') }];
+      }), { separator: true }, { label: '自定义页边距…', icon: 'pageSetup', disabled: !ready(), onSelect: () => commands.openPageSetup('page') }];
     },
     orientationItems() {
       const s = settings();
-      return [['Portrait', 'portrait'], ['Landscape', 'landscape']].map(([label, value]) => ({
+      return [['纵向', 'portrait'], ['横向', 'landscape']].map(([label, value]) => ({
         label, picture: value, radio: true, checked: s?.orientation === value,
         onSelect: () => {
           const current = settings(); if (!current || current.orientation === value) return;
@@ -168,7 +168,7 @@ export function createLayoutTab({ editor, pkg, error, onChange = () => {}, comma
       return [...PAPER_PRESETS.map(([label, hint, width, height]) => {
         const [w, h] = s?.orientation === 'landscape' ? [height, width] : [width, height];
         return { label, hint, radio: true, checked: !!s && near(s.width, w) && near(s.height, h), onSelect: () => setPage({ width: w, height: h }) };
-      }), { separator: true }, { label: 'More Paper Sizes…', icon: 'pageSetup', disabled: !ready(), onSelect: () => commands.openPageSetup('page') }];
+      }), { separator: true }, { label: '其他纸张大小…', icon: 'pageSetup', disabled: !ready(), onSelect: () => commands.openPageSetup('page') }];
     },
     columnItems() {
       const s = settings(), doc = model();
@@ -179,15 +179,15 @@ export function createLayoutTab({ editor, pkg, error, onChange = () => {}, comma
         // With text selected, the columns go to that text alone, between two continuous section breaks.
         onSelect: () => { const current = settings(); setPage({ columns: presetColumns(id, writingWidth(current), current.columns?.space || 720) }, selected ? { scope: 'selection', breakType: 'continuous' } : undefined); },
       })), { separator: true },
-      { label: 'Line Between', checked: !!s?.columns?.separator, disabled: !ready() || (s?.columns?.count || 1) < 2, onSelect: () => setPage({ columns: { ...settings().columns, separator: !settings().columns.separator } }) },
-      { label: 'More Columns…', icon: 'columnsDialog', disabled: !ready(), onSelect: () => commands.columnsDialog() }];
+      { label: '偏栏分界线', checked: !!s?.columns?.separator, disabled: !ready() || (s?.columns?.count || 1) < 2, onSelect: () => setPage({ columns: { ...settings().columns, separator: !settings().columns.separator } }) },
+      { label: '更多分栏…', icon: 'columnsDialog', disabled: !ready(), onSelect: () => commands.columnsDialog() }];
     },
     breakItems() {
       const engine = ready(), disabled = !engine;
-      return [{ header: 'Page Breaks' },
-        { label: 'Page', picture: 'breakPage', shortcut: `${MOD_KEY}+Enter`, hint: 'Continue on the next page.', disabled: disabled || inTable(), onSelect: () => { const e = ready(); if (e) { e.finishComposition(); e.insertPageBreak(); } } },
-        { label: 'Column', picture: 'breakColumn', shortcut: `${MOD_KEY}+Shift+Enter`, hint: 'Continue in the next column.', disabled: disabled || !base.insertColumnBreak, onSelect: () => base.insertColumnBreak?.() },
-        { label: 'Text Wrapping', picture: 'breakTextWrapping', hint: 'Start a new line in the same paragraph, below any pictures beside it.', disabled, onSelect: () => commands.insertTextWrappingBreak() },
+      return [{ header: '分页符' },
+        { label: '分页符', picture: 'breakPage', shortcut: `${MOD_KEY}+Enter`, hint: '在下一页继续。', disabled: disabled || inTable(), onSelect: () => { const e = ready(); if (e) { e.finishComposition(); e.insertPageBreak(); } } },
+        { label: '分栏符', picture: 'breakColumn', shortcut: `${MOD_KEY}+Shift+Enter`, hint: '在下一栏继续。', disabled: disabled || !base.insertColumnBreak, onSelect: () => base.insertColumnBreak?.() },
+        { label: '文字环绕符', picture: 'breakTextWrapping', hint: '在同一段落内换行，并排在旁边的图片下方。', disabled, onSelect: () => commands.insertTextWrappingBreak() },
         ...commands.sectionBreakItems()];
     },
     /** Indents in the measurement unit the View tab chooses. */
@@ -195,7 +195,7 @@ export function createLayoutTab({ editor, pkg, error, onChange = () => {}, comma
       const engine = ready(); if (!engine) return;
       engine.finishComposition();
       const twips = Math.round(value * (unit === 'cm' ? IN / 2.54 : IN));
-      if (engine.setParagraphGeometry({ [key]: twips }) === false) error(new Error('That indent does not fit the page.'));
+      if (engine.setParagraphGeometry({ [key]: twips }) === false) error(new Error('该缩进超出页面范围。'));
       engine.focus();
     },
     indentValue(key, unit = 'in') {
@@ -222,33 +222,33 @@ export function createLayoutTab({ editor, pkg, error, onChange = () => {}, comma
     if (tabId !== 'layout') return [];
     const { command, menuButton, rows, when } = kit;
     const enabled = () => !!ready();
-    const margins = menuButton('Margins', 'margins', () => commands.marginItems());
-    const orientation = menuButton('Orientation', 'orientation', () => commands.orientationItems());
-    const size = menuButton('Size', 'size', () => commands.sizeItems());
-    const columns = menuButton('Columns', 'columns', () => commands.columnItems());
-    const breaks = menuButton('Breaks', 'breaks', () => commands.breakItems(), { size: 'small', text: 'Breaks' });
+    const margins = menuButton('页边距', 'margins', () => commands.marginItems());
+    const orientation = menuButton('纸张方向', 'orientation', () => commands.orientationItems());
+    const size = menuButton('纸张大小', 'size', () => commands.sizeItems());
+    const columns = menuButton('分栏', 'columns', () => commands.columnItems());
+    const breaks = menuButton('分隔符', 'breaks', () => commands.breakItems(), { size: 'small', text: '分隔符' });
     const unavailable = label => [{ label, disabled: true }];
-    const lineNumbers = menuButton('Line Numbers', 'lineNumbers', () => base.lineNumberItems?.() || unavailable('Line numbers are not available'), { size: 'small', text: 'Line Numbers' });
-    const hyphenation = menuButton('Hyphenation', 'hyphenation', () => base.hyphenationItems?.() || unavailable('Hyphenation is not available'), { size: 'small', text: 'Hyphenation' });
-    const launcher = command('Page setup', 'pageSetup', () => commands.openPageSetup());
+    const lineNumbers = menuButton('行号', 'lineNumbers', () => base.lineNumberItems?.() || unavailable('行号不可用'), { size: 'small', text: '行号' });
+    const hyphenation = menuButton('连字符', 'hyphenation', () => base.hyphenationItems?.() || unavailable('连字符不可用'), { size: 'small', text: '连字符' });
+    const launcher = command('页面设置', 'pageSetup', () => commands.openPageSetup());
     launcher.addEventListener('mousedown', e => e.preventDefault());
     for (const control of [margins, orientation, size, columns, breaks, launcher]) when(control, enabled);
     when(lineNumbers, () => enabled() && !!base.lineNumberItems);
     when(hyphenation, () => enabled() && !!base.hyphenationItems);
-    return [{ id: 'pageSetup', replaces: 'pageSetup', label: 'Page Setup', icon: 'margins', priority: 9,
+    return [{ id: 'pageSetup', replaces: 'pageSetup', label: '页面设置', icon: 'margins', priority: 9,
       items: [margins, orientation, size, columns, rows([breaks], [lineNumbers], [hyphenation]), el('div.ribbon-launcher', {}, launcher)] }];
   }
 
   function extendMenu(menuId) {
-    if (menuId === 'insert') return [{ label: 'Break', icon: 'breaks', items: [
-      { label: 'Page Break', icon: 'breakPage', shortcut: `${MOD_KEY}+Enter`, disabled: !ready() || inTable(), onSelect: () => { const e = ready(); if (e) { e.finishComposition(); e.insertPageBreak(); } } },
-      { label: 'Column Break', icon: 'breakColumn', shortcut: `${MOD_KEY}+Shift+Enter`, disabled: !ready() || !base.insertColumnBreak, onSelect: () => base.insertColumnBreak?.() },
+    if (menuId === 'insert') return [{ label: '分隔符', icon: 'breaks', items: [
+      { label: '分页符', icon: 'breakPage', shortcut: `${MOD_KEY}+Enter`, disabled: !ready() || inTable(), onSelect: () => { const e = ready(); if (e) { e.finishComposition(); e.insertPageBreak(); } } },
+      { label: '分栏符', icon: 'breakColumn', shortcut: `${MOD_KEY}+Shift+Enter`, disabled: !ready() || !base.insertColumnBreak, onSelect: () => base.insertColumnBreak?.() },
       { separator: true },
       ...SECTION_BREAKS.map(([type, , icon]) => ({ label: BREAK_NAMES[type], icon, disabled: !ready() || inTable() || inStory(), onSelect: () => commands.insertSectionBreak(type) }))] }];
     if (menuId === 'format') return [
-      { label: 'Document…', icon: 'pageSetup', disabled: !ready(), onSelect: () => commands.openPageSetup('page') },
-      { label: 'Columns…', icon: 'columnsDialog', disabled: !ready(), onSelect: () => commands.columnsDialog() }];
-    if (menuId === 'file') return [{ label: 'Page Setup…', icon: 'pageSetup', disabled: !ready(), onSelect: () => commands.openPageSetup('page') }];
+      { label: '文档…', icon: 'pageSetup', disabled: !ready(), onSelect: () => commands.openPageSetup('page') },
+      { label: '分栏…', icon: 'columnsDialog', disabled: !ready(), onSelect: () => commands.columnsDialog() }];
+    if (menuId === 'file') return [{ label: '页面设置…', icon: 'pageSetup', disabled: !ready(), onSelect: () => commands.openPageSetup('page') }];
     return [];
   }
   function contextMenuItems() { return []; }

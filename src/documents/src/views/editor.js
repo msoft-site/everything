@@ -171,10 +171,10 @@ export function editorView({ doc, goHome, newDoc, importFile, openPath, newFromT
         const state = () => [editor.model, editor.model?.revision, editor.session?.revision];
         const kept = new Map();
         let painted = null, layout = null;
-        const preparing = () => `Preparing pages for printing… ${kept.size} of ${wanted.length}`;
+        const preparing = () => `正在准备打印页面… ${kept.size} / ${wanted.length}`;
         notice = setTimeout(() => {
           notice = null;
-          if (!cancel.signal.aborted) progress = toast(preparing(), { icon: 'info', duration: Infinity, action: { label: 'Cancel', onClick: () => { cancel.abort(); announce('Printing canceled'); } } });
+          if (!cancel.signal.aborted) progress = toast(preparing(), { icon: 'info', duration: Infinity, action: { label: '取消', onClick: () => { cancel.abort(); announce('已取消打印'); } } });
         }, PRINT_NOTICE_MS);
         for (let start = 0; start < wanted.length; start += PRINT_BATCH_PAGES) {
           if (cancel.signal.aborted) return [];
@@ -195,13 +195,13 @@ export function editorView({ doc, goHome, newDoc, importFile, openPath, newFromT
       try {
         // The notice goes as the print dialog opens.
         const printed = await printPages({ host, signal: cancel.signal, capture, onReady: hideProgress });
-        if (!printed && !destroyed && !cancel.signal.aborted) error(new Error('The document could not be prepared for printing. Please try again.'));
+        if (!printed && !destroyed && !cancel.signal.aborted) error(new Error('无法准备打印文档，请重试。'));
       } finally { for (const url of pictureUrls) URL.revokeObjectURL(url); }
     } catch (e) { if (!destroyed) error(e); }
     finally { hideProgress(); printAbort.signal.removeEventListener('abort', stopWithEditor); printing = false; if (!destroyed) printButton.disabled = !engine; }
   }
   // A printed page as a picture its copies share (lossless, at the canvas's own resolution).
-  const sheetPicture = sheet => new Promise((resolve, reject) => sheet.toBlob(blob => blob ? resolve(URL.createObjectURL(blob)) : reject(new Error('The document could not be prepared for printing. Please try again.')), 'image/png'));
+  const sheetPicture = sheet => new Promise((resolve, reject) => sheet.toBlob(blob => blob ? resolve(URL.createObjectURL(blob)) : reject(new Error('无法准备打印文档，请重试。')), 'image/png'));
   function sheetImage(sheet, url) {
     const image = document.createElement('img');
     image.className = sheet.className; image.style.cssText = sheet.style.cssText; image.alt = '';
@@ -220,7 +220,7 @@ export function editorView({ doc, goHome, newDoc, importFile, openPath, newFromT
   // A browser that does not let the page use the clipboard (permission refused, or a frame without it) refuses
   // with its own technical message; the keyboard's Cut, Copy and Paste need no permission.
   const clipboardError = (e, reading) => error(e?.name === 'NotAllowedError' || e?.name === 'SecurityError'
-    ? new Error(reading ? `The browser didn’t allow reading the clipboard. Paste with ${MOD_KEY}+V, or ${MOD_KEY}+Shift+V for the text alone.` : `The browser didn’t allow using the clipboard. Use ${MOD_KEY}+C to copy or ${MOD_KEY}+X to cut.`)
+    ? new Error(reading ? `浏览器不允许读取剪贴板。请使用 ${MOD_KEY}+V 粘贴，或使用 ${MOD_KEY}+Shift+V 仅粘贴文本。` : `浏览器不允许访问剪贴板。请使用 ${MOD_KEY}+C 复制或 ${MOD_KEY}+X 剪切。`)
     : e);
   const copyText = async cut => {
     const editor = engine; if (!editor) return;
@@ -275,16 +275,16 @@ export function editorView({ doc, goHome, newDoc, importFile, openPath, newFromT
     const arrange=direction=>{engine.execute(()=>engine.model.arrangeImage(direction));engine.focus();};
     const imageItems=()=>{
       if(!image) return [];
-      const items=[{label:'Image properties…',icon:'pictures',disabled:!editable,onSelect:()=>imageProperties.click()},
-        {label:'Arrange',icon:'wrapText',disabled:!editable || !image.anchor,items:[
-          {label:'Bring forward',onSelect:()=>arrange('forward')},{label:'Send backward',onSelect:()=>arrange('backward')},
-          {label:'Bring to front',onSelect:()=>arrange('front')},{label:'Send to back',onSelect:()=>arrange('back')},
-          {separator:true},{label:'In front of text',checked:!image.anchor?.behind,onSelect:()=>arrange('inFront')},
-          {label:'Behind text',checked:!!image.anchor?.behind,onSelect:()=>arrange('behind')} ]},
-        {label:'Delete image',icon:'deletePicture',disabled:!editable,onSelect:()=>{engine.execute(()=>engine.model.replace(''));engine.focus();}}];
+      const items=[{label:'图片属性…',icon:'pictures',disabled:!editable,onSelect:()=>imageProperties.click()},
+        {label:'排列',icon:'wrapText',disabled:!editable || !image.anchor,items:[
+          {label:'上移一层',onSelect:()=>arrange('forward')},{label:'下移一层',onSelect:()=>arrange('backward')},
+          {label:'置于顶层',onSelect:()=>arrange('front')},{label:'置于底层',onSelect:()=>arrange('back')},
+          {separator:true},{label:'浮于文字上方',checked:!image.anchor?.behind,onSelect:()=>arrange('inFront')},
+          {label:'衬于文字下方',checked:!!image.anchor?.behind,onSelect:()=>arrange('behind')} ]},
+        {label:'删除图片',icon:'deletePicture',disabled:!editable,onSelect:()=>{engine.execute(()=>engine.model.replace(''));engine.focus();}}];
       const frames=pkg.drawingTextFrames(image,engine.model.assets);
-      if(frames.length) items.push({label:'Edit drawing text',disabled:!editable,items:frames.map(frame=>({
-        label:`Text frame ${frame.index + 1}`,disabled:!!frame.reason,hint:frame.reason,
+      if(frames.length) items.push({label:'编辑绘图文字',disabled:!editable,items:frames.map(frame=>({
+        label:`文本框 ${frame.index + 1}`,disabled:!!frame.reason,hint:frame.reason,
         onSelect:async()=>{
           const editor=engine;
           try {
@@ -307,25 +307,25 @@ export function editorView({ doc, goHome, newDoc, importFile, openPath, newFromT
   let drawingTextModal = null;
   let engine = null, pkg = null, decodedPictures = null, destroyed = false, failed = false, pageSetupModal = null, paragraphModal = null, styleModal = null, tableModal = null, imageModal = null, fontPopover = null, colorPalette = null, highlightPalette = null, baselineModal = null, characterSpacingModal = null, textWidthModal = null, kerningModal = null, underlineModal = null;
   const releasePictures = () => { for (const image of decodedPictures?.values() || []) image.close(); decodedPictures?.clear(); decodedPictures = null; };
-  const title = el('input.canvas-title', { value: doc.name, 'aria-label': 'Document name', title: `${doc.name} — Rename`, dir: 'auto', maxLength: 120 });
+  const title = el('input.canvas-title', { value: doc.name, 'aria-label': '文档名称', title: `${doc.name} — 重命名`, dir: 'auto', maxLength: 120 });
   const status = el('button.canvas-save-status.save-status', { type: 'button', 'aria-live': 'polite', onclick: () => {
     if (pkg?.readOnly) return;
     if (!failed && session.signedOut) session.signIn();
     else if (doc.exporter) save();
-  } }, 'Opening…');
+  } }, '正在打开…');
   // The Apps button and the account button, or Settings and puter.js's <puter-user-menu>. A local file's window has neither.
-  const account = local ? null : accountControls({ label: 'Account', buttonClass: 'user-btn' });
+  const account = local ? null : accountControls({ label: '账户', buttonClass: 'user-btn' });
   const stats = el('span.ed-status-item.ed-page-count', {}, '');
   const words = el('span', {}, '');
-  const message = el('div.canvas-message', { role: 'status' }, 'Opening document…');
+  const message = el('div.canvas-message', { role: 'status' }, '正在打开文档…');
   // Notices about the open document form a message bar the user can put away; new notices bring it back.
-  const dismissNotices = el('button.icon-btn.canvas-message-close', { type: 'button', 'aria-label': 'Dismiss', title: 'Dismiss', onclick: () => { message.hidden = true; engine?.focus(); } }, iconEl('x', 16));
+  const dismissNotices = el('button.icon-btn.canvas-message-close', { type: 'button', 'aria-label': '关闭', title: '关闭', onclick: () => { message.hidden = true; engine?.focus(); } }, iconEl('x', 16));
   const showNotices = () => {
     dismissNotices.remove();
     message.hidden = !message.childElementCount;
     if (!message.hidden && !failed) message.prepend(dismissNotices);
   };
-  const host = el('div.canvas-host', { 'aria-label': 'Document pages' });
+  const host = el('div.canvas-host', { 'aria-label': '文档页面' });
   const surface = el('div.canvas-document-surface', {}, host);
   // Bookmarks are in the body: a link made in a note, header or footer goes to one there.
   const editHyperlink = (anchor = hyperlink, options = {}) => {
@@ -341,7 +341,7 @@ export function editorView({ doc, goHome, newDoc, importFile, openPath, newFromT
   // A tool with a shortcut names it in its tooltip and carries it for the menus that list the same command.
   const tool = (label, name, action, { shortcut = null, ...attrs } = {}) => el('button.icon-btn.canvas-tool', { type: 'button', disabled: true, 'aria-label': label, title: shortcut ? `${label} (${shortcut})` : label, dataset: { icon: name, ...(shortcut ? { shortcut } : {}) }, onclick: action, ...attrs }, iconEl(name, 19));
   // Open takes what Import on the documents screen takes (Hanword, Markdown, HTML, text), as File > Open says.
-  const openInput = el('input', { type: 'file', accept: P.IMPORT_ACCEPT, hidden: true, 'aria-label': 'Open DOCX file', onchange: async () => {
+  const openInput = el('input', { type: 'file', accept: P.IMPORT_ACCEPT, hidden: true, 'aria-label': '打开 DOCX 文件', onchange: async () => {
     const file = openInput.files?.[0]; openInput.value = '';
     if (!file) return;
     // A file the picker let through under "All files" is named rather than opened as a document that then fails.
@@ -380,22 +380,22 @@ export function editorView({ doc, goHome, newDoc, importFile, openPath, newFromT
       if (!engine || failed || destroyed || pkg.readOnly) return;
       engine.finishComposition();
       if (session.signedOut && !await session.signIn()) return;
-      const name = await promptDialog({ title: 'Save as template', label: 'Template name', value: title.value.trim() || 'Untitled document',
-        confirmLabel: 'Save template', hint: `Saved in ${TEMPLATE_FOLDER}. Start a new document from it with Templates on the documents screen.` });
+      const name = await promptDialog({ title: '另存为模板', label: '模板名称', value: title.value.trim() || '无标题文档',
+        confirmLabel: '保存模板', hint: `保存在 ${TEMPLATE_FOLDER} 中。可通过文档界面的“模板”以此为基础新建文档。` });
       if (!name || destroyed || !engine) return;
       const overwrite = await templateExists(name);
-      if (overwrite && !await confirmDialog({ title: 'Replace template?', message: `A template named "${name}" already exists. Replace it with this document?`, confirmLabel: 'Replace' })) return;
+      if (overwrite && !await confirmDialog({ title: '替换模板？', message: `名为“${name}”的模板已存在。是否用此文档替换？`, confirmLabel: '替换' })) return;
       if (destroyed || !engine) return;
       const saved = await saveAsTemplate(engine.export(pkg), name, { overwrite });
-      toast(`Saved as template "${saved.name}"`, { icon: 'check' });
+      toast(`已另存为模板“${saved.name}”`, { icon: 'check' });
     } catch (e) { if (!destroyed) error(e); }
     if (!destroyed) engine?.focus();
   };
-  const undo = tool('Undo', 'undo', () => engine?.undo(), { disabled: true, shortcut: `${MOD_KEY}+Z` });
+  const undo = tool('撤消', 'undo', () => engine?.undo(), { disabled: true, shortcut: `${MOD_KEY}+Z` });
   // With nothing to redo, Redo becomes Repeat: it runs the last command again, as F4 does. A design change undone
   // (a theme, a watermark) is something to redo (onHistoryEnd).
   const redoable = () => !!engine && (engine.session.future.length > 0 || !collab.live && designVersions.redo.length > 0);
-  const redo = tool('Redo', 'redo', () => { if (!engine) return; if (redoable() || !editCommands.canRepeat()) engine.redo(); else editCommands.repeat(); }, { disabled: true, shortcut: `${MOD_KEY}+Shift+Z` });
+  const redo = tool('恢复', 'redo', () => { if (!engine) return; if (redoable() || !editCommands.canRepeat()) engine.redo(); else editCommands.repeat(); }, { disabled: true, shortcut: `${MOD_KEY}+Shift+Z` });
   // Format area: Font/Paragraph/Tabs/Borders/Bullets/Style dialogs, Styles pane, paste options, Dictate.
   const formatArea = createFormatArea({ editor: () => engine, pkg: () => pkg, error, refresh: () => chrome?.refresh(), host: () => host, unit: () => rulers?.unit ?? 'in',
     focus: () => engine?.focus(), openFind: options => openFind(options), finder: () => finder, pageSetup: () => pageSetup.click(), clipboard: { state: () => clipboardState() }, hasKeymap: () => !!keymap, keyClaimed: e => !!keymap?.commandFor(chordOf(e)) });
@@ -413,65 +413,65 @@ export function editorView({ doc, goHome, newDoc, importFile, openPath, newFromT
     find.setAttribute('aria-expanded', 'true'); finder.open(engine.model.text.slice(...engine.model.range), options);
   };
   finder.node.id = 'canvas-find-panel';
-  const find = tool('Find and replace', 'search', openFind, { 'aria-expanded': 'false', 'aria-controls': finder.node.id, shortcut: `${MOD_KEY}+F` });
-  const bold = tool('Bold', 'bold', () => engine?.toggleBold(), { disabled: true, 'aria-pressed': 'false', shortcut: `${MOD_KEY}+B` });
-  const italic = tool('Italic', 'italic', () => engine?.toggleItalic(), { disabled: true, 'aria-pressed': 'false', shortcut: `${MOD_KEY}+I` });
-  const hyperlink = tool('Insert or edit link', 'link', editHyperlink, { disabled: true, 'aria-pressed': 'false', shortcut: `${MOD_KEY}+K` });
+  const find = tool('查找和替换', 'search', openFind, { 'aria-expanded': 'false', 'aria-controls': finder.node.id, shortcut: `${MOD_KEY}+F` });
+  const bold = tool('加粗', 'bold', () => engine?.toggleBold(), { disabled: true, 'aria-pressed': 'false', shortcut: `${MOD_KEY}+B` });
+  const italic = tool('倾斜', 'italic', () => engine?.toggleItalic(), { disabled: true, 'aria-pressed': 'false', shortcut: `${MOD_KEY}+I` });
+  const hyperlink = tool('插入或编辑超链接', 'link', editHyperlink, { disabled: true, 'aria-pressed': 'false', shortcut: `${MOD_KEY}+K` });
   hyperlink.openPopover = editHyperlink;
   hyperlink.setAttribute('aria-haspopup', 'dialog');
-  const unlink = tool('Remove link', 'unlink', () => engine?.removeHyperlink(), { disabled: true });
-  const bookmarks = tool('Bookmarks', 'bookmark', () => {
+  const unlink = tool('删除超链接', 'unlink', () => engine?.removeHyperlink(), { disabled: true });
+  const bookmarks = tool('书签', 'bookmark', () => {
     if (!engine) return; engine.finishComposition();
     // Hidden bookmarks (named with a leading underscore: _Toc…, _Ref…, _GoBack) belong to fields and links; renaming or
     // deleting one broke them, so the dialog lists only the author's own, as desktop word processors do by default.
     bookmarkModal = openBookmarks({ entries: () => (engine?.bookmarks || []).filter(b => !b.name?.startsWith('_')), add: (name, options) => engine?.addBookmark(name, options), rename: (id, name) => engine?.renameBookmark(id, name), remove: id => engine?.removeBookmark(id), navigate: id => engine?.goToBookmark(id) });
   });
-  const underline = tool('Underline', 'underline', () => engine?.toggleUnderline(), { disabled: true, 'aria-pressed': 'false', shortcut: `${MOD_KEY}+U` });
-  const clearTextFormatting = tool('Clear direct text formatting', 'clearFormat', () => engine?.clearDirectTextFormatting(), { shortcut: `${MOD_KEY}+Space`, title: `Clear direct text formatting (${MOD_KEY}+Space). Keep styles and links.` });
-  const underlineOptions = tool('Underline options', 'chevD', () => {
+  const underline = tool('下划线', 'underline', () => engine?.toggleUnderline(), { disabled: true, 'aria-pressed': 'false', shortcut: `${MOD_KEY}+U` });
+  const clearTextFormatting = tool('清除格式', 'clearFormat', () => engine?.clearDirectTextFormatting(), { shortcut: `${MOD_KEY}+Space`, title: `清除格式 (${MOD_KEY}+Space)。保留样式和超链接。` });
+  const underlineOptions = tool('下划线选项', 'chevD', () => {
     if (!engine) return; engine.finishComposition();
     underlineModal = openUnderline(engine.model.runFormatting, patch => engine?.setRunFormat(patch));
   });
-  const caps = tool('All caps', 'caps', () => engine?.setRunFormat({ capitalization: engine.model.runFormatting.capitalization === 'caps' ? 'normal' : 'caps' }), { disabled: true, 'aria-pressed': 'false', shortcut: `${MOD_KEY}+Shift+A` });
-  const smallCaps = tool('Small caps', 'smallCaps', () => engine?.setRunFormat({ capitalization: engine.model.runFormatting.capitalization === 'smallCaps' ? 'normal' : 'smallCaps' }), { disabled: true, 'aria-pressed': 'false', shortcut: `${MOD_KEY}+Shift+K` });
-  const strike = tool('Strikethrough', 'strike', () => engine?.setRunFormat({ strikethrough: engine.model.runFormatting.strikethrough === 'single' ? 'none' : 'single' }), { disabled: true, 'aria-pressed': 'false', shortcut: `${MOD_KEY}+Shift+X` });
-  const doubleStrike = tool('Double strikethrough', 'strikeDouble', () => engine?.setRunFormat({ strikethrough: engine.model.runFormatting.strikethrough === 'double' ? 'none' : 'double' }), { disabled: true, 'aria-pressed': 'false' });
+  const caps = tool('全部大写', 'caps', () => engine?.setRunFormat({ capitalization: engine.model.runFormatting.capitalization === 'caps' ? 'normal' : 'caps' }), { disabled: true, 'aria-pressed': 'false', shortcut: `${MOD_KEY}+Shift+A` });
+  const smallCaps = tool('小型大写字母', 'smallCaps', () => engine?.setRunFormat({ capitalization: engine.model.runFormatting.capitalization === 'smallCaps' ? 'normal' : 'smallCaps' }), { disabled: true, 'aria-pressed': 'false', shortcut: `${MOD_KEY}+Shift+K` });
+  const strike = tool('删除线', 'strike', () => engine?.setRunFormat({ strikethrough: engine.model.runFormatting.strikethrough === 'single' ? 'none' : 'single' }), { disabled: true, 'aria-pressed': 'false', shortcut: `${MOD_KEY}+Shift+X` });
+  const doubleStrike = tool('双删除线', 'strikeDouble', () => engine?.setRunFormat({ strikethrough: engine.model.runFormatting.strikethrough === 'double' ? 'none' : 'double' }), { disabled: true, 'aria-pressed': 'false' });
   const script = value => { if (engine) engine.setRunFormat({ verticalAlign: engine.model.runFormatting.verticalAlign === value ? 'baseline' : value }); };
-  const superscript = tool('Superscript', 'sup', () => script('superscript'), { disabled: true, 'aria-pressed': 'false', shortcut: `${MOD_KEY}+Shift+=` });
-  const subscript = tool('Subscript', 'sub', () => script('subscript'), { disabled: true, 'aria-pressed': 'false', shortcut: `${MOD_KEY}+=` });
-  const kerning = tool('Kerning', 'fitWidth', () => {
+  const superscript = tool('上标', 'sup', () => script('superscript'), { disabled: true, 'aria-pressed': 'false', shortcut: `${MOD_KEY}+Shift+=` });
+  const subscript = tool('下标', 'sub', () => script('subscript'), { disabled: true, 'aria-pressed': 'false', shortcut: `${MOD_KEY}+=` });
+  const kerning = tool('字距微调', 'fitWidth', () => {
     if (!engine) return; engine.finishComposition();
     kerningModal = openKerning(engine.model.runFormatting.kerning, kerning => engine?.setRunFormat({ kerning }));
   });
-  const textWidth = tool('Text width', 'expand', () => {
+  const textWidth = tool('字符缩放', 'expand', () => {
     if (!engine) return; engine.finishComposition();
     textWidthModal = openTextWidth(engine.model.runFormatting.textScale, textScale => engine?.setRunFormat({ textScale }));
   });
-  const characterSpacing = tool('Character spacing', 'fitWidth', () => {
+  const characterSpacing = tool('字符间距', 'fitWidth', () => {
     if (!engine) return; engine.finishComposition();
     characterSpacingModal = openCharacterSpacing(engine.model.runFormatting.characterSpacing, characterSpacing => engine?.setRunFormat({ characterSpacing }));
   });
-  const baselineShift = tool('Baseline shift', 'sort', () => {
+  const baselineShift = tool('基线偏移', 'sort', () => {
     if (!engine) return; engine.finishComposition();
     baselineModal = openBaselineShift(engine.model.runFormatting.baselineShift, baselineShift => engine?.setRunFormat({ baselineShift }));
   });
-  const textColor = tool('Text color', 'textColor', () => textColor.openPalette(textColor), { 'aria-haspopup': 'menu', 'aria-expanded': 'false' });
+  const textColor = tool('字体颜色', 'textColor', () => textColor.openPalette(textColor), { 'aria-haspopup': 'menu', 'aria-expanded': 'false' });
   textColor.openPalette = (anchor, options) => {
     if (!engine) return; engine.finishComposition();
     colorPalette = openTextColor(engine.model.runFormatting.color, color => engine?.setRunFormat({ color }), { anchor, ...options });
   };
-  const paragraphBorders = tool('Paragraph borders', 'table', () => {
+  const paragraphBorders = tool('段落边框', 'table', () => {
     if (!engine) return; engine.finishComposition();
     paragraphBorderModal = openParagraphBorders(engine.model.selectedParagraphs.map(p => paragraphFormat(p, engine.model.numbering).paragraphBorders), paragraphBorders => {
       const ok = engine.execute(() => engine.model.setParagraphFormat({ paragraphBorders })); if (ok) queueMicrotask(() => engine?.focus()); return ok;
     });
   });
-  const paragraphShading = tool('Paragraph shading', 'paint', () => paragraphShading.openPalette(paragraphShading), { 'aria-haspopup': 'menu' });
+  const paragraphShading = tool('段落底纹', 'paint', () => paragraphShading.openPalette(paragraphShading), { 'aria-haspopup': 'menu' });
   paragraphShading.openPalette = (anchor, options) => {
     if (!engine) return; engine.finishComposition();
     paragraphShadingModal = openParagraphShading(engine.model.paragraphFormatting.paragraphShading, paragraphShading => engine?.setParagraphFormat({ paragraphShading }), { anchor, ...options });
   };
-  const highlight = tool('Text highlight', 'highlight', () => highlight.openPalette(highlight), { 'aria-haspopup': 'menu', 'aria-expanded': 'false' });
+  const highlight = tool('文本突出显示颜色', 'highlight', () => highlight.openPalette(highlight), { 'aria-haspopup': 'menu', 'aria-expanded': 'false' });
   highlight.openPalette = (anchor, options) => {
     if (!engine) return; engine.finishComposition();
     highlightPalette = openTextHighlight(engine.model.runFormatting.highlight, highlight => engine?.setRunFormat({ highlight }), { anchor, ...options });
@@ -492,7 +492,7 @@ export function editorView({ doc, goHome, newDoc, importFile, openPath, newFromT
     showNotices();
     update();
   }
-  const fontFamily = el('button.canvas-font-label', { type: 'button', disabled: true, 'aria-label': 'Latin font family', 'aria-haspopup': 'dialog', onclick: () => fontFamily.openPopover(fontFamily) }, 'Noto Sans');
+  const fontFamily = el('button.canvas-font-label', { type: 'button', disabled: true, 'aria-label': '西文字体', 'aria-haspopup': 'dialog', onclick: () => fontFamily.openPopover(fontFamily) }, 'Noto Sans');
   fontFamily.openPopover = (anchor, options) => {
     if (!engine) return; engine.finishComposition();
     const fontEditor = engine;
@@ -517,7 +517,7 @@ export function editorView({ doc, goHome, newDoc, importFile, openPath, newFromT
     fontSize.value = engine?.model.runFormatting.fontSize ?? '';
     engine?.focus(); update();
   }
-  const fontSize = el('input.canvas-spacing', { type: 'number', min: 1, max: MAX_FONT_SIZE, step: 0.5, disabled: true, 'aria-label': 'Font size (pt)', placeholder: 'Mixed', onchange: applyFontSize,
+  const fontSize = el('input.canvas-spacing', { type: 'number', min: 1, max: MAX_FONT_SIZE, step: 0.5, disabled: true, 'aria-label': '字号 (磅)', placeholder: '混杂', onchange: applyFontSize,
     oninput: () => { fontSizeDraftCancelled = false; },
     onkeydown: e => {
       if (isComposing(e)) return;
@@ -530,15 +530,15 @@ export function editorView({ doc, goHome, newDoc, importFile, openPath, newFromT
   });
   // The usual sizes in a list beside the box, like a word processor's size box; any size can still be typed.
   // (A datalist filtered its suggestions by the box's value, so it offered only the current size.)
-  const fontSizeMenu = tool('Font sizes', 'chevD', () => {
+  const fontSizeMenu = tool('字号', 'chevD', () => {
     if (!engine) return; engine.finishComposition();
     const current = engine.model.runFormatting.fontSize;
-    openMenu({ anchor: fontSizeMenu, align: 'end', label: 'Font size', minWidth: fontSize.offsetWidth + fontSizeMenu.offsetWidth, items: FALLBACK_SIZES.map(size => ({
+    openMenu({ anchor: fontSizeMenu, align: 'end', label: '字号', minWidth: fontSize.offsetWidth + fontSizeMenu.offsetWidth, items: FALLBACK_SIZES.map(size => ({
       label: size, radio: true, checked: Number(size) === current, onSelect: () => { engine?.setFontSize(Number(size)); update(); },
     })) });
   }, { 'aria-haspopup': 'menu' });
-  const paragraphStyle = el('select.canvas-style-select', { disabled: true, 'aria-label': 'Paragraph style', onchange: () => engine?.setParagraphStyle(paragraphStyle.value) });
-  const clearParagraphFormatting = tool('Clear direct paragraph formatting', 'eraser', () => engine?.clearDirectParagraphFormatting(), { title: 'Clear direct paragraph formatting, including numbering. Keep text formatting and styles.' });
+  const paragraphStyle = el('select.canvas-style-select', { disabled: true, 'aria-label': '段落样式', onchange: () => engine?.setParagraphStyle(paragraphStyle.value) });
+  const clearParagraphFormatting = tool('清除段落格式', 'eraser', () => engine?.clearDirectParagraphFormatting(), { title: '清除直接段落格式（包括编号）。保留字符格式和样式。' });
   const outlinePanel = createNavigationPane({ navigate: id => engine?.goToParagraph(id), close: () => toggleOutline(false), focusEditor: () => engine?.focus(),
     goToPage: index => {
       if (!engine) return;
@@ -576,12 +576,12 @@ export function editorView({ doc, goHome, newDoc, importFile, openPath, newFromT
     toggleOutline(true, { search: true });
     if (selected && !/[\n\f\v]/.test(selected) && selected.length <= 255) outlinePanel.setSearch(selected);
   };
-  const outline = tool('Document outline', 'outline', () => toggleOutline(), { 'aria-expanded': 'false', 'aria-controls': outlinePanel.node.id, shortcut: MOD_KEY === 'Cmd' ? 'Cmd+Option+O' : 'Ctrl+Alt+O' });
-  const outlineLevel = el('select', { disabled: true, 'aria-label': 'Outline level', title: 'Outline level does not change text formatting', onchange: () => engine?.setOutlineLevel(outlineLevel.value === 'inherit' ? null : Number(outlineLevel.value)) },
-    el('option', { value: 'mixed', disabled: true }, 'Mixed levels'), el('option', { value: 'inherit' }, 'Use style level'),
-    ...Array.from({ length: 9 }, (_, i) => el('option', { value: i }, `Level ${i + 1}`)), el('option', { value: 9 }, 'Body text'));
+  const outline = tool('文档大纲', 'outline', () => toggleOutline(), { 'aria-expanded': 'false', 'aria-controls': outlinePanel.node.id, shortcut: MOD_KEY === 'Cmd' ? 'Cmd+Option+O' : 'Ctrl+Alt+O' });
+  const outlineLevel = el('select', { disabled: true, 'aria-label': '大纲级别', title: '大纲级别不影响文字格式', onchange: () => engine?.setOutlineLevel(outlineLevel.value === 'inherit' ? null : Number(outlineLevel.value)) },
+    el('option', { value: 'mixed', disabled: true }, '多种级别'), el('option', { value: 'inherit' }, '使用样式级别'),
+    ...Array.from({ length: 9 }, (_, i) => el('option', { value: i }, `第 ${i + 1} 级`)), el('option', { value: 9 }, '正文文本'));
   let styleOptionsSignature = '';
-  const editStyle = tool('Edit paragraph style', 'pencil', () => {
+  const editStyle = tool('编辑段落样式', 'pencil', () => {
     if (!engine) return; engine.finishComposition();
     const id = engine.model.paragraphStyle, style = engine.model.styles.definitions[id];
     if (!style) return;
@@ -589,15 +589,15 @@ export function editorView({ doc, goHome, newDoc, importFile, openPath, newFromT
       const ok = engine.editParagraphStyle(id, patch); if (ok) queueMicrotask(() => engine?.focus()); return ok;
     });
   });
-  const newStyle = tool('New paragraph style', 'plus', () => {
+  const newStyle = tool('新建段落样式', 'plus', () => {
     if (!engine) return; engine.finishComposition();
     styleModal = openStyleEditor({ basedOn: engine.model.paragraphStyle }, engine.model.paragraphStyles, patch => {
       const ok = engine.createParagraphStyle(patch.name, patch.basedOn); if (ok) queueMicrotask(() => engine?.focus()); return ok;
     });
   });
-  const characterStyle = el('select.canvas-style-select', { disabled: true, 'aria-label': 'Character style', onchange: () => engine?.setCharacterStyle(characterStyle.value) });
+  const characterStyle = el('select.canvas-style-select', { disabled: true, 'aria-label': '字符样式', onchange: () => engine?.setCharacterStyle(characterStyle.value) });
   let characterOptionsSignature = '';
-  const editCharacterStyle = tool('Edit character style', 'pencil', () => {
+  const editCharacterStyle = tool('编辑字符样式', 'pencil', () => {
     if (!engine) return; engine.finishComposition();
     const id = engine.model.characterStyle, style = engine.model.styles.definitions[id];
     if (!style || style.type !== 'character') return;
@@ -605,41 +605,42 @@ export function editorView({ doc, goHome, newDoc, importFile, openPath, newFromT
       const ok = engine.editCharacterStyle(id, patch); if (ok) queueMicrotask(() => engine?.focus()); return ok;
     }, engine.model.styles.defaults.run);
   });
-  const newCharacterStyle = tool('New character style', 'plus', () => {
+  const newCharacterStyle = tool('新建字符样式', 'plus', () => {
     if (!engine) return; engine.finishComposition();
     styleModal = openStyleEditor({ type: 'character', basedOn: engine.model.characterStyle }, engine.model.characterStyles, patch => {
       const ok = engine.createCharacterStyle(patch.name, patch.basedOn); if (ok) queueMicrotask(() => engine?.focus()); return ok;
     });
   });
   const alignments = ['left', 'center', 'right', 'both'];
-  const alignmentButtons = alignments.map((value, i) => tool(value === 'both' ? 'Justify' : `Align ${value}`, value === 'both' ? 'alignJustify' : `align${value[0].toUpperCase() + value.slice(1)}`, () => engine?.setParagraphAlignment(value), { 'aria-pressed': 'false', shortcut: `${MOD_KEY}+${'LERJ'[i]}` }));
+  const alignmentLabels = { left: '左对齐', center: '居中', right: '右对齐', both: '两端对齐' };
+  const alignmentButtons = alignments.map((value, i) => tool(alignmentLabels[value], value === 'both' ? 'alignJustify' : `align${value[0].toUpperCase() + value.slice(1)}`, () => engine?.setParagraphAlignment(value), { 'aria-pressed': 'false', shortcut: `${MOD_KEY}+${'LERJ'[i]}` }));
   // Paragraph direction (§17.3.1.6 bidi): the paragraph starts at the left or at the right margin. The
   // ribbon shows the right-to-left control alone, as a toggle; the Format menu lists both directions.
-  const directionButtons = [false, true].map(rtl => tool(rtl ? 'Right-to-left text direction' : 'Left-to-right text direction', rtl ? 'directionRtl' : 'directionLtr',
+  const directionButtons = [false, true].map(rtl => tool(rtl ? '从右向左文字方向' : '从左向右文字方向', rtl ? 'directionRtl' : 'directionLtr',
     () => engine?.setParagraphDirection(rtl && directionButtons[1].getAttribute('aria-pressed') !== 'true'), { 'aria-pressed': 'false' }));
-  const lineSpacing = el('select', { disabled: true, 'aria-label': 'Line spacing', onchange: () => {
+  const lineSpacing = el('select', { disabled: true, 'aria-label': '行距', onchange: () => {
     if (lineSpacing.value) engine?.setParagraphFormat({ lineRule: 'auto', lineSpacing: Number(lineSpacing.value) });
   } }, ...[1, 1.15, 1.5, 2, 2.5, 3].map(value => el('option', { value }, `${value}×`)));
-  const customLine = el('option', { value: '', disabled: true }, 'Mixed');
+  const customLine = el('option', { value: '', disabled: true }, '多种');
   lineSpacing.prepend(customLine);
-  const lineSpacingOptions = tool('Line spacing options', 'sort', () => {
+  const lineSpacingOptions = tool('行距选项', 'sort', () => {
     if (!engine) return; engine.finishComposition();
     paragraphModal = openLineSpacing(engine.model.paragraphFormatting, value => engine.setParagraphLineSpacing(value), () => queueMicrotask(() => engine?.focus()));
   });
-  const lineSpacingMenu = tool('Line spacing', 'sort', () => lineSpacingMenu.openPalette(lineSpacingMenu), { 'aria-haspopup': 'menu' });
+  const lineSpacingMenu = tool('行距', 'sort', () => lineSpacingMenu.openPalette(lineSpacingMenu), { 'aria-haspopup': 'menu' });
   lineSpacingMenu.openPalette = (anchor, options) => {
     if (!engine) return; engine.finishComposition();
     const format = engine.model.paragraphFormatting;
-    return openMenu({ anchor, ...options, label: 'Line spacing', items: [
+    return openMenu({ anchor, ...options, label: '行距', items: [
       ...[1, 1.15, 1.5, 2, 2.5, 3].map(value => ({ label: `${value}×`, radio: true, checked: format.lineRule === 'auto' && format.lineSpacing === value,
         onSelect: () => engine?.setParagraphFormat({ lineRule: 'auto', lineSpacing: value }) })),
-      { separator: true }, { label: 'Custom spacing…', onSelect: () => lineSpacingOptions.click() },
+      { separator: true }, { label: '自定义行距…', onSelect: () => lineSpacingOptions.click() },
     ] });
   };
   const spacingInput = (key, label) => {
     // The value already applied (Enter, then leaving the field) is not applied again.
     const unchanged = () => !!engine && input.value !== '' && Number(input.value) === engine.model.paragraphFormatting[key];
-    const input = el('input.canvas-spacing', { type: 'number', min: 0, max: 600, step: 'any', disabled: true, 'aria-label': label, placeholder: 'Mixed', onchange: () => {
+    const input = el('input.canvas-spacing', { type: 'number', min: 0, max: 600, step: 'any', disabled: true, 'aria-label': label, placeholder: '多种', onchange: () => {
       if (input.value === '' || !input.checkValidity()) { input.reportValidity(); update(); return; }
       if (!unchanged()) engine?.setParagraphFormat({ [key]: Number(input.value) });
     },
@@ -653,9 +654,9 @@ export function editorView({ doc, goHome, newDoc, importFile, openPath, newFromT
     } });
     return input;
   };
-  const spaceBefore = spacingInput('spaceBefore', 'Space before paragraph (pt)');
-  const spaceAfter = spacingInput('spaceAfter', 'Space after paragraph (pt)');
-  const pageSetup = tool('Page setup', 'pageSettings', () => {
+  const spaceBefore = spacingInput('spaceBefore', '段前间距 (磅)');
+  const spaceAfter = spacingInput('spaceAfter', '段后间距 (磅)');
+  const pageSetup = tool('页面设置', 'pageSettings', () => {
     if (!engine) return;
     if (editorCommands.openPageSetup) { pageSetupModal = editorCommands.openPageSetup(); return; }
     engine.finishComposition();
@@ -665,17 +666,17 @@ export function editorView({ doc, goHome, newDoc, importFile, openPath, newFromT
       return ok;
     });
   }, { disabled: true });
-  const pageBreak = tool('Page break', 'insertPageBreak', () => engine?.insertPageBreak(), { disabled: true, shortcut: `${MOD_KEY}+Enter`, title: `Insert page break (${MOD_KEY}+Enter)` });
-  const pageBreakBefore = tool('Start paragraph on new page', 'header', () => engine?.setParagraphFormat({ pageBreakBefore: engine.model.paragraphFormatting.pageBreakBefore !== true }), { 'aria-pressed': 'false' });
+  const pageBreak = tool('分页符', 'insertPageBreak', () => engine?.insertPageBreak(), { disabled: true, shortcut: `${MOD_KEY}+Enter`, title: `插入分页符 (${MOD_KEY}+Enter)` });
+  const pageBreakBefore = tool('段前分页', 'header', () => engine?.setParagraphFormat({ pageBreakBefore: engine.model.paragraphFormatting.pageBreakBefore !== true }), { 'aria-pressed': 'false' });
   const paginationTools = [
-    ['contextualSpacing', 'Contextual paragraph spacing', 'listView'],
-    ['keepNext', 'Keep with next paragraph', 'merge'],
-    ['keepLines', 'Keep lines together', 'rows'],
-    ['widowControl', 'Widow and orphan control', 'rowsSplit'],
+    ['contextualSpacing', '不在相同样式的段落之间添加空格', 'listView'],
+    ['keepNext', '与下段同页', 'merge'],
+    ['keepLines', '段中不分页', 'rows'],
+    ['widowControl', '孤行控制', 'rowsSplit'],
   ].map(([key, label, icon]) => ({ key, button: tool(label, icon, () => engine?.setParagraphFormat({ [key]: engine.model.paragraphFormatting[key] !== true }), { 'aria-pressed': 'false' }) }));
-  const outdent = tool('Decrease indent', 'outdent', () => engine?.changeListLevel(-1));
-  const indent = tool('Increase indent', 'indent', () => engine?.changeListLevel(1));
-  const paragraphGeometry = tool('Indents and tabs', 'ruler', () => {
+  const outdent = tool('减少缩进量', 'outdent', () => engine?.changeListLevel(-1));
+  const indent = tool('增加缩进量', 'indent', () => engine?.changeListLevel(1));
+  const paragraphGeometry = tool('缩进和制表位', 'ruler', () => {
     if (!engine) return;
     engine.finishComposition();
     paragraphModal = openParagraphGeometry(engine.model.paragraphFormatting, engine.model.pageSettings.defaultTabStop, (patch, defaultTabStop) => {
@@ -684,22 +685,22 @@ export function editorView({ doc, goHome, newDoc, importFile, openPath, newFromT
       return ok;
     });
   });
-  const bullets = tool('Bulleted list', 'bullets', () => engine?.toggleList('bullet'), { 'aria-pressed': 'false', shortcut: `${MOD_KEY}+Shift+8` });
-  const numbers = tool('Numbered list', 'numbers', () => engine?.toggleList('number'), { 'aria-pressed': 'false', shortcut: `${MOD_KEY}+Shift+7` });
-  const restart = tool('Restart numbering at 1', 'history', () => engine?.restartNumbering());
-  const imageInput = el('input', { type: 'file', accept: 'image/png,image/jpeg,image/tiff,.tif,.tiff', hidden: true, 'aria-label': 'Insert image file', onchange: async () => {
+  const bullets = tool('项目符号', 'bullets', () => engine?.toggleList('bullet'), { 'aria-pressed': 'false', shortcut: `${MOD_KEY}+Shift+8` });
+  const numbers = tool('编号', 'numbers', () => engine?.toggleList('number'), { 'aria-pressed': 'false', shortcut: `${MOD_KEY}+Shift+7` });
+  const restart = tool('重新编号', 'history', () => engine?.restartNumbering());
+  const imageInput = el('input', { type: 'file', accept: 'image/png,image/jpeg,image/tiff,.tif,.tiff', hidden: true, 'aria-label': '插入图片文件', onchange: async () => {
     const file = imageInput.files?.[0]; imageInput.value = '';
     try { if (file && engine) await engine.insertImageFile(file); } catch (e) { error(e); }
   } });
-  const insertImage = tool('Insert image', 'image', () => imageInput.click());
-  const imageProperties = tool('Image properties', 'settings', () => {
+  const insertImage = tool('插入图片', 'image', () => imageInput.click());
+  const imageProperties = tool('图片属性', 'settings', () => {
     if (!engine?.model.selectedImage) return; engine.finishComposition();
     imageModal = openImageProperties(engine.model.selectedImage, (patch,signal) => {
       if (engine.pictureEditor?.canResize(engine.model.selectedImage)) return Object.keys(patch).length ? engine.pictureEditor.resize(patch,{signal}) : true;
       const ok = engine.setImageProperties(patch); if (ok) queueMicrotask(() => engine?.focus()); return ok;
     }, { canResize: engine.pictureEditor?.canResize(engine.model.selectedImage) });
   });
-  const insertTable = tool('Insert table', 'table', () => insertTable.openPalette(insertTable), { 'aria-haspopup': 'menu' });
+  const insertTable = tool('插入表格', 'table', () => insertTable.openPalette(insertTable), { 'aria-haspopup': 'menu' });
   insertTable.openPalette = (anchor, options) => {
     if (!engine) return; engine.finishComposition();
     tableModal = openInsertTable((rows, columns) => {
@@ -711,7 +712,7 @@ export function editorView({ doc, goHome, newDoc, importFile, openPath, newFromT
       if (ok) queueMicrotask(() => engine?.focus()); return ok;
     }, { anchor, items: editorCommands.tableInsertMenuItems?.() || [], ...options });
   };
-  const tableProperties = tool('Table properties', 'ruler', () => {
+  const tableProperties = tool('表格属性', 'ruler', () => {
     if (!engine?.model.tableContext) return; engine.finishComposition();
     if (editorCommands.openTableProperties) { editorCommands.openTableProperties(); return; }
     const { table, column } = engine.model.tableContext;
@@ -720,30 +721,30 @@ export function editorView({ doc, goHome, newDoc, importFile, openPath, newFromT
       const ok = engine.setTableProperties(patch); if (ok) queueMicrotask(() => engine?.focus()); return ok;
     });
   });
-  const keepRow = tool('Keep table row together', 'rows', () => engine?.setTableRowKeep(engine.model.tableRowKeep !== true), { 'aria-pressed': 'false' });
-  const rowHeight = tool('Row height', 'rows', () => {
+  const keepRow = tool('防止跨页断行', 'rows', () => engine?.setTableRowKeep(engine.model.tableRowKeep !== true), { 'aria-pressed': 'false' });
+  const rowHeight = tool('行高', 'rows', () => {
     if (!engine?.model.selectedTableRows.length) return; engine.finishComposition();
     tableModal = openRowHeight(engine.model.tableRowHeight, value => engine.setTableRowHeight(value), () => queueMicrotask(() => engine?.focus()));
   });
-  const cellAlignment = tool('Cell alignment', 'sort', () => {
+  const cellAlignment = tool('单元格对齐方式', 'sort', () => {
     if (!engine?.model.selectedTableCells.length) return; engine.finishComposition();
     tableModal = openCellAlignment(engine.model.cellVerticalAlignment, value => {
       const ok = engine.setCellVerticalAlignment(value); if (ok) queueMicrotask(() => engine?.focus()); return ok;
     }, () => queueMicrotask(() => engine?.focus()));
   });
-  const cellShading = tool('Cell shading', 'paint', () => {
+  const cellShading = tool('单元格底纹', 'paint', () => {
     if (!engine?.model.selectedTableCells.length) return; engine.finishComposition();
     tableModal = openCellShading(engine.model.cellShading, value => engine.setCellShading(value), () => queueMicrotask(() => engine?.focus()));
   });
-  const cellBorders = tool('Cell borders', 'table', () => {
+  const cellBorders = tool('单元格边框', 'table', () => {
     if (!engine?.model.selectedTableCells.length) return; engine.finishComposition();
     tableModal = openCellBorders(engine.model.cellBorderValues, value => engine.setCellBorders(value), () => queueMicrotask(() => engine?.focus()));
   });
-  const cellMargins = tool('Cell margins', 'ruler', () => {
+  const cellMargins = tool('单元格边距', 'ruler', () => {
     if (!engine?.model.selectedTableCells.length) return; engine.finishComposition();
     tableModal = openCellMargins(engine.model.selectedTableCells, value => engine.setCellMargins(value), () => queueMicrotask(() => engine?.focus()));
   });
-  const tableActions = el('select', { disabled: true, 'aria-label': 'Table actions', onchange: () => {
+  const tableActions = el('select', { disabled: true, 'aria-label': '表格操作', onchange: () => {
     const action = tableActions.value; tableActions.value = '';
     if (action === 'fitContents' || action === 'fitPage') engine?.fitTable(action === 'fitContents' ? 'contents' : 'page');
     else if (action === 'repeatHeader') engine?.setTableHeaderRows(engine.model.headerRowsThroughSelection);
@@ -755,17 +756,17 @@ export function editorView({ doc, goHome, newDoc, importFile, openPath, newFromT
     else if (action === 'addColumn') engine?.insertTableColumn();
     else if (action === 'before' || action === 'after') engine?.insertTableParagraph(action === 'after');
     else if (action) engine?.deleteTablePart(action);
-  } }, ...[['', 'Table actions'], ['repeatHeader', 'Repeat rows through selection'], ['clearHeader', 'Remove repeated headers'], ['mergeCells', 'Merge cells in row'], ['mergeBelow', 'Merge with cell below'], ['splitCell', 'Split into grid cells'], ['fitContents', 'Fit to contents'], ['fitPage', 'Fit to page'], ['addRow', 'Insert row below'], ['addColumn', 'Insert column right'], ['row', 'Delete row'], ['column', 'Delete column'], ['table', 'Delete table'], ['before', 'Insert paragraph before table'], ['after', 'Insert paragraph after table']].map(([value, label]) => el('option', { value }, label)));
-  const insertTab = tool('Insert tab', 'tab', () => engine?.insertTab(), { title: 'Insert tab (Tab)' });
-  const exportButton = button('Download .docx', download, { disabled: true, className: 'btn btn-primary' });
-  const printButton = button('Print / Save as PDF', printDocument, { disabled: true });
-  const saveButton = button('Save to Puter', save, { disabled: true });
-  const templateButton = button('Save as template…', saveTemplate, { disabled: true });
+  } }, ...[['', '表格操作'], ['repeatHeader', '在选定范围内重复行作为标题'], ['clearHeader', '取消重复标题行'], ['mergeCells', '合并单元格'], ['mergeBelow', '与下方单元格合并'], ['splitCell', '拆分单元格'], ['fitContents', '根据内容调整表格'], ['fitPage', '根据窗口调整表格'], ['addRow', '在下方插入行'], ['addColumn', '在右侧插入列'], ['row', '删除行'], ['column', '删除列'], ['table', '删除表格'], ['before', '在表格前插入段落'], ['after', '在表格后插入段落']].map(([value, label]) => el('option', { value }, label)));
+  const insertTab = tool('插入制表符', 'tab', () => engine?.insertTab(), { title: '插入制表符 (Tab)' });
+  const exportButton = button('下载 .docx', download, { disabled: true, className: 'btn btn-primary' });
+  const printButton = button('打印 / 另存为 PDF', printDocument, { disabled: true });
+  const saveButton = button('保存', save, { disabled: true });
+  const templateButton = button('另存为模板…', saveTemplate, { disabled: true });
   // Choosing any other zoom leaves View → Multiple Pages.
   const singlePages = () => engine?.pages.classList.remove('is-multipage');
   // Fit width and Whole page are modes, not scales: the page goes on fitting as the window or a pane changes size.
-  const zoom = el('select', { 'aria-label': 'Zoom', onchange: () => { singlePages(); if (zoom.value === 'fit' || zoom.value === 'page') fitWidth(); else engine?.setZoom(Number(zoom.value)); syncZoom(); } },
-    el('option', { value: 'fit' }, 'Fit width'), el('option', { value: 'page' }, 'Whole page'),
+  const zoom = el('select', { 'aria-label': '显示比例', onchange: () => { singlePages(); if (zoom.value === 'fit' || zoom.value === 'page') fitWidth(); else engine?.setZoom(Number(zoom.value)); syncZoom(); } },
+    el('option', { value: 'fit' }, '适合页宽'), el('option', { value: 'page' }, '整页显示'),
     ...[0.5, 0.75, 1, 1.25, 1.5, 2].map(n => el('option', { value: n, selected: n === 1 }, `${n * 100}%`)));
   if (window.matchMedia('(max-width: 700px)').matches) zoom.value = 'fit';
   // A zoom from the slider or the Zoom dialog that is not a preset shows as one more choice.
@@ -787,7 +788,7 @@ export function editorView({ doc, goHome, newDoc, importFile, openPath, newFromT
   // A drag hands the keyboard back to the text when it ends; the arrow keys, which end a change at every press, keep it on the slider.
   let zoomDragged = false;
   // The slider's value is a percentage, and says so: a screen reader read a bare "100".
-  const zoomSlider = el('input.ed-zoom-slider', { type: 'range', min: 10, max: 200, step: 1, value: 100, 'aria-label': 'Zoom slider', 'aria-valuetext': '100%', oninput: () => zoomControl.set(Number(zoomSlider.value) / 100),
+  const zoomSlider = el('input.ed-zoom-slider', { type: 'range', min: 10, max: 200, step: 1, value: 100, 'aria-label': '缩放滑块', 'aria-valuetext': '100%', oninput: () => zoomControl.set(Number(zoomSlider.value) / 100),
     onpointerdown: () => { zoomDragged = true; }, onchange: () => { if (zoomDragged) { zoomDragged = false; engine?.focus(); } } });
   // At the largest or smallest zoom the step has nothing to do: it says so (aria-disabled) and keeps the keyboard,
   // which a disabled button would drop while the zoom is being stepped from it.
@@ -796,7 +797,7 @@ export function editorView({ doc, goHome, newDoc, importFile, openPath, newFromT
     const now = Math.round((engine?.zoom ?? 1) * 100), next = delta > 0 ? Math.floor(now / 10) * 10 + 10 : Math.ceil(now / 10) * 10 - 10;
     zoomControl.set(Math.max(10, Math.min(200, next)) / 100);
   } }, commandIconEl(icon, 12));
-  const zoomOut = zoomStep('Zoom Out', 'zoomOut', -1), zoomIn = zoomStep('Zoom In', 'zoomIn', 1);
+  const zoomOut = zoomStep('缩小', 'zoomOut', -1), zoomIn = zoomStep('放大', 'zoomIn', 1);
   function syncZoom() {
     if (!engine) return;
     const percent = Math.round(engine.zoom * 100);
@@ -817,11 +818,11 @@ export function editorView({ doc, goHome, newDoc, importFile, openPath, newFromT
     syncZoom();
   }
   let fitObserver;
-  const editingArea = el('select', { 'aria-label': 'Editing area', onchange: () => {
+  const editingArea = el('select', { 'aria-label': '编辑区域', onchange: () => {
     const [path, page] = editingArea.value ? JSON.parse(editingArea.value) : [null, 0];
     try { engine?.editStory(path, page); } catch (e) { error(e); }
   } });
-  const editingAreaLabel = el('label.canvas-zoom.canvas-story-area', {}, 'Editing ', editingArea);
+  const editingAreaLabel = el('label.canvas-zoom.canvas-story-area', {}, '正在编辑 ', editingArea);
   let editingAreaSignature;
   const textMode = el('input', { type: 'checkbox', onchange: () => { engine?.setAccessible(textMode.checked); rulers?.update(); } });
   for (const b of [undo, redo, bold, italic, underline, underlineOptions, caps, smallCaps, strike, doubleStrike, superscript, subscript, ...alignmentButtons, ...directionButtons, pageBreak, pageBreakBefore, ...paginationTools.map(t => t.button), outdent, indent, insertTab, bullets, numbers, restart, keepRow]) b.addEventListener('mousedown', e => e.preventDefault());
@@ -837,8 +838,8 @@ export function editorView({ doc, goHome, newDoc, importFile, openPath, newFromT
     if (!image || !pkg) return [];
     // A diagram is rebuilt from the outline kept in its description: text typed into one of its shapes would be
     // lost at the next Edit Diagram (and screen readers would go on reading the outline).
-    const diagram = image.retainedDrawing && parseDiagramDescription(image.alt) ? 'Use Edit Diagram to change a diagram’s text.' : null;
-    return pkg.drawingTextFrames(image, engine.model.assets).map(frame => ({ label: `Text frame ${frame.index + 1}`, disabled: !!frame.reason || !!diagram || !!pkg.readOnly, hint: frame.reason || diagram,
+    const diagram = image.retainedDrawing && parseDiagramDescription(image.alt) ? '使用“编辑图表”以更改图表文本。' : null;
+    return pkg.drawingTextFrames(image, engine.model.assets).map(frame => ({ label: `文本框 ${frame.index + 1}`, disabled: !!frame.reason || !!diagram || !!pkg.readOnly, hint: frame.reason || diagram,
       // `options.select`: text to select when the editor opens (a new drawing's sample text).
       onSelect: async options => {
         const editor = engine, select = typeof options?.select === 'string' ? options.select : null, type = typeof options?.type === 'string' ? options.type : null;
@@ -856,7 +857,7 @@ export function editorView({ doc, goHome, newDoc, importFile, openPath, newFromT
   const proofingButton = el('button.ed-status-item.ed-proofing', { type: 'button', onclick: () => proofing.openPane() }, commandIconEl('proofingClean', 16));
   function updateProofingStatus() {
     const summary = proofing.enabled ? proofing.summary : null;
-    const label = !proofing.enabled ? 'Spelling check is off' : !summary ? 'Checking spelling' : summary.errors ? `Spelling: ${summary.overflow ? 'too many errors to show' : `${summary.errors} ${summary.errors === 1 ? 'error' : 'errors'} found`}. Select to review.` : 'Spelling: no errors';
+    const label = !proofing.enabled ? '拼写检查已关闭' : !summary ? '正在检查拼写' : summary.errors ? `拼写：${summary.overflow ? '错误过多无法全部显示' : `发现 ${summary.errors} 处错误`}。单击以审阅。` : '拼写：无错误';
     proofingButton.title = label; proofingButton.setAttribute('aria-label', label);
     const state = !proofing.enabled ? 'off' : !summary ? 'pending' : summary.errors ? 'errors' : 'clean';
     if (proofingButton.dataset.state !== state) { proofingButton.dataset.state = state; proofingButton.replaceChildren(commandIconEl(state === 'errors' ? 'proofingErrors' : 'proofingClean', 16)); }
@@ -866,9 +867,9 @@ export function editorView({ doc, goHome, newDoc, importFile, openPath, newFromT
     goTo: () => { if (engine) { engine.finishComposition(); openGoTo(engine, { onClose: () => queueMicrotask(() => engine?.focus()) }); } },
     spelling: () => proofing.openPane(),
     spellingItems: () => [
-      { label: 'Spelling', icon: 'spell', shortcut: 'F7', onSelect: () => proofing.openPane() },
-      { label: 'Check Spelling as You Type', checked: proofing.enabled, onSelect: () => proofing.setEnabled(!proofing.enabled) },
-      { label: 'Recheck Document', disabled: !proofing.enabled, onSelect: () => proofing.recheck() },
+      { label: '拼写检查', icon: 'spell', shortcut: 'F7', onSelect: () => proofing.openPane() },
+      { label: '键入时检查拼写', checked: proofing.enabled, onSelect: () => proofing.setEnabled(!proofing.enabled) },
+      { label: '重新检查文档', disabled: !proofing.enabled, onSelect: () => proofing.recheck() },
     ],
   });
   const tables = createTableTools({ editor: () => engine, pkg: () => pkg, error, onChange: () => update(), controls: { get cellBorders() { return cellBorders; } } });
@@ -889,7 +890,7 @@ export function editorView({ doc, goHome, newDoc, importFile, openPath, newFromT
   const baseContextTabs = editorCommands.contextTabs;
   editorCommands.contextTabs = kit => [...(baseContextTabs?.(kit) || []), ...references.contextTabs(kit)];
   const baseFileItems = editorCommands.fileItems;
-  editorCommands.fileItems = () => [...(baseFileItems?.() || []), { label: 'Save as PDF', icon: 'pdf', disabled: !engine || failed, onSelect: savePdf }];
+  editorCommands.fileItems = () => [...(baseFileItems?.() || []), { label: '另存为 PDF', icon: 'pdf', disabled: !engine || failed, onSelect: savePdf }];
   // A PDF asked for again while one is being made (a long document's, chosen again from the menu) is that one:
   // a second export painted and encoded every page again beside the first, slowed both many times over and
   // downloaded the file twice.
@@ -900,8 +901,8 @@ export function editorView({ doc, goHome, newDoc, importFile, openPath, newFromT
       try {
         editor.finishComposition();
         const { exportPdf } = await import('../lib/pdf-export.js');
-        const name = P.ensureDocx(title.value || 'Untitled document').replace(/\.docx$/i, '.pdf');
-        P.downloadBlob(await exportPdf(editor, { title: title.value || 'Untitled document' }), name);
+        const name = P.ensureDocx(title.value || '无标题文档').replace(/\.docx$/i, '.pdf');
+        P.downloadBlob(await exportPdf(editor, { title: title.value || '无标题文档' }), name);
       } catch (e) { if (!destroyed) error(e); }
     })().finally(() => { savingPdf = null; });
   }
@@ -961,7 +962,7 @@ export function editorView({ doc, goHome, newDoc, importFile, openPath, newFromT
     else if (top && !labelOf(top)) {
       // A command is remembered for a few seconds, and while a dialog it opened then is open (or just closing).
       const fromDialog = command => [...document.querySelectorAll('.modal-root')].some(node => { const opened = Number(node.dataset.opened); return opened >= command.at && opened - command.at < 3000; });
-      const recent = pendingCommand && (Date.now() - pendingCommand.at < 3000 || fromDialog(pendingCommand)) ? pendingCommand : null, label = recent?.label || (length !== lastTextLength ? 'Typing' : 'Formatting');
+      const recent = pendingCommand && (Date.now() - pendingCommand.at < 3000 || fromDialog(pendingCommand)) ? pendingCommand : null, label = recent?.label || (length !== lastTextLength ? '键入' : '格式化');
       if (Object.isFrozen(top)) sharedLabels.set(top, label); else top.label = label;
       if (recent?.run) editCommands.recordRepeat(recent.label, recent.run);
       pendingCommand = null;
@@ -969,9 +970,9 @@ export function editorView({ doc, goHome, newDoc, importFile, openPath, newFromT
     lastTextLength = length;
   }
   const reviewCommands = review.commands;
-  const fileName = ext => P.ensureDocx(title.value || 'Untitled document').replace(/\.docx$/i, ext);
+  const fileName = ext => P.ensureDocx(title.value || '无标题文档').replace(/\.docx$/i, ext);
   const exporters = {
-    html: ['.html', 'text/html', () => documentHtml(engine.model, { title: title.value || 'Document' })],
+    html: ['.html', 'text/html', () => documentHtml(engine.model, { title: title.value || '文档' })],
     markdown: ['.md', 'text/markdown', () => documentMarkdown(engine.model)],
     text: ['.txt', 'text/plain', () => documentPlainText(engine.model)],
   };
@@ -1007,7 +1008,7 @@ export function editorView({ doc, goHome, newDoc, importFile, openPath, newFromT
     documentReadOnly: () => !!pkg?.readOnly,
     // Language of the selection (w:lang) and whether it is proofed.
     // Japanese text shows its East Asian language and Arabic its complex-script one (§17.3.2.20).
-    currentLanguage: () => engine ? selectionLanguage(engine.model) : 'en-US',
+    currentLanguage: () => engine ? selectionLanguage(engine.model) : 'zh-CN',
     noProofing: () => engine?.model.runFormatting.noProof === true,
     setLanguage: (tag, { noProof = false } = {}) => { if (!engine || pkg.readOnly || engine.viewOnly) return; engine.setRunFormat({ [languageProperty(tag)]: tag, noProof: !!noProof }); proofing.changed(); },
     languageDialog: () => statusBar?.openLanguageDialog(),
@@ -1023,8 +1024,8 @@ export function editorView({ doc, goHome, newDoc, importFile, openPath, newFromT
       return next ? next.label || null : designVersions.redo.at(-1)?.label || null;
     },
     // What Undo steps back through, latest first: the editor's own steps, then the design changes before them (onHistoryEnd).
-    undoHistory: () => engine ? [...[...engine.session.history].reverse().map(entry => labelOf(entry) || 'Edit'),
-      ...(collab.live ? [] : [...designVersions.undo].reverse().map(entry => entry.label || 'Design Change'))] : [],
+    undoHistory: () => engine ? [...[...engine.session.history].reverse().map(entry => labelOf(entry) || '编辑'),
+      ...(collab.live ? [] : [...designVersions.undo].reverse().map(entry => entry.label || '设计更改'))] : [],
     async undoSteps(count) {
       let left = count;
       for (; left > 0 && engine?.session.history.length; left--) engine.undo();
@@ -1043,9 +1044,9 @@ export function editorView({ doc, goHome, newDoc, importFile, openPath, newFromT
     versionHistory: cloud && versioning.enabled ? () => backstage.open('info', { scrollTo: 'bs-versions' }) : null,
     publishWeb: cloud && publishing.enabled && P.canHost() ? () => backstage.open('share') : null,
     shareItems: cloud ? () => [
-      ...(publishing.enabled && P.canHost() ? [{ label: 'Publish to the Web…', icon: 'share', disabled: !engine || failed, onSelect: () => backstage.open('share') }] : []),
-      { label: 'Send a Copy (.docx)', icon: 'download', disabled: !engine || failed, onSelect: download },
-      { label: 'Send as PDF', icon: 'pdf', disabled: !engine || failed, onSelect: () => savePdf() },
+      ...(publishing.enabled && P.canHost() ? [{ label: '发布到 Web…', icon: 'share', disabled: !engine || failed, onSelect: () => backstage.open('share') }] : []),
+      { label: '发送副本 (.docx)', icon: 'download', disabled: !engine || failed, onSelect: download },
+      { label: '作为 PDF 发送', icon: 'pdf', disabled: !engine || failed, onSelect: () => savePdf() },
     ] : null,
     exportAs(kind) {
       const exporter = exporters[kind]; if (!exporter || !engine || failed) return;
@@ -1076,37 +1077,37 @@ export function editorView({ doc, goHome, newDoc, importFile, openPath, newFromT
   }
   function openPreferencesDialog(section) {
     const sections = [
-      { id: 'general', label: 'General', controls: [
-        { type: 'choice', label: 'Appearance', options: [['system', 'System'], ['light', 'Light'], ['dark', 'Dark']], get: () => currentTheme(), set: mode => session.setTheme(mode) },
-        { type: 'toggle', label: 'Dark page', hint: 'With the dark appearance, show pages dark too. Printing and saving are unaffected.', get: () => darkPage(), set: on => setDarkPage(on), disabled: () => !isDark() },
-        { type: 'choice', label: 'Measurement units', hint: 'Rulers, indents, tabs and page setup.', select: true, options: UNITS.map(u => [u.id, u.label]), get: () => recallUnit(), set: unit => { rememberUnit(unit); rulers?.setUnit(unit); } },
-        { type: 'choice', label: 'Open documents at', hint: 'Phones and narrow windows always fit the page width.', select: true, options: [['100', '100%'], ['width', 'Page width'], ['page', 'One page']],
+      { id: 'general', label: '常规', controls: [
+        { type: 'choice', label: '外观', options: [['system', '跟随系统'], ['light', '浅色模式'], ['dark', '深色模式']], get: () => currentTheme(), set: mode => session.setTheme(mode) },
+        { type: 'toggle', label: '深色页面', hint: '在深色外观下，页面背景也显示为深色。不影响打印和保存。', get: () => darkPage(), set: on => setDarkPage(on), disabled: () => !isDark() },
+        { type: 'choice', label: '度量单位', hint: '标尺、缩进、制表位和页面设置。', select: true, options: UNITS.map(u => [u.id, u.label === 'Inches' ? '英寸' : u.label === 'Centimeters' ? '厘米' : u.label]), get: () => recallUnit(), set: unit => { rememberUnit(unit); rulers?.setUnit(unit); } },
+        { type: 'choice', label: '打开文档时显示比例', hint: '手机和窄窗口始终适应页宽。', select: true, options: [['100', '100%'], ['width', '适合页宽'], ['page', '整页显示']],
           get: () => { const z = recallZoom(); return z?.fit || (z?.value ? String(z.value) : '100'); }, set: v => rememberZoom(v === '100' ? { value: 100 } : { fit: v }) },
       ] },
-      { id: 'typing', label: 'AutoCorrect', note: 'These apply as you type, in every document on this device.', controls: [
-        { type: 'toggle', label: 'Autocorrect as you type', hint: 'Smart quotes, dashes, ellipses, symbols, fractions and a capital I; “- ” or “1. ” starts a list.', get: () => autocorrectEnabled(), set: on => setAutocorrectEnabled(on) },
-        { type: 'toggle', label: 'Capitalize the first letter of sentences', get: () => capitalizeSentencesEnabled(), set: on => setCapitalizeSentencesEnabled(on) },
-        { type: 'toggle', label: 'Link web and email addresses', hint: 'Addresses become links when you type a space or Return after them.', get: () => autolinkEnabled(), set: on => setAutolinkEnabled(on) },
+      { id: 'typing', label: '自动更正', note: '在键入时应用于此设备上的所有文档。', controls: [
+        { type: 'toggle', label: '键入时自动更正', hint: '直引号替换为弯引号、破折号、省略号、符号；键入“- ”或“1. ”开始列表。', get: () => autocorrectEnabled(), set: on => setAutocorrectEnabled(on) },
+        { type: 'toggle', label: '句首字母大写', get: () => capitalizeSentencesEnabled(), set: on => setCapitalizeSentencesEnabled(on) },
+        { type: 'toggle', label: '自动将网址和邮箱设为超链接', hint: '在地址后键入空格或回车时自动转为链接。', get: () => autolinkEnabled(), set: on => setAutolinkEnabled(on) },
       ] },
-      { id: 'proofing', label: 'Proofing', controls: [
-        { type: 'toggle', label: 'Check spelling as you type', get: () => proofing.enabled, set: on => proofing.setEnabled(on) },
-        { type: 'button', label: 'Recheck the document', hint: 'Forget words you chose to ignore and check again.', action: 'Recheck', run: () => proofing.recheck() },
-        { type: 'button', label: 'Language of the selection', hint: 'Mark text as another language, or exclude it from spelling.', action: 'Language…', run: () => statusBar?.openLanguageDialog() },
+      { id: 'proofing', label: '校对', controls: [
+        { type: 'toggle', label: '键入时检查拼写', get: () => proofing.enabled, set: on => proofing.setEnabled(on) },
+        { type: 'button', label: '重新检查文档', hint: '清除已忽略的词语并重新检查。', action: '重新检查', run: () => proofing.recheck() },
+        { type: 'button', label: '所选文字的语言', hint: '将文字标记为其他语言，或不检查拼写。', action: '语言…', run: () => statusBar?.openLanguageDialog() },
       ] },
-      { id: 'saving', label: 'Save', controls: [
-        cloud ? { type: 'toggle', label: 'AutoSave', hint: 'Save every change to Puter as you work. When off, use Save (' + MOD_KEY + '+S).', get: () => doc.autosave !== false, set: on => { doc.setAutosave?.(on); updateStatus(); chrome.refresh(); } }
-          : { type: 'button', label: 'Documents on this device', hint: 'Changes stay in this tab until you download the document.', action: 'Download', run: download },
+      { id: 'saving', label: '保存', controls: [
+        cloud ? { type: 'toggle', label: '自动保存', hint: '在编辑时自动保存所作更改。关闭时请使用保存快捷键 (' + MOD_KEY + '+S)。', get: () => doc.autosave !== false, set: on => { doc.setAutosave?.(on); updateStatus(); chrome.refresh(); } }
+          : { type: 'button', label: '此设备上的文档', hint: '在您下载文档之前，更改将保留在此标签页中。', action: '下载', run: download },
       ] },
-      { id: 'view', label: 'View', controls: [
-        { type: 'toggle', label: 'Ruler', get: () => rulers?.visible ?? true, set: on => { if ((rulers?.visible ?? true) !== on) rulers?.toggle(); } },
-        { type: 'toggle', label: 'Formatting marks', hint: `${MOD_KEY}+8`, get: () => !!editorCommands.marksVisible?.(), set: on => { if (!!editorCommands.marksVisible?.() !== on) editorCommands.toggleMarks?.(); } },
-        { type: 'toggle', label: 'Status bar', get: () => editorCommands.statusBarShown(), set: on => editorCommands.setStatusBarShown(on) },
-        { type: 'choice', label: 'Ribbon', options: [['always', 'Always show'], ['tabs', 'Tabs only'], ['auto', 'Auto-hide']], get: () => chrome.ribbonModes?.mode || 'always', set: mode => chrome.ribbonModes?.setMode(mode) },
+      { id: 'view', label: '视图', controls: [
+        { type: 'toggle', label: '标尺', get: () => rulers?.visible ?? true, set: on => { if ((rulers?.visible ?? true) !== on) rulers?.toggle(); } },
+        { type: 'toggle', label: '格式标记', hint: `${MOD_KEY}+8`, get: () => !!editorCommands.marksVisible?.(), set: on => { if (!!editorCommands.marksVisible?.() !== on) editorCommands.toggleMarks?.(); } },
+        { type: 'toggle', label: '状态栏', get: () => editorCommands.statusBarShown(), set: on => editorCommands.setStatusBarShown(on) },
+        { type: 'choice', label: '功能区', options: [['always', '始终显示功能区'], ['tabs', '仅显示选项卡'], ['auto', '自动隐藏功能区']], get: () => chrome.ribbonModes?.mode || 'always', set: mode => chrome.ribbonModes?.setMode(mode) },
       ] },
-      { id: 'keyboard', label: 'Keyboard', controls: [
-        { type: 'button', label: 'Customize Keyboard', hint: 'Give any command a shortcut of your own.', action: 'Customize…', run: () => editorCommands.customizeKeyboard() },
-        { type: 'button', label: 'Keyboard shortcuts', hint: `${MOD_KEY}+/`, action: 'Show', run: () => editorCommands.openShortcuts() },
-        { type: 'button', label: 'KeyTips', hint: `Press and release ${IS_MAC ? 'Option' : 'Alt'} to label the ribbon with keys.`, action: 'Show', closes: true, run: () => chrome.showKeyTips() },
+      { id: 'keyboard', label: '键盘', controls: [
+        { type: 'button', label: '自定义键盘', hint: '为常用功能指定自定义快捷键。', action: '自定义…', run: () => editorCommands.customizeKeyboard() },
+        { type: 'button', label: '键盘快捷键', hint: `${MOD_KEY}+/`, action: '显示', run: () => editorCommands.openShortcuts() },
+        { type: 'button', label: '按键提示', hint: `按一下 ${IS_MAC ? 'Option' : 'Alt'} 键可在功能区显示快捷键标签。`, action: '显示', closes: true, run: () => chrome.showKeyTips() },
       ] },
     ];
     return openPreferences({ sections, section, onClose: () => queueMicrotask(() => engine?.focus()) });
@@ -1208,7 +1209,7 @@ export function editorView({ doc, goHome, newDoc, importFile, openPath, newFromT
   Object.assign(editorCommands, collab.commands, assistant.commands, { autoSave: ({ enabled } = {}) => editorCommands.setAutosave?.(!!enabled) });
   if (cloud && versioning.enabled) editorCommands.versionHistory = () => versionHistory.open();
   const collabShareItems = editorCommands.shareItems;
-  editorCommands.shareItems = () => [...collab.shareItems(), ...(collabShareItems?.() || [{ label: 'Download a Copy (.docx)', icon: 'download', disabled: !engine || failed, onSelect: download }])];
+  editorCommands.shareItems = () => [...collab.shareItems(), ...(collabShareItems?.() || [{ label: '下载副本 (.docx)', icon: 'download', disabled: !engine || failed, onSelect: download }])];
   const collabExtendTab = editorCommands.extendTab;
   editorCommands.extendTab = (id, kit) => [...(collabExtendTab?.(id, kit) || []), ...collab.extendTab(id, kit)];
   const collabExtendMenu = editorCommands.extendMenu;
@@ -1228,12 +1229,12 @@ export function editorView({ doc, goHome, newDoc, importFile, openPath, newFromT
       clipboardState, cut: () => copyText(true), copy: () => copyText(false), paste: pasteText, pastePlain: pastePlainText, hasDocument: () => !!engine && !failed,
       engine: () => engine, searchDocument: text => { if (!engine) return; openSearch(); outlinePanel.setSearch(text); editCommands.setSearchQuery(text); } },
   });
-  const focusButton = el('button.ed-status-item', { type: 'button', title: 'Focus', 'aria-label': 'Focus', onclick: () => editorCommands.focusMode() }, commandIconEl('focusArrow', 14), el('span', {}, 'Focus'));
+  const focusButton = el('button.ed-status-item', { type: 'button', title: '专注模式', 'aria-label': '专注模式', onclick: () => editorCommands.focusMode() }, commandIconEl('focusArrow', 14), el('span', {}, '专注模式'));
   statusBar = createStatusBar({ w: editorCommands, a: { hasDocument: () => !!engine && !failed, focusEditor: () => engine?.focus(), toggleNavigation: () => toggleOutline() },
     parts: { stats, words, proofingButton, editingArea: editingAreaLabel, focusButton, zoomOut, zoomSlider, zoomIn,
-      textMode: el('label.canvas-text-mode', { title: 'Edit the text in a plain text field without page layout, for screen readers and other assistive tools' }, textMode, 'Text mode'),
-      zoomLabel: el('label.canvas-zoom', {}, el('span.visually-hidden', {}, 'Zoom '), zoom) },
-    help: el('span.visually-hidden', { id: 'canvas-input-help' }, `Tab moves between table cells · Escape then Tab to leave · ${MOD_KEY}+Enter page break · Shift+Enter line break`) });
+      textMode: el('label.canvas-text-mode', { title: '在无页面布局的纯文本框中编辑，适用于屏幕阅读器等辅助工具' }, textMode, '纯文本模式'),
+      zoomLabel: el('label.canvas-zoom', {}, el('span.visually-hidden', {}, '显示比例 '), zoom) },
+    help: el('span.visually-hidden', { id: 'canvas-input-help' }, `Tab 在单元格间移动 · Esc 然后 Tab 离开表格 · ${MOD_KEY}+Enter 分页符 · Shift+Enter 换行符`) });
   try { if (localStore()?.getItem(STATUS_HIDDEN) === '1') statusBar.el.hidden = true; } catch { /* storage unavailable */ }
   backstage = createBackstage({ local, title: () => title.value, focusEditor: () => engine?.focus(),
     newDocument: () => newDoc?.(), newFromTemplate: newFromTemplate ? id => newFromTemplate(id) : null, customTemplates: cloud ? () => listCustomTemplates() : null,
@@ -1247,24 +1248,24 @@ export function editorView({ doc, goHome, newDoc, importFile, openPath, newFromT
     versions: cloud && versioning.enabled ? () => (doc.path ? listVersions(doc.path, { uid: doc.uid }) : Promise.resolve([])) : null,
     versionsAvailable: () => !!doc.path,
     // A version that could not be written says so, as the Version History pane does.
-    saveVersionNow: () => doc.saveVersionNow().then(v => { if (!v) throw new Error('The version could not be saved.'); toast('Version saved'); }).catch(e => { if (!destroyed) error(e); }),
+    saveVersionNow: () => doc.saveVersionNow().then(v => { if (!v) throw new Error('无法保存版本。'); toast('已保存版本'); }).catch(e => { if (!destroyed) error(e); }),
     // Replacing the file of a shared document would be undone by the room when it reopens; the room restores it instead.
     restoreVersion: async version => { if (!collab.live) return restoreVersionFile(version); if (await versionHistory.restore(version)) backstage.close({ focus: true }); },
     exportAs: kind => editorCommands.exportAs(kind),
     save: () => save(), download, saveTemplate: cloud ? saveTemplate : null, savePdf: () => savePdf(), rename: cloud ? () => { title.focus(); title.select(); } : null,
     saveStatus: () => status.getAttribute('aria-label'),
     saveAs: cloud ? async name => {
-      try { await ready; if (!engine || failed) return 'The document is not open.'; engine.finishComposition(); if (session.signedOut && !await session.signIn()) return 'Sign in to save a copy.'; }
+      try { await ready; if (!engine || failed) return '文档未打开。'; engine.finishComposition(); if (session.signedOut && !await session.signIn()) return '登录后可保存副本。'; }
       catch (e) { return e?.message || String(e); }
       const failure = await doc.saveAs(name, { stillWanted: () => !destroyed });
       if (!failure) { title.value = doc.name; refreshTitle(); showDocumentTitle(); }
       return failure;
     } : null,
     // "Report copy", as Puter's Save dialog suggests below, or "Report copy 2" when that is taken.
-    copyName: cloud ? async () => P.documentStem(await P.uniqueName(`${P.documentStem(doc.name) || 'Untitled document'} copy.docx`)) : null,
+    copyName: cloud ? async () => P.documentStem(await P.uniqueName(`${P.documentStem(doc.name) || '无标题文档'} 副本.docx`)) : null,
     // Inside the Puter desktop Save a copy asks where, with Puter's Save dialog, rather than for a name in the app folder.
     saveCopyWhere: cloud && P.asksWhereToSave() ? async () => {
-      try { await ready; if (!engine || failed) return 'The document is not open.'; engine.finishComposition(); if (session.signedOut && !await session.signIn()) return 'Sign in to save a copy.'; }
+      try { await ready; if (!engine || failed) return '文档未打开。'; engine.finishComposition(); if (session.signedOut && !await session.signIn()) return '登录后可保存副本。'; }
       catch (e) { return e?.message || String(e); }
       const failure = await doc.saveCopy({ stillWanted: () => !destroyed });
       if (failure === null && !destroyed) { title.value = doc.name; refreshTitle(); showDocumentTitle(); }
@@ -1283,20 +1284,20 @@ export function editorView({ doc, goHome, newDoc, importFile, openPath, newFromT
         const scale = 150 / sheet.width, thumb = document.createElement('canvas');
         thumb.width = Math.round(sheet.width * scale); thumb.height = Math.round(sheet.height * scale);
         thumb.getContext('2d')?.drawImage(sheet, 0, 0, thumb.width, thumb.height);
-        return el('figure.bs-page', {}, thumb, el('figcaption', {}, `Page ${i + 1}`));
-      }), ...(sheets.length > max ? [el('p.bs-muted', {}, `and ${sheets.length - max} more`)] : []));
+        return el('figure.bs-page', {}, thumb, el('figcaption', {}, `第 ${i + 1} 页`));
+      }), ...(sheets.length > max ? [el('p.bs-muted', {}, `以及另外 ${sheets.length - max} 页`)] : []));
     },
     shareAvailable: () => true,
     shareWithPeople: () => collab.share(),
     openVersionHistory: cloud && versioning.enabled ? () => versionHistory.open() : null,
     publish: canPublish() || (cloud && publishing.enabled && P.canHost()) ? async () => {
-      await ready; if (!engine || failed) throw new Error('The document is not open.');
+      await ready; if (!engine || failed) throw new Error('文档未打开。');
       // A template or other file whose edits go to a new .docx (inside the Puter desktop, where Save puts it) is
       // published as that .docx, as a new document is: the page then follows the file the edits are saved in.
-      if (!doc.path || doc.waitsForPlace) { await save(); if (!doc.path || doc.waitsForPlace) throw new Error('Save the document first.'); }
+      if (!doc.path || doc.waitsForPlace) { await save(); if (!doc.path || doc.waitsForPlace) throw new Error('请先保存文档。'); }
       engine.finishComposition();
-      const html = exportBody(() => documentHtml(engine.model, { title: title.value || 'Document' }));
-      return publishPage(doc.path, title.value || 'Document', html, { existing: await findSite(doc.path) });
+      const html = exportBody(() => documentHtml(engine.model, { title: title.value || '文档' }));
+      return publishPage(doc.path, title.value || '文档', html, { existing: await findSite(doc.path) });
     } : null,
     findSite: cloud ? () => (doc.path && P.canHost() ? findSite(doc.path) : Promise.resolve(null)) : null,
     unpublish: site => unpublishPage(site),
@@ -1307,7 +1308,7 @@ export function editorView({ doc, goHome, newDoc, importFile, openPath, newFromT
   });
   // A shared document restored through the room is one undoable change for everyone (version-history.js); otherwise the file is replaced.
   async function restoreVersionFile(version, { confirm = true } = {}) {
-    if (confirm && !await confirmDialog({ title: 'Restore this version?', message: `The document goes back to how it was on ${new Date(version.time).toLocaleString()}. The current version is kept in the history.`, confirmLabel: 'Restore', danger: false })) return;
+    if (confirm && !await confirmDialog({ title: '恢复此版本？', message: `文档将恢复到 ${new Date(version.time).toLocaleString()} 的状态。当前版本仍将保留在历史记录中。`, confirmLabel: '恢复', danger: false })) return;
     try {
       await doc.restoreVersion(version.path, { stillWanted: () => !destroyed });
       backstage.close({ focus: false });
@@ -1532,7 +1533,7 @@ export function editorView({ doc, goHome, newDoc, importFile, openPath, newFromT
     const areas = (engine.storyLayout.positions || []).filter(item => engine.pageStories.stories[item.path].editable);
     const areaSignature = JSON.stringify(areas.map(item => [item.path, item.page]));
     if (areaSignature !== editingAreaSignature) {
-      editingArea.replaceChildren(el('option', { value: '' }, 'Body'), ...areas.map(item => el('option', { value: JSON.stringify([item.path, item.page]) }, `${{ header: 'Header', footer: 'Footer', footnote: 'Footnote' }[engine.pageStories.stories[item.path].kind] || 'Story'} · page ${item.page + 1}`)));
+      editingArea.replaceChildren(el('option', { value: '' }, '正文'), ...areas.map(item => el('option', { value: JSON.stringify([item.path, item.page]) }, `${{ header: '页眉', footer: '页脚', footnote: '脚注' }[engine.pageStories.stories[item.path].kind] || '文本文档'} · 第 ${item.page + 1} 页`)));
       editingAreaSignature = areaSignature;
     }
     editingAreaLabel.hidden = pkg.readOnly || !areas.length;
@@ -1552,7 +1553,7 @@ export function editorView({ doc, goHome, newDoc, importFile, openPath, newFromT
       undo.disabled = redo.disabled = true;
       find.disabled = false; finder.refresh();
       stats.textContent = pageStatus();
-      if (pkg.readOnly) words.textContent = 'Read only'; else updateWordCount();
+      if (pkg.readOnly) words.textContent = '只读'; else updateWordCount();
       chrome.refresh(); review.refresh(); statusBar?.refresh(); assistant.refresh(); collab.refresh(); tables.refresh();
       return;
     }
@@ -1560,8 +1561,8 @@ export function editorView({ doc, goHome, newDoc, importFile, openPath, newFromT
     undo.disabled = !engine.session.history.length && !designVersions.undo.length;
     const repeating = !engine.session.future.length && !designVersions.redo.length && editCommands.canRepeat();
     redo.disabled = !engine.session.future.length && !designVersions.redo.length && !repeating;
-    const redoLabel = repeating ? `Repeat ${editCommands.repeatLabel()}` : 'Redo';
-    if (redo.getAttribute('aria-label') !== redoLabel) { redo.setAttribute('aria-label', redoLabel); redo.title = repeating ? `${redoLabel} (F4)` : `Redo (${MOD_KEY}+Shift+Z)`; }
+    const redoLabel = repeating ? `重复 ${editCommands.repeatLabel()}` : '重做';
+    if (redo.getAttribute('aria-label') !== redoLabel) { redo.setAttribute('aria-label', redoLabel); redo.title = repeating ? `${redoLabel} (F4)` : `重做 (${MOD_KEY}+Shift+Z)`; }
     find.disabled = false; finder.refresh();
     hyperlink.disabled = false; hyperlink.setAttribute('aria-pressed', String(!!engine.model.hyperlink));
     bookmarks.disabled = engine.session.path !== null;
@@ -1571,7 +1572,7 @@ export function editorView({ doc, goHome, newDoc, importFile, openPath, newFromT
     // "No style" shows as the document's default paragraph style (Normal), so it is only listed when there is none.
     const choices = engine.model.paragraphStyles, unstyled = !engine.model.styles.defaultParagraph, signature = JSON.stringify([choices, unstyled]);
     if (signature !== styleOptionsSignature) {
-      paragraphStyle.replaceChildren(el('option', { value: '__mixed', disabled: true }, 'Mixed styles'), ...(unstyled ? [el('option', { value: '' }, 'Default paragraph')] : []), ...choices.map(s => el('option', { value: s.id, disabled: !!s.error, title: s.error || styleDisplayName(s.name) }, styleDisplayName(s.name))));
+      paragraphStyle.replaceChildren(el('option', { value: '__mixed', disabled: true }, '多种样式'), ...(unstyled ? [el('option', { value: '' }, '默认段落')] : []), ...choices.map(s => el('option', { value: s.id, disabled: !!s.error, title: s.error || styleDisplayName(s.name) }, styleDisplayName(s.name))));
       styleOptionsSignature = signature;
     }
     paragraphStyle.disabled = false; paragraphStyle.value = engine.model.paragraphStyle ?? '__mixed';
@@ -1579,7 +1580,7 @@ export function editorView({ doc, goHome, newDoc, importFile, openPath, newFromT
     newStyle.disabled = false;
     const characterChoices = engine.model.characterStyles, characterSignature = JSON.stringify(characterChoices);
     if (characterSignature !== characterOptionsSignature) {
-      characterStyle.replaceChildren(el('option', { value: '__mixed', disabled: true }, 'Mixed character styles'), el('option', { value: '' }, 'Default characters'), ...characterChoices.map(s => el('option', { value: s.id, disabled: !!s.error, title: s.error || styleDisplayName(s.name) }, styleDisplayName(s.name))));
+      characterStyle.replaceChildren(el('option', { value: '__mixed', disabled: true }, '多种字符样式'), el('option', { value: '' }, '默认字符'), ...characterChoices.map(s => el('option', { value: s.id, disabled: !!s.error, title: s.error || styleDisplayName(s.name) }, styleDisplayName(s.name))));
       characterOptionsSignature = characterSignature;
     }
     characterStyle.disabled = false; characterStyle.value = engine.model.characterStyle ?? '__mixed';
@@ -1589,30 +1590,30 @@ export function editorView({ doc, goHome, newDoc, importFile, openPath, newFromT
     insertImage.disabled = false; imageProperties.disabled = !engine.model.selectedImage;
     tableActions.disabled = !engine.model.tableContext; tableProperties.disabled = tableActions.disabled;
     const nestedTable = !!engine.model.tableContext?.table.parentCellId;
-    tableActions.querySelector('option[value="fitPage"]').textContent = nestedTable ? 'Fit to cell' : 'Fit to page';
+    tableActions.querySelector('option[value="fitPage"]').textContent = nestedTable ? '根据单元格调整' : '根据窗口调整表格';
     const repeatHeader = tableActions.querySelector('option[value="repeatHeader"]');
     repeatHeader.disabled = nestedTable;
-    repeatHeader.textContent = nestedTable ? 'Nested tables do not repeat their own header rows' : 'Repeat rows through selection';
-    tableActions.querySelector('option[value="clearHeader"]').textContent = nestedTable ? 'Remove header flags' : 'Remove repeated headers';
+    repeatHeader.textContent = nestedTable ? '嵌套表格不重复其标题行' : '在选定范围内重复标题行';
+    tableActions.querySelector('option[value="clearHeader"]').textContent = nestedTable ? '清除标题标记' : '取消重复标题行';
     tableActions.querySelector('option[value="mergeCells"]').disabled = !engine.model.mergeCellsContext;
     tableActions.querySelector('option[value="mergeBelow"]').disabled = !engine.model.mergeBelowContext;
     tableActions.querySelector('option[value="splitCell"]').disabled = !engine.model.canSplitCell;
     tableActions.querySelector('option[value="clearHeader"]').disabled = !engine.model.tableContext?.table.rows.some(row => row.header);
     const columnCount = engine.model.tableContext?.span ?? 1;
-    tableActions.querySelector('option[value="column"]').textContent = columnCount > 1 ? `Delete ${columnCount} spanned columns` : 'Delete column';
+    tableActions.querySelector('option[value="column"]').textContent = columnCount > 1 ? `删除跨越的 ${columnCount} 列` : '删除列';
     // Each of these walks the selection's tables: read once for all the controls.
     const selectedRows = engine.model.selectedTableRows, selectedCells = engine.model.selectedTableCells, inCells = selectedCells.length > 0;
     keepRow.disabled = !selectedRows.length;
     rowHeight.disabled = keepRow.disabled;
-    rowHeight.title = 'Row height: ' + rowHeightLabel(engine.model.tableRowHeight);
+    rowHeight.title = '行高: ' + rowHeightLabel(engine.model.tableRowHeight);
     cellAlignment.disabled = !inCells;
-    cellAlignment.title = 'Cell alignment: ' + (CELL_ALIGNMENTS[engine.model.cellVerticalAlignment] || 'Mixed');
+    cellAlignment.title = '单元格对齐方式: ' + (CELL_ALIGNMENTS[engine.model.cellVerticalAlignment] || '多种');
     cellShading.disabled = !inCells;
-    cellShading.title = 'Cell shading: ' + cellShadingLabel(engine.model.cellShading);
+    cellShading.title = '单元格底纹: ' + cellShadingLabel(engine.model.cellShading);
     cellBorders.disabled = !inCells;
-    cellBorders.title = 'Cell borders: ' + cellBorderLabel(engine.model.cellBorderValues);
+    cellBorders.title = '单元格边框: ' + cellBorderLabel(engine.model.cellBorderValues);
     cellMargins.disabled = !inCells;
-    cellMargins.title = 'Cell margins: ' + cellMarginLabel(selectedCells);
+    cellMargins.title = '单元格边距: ' + cellMarginLabel(selectedCells);
     // Outside a table there is nothing to keep together: a state of 'mixed' there would read as a mixed selection.
     keepRow.setAttribute('aria-pressed', !selectedRows.length ? 'false' : engine.model.tableRowKeep === null ? 'mixed' : String(engine.model.tableRowKeep));
     const run = engine.model.runCommandFormatting;
@@ -1624,14 +1625,14 @@ export function editorView({ doc, goHome, newDoc, importFile, openPath, newFromT
     }
     for (const [control, mode] of [[caps, 'caps'], [smallCaps, 'smallCaps']]) { control.disabled = false; control.setAttribute('aria-pressed', run.capitalization === null ? 'mixed' : String(run.capitalization === mode)); }
     for (const [control, mode] of [[strike, 'single'], [doubleStrike, 'double']]) { control.disabled = false; control.setAttribute('aria-pressed', run.strikethrough === null ? 'mixed' : String(run.strikethrough === mode)); }
-    underlineOptions.disabled = false; underlineOptions.title = `Underline: ${run.underlineStyle === null ? 'Mixed' : UNDERLINE_STYLES[run.underlineStyle]}`;
-    kerning.disabled = false; kerning.title = `Kerning: ${run.kerning === null ? 'Mixed' : run.kerning === 0 ? 'Off' : 'from ' + run.kerning + ' pt'}`;
-    textWidth.disabled = false; textWidth.title = `Text width: ${run.textScale === null ? 'Mixed' : run.textScale + '%'}`;
-    characterSpacing.disabled = false; characterSpacing.title = `Character spacing: ${run.characterSpacing === null ? 'Mixed' : run.characterSpacing + ' pt'}`;
-    baselineShift.disabled = false; baselineShift.title = `Baseline shift: ${run.baselineShift === null ? 'Mixed' : run.baselineShift + ' pt'}`;
-    highlight.disabled = false; highlight.title = `Text highlight: ${run.highlight === null ? 'Mixed' : highlightLabel(run.highlight)}`;
+    underlineOptions.disabled = false; underlineOptions.title = `下划线: ${run.underlineStyle === null ? '多种' : UNDERLINE_STYLES[run.underlineStyle]}`;
+    kerning.disabled = false; kerning.title = `字距微调: ${run.kerning === null ? '多种' : run.kerning === 0 ? '关' : run.kerning + ' 磅起'}`;
+    textWidth.disabled = false; textWidth.title = `字符缩放: ${run.textScale === null ? '多种' : run.textScale + '%'}`;
+    characterSpacing.disabled = false; characterSpacing.title = `字符间距: ${run.characterSpacing === null ? '多种' : run.characterSpacing + ' 磅'}`;
+    baselineShift.disabled = false; baselineShift.title = `基线偏移: ${run.baselineShift === null ? '多种' : run.baselineShift + ' 磅'}`;
+    highlight.disabled = false; highlight.title = `突出显示: ${run.highlight === null ? '多种' : highlightLabel(run.highlight)}`;
     for (const [control, value] of [[superscript, 'superscript'], [subscript, 'subscript']]) { control.disabled = false; control.setAttribute('aria-pressed', run.verticalAlign === null ? 'mixed' : String(run.verticalAlign === value)); }
-    textColor.disabled = false; textColor.title = `Text color: ${run.color === null ? 'Mixed' : run.color === 'auto' ? 'Automatic' : '#' + run.color}`;
+    textColor.disabled = false; textColor.title = `字体颜色: ${run.color === null ? '多种' : run.color === 'auto' ? '自动' : '#' + run.color}`;
     for (const [control, value, color] of [[textColor, run.color, run.color === 'auto' ? 'currentColor' : `#${run.color}`], [highlight, run.highlight, HIGHLIGHTS[run.highlight] ? `#${HIGHLIGHTS[run.highlight]}` : 'transparent']]) {
       const indicator = control.querySelector('.canvas-color-indicator');
       indicator.style.background = value === null ? '' : color;
@@ -1642,8 +1643,8 @@ export function editorView({ doc, goHome, newDoc, importFile, openPath, newFromT
     const family = run.fontAscii === run.fontHAnsi ? run.fontAscii : null;
     const substituted = family && documentFontAvailable(family, engine.model.styles.fontAlternatives) === false;
     const replacement = substituted ? displayedFont({ fontFamily: family }, engine.model.styles.fontAlternatives) : family;
-    fontFamily.textContent = !family ? 'Mixed fonts' : substituted ? `${family} → ${replacement}` : family;
-    fontFamily.title = substituted ? `${family} is unavailable in this browser. Displaying ${replacement}; the original font is retained in the DOCX.` : !family ? 'The selection uses different Latin font declarations.' : `Latin font: ${family}`;
+    fontFamily.textContent = !family ? '多种字体' : substituted ? `${family} → ${replacement}` : family;
+    fontFamily.title = substituted ? `${family} 在此浏览器中不可用。当前显示为 ${replacement}；DOCX 中保留原始字体。` : !family ? '选定内容使用了不同的西文字体声明。' : `西文字体: ${family}`;
     if (document.activeElement !== fontSize) fontSize.value = run.fontSize ?? '';
     for (const control of [pageSetup, pageBreak, pageBreakBefore, outdent, indent, paragraphGeometry, insertTab, lineSpacingOptions, lineSpacingMenu, ...alignmentButtons, ...directionButtons]) control.disabled = false;
     pageBreak.disabled = !!engine.model.selectedParagraphs[0]?.cellId;
@@ -1654,10 +1655,10 @@ export function editorView({ doc, goHome, newDoc, importFile, openPath, newFromT
     }
     restart.disabled = engine.model.listFormatting !== 'number';
     const format = engine.model.paragraphFormatting;
-    paragraphBorders.disabled = false; paragraphBorders.title = 'Paragraph borders: ' + paragraphBorderLabel(format.paragraphBorders);
-    paragraphShading.disabled = false; paragraphShading.title = 'Paragraph shading: ' + paragraphShadingLabel(format.paragraphShading);
+    paragraphBorders.disabled = false; paragraphBorders.title = '段落边框: ' + paragraphBorderLabel(format.paragraphBorders);
+    paragraphShading.disabled = false; paragraphShading.title = '段落底纹: ' + paragraphShadingLabel(format.paragraphShading);
     outline.disabled = false; outlineLevel.disabled = !engine.model.canSetOutlineLevel; outlineLevel.value = format.outlineLevel === null ? 'mixed' : String(format.outlineLevel);
-    outlineLevel.title = outlineLevel.disabled ? 'Built-in heading styles have a fixed level. Choose another paragraph style to change it.' : 'Outline level does not change text formatting';
+    outlineLevel.title = outlineLevel.disabled ? '内置标题样式具有固定级别。选择其他段落样式以进行更改。' : '大纲级别不影响文字格式';
     pageBreakBefore.setAttribute('aria-pressed', format.pageBreakBefore === null ? 'mixed' : String(format.pageBreakBefore));
     for (const { key, button } of paginationTools) {
       button.disabled = false;
@@ -1666,7 +1667,7 @@ export function editorView({ doc, goHome, newDoc, importFile, openPath, newFromT
     for (const control of [lineSpacing, spaceBefore, spaceAfter]) control.disabled = false;
     alignmentButtons.forEach((control, i) => control.setAttribute('aria-pressed', format.alignmentSide === null ? 'mixed' : String(format.alignmentSide === alignments[i])));
     directionButtons.forEach((control, i) => control.setAttribute('aria-pressed', format.bidi === null ? 'mixed' : String(format.bidi === !!i)));
-    customLine.textContent = format.lineRule === null || format.lineSpacing === null ? 'Mixed' : format.lineRule === 'auto' ? `${format.lineSpacing}×` : `${format.lineRule === 'exact' ? 'Exactly' : 'At least'} ${format.lineSpacing} pt`;
+    customLine.textContent = format.lineRule === null || format.lineSpacing === null ? '多种' : format.lineRule === 'auto' ? `${format.lineSpacing}×` : `${format.lineRule === 'exact' ? '固定值' : '最小值'} ${format.lineSpacing} 磅`;
     lineSpacing.value = format.lineRule === 'auto' && [1, 1.15, 1.5, 2, 2.5, 3].includes(format.lineSpacing) ? String(format.lineSpacing) : '';
     if (document.activeElement !== spaceBefore) spaceBefore.value = format.spaceBefore ?? '';
     if (document.activeElement !== spaceAfter) spaceAfter.value = format.spaceAfter ?? '';
@@ -1680,14 +1681,14 @@ export function editorView({ doc, goHome, newDoc, importFile, openPath, newFromT
   // processors paginate in the background, and the last count shows meanwhile.
   let printedStatus = null, printedStatusTimer = 0;
   function pageStatus() {
-    if (!isContinuousView(engine.view?.kind)) { printedStatus = null; return `Page ${Math.min(engine.layout.pageCount, (engine.caretPageIndex ?? 0) + 1)} of ${engine.layout.pageCount}`; }
+    if (!isContinuousView(engine.view?.kind)) { printedStatus = null; return `第 ${Math.min(engine.layout.pageCount, (engine.caretPageIndex ?? 0) + 1)} 页，共 ${engine.layout.pageCount} 页`; }
     clearTimeout(printedStatusTimer);
     printedStatusTimer = setTimeout(() => {
       if (!engine || failed || destroyed || !isContinuousView(engine.view?.kind)) return;
       try { printedStatus = engine.printedPages(); } catch { printedStatus = null; }
-      stats.textContent = printedStatus ? `Page ${printedStatus.current} of ${printedStatus.count}` : '';
+      stats.textContent = printedStatus ? `第 ${printedStatus.current} 页，共 ${printedStatus.count} 页` : '';
     }, 600);
-    return printedStatus ? `Page ${printedStatus.current} of ${printedStatus.count}` : '';
+    return printedStatus ? `第 ${printedStatus.current} 页，共 ${printedStatus.count} 页` : '';
   }
   // Scrolled away from the caret, the status bar names the page in view, as desktop word processors do; while the
   // caret's page shows, and at the next caret move or edit (update), it names the caret's. Once a frame, reading only
@@ -1699,7 +1700,7 @@ export function editorView({ doc, goHome, newDoc, importFile, openPath, newFromT
       pageInViewFrame = 0;
       if (!engine || failed || destroyed || host.hidden || isContinuousView(engine.view?.kind)) return;
       const index = pageInView();
-      if (index !== null) stats.textContent = `Page ${index + 1} of ${engine.layout.pageCount}`;
+      if (index !== null) stats.textContent = `第 ${index + 1} 页，共 ${engine.layout.pageCount} 页`;
     });
   }, { passive: true });
   function pageInView() {
@@ -1729,7 +1730,7 @@ export function editorView({ doc, goHome, newDoc, importFile, openPath, newFromT
     // against them), with the Word Count dialog's rule and scope, so the two always agree.
     counted = statusWordCount(engine, { cache: counted });
     const { total, chosen } = counted;
-    words.textContent = chosen !== null ? `${chosen} of ${total} ${total === 1 ? 'word' : 'words'}` : `${total} ${total === 1 ? 'word' : 'words'}`;
+    words.textContent = chosen !== null ? `${chosen} / ${total} 个字` : `${total} 个字`;
   }
   function renderStatus(label, name, state = '') {
     status.className = `canvas-save-status save-status ${state}`;
@@ -1739,37 +1740,37 @@ export function editorView({ doc, goHome, newDoc, importFile, openPath, newFromT
   }
   // The browser tab and, inside the Puter desktop, the window's title bar (which does not follow the page's title) name the document.
   function showDocumentTitle() {
-    document.title = `${doc.name} — Documents`;
+    document.title = `${doc.name} — 文档`;
     P.setWindowTitle(document.title);
   }
   function refreshTitle() {
-    title.title = `${doc.name} — Rename`;
+    title.title = `${doc.name} — 重命名`;
     title.style.width = `${Math.min(48, Math.max(12, title.value.length + 2))}ch`;
   }
   function updateStatus() {
     if (destroyed || failed) return;
-    if (pkg?.readOnly) { renderStatus('Read only', 'monitor'); status.disabled = true; saveButton.disabled = true; return; }
+    if (pkg?.readOnly) { renderStatus('只读', 'monitor'); status.disabled = true; saveButton.disabled = true; return; }
     const signedOut = !local && session.signedOut;
     // A tab that leaves saving to the owner's has its edits safe only once the room has them.
     const waiting = doc.writes === false && collab?.live?.status === 'offline' ? collab.live.pending : -1;
-    const [label, name, state] = signedOut ? ['Sign in to save', 'cloud', 'signed-out']
-      : doc.status === 'saving' ? ['Saving…', 'spinner', 'saving']
-      : doc.status === 'error' ? ['Not saved', 'alert', 'error']
-      : doc.status === 'offline' ? ['Offline', 'wifiOff', 'offline']
-      : waiting >= 0 ? ['Offline', 'wifiOff', 'offline']
+    const [label, name, state] = signedOut ? ['登录以保存', 'cloud', 'signed-out']
+      : doc.status === 'saving' ? ['正在保存…', 'spinner', 'saving']
+      : doc.status === 'error' ? ['未保存', 'alert', 'error']
+      : doc.status === 'offline' ? ['脱机', 'wifiOff', 'offline']
+      : waiting >= 0 ? ['脱机', 'wifiOff', 'offline']
       // The owner joined their own room from a link, and its file is not known here: nothing saves it until the file is opened.
-      : doc.writes === false && !local && !doc.path && collab?.live?.role === 'owner' ? ['Shared · open its file to save', 'cloudOff', 'unsaved']
+      : doc.writes === false && !local && !doc.path && collab?.live?.role === 'owner' ? ['共享 · 打开文件以保存', 'cloudOff', 'unsaved']
       // A shared document's other tabs leave saving to the owner's (see collab/live.js).
-      : doc.writes === false ? (local ? ['Shared in this browser', 'monitor', 'local'] : ['Shared · saved by the owner', 'cloud', 'saved'])
+      : doc.writes === false ? (local ? ['在此浏览器中共享', 'monitor', 'local'] : ['共享 · 由所有者保存', 'cloud', 'saved'])
       // Inside the Puter desktop a new document's edits wait for a first Save to ask where they go: AutoSave cannot write them yet.
-      : doc.waitsForPlace ? ['Not saved yet', 'cloudOff', 'unsaved']
-      : doc.dirty ? ['Unsaved changes', 'cloudOff', 'unsaved']
-      : local ? ['On this device', 'monitor', 'local']
-      : doc.path ? ['Saved to Puter', 'cloud', 'saved'] : ['Not saved yet', 'cloud', 'unsaved'];
+      : doc.waitsForPlace ? ['尚未保存', 'cloudOff', 'unsaved']
+      : doc.dirty ? ['未保存的更改', 'cloudOff', 'unsaved']
+      : local ? ['在此设备上', 'monitor', 'local']
+      : doc.path ? ['已保存', 'cloud', 'saved'] : ['尚未保存', 'cloud', 'unsaved'];
     renderStatus(label, name, state);
-    if (label === 'Shared · open its file to save') status.title = 'You own this shared document. Changes made here are kept with it, and saved to its file when you open it from your documents';
-    if (waiting >= 0) status.title = waiting ? `Offline: ${waiting === 1 ? 'a change is' : `${waiting} changes are`} waiting to reach the others` : 'Offline: the shared document cannot be reached';
-    if (label === 'Not saved yet' && doc.waitsForPlace) status.title = 'Not saved yet. Save to choose where it goes; AutoSave starts then';
+    if (label === '共享 · 打开文件以保存') status.title = '您是此共享文档的所有者。在此进行的更改将与其保留，并在您从文档中打开时保存到其文件中';
+    if (waiting >= 0) status.title = waiting ? `脱机：${waiting} 项更改等待同步给他人` : '脱机：无法连接到共享文档';
+    if (label === '尚未保存' && doc.waitsForPlace) status.title = '尚未保存。保存以选择保存位置；之后将启用自动保存';
     status.disabled = !signedOut && (!doc.exporter || doc.status === 'saving');
     if (doc.exporter) saveButton.disabled = false;
     refreshTitle();
@@ -1778,7 +1779,7 @@ export function editorView({ doc, goHome, newDoc, importFile, openPath, newFromT
   let titleTyped = false;
   const onTitle = async () => {
     titleTyped = false;
-    const name = title.value.trim() || 'Untitled document';
+    const name = title.value.trim() || '无标题文档';
     title.value = name;
     try {
       if (doc.rename) {
@@ -1805,7 +1806,7 @@ export function editorView({ doc, goHome, newDoc, importFile, openPath, newFromT
   const onConflict = e => {
     if (destroyed || conflictTold) return;
     conflictTold = true;
-    toast(e.detail.message, { icon: 'alert', duration: 15000, action: { label: 'Save a Copy', onClick: () => backstage.open('save') } });
+    toast(e.detail.message, { icon: 'alert', duration: 15000, action: { label: '保存副本', onClick: () => backstage.open('save') } });
   };
   const onSaved = () => { if (doc.status === 'saved') conflictTold = false; };
   doc.addEventListener('conflict', onConflict);
@@ -1813,7 +1814,7 @@ export function editorView({ doc, goHome, newDoc, importFile, openPath, newFromT
   const onSaveFailed = e => {
     if (destroyed) return;
     const reason = String(e.detail.message || '').trim().replace(/[.!]+$/, '');
-    toast(`Your changes are not saved${reason ? `: ${reason}` : ''}. AutoSave keeps trying.`, { icon: 'alert', duration: 15000, action: { label: 'Download a Copy', onClick: () => download() } });
+    toast(`您的更改尚未保存${reason ? `：${reason}` : ''}。自动保存将继续重试。`, { icon: 'alert', duration: 15000, action: { label: '下载副本', onClick: () => download() } });
   };
   doc.addEventListener('savefailed', onSaveFailed);
   doc.addEventListener('status', onSaved);
@@ -1842,7 +1843,7 @@ export function editorView({ doc, goHome, newDoc, importFile, openPath, newFromT
       onLinkClick: range => linkCard.show(range),
       onOpenLink: target => {
         // Imported destinations outside web, email and phone addresses (file paths, relative links) stay in the document unopened.
-        try { checkedHyperlinkTarget(target); } catch { error(new Error('This link points to a file or address that can’t be opened from here. It is kept in the document.')); return; }
+        try { checkedHyperlinkTarget(target); } catch { error(new Error('此链接指向无法在此打开的文件或地址。已在文档中保留。')); return; }
         window.open(target, '_blank', 'noopener,noreferrer');
       },
       // The account menu's typing settings, read at each keystroke so a change applies at once.
@@ -2154,7 +2155,7 @@ export function editorView({ doc, goHome, newDoc, importFile, openPath, newFromT
       try {
         const saved = await Promise.race([flushing, stalled]);
         if (saved !== 'stalled') return saved;
-        if (!destroyed) toast('Saving is taking longer than usual. Check your connection.', { icon: 'alert', duration: 8000 });
+        if (!destroyed) toast('保存耗时超过预期。请检查您的网络连接。', { icon: 'alert', duration: 8000 });
         return false;
       }
       catch (e) { if (!session.signedOut) error(e); return false; }

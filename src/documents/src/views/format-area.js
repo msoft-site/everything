@@ -33,8 +33,8 @@ import { fontCondition } from './find-replace.js';
 const MAC = MOD_KEY === 'Cmd';
 const chord = mac => MAC ? mac : mac.replace('Cmd+Ctrl', 'Ctrl+Alt').replace('Cmd+Option', 'Ctrl+Alt').replace('Cmd', 'Ctrl');
 const NULL_RUN = { fontAscii: null, fontHAnsi: null, bold: null, italic: null, fontSize: null, color: null, underlineStyle: null, underlineColor: null, strikethrough: null, capitalization: null, verticalAlign: null, vanish: null, textScale: null, characterSpacing: null, baselineShift: null, kerning: null, ligatures: null };
-const BORDER_ITEMS = [['Bottom Border', ['bottom'], 'borderBottom'], ['Top Border', ['top'], 'borderTop'], ['Left Border', ['left'], 'borderLeft'], ['Right Border', ['right'], 'borderRight'],
-  ['All Borders', ['top', 'bottom', 'left', 'right', 'between'], 'borderAll'], ['Outside Borders', ['top', 'bottom', 'left', 'right'], 'borderOuter'], ['Inside Borders', ['between'], 'borderInside']];
+const BORDER_ITEMS = [['下边框', ['bottom'], 'borderBottom'], ['上边框', ['top'], 'borderTop'], ['左边框', ['left'], 'borderLeft'], ['右边框', ['right'], 'borderRight'],
+  ['所有边框', ['top', 'bottom', 'left', 'right', 'between'], 'borderAll'], ['外侧边框', ['top', 'bottom', 'left', 'right'], 'borderOuter'], ['内部边框', ['between'], 'borderInside']];
 
 /**
  * The Format area: the Font, Paragraph, Tabs, Borders and Shading, Bullets and Numbering, Change Case,
@@ -51,11 +51,11 @@ export function createFormatArea({ editor, pkg, error, refresh: refreshChrome = 
   const later = () => queueMicrotask(() => editor()?.focus());
   /** Run a model change as one undo step; throw its error so a dialog can show it. */
   const transact = action => {
-    const engine = ready(); if (!engine) throw new Error('This document is read only.');
+    const engine = ready(); if (!engine) throw new Error('此文档为只读。');
     engine.finishComposition();
     let failure = null;
     const ok = engine.execute(() => action(engine.model, engine), e => { failure = e; }, undefined, true);
-    if (!ok) throw failure || new Error('This change could not be applied.');
+    if (!ok) throw failure || new Error('无法应用此更改。');
     return true;
   };
   /** Run a change from a menu: errors become a toast. */
@@ -64,7 +64,7 @@ export function createFormatArea({ editor, pkg, error, refresh: refreshChrome = 
   const track = opened => { modal = opened; return opened; };
 
   /* ---- Font and text effects ---- */
-  function fontDialog({ title = 'Font', seed = null, capture = null } = {}) {
+  function fontDialog({ title = '字体', seed = null, capture = null } = {}) {
     const engine = editor(); if (!engine) return;
     engine.finishComposition();
     const [start, end] = engine.model.range;
@@ -74,8 +74,8 @@ export function createFormatArea({ editor, pkg, error, refresh: refreshChrome = 
       textEffects: capture || readOnly() ? null : () => textEffectsDialog(),
       setDefault: capture || readOnly() ? null : async (patch, fail) => {
         const id = engine.model.styles.defaultParagraph;
-        if (!id) { fail(new Error('This document has no default paragraph style to change.')); return false; }
-        if (!await confirmDialog({ title: 'Set as default', message: `Make this the default font for this document? Text in the ${styleDisplayName(engine.model.styles.definitions[id]?.name || 'Normal')} style and styles based on it will change.`, confirmLabel: 'Set As Default', danger: false })) return false;
+        if (!id) { fail(new Error('本文档没有可更改的默认段落样式。')); return false; }
+        if (!await confirmDialog({ title: '设为默认值', message: `是否将此字体设为本文档的默认字体？采用“${styleDisplayName(engine.model.styles.definitions[id]?.name || 'Normal')}”样式及基于该样式的文本都将发生更改。`, confirmLabel: '设为默认值', danger: false })) return false;
         const run = { ...patch };
         if (run.capitalization === 'normal') run.capitalization = null;
         if (run.strikethrough === 'none') run.strikethrough = null;
@@ -85,7 +85,7 @@ export function createFormatArea({ editor, pkg, error, refresh: refreshChrome = 
         if (capture) { capture(patch); return true; }
         for (const name of new Set([patch.fontAscii, patch.fontEastAsia].filter(Boolean))) {
           await prepareCanvasFont(name);
-          if (documentFontAvailable(name, engine.model.styles.fontAlternatives) !== true) { fail(new Error(`${name} could not be loaded on this device. Choose another font.`)); return false; }
+          if (documentFontAvailable(name, engine.model.styles.fontAlternatives) !== true) { fail(new Error(`${name} 无法在此设备上加载。请选择其他字体。`)); return false; }
         }
         if (editor() !== engine) return false;
         return engine.execute(() => engine.model.setRunFormat(patch), fail, undefined, true);
@@ -111,9 +111,9 @@ export function createFormatArea({ editor, pkg, error, refresh: refreshChrome = 
       },
       setDefault: async patch => {
         const id = engine.model.styles.defaultParagraph;
-        if (!id) throw new Error('This document has no default paragraph style to change.');
+        if (!id) throw new Error('本文档没有可更改的默认段落样式。');
         if (!Object.keys(patch).length) return true;
-        if (!await confirmDialog({ title: 'Set as default', message: `Make these paragraph settings the default for this document? Paragraphs in the ${styleDisplayName(engine.model.styles.definitions[id]?.name || 'Normal')} style will change.`, confirmLabel: 'Set As Default', danger: false })) return false;
+        if (!await confirmDialog({ title: '设为默认值', message: `是否将这些段落设置设为本文档的默认值？采用“${styleDisplayName(engine.model.styles.definitions[id]?.name || 'Normal')}”样式的段落都将发生更改。`, confirmLabel: '设为默认值', danger: false })) return false;
         return transact(m => m.editParagraphStyle(id, { paragraph: patch }));
       } }));
   }
@@ -156,9 +156,9 @@ export function createFormatArea({ editor, pkg, error, refresh: refreshChrome = 
   function paragraphBorderItems() {
     const engine = editor(), on = engine ? borderSides(engine.model) : [], disabled = !ready();
     return [...BORDER_ITEMS.map(([label, sides, icon]) => ({ label, icon, disabled, checked: sides.every(s => on.includes(s)), onSelect: () => setBorders(sides) })),
-      { label: 'No Border', icon: 'borderNone', disabled, onSelect: () => run(m => m.setParagraphFormat({ paragraphBorders: Object.fromEntries(['top', 'bottom', 'left', 'right', 'between'].map(s => [s, checkedParagraphBorder({ style: 'none' })])) })) },
+      { label: '无边框', icon: 'borderNone', disabled, onSelect: () => run(m => m.setParagraphFormat({ paragraphBorders: Object.fromEntries(['top', 'bottom', 'left', 'right', 'between'].map(s => [s, checkedParagraphBorder({ style: 'none' })])) })) },
       { separator: true },
-      { label: 'Borders and Shading…', icon: 'borders', disabled: !engine, onSelect: () => bordersDialog() }];
+      { label: '边框和底纹…', icon: 'borders', disabled: !engine, onSelect: () => bordersDialog() }];
   }
 
   /* ---- Bullets and numbering ---- */
@@ -173,7 +173,7 @@ export function createFormatArea({ editor, pkg, error, refresh: refreshChrome = 
   function setNumberingValue() {
     const engine = editor(); if (!engine) return;
     engine.finishComposition();
-    if (engine.model.listFormatting !== 'number') { toast('Place the cursor in a numbered list to set its value.', { icon: 'info' }); return; }
+    if (engine.model.listFormatting !== 'number') { toast('请将光标置于编号列表中以设置其值。', { icon: 'info' }); return; }
     return track(openSetNumberingValue({ current: currentListValue(engine.model) ?? 1, canContinue: !!previousList(engine.model), onClose: later,
       apply: ({ mode, value }) => transact(m => {
         if (mode === 'continue') { continueNumbering(m); if (value !== null) m.restartNumbering(value); }
@@ -184,7 +184,7 @@ export function createFormatArea({ editor, pkg, error, refresh: refreshChrome = 
     const engine = editor(); if (!engine) return;
     engine.finishComposition();
     const info = selectedLevelDefinition(engine.model);
-    if (!info) { toast('Place the cursor in a list to adjust its indents.', { icon: 'info' }); return; }
+    if (!info) { toast('请将光标置于列表中以调整其缩进。', { icon: 'info' }); return; }
     return track(openAdjustListIndents({ level: info.level, unit: unit(), onClose: later, apply: options => transact(m => adjustListIndents(m, options)) }));
   }
   function defineMultilevel() {
@@ -236,7 +236,7 @@ export function createFormatArea({ editor, pkg, error, refresh: refreshChrome = 
     const character = style.type === 'character';
     track(openStyleEditor(style, character ? engine.model.characterStyles : engine.model.paragraphStyles, patch => {
       // A renamed style must not take another style's name, as a new one may not.
-      if (patch.name && Object.values(engine.model.styles.definitions).some(s => s.id !== id && String(s.name).toLowerCase() === patch.name.trim().toLowerCase())) throw new Error(`A style named “${patch.name.trim()}” already exists. Choose another name.`);
+      if (patch.name && Object.values(engine.model.styles.definitions).some(s => s.id !== id && String(s.name).toLowerCase() === patch.name.trim().toLowerCase())) throw new Error(`已存在名为“${patch.name.trim()}”的样式。请选择其他名称。`);
       const ok = character ? engine.editCharacterStyle(id, patch) : engine.editParagraphStyle(id, patch); if (ok) later(); return ok;
     }, character ? engine.model.styles.defaults.run : undefined));
   }
@@ -246,8 +246,8 @@ export function createFormatArea({ editor, pkg, error, refresh: refreshChrome = 
     track(openNewStyle({ paragraphStyles: engine.model.paragraphStyles, characterStyles: engine.model.characterStyles, basedOn: engine.model.paragraphStyle || '', characterBase: engine.model.characterStyle || '', onClose: later,
       apply: ({ name, type, basedOn, next }) => {
         const taken = Object.values(engine.model.styles.definitions).some(s => String(s.name).toLowerCase() === name.toLowerCase());
-        if (taken) throw new Error(`A style named “${name}” already exists. Choose another name.`);
-        return transact(m => { if (!createStyleFromSelection(m, name, { type, basedOn, next })) throw new Error('The style could not be created.'); });
+        if (taken) throw new Error(`已存在名为“${name}”的样式。请选择其他名称。`);
+        return transact(m => { if (!createStyleFromSelection(m, name, { type, basedOn, next })) throw new Error('无法创建样式。'); });
       } }));
   }
   async function removeStyle(id) {
@@ -255,13 +255,13 @@ export function createFormatArea({ editor, pkg, error, refresh: refreshChrome = 
     const blocker = styleDeletionBlocker(engine.model, id);
     if (blocker) { toast(blocker, { icon: 'info' }); return false; }
     const name = styleDisplayName(engine.model.styles.definitions[id].name), count = styleUsage(engine.model).get(id) || 0;
-    if (!await confirmDialog({ title: 'Delete style', message: `Delete the style “${name}”?${count ? ` ${count} ${count === 1 ? 'use returns' : 'uses return'} to the default style; direct formatting is kept.` : ''}`, confirmLabel: 'Delete' })) return false;
+    if (!await confirmDialog({ title: '删除样式', message: `是否删除样式“${name}”？${count ? ` ${count} 处使用将恢复为默认样式；直接格式将被保留。` : ''}`, confirmLabel: '删除' })) return false;
     try { transact(m => deleteStyle(m, id)); pane.refresh(); return true; } catch (e) { error(e); return false; }
   }
   /** Select the ranges of one condition: contiguous ones as one selection, otherwise the first with all highlighted. */
   let highlighted = null;
   function selectRanges(ranges, what, onFind) {
-    const engine = editor(); if (!engine || !ranges.length) { toast(`No ${what} found.`, { icon: 'info' }); return; }
+    const engine = editor(); if (!engine || !ranges.length) { toast(`未找到${what}。`, { icon: 'info' }); return; }
     engine.finishComposition();
     const text = engine.model.text;
     const contiguous = ranges.every((r, i) => !i || /^\n?$/.test(text.slice(ranges[i - 1].end, r.start)));
@@ -269,25 +269,25 @@ export function createFormatArea({ editor, pkg, error, refresh: refreshChrome = 
     engine.selectMatch({ start: ranges[0].start, end: ranges[0].end });
     engine.setFindHighlights(ranges.map(r => ({ start: r.start, end: r.end })));
     highlighted = { start: ranges[0].start, end: ranges[0].end };
-    toast(`${ranges.length} ${what} highlighted. The first is selected; use Find formatting to change them all.`, { icon: 'info', action: onFind ? { label: 'Find', onClick: onFind } : null });
+    toast(`已突出显示 ${ranges.length} 处${what}。首处已被选中；使用“查找格式”可统一修改。`, { icon: 'info', action: onFind ? { label: '查找', onClick: onFind } : null });
   }
   function selectInstances(id) {
     const engine = editor(); if (!engine) return;
     const style = engine.model.styles.definitions[id];
-    selectRanges(styleRanges(engine.model, id), 'instances', () => advancedFind(style?.type === 'character' ? { characterStyle: id } : { paragraphStyle: id }));
+    selectRanges(styleRanges(engine.model, id), '匹配项', () => advancedFind(style?.type === 'character' ? { characterStyle: id } : { paragraphStyle: id }));
   }
   function selectSimilar() {
     const engine = editor(); if (!engine) return;
     engine.finishComposition();
     const condition = similarFormatCondition(engine.model);
-    selectRanges(similarFormattingRanges(engine.model), 'passages with similar formatting', () => advancedFind(condition));
+    selectRanges(similarFormattingRanges(engine.model), '格式相似的文本', () => advancedFind(condition));
   }
   function selectObjects() {
     const engine = editor(); if (!engine) return;
     engine.finishComposition();
     const objects = []; let at = 0;
     for (const p of engine.model.paragraphs) { for (const r of p.runs) { if (r.image) objects.push(at); at += r.text.length; } at++; }
-    if (!objects.length) { toast('There are no pictures, shapes or text boxes in this part of the document.', { icon: 'info' }); return; }
+    if (!objects.length) { toast('文档的此部分没有图片、形状或文本框。', { icon: 'info' }); return; }
     const [start, end] = engine.model.range, current = end === start + 1 ? objects.indexOf(start) : -1;
     const next = current >= 0 ? objects[(current + 1) % objects.length] : objects.find(p => p >= start) ?? objects[0];
     engine.selectMatch({ start: next, end: next + 1 });
@@ -388,11 +388,11 @@ export function createFormatArea({ editor, pkg, error, refresh: refreshChrome = 
     replace(query, text, options, all) {
       const engine = editor(); if (!engine) return 0;
       // Named in Undo (Edit › Undo Replace All), as a command chosen from a menu is; a refused one leaves no name.
-      commandsRef().noteCommand?.(all ? 'Replace All' : 'Replace');
+      commandsRef().noteCommand?.(all ? '全部替换' : '替换');
       const revision = engine.session.revision;
       try { return replaceIn(engine, query, text, options, all); } finally { if (engine.session.revision === revision) commandsRef().noteCommand?.(null); }
     },
-    chooseFont: (seed, done) => fontDialog({ title: 'Find Font', seed: Object.fromEntries(Object.entries(seed || {}).filter(([k]) => k in NULL_RUN)), capture: patch => done(fontCondition(patch)) }),
+    chooseFont: (seed, done) => fontDialog({ title: '查找字体', seed: Object.fromEntries(Object.entries(seed || {}).filter(([k]) => k in NULL_RUN)), capture: patch => done(fontCondition(patch)) }),
     chooseParagraph: (seed, done) => {
       const nulls = Object.fromEntries(['alignment', 'outlineLevel', 'indentLeft', 'indentRight', 'firstLine', 'spaceBefore', 'spaceAfter', 'lineRule', 'lineSpacing', 'contextualSpacing', 'mirrorIndents', 'widowControl', 'keepNext', 'keepLines', 'pageBreakBefore', 'suppressLineNumbers', 'suppressAutoHyphens', 'bidi'].map(k => [k, null]));
       track(openParagraphDialog({ format: { ...nulls, ...seed }, unit: unit(), apply: patch => { done(patch); return true; } }));
@@ -401,7 +401,7 @@ export function createFormatArea({ editor, pkg, error, refresh: refreshChrome = 
   };
 
   /* ---- Paste ---- */
-  const CLIPBOARD_CLOSED = 'The clipboard could not be read. Allow clipboard access, or paste with the keyboard.';
+  const CLIPBOARD_CLOSED = '无法读取剪贴板。请允许访问剪贴板，或使用键盘快捷键粘贴。';
   let lastPaste = null, chip = null, original = null;
   async function readClipboard() {
     let text = '', html = '', picture = null;
@@ -445,7 +445,7 @@ export function createFormatArea({ editor, pkg, error, refresh: refreshChrome = 
     const rect = engine.input.getBoundingClientRect(), root = host();
     if (!root || !rect.width && !rect.height) return;
     const bounds = root.getBoundingClientRect();
-    const button = el('button.paste-options-chip', { type: 'button', 'aria-label': 'Pasted text options', title: 'Pasted text options: keep, merge or drop the formatting', 'aria-haspopup': 'menu', onclick: () => openMenu({ anchor: button, label: 'Paste Options', onClose: () => editor()?.focus(), items: pasteModeItems() }) },
+    const button = el('button.paste-options-chip', { type: 'button', 'aria-label': '粘贴选项', title: '粘贴选项：保留源格式、合并格式或仅保留文本', 'aria-haspopup': 'menu', onclick: () => openMenu({ anchor: button, label: '粘贴选项', onClose: () => editor()?.focus(), items: pasteModeItems() }) },
       commandIconEl('paste', 16), el('span.ribbon-caret', { 'aria-hidden': 'true' }));
     button.addEventListener('mousedown', e => e.preventDefault());
     button.style.left = `${Math.max(4, Math.min(bounds.width - 48, rect.left - bounds.left + root.scrollLeft + 4))}px`;
@@ -463,7 +463,7 @@ export function createFormatArea({ editor, pkg, error, refresh: refreshChrome = 
     if (!current || !engine || current.engine !== engine || current.revision !== engine.session.revision || current.mode === mode) return;
     engine.undo();
     // The paste made again is named Paste in Undo, as the first was.
-    commandsRef().noteCommand?.('Paste');
+    commandsRef().noteCommand?.('粘贴');
     pasteWith(engine, mode, current.data);
     lastPaste = { ...current, mode, revision: engine.session.revision };
     showChip(engine);
@@ -476,11 +476,11 @@ export function createFormatArea({ editor, pkg, error, refresh: refreshChrome = 
     try { data = await readClipboard(); } catch (e) { error(new Error(CLIPBOARD_CLOSED)); return; }
     const formatted = availablePasteModes(engine.model, data).includes('keep');
     const choices = [
-      ...(formatted ? [{ id: 'keep', label: 'HTML format', hint: 'Text with the source’s fonts, styles and lists' }, { id: 'merge', label: 'Formatted text (merged)', hint: 'Bold, italic and underline only, in this document’s formatting' }] : []),
-      ...(data.text ? [{ id: 'text', label: 'Unformatted text', hint: 'Plain text in the current formatting' }] : []),
-      ...(data.picture ? [{ id: 'picture', label: 'Picture', hint: `${data.picture.type.split('/')[1].toUpperCase()} image` }] : []),
+      ...(formatted ? [{ id: 'keep', label: 'HTML 格式', hint: '保留源文本的字体、样式和列表' }, { id: 'merge', label: '格式化文本 (合并)', hint: '仅保留加粗、倾斜和下划线，采用本文档的格式' }] : []),
+      ...(data.text ? [{ id: 'text', label: '无格式文本', hint: '采用当前格式的纯文本' }] : []),
+      ...(data.picture ? [{ id: 'picture', label: '图片', hint: `${data.picture.type.split('/')[1].toUpperCase()} 图像` }] : []),
     ];
-    if (!choices.length) { toast('The clipboard is empty.', { icon: 'info' }); return; }
+    if (!choices.length) { toast('剪贴板为空。', { icon: 'info' }); return; }
     track(openPasteSpecial({ source: data.text, choices, onClose: later, apply: async choice => {
       if (choice === 'picture') { await engine.insertImageFile(data.picture); return true; }
       const before = engine.session.revision;
@@ -492,11 +492,11 @@ export function createFormatArea({ editor, pkg, error, refresh: refreshChrome = 
   function pasteItems() {
     const state = clipboard.state?.() || {};
     return [
-      { label: 'Keep Source Formatting', icon: 'paste', shortcut: `${MOD_KEY}+V`, disabled: !state.paste, onSelect: () => pasteAs('keep') },
-      { label: 'Merge Formatting', icon: 'paste', shortcut: chord('Cmd+Option+Shift+V'), disabled: !state.paste, onSelect: () => pasteAs('merge') },
-      { label: 'Keep Text Only', icon: 'pasteText', disabled: !state.paste, onSelect: () => pasteAs('text') },
+      { label: '保留源格式', icon: 'paste', shortcut: `${MOD_KEY}+V`, disabled: !state.paste, onSelect: () => pasteAs('keep') },
+      { label: '合并格式', icon: 'paste', shortcut: chord('Cmd+Option+Shift+V'), disabled: !state.paste, onSelect: () => pasteAs('merge') },
+      { label: '仅保留文本', icon: 'pasteText', disabled: !state.paste, onSelect: () => pasteAs('text') },
       { separator: true },
-      { label: 'Paste Special…', shortcut: chord('Cmd+Ctrl+V'), disabled: !state.paste, onSelect: () => pasteSpecial() },
+      { label: '选择性粘贴…', shortcut: chord('Cmd+Ctrl+V'), disabled: !state.paste, onSelect: () => pasteSpecial() },
     ];
   }
   function attach(engine) {
@@ -507,7 +507,7 @@ export function createFormatArea({ editor, pkg, error, refresh: refreshChrome = 
       const before = engine.session.revision;
       // The paste is named in Undo (Edit › Undo Paste), as a command chosen from a menu is; one that changed nothing
       // leaves no name for the next edit.
-      commandsRef().noteCommand?.('Paste');
+      commandsRef().noteCommand?.('粘贴');
       try { original(text, html); } finally { if (engine.session.revision === before) commandsRef().noteCommand?.(null); }
       if (engine.session.revision !== before && (text || html)) remember(engine, { text, html }, html ? 'keep' : 'text');
     };
@@ -521,7 +521,7 @@ export function createFormatArea({ editor, pkg, error, refresh: refreshChrome = 
     const engine = editor(); if (!engine) return;
     engine.finishComposition();
     copiedFormat = captureFormat(engine.model);
-    toast('Formatting copied. Select text and press ' + chord('Cmd+Shift+V') + ' to apply it.', { icon: 'formatPainter' });
+    toast('已复制格式。选中文本并按 ' + chord('Cmd+Shift+V') + ' 即可应用。', { icon: 'formatPainter' });
   }
   function pasteFormatting() {
     if (!copiedFormat) return false;
@@ -537,57 +537,57 @@ export function createFormatArea({ editor, pkg, error, refresh: refreshChrome = 
     fontDialog: () => fontDialog(), textEffectsDialog, paragraphDialog, tabsDialog, bordersDialog, paragraphBorderItems, applyLastBorder: () => setBorders(lastBorder, { toggle: false }),
     bulletsAndNumbering, defineBullet: () => listCommand(openDefineBullet, 'bullet'), defineNumberFormat: () => listCommand(openDefineNumberFormat, 'number'),
     defineMultilevelList: defineMultilevel, setNumberingValue, adjustListIndents: adjustIndents,
-    continueNumbering: () => run(m => { if (!continueNumbering(m)) throw new Error('There is no earlier numbered list to continue.'); }),
+    continueNumbering: () => run(m => { if (!continueNumbering(m)) throw new Error('没有可继续的早期编号列表。'); }),
     restartNumberingAtOne: () => run(m => m.restartNumbering(1)),
     stylesPane: () => stylesPane('styles'), styleInspector: () => stylesPane('inspector'), revealFormatting: () => stylesPane('reveal'), stylesPaneVisible: () => pane.visible,
     applyStyles: applyStylesBox, styleDialog, newStyle, changeCaseDialog: () => { if (ready()) track(openChangeCase({ onClose: later, apply: mode => transact(m => changeCase(m, mode)) })); },
     selectObjects, selectSimilar, selectItems: () => [
-      { label: 'Select Objects', icon: 'select', disabled: !editor(), onSelect: selectObjects },
-      { label: 'Select All Text With Similar Formatting', disabled: !editor(), onSelect: selectSimilar },
+      { label: '选择对象', icon: 'select', disabled: !editor(), onSelect: selectObjects },
+      { label: '选定所有格式类似的文本', disabled: !editor(), onSelect: selectSimilar },
     ],
     pasteItems, pasteSpecial, pasteMatchFormatting: () => pasteAs('merge'), pasteAs, copyFormatting, pasteFormatting,
     advancedFind: () => advancedFind(), dictate: () => dictation.toggle(), dictationSupported: () => dictation.supported, dictating: () => dictation.active,
     listLibraryExtras: kind => kind === 'bullet'
-      ? [{ separator: true }, { label: 'Define New Bullet…', onSelect: () => listCommand(openDefineBullet, 'bullet') }]
-      : [{ separator: true }, { label: 'Define New Number Format…', onSelect: () => listCommand(openDefineNumberFormat, 'number') }, { label: 'Set Numbering Value…', disabled: editor()?.model.listFormatting !== 'number', onSelect: setNumberingValue }],
+      ? [{ separator: true }, { label: '定义新项目符号…', onSelect: () => listCommand(openDefineBullet, 'bullet') }]
+      : [{ separator: true }, { label: '定义新编号格式…', onSelect: () => listCommand(openDefineNumberFormat, 'number') }, { label: '设置编号值…', disabled: editor()?.model.listFormatting !== 'number', onSelect: setNumberingValue }],
     styleGroupItems: ({ command, when }) => {
-      const button = command('Styles Pane', 'stylesPane', () => stylesPane('styles'), { size: 'large', text: 'Styles Pane', shortcut: chord('Cmd+Option+Shift+S'), attrs: { 'aria-pressed': 'false' } });
+      const button = command('样式窗格', 'stylesPane', () => stylesPane('styles'), { size: 'large', text: '样式窗格', shortcut: chord('Cmd+Option+Shift+S'), attrs: { 'aria-pressed': 'false' } });
       button.addEventListener('mousedown', e => e.preventDefault());
       when(button, () => !!editor(), () => String(pane.visible && pane.view === 'styles'));
       return [button];
     },
     extendTab(tabId, kit) {
       if (tabId !== 'home' || !dictation.supported) return [];
-      const button = kit.command('Dictate', 'dictate', () => dictation.toggle(), { size: 'large', text: 'Dictate', attrs: { 'aria-pressed': 'false' } });
+      const button = kit.command('听写', 'dictate', () => dictation.toggle(), { size: 'large', text: '听写', attrs: { 'aria-pressed': 'false' } });
       button.addEventListener('mousedown', e => e.preventDefault());
       kit.when(button, () => !readOnly(), () => String(dictation.active));
-      return [{ id: 'voice', label: 'Voice', icon: 'dictate', priority: 1, after: 'styles', items: [button] }];
+      return [{ id: 'voice', label: '语音', icon: 'dictate', priority: 1, after: 'styles', items: [button] }];
     },
     extendMenu(menuId) {
       const has = !!editor(), editable = !!ready();
       if (menuId === 'format') return [
-        { label: 'Font…', icon: 'fontDialog', shortcut: `${MOD_KEY}+D`, disabled: !has, onSelect: () => fontDialog() },
-        { label: 'Text Effects…', icon: 'textEffects', disabled: !editable, onSelect: textEffectsDialog },
-        { label: 'Paragraph…', icon: 'paragraphDialog', shortcut: MAC ? 'Cmd+Option+M' : null, disabled: !has, onSelect: () => paragraphDialog() },
+        { label: '字体…', icon: 'fontDialog', shortcut: `${MOD_KEY}+D`, disabled: !has, onSelect: () => fontDialog() },
+        { label: '文本效果…', icon: 'textEffects', disabled: !editable, onSelect: textEffectsDialog },
+        { label: '段落…', icon: 'paragraphDialog', shortcut: MAC ? 'Cmd+Option+M' : null, disabled: !has, onSelect: () => paragraphDialog() },
         { separator: true },
-        { label: 'Bullets and Numbering…', icon: 'bullets', disabled: !editable, onSelect: () => bulletsAndNumbering() },
-        { label: 'Borders and Shading…', icon: 'borders', disabled: !has, onSelect: () => bordersDialog() },
+        { label: '项目符号和编号…', icon: 'bullets', disabled: !editable, onSelect: () => bulletsAndNumbering() },
+        { label: '边框和底纹…', icon: 'borders', disabled: !has, onSelect: () => bordersDialog() },
         { separator: true },
-        { label: 'Tabs…', icon: 'tabStop', disabled: !has, onSelect: tabsDialog },
-        { label: 'Change Case…', icon: 'changeCase', disabled: !editable, onSelect: () => commands.changeCaseDialog() },
+        { label: '制表位…', icon: 'tabStop', disabled: !has, onSelect: tabsDialog },
+        { label: '更改大小写…', icon: 'changeCase', disabled: !editable, onSelect: () => commands.changeCaseDialog() },
         { separator: true },
-        { label: 'Style…', icon: 'stylesPane', disabled: !has, onSelect: styleDialog },
+        { label: '样式…', icon: 'stylesPane', disabled: !has, onSelect: styleDialog },
       ];
       if (menuId === 'edit') return [
-        { label: 'Paste Special…', shortcut: chord('Cmd+Ctrl+V'), disabled: !editable, onSelect: pasteSpecial },
-        { label: 'Paste and Match Formatting', shortcut: chord('Cmd+Option+Shift+V'), disabled: !editable, onSelect: () => pasteAs('merge') },
-        { label: 'Select', items: [{ label: 'Select Objects', disabled: !has, onSelect: selectObjects }, { label: 'Select All Text With Similar Formatting', disabled: !has, onSelect: selectSimilar }] },
-        ...(dictation.supported ? [{ label: dictation.active ? 'Stop Dictation' : 'Start Dictation…', disabled: !editable, onSelect: () => dictation.toggle() }] : []),
+        { label: '选择性粘贴…', shortcut: chord('Cmd+Ctrl+V'), disabled: !editable, onSelect: pasteSpecial },
+        { label: '粘贴并匹配格式', shortcut: chord('Cmd+Option+Shift+V'), disabled: !editable, onSelect: () => pasteAs('merge') },
+        { label: '选择', items: [{ label: '选择对象', disabled: !has, onSelect: selectObjects }, { label: '选定所有格式类似的文本', disabled: !has, onSelect: selectSimilar }] },
+        ...(dictation.supported ? [{ label: dictation.active ? '停止听写' : '开始听写…', disabled: !editable, onSelect: () => dictation.toggle() }] : []),
       ];
       if (menuId === 'view') return [
-        { label: 'Styles Pane', checked: pane.visible && pane.view === 'styles', disabled: !has, onSelect: () => stylesPane('styles') },
-        { label: 'Reveal Formatting', shortcut: MAC ? 'Shift+F1' : 'Shift+F1', checked: pane.visible && pane.view === 'reveal', disabled: !has, onSelect: () => stylesPane('reveal') },
-        { label: 'Style Inspector', checked: pane.visible && pane.view === 'inspector', disabled: !has, onSelect: () => stylesPane('inspector') },
+        { label: '样式窗格', checked: pane.visible && pane.view === 'styles', disabled: !has, onSelect: () => stylesPane('styles') },
+        { label: '显示格式', shortcut: MAC ? 'Shift+F1' : 'Shift+F1', checked: pane.visible && pane.view === 'reveal', disabled: !has, onSelect: () => stylesPane('reveal') },
+        { label: '样式检查器', checked: pane.visible && pane.view === 'inspector', disabled: !has, onSelect: () => stylesPane('inspector') },
       ];
       return [];
     },
@@ -595,19 +595,19 @@ export function createFormatArea({ editor, pkg, error, refresh: refreshChrome = 
       const engine = editor(); if (!engine) return [];
       const editable = !!ready();
       if (['text', 'table', 'link'].includes(context)) return [
-        { label: 'Font…', shortcut: `${MOD_KEY}+D`, onSelect: () => fontDialog() },
-        { label: 'Paragraph…', onSelect: () => paragraphDialog() },
-        { label: 'Bullets and Numbering…', disabled: !editable, onSelect: () => bulletsAndNumbering() },
-        { label: 'Styles', items: [...engine.model.paragraphStyles.filter(s => !s.error).slice(0, 12).map(s => ({ label: styleDisplayName(s.name), radio: true, checked: engine.model.paragraphStyle === s.id, disabled: !editable, onSelect: () => applyStyle(s.id) })), { separator: true }, { label: 'Styles Pane…', onSelect: () => stylesPane('styles') }] },
-        { label: 'Select Text with Similar Formatting', onSelect: selectSimilar },
+        { label: '字体…', shortcut: `${MOD_KEY}+D`, onSelect: () => fontDialog() },
+        { label: '段落…', onSelect: () => paragraphDialog() },
+        { label: '项目符号和编号…', disabled: !editable, onSelect: () => bulletsAndNumbering() },
+        { label: '样式', items: [...engine.model.paragraphStyles.filter(s => !s.error).slice(0, 12).map(s => ({ label: styleDisplayName(s.name), radio: true, checked: engine.model.paragraphStyle === s.id, disabled: !editable, onSelect: () => applyStyle(s.id) })), { separator: true }, { label: '样式窗格…', onSelect: () => stylesPane('styles') }] },
+        { label: '选定所有格式类似的文本', onSelect: selectSimilar },
       ];
       if (context === 'list') {
         const numbered = engine.model.listFormatting === 'number';
         return [
           // Restart Numbering at 1 is the menu shell's own entry.
-          ...(numbered ? [{ label: 'Continue Numbering', disabled: !editable || !previousList(engine.model), onSelect: commands.continueNumbering },
-            { label: 'Set Numbering Value…', disabled: !editable, onSelect: setNumberingValue }] : []),
-          { label: 'Adjust List Indents…', disabled: !editable, onSelect: adjustIndents },
+          ...(numbered ? [{ label: '继续编号', disabled: !editable || !previousList(engine.model), onSelect: commands.continueNumbering },
+            { label: '设置编号值…', disabled: !editable, onSelect: setNumberingValue }] : []),
+          { label: '调整列表缩进…', disabled: !editable, onSelect: adjustIndents },
         ];
       }
       return [];
@@ -642,8 +642,8 @@ export function createFormatArea({ editor, pkg, error, refresh: refreshChrome = 
   function install(all) {
     commandsRef = () => all;
     const multilevel = all.multilevelItems, effects = all.textEffectItems;
-    all.multilevelItems = () => [...(multilevel?.() || []), { separator: true }, { label: 'Define New Multilevel List…', disabled: !ready(), onSelect: defineMultilevel }];
-    all.textEffectItems = () => [...(effects?.() || []), { separator: true }, { label: 'Text Effects…', icon: 'textEffects', disabled: !ready(), onSelect: textEffectsDialog }];
+    all.multilevelItems = () => [...(multilevel?.() || []), { separator: true }, { label: '定义新多级列表…', disabled: !ready(), onSelect: defineMultilevel }];
+    all.textEffectItems = () => [...(effects?.() || []), { separator: true }, { label: '文本效果…', icon: 'textEffects', disabled: !ready(), onSelect: textEffectsDialog }];
   }
   return { commands, findApi, pane, attach, install,
     refresh() {
@@ -658,7 +658,7 @@ export function createFormatArea({ editor, pkg, error, refresh: refreshChrome = 
 
 /** Shortcuts this area adds, for the keyboard shortcut list. */
 export const FORMAT_SHORTCUTS = [
-  [chord('Cmd+D'), 'Font dialog'], [MAC ? 'Cmd+Option+M' : '', 'Paragraph dialog'], [chord('Cmd+Option+Shift+S'), 'Styles pane'], [chord('Cmd+Shift+S'), 'Apply Styles'],
-  [chord('Cmd+Shift+C'), 'Copy formatting'], [chord('Cmd+Shift+V'), 'Paste formatting'], [chord('Cmd+Option+Shift+V'), 'Paste and match formatting'], [chord('Cmd+Ctrl+V'), 'Paste Special'], ['Shift+F1', 'Reveal Formatting'],
+  [chord('Cmd+D'), '字体对话框'], [MAC ? 'Cmd+Option+M' : '', '段落对话框'], [chord('Cmd+Option+Shift+S'), '样式窗格'], [chord('Cmd+Shift+S'), '应用样式'],
+  [chord('Cmd+Shift+C'), '复制格式'], [chord('Cmd+Shift+V'), '粘贴格式'], [chord('Cmd+Option+Shift+V'), '粘贴并匹配格式'], [chord('Cmd+Ctrl+V'), '选择性粘贴'], ['Shift+F1', '显示格式'],
 ].filter(([key]) => key);
 export { CASE_MODES };

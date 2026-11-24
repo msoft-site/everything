@@ -26,7 +26,7 @@ const PROPS_TYPE = 'application/vnd.openxmlformats-officedocument.customXmlPrope
 
 /** Main document types (ST_MailMergeDocType) and how the ribbon names them. */
 export const DOCUMENT_TYPES = [
-  ['formLetters', 'Letters'], ['email', 'Email Messages'], ['envelopes', 'Envelopes'], ['mailingLabels', 'Labels'], ['catalog', 'Directory'],
+  ['formLetters', '信函'], ['email', '电子邮件'], ['envelopes', '信封'], ['mailingLabels', '标签'], ['catalog', '目录'],
 ];
 
 const serialize = node => new XMLSerializer().serializeToString(node);

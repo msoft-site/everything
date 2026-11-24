@@ -105,7 +105,7 @@ export function createRibbon({ tabs, fileButton, focusEditor, onSelect }) {
   let activeContext = new Set();
   let lastStandard = current;
   // File opens a menu rather than a tab, so it sits beside the tab list, not in it.
-  const tablist = el('div.ribbon-tablist', { role: 'tablist', 'aria-label': 'Ribbon tabs' });
+  const tablist = el('div.ribbon-tablist', { role: 'tablist', 'aria-label': '功能区选项卡' });
   const tabRow = el('div.ribbon-tabs', {}, fileButton || null, tablist);
   const card = el('div.ribbon-card');
   for (const tab of tabs) {

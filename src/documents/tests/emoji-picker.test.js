@@ -16,12 +16,12 @@ describe('emoji picker keyboard', () => {
   it('picks the first match on Enter in the search field and moves into the results on Down', () => {
     const picked = [];
     openEmojiPicker({ onPick: (ch) => picked.push(ch) });
-    const search = document.querySelector('[aria-label="Search emoji"]');
+    const search = document.querySelector('[aria-label="搜索表情符号"]');
     // Enter with nothing searched does nothing; it must not pick a category's first emoji.
     press(search, 'Enter');
     expect(picked).toEqual([]);
     type(search, 'pizza');
-    const results = document.querySelector('[aria-label="Search results"]');
+    const results = document.querySelector('[aria-label="搜索结果"]');
     expect(results.hidden).toBe(false);
     expect([...results.children].map((b) => b.tabIndex)).toEqual([0]);
     press(search, 'ArrowDown');
@@ -33,14 +33,14 @@ describe('emoji picker keyboard', () => {
 
   it('gives each category one Tab stop and keeps it after a cleared search', () => {
     openEmojiPicker({ onPick: () => {} });
-    const search = document.querySelector('[aria-label="Search emoji"]');
+    const search = document.querySelector('[aria-label="搜索表情符号"]');
     const grids = [...document.querySelectorAll('.emoji-picker section .symbol-grid')];
     expect(grids.length).toBeGreaterThan(3);
     expect(document.querySelectorAll('.emoji-picker section .symbol[tabindex="0"]')).toHaveLength(grids.length);
     type(search, 'heart');
     type(search, '');
     expect(document.querySelectorAll('.emoji-picker section .symbol[tabindex="0"]')).toHaveLength(grids.length);
-    const nothing = document.querySelector('[aria-label="Search results"]');
+    const nothing = document.querySelector('[aria-label="搜索结果"]');
     type(search, 'notarealemojiname');
     expect(nothing.hidden).toBe(true);
     press(search, 'Enter');

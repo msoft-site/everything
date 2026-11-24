@@ -2,7 +2,7 @@ import { textFillColor, visibleUnderline } from './text-fill.js';
 import { UnsupportedDocumentError } from './errors.js';
 import { inlineSegments } from './images.js';
 
-export const UNDERLINE_STYLES = Object.freeze({ none: 'None', single: 'Single', words: 'Words only', double: 'Double', thick: 'Thick', dotted: 'Dotted', dottedHeavy: 'Heavy dotted', dash: 'Dashed', dashedHeavy: 'Heavy dashed', dashLong: 'Long dashed', dashLongHeavy: 'Heavy long dashed', dotDash: 'Dash-dot', dashDotHeavy: 'Heavy dash-dot', dotDotDash: 'Dash-dot-dot', dashDotDotHeavy: 'Heavy dash-dot-dot', wave: 'Wavy', wavyHeavy: 'Heavy wavy', wavyDouble: 'Double wavy' });
+export const UNDERLINE_STYLES = Object.freeze({ none: '无', single: '单线', words: '字下加线', double: '双线', thick: '粗线', dotted: '点线', dottedHeavy: '粗点线', dash: '虚线', dashedHeavy: '粗虚线', dashLong: '长虚线', dashLongHeavy: '粗长虚线', dotDash: '点划线', dashDotHeavy: '粗点划线', dotDotDash: '双点划线', dashDotDotHeavy: '粗双点划线', wave: '波浪线', wavyHeavy: '粗波浪线', wavyDouble: '双波浪线' });
 export function checkedUnderline(value) {
   if (typeof value !== 'string' || !Object.hasOwn(UNDERLINE_STYLES, value)) throw new UnsupportedDocumentError('invalid underline pattern');
   return value;

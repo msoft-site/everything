@@ -7,25 +7,25 @@ import { formDialog } from './table-dialogs.js';
 import { drawTableStyleThumbnail } from '../ui/table-design-gallery.js';
 import { REGION_LABELS, STYLE_REGIONS } from '../engine/table-styles.js';
 
-const BORDER_PRESETS = [['keep', 'Keep borders'], ['none', 'No borders'], ['all', 'All borders'], ['outside', 'Outside borders'], ['inside', 'Inside borders'], ['top', 'Top border'], ['bottom', 'Bottom border'], ['topBottom', 'Top and bottom borders']];
+const BORDER_PRESETS = [['keep', '保留框线'], ['none', '无框线'], ['all', '所有框线'], ['outside', '外侧框线'], ['inside', '内部框线'], ['top', '上框线'], ['bottom', '下框线'], ['topBottom', '上下框线']];
 const PRESET_SIDES = { none: ['top', 'left', 'bottom', 'right', 'insideH', 'insideV'], all: ['top', 'left', 'bottom', 'right', 'insideH', 'insideV'], outside: ['top', 'left', 'bottom', 'right'], inside: ['insideH', 'insideV'], top: ['top'], bottom: ['bottom'], topBottom: ['top', 'bottom'] };
-const WEIGHTS = [[2, '¼ pt'], [4, '½ pt'], [6, '¾ pt'], [8, '1 pt'], [12, '1½ pt'], [18, '2¼ pt'], [24, '3 pt']];
+const WEIGHTS = [[2, '¼ 磅'], [4, '½ 磅'], [6, '¾ 磅'], [8, '1 磅'], [12, '1½ 磅'], [18, '2¼ 磅'], [24, '3 磅']];
 
 /** spec: the style to edit (a copy is edited). apply(spec) saves it. */
 export function openTableStyleDialog({ title, spec, look, nameTaken = () => false }, apply, { onClose } = {}) {
   const work = structuredClone(spec);
   work.regions ||= {}; work.borders ||= {};
-  const name = el('input.input', { type: 'text', value: work.name, required: true, maxLength: 100, 'aria-label': 'Style name' });
-  const region = el('select.input', { 'aria-label': 'Apply formatting to' }, ...['whole', ...STYLE_REGIONS].map(id => el('option', { value: id }, REGION_LABELS[id])));
-  const fill = el('input.input.table-color', { type: 'color', 'aria-label': 'Fill color' });
-  const noFill = el('input', { type: 'checkbox', 'aria-label': 'No fill' });
-  const color = el('input.input.table-color', { type: 'color', 'aria-label': 'Text color' });
-  const autoColor = el('input', { type: 'checkbox', 'aria-label': 'Automatic text color' });
-  const bold = el('input', { type: 'checkbox', 'aria-label': 'Bold' }), italic = el('input', { type: 'checkbox', 'aria-label': 'Italic' });
-  const borders = el('select.input', { 'aria-label': 'Borders' }, ...BORDER_PRESETS.map(([v, t]) => el('option', { value: v }, t)));
-  const borderColor = el('input.input.table-color', { type: 'color', value: '#000000', 'aria-label': 'Border color' });
-  const weight = el('select.input', { 'aria-label': 'Border weight' }, ...WEIGHTS.map(([v, t]) => el('option', { value: v, selected: v === 4 }, t)));
-  const canvas = el('canvas.table-style-preview', { role: 'img', 'aria-label': 'Style preview' });
+  const name = el('input.input', { type: 'text', value: work.name, required: true, maxLength: 100, 'aria-label': '样式名称' });
+  const region = el('select.input', { 'aria-label': '将格式应用于' }, ...['whole', ...STYLE_REGIONS].map(id => el('option', { value: id }, REGION_LABELS[id])));
+  const fill = el('input.input.table-color', { type: 'color', 'aria-label': '填充颜色' });
+  const noFill = el('input', { type: 'checkbox', 'aria-label': '无填充' });
+  const color = el('input.input.table-color', { type: 'color', 'aria-label': '文字颜色' });
+  const autoColor = el('input', { type: 'checkbox', 'aria-label': '自动文字颜色' });
+  const bold = el('input', { type: 'checkbox', 'aria-label': '加粗' }), italic = el('input', { type: 'checkbox', 'aria-label': '倾斜' });
+  const borders = el('select.input', { 'aria-label': '边框' }, ...BORDER_PRESETS.map(([v, t]) => el('option', { value: v }, t)));
+  const borderColor = el('input.input.table-color', { type: 'color', value: '#000000', 'aria-label': '边框颜色' });
+  const weight = el('select.input', { 'aria-label': '边框磅值' }, ...WEIGHTS.map(([v, t]) => el('option', { value: v, selected: v === 4 }, t)));
+  const canvas = el('canvas.table-style-preview', { role: 'img', 'aria-label': '样式预览' });
   const target = () => region.value === 'whole' ? (work.whole ||= {}) : (work.regions[region.value] ||= {});
   const hex = value => value.replace('#', '').toUpperCase();
   function load() {
@@ -63,16 +63,16 @@ export function openTableStyleDialog({ title, spec, look, nameTaken = () => fals
   return formDialog({ title, onClose, className: 'table-style-dialog', wide: true, body: [
     el('div.table-style-layout', {},
       el('div.table-style-fields', {},
-        el('label.field', {}, el('span.field-label', {}, 'Name'), name),
-        el('label.field', {}, el('span.field-label', {}, 'Apply formatting to'), region),
-        el('div.field', {}, el('span.field-label', {}, 'Fill'), row(fill, labelled('No fill', noFill))),
-        el('div.field', {}, el('span.field-label', {}, 'Text'), row(color, labelled('Automatic', autoColor), labelled('Bold', bold), labelled('Italic', italic))),
-        el('div.field', {}, el('span.field-label', {}, 'Borders'), row(borders, borderColor, weight))),
-      el('div.table-style-sample', {}, canvas, el('p.field-hint', {}, 'The sample shows the regions the selected table’s style options turn on.'))),
+        el('label.field', {}, el('span.field-label', {}, '名称'), name),
+        el('label.field', {}, el('span.field-label', {}, '将格式应用于'), region),
+        el('div.field', {}, el('span.field-label', {}, '填充'), row(fill, labelled('无填充', noFill))),
+        el('div.field', {}, el('span.field-label', {}, '文字'), row(color, labelled('自动', autoColor), labelled('加粗', bold), labelled('倾斜', italic))),
+        el('div.field', {}, el('span.field-label', {}, '边框'), row(borders, borderColor, weight))),
+      el('div.table-style-sample', {}, canvas, el('p.field-hint', {}, '示例显示选定表格的样式选项所启用的区域。'))),
   ], submit: () => {
     const value = name.value.trim();
-    if (!value) throw new Error('Name the table style.');
-    if (nameTaken(value)) throw new Error('Another table style already has that name.');
+    if (!value) throw new Error('请输入表格样式名称。');
+    if (nameTaken(value)) throw new Error('已有同名的表格样式。');
     for (const key of Object.keys(work.regions)) if (!Object.keys(work.regions[key]).length) delete work.regions[key];
     if (work.whole && !Object.keys(work.whole).length) delete work.whole;
     return apply({ ...work, name: value });

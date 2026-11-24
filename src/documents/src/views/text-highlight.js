@@ -7,6 +7,6 @@ const choices = [
 ].map(value => ({ value, color: `#${HIGHLIGHTS[value]}`, label: highlightLabel(value) }));
 
 export function openTextHighlight(value, apply, options) {
-  return openColorPalette({ ...options, label: 'Text highlight', value, choices,
-    reset: { value: 'none', label: 'No highlight' }, onPick: apply });
+  return openColorPalette({ ...options, label: '文本突出显示颜色', value, choices,
+    reset: { value: 'none', label: '无颜色' }, onPick: apply });
 }

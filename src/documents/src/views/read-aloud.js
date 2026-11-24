@@ -100,15 +100,15 @@ export function createReadAloud({ editor, onState = () => {} }) {
   // `current` is the paragraph being read and `from` where in its text the utterance began. `seen` is the
   // document's text its positions belong to: an edit while it reads moves them (follow).
   let active = false, paused = false, current = null, from = 0, seen = '', utterance = null;
-  const play = el('button.icon-btn.read-aloud-play', { type: 'button', 'aria-label': 'Pause', title: 'Pause', onclick: () => toggle() });
-  const bar = el('div.read-aloud-bar', { role: 'toolbar', 'aria-label': 'Read Aloud', hidden: true },
-    el('button.icon-btn', { type: 'button', 'aria-label': 'Previous paragraph', title: 'Previous paragraph', onclick: () => jump(-1) }, commandIconEl('previousArrow', 16)),
+  const play = el('button.icon-btn.read-aloud-play', { type: 'button', 'aria-label': '暂停', title: '暂停', onclick: () => toggle() });
+  const bar = el('div.read-aloud-bar', { role: 'toolbar', 'aria-label': '大声朗读', hidden: true },
+    el('button.icon-btn', { type: 'button', 'aria-label': '上一段', title: '上一段', onclick: () => jump(-1) }, commandIconEl('previousArrow', 16)),
     play,
-    el('button.icon-btn', { type: 'button', 'aria-label': 'Next paragraph', title: 'Next paragraph', onclick: () => jump(1) }, commandIconEl('nextArrow', 16)),
-    el('button.icon-btn', { type: 'button', 'aria-label': 'Stop reading', title: 'Stop reading', onclick: () => stop() }, '✕'));
+    el('button.icon-btn', { type: 'button', 'aria-label': '下一段', title: '下一段', onclick: () => jump(1) }, commandIconEl('nextArrow', 16)),
+    el('button.icon-btn', { type: 'button', 'aria-label': '停止朗读', title: '停止朗读', onclick: () => stop() }, '✕'));
   const setPlayIcon = () => {
     play.replaceChildren(el('span', { 'aria-hidden': 'true' }, paused ? '▶' : '❚❚'));
-    play.setAttribute('aria-label', paused ? 'Play' : 'Pause'); play.title = play.getAttribute('aria-label');
+    play.setAttribute('aria-label', paused ? '朗读' : '暂停'); play.title = play.getAttribute('aria-label');
   };
   const body = () => editor()?.session?.body;
 

@@ -2,9 +2,28 @@ import { normalizeColor, paintColor } from './colors.js';
 
 // ECMA-376 Part 1 §17.18.40, including its exact dark/gray sRGB values.
 export const HIGHLIGHTS = Object.freeze({ none: null, yellow: 'FFFF00', green: '00FF00', cyan: '00FFFF', magenta: 'FF00FF', blue: '0000FF', red: 'FF0000', darkBlue: '00008B', darkCyan: '008B8B', darkGreen: '006400', darkMagenta: '800080', darkRed: '8B0000', darkYellow: '808000', darkGray: 'A9A9A9', lightGray: 'D3D3D3', black: '000000', white: 'FFFFFF' });
-export const highlightLabel = value => value === 'none' ? 'No highlight' : value.replace(/([A-Z])/g, ' $1').toLowerCase().replace(/^./, c => c.toUpperCase());
+const HIGHLIGHT_NAMES = {
+  none: '无颜色',
+  yellow: '黄色',
+  green: '亮绿色',
+  cyan: '青绿色',
+  magenta: '品红',
+  blue: '蓝色',
+  red: '红色',
+  darkBlue: '深蓝',
+  darkCyan: '深青',
+  darkGreen: '深绿',
+  darkMagenta: '深紫',
+  darkRed: '深红',
+  darkYellow: '浅灰(深黄)',
+  darkGray: '深灰',
+  lightGray: '浅灰',
+  black: '黑色',
+  white: '白色',
+};
+export const highlightLabel = value => HIGHLIGHT_NAMES[value] || (value === 'none' ? '无颜色' : value);
 export function checkedHighlight(value) {
-  if (typeof value !== 'string' || !Object.hasOwn(HIGHLIGHTS, value)) throw new Error('Choose a supported highlight color or No highlight.');
+  if (typeof value !== 'string' || !Object.hasOwn(HIGHLIGHTS, value)) throw new Error('请选择支持的突出显示颜色或“无颜色”。');
   return value;
 }
 export function checkedShading(value) {

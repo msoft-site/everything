@@ -135,16 +135,16 @@ export function openWordCount(engine, { onClose, onChange } = {}) {
   const intro = el('p.field-hint');
   function render() {
     const s = wordCountStatistics(engine, { includeNotes: include.checked });
-    intro.textContent = s.selected ? 'Statistics for the selected text:' : 'Statistics for the whole document:';
+    intro.textContent = s.selected ? '选定内容的统计信息:' : '整篇文档的统计信息:';
     const row = (label, value) => el('tr', {}, el('th', { scope: 'row' }, label), el('td', {}, value.toLocaleString()));
-    table.replaceChildren(el('tbody', {}, ...(s.selected ? [] : [row('Pages', s.pages)]), row('Words', s.words), row('Characters (no spaces)', s.charactersNoSpaces), row('Characters (with spaces)', s.characters), row('Paragraphs', s.paragraphs), row('Lines', s.lines)));
+    table.replaceChildren(el('tbody', {}, ...(s.selected ? [] : [row('页数', s.pages)]), row('字数', s.words), row('字符数 (不计空格)', s.charactersNoSpaces), row('字符数 (计空格)', s.characters), row('段落数', s.paragraphs), row('行数', s.lines)));
     include.disabled = s.selected;
   }
   render();
   // A form, as the other dialogs are: Enter (on the check box too) presses Close, the default button.
-  const modal = openModal({ title: 'Word Count', onClose, content: el('form.ed-dialog-body', { onsubmit: e => { e.preventDefault(); modal.close(); } },
+  const modal = openModal({ title: '字数统计', onClose, content: el('form.ed-dialog-body', { onsubmit: e => { e.preventDefault(); modal.close(); } },
     intro, table,
-    el('label.rv-check', {}, include, 'Include text boxes, footnotes and endnotes'),
-    el('div.modal-actions', {}, el('button.btn.btn-primary', { type: 'submit' }, 'Close'))) });
+    el('label.rv-check', {}, include, '包括文本框、脚注和尾注'),
+    el('div.modal-actions', {}, el('button.btn.btn-primary', { type: 'submit' }, '关闭'))) });
   return modal;
 }

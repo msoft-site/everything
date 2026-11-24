@@ -156,14 +156,14 @@ export function createInsert({ editor, pkg, error, base = {}, docName = () => ''
   }
   function coverPageItems() {
     const engine = ready(), current = engine ? coverPageRange(engine.session.body) : null;
-    return [...galleryItems([{ header: 'Built-In', items: COVER_DESIGNS.map(design => ({ label: design.name, preview: coverPreview(design), disabled: !engine, onSelect: () => insertCover(design.id) })) }], { columns: 3, label: 'Cover pages' }),
+    return [...galleryItems([{ header: '内置', items: COVER_DESIGNS.map(design => ({ label: design.name, preview: coverPreview(design), disabled: !engine, onSelect: () => insertCover(design.id) })) }], { columns: 3, label: '封面' }),
       { separator: true },
-      { label: 'Remove Current Cover Page', icon: 'deletePicture', disabled: !current, onSelect: () => { const engine = ready(); if (!engine) return; toBody(engine); run(engine, () => removeCoverPage(engine.model)); } }];
+      { label: '删除当前封面', icon: 'deletePicture', disabled: !current, onSelect: () => { const engine = ready(); if (!engine) return; toBody(engine); run(engine, () => removeCoverPage(engine.model)); } }];
   }
   function insertCover(id) {
     const engine = ready(); if (!engine) return;
     toBody(engine);
-    if (run(engine, () => insertCoverPage(engine.model, id, { title: title(), subtitle: 'Document subtitle', author: user() || 'Author Name', date: today() }))) engine.revealCaret();
+    if (run(engine, () => insertCoverPage(engine.model, id, { title: title(), subtitle: '文档副标题', author: user() || '作者姓名', date: today() }))) engine.revealCaret();
   }
 
   /* ---- Pictures ---- */
@@ -185,20 +185,20 @@ export function createInsert({ editor, pkg, error, base = {}, docName = () => ''
       await engine.insertImageFile(await pictureFile(file), alt ? { alt } : {}); onChange();
     } catch (e) { fail(e); }
   }
-  const pictureInput = el('input', { type: 'file', accept: 'image/png,image/jpeg,image/tiff,image/gif,image/webp,image/bmp,image/svg+xml,.svg,.tif,.tiff', hidden: true, 'aria-label': 'Insert picture file',
+  const pictureInput = el('input', { type: 'file', accept: 'image/png,image/jpeg,image/tiff,image/gif,image/webp,image/bmp,image/svg+xml,.svg,.tif,.tiff', hidden: true, 'aria-label': '插入图片文件',
     onchange: () => { const file = pictureInput.files?.[0]; pictureInput.value = ''; if (file) insertPictureFile(file); } });
   function pictureItems() {
     const engine = ready();
     return [
-      { label: 'This Device…', icon: 'folderOpen', disabled: !engine, onSelect: () => pictureInput.click() },
-      ...(P.canPickFiles() ? [{ label: 'From Puter…', icon: 'pictures', disabled: !engine, onSelect: async () => { try { const file = await P.pickImage(); if (file) await insertPictureFile(file); } catch (e) { fail(e); } } }] : []),
-      ...(P.canMakeImages() ? [{ label: 'Generate with AI…', icon: 'pictures', disabled: !engine, onSelect: () => openGenerateDialog({ onClose: () => queueMicrotask(() => editor()?.focus()),
+      { label: '此设备…', icon: 'folderOpen', disabled: !engine, onSelect: () => pictureInput.click() },
+      ...(P.canPickFiles() ? [{ label: '从云端选择…', icon: 'pictures', disabled: !engine, onSelect: async () => { try { const file = await P.pickImage(); if (file) await insertPictureFile(file); } catch (e) { fail(e); } } }] : []),
+      ...(P.canMakeImages() ? [{ label: 'AI 生成图片…', icon: 'pictures', disabled: !engine, onSelect: () => openGenerateDialog({ onClose: () => queueMicrotask(() => editor()?.focus()),
         generate: async prompt => {
           let image;
           try { image = await P.makeImage(prompt); } catch (e) { throw generationError(e); }
           return imageFileFromSource(image, prompt);
         }, onInsert: (file, { alt } = {}) => insertPictureFile(file, { alt }) }) }] : []),
-      ...(canCapture() ? [{ separator: true }, { label: 'Screenshot…', icon: 'screenshot', disabled: !engine, onSelect: screenshot }] : []),
+      ...(canCapture() ? [{ separator: true }, { label: '屏幕截图…', icon: 'screenshot', disabled: !engine, onSelect: screenshot }] : []),
     ];
   }
   const canCapture = () => !!navigator.mediaDevices?.getDisplayMedia;
@@ -212,7 +212,7 @@ export function createInsert({ editor, pkg, error, base = {}, docName = () => ''
       const canvas = Object.assign(document.createElement('canvas'), { width: video.videoWidth, height: video.videoHeight });
       canvas.getContext('2d').drawImage(video, 0, 0);
       const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
-      if (!blob) throw new Error('The screen could not be captured.');
+      if (!blob) throw new Error('无法截取屏幕。');
       await engine.insertImageFile(new File([blob], 'screenshot.png', { type: 'image/png' })); onChange();
     } catch (e) { if (e?.name !== 'NotAllowedError' && e?.name !== 'AbortError') fail(e); else editor()?.focus(); }
     finally { for (const track of stream?.getTracks() || []) track.stop(); }
@@ -241,7 +241,7 @@ export function createInsert({ editor, pkg, error, base = {}, docName = () => ''
     const engine = ready(); if (!engine) return;
     cancelDrawing();
     const pages = engine.pages, band = el('div.insert-draw-band', { hidden: true });
-    const hint = el('div.insert-draw-hint', { role: 'status' }, `${label}: drag on the page to draw it, or click for the default size. Esc cancels.`);
+    const hint = el('div.insert-draw-hint', { role: 'status' }, `${label}：在页面上拖动以绘制，或单击以使用默认大小。按 Esc 取消。`);
     document.body.append(band, hint);
     pages.classList.add('is-drawing-shape');
     let start = null;
@@ -284,11 +284,15 @@ export function createInsert({ editor, pkg, error, base = {}, docName = () => ''
       return sceneFragment(engine, shapeDrawingXml({ id, name: `${name} ${id}`, preset, width, height, fill: line || open ? null : DEFAULT_SHAPE_STYLE.fill, line: line || open ? DEFAULT_SHAPE_STYLE.fill : DEFAULT_SHAPE_STYLE.line, lineWidth: DEFAULT_SHAPE_STYLE.lineWidth, anchor, ...flips }));
     });
   }
+  const SHAPE_GROUPS = {
+    'Lines': '线条', 'Rectangles': '矩形', 'Basic Shapes': '基本形状', 'Block Arrows': '箭头总汇',
+    'Equation Shapes': '公式形状', 'Flowchart': '流程图', 'Stars and Banners': '星与旗帜', 'Callouts': '标注',
+  };
   function openShapes(anchor, event) {
     if (!ready()) return;
     const pointer = !!event?.detail;
     const groups = [...new Set(SHAPE_PRESETS.map(([, , group]) => group))];
-    const items = groups.flatMap(group => [{ header: group }, { custom: el('div.menu-custom-grid.insert-shape-grid', { role: 'group', 'aria-label': group, dataset: { columns: '10' } },
+    const items = groups.flatMap(group => [{ header: SHAPE_GROUPS[group] || group }, { custom: el('div.menu-custom-grid.insert-shape-grid', { role: 'group', 'aria-label': SHAPE_GROUPS[group] || group, dataset: { columns: '10' } },
       ...SHAPE_PRESETS.filter(([, , g]) => g === group).map(([preset, name]) => {
         const canvas = el('canvas', { 'aria-hidden': 'true' }); drawShapeThumbnail(canvas, preset);
         return el('button.swatch.shape-gallery-item.insert-shape-item', { type: 'button', role: 'menuitem', tabindex: -1, 'aria-label': name, title: name, onclick: e => {
@@ -297,7 +301,7 @@ export function createInsert({ editor, pkg, error, base = {}, docName = () => ''
           if (e.detail) drawOnPage(name, rect => insertShapeAt(preset, rect)); else insertShapeAt(preset);
         } }, canvas);
       })) }]);
-    return openMenu({ anchor, label: 'Shapes', className: 'insert-shapes-menu', items, pointer, onClose: pointer ? () => editor()?.focus() : null });
+    return openMenu({ anchor, label: '形状', className: 'insert-shapes-menu', items, pointer, onClose: pointer ? () => editor()?.focus() : null });
   }
 
   /* ---- Diagrams ---- */
@@ -333,9 +337,9 @@ export function createInsert({ editor, pkg, error, base = {}, docName = () => ''
     return true;
   }
   function diagramItems() {
-    const sample = [{ text: 'One', children: [] }, { text: 'Two', children: [] }, { text: 'Three', children: [] }];
-    return [...galleryItems([{ items: DIAGRAM_LAYOUTS.map(layout => ({ label: layout.name, hint: `${layout.category}: ${layout.hint}`, preview: diagramSketch(layout.id, layout.id === 'orgChart' ? [{ text: 'Lead', children: sample }] : sample, 'blue', 96, 54), onSelect: () => insertDiagram(layout.id) })) }], { columns: 3, label: 'Diagram layouts' }),
-      { separator: true }, { label: 'Edit Selected Diagram…', disabled: !selectedDiagram(), onSelect: () => insertDiagram() }];
+    const sample = [{ text: '一', children: [] }, { text: '二', children: [] }, { text: '三', children: [] }];
+    return [...galleryItems([{ items: DIAGRAM_LAYOUTS.map(layout => ({ label: layout.name, hint: `${layout.category}: ${layout.hint}`, preview: diagramSketch(layout.id, layout.id === 'orgChart' ? [{ text: '负责人', children: sample }] : sample, 'blue', 96, 54), onSelect: () => insertDiagram(layout.id) })) }], { columns: 3, label: '图示版式' }),
+      { separator: true }, { label: '编辑所选图示…', disabled: !selectedDiagram(), onSelect: () => insertDiagram() }];
   }
 
   /* ---- Headers, footers and page numbers ---- */
@@ -364,12 +368,12 @@ export function createInsert({ editor, pkg, error, base = {}, docName = () => ''
     return pagePreview([...pieces, ...body], { bands, width: 120, viewHeight: 27 });
   }
   function headerItems(kind) {
-    const engine = ready(), Kind = kind === 'header' ? 'Header' : 'Footer';
-    return [...galleryItems([{ header: 'Built-In', items: HEADER_DESIGNS.filter(d => d.kinds.includes(kind)).map(design => ({ label: design.name, hint: design.hint, preview: storyPreview(design, kind), disabled: !engine,
-      onSelect: () => applyStoryDesign(kind, designLines(design, kind)) })) }], { columns: 3, label: `${Kind} designs` }),
+    const engine = ready(), Kind = kind === 'header' ? '页眉' : '页脚';
+    return [...galleryItems([{ header: '内置', items: HEADER_DESIGNS.filter(d => d.kinds.includes(kind)).map(design => ({ label: design.name, hint: design.hint, preview: storyPreview(design, kind), disabled: !engine,
+      onSelect: () => applyStoryDesign(kind, designLines(design, kind)) })) }], { columns: 3, label: `${Kind}样式` }),
     { separator: true },
-    { label: `Edit ${Kind}`, icon: kind, disabled: !engine, onSelect: () => base.editHeader?.(kind) },
-    { label: `Remove ${Kind}`, disabled: !engine, onSelect: () => removeStory(kind) }];
+    { label: `编辑${Kind}`, icon: kind, disabled: !engine, onSelect: () => base.editHeader?.(kind) },
+    { label: `删除${Kind}`, disabled: !engine, onSelect: () => removeStory(kind) }];
   }
   async function removeStory(kind) {
     const engine = ready(); if (!engine) return;
@@ -408,20 +412,21 @@ export function createInsert({ editor, pkg, error, base = {}, docName = () => ''
   function pageNumberGallery(where) {
     const disabled = !ready();
     const plain = PAGE_NUMBER_DESIGNS[0], others = PAGE_NUMBER_DESIGNS.slice(1);
+    const alignLabels = { left: '左侧', center: '居中', right: '右侧' };
     const items = where === 'current'
       ? PAGE_NUMBER_DESIGNS.map(design => ({ label: design.name, preview: numberPreview(design, 'center'), disabled, onSelect: () => insertPageNumber(where, design, null) }))
-      : [...['left', 'center', 'right'].map((alignment, i) => ({ label: `Plain Number ${i + 1}`, hint: `${alignment[0].toUpperCase()}${alignment.slice(1)}`, preview: numberPreview(plain, alignment), disabled, onSelect: () => insertPageNumber(where, plain, alignment) })),
+      : [...['left', 'center', 'right'].map((alignment, i) => ({ label: `普通数字 ${i + 1}`, hint: alignLabels[alignment], preview: numberPreview(plain, alignment), disabled, onSelect: () => insertPageNumber(where, plain, alignment) })),
         ...others.map(design => ({ label: design.name, preview: numberPreview(design, design.id === 'accentBar' ? 'left' : 'center'), disabled, onSelect: () => insertPageNumber(where, design, design.id === 'accentBar' ? 'left' : design.id === 'bold' ? 'right' : 'center') }))];
-    return galleryItems([{ items }], { columns: 2, size: 'wide', label: 'Page number designs' });
+    return galleryItems([{ items }], { columns: 2, size: 'wide', label: '页码样式' });
   }
   function pageNumberItems() {
     const engine = ready();
-    return [{ label: 'Top of Page', icon: 'header', disabled: !engine, items: pageNumberGallery('top') },
-      { label: 'Bottom of Page', icon: 'footer', disabled: !engine, items: pageNumberGallery('bottom') },
-      { label: 'Current Position', disabled: !engine, items: pageNumberGallery('current') },
+    return [{ label: '页面顶端', icon: 'header', disabled: !engine, items: pageNumberGallery('top') },
+      { label: '页面底端', icon: 'footer', disabled: !engine, items: pageNumberGallery('bottom') },
+      { label: '当前位置', disabled: !engine, items: pageNumberGallery('current') },
       { separator: true },
-      { label: 'Format Page Numbers…', disabled: !engine, onSelect: formatPageNumbers },
-      { label: 'Remove Page Numbers', disabled: !engine, onSelect: removePageNumbers }];
+      { label: '设置页码格式…', disabled: !engine, onSelect: formatPageNumbers },
+      { label: '删除页码', disabled: !engine, onSelect: removePageNumbers }];
   }
   function formatPageNumbers() {
     const engine = ready(); if (!engine) return;
@@ -429,7 +434,7 @@ export function createInsert({ editor, pkg, error, base = {}, docName = () => ''
     const page = engine.session.path !== null ? engine.storyPage ?? 0 : engine.caretPageIndex ?? 0, section = engine.sectionOfPage(page);
     openFormatPageNumbers({ current: engine.pageStories?.sections?.[section]?.pageNumbering || {}, onClose: () => queueMicrotask(() => editor()?.focus()), onApply: ({ format, start }) => {
       // Page numbering is a section setting no protected edit check sees: refused under Restrict Editing.
-      if (base.protectedDocument?.()) throw new Error('This document is protected against editing, so its page numbering cannot be changed. Stop protection under Review > Restrict Editing first.');
+      if (base.protectedDocument?.()) throw new Error('此文档受保护无法编辑，不能更改其页码。请先在“审阅”>“限制编辑”中停止保护。');
       const value = format === 'decimal' && start === null ? null : { format, ...(start !== null ? { start } : {}) };
       engine.changeSettings(() => { pkg().setPageNumbering(section, value); engine.setStoryOptions({ section, pageNumbering: value }); });
       onChange();
@@ -453,7 +458,7 @@ export function createInsert({ editor, pkg, error, base = {}, docName = () => ''
       }
     });
     engine.editStory(null); engine.focus();
-    if (removed) onChange(); else toast('No page numbers were found in this section’s headers and footers.', { icon: 'info' });
+    if (removed) onChange(); else toast('此节的页眉和页脚中未找到页码。', { icon: 'info' });
   }
 
   /* ---- Text boxes, WordArt, signature lines ---- */
@@ -479,15 +484,15 @@ export function createInsert({ editor, pkg, error, base = {}, docName = () => ''
   }
   function textBoxItems() {
     const engine = ready();
-    return [...galleryItems([{ header: 'Built-In', items: TEXT_BOX_DESIGNS.map(design => ({ label: design.name, hint: design.hint, preview: textBoxPreview(design), disabled: !engine, onSelect: () => insertTextBoxDesign(design) })) }], { columns: 3, label: 'Text box designs' }),
-      { separator: true }, { label: 'Draw Text Box', icon: 'textBox', disabled: !engine, onSelect: () => drawOnPage('Text box', rect => insertTextBoxDesign(TEXT_BOX_DESIGNS[0], rect)) }];
+    return [...galleryItems([{ header: '内置', items: TEXT_BOX_DESIGNS.map(design => ({ label: design.name, hint: design.hint, preview: textBoxPreview(design), disabled: !engine, onSelect: () => insertTextBoxDesign(design) })) }], { columns: 3, label: '文本框样式' }),
+      { separator: true }, { label: '绘制文本框', icon: 'textBox', disabled: !engine, onSelect: () => drawOnPage('文本框', rect => insertTextBoxDesign(TEXT_BOX_DESIGNS[0], rect)) }];
   }
   const wordArtCss = style => ({ color: style.run.fill && style.run.fill !== 'none' ? `#${style.run.fill}` : style.run.fill === 'none' ? 'transparent' : `#${style.run.color}`,
     WebkitTextStroke: style.run.outline ? `${Math.max(0.6, style.run.outline.width / 12700)}px #${style.run.outline.color}` : '', textShadow: style.run.shadow ? `1px 1px 2px rgba(0,0,0,${style.run.shadow.alpha ?? 0.5})` : '',
     fontWeight: '700', fontSize: '26px', letterSpacing: style.run.spacing ? '2px' : '', textTransform: style.run.caps ? 'uppercase' : '' });
   function wordArtItems() {
     const engine = ready();
-    return galleryItems([{ items: WORDART_STYLES.map(style => ({ label: style.name, preview: textPreview('A', wordArtCss(style)), disabled: !engine, onSelect: () => insertWordArt(style) })) }], { columns: 4, size: 'small', label: 'WordArt styles' });
+    return galleryItems([{ items: WORDART_STYLES.map(style => ({ label: style.name, preview: textPreview('A', wordArtCss(style)), disabled: !engine, onSelect: () => insertWordArt(style) })) }], { columns: 4, size: 'small', label: '艺术字样式' });
   }
   function insertWordArt(style) {
     let prompt = null;
@@ -500,7 +505,7 @@ export function createInsert({ editor, pkg, error, base = {}, docName = () => ''
   function insertSignatureLine() {
     if (!ready()) return;
     openSignatureDialog({ onClose: () => queueMicrotask(() => editor()?.focus()), onInsert: options => insertDrawing((engine, id, order) =>
-      sceneFragment(engine, withDescription(textShapeXml(inCell(engine, signatureLineParams({ ...options, id, order, width: textWidth(engine) }))), `Signature line${options.signer ? ` for ${options.signer}` : ''}${options.instructions ? `. ${options.instructions}` : ''}`))) });
+      sceneFragment(engine, withDescription(textShapeXml(inCell(engine, signatureLineParams({ ...options, id, order, width: textWidth(engine) }))), `签名行${options.signer ? ` (签署人：${options.signer})` : ''}${options.instructions ? `。${options.instructions}` : ''}`))) });
   }
 
   /* ---- Drop cap ---- */
@@ -511,9 +516,9 @@ export function createInsert({ editor, pkg, error, base = {}, docName = () => ''
   }
   function dropCapItems() {
     const engine = ready(), state = engine && engine.session.path === null ? safe(() => dropCapState(engine.model)) : null;
-    return [['None', 'none'], ['Dropped', 'drop'], ['In Margin', 'margin']].map(([label, mode]) => ({ label, icon: mode === 'none' ? null : 'dropCap', radio: true, checked: (state?.mode || 'none') === mode, disabled: !engine,
+    return [['无', 'none'], ['下沉', 'drop'], ['悬挂', 'margin']].map(([label, mode]) => ({ label, icon: mode === 'none' ? null : 'dropCap', radio: true, checked: (state?.mode || 'none') === mode, disabled: !engine,
       onSelect: () => applyDropCap({ mode, lines: state?.lines || 3, distance: state?.distance || 0, fontFamily: state?.fontFamily || null }) }))
-      .concat([{ separator: true }, { label: 'Drop Cap Options…', disabled: !engine, onSelect: dropCapOptions }]);
+      .concat([{ separator: true }, { label: '首字下沉选项…', disabled: !engine, onSelect: dropCapOptions }]);
   }
   function dropCapOptions() {
     const engine = ready(); if (!engine) return;
@@ -561,19 +566,19 @@ export function createInsert({ editor, pkg, error, base = {}, docName = () => ''
   };
   const autoTextKey = () => `${AUTOTEXT_KEY}.${user() || 'local'}`;
   const autoTexts = () => { try { const list = JSON.parse(localStorage.getItem(autoTextKey()) || '[]'); return Array.isArray(list) ? list : []; } catch { return []; } };
-  const saveAutoTexts = list => { try { localStorage.setItem(autoTextKey(), JSON.stringify(list)); return true; } catch { fail(new Error('AutoText could not be saved in this browser.')); return false; } };
+  const saveAutoTexts = list => { try { localStorage.setItem(autoTextKey(), JSON.stringify(list)); return true; } catch { fail(new Error('无法在此浏览器中保存自动图文集。')); return false; } };
   async function saveAutoText() {
     const engine = ready(); if (!engine) return;
     engine.finishComposition();
     const [a, b] = engine.model.range;
-    if (a === b) { toast('Select the text to save as AutoText first.', { icon: 'info' }); return; }
+    if (a === b) { toast('请先选择要保存为自动图文集的文本。', { icon: 'info' }); return; }
     const { copyFragment } = await import('../engine/clipboard-fragment.js');
     const fragment = copyFragment(engine.model), text = engine.model.text.slice(a, b).replace(/\uFFFC/g, '');
-    const name = await promptDialog({ title: 'Create New Building Block', label: 'Name', value: text.trim().split(/\s+/).slice(0, 4).join(' ').slice(0, 40), confirmLabel: 'Save',
-      hint: fragment ? 'Saved with its formatting, for you in this browser.' : 'Pictures, fields and tables are saved as their text.', validate: v => v.trim() ? null : 'Enter a name.' });
+    const name = await promptDialog({ title: '新建文档部件', label: '名称', value: text.trim().split(/\s+/).slice(0, 4).join(' ').slice(0, 40), confirmLabel: '保存',
+      hint: fragment ? '将连同其格式一起保存在此浏览器中。' : '图片、域和表格将作为纯文本保存。', validate: v => v.trim() ? null : '请输入名称。' });
     if (!name) return;
     const list = autoTexts().filter(entry => entry.name !== name.trim());
-    if (saveAutoTexts([{ name: name.trim(), text, fragment, created: new Date().toISOString() }, ...list].slice(0, 100))) toast(`Saved “${name.trim()}” to AutoText`, { icon: 'check' });
+    if (saveAutoTexts([{ name: name.trim(), text, fragment, created: new Date().toISOString() }, ...list].slice(0, 100))) toast(`已将“${name.trim()}”保存到自动图文集`, { icon: 'check' });
     engine.focus();
   }
   async function insertAutoText(entry) {
@@ -583,17 +588,18 @@ export function createInsert({ editor, pkg, error, base = {}, docName = () => ''
     afterFloatingDrawing(engine);
     run(engine, () => entry.fragment && carriesFormatting(engine.model) && !engine.model.tableContext ? pasteFragment(engine.model, entry.fragment) : engine.model.replace(entry.text));
   }
+  const PROPERTY_LABELS = { Title: '标题', Subject: '主题', Author: '作者', Keywords: '关键词', Comments: '批注', Category: '类别', Status: '状态', Company: '公司', Manager: '管理者', LastSavedBy: '最后保存者' };
   function quickPartsItems() {
     const engine = ready(), entries = autoTexts();
     return [
-      { label: 'AutoText', icon: 'textBox', disabled: !engine, items: [
-        ...(entries.length ? entries.map(entry => ({ label: entry.name, hint: entry.text.slice(0, 60), onSelect: () => insertAutoText(entry) })) : [{ label: 'No AutoText entries yet', disabled: true }]),
-        { separator: true }, { label: 'Save Selection to AutoText Gallery…', disabled: !engine || engine.model.range[0] === engine.model.range[1], onSelect: saveAutoText },
-        ...(entries.length ? [{ label: 'Delete Entry', items: entries.map(entry => ({ label: entry.name, onSelect: async () => {
-          if (await confirmDialog({ title: 'Delete AutoText?', message: `Delete “${entry.name}” from your AutoText gallery?`, confirmLabel: 'Delete' })) saveAutoTexts(autoTexts().filter(e => e.name !== entry.name));
+      { label: '自动图文集', icon: 'textBox', disabled: !engine, items: [
+        ...(entries.length ? entries.map(entry => ({ label: entry.name, hint: entry.text.slice(0, 60), onSelect: () => insertAutoText(entry) })) : [{ label: '暂无自动图文集条目', disabled: true }]),
+        { separator: true }, { label: '将所选内容保存到自动图文集库…', disabled: !engine || engine.model.range[0] === engine.model.range[1], onSelect: saveAutoText },
+        ...(entries.length ? [{ label: '删除条目', items: entries.map(entry => ({ label: entry.name, onSelect: async () => {
+          if (await confirmDialog({ title: '删除自动图文集?', message: `确定从自动图文集库中删除“${entry.name}”吗?`, confirmLabel: '删除' })) saveAutoTexts(autoTexts().filter(e => e.name !== entry.name));
         } })) }] : [])] },
-      { label: 'Document Property', disabled: !engine, items: DOCUMENT_PROPERTY_NAMES.map(([label, key]) => ({ label: label === 'LastSavedBy' ? 'Last Saved By' : label, hint: packageDocumentProperties(pkg())[key] || 'Empty', onSelect: () => propertyField(label, key) })) },
-      { label: 'Field…', icon: 'field', disabled: !engine, onSelect: insertField },
+      { label: '文档属性', disabled: !engine, items: DOCUMENT_PROPERTY_NAMES.map(([label, key]) => ({ label: PROPERTY_LABELS[label] || (label === 'LastSavedBy' ? '最后保存者' : label), hint: packageDocumentProperties(pkg())[key] || '空', onSelect: () => propertyField(label, key) })) },
+      { label: '域…', icon: 'field', disabled: !engine, onSelect: insertField },
     ];
   }
 
@@ -637,7 +643,7 @@ export function createInsert({ editor, pkg, error, base = {}, docName = () => ''
           // Markdown is read off the page's thread, and as its lines of text when that takes too long (markdownHtmlOffThread).
           const markdown = kind === 'markdown' ? await (await import('../lib/markdown-html.js')).markdownHtmlOffThread(raw) : null;
           if (ready() !== engine) return;
-          if (markdown?.plain) toast('That Markdown file took too long to read, so it was inserted as plain text.', { icon: 'info' });
+          if (markdown?.plain) toast('该 Markdown 文件读取时间过长，已作为纯文本插入。', { icon: 'info' });
           const converted = htmlFragment(markdown ? markdown.html : raw, { copied: false });
           fragment = formatted ? converted : null;
           text = converted ? converted.paragraphs.map(p => p.text).join('\n') : '';
@@ -648,9 +654,9 @@ export function createInsert({ editor, pkg, error, base = {}, docName = () => ''
       run(engine, () => fragment ? pasteFragment(engine.model, fragment) : engine.model.replace(text));
     } catch (e) { fail(e); }
   }
-  const textFileInput = el('input', { type: 'file', accept: '.docx,.dotx,.docm,.md,.markdown,.txt,.html,.htm', hidden: true, 'aria-label': 'Insert text from file',
+  const textFileInput = el('input', { type: 'file', accept: '.docx,.dotx,.docm,.md,.markdown,.txt,.html,.htm', hidden: true, 'aria-label': '从文件插入文本',
     onchange: () => { const file = textFileInput.files?.[0]; textFileInput.value = ''; if (file) insertTextFromFile(file); } });
-  const objectItems = () => [{ label: 'Text from File…', icon: 'object', disabled: !ready(), onSelect: () => textFileInput.click() }];
+  const objectItems = () => [{ label: '文件中的文本…', icon: 'object', disabled: !ready(), onSelect: () => textFileInput.click() }];
 
   /* ---- Equations ---- */
   const selectedMath = () => {
@@ -693,9 +699,9 @@ export function createInsert({ editor, pkg, error, base = {}, docName = () => ''
   function equationItems() {
     const engine = ready();
     const preview = linear => { const node = el('span.insert-equation-thumb'); try { node.innerHTML = ommlToMathml(linearToOmml(linear)); } catch { node.textContent = linear; } return node; };
-    return [...galleryItems([{ header: 'Built-In', items: EQUATION_GALLERY.map(entry => ({ label: entry.name, preview: preview(entry.linear), disabled: !engine, onSelect: () => placeEquation({ linear: entry.linear, display: true }) })) }], { columns: 2, size: 'wide', label: 'Equations' }),
-      { separator: true }, { label: 'Insert New Equation', icon: 'equation', shortcut: equationShortcut, disabled: !engine, onSelect: () => insertEquation() },
-      ...(selectedMath() ? [{ label: 'Edit Equation…', onSelect: () => insertEquation() }] : [])];
+    return [...galleryItems([{ header: '内置', items: EQUATION_GALLERY.map(entry => ({ label: entry.name, preview: preview(entry.linear), disabled: !engine, onSelect: () => placeEquation({ linear: entry.linear, display: true }) })) }], { columns: 2, size: 'wide', label: '公式' }),
+      { separator: true }, { label: '插入新公式', icon: 'equation', shortcut: equationShortcut, disabled: !engine, onSelect: () => insertEquation() },
+      ...(selectedMath() ? [{ label: '编辑公式…', onSelect: () => insertEquation() }] : [])];
   }
   const equationShortcut = MOD_KEY === 'Cmd' ? 'Ctrl+=' : 'Alt+=';
 
@@ -713,8 +719,8 @@ export function createInsert({ editor, pkg, error, base = {}, docName = () => ''
   }
   function symbolItems() {
     const engine = ready();
-    return [...galleryItems([{ header: 'Recently Used', items: recentSymbols().map(ch => ({ label: ch, hint: `U+${ch.codePointAt(0).toString(16).toUpperCase().padStart(4, '0')}`, preview: textPreview(ch), disabled: !engine, onSelect: () => placeSymbol(ch) })) }], { columns: 5, size: 'symbol', label: 'Symbols' }),
-      { separator: true }, { label: 'More Symbols…', icon: 'symbol', disabled: !engine, onSelect: moreSymbols }];
+    return [...galleryItems([{ header: '最近使用', items: recentSymbols().map(ch => ({ label: ch, hint: `U+${ch.codePointAt(0).toString(16).toUpperCase().padStart(4, '0')}`, preview: textPreview(ch), disabled: !engine, onSelect: () => placeSymbol(ch) })) }], { columns: 5, size: 'symbol', label: '符号' }),
+      { separator: true }, { label: '其他符号…', icon: 'symbol', disabled: !engine, onSelect: moreSymbols }];
   }
   function moreSymbols() {
     const engine = ready(); if (!engine) return;
@@ -729,31 +735,31 @@ export function createInsert({ editor, pkg, error, base = {}, docName = () => ''
     const can = () => engineReady() && !!ready();
     const noSteal = (...buttons) => { for (const b of buttons) b.addEventListener('mousedown', e => e.preventDefault()); };
     // Pages stack as small commands, leaving room for the larger galleries.
-    const coverPage = menuButton('Cover Page', 'coverPage', coverPageItems, { size: 'small', text: 'Cover Page' });
-    const blankPage = command('Blank Page', 'blankPage', () => { const engine = ready(); if (engine) { base.insertBlankPage?.(); onChange(); } }, { text: 'Blank Page' });
+    const coverPage = menuButton('封面', 'coverPage', coverPageItems, { size: 'small', text: '封面' });
+    const blankPage = command('空白页', 'blankPage', () => { const engine = ready(); if (engine) { base.insertBlankPage?.(); onChange(); } }, { text: '空白页' });
     // The editor's own page break control keeps its state and shortcut; here it is a small row command.
-    const pageBreak = kit.pageBreak ? asSmall(kit.pageBreak, 'pageBreak', 'Page Break')
-      : command('Page Break', 'pageBreak', () => { const engine = ready(); if (engine) { engine.insertPageBreak(); onChange(); } }, { text: 'Page Break', shortcut: `${MOD_KEY}+Enter` });
-    const pictures = menuButton('Pictures', 'pictures', pictureItems, { text: 'Pictures' });
-    const shapes = command('Shapes', 'shapes', e => openShapes(shapes, e), { size: 'large', caret: true, attrs: { 'aria-haspopup': 'menu' } });
-    const icons = command('Icons', 'icons', () => insertIcons(), { text: 'Icons' });
-    const diagram = menuButton('Diagram', 'smartArt', diagramItems, { size: 'small', text: 'Diagram' });
-    const chart = command('Chart', 'chart', () => commands.insertChart?.(), { text: 'Chart' });
+    const pageBreak = kit.pageBreak ? asSmall(kit.pageBreak, 'pageBreak', '分页符')
+      : command('分页符', 'pageBreak', () => { const engine = ready(); if (engine) { engine.insertPageBreak(); onChange(); } }, { text: '分页符', shortcut: `${MOD_KEY}+Enter` });
+    const pictures = menuButton('图片', 'pictures', pictureItems, { text: '图片' });
+    const shapes = command('形状', 'shapes', e => openShapes(shapes, e), { size: 'large', caret: true, attrs: { 'aria-haspopup': 'menu' } });
+    const icons = command('图标', 'icons', () => insertIcons(), { text: '图标' });
+    const diagram = menuButton('图示', 'smartArt', diagramItems, { size: 'small', text: '图示' });
+    const chart = command('图表', 'chart', () => commands.insertChart?.(), { text: '图表' });
     // Screenshot is in the Pictures menu (only where the browser can capture the screen).
     const screenshotButton = null;
-    const header = menuButton('Header', 'header', () => headerItems('header'));
-    const footer = menuButton('Footer', 'footer', () => headerItems('footer'));
-    const pageNumber = menuButton('Page Number', 'pageNumber', pageNumberItems, { text: 'Page Number' });
-    const textBox = menuButton('Text Box', 'textBox', textBoxItems, { text: 'Text Box' });
-    const quickParts = menuButton('Quick Parts', 'quickParts', quickPartsItems, { size: 'small', text: 'Quick Parts' });
-    const wordArt = menuButton('WordArt', 'wordArt', wordArtItems, { size: 'small', text: 'WordArt' });
-    const dropCap = menuButton('Drop Cap', 'dropCap', dropCapItems, { size: 'small', text: 'Drop Cap' });
-    const signature = command('Signature Line', 'signatureLine', () => insertSignatureLine(), { text: 'Signature Line' });
-    const dateTime = command('Date & Time', 'dateTime', () => insertDateTime(), { text: 'Date & Time' });
-    const object = menuButton('Object', 'object', objectItems, { size: 'small', text: 'Object' });
-    const equationMain = command('Equation', 'equation', () => insertEquation(), { size: 'large', shortcut: equationShortcut });
-    const equation = kit.split(equationMain, { label: 'Equation gallery', size: 'large', open: (anchor, e) => openMenu({ anchor, label: 'Equations', minWidth: 300, pointer: !!e?.detail, onClose: e?.detail ? () => editor()?.focus() : null, items: equationItems() }) });
-    const symbol = menuButton('Symbol', 'symbol', symbolItems, { size: 'small', text: 'Symbol' });
+    const header = menuButton('页眉', 'header', () => headerItems('header'));
+    const footer = menuButton('页脚', 'footer', () => headerItems('footer'));
+    const pageNumber = menuButton('页码', 'pageNumber', pageNumberItems, { text: '页码' });
+    const textBox = menuButton('文本框', 'textBox', textBoxItems, { text: '文本框' });
+    const quickParts = menuButton('文档部件', 'quickParts', quickPartsItems, { size: 'small', text: '文档部件' });
+    const wordArt = menuButton('艺术字', 'wordArt', wordArtItems, { size: 'small', text: '艺术字' });
+    const dropCap = menuButton('首字下沉', 'dropCap', dropCapItems, { size: 'small', text: '首字下沉' });
+    const signature = command('签名行', 'signatureLine', () => insertSignatureLine(), { text: '签名行' });
+    const dateTime = command('日期和时间', 'dateTime', () => insertDateTime(), { text: '日期和时间' });
+    const object = menuButton('对象', 'object', objectItems, { size: 'small', text: '对象' });
+    const equationMain = command('公式', 'equation', () => insertEquation(), { size: 'large', shortcut: equationShortcut });
+    const equation = kit.split(equationMain, { label: '公式库', size: 'large', open: (anchor, e) => openMenu({ anchor, label: '公式', minWidth: 300, pointer: !!e?.detail, onClose: e?.detail ? () => editor()?.focus() : null, items: equationItems() }) });
+    const symbol = menuButton('符号', 'symbol', symbolItems, { size: 'small', text: '符号' });
     noSteal(blankPage, shapes, icons, chart, signature, dateTime, equationMain, ...(screenshotButton ? [screenshotButton] : []));
     when(coverPage, can); when(blankPage, () => can() && !ready()?.model.selectedParagraphs[0]?.cellId); if (!kit.pageBreak) when(pageBreak, () => can() && !ready()?.model.selectedParagraphs[0]?.cellId);
     for (const control of [pictures, shapes, icons, diagram, chart, header, footer, pageNumber, textBox, quickParts, wordArt, dropCap, signature, dateTime, object, equationMain, equation.arrow, symbol, ...(screenshotButton ? [screenshotButton] : [])]) when(control, can);
@@ -770,45 +776,45 @@ export function createInsert({ editor, pkg, error, base = {}, docName = () => ''
   function extendMenu(menuId) {
     const engine = ready(), disabled = !engine;
     if (menuId === 'insert') return [
-      { label: 'Pictures', icon: 'pictures', disabled, items: pictureItems() },
-      { label: 'Shapes…', icon: 'shapes', disabled, onSelect: () => openShapes(document.querySelector('#ribbon-panel-insert [aria-label="Shapes"]') || document.activeElement) },
-      { label: 'Diagram…', icon: 'smartArt', disabled, onSelect: () => insertDiagram() },
-      { label: 'Chart…', icon: 'chart', disabled: disabled || !commands.insertChart, onSelect: () => commands.insertChart?.() },
-      { label: 'Icons…', icon: 'icons', disabled, onSelect: insertIcons },
-      ...(canCapture() ? [{ label: 'Screenshot…', icon: 'screenshot', disabled, onSelect: screenshot }] : []),
+      { label: '图片', icon: 'pictures', disabled, items: pictureItems() },
+      { label: '形状…', icon: 'shapes', disabled, onSelect: () => openShapes(document.querySelector('#ribbon-panel-insert [aria-label="形状"]') || document.activeElement) },
+      { label: '图示…', icon: 'smartArt', disabled, onSelect: () => insertDiagram() },
+      { label: '图表…', icon: 'chart', disabled: disabled || !commands.insertChart, onSelect: () => commands.insertChart?.() },
+      { label: '图标…', icon: 'icons', disabled, onSelect: insertIcons },
+      ...(canCapture() ? [{ label: '屏幕截图…', icon: 'screenshot', disabled, onSelect: screenshot }] : []),
       { separator: true },
-      { label: 'Cover Page', icon: 'coverPage', disabled, items: coverPageItems() },
-      { label: 'Header', icon: 'header', disabled, items: headerItems('header') },
-      { label: 'Footer', icon: 'footer', disabled, items: headerItems('footer') },
-      { label: 'Page Numbers', icon: 'pageNumber', disabled, items: pageNumberItems() },
+      { label: '封面', icon: 'coverPage', disabled, items: coverPageItems() },
+      { label: '页眉', icon: 'header', disabled, items: headerItems('header') },
+      { label: '页脚', icon: 'footer', disabled, items: headerItems('footer') },
+      { label: '页码', icon: 'pageNumber', disabled, items: pageNumberItems() },
       { separator: true },
-      { label: 'Text Box', icon: 'textBox', disabled, items: textBoxItems() },
-      { label: 'AutoText', disabled, items: quickPartsItems()[0].items },
-      { label: 'Date and Time…', icon: 'dateTime', disabled, onSelect: insertDateTime },
-      { label: 'Field…', icon: 'field', disabled, onSelect: insertField },
-      { label: 'WordArt', icon: 'wordArt', disabled, items: wordArtItems() },
-      { label: 'Signature Line…', icon: 'signatureLine', disabled, onSelect: insertSignatureLine },
-      { label: 'Text from File…', icon: 'object', disabled, onSelect: () => textFileInput.click() },
+      { label: '文本框', icon: 'textBox', disabled, items: textBoxItems() },
+      { label: '自动图文集', disabled, items: quickPartsItems()[0].items },
+      { label: '日期和时间…', icon: 'dateTime', disabled, onSelect: insertDateTime },
+      { label: '域…', icon: 'field', disabled, onSelect: insertField },
+      { label: '艺术字', icon: 'wordArt', disabled, items: wordArtItems() },
+      { label: '签名行…', icon: 'signatureLine', disabled, onSelect: insertSignatureLine },
+      { label: '文件中的文本…', icon: 'object', disabled, onSelect: () => textFileInput.click() },
       { separator: true },
-      { label: 'Link…', icon: 'link', shortcut: `${MOD_KEY}+K`, disabled, onSelect: () => base.link?.() },
-      { label: 'Bookmark…', icon: 'bookmark', disabled, onSelect: () => base.bookmark?.() },
-      { label: 'Comment', icon: 'newComment', disabled: disabled || !base.comment, onSelect: () => base.comment?.() },
+      { label: '超链接…', icon: 'link', shortcut: `${MOD_KEY}+K`, disabled, onSelect: () => base.link?.() },
+      { label: '书签…', icon: 'bookmark', disabled, onSelect: () => base.bookmark?.() },
+      { label: '批注', icon: 'newComment', disabled: disabled || !base.comment, onSelect: () => base.comment?.() },
       { separator: true },
-      { label: 'Equation', icon: 'equation', shortcut: equationShortcut, disabled, onSelect: () => insertEquation() },
-      { label: 'Symbol…', icon: 'symbol', disabled, onSelect: moreSymbols },
+      { label: '公式', icon: 'equation', shortcut: equationShortcut, disabled, onSelect: () => insertEquation() },
+      { label: '符号…', icon: 'symbol', disabled, onSelect: moreSymbols },
     ];
-    if (menuId === 'format') return [{ label: 'Drop Cap…', icon: 'dropCap', disabled, onSelect: dropCapOptions }];
+    if (menuId === 'format') return [{ label: '首字下沉…', icon: 'dropCap', disabled, onSelect: dropCapOptions }];
     return [];
   }
   function contextMenuItems(context) {
     if (!ready()) return [];
     if (context === 'image' || context === 'shape') {
       const items = [];
-      if (selectedDiagram()) items.push({ label: 'Edit Diagram…', icon: 'smartArt', onSelect: () => insertDiagram() });
-      if (ready()?.model.selectedImage?.kind === 'chart' && commands.editChart) items.push({ label: 'Edit Chart Data…', icon: 'chart', onSelect: () => commands.editChart() });
+      if (selectedDiagram()) items.push({ label: '编辑图示…', icon: 'smartArt', onSelect: () => insertDiagram() });
+      if (ready()?.model.selectedImage?.kind === 'chart' && commands.editChart) items.push({ label: '编辑图表数据…', icon: 'chart', onSelect: () => commands.editChart() });
       return items;
     }
-    if (context === 'text' && selectedMath()) return [{ label: 'Edit Equation…', icon: 'equation', onSelect: () => insertEquation() }];
+    if (context === 'text' && selectedMath()) return [{ label: '编辑公式…', icon: 'equation', onSelect: () => insertEquation() }];
     return [];
   }
 
@@ -832,7 +838,7 @@ export function createInsert({ editor, pkg, error, base = {}, docName = () => ''
   const commands = {
     insertRibbon, coverPageItems, pictureItems, insertPictureFile, openShapes, insertShapeAt, insertIcons, insertDiagram, diagramItems, screenshot, openSelectedDrawing,
     headerItems, pageNumberItems, formatPageNumbers, removePageNumbers,
-    insertPageNumber: (event, button) => openMenu({ anchor: button || document.activeElement, label: 'Page Number', minWidth: 220, items: pageNumberItems(), pointer: !!event?.detail, onClose: event?.detail ? () => editor()?.focus() : null }),
+    insertPageNumber: (event, button) => openMenu({ anchor: button || document.activeElement, label: '页码', minWidth: 220, items: pageNumberItems(), pointer: !!event?.detail, onClose: event?.detail ? () => editor()?.focus() : null }),
     textBoxItems, insertTextBox: () => insertTextBoxDesign(TEXT_BOX_DESIGNS[0]), wordArtItems, insertWordArt, insertSignatureLine,
     dropCapItems, dropCapOptions, insertDateTime, insertField, quickPartsItems, saveAutoText, objectItems, insertTextFromFile,
     equationItems, insertEquation, symbolItems, insertSymbol: moreSymbols, moreSymbols,

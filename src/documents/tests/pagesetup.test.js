@@ -78,11 +78,11 @@ describe('openPageSetup', () => {
     const p = openPageSetup({ current: { width: 8.5, height: 11, orientation: 'portrait', margins: { top: 1, bottom: 1, left: 1, right: 1 }, headerFooterMargins: { header: 0.5, footer: 0.5 }, verticalAlign: 'top' }, unit: 'in', onApply: async (v) => { applied = v; return null; } });
     const panel = document.querySelector('.modal-panel');
     expect(panel.querySelector('select').value).toBe('letter');
-    expect(panel.querySelector('[aria-label="Header from the top edge"]').value).toBe('0.5');
-    panel.querySelector('[aria-label="Left margin"]').value = '0.5';
-    panel.querySelector('[aria-label="Footer from the bottom edge"]').value = '0.3';
-    [...panel.querySelectorAll('[role="radio"]')].find((b) => b.textContent === 'Landscape').click();
-    [...panel.querySelectorAll('[role="radio"]')].find((b) => b.textContent === 'Center').click();
+    expect(panel.querySelector('[aria-label="页眉边距"]').value).toBe('0.5');
+    panel.querySelector('[aria-label="左边距"]').value = '0.5';
+    panel.querySelector('[aria-label="页脚边距"]').value = '0.3';
+    [...panel.querySelectorAll('[role="radio"]')].find((b) => b.textContent === '横向').click();
+    [...panel.querySelectorAll('[role="radio"]')].find((b) => b.textContent === '居中对齐').click();
     panel.querySelector('form').requestSubmit();
     const result = await p;
     expect(applied.pageSetup).toEqual({ width: 11, height: 8.5, orientation: 'landscape' });
@@ -99,14 +99,14 @@ describe('openPageSetup', () => {
     const p = openPageSetup({ current: { width: 8.5, height: 11, orientation: 'portrait', margins: { top: 0.75, bottom: 1.25, left: 0.625, right: 1 }, headerFooterMargins: { header: 0.5, footer: 0.375 } }, unit: 'cm', onApply: async (v) => { applied = v; return null; } });
     const panel = document.querySelector('.modal-panel');
     // 0.75 in reads as 1.91 cm; converting that back would give 0.752 in.
-    expect(panel.querySelector('[aria-label="Top margin"]').value).toBe('1.91');
+    expect(panel.querySelector('[aria-label="上边距"]').value).toBe('1.91');
     // Switching units and back keeps the exact values too.
-    [...panel.querySelectorAll('[role="radio"]')].find((b) => b.textContent === 'Inches').click();
-    expect(panel.querySelector('[aria-label="Left margin"]').value).toBe('0.63');
-    [...panel.querySelectorAll('[role="radio"]')].find((b) => b.textContent === 'Centimeters').click();
-    expect(panel.querySelector('[aria-label="Left margin"]').value).toBe('1.59');
+    [...panel.querySelectorAll('[role="radio"]')].find((b) => b.textContent === '英寸').click();
+    expect(panel.querySelector('[aria-label="左边距"]').value).toBe('0.63');
+    [...panel.querySelectorAll('[role="radio"]')].find((b) => b.textContent === '厘米').click();
+    expect(panel.querySelector('[aria-label="左边距"]').value).toBe('1.59');
     // An edited field is taken as typed, in the unit shown.
-    const right = panel.querySelector('[aria-label="Right margin"]');
+    const right = panel.querySelector('[aria-label="右边距"]');
     right.value = '2';
     right.dispatchEvent(new Event('input'));
     panel.querySelector('form').requestSubmit();
@@ -125,16 +125,16 @@ describe('openPageSetup', () => {
     const paper = panel.querySelector('select');
     paper.value = 'custom';
     paper.dispatchEvent(new Event('change'));
-    const width = panel.querySelector('[aria-label="Page width"]');
-    const height = panel.querySelector('[aria-label="Page height"]');
+    const width = panel.querySelector('[aria-label="页面宽度"]');
+    const height = panel.querySelector('[aria-label="页面高度"]');
     // Typing a wide page turns the choice to Landscape.
     width.value = '11'; width.dispatchEvent(new Event('input'));
     height.value = '8.5'; height.dispatchEvent(new Event('input'));
-    expect(radio('Landscape').getAttribute('aria-checked')).toBe('true');
+    expect(radio('横向').getAttribute('aria-checked')).toBe('true');
     // Choosing Portrait again swaps the fields instead of ignoring them.
-    radio('Portrait').click();
+    radio('纵向').click();
     expect([width.value, height.value]).toEqual(['8.5', '11']);
-    radio('Landscape').click();
+    radio('横向').click();
     expect([width.value, height.value]).toEqual(['11', '8.5']);
     panel.querySelector('form').requestSubmit();
     await p;
@@ -149,10 +149,10 @@ describe('page setup fields and assistive technology', () => {
     openPageSetup({ current: { width: 8.5, height: 11, orientation: 'portrait', margins: { top: 1, bottom: 1, left: 1, right: 1 } }, unit: 'in', onApply: async () => null });
     // Dialogs of earlier tests may still be closing: this one is the newest.
     const panel = [...document.querySelectorAll('.modal-root:not(.closing) .modal-panel')].at(-1);
-    const left = panel.querySelector('[aria-label="Left margin"]');
+    const left = panel.querySelector('[aria-label="左边距"]');
     const describedBy = () => document.getElementById(left.getAttribute('aria-describedby'))?.textContent;
     expect(describedBy()).toBe('in');
-    [...panel.querySelectorAll('[role="radio"]')].find((b) => b.textContent === 'Centimeters').click();
+    [...panel.querySelectorAll('[role="radio"]')].find((b) => b.textContent === '厘米').click();
     expect(describedBy()).toBe('cm');
     closeAllModals();
     vi.unstubAllGlobals();

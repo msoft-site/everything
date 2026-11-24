@@ -50,8 +50,8 @@ afterEach(() => {
 describe('the Apps button', () => {
   it('is offered on the web, named, announcing a dialog that starts closed', () => {
     const btn = mount();
-    expect(btn.getAttribute('aria-label')).toBe('Apps');
-    expect(btn.title).toBe('Apps');
+    expect(btn.getAttribute('aria-label')).toBe('应用');
+    expect(btn.title).toBe('应用');
     expect(btn.getAttribute('aria-haspopup')).toBe('dialog');
     expect(btn.getAttribute('aria-expanded')).toBe('false');
     expect(btn.querySelectorAll('circle')).toHaveLength(9);
@@ -70,12 +70,12 @@ describe('the Apps button', () => {
     expect(btn.getAttribute('aria-expanded')).toBe('true');
     expect(panel().parentElement).toBe(document.body);
     expect(panel().getAttribute('role')).toBe('dialog');
-    expect(panel().getAttribute('aria-label')).toBe('Apps');
+    expect(panel().getAttribute('aria-label')).toBe('应用');
     expect(panel().getAttribute('tabindex')).toBe('-1');
     expect(document.activeElement).toBe(panel());
     const frame = panel().querySelector('iframe.apps-frame');
     expect(frame.src).toBe(APPS_EMBED_URL);
-    expect(frame.title).toBe('Your Puter apps');
+    expect(frame.title).toBe('您的 Puter 应用');
     expect(frame.getAttribute('referrerpolicy')).toBe('strict-origin-when-cross-origin');
     expect(frame.getAttribute('allow')).toBe('clipboard-read; clipboard-write');
     const newTab = panel().querySelector('.apps-panel-newtab');

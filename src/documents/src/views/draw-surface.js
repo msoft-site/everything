@@ -100,7 +100,7 @@ export function createDrawSurface({ editor, handlers }) {
   }
 
   /* ---- Ruler ---- */
-  const rulerNode = el('div.draw-ruler', { tabindex: 0, role: 'slider', 'aria-label': 'Ruler', 'aria-valuemin': 0, 'aria-valuemax': 359, hidden: true, title: 'Drag to move · scroll or Alt+arrow keys to turn · two fingers turn on touch' });
+  const rulerNode = el('div.draw-ruler', { tabindex: 0, role: 'slider', 'aria-label': '标尺', 'aria-valuemin': 0, 'aria-valuemax': 359, hidden: true, title: '拖动可移动 · 滚动鼠标滚轮或按 Alt+方向键可旋转 · 触摸屏上双指旋转' });
   const rulerScale = el('canvas.draw-ruler-scale', { 'aria-hidden': 'true' });
   const rulerAngle = el('span.draw-ruler-angle', { 'aria-hidden': 'true' });
   rulerNode.append(rulerScale, rulerAngle);
@@ -110,7 +110,7 @@ export function createDrawSurface({ editor, handlers }) {
     const { x, y, angle } = rulerState, degrees = Math.round(((angle * 180 / Math.PI) % 360 + 360) % 360);
     Object.assign(rulerNode.style, { left: `${x - RULER_LENGTH / 2}px`, top: `${y - RULER_THICKNESS / 2}px`, width: `${RULER_LENGTH}px`, height: `${RULER_THICKNESS}px`, transform: `rotate(${angle}rad)` });
     rulerNode.hidden = false;
-    rulerNode.setAttribute('aria-valuenow', String(degrees)); rulerNode.setAttribute('aria-valuetext', `${degrees} degrees`);
+    rulerNode.setAttribute('aria-valuenow', String(degrees)); rulerNode.setAttribute('aria-valuetext', `${degrees} 度`);
     rulerAngle.textContent = `${degrees}°`;
     rulerAngle.style.transform = `translate(-50%, -50%) rotate(${-angle}rad)`;
     drawScale();

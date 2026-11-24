@@ -13,15 +13,15 @@ const check = () => icon('check', 16, 2.2);
 const STORAGE_KEY = 'documents.draw.pens.v1';
 const MAX_PENS = 12;
 
-export const TOOL_LABELS = { pen: 'Pen', pencil: 'Pencil', highlighter: 'Highlighter' };
+export const TOOL_LABELS = { pen: '笔', pencil: '铅笔', highlighter: '荧光笔' };
 /** Thickness choices in millimetres. */
 export const PEN_WIDTHS = { pen: [0.25, 0.35, 0.5, 0.75, 1, 1.5, 2, 3.5], pencil: [0.5, 1, 1.5, 2, 3], highlighter: [2, 4, 6, 8, 10, 12] };
 /** The palette: ink colours for pens and pencils, bright translucent ones for highlighters. */
 export const INK_COLORS = [
-  ['000000', 'Black'], ['FFFFFF', 'White'], ['7F7F7F', 'Gray'], ['C00000', 'Dark Red'], ['FF0000', 'Red'], ['FF6A00', 'Orange'], ['FFC000', 'Gold'], ['FFFF00', 'Yellow'],
-  ['92D050', 'Light Green'], ['00B050', 'Green'], ['00B0F0', 'Light Blue'], ['0070C0', 'Blue'], ['002060', 'Navy'], ['7030A0', 'Purple'], ['FF66CC', 'Pink'], ['8B5A2B', 'Brown'],
+  ['000000', '黑色'], ['FFFFFF', '白色'], ['7F7F7F', '灰色'], ['C00000', '深红'], ['FF0000', '红色'], ['FF6A00', '橙色'], ['FFC000', '金色'], ['FFFF00', '黄色'],
+  ['92D050', '浅绿'], ['00B050', '绿色'], ['00B0F0', '浅蓝'], ['0070C0', '蓝色'], ['002060', '深蓝'], ['7030A0', '紫色'], ['FF66CC', '粉色'], ['8B5A2B', '褐色'],
 ];
-export const HIGHLIGHT_INKS = [['FFFF00', 'Yellow'], ['00FF00', 'Bright Green'], ['00FFFF', 'Turquoise'], ['FF00FF', 'Pink'], ['FF9900', 'Orange'], ['3399FF', 'Blue'], ['FF3333', 'Red'], ['B4A7D6', 'Lavender']];
+export const HIGHLIGHT_INKS = [['FFFF00', '黄色'], ['00FF00', '鲜绿'], ['00FFFF', '青绿'], ['FF00FF', '粉红'], ['FF9900', '橙色'], ['3399FF', '蓝色'], ['FF3333', '红色'], ['B4A7D6', '淡紫']];
 const colorName = hex => [...INK_COLORS, ...HIGHLIGHT_INKS].find(([c]) => c === hex)?.[1] || `#${hex}`;
 
 export const DEFAULT_PENS = Object.freeze([
@@ -46,7 +46,7 @@ export function savePens(state, storage = globalThis.localStorage) {
   try { storage?.setItem(STORAGE_KEY, JSON.stringify({ pens: state.pens, active: state.active })); } catch { /* storage is a convenience */ }
 }
 
-export const penLabel = pen => `${TOOL_LABELS[pen.tool]}: ${colorName(pen.color)}, ${pen.width} mm`;
+export const penLabel = pen => `${TOOL_LABELS[pen.tool]}: ${colorName(pen.color)}, ${pen.width} 毫米`;
 /** The pen's nominal ink width in page pixels. */
 export const penWidthPx = pen => pen.width * PX_PER_MM;
 
@@ -78,18 +78,18 @@ export function openPenSettings({ anchor, pen, canRemove, onChange, onRemove, po
   const colors = pen.tool === 'highlighter' ? HIGHLIGHT_INKS : INK_COLORS;
   const swatch = ([hex, name]) => el('button.swatch.draw-pen-swatch', { type: 'button', role: 'menuitemradio', tabindex: -1, 'aria-label': name, title: name,
     'aria-checked': String(pen.color === hex), style: { background: `#${hex}` }, onclick: () => { closeMenu(); onChange({ color: hex }); } });
-  const grid = el('div.menu-custom-grid', { role: 'group', 'aria-label': `${TOOL_LABELS[pen.tool]} colors`, dataset: { columns: '8' } }, colors.map(swatch));
-  const picker = el('input', { type: 'color', value: `#${pen.color.toLowerCase()}`, 'aria-label': 'Custom ink color', hidden: true,
+  const grid = el('div.menu-custom-grid', { role: 'group', 'aria-label': `${TOOL_LABELS[pen.tool]}颜色`, dataset: { columns: '8' } }, colors.map(swatch));
+  const picker = el('input', { type: 'color', value: `#${pen.color.toLowerCase()}`, 'aria-label': '自定义墨迹颜色', hidden: true,
     onchange: () => { const hex = picker.value.replace('#', '').toUpperCase(); if (/^[0-9A-F]{6}$/.test(hex)) onChange({ color: hex }); picker.remove(); } });
   const preview = width => { const line = el('span.draw-width-preview', { 'aria-hidden': 'true' }); line.style.height = `${Math.max(1, Math.min(14, width * PX_PER_MM))}px`; line.style.background = `#${pen.color}`; if (pen.tool === 'highlighter') line.style.opacity = '.6'; return line; };
-  return openMenu({ anchor, label: `${TOOL_LABELS[pen.tool]} settings`, className: 'draw-pen-menu', pointer, minWidth: 240, items: [
-    { header: 'Thickness' },
+  return openMenu({ anchor, label: `${TOOL_LABELS[pen.tool]}设置`, className: 'draw-pen-menu', pointer, minWidth: 240, items: [
+    { header: '粗细' },
     ...PEN_WIDTHS[pen.tool].map(width => ({ custom: el('button.menu-item.draw-width-item', { type: 'button', role: 'menuitemradio', tabindex: -1, 'aria-checked': String(pen.width === width),
-      onclick: () => { closeMenu(); onChange({ width }); } }, el('span.menu-icon', { 'aria-hidden': 'true', html: pen.width === width ? check() : '' }), el('span.menu-label', {}, `${width} mm`), preview(width)) })),
-    { separator: true }, { header: 'Color' }, { custom: grid },
-    { label: 'More Colors…', onSelect: () => { document.body.append(picker); picker.click(); } },
+      onclick: () => { closeMenu(); onChange({ width }); } }, el('span.menu-icon', { 'aria-hidden': 'true', html: pen.width === width ? check() : '' }), el('span.menu-label', {}, `${width} 毫米`), preview(width)) })),
+    { separator: true }, { header: '颜色' }, { custom: grid },
+    { label: '更多颜色…', onSelect: () => { document.body.append(picker); picker.click(); } },
     { separator: true },
-    { label: 'Remove Pen', icon: 'deleteShape', disabled: !canRemove, onSelect: onRemove },
+    { label: '删除笔', icon: 'deleteShape', disabled: !canRemove, onSelect: onRemove },
   ] });
 }
 

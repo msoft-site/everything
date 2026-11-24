@@ -11,9 +11,9 @@ import { openMenu } from '../ui/menu.js';
 import { commandIconEl } from '../ui/ribbon.js';
 import { readingColumns, lineFocusBand } from '../engine/document-views.js';
 
-const WIDTHS = [['narrow', 'Narrow'], ['default', 'Default'], ['wide', 'Wide']];
-const COLORS = [['none', 'None'], ['sepia', 'Sepia'], ['inverse', 'Inverse']];
-const FOCUS = [[0, 'Off'], [1, 'One Line'], [3, 'Three Lines'], [5, 'Five Lines']];
+const WIDTHS = [['narrow', '窄'], ['default', '默认'], ['wide', '宽']];
+const COLORS = [['none', '无'], ['sepia', '棕褐色'], ['inverse', '反转']];
+const FOCUS = [[0, '关闭'], [1, '单行'], [3, '三行'], [5, '五行']];
 // Room beside each screen's last page for the comment cards (review.js puts them there), while they are shown.
 const COMMENT_ROOM = 312;
 const letterSpacing = () => typeof CanvasRenderingContext2D !== 'undefined' && 'letterSpacing' in CanvasRenderingContext2D.prototype;
@@ -30,22 +30,22 @@ export function createReadMode({ editor, host, root: rootOf, exit, toggleNavigat
     const button = el('button.read-tool', { type: 'button', 'aria-haspopup': 'menu', onclick: e => openMenu({ anchor: button, label, items: items(), pointer: !!e.detail, onClose: () => focusSurface() }) }, label, el('span.ribbon-caret', { 'aria-hidden': 'true' }));
     return button;
   };
-  const tools = menuButton('Tools', () => [
-    { label: 'Navigation Pane', icon: 'navigationPane', onSelect: () => toggleNavigation?.() },
-    { label: readAloudActive?.() ? 'Stop Reading Aloud' : 'Read Aloud', icon: 'readAloud', disabled: !readAloud, onSelect: () => readAloud?.() },
+  const tools = menuButton('工具', () => [
+    { label: '导航窗格', icon: 'navigationPane', onSelect: () => toggleNavigation?.() },
+    { label: readAloudActive?.() ? '停止大声朗读' : '大声朗读', icon: 'readAloud', disabled: !readAloud, onSelect: () => readAloud?.() },
   ]);
-  const viewMenu = menuButton('View', () => [
-    { label: 'Column Width', icon: 'columnWidth', items: WIDTHS.map(([id, label]) => ({ label, radio: true, checked: width === id, onSelect: () => set({ width: id }) })) },
-    { label: 'Page Color', icon: 'pageColor', items: COLORS.map(([id, label]) => ({ label, radio: true, checked: color === id, onSelect: () => set({ color: id }) })) },
-    { label: 'Text Spacing', icon: 'textSpacing', checked: textSpacing, onSelect: () => set({ textSpacing: !textSpacing }) },
-    { label: 'Line Focus', icon: 'lineFocus', items: FOCUS.map(([n, label]) => ({ label, radio: true, checked: focusLines === n, onSelect: () => set({ focusLines: n }) })) },
+  const viewMenu = menuButton('视图', () => [
+    { label: '列宽', icon: 'columnWidth', items: WIDTHS.map(([id, label]) => ({ label, radio: true, checked: width === id, onSelect: () => set({ width: id }) })) },
+    { label: '页面颜色', icon: 'pageColor', items: COLORS.map(([id, label]) => ({ label, radio: true, checked: color === id, onSelect: () => set({ color: id }) })) },
+    { label: '文字间距', icon: 'textSpacing', checked: textSpacing, onSelect: () => set({ textSpacing: !textSpacing }) },
+    { label: '焦点行', icon: 'lineFocus', items: FOCUS.map(([n, label]) => ({ label, radio: true, checked: focusLines === n, onSelect: () => set({ focusLines: n }) })) },
     { separator: true },
-    { label: 'Edit Document', icon: 'printLayout', onSelect: () => exit() },
+    { label: '编辑文档', icon: 'printLayout', onSelect: () => exit() },
   ]);
-  const edit = el('button.btn.btn-outline.read-edit', { type: 'button', title: 'Back to editing (Esc)', onclick: () => exit() }, 'Edit Document');
-  const toolbar = el('div.read-toolbar', { role: 'toolbar', 'aria-label': 'Read Mode' }, el('div.read-toolbar-start', {}, tools, viewMenu), title, el('div.read-toolbar-end', {}, edit));
+  const edit = el('button.btn.btn-outline.read-edit', { type: 'button', title: '返回编辑 (Esc)', onclick: () => exit() }, '编辑文档');
+  const toolbar = el('div.read-toolbar', { role: 'toolbar', 'aria-label': '阅读模式' }, el('div.read-toolbar-start', {}, tools, viewMenu), title, el('div.read-toolbar-end', {}, edit));
   const arrow = (label, icon, delta) => el(`button.read-turn.read-turn-${delta < 0 ? 'back' : 'next'}`, { type: 'button', 'aria-label': label, title: label, onclick: () => turn(delta) }, commandIconEl(icon, 20));
-  const back = arrow('Previous screen', 'previousArrow', -1), next = arrow('Next screen', 'nextArrow', 1);
+  const back = arrow('上一屏', 'previousArrow', -1), next = arrow('下一屏', 'nextArrow', 1);
   const footer = el('div.read-footer', {}, counter);
   for (const b of [tools, viewMenu, edit, back, next]) b.addEventListener('mousedown', e => e.preventDefault());
 
@@ -82,7 +82,7 @@ export function createReadMode({ editor, host, root: rootOf, exit, toggleNavigat
   function updateCounter() {
     const list = canvases();
     const from = screen * perScreen + 1, to = Math.min(list.length, from + perScreen - 1);
-    counter.textContent = list.length ? `${from === to ? `Page ${from}` : `Pages ${from}–${to}`} of ${list.length}` : '';
+    counter.textContent = list.length ? `${from === to ? `第 ${from} 页` : `第 ${from}–${to} 页`}，共 ${list.length} 页` : '';
     back.disabled = screen === 0; next.disabled = screen >= screens() - 1;
   }
   function turn(delta) {
@@ -182,7 +182,7 @@ export function createReadMode({ editor, host, root: rootOf, exit, toggleNavigat
       title.textContent = documentTitle?.() || '';
       root.classList.add('ed-read-mode');
       host.classList.add('is-reading');
-      host.tabIndex = 0; host.setAttribute('aria-label', 'Document pages. Use the arrow keys to turn pages; Escape returns to editing.');
+      host.tabIndex = 0; host.setAttribute('aria-label', '文档页面。使用方向键翻页；按 Escape 返回编辑。');
       // The text input inside the pages would take the next Tab and hand focus straight back to the pages
       // (see focusin below), so Tab never reached the reading tools: it is out of the Tab order while reading.
       textInput = host.querySelector('.canvas-input');
@@ -213,7 +213,7 @@ export function createReadMode({ editor, host, root: rootOf, exit, toggleNavigat
       delete host.dataset.cardPages;
       root.classList.remove('ed-read-mode', 'read-line-focus');
       host.classList.remove('is-reading', 'read-inverse', 'read-sepia');
-      host.removeAttribute('tabindex'); host.setAttribute('aria-label', 'Document pages');
+      host.removeAttribute('tabindex'); host.setAttribute('aria-label', '文档页面');
       if (textInput) { if (textInputTabIndex === null) textInput.removeAttribute('tabindex'); else textInput.setAttribute('tabindex', textInputTabIndex); textInput = null; }
       for (const node of [toolbar, back, next, footer]) node.remove();
       if (ed) { const at = ed.overlays.indexOf(overlay); if (at >= 0) ed.overlays.splice(at, 1); }

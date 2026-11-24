@@ -2,7 +2,7 @@ import { normalizeColor } from './colors.js';
 import { compoundBorderMetrics } from './border-patterns.js';
 
 export const BORDER_SIDES = Object.freeze(['top', 'left', 'bottom', 'right', 'between', 'bar']);
-export const BORDER_STYLES = Object.freeze({ none: 'None', single: 'Single', double: 'Double', triple: 'Triple', thinThickSmallGap: 'Thin and thick, small gap', thickThinSmallGap: 'Thick and thin, small gap', thinThickMediumGap: 'Thin and thick, medium gap', thickThinMediumGap: 'Thick and thin, medium gap', thinThickLargeGap: 'Thin and thick, large gap', dotted: 'Dotted', dashed: 'Dashed', dashSmallGap: 'Short dashed', dotDash: 'Dot dash', dotDotDash: 'Dot dot dash' });
+export const BORDER_STYLES = Object.freeze({ none: '无', single: '单实线', double: '双实线', triple: '三实线', thinThickSmallGap: '细粗小间隙', thickThinSmallGap: '粗细小间隙', thinThickMediumGap: '细粗中间隙', thickThinMediumGap: '粗细中间隙', thinThickLargeGap: '细粗大间隙', dotted: '点线', dashed: '虚线', dashSmallGap: '短划线', dotDash: '点划线', dotDotDash: '双点划线' });
 
 /** One side replaces a complete CT_Border declaration. Missing sides inherit. */
 export function checkedParagraphBorder(value) {

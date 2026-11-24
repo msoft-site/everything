@@ -3,7 +3,7 @@ import { checkedParagraphBorder, BORDER_STYLES } from './paragraph-borders.js';
 export const CELL_BORDER_SIDES = Object.freeze(['top', 'left', 'bottom', 'right']);
 // Diagonal strokes across a cell (§17.4.66 tl2br/tr2bl): ink only, no space or conflict resolution.
 export const CELL_DIAGONALS = Object.freeze(['tl2br', 'tr2bl']);
-export const CELL_BORDER_STYLES = Object.freeze({ nil: 'No border', ...Object.fromEntries(Object.entries(BORDER_STYLES).filter(([key]) => key !== 'none')), thick: 'Thick' });
+export const CELL_BORDER_STYLES = Object.freeze({ nil: '无边框', ...Object.fromEntries(Object.entries(BORDER_STYLES).filter(([key]) => key !== 'none')), thick: '粗实线' });
 
 export function checkedCellBorder(value) {
   if (!value || typeof value !== 'object') throw new Error('Choose a cell border.');

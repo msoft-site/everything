@@ -16,18 +16,18 @@ export function openCompressDialog({ selectedOnly = true, onApply }) {
   const submit = async e => {
     e.preventDefault();
     const ppi = Number(e.target.querySelector(`input[name="${name}"]:checked`)?.value || 150);
-    working.textContent = 'Compressing…';
+    working.textContent = '正在压缩…';
     for (const button of e.target.querySelectorAll('button')) button.disabled = true;
     try { await onApply({ ppi, deleteCropped: crop.checked, selectedOnly: only.checked }); } finally { modal.close(); }
   };
-  modal = openModal({ title: 'Compress Pictures', content: el('form.pic-dialog', { onsubmit: submit },
-    el('fieldset.pic-fieldset', {}, el('legend', {}, 'Compression options'),
-      el('label.pic-check', { htmlFor: only.id }, only, 'Apply only to this picture'),
-      el('label.pic-check', { htmlFor: crop.id }, crop, 'Delete cropped areas of pictures')),
-    el('fieldset.pic-fieldset', {}, el('legend', {}, 'Resolution'), el('div.pic-radios', { role: 'radiogroup', 'aria-label': 'Resolution' }, ...choices)),
-    el('p.pic-hint', {}, 'Pictures are resampled for the size they are shown at. Compressing removes the original pictures kept for Reset Picture.'),
+  modal = openModal({ title: '压缩图片', content: el('form.pic-dialog', { onsubmit: submit },
+    el('fieldset.pic-fieldset', {}, el('legend', {}, '压缩选项'),
+      el('label.pic-check', { htmlFor: only.id }, only, '仅应用于此图片'),
+      el('label.pic-check', { htmlFor: crop.id }, crop, '删除图片的剪裁区域')),
+    el('fieldset.pic-fieldset', {}, el('legend', {}, '分辨率'), el('div.pic-radios', { role: 'radiogroup', 'aria-label': '分辨率' }, ...choices)),
+    el('p.pic-hint', {}, '图片将按显示的尺寸重新采样。压缩会删除为“重置图片”保留的原始图片。'),
     working,
-    el('div.row.row-end', {}, el('button.btn.btn-ghost', { type: 'button', onclick: () => modal.close() }, 'Cancel'), el('button.btn.btn-primary', { type: 'submit' }, 'OK'))) });
+    el('div.row.row-end', {}, el('button.btn.btn-ghost', { type: 'button', onclick: () => modal.close() }, '取消'), el('button.btn.btn-primary', { type: 'submit' }, '确定'))) });
   queueMicrotask(() => modal.panel?.querySelector('input:checked')?.focus());
   return modal;
 }
@@ -39,10 +39,10 @@ export function openGridDialog({ value = 0.125, snap = false, onApply }) {
   let modal;
   // The arrows step by hundredths, but any spacing in range is taken: the default is an eighth of an inch.
   const inRange = () => size.value !== '' && !size.validity.badInput && !size.validity.rangeUnderflow && !size.validity.rangeOverflow;
-  modal = openModal({ title: 'Grid Settings', content: el('form.pic-dialog', { noValidate: true, onsubmit: e => { e.preventDefault(); if (!inRange()) { size.reportValidity(); return; } onApply({ size: Number(size.value), snap: snapBox.checked }); modal.close(); } },
-    el('label.pic-field', { htmlFor: size.id }, el('span', {}, 'Grid spacing (in)'), size),
-    el('label.pic-check', { htmlFor: snapBox.id }, snapBox, 'Snap objects to the grid while moving them'),
-    el('div.row.row-end', {}, el('button.btn.btn-ghost', { type: 'button', onclick: () => modal.close() }, 'Cancel'), el('button.btn.btn-primary', { type: 'submit' }, 'OK'))) });
+  modal = openModal({ title: '网格设置', content: el('form.pic-dialog', { noValidate: true, onsubmit: e => { e.preventDefault(); if (!inRange()) { size.reportValidity(); return; } onApply({ size: Number(size.value), snap: snapBox.checked }); modal.close(); } },
+    el('label.pic-field', { htmlFor: size.id }, el('span', {}, '网格间距 (英寸)'), size),
+    el('label.pic-check', { htmlFor: snapBox.id }, snapBox, '移动对象时对齐到网格'),
+    el('div.row.row-end', {}, el('button.btn.btn-ghost', { type: 'button', onclick: () => modal.close() }, '取消'), el('button.btn.btn-primary', { type: 'submit' }, '确定'))) });
   queueMicrotask(() => size.focus());
   return modal;
 }

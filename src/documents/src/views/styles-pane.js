@@ -14,9 +14,19 @@ const RECOMMENDED = ['normal', 'no spacing', 'heading 1', 'heading 2', 'heading 
 const PREVIEW_KEY = 'documents.stylesPane.preview', FILTER_KEY = 'documents.stylesPane.filter';
 const stored = (key, fallback) => { try { return localStorage.getItem(key) ?? fallback; } catch { return fallback; } };
 const store = (key, value) => { try { localStorage.setItem(key, value); } catch { /* storage unavailable */ } };
-const VIEWS = { styles: 'Styles', inspector: 'Style Inspector', reveal: 'Reveal Formatting' };
-const LABELS = { fontAscii: 'font', fontHAnsi: 'font', fontSize: 'size', bold: 'bold', italic: 'italic', underline: 'underline', underlineStyle: 'underline', underlineColor: 'underline color', color: 'color', strikethrough: 'strikethrough', capitalization: 'capitals', verticalAlign: 'position', baselineShift: 'position', characterSpacing: 'spacing', textScale: 'scale', kerning: 'kerning', highlight: 'highlight', vanish: 'hidden', alignment: 'alignment', indentLeft: 'left indent', indentRight: 'right indent', firstLine: 'special indent', spaceBefore: 'space before', spaceAfter: 'space after', lineSpacing: 'line spacing', lineRule: 'line spacing', keepNext: 'keep with next', keepLines: 'keep lines together', widowControl: 'widow control', pageBreakBefore: 'page break before', tabs: 'tabs', paragraphBorders: 'borders', paragraphShading: 'shading', contextualSpacing: 'contextual spacing', outlineLevel: 'outline level', mirrorIndents: 'mirror indents', bidi: 'direction', textOutline: 'outline', textShadow: 'shadow', textFill: 'text fill' };
-const describeKeys = keys => [...new Set(keys.map(k => LABELS[k] || k))].join(', ');
+const VIEWS = { styles: '样式', inspector: '样式检查器', reveal: '显示格式' };
+const LABELS = {
+  fontAscii: '字体', fontHAnsi: '字体', fontSize: '字号', bold: '加粗', italic: '倾斜', underline: '下划线',
+  underlineStyle: '下划线', underlineColor: '下划线颜色', color: '颜色', strikethrough: '删除线',
+  capitalization: '字母大小写', verticalAlign: '位置', baselineShift: '基线偏移', characterSpacing: '字符间距',
+  textScale: '缩放', kerning: '字距调整', highlight: '突出显示', vanish: '隐藏', alignment: '对齐方式',
+  indentLeft: '左缩进', indentRight: '右缩进', firstLine: '特殊缩进', spaceBefore: '段前间距', spaceAfter: '段后间距',
+  lineSpacing: '行距', lineRule: '行距规则', keepNext: '与下段同页', keepLines: '段中不分页', widowControl: '孤行控制',
+  pageBreakBefore: '段前分页', tabs: '制表位', paragraphBorders: '边框', paragraphShading: '底纹',
+  contextualSpacing: '上下文间距', outlineLevel: '大纲级别', mirrorIndents: '对称缩进', bidi: '文字方向',
+  textOutline: '轮廓', textShadow: '阴影', textFill: '文本填充'
+};
+const describeKeys = keys => [...new Set(keys.map(k => LABELS[k] || k))].join('、');
 
 /**
  * The Styles pane, docked beside the pages, with three views: Styles (apply, modify, new, delete, select
@@ -30,7 +40,7 @@ const describeKeys = keys => [...new Set(keys.map(k => LABELS[k] || k))].join(',
 export function createStylesPane({ editor, readOnly, actions }) {
   let view = 'styles', signature = '';
   let filter = stored(FILTER_KEY, 'recommended'), showPreview = stored(PREVIEW_KEY, '1') === '1';
-  const heading = el('h2', {}, 'Styles');
+  const heading = el('h2', {}, '样式');
   const tabs = Object.entries(VIEWS).map(([id, label]) => el('button.styles-pane-tab', { type: 'button', role: 'tab', id: `styles-pane-tab-${id}`, 'aria-controls': 'styles-pane-view', 'aria-selected': 'false', tabindex: -1, dataset: { view: id }, onclick: () => open(id) }, label));
   const body = el('div.styles-pane-body', { role: 'tabpanel', id: 'styles-pane-view' });
   // The views are one tab stop; the arrows, Home and End move between them, as in the dialogs' tab strips.
@@ -43,11 +53,11 @@ export function createStylesPane({ editor, readOnly, actions }) {
     const tab = tabs[(next + tabs.length) % tabs.length];
     open(tab.dataset.view); tab.focus();
   };
-  const node = el('aside.styles-pane', { 'aria-label': 'Styles pane', hidden: true, onkeydown: e => {
+  const node = el('aside.styles-pane', { 'aria-label': '样式窗格', hidden: true, onkeydown: e => {
     if (e.key === 'Escape' && !isComposing(e) && !e.defaultPrevented) { e.preventDefault(); close(); actions.focusEditor(); }
   } },
-  el('div.canvas-panel-heading', {}, heading, el('button.icon-btn', { type: 'button', 'aria-label': 'Close Styles pane', title: 'Close', onclick: () => { close(); actions.focusEditor(); } }, iconEl('x', 18))),
-  el('div.styles-pane-tabs', { role: 'tablist', 'aria-label': 'Styles pane views', onkeydown: onTabKey }, ...tabs), body);
+  el('div.canvas-panel-heading', {}, heading, el('button.icon-btn', { type: 'button', 'aria-label': '关闭样式窗格', title: '关闭', onclick: () => { close(); actions.focusEditor(); } }, iconEl('x', 18))),
+  el('div.styles-pane-tabs', { role: 'tablist', 'aria-label': '样式窗格视图', onkeydown: onTabKey }, ...tabs), body);
 
   function open(next = view) {
     view = next; node.hidden = false; signature = '';
@@ -87,32 +97,32 @@ export function createStylesPane({ editor, readOnly, actions }) {
     const items = list.map(s => {
       const active = s.id === current || s.id === character;
       const look = showPreview ? preview(s.id) : {};
-      const more = el('button.icon-btn.styles-pane-more', { type: 'button', 'aria-label': `${styleDisplayName(s.name)} options`, title: 'Style options', 'aria-haspopup': 'menu', onclick: e2 => { e2.stopPropagation(); menu(s, more); } }, iconEl('more', 16));
+      const more = el('button.icon-btn.styles-pane-more', { type: 'button', 'aria-label': `${styleDisplayName(s.name)} 选项`, title: '样式选项', 'aria-haspopup': 'menu', onclick: e2 => { e2.stopPropagation(); menu(s, more); } }, iconEl('more', 16));
       // A list of buttons rather than a listbox: a listbox's options cannot hold buttons, and these rows hold two each.
       // The style of the selection is the list's current item.
       const item = el(`div.styles-pane-item${active ? '.is-current' : ''}`, { role: 'listitem', dataset: { style: s.id } },
-        el('button.styles-pane-apply', { type: 'button', disabled: ro, 'aria-current': active ? 'true' : null, 'aria-label': `Apply ${styleDisplayName(s.name)} (${s.type === 'character' ? 'character' : 'paragraph'} style)`, title: `Apply ${styleDisplayName(s.name)}${s.count ? ` · used ${s.count} ${s.count === 1 ? 'time' : 'times'}` : ''}`, onclick: () => actions.apply(s.id),
+        el('button.styles-pane-apply', { type: 'button', disabled: ro, 'aria-current': active ? 'true' : null, 'aria-label': `应用 ${styleDisplayName(s.name)} (${s.type === 'character' ? '字符' : '段落'}样式)`, title: `应用 ${styleDisplayName(s.name)}${s.count ? ` · 已使用 ${s.count} 次` : ''}`, onclick: () => actions.apply(s.id),
           oncontextmenu: ev => { ev.preventDefault(); menu(s, more, ev); } },
         styleColor(el('span.styles-pane-name', { style: { ...look, color: '' } }, styleDisplayName(s.name)), look.color),
-        el('span.styles-pane-kind', { 'aria-label': s.type === 'character' ? 'Character style' : 'Paragraph style', title: s.type === 'character' ? 'Character style' : 'Paragraph style' }, s.type === 'character' ? 'a' : '¶')), more);
+        el('span.styles-pane-kind', { 'aria-label': s.type === 'character' ? '字符样式' : '段落样式', title: s.type === 'character' ? '字符样式' : '段落样式' }, s.type === 'character' ? 'a' : '¶')), more);
       return item;
     });
-    const filterSelect = el('select.input', { 'aria-label': 'List', onchange: () => { filter = filterSelect.value; store(FILTER_KEY, filter); signature = ''; refresh(); } },
-      el('option', { value: 'recommended' }, 'Recommended'), el('option', { value: 'inUse' }, 'Styles in use'), el('option', { value: 'all' }, 'All styles'));
+    const filterSelect = el('select.input', { 'aria-label': '列表', onchange: () => { filter = filterSelect.value; store(FILTER_KEY, filter); signature = ''; refresh(); } },
+      el('option', { value: 'recommended' }, '推荐'), el('option', { value: 'inUse' }, '使用中的样式'), el('option', { value: 'all' }, '所有样式'));
     filterSelect.value = filter;
     const previewBox = el('input', { type: 'checkbox', checked: showPreview, onchange: () => { showPreview = previewBox.checked; store(PREVIEW_KEY, showPreview ? '1' : '0'); signature = ''; refresh(); } });
     body.replaceChildren(
       el('div.styles-pane-current', {},
-        el('span.field-label', {}, 'Current style of selected text'),
-        el('strong.styles-pane-current-name', {}, currentStyle ? styleDisplayName(currentStyle.name) : current === null ? 'Mixed styles' : 'Default paragraph'),
+        el('span.field-label', {}, '所选文本的当前样式'),
+        el('strong.styles-pane-current-name', {}, currentStyle ? styleDisplayName(currentStyle.name) : current === null ? '混合样式' : '默认段落'),
         el('div.styles-pane-actions', {},
-          el('button.btn.btn-outline.btn-sm', { type: 'button', disabled: !currentStyle || !currentCount, onclick: () => actions.selectAll(currentStyle.id) }, currentCount ? `Select All ${currentCount} Instance${currentCount === 1 ? '' : 's'}` : 'Select All Instances'),
-          el('button.btn.btn-outline.btn-sm', { type: 'button', disabled: ro, onclick: () => actions.create() }, 'New Style…'),
-          el('button.btn.btn-ghost.btn-sm', { type: 'button', disabled: ro, onclick: () => actions.clearFormatting() }, 'Clear Formatting'))),
+          el('button.btn.btn-outline.btn-sm', { type: 'button', disabled: !currentStyle || !currentCount, onclick: () => actions.selectAll(currentStyle.id) }, currentCount ? `选择全部 ${currentCount} 个实例` : '选择所有实例'),
+          el('button.btn.btn-outline.btn-sm', { type: 'button', disabled: ro, onclick: () => actions.create() }, '新建样式…'),
+          el('button.btn.btn-ghost.btn-sm', { type: 'button', disabled: ro, onclick: () => actions.clearFormatting() }, '清除格式'))),
       styleListNode(items, ro),
-      ...(items.length ? [] : [el('p.field-hint', {}, 'No styles to show with this filter.')]),
-      el('div.styles-pane-footer', {}, el('label.ed-font-field', {}, el('span.field-label', {}, 'List'), filterSelect), el('label.ed-check', {}, previewBox, 'Show styles as they look'),
-        el('button.btn.btn-ghost.btn-sm', { type: 'button', onclick: () => actions.manage() }, 'Manage Styles…')));
+      ...(items.length ? [] : [el('p.field-hint', {}, '在此筛选条件下没有可显示的样式。')]),
+      el('div.styles-pane-footer', {}, el('label.ed-font-field', {}, el('span.field-label', {}, '列表'), filterSelect), el('label.ed-check', {}, previewBox, '显示样式预览'),
+        el('button.btn.btn-ghost.btn-sm', { type: 'button', onclick: () => actions.manage() }, '管理样式…')));
   }
   /**
    * The list is one Tab stop, on the selection's style: Up, Down, Home and End move between the styles, Right goes to
@@ -120,7 +130,7 @@ export function createStylesPane({ editor, readOnly, actions }) {
    * took dozens of presses with All styles shown.
    */
   function styleListNode(items, ro) {
-    const list = el('div.styles-pane-list', { role: 'list', 'aria-label': 'Apply a style' }, ...items);
+    const list = el('div.styles-pane-list', { role: 'list', 'aria-label': '应用样式' }, ...items);
     // Read-only, the Apply buttons are off: the options buttons (Select All Instances) are what the keys reach.
     const stops = () => [...list.querySelectorAll(ro ? '.styles-pane-more' : '.styles-pane-apply')];
     const rove = target => { for (const button of list.querySelectorAll('button')) button.tabIndex = button === target ? 0 : -1; };
@@ -144,12 +154,12 @@ export function createStylesPane({ editor, readOnly, actions }) {
     const e = engine(); if (!e) return;
     const count = styleUsage(e.model).get(style.id) || 0, ro = readOnly();
     openMenu({ anchor, x: event?.clientX ?? null, y: event?.clientY ?? null, label: styleDisplayName(style.name), onClose: null, items: [
-      { label: 'Apply', disabled: ro, onSelect: () => actions.apply(style.id) },
-      { label: 'Modify…', icon: 'editStyle', disabled: ro, onSelect: () => actions.modify(style.id) },
-      { label: `Select All ${count} Instance${count === 1 ? '' : 's'}`, disabled: !count, onSelect: () => actions.selectAll(style.id) },
-      { label: 'Update to Match Selection', disabled: ro || style.type !== 'paragraph', onSelect: () => actions.updateToMatch(style.id) },
+      { label: '应用', disabled: ro, onSelect: () => actions.apply(style.id) },
+      { label: '修改…', icon: 'editStyle', disabled: ro, onSelect: () => actions.modify(style.id) },
+      { label: `选择全部 ${count} 个实例`, disabled: !count, onSelect: () => actions.selectAll(style.id) },
+      { label: '更新以匹配所选内容', disabled: ro || style.type !== 'paragraph', onSelect: () => actions.updateToMatch(style.id) },
       { separator: true },
-      { label: `Delete ${styleDisplayName(style.name)}…`, disabled: ro, onSelect: () => actions.remove(style.id) },
+      { label: `删除 ${styleDisplayName(style.name)}…`, disabled: ro, onSelect: () => actions.remove(style.id) },
     ] });
   }
 
@@ -159,15 +169,15 @@ export function createStylesPane({ editor, readOnly, actions }) {
     const section = (title, styleLabel, direct, clearStyleLabel, clearStyle, clearDirectLabel, clearDirect) => el('section.styles-inspector-section', {},
       el('h3', {}, title),
       el('div.styles-inspector-row', {}, el('span', {}, styleLabel), el('button.btn.btn-ghost.btn-sm', { type: 'button', disabled: ro, onclick: clearStyle }, clearStyleLabel)),
-      el('div.styles-inspector-row', {}, el('span', { className: direct.length ? 'is-direct' : '' }, direct.length ? `Plus: ${describeKeys(direct)}` : 'No direct formatting'),
+      el('div.styles-inspector-row', {}, el('span', { className: direct.length ? 'is-direct' : '' }, direct.length ? `附加: ${describeKeys(direct)}` : '无直接格式'),
         el('button.btn.btn-ghost.btn-sm', { type: 'button', disabled: ro || !direct.length, onclick: clearDirect }, clearDirectLabel)));
     body.replaceChildren(
-      section('Paragraph formatting', info.paragraphStyle ? name(info.paragraphStyle) : 'Default paragraph', info.directParagraph, 'Reset to Normal', () => actions.resetParagraphStyle(), 'Clear Paragraph Formatting', () => actions.clearParagraph()),
-      section('Text level formatting', info.characterStyle ? name(info.characterStyle) : 'Default characters', info.directText, 'Clear Character Style', () => actions.clearCharacterStyle(), 'Clear Character Formatting', () => actions.clearText()),
+      section('段落格式', info.paragraphStyle ? name(info.paragraphStyle) : '默认段落', info.directParagraph, '重置为正文', () => actions.resetParagraphStyle(), '清除段落格式', () => actions.clearParagraph()),
+      section('文本级别格式', info.characterStyle ? name(info.characterStyle) : '默认字符', info.directText, '清除字符样式', () => actions.clearCharacterStyle(), '清除字符格式', () => actions.clearText()),
       el('div.styles-pane-actions', {},
-        el('button.btn.btn-outline.btn-sm', { type: 'button', onclick: () => open('reveal') }, 'Reveal Formatting'),
-        el('button.btn.btn-outline.btn-sm', { type: 'button', disabled: ro, onclick: () => actions.create() }, 'New Style…'),
-        el('button.btn.btn-ghost.btn-sm', { type: 'button', disabled: ro, onclick: () => actions.clearFormatting() }, 'Clear All')));
+        el('button.btn.btn-outline.btn-sm', { type: 'button', onclick: () => open('reveal') }, '显示格式'),
+        el('button.btn.btn-outline.btn-sm', { type: 'button', disabled: ro, onclick: () => actions.create() }, '新建样式…'),
+        el('button.btn.btn-ghost.btn-sm', { type: 'button', disabled: ro, onclick: () => actions.clearFormatting() }, '全部清除')));
   }
 
   let distinguish = true;
@@ -175,12 +185,12 @@ export function createStylesPane({ editor, readOnly, actions }) {
     const sections = revealFormatting(e.model, { styleName: id => styleDisplayName(e.model.styles.definitions[id]?.name || id) });
     const box = el('input', { type: 'checkbox', checked: distinguish, onchange: () => { distinguish = box.checked; signature = ''; refresh(); } });
     body.replaceChildren(
-      el('p.styles-reveal-sample', {}, (() => { const [a, b] = e.model.range; const text = e.model.text.slice(a, b).replace(/\s+/g, ' ').trim(); return text ? `Selected text: “${clipText(text, 60)}${text.length > 60 ? '…' : ''}”` : 'Formatting at the cursor'; })()),
+      el('p.styles-reveal-sample', {}, (() => { const [a, b] = e.model.range; const text = e.model.text.slice(a, b).replace(/\s+/g, ' ').trim(); return text ? `所选文本: “${clipText(text, 60)}${text.length > 60 ? '…' : ''}”` : '光标处的格式'; })()),
       ...sections.map(({ title, entries }) => el('section.styles-reveal-section', { 'aria-label': title }, el('h3', {}, title),
         el('dl.styles-reveal-list', {}, ...entries.flatMap(item => [
-          el('dt', {}, el('button.styles-reveal-link', { type: 'button', title: `Change ${item.label.toLowerCase()}`, onclick: () => actions.openTarget(item.target) }, item.label)),
-          el('dd', { className: distinguish && item.direct ? 'is-direct' : '' }, item.value, distinguish && item.direct ? el('span.styles-reveal-badge', {}, 'direct') : null)])))),
-      el('label.ed-check', {}, box, 'Distinguish direct formatting from styles'));
+          el('dt', {}, el('button.styles-reveal-link', { type: 'button', title: `修改 ${item.label}`, onclick: () => actions.openTarget(item.target) }, item.label)),
+          el('dd', { className: distinguish && item.direct ? 'is-direct' : '' }, item.value, distinguish && item.direct ? el('span.styles-reveal-badge', {}, '直接格式') : null)])))),
+      el('label.ed-check', {}, box, '区分样式和直接格式'));
   }
 
   function refresh() {

@@ -165,7 +165,7 @@ export function createDraw({ editor, pkg, error, onChange = () => {}, commands =
     await endSession();
     const page = engine.caretPageIndex ?? 0;
     const frames = inkFrames(engine).filter(f => scope === 'document' || f.page === page);
-    if (!frames.length) { toast('There is no ink to erase.', { icon: 'info' }); return; }
+    if (!frames.length) { toast('没有可擦除的墨迹。', { icon: 'info' }); return; }
     await committer.commit(frames.map(f => ({ remove: f.image })));
   }
 
@@ -181,7 +181,7 @@ export function createDraw({ editor, pkg, error, onChange = () => {}, commands =
     const items = [];
     for (const f of inkFrames(engine, page)) f.strokes.forEach((stroke, index) => { if (lassoContains(polygon, stroke)) items.push({ image: f.image, index, stroke }); });
     setSelection({ page, items });
-    if (!items.length && polygon.length > 4) toast('No ink inside the loop.', { icon: 'info', duration: 1800 });
+    if (!items.length && polygon.length > 4) toast('套索范围内没有墨迹。', { icon: 'info', duration: 1800 });
   }
   /** The strokes of each drawing touched by the selection, with the selected ones changed by `edit`. */
   function selectionEdit(edit) {
@@ -233,7 +233,7 @@ export function createDraw({ editor, pkg, error, onChange = () => {}, commands =
     const together = chosen.length <= 2 ? recognizeStrokes(chosen) : null;
     if (together) shapes.push({ shape: together, from: chosen });
     else for (const stroke of chosen) { const shape = recognizeStroke(stroke.points); if (shape) shapes.push({ shape, from: [stroke] }); }
-    if (!shapes.length) { toast('No shapes were recognised in this ink.', { icon: 'info' }); return false; }
+    if (!shapes.length) { toast('在此墨迹中未识别出任何形状。', { icon: 'info' }); return false; }
     const converted = new Set(shapes.flatMap(s => s.from));
     const ops = [];
     for (const [image, list] of groups) {
@@ -276,8 +276,8 @@ export function createDraw({ editor, pkg, error, onChange = () => {}, commands =
     await endSession();
     const frames = inkFrames(engine).sort((a, b) => a.image.id - b.image.id);
     const queue = frames.flatMap(f => f.strokes.map(stroke => ({ page: f.page, stroke })));
-    if (!queue.length) { toast('There is no ink to replay.', { icon: 'info' }); return; }
-    const chip = el('div.draw-replay-chip', { role: 'status' }, el('span', {}, 'Replaying ink'), el('button.btn.btn-sm', { type: 'button', onclick: stopReplay }, 'Stop'));
+    if (!queue.length) { toast('没有可重播的墨迹。', { icon: 'info' }); return; }
+    const chip = el('div.draw-replay-chip', { role: 'status' }, el('span', {}, '正在重播墨迹'), el('button.btn.btn-sm', { type: 'button', onclick: stopReplay }, '停止'));
     document.body.append(chip);
     replaying = { frame: 0, timer: 0, chip };
     repaint(); refresh();
@@ -338,7 +338,7 @@ export function createDraw({ editor, pkg, error, onChange = () => {}, commands =
     let timer = 0;
     // A reminder of the tool shows when it changes, then gets out of the way of the page.
     return { node, update() {
-      const pen = activePen(), text = tool === 'pen' ? `${penLabel(pen)} · Esc returns to typing` : tool === 'eraser' ? `${prefs.eraser === 'stroke' ? 'Stroke' : 'Point'} eraser · Esc returns to typing` : tool === 'lasso' ? 'Draw a loop around ink to select it · Esc returns to typing' : '';
+      const pen = activePen(), text = tool === 'pen' ? `${penLabel(pen)} · 按 Esc 返回文字键入` : tool === 'eraser' ? `${prefs.eraser === 'stroke' ? '笔划' : '点'}橡皮擦 · 按 Esc 返回文字键入` : tool === 'lasso' ? '在墨迹周围套索以选中 · 按 Esc 返回文字键入' : '';
       clearTimeout(timer);
       node.hidden = !text || !editor();
       node.textContent = text;
@@ -351,7 +351,7 @@ export function createDraw({ editor, pkg, error, onChange = () => {}, commands =
     if (!gallery) return;
     gallery.replaceChildren(...pens.pens.map(pen => {
       const active = tool === 'pen' && pen.id === lastPen;
-      const button = el('button.draw-pen', { type: 'button', 'aria-label': penLabel(pen), title: `${penLabel(pen)}${active ? ' — click again for settings' : ''}`, 'aria-pressed': String(active), 'aria-haspopup': 'menu', dataset: { pen: pen.id, tool: pen.tool },
+      const button = el('button.draw-pen', { type: 'button', 'aria-label': penLabel(pen), title: `${penLabel(pen)}${active ? ' — 再次点击进行设置' : ''}`, 'aria-pressed': String(active), 'aria-haspopup': 'menu', dataset: { pen: pen.id, tool: pen.tool },
         html: penIconSvg(pen, 30),
         onclick: e => { if (tool === 'pen' && pen.id === lastPen) penSettings(button, pen, e); else { setTool('pen', pen.id); editor()?.focus(); } },
         onkeydown: e => { if (!isComposing(e) && (e.key === 'ArrowDown' && e.altKey || e.key === 'F4')) { e.preventDefault(); penSettings(button, pen, e); } } });
@@ -366,7 +366,7 @@ export function createDraw({ editor, pkg, error, onChange = () => {}, commands =
       onRemove: () => { pens.pens = pens.pens.filter(p => p !== pen); if (lastPen === pen.id) lastPen = pens.pens[0].id; pens.active = lastPen; savePens(pens); renderGallery(); setTool(tool === 'pen' ? 'pen' : tool); } });
   }
   function addPen(kind) {
-    if (pens.pens.length >= 12) { toast('The pen gallery holds up to 12 pens. Remove one first.', { icon: 'info' }); return; }
+    if (pens.pens.length >= 12) { toast('笔库最多容纳 12 支笔。请先移除一支。', { icon: 'info' }); return; }
     const pen = newPen(kind); pens.pens.push(pen); savePens(pens); renderGallery(); setTool('pen', pen.id);
   }
 
@@ -374,23 +374,23 @@ export function createDraw({ editor, pkg, error, onChange = () => {}, commands =
     const { command, menuButton, rows, when, split } = kit;
     const noSteal = (...buttons) => { for (const b of buttons) b.addEventListener('mousedown', e => e.preventDefault()); };
     const can = () => !!ready();
-    const select = command('Select', 'drawSelect', () => { setTool('select'); editor()?.focus(); }, { size: 'large', text: 'Select' });
-    const lasso = command('Lasso Select', 'lassoSelect', () => setTool(tool === 'lasso' ? 'select' : 'lasso'), { size: 'large', text: 'Lasso Select' });
-    const eraserMain = command('Eraser', 'inkEraser', () => setTool(tool === 'eraser' ? 'select' : 'eraser'), { size: 'large', text: 'Eraser' });
-    const eraser = split(eraserMain, { label: 'Eraser options', size: 'large', open: (anchor, e) => openMenu({ anchor, label: 'Eraser', pointer: !!e?.detail, items: eraserItems() }) });
-    gallery = el('div.draw-pen-gallery', { role: 'group', 'aria-label': 'Pens' });
+    const select = command('选择', 'drawSelect', () => { setTool('select'); editor()?.focus(); }, { size: 'large', text: '选择' });
+    const lasso = command('套索选择', 'lassoSelect', () => setTool(tool === 'lasso' ? 'select' : 'lasso'), { size: 'large', text: '套索选择' });
+    const eraserMain = command('橡皮擦', 'inkEraser', () => setTool(tool === 'eraser' ? 'select' : 'eraser'), { size: 'large', text: '橡皮擦' });
+    const eraser = split(eraserMain, { label: '橡皮擦选项', size: 'large', open: (anchor, e) => openMenu({ anchor, label: '橡皮擦', pointer: !!e?.detail, items: eraserItems() }) });
+    gallery = el('div.draw-pen-gallery', { role: 'group', 'aria-label': '笔' });
     renderGallery();
-    const add = menuButton('Add Pen', 'addPen', () => ['pen', 'pencil', 'highlighter'].map(kind => ({ label: `Add ${TOOL_LABELS[kind]}`, onSelect: () => addPen(kind) })), { size: 'large', text: 'Add Pen' });
-    const touchToggle = command('Draw with Touch', 'drawTouch', () => { prefs.touch = !prefs.touch; store(prefs); surface.setTouch(prefs.touch); refresh(); }, { size: 'large', text: 'Draw with Touch', attrs: { 'aria-pressed': 'false' } });
-    const ruler = command('Ruler', 'inkRuler', () => { surface.showRuler(!surface.rulerVisible()); refresh(); }, { size: 'large', text: 'Ruler', attrs: { 'aria-pressed': 'false' } });
-    const toShape = command('Ink to Shape', 'inkToShape', () => {
+    const add = menuButton('添加笔', 'addPen', () => ['pen', 'pencil', 'highlighter'].map(kind => ({ label: `添加${TOOL_LABELS[kind]}`, onSelect: () => addPen(kind) })), { size: 'large', text: '添加笔' });
+    const touchToggle = command('通过触摸绘图', 'drawTouch', () => { prefs.touch = !prefs.touch; store(prefs); surface.setTouch(prefs.touch); refresh(); }, { size: 'large', text: '通过触摸绘图', attrs: { 'aria-pressed': 'false' } });
+    const ruler = command('标尺', 'inkRuler', () => { surface.showRuler(!surface.rulerVisible()); refresh(); }, { size: 'large', text: '标尺', attrs: { 'aria-pressed': 'false' } });
+    const toShape = command('墨迹转形状', 'inkToShape', () => {
       if (selected) { convertSelection(); return; }
       inkToShape = !inkToShape; if (inkToShape && tool !== 'pen') setTool('pen'); refresh();
-    }, { size: 'large', text: 'Ink to Shape', attrs: { 'aria-pressed': 'false' } });
-    const toMath = command('Ink to Math', 'inkToMath', () => inkToMath(), { size: 'large', text: 'Ink to Math' });
-    const replay = command('Ink Replay', 'inkReplay', () => inkReplay(), { size: 'large', text: 'Ink Replay', attrs: { 'aria-pressed': 'false' } });
-    const canvas = command('Drawing Canvas', 'drawingCanvas', () => insertCanvas(), { size: 'large', text: 'Drawing Canvas' });
-    const hide = command('Hide Ink', 'hideInk', () => toggleInk(), { size: 'large', text: 'Hide Ink', attrs: { 'aria-pressed': 'false' } });
+    }, { size: 'large', text: '墨迹转形状', attrs: { 'aria-pressed': 'false' } });
+    const toMath = command('墨迹转公式', 'inkToMath', () => inkToMath(), { size: 'large', text: '墨迹转公式' });
+    const replay = command('墨迹重放', 'inkReplay', () => inkReplay(), { size: 'large', text: '墨迹重放', attrs: { 'aria-pressed': 'false' } });
+    const canvas = command('新建绘图画布', 'drawingCanvas', () => insertCanvas(), { size: 'large', text: '新建绘图画布' });
+    const hide = command('隐藏墨迹', 'hideInk', () => toggleInk(), { size: 'large', text: '隐藏墨迹', attrs: { 'aria-pressed': 'false' } });
     for (const b of [lasso, eraserMain, add, toShape, replay, canvas]) b.classList.add('ribbon-wide');
     noSteal(select, lasso, eraserMain, touchToggle, ruler, toShape, toMath, replay, canvas, hide);
     when(select, can, () => String(tool === 'select'));
@@ -407,24 +407,25 @@ export function createDraw({ editor, pkg, error, onChange = () => {}, commands =
     when(hide, () => !!editor(), () => String(inkHidden));
     // The gallery follows the tool and the document's state on every refresh.
     when(gallery, () => { for (const b of gallery.querySelectorAll('.draw-pen')) { const active = tool === 'pen' && b.dataset.pen === lastPen; b.setAttribute('aria-pressed', String(active)); b.disabled = !ready(); } toMath.hidden = !canMath(); return true; });
-    return [{ id: 'draw', label: 'Draw', after: 'insert', groups: [
-      { id: 'drawTools', label: 'Drawing Tools', icon: 'inkPen', priority: 9, items: [select, lasso, eraser, gallery, add] },
-      { id: 'drawInput', label: 'Input', icon: 'drawTouch', priority: 4, items: [touchToggle, ruler] },
-      { id: 'drawConvert', label: 'Convert', icon: 'inkToShape', priority: 6, items: [toShape, toMath] },
-      { id: 'drawInsert', label: 'Insert', icon: 'drawingCanvas', priority: 5, items: [canvas] },
-      { id: 'drawReplay', label: 'Replay', icon: 'inkReplay', priority: 3, items: [replay, hide] },
+    return [{ id: 'draw', label: '绘图', after: 'insert', groups: [
+      { id: 'drawTools', label: '绘图工具', icon: 'inkPen', priority: 9, items: [select, lasso, eraser, gallery, add] },
+      { id: 'drawInput', label: '手写输入', icon: 'drawTouch', priority: 4, items: [touchToggle, ruler] },
+      { id: 'drawConvert', label: '转换', icon: 'inkToShape', priority: 6, items: [toShape, toMath] },
+      { id: 'drawInsert', label: '插入', icon: 'drawingCanvas', priority: 5, items: [canvas] },
+      { id: 'drawReplay', label: '重放', icon: 'inkReplay', priority: 3, items: [replay, hide] },
     ] }];
   }
   function eraserItems() {
     const pick = patch => { Object.assign(prefs, patch); store(prefs); setTool('eraser'); };
+    const sizeLabels = { small: '小', medium: '中', large: '大' };
     return [
-      { label: 'Stroke Eraser', checked: prefs.eraser === 'stroke', radio: true, onSelect: () => pick({ eraser: 'stroke' }) },
-      { label: 'Point Eraser', checked: prefs.eraser === 'point', radio: true, onSelect: () => pick({ eraser: 'point' }) },
-      { separator: true }, { header: 'Eraser Size' },
-      ...Object.keys(ERASER_SIZES).map(size => ({ label: size[0].toUpperCase() + size.slice(1), checked: prefs.eraserSize === size, radio: true, onSelect: () => pick({ eraserSize: size }) })),
+      { label: '笔划橡皮擦', checked: prefs.eraser === 'stroke', radio: true, onSelect: () => pick({ eraser: 'stroke' }) },
+      { label: '点橡皮擦', checked: prefs.eraser === 'point', radio: true, onSelect: () => pick({ eraser: 'point' }) },
+      { separator: true }, { header: '橡皮擦大小' },
+      ...Object.keys(ERASER_SIZES).map(size => ({ label: sizeLabels[size] || size, checked: prefs.eraserSize === size, radio: true, onSelect: () => pick({ eraserSize: size }) })),
       { separator: true },
-      { label: 'Erase All Ink on This Page', disabled: !ready(), onSelect: () => eraseAll('page') },
-      { label: 'Erase All Ink in Document', disabled: !ready(), onSelect: () => eraseAll('document') },
+      { label: '清除此页上的所有墨迹', disabled: !ready(), onSelect: () => eraseAll('page') },
+      { label: '清除文档中的所有墨迹', disabled: !ready(), onSelect: () => eraseAll('document') },
     ];
   }
 
@@ -432,9 +433,9 @@ export function createDraw({ editor, pkg, error, onChange = () => {}, commands =
   const toggleShortcut = MOD_KEY === 'Cmd' ? 'Cmd+Ctrl+Z' : 'Ctrl+Alt+Z';
   function extendMenu(menuId) {
     const disabled = !ready();
-    if (menuId === 'edit') return [{ separator: true }, { label: 'Toggle Drawing', icon: 'inkPen', shortcut: toggleShortcut, checked: tool !== 'select', disabled, onSelect: toggleDrawing }];
-    if (menuId === 'insert') return [{ label: 'Drawing Canvas', icon: 'drawingCanvas', disabled, onSelect: insertCanvas }];
-    if (menuId === 'view') return [{ label: 'Hide Ink', icon: 'hideInk', checked: inkHidden, disabled: !editor(), onSelect: () => toggleInk() }];
+    if (menuId === 'edit') return [{ separator: true }, { label: '切换绘图模式', icon: 'inkPen', shortcut: toggleShortcut, checked: tool !== 'select', disabled, onSelect: toggleDrawing }];
+    if (menuId === 'insert') return [{ label: '新建绘图画布', icon: 'drawingCanvas', disabled, onSelect: insertCanvas }];
+    if (menuId === 'view') return [{ label: '隐藏墨迹', icon: 'hideInk', checked: inkHidden, disabled: !editor(), onSelect: () => toggleInk() }];
     return [];
   }
   function contextMenuItems(context) {
@@ -443,10 +444,10 @@ export function createDraw({ editor, pkg, error, onChange = () => {}, commands =
     const arrange = direction => { engine.execute(() => engine.model.arrangeImage(direction)); engine.focus(); };
     const floating = !!image.anchor;
     return [
-      { label: 'Convert to Shape', icon: 'inkToShape', onSelect: () => convertDrawing(image) },
-      { label: 'Bring to Front', icon: 'bringForward', disabled: !floating, onSelect: () => arrange('front') },
-      { label: 'Send to Back', icon: 'sendBackward', disabled: !floating, onSelect: () => arrange('back') },
-      { label: 'Delete Ink', icon: 'deleteShape', onSelect: () => committer.commit([{ remove: image }]) },
+      { label: '转换为形状', icon: 'inkToShape', onSelect: () => convertDrawing(image) },
+      { label: '置于顶层', icon: 'bringForward', disabled: !floating, onSelect: () => arrange('front') },
+      { label: '置于底层', icon: 'sendBackward', disabled: !floating, onSelect: () => arrange('back') },
+      { label: '删除墨迹', icon: 'deleteShape', onSelect: () => committer.commit([{ remove: image }]) },
     ];
   }
 

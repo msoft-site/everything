@@ -33,11 +33,11 @@ export const MAX_AUTOSAVE_MS = 30000;
 export const RETRY_MS = 8000;
 /** The longest pause between retries of an autosave that keeps failing: they double from RETRY_MS up to this. */
 export const MAX_RETRY_MS = 5 * 60_000;
-export const UNTITLED = 'Untitled document';
-export const SIGN_IN_TO_SAVE = 'Sign in to Puter to save this document';
+export const UNTITLED = '无标题文档';
+export const SIGN_IN_TO_SAVE = '登录账户以保存此文档';
 /** Save pressed without a connection: what happens to the changes, rather than the browser's "Failed to fetch". */
-export const OFFLINE_SAVE = 'You are offline. Your changes will save when you reconnect';
-export const OFFLINE_SAVE_MANUAL = 'You are offline. Save again when you reconnect';
+export const OFFLINE_SAVE = '您处于离线状态。重新连接时将自动保存更改';
+export const OFFLINE_SAVE_MANUAL = '您处于离线状态。重新连接时请再次保存';
 /** Markdown, HTML, and plain text are read and converted on the main thread; a novel is about a megabyte. */
 export const MAX_TEXT_IMPORT_BYTES = 20 * 1024 * 1024;
 /** Version snapshots after saves; tests switch them off. */

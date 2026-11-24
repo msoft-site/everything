@@ -1,4 +1,4 @@
-export const TAB_LEADERS = Object.freeze({ none: 'None', dot: 'Dots', hyphen: 'Dashes', underscore: 'Line', heavy: 'Heavy (legacy)', middleDot: 'Middle dots' });
+export const TAB_LEADERS = Object.freeze({ none: '1 无', dot: '2 点虚线(.....)', hyphen: '3 短划线(-----)', underscore: '4 下划线(_____)', heavy: '粗线(旧版)', middleDot: '居中点(·····)' });
 const characters = { dot: '.', hyphen: '-', underscore: '_', heavy: '_', middleDot: '·' };
 
 // Leader glyphs sit on a page-relative 600 dpi advance grid. This is
@@ -17,10 +17,10 @@ export function tabLeader(tab, x, width, measure) {
   const glyphAdvance = pair.width - single.width;
   const spacing = (style.characterSpacing || 0) * 4 / 3;
   const nativeAdvance = glyphAdvance + spacing;
-  if (!(nativeAdvance > 0)) throw new Error('This character spacing leaves no room for tab leaders. Increase the spacing.');
+  if (!(nativeAdvance > 0)) throw new Error('字符间距过小，无法放置前导符。请增加间距。');
   // Keep the density guard before rounding so tiny positive advances cannot
   // become a zero divisor or silently remove the previous validation limit.
-  if (width / nativeAdvance > 20000) throw new Error('These tab leaders are too dense. Increase the font size or text width.');
+  if (width / nativeAdvance > 20000) throw new Error('制表位前导符过密。请增大字号或文本宽度。');
   const advance = snap(glyphAdvance) + snap(spacing);
   if (!(advance > 0)) return null;
   // Compare coordinates on the same grid as the advance. Native fractional
@@ -28,7 +28,7 @@ export function tabLeader(tab, x, width, measure) {
   const start = Math.ceil((snap(x) - 1e-7) / advance) * advance;
   const count = Math.floor((x + width - start + 1e-7) / advance);
   if (count < 1) return null;
-  if (count > 20000) throw new Error('These tab leaders are too dense. Increase the font size or text width.');
+  if (count > 20000) throw new Error('制表位前导符过密。请增大字号或文本宽度。');
   style.characterSpacing = (advance - glyphAdvance) * .75;
   const repeated = text.repeat(count), metrics = measure(repeated, style);
   const scale = metrics.textTransform?.scaleX || 1;

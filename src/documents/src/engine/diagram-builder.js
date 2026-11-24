@@ -9,26 +9,26 @@
 import { drawingFrame, xmlEscape, EMU_PER_INCH } from './inserted-drawings.js';
 
 export const DIAGRAM_LAYOUTS = Object.freeze([
-  { id: 'blockList', name: 'Block List', category: 'List', hint: 'Items as a grid of blocks' },
-  { id: 'verticalList', name: 'Vertical List', category: 'List', hint: 'Stacked bars with their details' },
-  { id: 'basicProcess', name: 'Basic Process', category: 'Process', hint: 'Steps joined by arrows' },
-  { id: 'chevronProcess', name: 'Chevron Process', category: 'Process', hint: 'Steps as a row of chevrons' },
-  { id: 'timeline', name: 'Timeline', category: 'Process', hint: 'Milestones along a line' },
-  { id: 'basicCycle', name: 'Basic Cycle', category: 'Cycle', hint: 'Stages around a circle' },
-  { id: 'orgChart', name: 'Organization Chart', category: 'Hierarchy', hint: 'A top item with the items under it' },
-  { id: 'venn', name: 'Basic Venn', category: 'Relationship', hint: 'Overlapping circles' },
-  { id: 'balance', name: 'Radial', category: 'Relationship', hint: 'A center idea with ideas around it' },
-  { id: 'matrix', name: 'Basic Matrix', category: 'Matrix', hint: 'Four quadrants' },
-  { id: 'pyramid', name: 'Basic Pyramid', category: 'Pyramid', hint: 'Levels from the base up' },
+  { id: 'blockList', name: '方块列表', category: '列表', hint: '以方块网格形式显示各项目' },
+  { id: 'verticalList', name: '垂直列表', category: '列表', hint: '带详细说明的堆叠条形图' },
+  { id: 'basicProcess', name: '基本流程', category: '流程', hint: '通过箭头连接的步骤' },
+  { id: 'chevronProcess', name: '燕尾形流程', category: '流程', hint: '燕尾形箭头的连续步骤' },
+  { id: 'timeline', name: '时间线', category: '流程', hint: '沿时间线的里程碑' },
+  { id: 'basicCycle', name: '基本循环', category: '循环', hint: '环形阶段流程' },
+  { id: 'orgChart', name: '组织结构图', category: '层次结构', hint: '包含下属项的层级图' },
+  { id: 'venn', name: '基本维恩图', category: '关系', hint: '重叠的圆形' },
+  { id: 'balance', name: '发散关系图', category: '关系', hint: '中心主题向外发散' },
+  { id: 'matrix', name: '基本矩阵', category: '矩阵', hint: '四象限矩阵' },
+  { id: 'pyramid', name: '基本金字塔', category: '金字塔', hint: '自底向上的分层金字塔' },
 ]);
 export const DIAGRAM_COLORS = Object.freeze([
-  { id: 'blue', name: 'Blue', fills: ['2F5597'], text: 'FFFFFF', light: 'DEEAF6', lightText: '1F3864', line: 'FFFFFF' },
-  { id: 'teal', name: 'Teal', fills: ['1E6E6A'], text: 'FFFFFF', light: 'D9F0EF', lightText: '0F3735', line: 'FFFFFF' },
-  { id: 'orange', name: 'Orange', fills: ['C55A11'], text: 'FFFFFF', light: 'FBE4D5', lightText: '833C0B', line: 'FFFFFF' },
-  { id: 'gray', name: 'Gray', fills: ['595959'], text: 'FFFFFF', light: 'EDEDED', lightText: '262626', line: 'FFFFFF' },
-  { id: 'colorful', name: 'Colorful', fills: ['2F5597', 'C55A11', '548235', '7030A0', 'BF9000', '1E6E6A'], text: 'FFFFFF', light: 'F2F2F2', lightText: '262626', line: 'FFFFFF' },
+  { id: 'blue', name: '蓝色', fills: ['2F5597'], text: 'FFFFFF', light: 'DEEAF6', lightText: '1F3864', line: 'FFFFFF' },
+  { id: 'teal', name: '蓝绿', fills: ['1E6E6A'], text: 'FFFFFF', light: 'D9F0EF', lightText: '0F3735', line: 'FFFFFF' },
+  { id: 'orange', name: '橙色', fills: ['C55A11'], text: 'FFFFFF', light: 'FBE4D5', lightText: '833C0B', line: 'FFFFFF' },
+  { id: 'gray', name: '灰色', fills: ['595959'], text: 'FFFFFF', light: 'EDEDED', lightText: '262626', line: 'FFFFFF' },
+  { id: 'colorful', name: '彩色', fills: ['2F5597', 'C55A11', '548235', '7030A0', 'BF9000', '1E6E6A'], text: 'FFFFFF', light: 'F2F2F2', lightText: '262626', line: 'FFFFFF' },
 ]);
-export const DEFAULT_OUTLINE = 'Plan\n  Goals\n  Budget\nBuild\n  Prototype\nReview\nLaunch';
+export const DEFAULT_OUTLINE = '计划\n  目标\n  预算\n开发\n  原型\n评审\n发布';
 
 /** An outline in text: one item per line, indented (spaces, tabs or leading - * •) for sub-items. */
 export function parseOutline(text) {

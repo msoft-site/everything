@@ -8,7 +8,7 @@ import { fontChoices } from './font-picker.js';
 import { revealInvalidControls } from './format-dialog-kit.js';
 import { canvasFontFamily, cssFontString } from '../engine/font-families.js';
 
-const STYLES = [['regular', 'Regular'], ['italic', 'Italic'], ['bold', 'Bold'], ['boldItalic', 'Bold Italic']];
+const STYLES = [['regular', '常规'], ['italic', '倾斜'], ['bold', '加粗'], ['boldItalic', '加粗倾斜']];
 const SCALES = [200, 150, 100, 90, 80, 66, 50, 33];
 const fontStyle = f => f.bold === null || f.italic === null ? '' : f.bold ? (f.italic ? 'boldItalic' : 'bold') : f.italic ? 'italic' : 'regular';
 const swatch = color => !color || color === 'auto' ? '#000' : `#${color}`;
@@ -31,7 +31,7 @@ export function selectsEastAsianText(text, [start, end]) {
   return EAST_ASIAN.test(text.slice(start, end));
 }
 
-export function openFontDialog({ format: f, sample = '', apply, onClose, setDefault = null, textEffects = null, ligatures = false, title = 'Font', eastAsian = false }) {
+export function openFontDialog({ format: f, sample = '', apply, onClose, setDefault = null, textEffects = null, ligatures = false, title = '字体', eastAsian = false }) {
   const patch = {};
   const set = values => { Object.assign(patch, values); preview(); };
   const unset = (...keys) => { for (const key of keys) delete patch[key]; preview(); };
@@ -40,17 +40,17 @@ export function openFontDialog({ format: f, sample = '', apply, onClose, setDefa
   /* ---- Font tab ---- */
   const fontName = f.fontAscii === f.fontHAnsi ? f.fontAscii : '';
   const fonts = el('datalist', { id: 'ed-font-dialog-fonts' }, ...fontChoices().map(name => el('option', { value: name })));
-  const font = el('input.input', { type: 'text', value: fontName || '', placeholder: fontName ? '' : 'Mixed', list: fonts.id, 'aria-label': 'Font', autocomplete: 'off',
+  const font = el('input.input', { type: 'text', value: fontName || '', placeholder: fontName ? '' : '多种', list: fonts.id, 'aria-label': '西文字体', autocomplete: 'off',
     oninput: () => { const name = font.value.trim(); if (name) set({ fontAscii: name, fontHAnsi: name }); else unset('fontAscii', 'fontHAnsi'); } });
   // Chinese, Japanese and Korean text is shown in the run's Asian text font, which Font alone leaves as it was.
   const asianName = f.fontEastAsia ?? '';
-  const asianFont = eastAsian && el('input.input', { type: 'text', value: asianName, placeholder: asianName ? '' : 'Mixed', list: fonts.id, 'aria-label': 'Asian text font', autocomplete: 'off',
+  const asianFont = eastAsian && el('input.input', { type: 'text', value: asianName, placeholder: asianName ? '' : '多种', list: fonts.id, 'aria-label': '中文字体', autocomplete: 'off',
     oninput: () => { const name = asianFont.value.trim(); if (name) set({ fontEastAsia: name }); else unset('fontEastAsia'); } });
-  const style = el('select.input', { 'aria-label': 'Font style', onchange: () => set({ bold: style.value.startsWith('bold'), italic: /italic/i.test(style.value) }) },
-    ...(fontStyle(f) ? [] : [el('option', { value: '', disabled: true }, 'Mixed')]), ...STYLES.map(([value, label]) => el('option', { value }, label)));
+  const style = el('select.input', { 'aria-label': '字形', onchange: () => set({ bold: style.value.startsWith('bold'), italic: /italic/i.test(style.value) }) },
+    ...(fontStyle(f) ? [] : [el('option', { value: '', disabled: true }, '多种')]), ...STYLES.map(([value, label]) => el('option', { value }, label)));
   style.value = fontStyle(f);
   const sizes = el('datalist', { id: 'ed-font-dialog-sizes' }, ...FALLBACK_SIZES.map(size => el('option', { value: size })));
-  const size = el('input.input', { type: 'number', min: 1, max: 1638, step: 0.5, value: f.fontSize ?? '', placeholder: f.fontSize == null ? 'Mixed' : '', list: sizes.id, 'aria-label': 'Size',
+  const size = el('input.input', { type: 'number', min: 1, max: 1638, step: 0.5, value: f.fontSize ?? '', placeholder: f.fontSize == null ? '多种' : '', list: sizes.id, 'aria-label': '字号',
     // An emptied field leaves the size as it was, as an emptied Font name does, rather than applying the last size typed.
     oninput: () => { if (!size.value) unset('fontSize', 'fontSizeCs'); else if (size.checkValidity()) set({ fontSize: Number(size.value), fontSizeCs: Number(size.value) }); } });
   const colorButton = (label, key) => {
@@ -62,14 +62,14 @@ export function openFontDialog({ format: f, sample = '', apply, onClose, setDefa
     const paint = () => {
       const value = current(key);
       chip.style.background = value === null ? 'repeating-linear-gradient(45deg, #ccc 0 3px, #fff 3px 6px)' : swatch(value);
-      name.textContent = value === null ? 'Mixed' : value === 'auto' ? 'Automatic' : `#${value}`;
+      name.textContent = value === null ? '多种' : value === 'auto' ? '自动' : `#${value}`;
     };
     paint();
     return button;
   };
-  const underline = el('select.input', { 'aria-label': 'Underline style', onchange: () => set({ underlineStyle: underline.value }) },
-    ...(f.underlineStyle === null ? [el('option', { value: '', disabled: true }, 'Mixed')] : []),
-    ...Object.entries(UNDERLINE_STYLES).map(([value, label]) => el('option', { value }, value === 'none' ? '(none)' : label)));
+  const underline = el('select.input', { 'aria-label': '下划线线型', onchange: () => set({ underlineStyle: underline.value }) },
+    ...(f.underlineStyle === null ? [el('option', { value: '', disabled: true }, '多种')] : []),
+    ...Object.entries(UNDERLINE_STYLES).map(([value, label]) => el('option', { value }, value === 'none' ? '(无)' : label)));
   underline.value = f.underlineStyle ?? '';
 
   // Effects: each pair shares one property, so checking one clears its partner.
@@ -84,22 +84,22 @@ export function openFontDialog({ format: f, sample = '', apply, onClose, setDefa
     effects.push({ label, box });
     return el('label.ed-check', {}, box, label);
   };
-  const effectGrid = el('fieldset.ed-font-effects', {}, el('legend', {}, 'Effects'),
-    effect('Strikethrough', 'strikethrough', 'single', 'Double strikethrough'), effect('Small caps', 'capitalization', 'smallCaps', 'All caps'),
-    effect('Double strikethrough', 'strikethrough', 'double', 'Strikethrough'), effect('All caps', 'capitalization', 'caps', 'Small caps'),
-    effect('Superscript', 'verticalAlign', 'superscript', 'Subscript'), effect('Hidden', 'vanish', true),
-    effect('Subscript', 'verticalAlign', 'subscript', 'Superscript'));
+  const effectGrid = el('fieldset.ed-font-effects', {}, el('legend', {}, '效果'),
+    effect('删除线', 'strikethrough', 'single', '双删除线'), effect('小型大写字母', 'capitalization', 'smallCaps', '全部大写'),
+    effect('双删除线', 'strikethrough', 'double', '删除线'), effect('全部大写', 'capitalization', 'caps', '小型大写字母'),
+    effect('上标', 'verticalAlign', 'superscript', '下标'), effect('隐藏', 'vanish', true),
+    effect('下标', 'verticalAlign', 'subscript', '上标'));
 
   /* ---- Advanced tab ---- */
   const scales = el('datalist', { id: 'ed-font-dialog-scales' }, ...SCALES.map(n => el('option', { value: n })));
-  const scale = el('input.input', { type: 'number', min: 1, max: 600, step: 1, value: f.textScale ?? '', placeholder: f.textScale == null ? 'Mixed' : '', list: scales.id, 'aria-label': 'Scale (%)',
+  const scale = el('input.input', { type: 'number', min: 1, max: 600, step: 1, value: f.textScale ?? '', placeholder: f.textScale == null ? '多种' : '', list: scales.id, 'aria-label': '缩放 (%)',
     oninput: () => { if (!scale.value) unset('textScale'); else if (scale.checkValidity()) set({ textScale: Number(scale.value) }); } });
   const signed = (value, positive, negative) => value === null ? '' : value > 0 ? positive : value < 0 ? negative : 'normal';
-  const amount = (label, value) => el('input.input', { type: 'number', min: 0, max: 1584, step: 0.05, value: value ? Math.abs(value) : '', placeholder: value === null ? 'Mixed' : '', 'aria-label': label });
-  const spacing = el('select.input', { 'aria-label': 'Spacing' }, el('option', { value: '', disabled: true, hidden: f.characterSpacing !== null }, 'Mixed'),
-    el('option', { value: 'normal' }, 'Normal'), el('option', { value: 'expanded' }, 'Expanded'), el('option', { value: 'condensed' }, 'Condensed'));
+  const amount = (label, value) => el('input.input', { type: 'number', min: 0, max: 1584, step: 0.05, value: value ? Math.abs(value) : '', placeholder: value === null ? '多种' : '', 'aria-label': label });
+  const spacing = el('select.input', { 'aria-label': '间距' }, el('option', { value: '', disabled: true, hidden: f.characterSpacing !== null }, '多种'),
+    el('option', { value: 'normal' }, '标准'), el('option', { value: 'expanded' }, '加宽'), el('option', { value: 'condensed' }, '紧缩'));
   spacing.value = signed(f.characterSpacing, 'expanded', 'condensed');
-  const spacingBy = amount('Spacing by (pt)', f.characterSpacing);
+  const spacingBy = amount('间距磅值 (磅)', f.characterSpacing);
   const applySpacing = () => {
     spacingBy.disabled = spacing.value === 'normal';
     if (spacing.value === 'normal') { spacingBy.value = ''; set({ characterSpacing: 0 }); return; }
@@ -110,10 +110,10 @@ export function openFontDialog({ format: f, sample = '', apply, onClose, setDefa
   };
   spacing.addEventListener('change', applySpacing); spacingBy.addEventListener('input', applySpacing);
   spacingBy.disabled = spacing.value === 'normal';
-  const position = el('select.input', { 'aria-label': 'Position' }, el('option', { value: '', disabled: true, hidden: f.baselineShift !== null }, 'Mixed'),
-    el('option', { value: 'normal' }, 'Normal'), el('option', { value: 'raised' }, 'Raised'), el('option', { value: 'lowered' }, 'Lowered'));
+  const position = el('select.input', { 'aria-label': '位置' }, el('option', { value: '', disabled: true, hidden: f.baselineShift !== null }, '多种'),
+    el('option', { value: 'normal' }, '标准'), el('option', { value: 'raised' }, '提升'), el('option', { value: 'lowered' }, '降低'));
   position.value = signed(f.baselineShift, 'raised', 'lowered');
-  const positionBy = amount('Position by (pt)', f.baselineShift);
+  const positionBy = amount('位置磅值 (磅)', f.baselineShift);
   positionBy.max = 200; positionBy.step = 0.5;
   const applyPosition = () => {
     positionBy.disabled = position.value === 'normal';
@@ -125,7 +125,7 @@ export function openFontDialog({ format: f, sample = '', apply, onClose, setDefa
   position.addEventListener('change', applyPosition); positionBy.addEventListener('input', applyPosition);
   positionBy.disabled = position.value === 'normal';
   const kern = el('input', { type: 'checkbox' });
-  const kernFrom = el('input.input', { type: 'number', min: 0.5, max: 1638, step: 0.5, value: f.kerning || '', placeholder: f.kerning === null ? 'Mixed' : '', 'aria-label': 'Kerning from (pt)' });
+  const kernFrom = el('input.input', { type: 'number', min: 0.5, max: 1638, step: 0.5, value: f.kerning || '', placeholder: f.kerning === null ? '多种' : '', 'aria-label': '字距调整起算磅值 (磅)' });
   if (f.kerning === null) kern.indeterminate = true; else kern.checked = f.kerning > 0;
   kernFrom.disabled = !kern.checked;
   const applyKerning = () => {
@@ -137,13 +137,13 @@ export function openFontDialog({ format: f, sample = '', apply, onClose, setDefa
   kern.addEventListener('change', applyKerning); kernFrom.addEventListener('input', applyKerning);
 
   // Ligatures only where this document renders OpenType features (its compatibility settings allow them).
-  const LIGATURES = [['none', 'None'], ['standard', 'Standard only'], ['standardContextual', 'Standard and contextual'], ['historicalDiscretional', 'Historical and discretionary'], ['all', 'All']];
-  const ligatureSelect = el('select.input', { 'aria-label': 'Ligatures', onchange: () => set({ ligatures: ligatureSelect.value }) },
-    ...(f.ligatures == null || !LIGATURES.some(([v]) => v === f.ligatures) ? [el('option', { value: '', disabled: true }, f.ligatures == null ? 'Mixed' : 'Custom')] : []), ...LIGATURES.map(([v, label]) => el('option', { value: v }, label)));
+  const LIGATURES = [['none', '无'], ['standard', '仅标准'], ['standardContextual', '标准和上下文'], ['historicalDiscretional', '历史和可选'], ['all', '全部']];
+  const ligatureSelect = el('select.input', { 'aria-label': '连字', onchange: () => set({ ligatures: ligatureSelect.value }) },
+    ...(f.ligatures == null || !LIGATURES.some(([v]) => v === f.ligatures) ? [el('option', { value: '', disabled: true }, f.ligatures == null ? '多种' : '自定义')] : []), ...LIGATURES.map(([v, label]) => el('option', { value: v }, label)));
   ligatureSelect.value = LIGATURES.some(([v]) => v === f.ligatures) ? f.ligatures : '';
 
   /* ---- Preview ---- */
-  const previewText = el('span', {}, clipText(sample.replace(/\s+/g, ' ').trim(), 48) || fontName || 'Aa Bb Cc');
+  const previewText = el('span', {}, clipText(sample.replace(/\s+/g, ' ').trim(), 48) || fontName || 'Aa Bb Cc 中文字体示例');
   const previewBox = el('div.ed-font-preview', { 'aria-hidden': 'true' }, previewText);
   function preview() {
     const s = previewText.style, family = current('fontAscii'), asian = eastAsian && current('fontEastAsia');
@@ -174,19 +174,19 @@ export function openFontDialog({ format: f, sample = '', apply, onClose, setDefa
   /* ---- Tabs and actions ---- */
   const row = (label, control) => el('label.ed-font-field', {}, el('span.field-label', {}, label), control);
   const fontPanel = el('div.ed-font-panel', { role: 'tabpanel', id: 'ed-font-tab-font', 'aria-labelledby': 'ed-font-tab-font-button' },
-    el('div.ed-font-grid', {}, row('Font', font), row('Font style', style), row('Size', size)),
-    asianFont && el('div.ed-font-grid', {}, row('Asian text font', asianFont)),
-    el('div.ed-font-grid', {}, row('Font color', colorButton('Font color', 'color')), row('Underline style', underline), row('Underline color', colorButton('Underline color', 'underlineColor'))),
+    el('div.ed-font-grid', {}, row('西文字体', font), row('字形', style), row('字号', size)),
+    asianFont && el('div.ed-font-grid', {}, row('中文字体', asianFont)),
+    el('div.ed-font-grid', {}, row('字体颜色', colorButton('字体颜色', 'color')), row('下划线线型', underline), row('下划线颜色', colorButton('下划线颜色', 'underlineColor'))),
     effectGrid, fonts, sizes);
   const advancedPanel = el('div.ed-font-panel', { role: 'tabpanel', id: 'ed-font-tab-advanced', 'aria-labelledby': 'ed-font-tab-advanced-button', hidden: true },
-    el('fieldset.ed-font-advanced', {}, el('legend', {}, 'Character Spacing'),
-      row('Scale (%)', scale),
-      el('div.ed-font-pair', {}, row('Spacing', spacing), row('By (pt)', spacingBy)),
-      el('div.ed-font-pair', {}, row('Position', position), row('By (pt)', positionBy)),
-      el('div.ed-font-pair', {}, el('label.ed-check', {}, kern, 'Kerning for fonts:'), row('Points and above', kernFrom))),
-    ligatures && el('fieldset.ed-font-advanced', {}, el('legend', {}, 'OpenType Features'), row('Ligatures', ligatureSelect)),
+    el('fieldset.ed-font-advanced', {}, el('legend', {}, '字符间距'),
+      row('缩放 (%)', scale),
+      el('div.ed-font-pair', {}, row('间距', spacing), row('磅值 (磅)', spacingBy)),
+      el('div.ed-font-pair', {}, row('位置', position), row('磅值 (磅)', positionBy)),
+      el('div.ed-font-pair', {}, el('label.ed-check', {}, kern, '字距调整:'), row('磅值及以上', kernFrom))),
+    ligatures && el('fieldset.ed-font-advanced', {}, el('legend', {}, 'OpenType 功能'), row('连字', ligatureSelect)),
     scales);
-  const tabs = [['font', 'Font', fontPanel], ['advanced', 'Advanced', advancedPanel]];
+  const tabs = [['font', '字体', fontPanel], ['advanced', '高级', advancedPanel]];
   const tabButtons = tabs.map(([id, label, panel], i) => el('button.ed-font-tab', { type: 'button', role: 'tab', id: `ed-font-tab-${id}-button`, 'aria-controls': panel.id, 'aria-selected': String(!i), tabindex: i ? -1 : 0,
     onclick: () => show(id), onkeydown: e => { if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { e.preventDefault(); const next = tabs[(i + 1) % tabs.length][0]; show(next); tabButtons[(i + 1) % tabs.length].focus(); } } }, label));
   function show(id) {
@@ -200,7 +200,7 @@ export function openFontDialog({ format: f, sample = '', apply, onClose, setDefa
     if (Object.keys(patch).length) {
       let failure = null;
       const ok = await apply(patch, error => { failure = error; });
-      if (ok === false) { message.textContent = failure?.message || 'This formatting cannot be applied to the selection.'; message.hidden = false; return false; }
+      if (ok === false) { message.textContent = failure?.message || '无法将此格式应用于所选内容。'; message.hidden = false; return false; }
     }
     return true;
   };
@@ -208,9 +208,9 @@ export function openFontDialog({ format: f, sample = '', apply, onClose, setDefa
     e.preventDefault();
     if (await commit()) modal.close();
   } },
-  el('div.ed-font-tabs', { role: 'tablist', 'aria-label': 'Font settings' }, ...tabButtons),
+  el('div.ed-font-tabs', { role: 'tablist', 'aria-label': '字体设置' }, ...tabButtons),
   fontPanel, advancedPanel,
-  el('div.ed-font-preview-frame', {}, el('span.field-label', {}, 'Preview'), previewBox),
+  el('div.ed-font-preview-frame', {}, el('span.field-label', {}, '预览'), previewBox),
   message,
   el('div.fmt-footer', {},
     el('div.fmt-footer-start', {},
@@ -220,10 +220,10 @@ export function openFontDialog({ format: f, sample = '', apply, onClose, setDefa
         const ok = await setDefault({ ...patch }, error => { failure = error; });
         if (ok === false) { if (failure) { message.textContent = failure.message; message.hidden = false; } return; }
         modal.close();
-      } }, 'Set As Default'),
+      } }, '设为默认值'),
       // Text Effects takes the Font dialog's changes with it, as the Paragraph dialog's Tabs… does.
-      textEffects && el('button.btn.btn-outline', { type: 'button', onclick: async () => { if (!await commit()) return; modal.close(); textEffects(); } }, 'Text Effects…')),
-    el('div.row.row-end', {}, el('button.btn.btn-ghost', { type: 'button', onclick: () => modal.close() }, 'Cancel'), el('button.btn.btn-primary', { type: 'submit' }, 'OK'))));
+      textEffects && el('button.btn.btn-outline', { type: 'button', onclick: async () => { if (!await commit()) return; modal.close(); textEffects(); } }, '文字效果…')),
+    el('div.row.row-end', {}, el('button.btn.btn-ghost', { type: 'button', onclick: () => modal.close() }, '取消'), el('button.btn.btn-primary', { type: 'submit' }, '确定'))));
   revealInvalidControls(form);
   modal = openModal({ title, content: form, wide: true, onClose });
   font.focus(); font.select();

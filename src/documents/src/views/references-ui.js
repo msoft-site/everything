@@ -44,7 +44,7 @@ export const section = (legend, ...children) => el('fieldset.ref-section', {}, e
  * A dialog with a form, an error line and Cancel/OK. `onSubmit` may return false (or throw) to keep it
  * open; thrown errors show in the error line. `actions` adds buttons on the left of Cancel.
  */
-export function openDialog({ title, body, submitLabel = 'OK', onSubmit, wide = false, className = '', actions = [], onClose = null, cancelLabel = 'Cancel' }) {
+export function openDialog({ title, body, submitLabel = '确定', onSubmit, wide = false, className = '', actions = [], onClose = null, cancelLabel = '取消' }) {
   const error = el('p.field-error.ref-error', { role: 'alert', hidden: true });
   const submit = el('button.btn.btn-primary', { type: 'submit' }, submitLabel);
   let modal, busy = false, closed = false;

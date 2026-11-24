@@ -15,7 +15,7 @@ import { importKind } from './importers.js';
 import { forgetRoom } from '../collab/room-memory.js';
 
 /** The formats the app takes from the device, named the way the user sees them. */
-export const IMPORT_FORMATS = 'DOCX, Hanword (.hwp, .hwpx), Markdown, HTML, or text files';
+export const IMPORT_FORMATS = 'DOCX、Hanword (.hwp, .hwpx)、Markdown、HTML 或文本文件';
 
 /** Importable DOCX, Hanword, and text files, in the order given. */
 export function importableFiles(fileList) {
@@ -35,8 +35,8 @@ export function importableFiles(fileList) {
  * wrong and the user may have switched the dialog to all files).
  */
 export function nothingImportable(files, { picked = false } = {}) {
-  if (!picked) return `Drop ${IMPORT_FORMATS} to open them`;
-  return `${(files?.length || 0) === 1 ? 'That file' : 'Those files'} cannot be imported. Choose ${IMPORT_FORMATS}`;
+  if (!picked) return `拖放 ${IMPORT_FORMATS} 即可打开`;
+  return `${(files?.length || 0) === 1 ? '该文件' : '这些文件'}无法导入。请选择 ${IMPORT_FORMATS}`;
 }
 
 export async function importFiles(fileList, {
@@ -53,7 +53,7 @@ export async function importFiles(fileList, {
   const words = picked.filter((f) => P.OPENABLE.test(f.name || ''));
   const texts = picked.filter((f) => !P.OPENABLE.test(f.name || ''));
   // Only the files written to the cloud directly need a session; text files open like a single one does.
-  if (words.length && session.signedOut && !await session.signIn()) { if (stillHere()) toast('Sign in to Puter to import several files at once', { icon: 'info' }); return; }
+  if (words.length && session.signedOut && !await session.signIn()) { if (stillHere()) toast('登录 Puter 可同时导入多个文件', { icon: 'info' }); return; }
   if (!stillHere()) return;
   let saved = 0;
   const issues = [];
@@ -64,8 +64,8 @@ export async function importFiles(fileList, {
       // A template or macro-enabled document is written as it is, so it keeps its extension: under .docx, Word
       // refuses its content. A converted Hanword file is a .docx.
       const kind = !converted && /\.(dotx|docm)$/i.exec(f.name)?.[0];
-      const stem = P.stripExtension(f.name) || 'Untitled document';
-      const name = await P.uniqueName(kind ? `${P.sanitizeName(stem) || 'Untitled document'}${kind}` : P.ensureDocx(stem));
+      const stem = P.stripExtension(f.name) || '未命名文档';
+      const name = await P.uniqueName(kind ? `${P.sanitizeName(stem) || '未命名文档'}${kind}` : P.ensureDocx(stem));
       // Another tab or import may claim the checked name before this write.
       const path = await P.createFile(`${P.FOLDER}/${name}`, converted?.blob || f);
       saved += 1;
@@ -73,24 +73,24 @@ export async function importFiles(fileList, {
       await forgetRoom(path);
     } catch (e) {
       console.error(e);
-      issues.push(`${f.name}: ${e?.message || 'Import failed'}`);
+      issues.push(`${f.name}: ${e?.message || '导入失败'}`);
     }
   }
-  const reportIssues = () => { if (issues.length) openModal({ title: 'Import details', content: el('div', {}, ...issues.map((message) => el('p.modal-text', {}, message))) }); };
+  const reportIssues = () => { if (issues.length) openModal({ title: '导入详情', content: el('div', {}, ...issues.map((message) => el('p.modal-text', {}, message))) }); };
   if (!stillHere()) {
-    toast(`Imported ${saved} of ${picked.length} files${texts.length ? '. Text files were not opened because you moved on' : ''}`, { icon: saved ? 'info' : 'alert', duration: 6000 });
+    toast(`已导入 ${saved} / ${picked.length} 个文件${texts.length ? '。文本文件未打开，因为您已切换页面' : ''}`, { icon: saved ? 'info' : 'alert', duration: 6000 });
     // A file that did not make it is still worth naming, wherever the user is now.
     reportIssues();
     return;
   }
   if (texts.length) {
-    if (words.length) toast(`Imported ${saved} of ${words.length} documents. Opening ${texts[0].name}; other text files import one at a time`, { icon: 'info', duration: 6000 });
-    else if (texts.length > 1) toast(`Opening ${texts[0].name}. Markdown, HTML, and text files import one at a time`, { icon: 'info', duration: 5000 });
+    if (words.length) toast(`已导入 ${saved} / ${words.length} 个文档。正在打开 ${texts[0].name}；其他文本文件需依次导入`, { icon: 'info', duration: 6000 });
+    else if (texts.length > 1) toast(`正在打开 ${texts[0].name}。Markdown、HTML 和文本文件需依次导入`, { icon: 'info', duration: 5000 });
     await openFile(texts[0]);
     reportIssues();
     return;
   }
-  toast(saved === picked.length ? `Imported ${saved} documents` : `Imported ${saved} of ${picked.length} documents`, { icon: saved ? 'check' : 'alert' });
+  toast(saved === picked.length ? `已导入 ${saved} 个文档` : `已导入 ${saved} / ${picked.length} 个文档`, { icon: saved ? 'check' : 'alert' });
   reportIssues();
   onImported();
 }

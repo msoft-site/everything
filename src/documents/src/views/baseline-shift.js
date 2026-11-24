@@ -2,12 +2,12 @@ import { el } from '../ui/dom.js';
 import { openModal } from '../ui/modal.js';
 
 export function openBaselineShift(value, apply) {
-  const input = el('input.input', { type: 'number', min: -200, max: 200, step: .5, required: true, value: value ?? '', placeholder: value === null ? 'Mixed' : '0', 'aria-label': 'Baseline shift (pt)' });
+  const input = el('input.input', { type: 'number', min: -200, max: 200, step: .5, required: true, value: value ?? '', placeholder: value === null ? '多种' : '0', 'aria-label': '基线偏移 (磅)' });
   const content = el('form', { onsubmit: e => { e.preventDefault(); const chosen = Number(input.value); modal.close(); apply(chosen); } },
-    el('label.field', {}, el('span.field-label', {}, 'Baseline shift (pt)'), input),
-    el('p.field-hint', {}, 'Positive values raise text; negative values lower it. Zero removes the shift. Font size stays the same.'),
-    value === null ? el('p.field-hint', {}, 'The selection has mixed shifts. Choose a value for the whole selection.') : null,
-    el('div.row.row-end', {}, el('button.btn.btn-ghost', { type: 'button', onclick: () => modal.close() }, 'Cancel'), el('button.btn.btn-primary', { type: 'submit' }, 'Apply')));
-  const modal = openModal({ title: 'Baseline shift', content });
+    el('label.field', {}, el('span.field-label', {}, '基线偏移 (磅)'), input),
+    el('p.field-hint', {}, '正数提升文本，负数降低文本。0 恢复正常位置。字号保持不变。'),
+    value === null ? el('p.field-hint', {}, '选定内容包含多种基线偏移量。请为整个选定内容选择一个数值。') : null,
+    el('div.row.row-end', {}, el('button.btn.btn-ghost', { type: 'button', onclick: () => modal.close() }, '取消'), el('button.btn.btn-primary', { type: 'submit' }, '应用')));
+  const modal = openModal({ title: '基线偏移', content });
   return modal;
 }

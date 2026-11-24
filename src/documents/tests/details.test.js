@@ -32,23 +32,23 @@ describe('document details', () => {
 
   it('lists the rows for a saved document and for a new one', () => {
     const rows = detailRows({ name: 'Report', path: 'Documents/Report.docx', size: 2048, created: (now - 86400000) / 1000, modified: (now - 3600000) / 1000, lastSaved: now - 60000, pages: 3, words: 1204, publishedUrl: null }, { now });
-    expect(rows.map((r) => r.label)).toEqual(['Name', 'Location', 'Size', 'Created', 'Modified', 'Last saved here', 'Length', 'Published']);
+    expect(rows.map((r) => r.label)).toEqual(['名称', '位置', '大小', '创建时间', '修改时间', '上次保存在此', '篇幅', '发布状态']);
     expect(rows[0].value).toBe('Report.docx');
-    expect(rows[1].value).toBe('Documents/ on your Puter drive');
+    expect(rows[1].value).toBe('Documents/（位于 Puter 云端硬盘）');
     expect(rows[2].value).toBe('2.0 KB');
     expect(rows[3].value).toMatch(/\(1 day ago\)/);
-    expect(rows[6].value).toBe('3 pages, 1,204 words');
-    expect(rows[7].value).toBe('Not published');
-    const fresh = detailRows({ name: 'Untitled document', path: null, pages: 1, words: 1 }, { now });
-    expect(fresh.map((r) => r.label)).toEqual(['Name', 'Location', 'Length']);
-    expect(fresh[0].value).toBe('Untitled document.docx');
-    expect(fresh[1].value).toBe('Not saved yet');
+    expect(rows[6].value).toBe('3 页，1,204 字');
+    expect(rows[7].value).toBe('未发布');
+    const fresh = detailRows({ name: '未命名文档', path: null, pages: 1, words: 1 }, { now });
+    expect(fresh.map((r) => r.label)).toEqual(['名称', '位置', '篇幅']);
+    expect(fresh[0].value).toBe('未命名文档.docx');
+    expect(fresh[1].value).toBe('尚未保存');
     // A template or macro file opened as it stands keeps its own extension until it is saved.
     expect(detailRows({ name: 'Letterhead', path: 'Documents/Letterhead.dotx' }, { now })[0].value).toBe('Letterhead.dotx');
-    expect(fresh[2].value).toBe('1 page, 1 word');
+    expect(fresh[2].value).toBe('1 页，1 字');
     const opened = detailRows({ name: 'X', path: 'Documents/X.docx', size: 10 }, { now });
-    expect(opened.find((r) => r.label === 'Last saved here').value).toBe('Unchanged since it was opened');
-    expect(detailRows({ name: 'X', path: 'Documents/X.docx', saved: false }, { now }).find((r) => r.label === 'Last saved here').value).toBe('Not yet, this session');
+    expect(opened.find((r) => r.label === '上次保存在此').value).toBe('自打开以来未更改');
+    expect(detailRows({ name: 'X', path: 'Documents/X.docx', saved: false }, { now }).find((r) => r.label === '上次保存在此').value).toBe('本次会话尚未保存');
     expect(detailRows({ name: 'Y', path: 'Documents/Y.docx', publishedUrl: 'https://a.puter.site' }, { now }).at(-1).value).toBe('https://a.puter.site');
   });
 });

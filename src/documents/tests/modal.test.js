@@ -54,7 +54,7 @@ describe('modal keyboard focus', () => {
     const result = formDialog({ title: 'Format', fields: [{ name: 'amount', label: 'Amount', value: 2, type: 'number' }], prepare });
     document.querySelector('.modal-panel form').requestSubmit();
     const signal = prepare.mock.calls[0][1].signal;
-    document.querySelector('[aria-label="Close"]').click();
+    document.querySelector('[aria-label="关闭"]').click();
     await expect(result).resolves.toBeNull();
     expect(signal.aborted).toBe(true);
     const input = el('input', { value: 'New dialog' });
@@ -95,7 +95,7 @@ describe('modal keyboard focus', () => {
     expect(form.querySelector('[type="submit"]').textContent).toBe('Fetching picture…');
     const signal = prepare.mock.calls[0][1].signal;
     expect(signal.aborted).toBe(false);
-    document.querySelector('[aria-label="Close"]').click();
+    document.querySelector('[aria-label="关闭"]').click();
     await expect(result).resolves.toBeNull();
     expect(signal.aborted).toBe(true);
     complete(new Error('Late failure'));
@@ -122,7 +122,7 @@ describe('modal keyboard focus', () => {
     const input = el('input');
     const last = el('button', {}, 'Save');
     const { panel } = openModal({ title: 'Edit', content: el('div', {}, input, last, el('button', { disabled: true }, 'Disabled'), el('div', { hidden: true }, el('button', {}, 'Hidden'))) });
-    const first = panel.querySelector('[aria-label="Close"]');
+    const first = panel.querySelector('[aria-label="关闭"]');
     last.focus();
     expect(tab().defaultPrevented).toBe(true);
     expect(document.activeElement === first).toBe(true);
@@ -143,7 +143,7 @@ describe('modal keyboard focus', () => {
     const inner = openModal({ title: 'Inner', content: last });
     last.focus();
     tab();
-    expect(document.activeElement === inner.panel.querySelector('[aria-label="Close"]')).toBe(true);
+    expect(document.activeElement === inner.panel.querySelector('[aria-label="关闭"]')).toBe(true);
     inner.close();
     vi.advanceTimersByTime(200);
     expect(document.activeElement === opener).toBe(true);

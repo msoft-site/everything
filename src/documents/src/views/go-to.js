@@ -7,9 +7,9 @@ import { bodyFieldRanges } from '../engine/body-fields.js';
 
 // The targets Word's Go To offers, in its order. Comments are chosen by reviewer and fields by name, with Previous and
 // Next; the others by number, or + and − a number from where the caret is.
-const KINDS = [['page', 'Page'], ['section', 'Section'], ['line', 'Line'], ['bookmark', 'Bookmark'], ['comment', 'Comment'], ['footnote', 'Footnote'], ['endnote', 'Endnote'],
-  ['field', 'Field'], ['table', 'Table'], ['graphic', 'Graphic'], ['equation', 'Equation'], ['heading', 'Heading']];
-const FILTERS = { comment: ['Enter reviewer’s name', 'Any reviewer'], field: ['Enter field name', 'Any field'] };
+const KINDS = [['page', '页'], ['section', '节'], ['line', '行'], ['bookmark', '书签'], ['comment', '批注'], ['footnote', '脚注'], ['endnote', '尾注'],
+  ['field', '域'], ['table', '表格'], ['graphic', '图形'], ['equation', '公式'], ['heading', '标题']];
+const FILTERS = { comment: ['输入审阅者姓名', '所有审阅者'], field: ['输入域名称', '所有域'] };
 
 /** Document positions of each target kind, in reading order: [{ position, label }]. */
 export function goToTargets(engine, kind) {
@@ -31,27 +31,27 @@ export function goToTargets(engine, kind) {
       const number = numbers[i] ?? null, section = sections[i] ?? null;
       let text = number === null ? null : String(number);
       try { if (number !== null) text = formatPageNumber(number, definition?.sections?.[section]?.pageNumbering?.format || 'decimal').trim() || null; } catch { /* the plain number */ }
-      return { position: last, label: `Page ${i + 1}`, number, text, section };
+      return { position: last, label: `第 ${i + 1} 页`, number, text, section };
     });
   }
-  if (kind === 'line') return lines.map((line, i) => ({ position: line.start, label: `Line ${i + 1}` }));
+  if (kind === 'line') return lines.map((line, i) => ({ position: line.start, label: `第 ${i + 1} 行` }));
   // Hidden bookmarks (_Toc…, _Ref…, _GoBack) are not offered, as in the Bookmarks dialog.
   if (kind === 'bookmark') return engine.bookmarks.filter(b => !b.name?.startsWith('_')).map(b => ({ position: b.start, label: b.name, id: b.id }));
   if (kind === 'heading') return engine.outline.map(entry => ({ position: entry.start, label: entry.text }));
   // A comment thread where its text starts; `filter` names its reviewer.
   if (kind === 'comment') return (body.comments?.length ? body.commentList : []).filter(c => c.id === c.rootId && c.start !== null)
-    .map(c => ({ position: c.start, label: c.author || 'Unknown author', filter: c.author || '' })).sort((a, b) => a.position - b.position);
-  if (kind === 'footnote' || kind === 'endnote') return noteReferences(body.paragraphs, kind, true).map((ref, i) => ({ position: ref.position, label: `${kind === 'footnote' ? 'Footnote' : 'Endnote'} ${i + 1}` }));
+    .map(c => ({ position: c.start, label: c.author || '未知作者', filter: c.author || '' })).sort((a, b) => a.position - b.position);
+  if (kind === 'footnote' || kind === 'endnote') return noteReferences(body.paragraphs, kind, true).map((ref, i) => ({ position: ref.position, label: `${kind === 'footnote' ? '脚注' : '尾注'} ${i + 1}` }));
   // Fields as the document holds them, the outermost of nested ones; `filter` is the field's name (REF, PAGE…).
-  if (kind === 'field') return bodyFieldRanges(body.paragraphs).filter(r => !r.parentId).map(r => ({ position: r.start, label: r.field.type || 'Field', filter: r.field.type || '' }));
+  if (kind === 'field') return bodyFieldRanges(body.paragraphs).filter(r => !r.parentId).map(r => ({ position: r.start, label: r.field.type || '域', filter: r.field.type || '' }));
   const out = [];
   let at = 0, inTable = false, section = true;
   for (const p of body.paragraphs) {
-    if (kind === 'section') { if (section) out.push({ position: at, label: `Section ${out.length + 1}` }); section = !!p.sectionEnd; }
-    if (kind === 'table') { if (p.cellId && !inTable) out.push({ position: at, label: `Table ${out.length + 1}` }); inTable = !!p.cellId; }
+    if (kind === 'section') { if (section) out.push({ position: at, label: `第 ${out.length + 1} 节` }); section = !!p.sectionEnd; }
+    if (kind === 'table') { if (p.cellId && !inTable) out.push({ position: at, label: `表格 ${out.length + 1}` }); inTable = !!p.cellId; }
     if (kind === 'graphic' || kind === 'equation') {
       let offset = at;
-      for (const run of p.runs) { if (kind === 'graphic' ? run.image : run.math) out.push({ position: offset, label: `${kind === 'graphic' ? 'Graphic' : 'Equation'} ${out.length + 1}` }); offset += run.text.length; }
+      for (const run of p.runs) { if (kind === 'graphic' ? run.image : run.math) out.push({ position: offset, label: `${kind === 'graphic' ? '图形' : '公式'} ${out.length + 1}` }); offset += run.text.length; }
     }
     at += paragraphText(p).length + 1;
   }
@@ -76,21 +76,21 @@ export function printedPage(pages, value) {
  * with Previous and Next. Bookmarks are chosen by name.
  */
 export function openGoTo(engine, { onClose } = {}) {
-  const kind = el('select.input', { 'aria-label': 'Go to what', size: 6 }, ...KINDS.map(([value, label]) => el('option', { value }, label)));
+  const kind = el('select.input', { 'aria-label': '定位目标', size: 6 }, ...KINDS.map(([value, label]) => el('option', { value }, label)));
   kind.value = 'page';
   const label = el('span.field-label');
   const number = el('input.input', { type: 'text', autocomplete: 'off' });
   const names = el('select.input');
   const numberField = el('label.field', {}, label, number);
-  const nameField = el('label.field', { style: { display: 'none' } }, el('span.field-label', {}, 'Enter bookmark name'), names);
+  const nameField = el('label.field', { style: { display: 'none' } }, el('span.field-label', {}, '输入书签名称'), names);
   // A reviewer for comments, a field name for fields.
   const filter = el('select.input');
   const filterLabel = el('span.field-label');
   const filterField = el('label.field', { style: { display: 'none' } }, filterLabel, filter);
   const hint = el('p.field-hint');
   const message = el('p.field-error', { role: 'alert', hidden: true });
-  const previous = el('button.btn.btn-outline', { type: 'button', onclick: () => step(-1) }, 'Previous');
-  const next = el('button.btn.btn-primary', { type: 'submit' }, 'Next');
+  const previous = el('button.btn.btn-outline', { type: 'button', onclick: () => step(-1) }, '上一处');
+  const next = el('button.btn.btn-primary', { type: 'submit' }, '下一处');
   // In a header or footer, where it is is the page it is on: its own offsets are not the body's.
   const current = () => engine.session.path === null ? engine.model.range[0] : goToTargets(engine, 'page')[engine.storyPage ?? 0]?.position ?? 0;
   let filterKind = null;
@@ -101,15 +101,15 @@ export function openGoTo(engine, { onClose } = {}) {
     numberField.style.display = bookmark || filtered ? 'none' : ''; nameField.style.display = bookmark ? '' : 'none';
     filterField.style.display = filtered ? '' : 'none';
     previous.style.display = bookmark ? 'none' : '';
-    label.textContent = `Enter ${name.toLowerCase()} number`;
+    label.textContent = `输入${name}号:`;
     if (bookmark) names.replaceChildren(...goToTargets(engine, 'bookmark').map(b => el('option', { value: b.id }, b.label)));
     if (filtered && filterKind !== kind.value) {
       filterKind = kind.value; filterLabel.textContent = filtered[0];
       const choices = [...new Set(goToTargets(engine, kind.value).map(t => t.filter))].sort((a, b) => a.localeCompare(b));
-      filter.replaceChildren(el('option', { value: '' }, filtered[1]), ...choices.map(value => el('option', { value: `=${value}` }, value || 'Unknown author')));
+      filter.replaceChildren(el('option', { value: '' }, filtered[1]), ...choices.map(value => el('option', { value: `=${value}` }, value || '未知作者')));
     }
-    hint.textContent = bookmark || filtered ? '' : `Enter + and − to move relative to the current location. Example: +4 will move forward four items.`;
-    next.textContent = bookmark || !filtered && number.value.trim() ? 'Go To' : 'Next';
+    hint.textContent = bookmark || filtered ? '' : `输入 + 或 − 可相对于当前位置移动。例如: +4 将向前移动 4 项。`;
+    next.textContent = bookmark || !filtered && number.value.trim() ? '定位' : '下一处';
     message.hidden = true;
   }
   /** The targets of the chosen kind, of the chosen reviewer or field name. */
@@ -126,24 +126,24 @@ export function openGoTo(engine, { onClose } = {}) {
     const targets = targetsOf(kind.value), here = current();
     const index = targets.findLastIndex(t => t.position <= here);
     const target = direction > 0 ? targets.find(t => t.position > here) : targets[index] && targets[index].position < here ? targets[index] : targets[index - 1];
-    if (!target) { fail(`There is no ${direction > 0 ? 'next' : 'previous'} ${kind.selectedOptions[0].textContent.toLowerCase()}.`); return; }
+    if (!target) { fail(`没有${direction > 0 ? '下一个' : '上一个'}${kind.selectedOptions[0].textContent}。`); return; }
     land(target.position); message.hidden = true;
   }
   function go() {
     if (kind.value === 'bookmark') {
-      if (!names.value) { fail('This document has no bookmarks.'); return; }
+      if (!names.value) { fail('本文档中没有书签。'); return; }
       engine.goToBookmark(names.value); modal.close(); return;
     }
     const value = FILTERS[kind.value] ? '' : number.value.trim();
     if (!value) { step(1); return; }
     if (kind.value === 'page' && !/^[+−-]/.test(value)) {
       const pages = goToTargets(engine, 'page'), target = printedPage(pages, value);
-      if (target === undefined) { fail('Enter a page number, + or − followed by a number, or p and s numbers such as p2s3 for page 2 of section 3.'); return; }
-      if (!target) { fail(/^\d+$/.test(value) ? `This document has ${pages.length} page${pages.length === 1 ? '' : 's'}.` : `This document has no page ${value}.`); return; }
+      if (target === undefined) { fail('请输入页码、+ 或 − 紧跟数字，或使用形如 p2s3 表示第 3 节第 2 页。'); return; }
+      if (!target) { fail(/^\d+$/.test(value) ? `本文档共有 ${pages.length} 页。` : `本文档中没有第 ${value} 页。`); return; }
       land(target.position); modal.close(); return;
     }
     const match = /^([+-]?)(\d+)$/.exec(value.replace('−', '-'));
-    if (!match) { fail('Enter a number, or + or − followed by a number.'); return; }
+    if (!match) { fail('请输入数字，或在数字前加 + 或 −。'); return; }
     const targets = targetsOf(kind.value), n = Number(match[2]);
     let index;
     if (match[1]) {
@@ -152,17 +152,17 @@ export function openGoTo(engine, { onClose } = {}) {
       index = here + (match[1] === '+' ? n : -n);
     } else index = n - 1;
     const target = targets[index];
-    if (!target) { fail(targets.length ? `This document has ${targets.length} ${kind.selectedOptions[0].textContent.toLowerCase()}${targets.length === 1 ? '' : 's'}.` : `This document has no ${kind.selectedOptions[0].textContent.toLowerCase()}s.`); return; }
+    if (!target) { fail(targets.length ? `本文档共有 ${targets.length} 个${kind.selectedOptions[0].textContent}。` : `本文档中没有${kind.selectedOptions[0].textContent}。`); return; }
     land(target.position); modal.close();
   }
   kind.addEventListener('change', refresh); number.addEventListener('input', refresh);
   const form = el('form.ed-dialog-body.ed-goto', { onsubmit: e => { e.preventDefault(); go(); } },
     el('div.ed-goto-grid', {},
-      el('label.field', {}, el('span.field-label', {}, 'Go to what'), kind),
+      el('label.field', {}, el('span.field-label', {}, '定位目标'), kind),
       el('div', {}, numberField, nameField, filterField, hint)),
     message,
-    el('div.row.row-end', {}, previous, next, el('button.btn.btn-ghost', { type: 'button', onclick: () => modal.close() }, 'Close')));
-  const modal = openModal({ title: 'Go To', content: form, onClose });
+    el('div.row.row-end', {}, previous, next, el('button.btn.btn-ghost', { type: 'button', onclick: () => modal.close() }, '关闭')));
+  const modal = openModal({ title: '定位', content: form, onClose });
   refresh();
   number.focus();
   return modal;

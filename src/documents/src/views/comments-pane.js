@@ -12,14 +12,14 @@ const SHOW_RESOLVED = preference('documents:comments-pane-resolved', true);
 
 export function createCommentsPane({ editor, review, people }) {
   let author = '', query = '';
-  const pane = sidePane({ title: 'Comments', label: 'Comments pane', className: 'rv-comments-pane', onOpen: () => render(), onClose: () => editor()?.focus() });
-  const authorSelect = el('select.input', { 'aria-label': 'Show comments by or mentioning', onchange: () => { author = authorSelect.value; render(); } });
-  const search = el('input.input', { type: 'search', placeholder: 'Search comments', 'aria-label': 'Search comments', oninput: () => { query = search.value.trim().toLowerCase(); render(); } });
+  const pane = sidePane({ title: '批注', label: '批注窗格', className: 'rv-comments-pane', onOpen: () => render(), onClose: () => editor()?.focus() });
+  const authorSelect = el('select.input', { 'aria-label': '显示该人员创建或提及的批注', onchange: () => { author = authorSelect.value; render(); } });
+  const search = el('input.input', { type: 'search', placeholder: '搜索批注', 'aria-label': '搜索批注', oninput: () => { query = search.value.trim().toLowerCase(); render(); } });
   const resolved = el('input', { type: 'checkbox', checked: SHOW_RESOLVED.get(), onchange: () => { SHOW_RESOLVED.set(resolved.checked); render(); } });
-  const list = el('div.rv-list.rv-comment-list', { role: 'list', 'aria-label': 'Comments' });
+  const list = el('div.rv-list.rv-comment-list', { role: 'list', 'aria-label': '批注' });
   const count = el('p.rv-status', { role: 'status' });
-  const newComment = el('button.btn.btn-primary.btn-sm', { type: 'button', onclick: () => review.commands.newComment() }, 'New Comment');
-  pane.body.append(el('div.rv-filters', {}, authorSelect, search), el('label.rv-check', {}, resolved, 'Show resolved comments'), el('div.rv-actions', {}, newComment), count, list);
+  const newComment = el('button.btn.btn-primary.btn-sm', { type: 'button', onclick: () => review.commands.newComment() }, '新建批注');
+  pane.body.append(el('div.rv-filters', {}, authorSelect, search), el('label.rv-check', {}, resolved, '显示已解决的批注'), el('div.rv-actions', {}, newComment), count, list);
 
   // The body's comments, also while a header, footer or note is being edited.
   const threads = () => { const body = editor()?.session.body; return body?.comments ? commentThreads(body.commentList) : []; };
@@ -36,20 +36,20 @@ export function createCommentsPane({ editor, review, people }) {
     // Authors, and people mentioned in comments: filtering by someone shows what involves them.
     const authors = [...new Set(all.flatMap(t => [t.root, ...t.replies].flatMap(c => [c.author, ...mentionsIn(c.text, names)])).filter(Boolean))];
     if (author && !authors.includes(author)) author = '';
-    authorSelect.replaceChildren(el('option', { value: '' }, 'All people'), ...authors.map(name => el('option', { value: name, selected: name === author }, name)));
+    authorSelect.replaceChildren(el('option', { value: '' }, '所有人员'), ...authors.map(name => el('option', { value: name, selected: name === author }, name)));
     const shown = all.filter(t => (resolved.checked || !t.root.done)
       && (!author || [t.root, ...t.replies].some(c => c.author === author || mentionsIn(c.text, names).includes(author)))
       && (!query || [t.root, ...t.replies].some(c => `${c.author} ${c.text}`.toLowerCase().includes(query))));
-    count.textContent = all.length ? `${shown.length} of ${all.length} ${all.length === 1 ? 'thread' : 'threads'}` : 'No comments yet.';
+    count.textContent = all.length ? `${shown.length} / ${all.length} 条批注列表` : '暂无批注。';
     const active = review.commands.activeThread()?.id;
     newComment.disabled = !review.commands.canComment();
     list.replaceChildren(...shown.map(t => {
       const when = Date.parse(t.root.date);
       return listItem(el(`button.rv-comment${t.root.done ? '.is-resolved' : ''}`, { type: 'button', 'aria-current': String(t.id === active), onclick: () => review.commands.selectThreadById(t.id) },
         el('span.rv-comment-head', {}, el('span.wcc-avatar', { 'aria-hidden': 'true', style: { background: avatarColor(t.root.author) } }, (t.root.initials || initialsFor(t.root.author) || '?').slice(0, 2)),
-          el('strong', {}, t.root.author || 'Unknown author'), el('span.rv-comment-date', {}, Number.isFinite(when) ? relativeTime(when) : ''), t.root.done ? el('span.rv-badge', {}, 'Resolved') : null),
+          el('strong', {}, t.root.author || '未知作者'), el('span.rv-comment-date', {}, Number.isFinite(when) ? relativeTime(when) : ''), t.root.done ? el('span.rv-badge', {}, '已解决') : null),
         el('span.rv-comment-text', {}, ...renderMentions(t.root.text, names)),
-        t.replies.length ? el('span.rv-comment-replies', {}, `${t.replies.length} ${t.replies.length === 1 ? 'reply' : 'replies'}`) : null));
+        t.replies.length ? el('span.rv-comment-replies', {}, `${t.replies.length} 条回复`) : null));
     }));
   }
   return { pane, open() { pane.open(); render(); }, refresh() { render(false); }, get filterAuthor() { return author; }, destroy() { pane.destroy(); } };

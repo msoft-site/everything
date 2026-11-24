@@ -2,9 +2,9 @@ import { el } from '../ui/dom.js';
 import { tabStrip, field, checkbox, group, select, distance, points, openFormatDialog, paragraphPreview } from './format-dialog-kit.js';
 import { physicalAlignment } from '../engine/rtl-paragraph.js';
 
-const ALIGNMENTS = [['left', 'Left'], ['center', 'Centered'], ['right', 'Right'], ['both', 'Justified'], ['distribute', 'Distributed']];
-const OUTLINE = [...Array.from({ length: 9 }, (_, i) => [String(i), `Level ${i + 1}`]), ['9', 'Body text']];
-const LINE_CHOICES = [['single', 'Single'], ['oneHalf', '1.5 lines'], ['double', 'Double'], ['atLeast', 'At least'], ['exact', 'Exactly'], ['multiple', 'Multiple']];
+const ALIGNMENTS = [['left', '左对齐'], ['center', '居中'], ['right', '右对齐'], ['both', '两端对齐'], ['distribute', '分散对齐']];
+const OUTLINE = [...Array.from({ length: 9 }, (_, i) => [String(i), `${i + 1} 级`]), ['9', '正文文本']];
+const LINE_CHOICES = [['single', '单倍行距'], ['oneHalf', '1.5 倍行距'], ['double', '2 倍行距'], ['atLeast', '最小值'], ['exact', '固定值'], ['multiple', '多倍行距']];
 
 /** The line-spacing choice and amount for a paragraph format (null when mixed). */
 export function lineChoice(rule, spacing) {
@@ -40,22 +40,22 @@ export function openParagraphDialog({ format: f, unit = 'in', canSetOutline = tr
   // Left and Right name sides of the page. The file keeps alignment relative to the reading direction
   // (rtl-paragraph.js), so a right-to-left paragraph shows, and stores, the opposite value. With mixed
   // directions the stored value is shown as it is.
-  const direction = select('Direction', [['ltr', 'Left-to-right'], ['rtl', 'Right-to-left']], f.bidi === null ? '' : f.bidi ? 'rtl' : 'ltr', { mixed: f.bidi === null });
+  const direction = select('文字方向', [['ltr', '从左向右'], ['rtl', '从右向左']], f.bidi === null ? '' : f.bidi ? 'rtl' : 'ltr', { mixed: f.bidi === null });
   const rtlNow = () => direction.value === 'rtl';
-  const alignment = select('Alignment', f.alignment === 'thaiDistribute' ? [...ALIGNMENTS, ['thaiDistribute', 'Thai Distributed']] : ALIGNMENTS, f.alignment === null ? null : physicalAlignment(f.alignment, !!f.bidi), { mixed: f.alignment === null });
+  const alignment = select('对齐方式', f.alignment === 'thaiDistribute' ? [...ALIGNMENTS, ['thaiDistribute', '泰文分散对齐']] : ALIGNMENTS, f.alignment === null ? null : physicalAlignment(f.alignment, !!f.bidi), { mixed: f.alignment === null });
   let shownRtl = !!f.bidi;
-  const outline = select('Outline level', OUTLINE, f.outlineLevel === null ? '' : String(f.outlineLevel), { mixed: f.outlineLevel === null });
+  const outline = select('大纲级别', OUTLINE, f.outlineLevel === null ? '' : String(f.outlineLevel), { mixed: f.outlineLevel === null });
   outline.disabled = !canSetOutline;
-  if (!canSetOutline) outline.title = 'Built-in heading styles have a fixed outline level.';
-  const left = distance('Left indent', f.indentLeft, { unit }), right = distance('Right indent', f.indentRight, { unit });
-  const special = select('Special indent', [['none', '(none)'], ['firstLine', 'First line'], ['hanging', 'Hanging']], f.firstLine === null ? '' : f.firstLine > 0 ? 'firstLine' : f.firstLine < 0 ? 'hanging' : 'none', { mixed: f.firstLine === null });
-  const by = distance('Special indent by', f.firstLine === null ? null : Math.abs(f.firstLine), { unit, min: 0 });
+  if (!canSetOutline) outline.title = '内置标题样式具有固定的大纲级别。';
+  const left = distance('左侧缩进', f.indentLeft, { unit }), right = distance('右侧缩进', f.indentRight, { unit });
+  const special = select('特殊格式', [['none', '(无)'], ['firstLine', '首行缩进'], ['hanging', '悬挂缩进']], f.firstLine === null ? '' : f.firstLine > 0 ? 'firstLine' : f.firstLine < 0 ? 'hanging' : 'none', { mixed: f.firstLine === null });
+  const by = distance('磅值/字符', f.firstLine === null ? null : Math.abs(f.firstLine), { unit, min: 0 });
   const syncSpecial = () => { by.disabled = !special.value || special.value === 'none'; if (!by.disabled && by.value === '') by.value = unit === 'cm' ? '1.27' : '0.5'; };
   special.addEventListener('change', syncSpecial); syncSpecial();
-  const leftLabel = el('span.field-label', {}, 'Left'), rightLabel = el('span.field-label', {}, 'Right');
+  const leftLabel = el('span.field-label', {}, '左侧'), rightLabel = el('span.field-label', {}, '右侧');
   // The stored left indent is the one before the text: on the right in a right-to-left paragraph.
-  const labelIndents = on => { leftLabel.textContent = on ? 'Inside' : rtlNow() ? 'Before text' : 'Left'; rightLabel.textContent = on ? 'Outside' : rtlNow() ? 'After text' : 'Right'; };
-  const mirror = checkbox('Mirror indents', f.mirrorIndents, on => { labelIndents(on); preview(); });
+  const labelIndents = on => { leftLabel.textContent = on ? '内部' : rtlNow() ? '文字之前' : '左侧'; rightLabel.textContent = on ? '外部' : rtlNow() ? '文字之后' : '右侧'; };
+  const mirror = checkbox('镜像缩进', f.mirrorIndents, on => { labelIndents(on); preview(); });
   labelIndents(!!f.mirrorIndents);
   direction.addEventListener('change', () => {
     // The paragraph turns over as a whole: its alignment keeps its stored value, so the side shown flips.
@@ -64,13 +64,13 @@ export function openParagraphDialog({ format: f, unit = 'in', canSetOutline = tr
   });
   // A document's amounts need not fall on the arrows' steps (spacing is kept in twentieths of a point, 7.5 pt or
   // 13.8 pt), so the fields take any amount, as Word does; it is rounded to the file's units where it is applied.
-  const before = points('Spacing before', f.spaceBefore, { step: 'any' }), after = points('Spacing after', f.spaceAfter, { step: 'any' });
+  const before = points('段前间距', f.spaceBefore, { step: 'any' }), after = points('段后间距', f.spaceAfter, { step: 'any' });
   const [choice, amount] = lineChoice(f.lineRule, f.lineSpacing);
   // A multiple is kept in 240ths of a line: Word's 1.08 is 259/240. It shows to two places, as Word shows it, and an
   // untouched amount keeps its exact value.
   const shownAmount = choice === 'multiple' ? String(Number(Number(amount).toFixed(2))) : String(amount);
-  const line = select('Line spacing', LINE_CHOICES, choice, { mixed: !choice });
-  const at = el('input.input', { type: 'number', min: 0, step: 'any', value: shownAmount, placeholder: choice ? '' : 'Mixed', 'aria-label': 'Line spacing at' });
+  const line = select('行距', LINE_CHOICES, choice, { mixed: !choice });
+  const at = el('input.input', { type: 'number', min: 0, step: 'any', value: shownAmount, placeholder: choice ? '' : '多种', 'aria-label': '行距设置值' });
   const syncLine = (fill = false) => {
     const fixed = ['single', 'oneHalf', 'double', ''].includes(line.value);
     at.disabled = fixed;
@@ -79,20 +79,20 @@ export function openParagraphDialog({ format: f, unit = 'in', canSetOutline = tr
     else if (fill || at.value === '') at.value = line.value === 'multiple' ? '3' : '12';
   };
   line.addEventListener('change', () => { syncLine(true); preview(); }); syncLine();
-  const contextual = checkbox('Don’t add space between paragraphs of the same style', f.contextualSpacing);
+  const contextual = checkbox('如果定义了相同样式，则段落之间不添加空格', f.contextualSpacing);
   const indentsPanel = el('div', {},
-    group('General', el('div.fmt-grid', {}, field('Alignment', alignment), field('Outline level', outline), field('Direction', direction))),
-    group('Indentation', el('div.fmt-grid', {}, el('label.ed-font-field', {}, leftLabel, left), el('label.ed-font-field', {}, rightLabel, right), field('Special', special), field(`By (${by.unit})`, by)), mirror),
-    group('Spacing', el('div.fmt-grid', {}, field('Before (pt)', before), field('After (pt)', after), field('Line spacing', line), field('At', at)), contextual));
+    group('常规', el('div.fmt-grid', {}, field('对齐方式', alignment), field('大纲级别', outline), field('文字方向', direction))),
+    group('缩进', el('div.fmt-grid', {}, el('label.ed-font-field', {}, leftLabel, left), el('label.ed-font-field', {}, rightLabel, right), field('特殊格式', special), field(`磅值 (${by.unit})`, by)), mirror),
+    group('间距', el('div.fmt-grid', {}, field('段前 (磅)', before), field('段后 (磅)', after), field('行距', line), field('设置值', at)), contextual));
 
   /* ---- Line and Page Breaks ---- */
-  const flags = [['widowControl', 'Widow/Orphan control'], ['keepNext', 'Keep with next'], ['keepLines', 'Keep lines together'], ['pageBreakBefore', 'Page break before']].map(([key, label]) => ({ key, node: checkbox(label, f[key]) }));
-  const exceptions = [['suppressLineNumbers', 'Suppress line numbers'], ['suppressAutoHyphens', 'Don’t hyphenate']].map(([key, label]) => ({ key, node: checkbox(label, f[key]) }));
+  const flags = [['widowControl', '孤行控制'], ['keepNext', '与下段同页'], ['keepLines', '段中不分页'], ['pageBreakBefore', '段前分页']].map(([key, label]) => ({ key, node: checkbox(label, f[key]) }));
+  const exceptions = [['suppressLineNumbers', '取消行号'], ['suppressAutoHyphens', '不进行断字']].map(([key, label]) => ({ key, node: checkbox(label, f[key]) }));
   const breaksPanel = el('div', {},
-    group('Pagination', el('div.fmt-checks', {}, ...flags.map(x => x.node))),
-    group('Formatting exceptions', el('div.fmt-checks', {}, ...exceptions.map(x => x.node))),
-    el('p.field-hint', {}, 'Line numbers and hyphenation are kept in the file for other word processors; this editor does not number lines or hyphenate automatically.'));
-  const tabs = tabStrip('Paragraph settings', [['indents', 'Indents and Spacing', indentsPanel], ['breaks', 'Line and Page Breaks', breaksPanel]]);
+    group('换行和分页', el('div.fmt-checks', {}, ...flags.map(x => x.node))),
+    group('格式异常', el('div.fmt-checks', {}, ...exceptions.map(x => x.node))),
+    el('p.field-hint', {}, '行号与断字设置保存在文档中供其他文字处理程序读取；本编辑器不自动排版行号或断字。'));
+  const tabs = tabStrip('段落设置', [['indents', '缩进和间距', indentsPanel], ['breaks', '换行和分页', breaksPanel]]);
 
   /* ---- Preview ---- */
   const sample = paragraphPreview();
@@ -130,7 +130,7 @@ export function openParagraphDialog({ format: f, unit = 'in', canSetOutline = tr
     }
     for (const [key, input] of [['spaceBefore', before], ['spaceAfter', after]]) { const v = input.read(); if (v !== null && v !== f[key]) result[key] = v; }
     if (line.value && !(line.value === choice && at.value === shownAmount)) {
-      if (!line.value.match(/single|oneHalf|double/) && (at.value === '' || !at.checkValidity())) throw new Error('Enter a line spacing amount.');
+      if (!line.value.match(/single|oneHalf|double/) && (at.value === '' || !at.checkValidity())) throw new Error('请输入行距设置值。');
       const setting = lineSetting(line.value, at.value);
       if (setting.lineRule !== f.lineRule || setting.lineSpacing !== f.lineSpacing) Object.assign(result, setting);
     }
@@ -141,12 +141,12 @@ export function openParagraphDialog({ format: f, unit = 'in', canSetOutline = tr
   }
   const tabsButton = el('button.btn.btn-outline', { type: 'button', onclick: async () => {
     try { const value = patch(); if (await openTabs?.(value) !== false) modal.close(); } catch (e) { modal.fail(e.message); }
-  } }, 'Tabs…');
+  } }, '制表位…');
   const defaultButton = el('button.btn.btn-ghost', { type: 'button', onclick: async () => {
     try { const value = patch(); if (await setDefault?.(value) !== false) modal.close(); } catch (e) { modal.fail(e.message); }
-  } }, 'Set As Default');
-  const modal = openFormatDialog({ title: 'Paragraph', className: 'fmt-paragraph-dialog', onClose,
-    body: [tabs.node, indentsPanel, breaksPanel, el('div.ed-font-preview-frame', {}, el('span.field-label', {}, 'Preview'), sample.node)],
+  } }, '设为默认值');
+  const modal = openFormatDialog({ title: '段落', className: 'fmt-paragraph-dialog', onClose,
+    body: [tabs.node, indentsPanel, breaksPanel, el('div.ed-font-preview-frame', {}, el('span.field-label', {}, '预览'), sample.node)],
     extra: [openTabs && tabsButton, setDefault && defaultButton].filter(Boolean),
     submit: () => { const value = patch(); return Object.keys(value).length ? apply(value) : true; } });
   if (initialTab !== 'indents') tabs.show(initialTab);

@@ -218,7 +218,7 @@ export const GREETING_NAMES = [
   ['titleFirstLast', 'Dr. Avery Quinn', '<<_TITLE0_ >><<_FIRST0_>><< _LAST0_>>'],
   ['nickname', 'Ave', '<<_NICK0_>>'],
 ];
-export const SAMPLE_RECIPIENT = { title: 'Dr.', first: 'Avery', middle: 'J.', last: 'Quinn', suffix: 'III', nickname: 'Ave', company: 'Northwind Studio', address1: '42 Harbor Lane', address2: 'Suite 5', city: 'Portland', state: 'OR', postal: '97201', country: 'United States' };
+export const SAMPLE_RECIPIENT = { title: '博士', first: 'Avery', middle: 'J.', last: 'Quinn', suffix: 'III', nickname: 'Ave', company: 'Northwind Studio', address1: '42 Harbor Lane', address2: 'Suite 5', city: 'Portland', state: 'OR', postal: '97201', country: 'United States' };
 
 /** The ADDRESSBLOCK format for dialog choices. */
 export function addressBlockFormat({ name = 'titleFirstLast', company = true, postal = true, country = 'unlessExcluded' } = {}) {

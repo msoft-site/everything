@@ -21,9 +21,9 @@ import { createOutlineView } from './outline-view.js';
 import { createReadMode } from './read-mode.js';
 import '../styles/document-views.css';
 
-const VIEW_LABELS = { print: 'Print Layout', read: 'Read Mode', web: 'Web Layout', outline: 'Outline', draft: 'Draft' };
-const GRID_SPACINGS = [[12, '⅛ inch'], [24, '¼ inch'], [48, '½ inch'], [96 / 2.54 * 0.5, '0.5 cm'], [96 / 2.54, '1 cm']];
-const STYLE_AREAS = [[0, 'None'], [48, '0.5 inch'], [96, '1 inch'], [144, '1.5 inch']];
+const VIEW_LABELS = { print: '页面视图', read: '阅读模式', web: 'Web 版式视图', outline: '大纲视图', draft: '草稿' };
+const GRID_SPACINGS = [[12, '⅛ 英寸'], [24, '¼ 英寸'], [48, '½ 英寸'], [96 / 2.54 * 0.5, '0.5 厘米'], [96 / 2.54, '1 厘米']];
+const STYLE_AREAS = [[0, '无'], [48, '0.5 英寸'], [96, '1 英寸'], [144, '1.5 英寸']];
 
 export function createDocumentViews({ editor, pkg, host, surface, root, error, commands: w, toggleNavigation, navigationVisible, rulers, layoutChanged = () => {}, exportDocument, documentTitle, onState = () => {} }) {
   let mode = 'print', attached = null, sideToSide = false, thumbnails = false, gridlines = false, gridSpacing = 24, styleArea = 0, split = null;
@@ -190,7 +190,7 @@ export function createDocumentViews({ editor, pkg, host, surface, root, error, c
   }
 
   /* ---- Page Movement ---- */
-  const thumbStrip = el('div.view-thumbnails', { role: 'list', 'aria-label': 'Page thumbnails', hidden: true });
+  const thumbStrip = el('div.view-thumbnails', { role: 'list', 'aria-label': '页面缩略图', hidden: true });
   surface.append(thumbStrip);
   function setSideToSide(on, { silent = false } = {}) {
     const engine = ready(); if (!engine) return;
@@ -349,7 +349,7 @@ export function createDocumentViews({ editor, pkg, host, surface, root, error, c
     // Page width that follows the window is restored as that, not as the scale it worked out to.
     const start = engine.zoom, startSetting = w.zoomSetting?.() ?? start, startMulti = engine.pages.classList.contains('is-multipage');
     let choice = null, modal = null, many = [2, 1];
-    const percent = el('input.input', { type: 'number', min: 10, max: 200, step: 1, required: true, value: Math.round(start * 100), 'aria-label': 'Percent' });
+    const percent = el('input.input', { type: 'number', min: 10, max: 200, step: 1, required: true, value: Math.round(start * 100), 'aria-label': '百分比' });
     // A field cleared to type another number is not a zoom of 0: it previews nothing until a number is there.
     const preview = () => { if (percent.value === '' || !percent.checkValidity()) return; apply(Number(percent.value) / 100, true); };
     percent.addEventListener('input', () => { choice = null; for (const r of radios) r.checked = false; preview(); });
@@ -357,17 +357,17 @@ export function createDocumentViews({ editor, pkg, host, surface, root, error, c
       const input = el('input', { type: 'radio', name: 'zoom-choice', value: String(value), onchange: () => { choice = value; if (typeof value === 'number') percent.value = String(Math.round(value * 100)); apply(value, true); } });
       return el('label.view-zoom-option', {}, input, label);
     };
-    const options = [option('200%', 2), option('100%', 1), option('75%', 0.75), option('Page width', 'width'), option('Text width', 'text'), option('Whole page', 'page')];
+    const options = [option('200%', 2), option('100%', 1), option('75%', 0.75), option('页宽', 'width'), option('文字宽度', 'text'), option('整页', 'page')];
     const radios = options.map(o => o.querySelector('input'));
-    const manyLabel = el('span', {}, '2 × 1 pages');
-    const grid = el('div.view-many-grid', { role: 'grid', 'aria-label': 'Many pages' }, ...Array.from({ length: 3 }, (_, row) => el('div', { role: 'row' }, ...Array.from({ length: 4 }, (_, col) => {
-      const cell = el('button.view-many-cell', { type: 'button', role: 'gridcell', 'aria-label': `${col + 1} by ${row + 1} pages`,
+    const manyLabel = el('span', {}, '2 × 1 页');
+    const grid = el('div.view-many-grid', { role: 'grid', 'aria-label': '多页' }, ...Array.from({ length: 3 }, (_, row) => el('div', { role: 'row' }, ...Array.from({ length: 4 }, (_, col) => {
+      const cell = el('button.view-many-cell', { type: 'button', role: 'gridcell', 'aria-label': `${col + 1} × ${row + 1} 页`,
         onmouseenter: () => mark(col + 1, row + 1), onfocus: () => mark(col + 1, row + 1),
         onclick: () => { many = [col + 1, row + 1]; choice = 'many'; for (const r of radios) r.checked = false; apply('many', true); } });
       cell.dataset.col = col + 1; cell.dataset.row = row + 1;
       return cell;
     }))));
-    const mark = (cols, rowsCount) => { manyLabel.textContent = `${cols} × ${rowsCount} pages`; for (const cell of grid.querySelectorAll('.view-many-cell')) cell.classList.toggle('is-on', cell.dataset.col <= cols && cell.dataset.row <= rowsCount); };
+    const mark = (cols, rowsCount) => { manyLabel.textContent = `${cols} × ${rowsCount} 页`; for (const cell of grid.querySelectorAll('.view-many-cell')) cell.classList.toggle('is-on', cell.dataset.col <= cols && cell.dataset.row <= rowsCount); };
     grid.addEventListener('mouseleave', () => mark(...many));
     mark(...many);
     // One Tab stop, on the pages chosen; the arrows move over the cells (marking as they go), Home and End along a row.
@@ -386,7 +386,7 @@ export function createDocumentViews({ editor, pkg, host, surface, root, error, c
       cellAt(...keys[e.key])?.focus();
     });
     const disabledFit = mode !== 'print';
-    if (disabledFit) for (const r of radios.slice(3)) { r.disabled = true; r.parentElement.title = 'Available in Print Layout'; }
+    if (disabledFit) for (const r of radios.slice(3)) { r.disabled = true; r.parentElement.title = '在页面视图中可用'; }
     // The choice the zoom is at now starts checked: 100% at 100%, Page width while the page follows the window.
     const current = startMulti ? null : radios.find(r => !r.disabled && (startSetting === 'fit' ? r.value === 'width' : startSetting === 'page' ? r.value === 'page' : Number(r.value) === startSetting));
     if (current) { current.checked = true; choice = current.value === 'width' || current.value === 'page' ? current.value : Number(current.value); }
@@ -399,7 +399,7 @@ export function createDocumentViews({ editor, pkg, host, surface, root, error, c
       if (live) percent.value = String(Math.round((editor()?.zoom ?? 1) * 100));
     }
     let applied = false;
-    modal = openModal({ title: 'Zoom', onClose: () => {
+    modal = openModal({ title: '显示比例', onClose: () => {
       // Cancel puts the zoom back as it was.
       if (!applied && editor()) { w.setZoom?.(startSetting); if (startMulti) w.multiplePages?.(); }
       queueMicrotask(() => editor()?.focus());
@@ -409,11 +409,11 @@ export function createDocumentViews({ editor, pkg, host, surface, root, error, c
       else apply(choice);
       applied = true; modal.close();
     } },
-    el('fieldset.view-zoom-set', {}, el('legend', {}, 'Zoom to'), el('div.view-zoom-options', {}, ...options),
-      el('div.view-many', {}, el('span.field-label', {}, 'Many pages'), grid, manyLabel)),
-    el('label.field', {}, el('span.field-label', {}, 'Percent'), percent),
-    el('p.field-hint', {}, 'Changes preview as you choose. Hold Ctrl (⌘ on a Mac) and scroll, or pinch, to zoom at any time.'),
-    el('div.modal-actions', {}, el('button.btn.btn-ghost', { type: 'button', onclick: () => modal.close() }, 'Cancel'), el('button.btn.btn-primary', { type: 'submit' }, 'OK'))) });
+    el('fieldset.view-zoom-set', {}, el('legend', {}, '显示比例'), el('div.view-zoom-options', {}, ...options),
+      el('div.view-many', {}, el('span.field-label', {}, '多页'), grid, manyLabel)),
+    el('label.field', {}, el('span.field-label', {}, '百分比'), percent),
+    el('p.field-hint', {}, '选择时实时预览更改。按住 Ctrl (Mac 上为 ⌘) 并滚动或双指缩放可随时调整显示比例。'),
+    el('div.modal-actions', {}, el('button.btn.btn-ghost', { type: 'button', onclick: () => modal.close() }, '取消'), el('button.btn.btn-primary', { type: 'submit' }, '确定'))) });
     percent.focus(); percent.select();
   }
   /** Zoom so the text area (the page less its margins) fills the window. */
@@ -455,7 +455,7 @@ export function createDocumentViews({ editor, pkg, host, surface, root, error, c
   }
   function newWindow() {
     if (!ready()) return;
-    if (typeof BroadcastChannel === 'undefined') { error(new Error('This browser cannot keep a second window in step.')); return; }
+    if (typeof BroadcastChannel === 'undefined') { error(new Error('此浏览器不支持多窗口同步。')); return; }
     const id = (crypto.randomUUID?.() || String(Math.random()).slice(2));
     const channel = new BroadcastChannel(`documents-window:${id}`);
     channel.onmessage = e => {
@@ -464,7 +464,7 @@ export function createDocumentViews({ editor, pkg, host, surface, root, error, c
     };
     channels.add(channel);
     const opened = window.open(new URL(`mirror.html#${id}`, location.href).href, '_blank');
-    if (!opened) { channel.close(); channels.delete(channel); toast('Allow pop-ups for this site to open a new window.', { icon: 'alert' }); return; }
+    if (!opened) { channel.close(); channels.delete(channel); toast('请允许此网站弹出窗口以打开新窗口。', { icon: 'alert' }); return; }
     sentRevision = editor()?.session.revision ?? null;
   }
   function broadcastChanges() {
@@ -484,8 +484,8 @@ export function createDocumentViews({ editor, pkg, host, surface, root, error, c
     }
     if (split) return;
     const pages = el('div.view-split-pages');
-    const pane = el('div.view-split-pane', { 'aria-label': 'Second pane of this document', tabindex: 0 }, pages);
-    const divider = el('div.view-split-divider', { role: 'separator', 'aria-orientation': 'horizontal', 'aria-label': 'Split position', tabindex: 0, 'aria-valuemin': 15, 'aria-valuemax': 85, 'aria-valuenow': 50 });
+    const pane = el('div.view-split-pane', { 'aria-label': '本文档的拆分窗格', tabindex: 0 }, pages);
+    const divider = el('div.view-split-divider', { role: 'separator', 'aria-orientation': 'horizontal', 'aria-label': '拆分位置', tabindex: 0, 'aria-valuemin': 15, 'aria-valuemax': 85, 'aria-valuenow': 50 });
     split = { pane, pages, divider, ratio: 0.5, dirty: new Set() };
     surface.classList.add('is-split');
     host.after(divider, pane);
@@ -587,24 +587,24 @@ export function createDocumentViews({ editor, pkg, host, surface, root, error, c
     if (id !== 'view') return [];
     const { command, menuButton, rows, when } = kit;
     const has = () => !!ready();
-    const vertical = command('Vertical', 'verticalMovement', () => setSideToSide(false), { size: 'large', attrs: { 'aria-pressed': 'true' } });
-    const across = command('Side to Side', 'sideToSide', () => setSideToSide(true), { size: 'large', text: 'Side to Side', attrs: { 'aria-pressed': 'false' } });
-    const thumbs = command('Thumbnails', 'thumbnails', () => { thumbnails = !thumbnails; showThumbnails(sideToSide && thumbnails); if (sideToSide) fitSideToSide(); onState(); }, { text: 'Thumbnails', attrs: { 'aria-pressed': 'false' } });
+    const vertical = command('垂直', 'verticalMovement', () => setSideToSide(false), { size: 'large', attrs: { 'aria-pressed': 'true' } });
+    const across = command('翻页', 'sideToSide', () => setSideToSide(true), { size: 'large', text: '翻页', attrs: { 'aria-pressed': 'false' } });
+    const thumbs = command('缩略图', 'thumbnails', () => { thumbnails = !thumbnails; showThumbnails(sideToSide && thumbnails); if (sideToSide) fitSideToSide(); onState(); }, { text: '缩略图', attrs: { 'aria-pressed': 'false' } });
     when(vertical, has, () => String(!sideToSide)); when(across, () => has() && mode !== 'outline', () => String(sideToSide));
     when(thumbs, () => has() && sideToSide, () => String(sideToSide && thumbnails));
-    const newWin = command('New Window', 'newWindow', newWindow, { size: 'large', text: 'New Window' });
-    const splitButton = command('Split', 'split', () => toggleSplit(), { size: 'large', attrs: { 'aria-pressed': 'false' } });
+    const newWin = command('新建窗口', 'newWindow', newWindow, { size: 'large', text: '新建窗口' });
+    const splitButton = command('拆分', 'split', () => toggleSplit(), { size: 'large', attrs: { 'aria-pressed': 'false' } });
     when(newWin, has); when(splitButton, () => has() && mode !== 'outline' && mode !== 'read', () => String(!!split));
-    const properties = command('Properties', 'info', () => w.documentProperties?.(), { size: 'large' });
+    const properties = command('属性', 'info', () => w.documentProperties?.(), { size: 'large' });
     when(properties, () => has() && !!w.documentProperties);
-    const gridMenu = menuButton('Grid Spacing', 'gridlines', () => GRID_SPACINGS.map(([value, label]) => ({ label, radio: true, checked: Math.abs(gridSpacing - value) < 0.01, onSelect: () => { gridSpacing = value; setGridlines(true); } })), { size: 'small', text: 'Grid Spacing' });
-    const styleMenu = menuButton('Style Area', 'styleArea', () => STYLE_AREAS.map(([value, label]) => ({ label, radio: true, checked: styleArea === value, onSelect: () => setStyleArea(value) })), { size: 'small', text: 'Style Area' });
+    const gridMenu = menuButton('网格间距', 'gridlines', () => GRID_SPACINGS.map(([value, label]) => ({ label, radio: true, checked: Math.abs(gridSpacing - value) < 0.01, onSelect: () => { gridSpacing = value; setGridlines(true); } })), { size: 'small', text: '网格间距' });
+    const styleMenu = menuButton('样式区域', 'styleArea', () => STYLE_AREAS.map(([value, label]) => ({ label, radio: true, checked: styleArea === value, onSelect: () => setStyleArea(value) })), { size: 'small', text: '样式区域' });
     when(styleMenu, () => has() && mode === 'draft');
     return [
-      { id: 'pageMovement', label: 'Page Movement', icon: 'sideToSide', priority: 4, after: 'immersive', items: [vertical, across, rows([thumbs], [gridMenu], [styleMenu])] },
-      { id: 'window', label: 'Window', icon: 'newWindow', priority: 5, after: 'zoom', items: [newWin, splitButton] },
+      { id: 'pageMovement', label: '页面移动', icon: 'sideToSide', priority: 4, after: 'immersive', items: [vertical, across, rows([thumbs], [gridMenu], [styleMenu])] },
+      { id: 'window', label: '窗口', icon: 'newWindow', priority: 5, after: 'zoom', items: [newWin, splitButton] },
       // Document properties live in the File backstage; the View tab offers them when it exists.
-      ...(w.documentProperties ? [{ id: 'properties', label: 'Properties', icon: 'info', priority: 2, after: 'window', items: [properties] }] : []),
+      ...(w.documentProperties ? [{ id: 'properties', label: '属性', icon: 'info', priority: 2, after: 'window', items: [properties] }] : []),
     ];
   }
   function setStyleArea(value) {
@@ -617,21 +617,21 @@ export function createDocumentViews({ editor, pkg, host, surface, root, error, c
     const { command, menuButton, rows, when, check, divider } = kit;
     const on = () => mode === 'outline' && !!ready() && !pkg()?.readOnly;
     const level = () => outline.currentLevel();
-    const toHeading1 = command('Promote to Heading 1', 'promoteHeading1', () => outline.promoteToHeading1(), { shortcut: `${MOD_KEY === 'Cmd' ? 'Option' : 'Alt'}+Shift+1` });
-    const promote = command('Promote', 'promote', () => outline.promote(), { shortcut: `${outline.shortcutHint}+Left` });
-    const levelMenu = menuButton('Outline Level', 'outlineView', () => outline.levelNames.map((label, i) => ({ label, radio: true, checked: level() === i + 1, onSelect: () => outline.setLevel(i + 1) })), { size: 'small', text: 'Outline Level' });
-    const demote = command('Demote', 'demote', () => outline.demote(), { shortcut: `${outline.shortcutHint}+Right` });
+    const toHeading1 = command('提升到标题 1', 'promoteHeading1', () => outline.promoteToHeading1(), { shortcut: `${MOD_KEY === 'Cmd' ? 'Option' : 'Alt'}+Shift+1` });
+    const promote = command('提升', 'promote', () => outline.promote(), { shortcut: `${outline.shortcutHint}+Left` });
+    const levelMenu = menuButton('大纲级别', 'outlineView', () => outline.levelNames.map((label, i) => ({ label, radio: true, checked: level() === i + 1, onSelect: () => outline.setLevel(i + 1) })), { size: 'small', text: '大纲级别' });
+    const demote = command('降低', 'demote', () => outline.demote(), { shortcut: `${outline.shortcutHint}+Right` });
     // Ctrl+Shift+N on a Mac too, where Cmd+Shift+N opens a private window and never reaches the page.
-    const toBody = command('Demote to Body Text', 'demoteBody', () => outline.demoteToBody(), { shortcut: 'Ctrl+Shift+N' });
-    const up = command('Move Up', 'moveUp', () => outline.moveUp(), { shortcut: `${outline.shortcutHint}+Up` });
-    const down = command('Move Down', 'moveDown', () => outline.moveDown(), { shortcut: `${outline.shortcutHint}+Down` });
-    const expand = command('Expand', 'expand', () => outline.expand(), { shortcut: `${outline.shortcutHint}+Plus` });
-    const collapse = command('Collapse', 'collapse', () => outline.collapse(), { shortcut: `${outline.shortcutHint}+Minus` });
-    const showLevel = menuButton('Show Level', 'showLevel', () => [...Array.from({ length: 9 }, (_, i) => ({ label: `Level ${i + 1}`, radio: true, checked: outline.showLevel === i + 1, onSelect: () => outline.setShowLevel(i + 1) })),
-      { label: 'All Levels', radio: true, checked: outline.showLevel === BODY_LEVEL, onSelect: () => outline.setShowLevel(BODY_LEVEL) }], { size: 'small', text: 'Show Level' });
-    const formatting = check('Show Text Formatting', () => outline.formatting, value => outline.setFormatting(value));
-    const firstLine = check('Show First Line Only', () => outline.firstLineOnly, value => outline.setFirstLineOnly(value));
-    const close = command('Close Outline View', 'closeView', () => setDocumentView(pkg()?.documentView && pkg().documentView !== 'outline' ? pkg().documentView : 'print'), { size: 'large', text: 'Close Outline View' });
+    const toBody = command('降低到正文', 'demoteBody', () => outline.demoteToBody(), { shortcut: 'Ctrl+Shift+N' });
+    const up = command('上移', 'moveUp', () => outline.moveUp(), { shortcut: `${outline.shortcutHint}+Up` });
+    const down = command('下移', 'moveDown', () => outline.moveDown(), { shortcut: `${outline.shortcutHint}+Down` });
+    const expand = command('展开', 'expand', () => outline.expand(), { shortcut: `${outline.shortcutHint}+Plus` });
+    const collapse = command('折叠', 'collapse', () => outline.collapse(), { shortcut: `${outline.shortcutHint}+Minus` });
+    const showLevel = menuButton('显示级别', 'showLevel', () => [...Array.from({ length: 9 }, (_, i) => ({ label: `${i + 1} 级`, radio: true, checked: outline.showLevel === i + 1, onSelect: () => outline.setShowLevel(i + 1) })),
+      { label: '所有级别', radio: true, checked: outline.showLevel === BODY_LEVEL, onSelect: () => outline.setShowLevel(BODY_LEVEL) }], { size: 'small', text: '显示级别' });
+    const formatting = check('显示文本格式', () => outline.formatting, value => outline.setFormatting(value));
+    const firstLine = check('仅显示首行', () => outline.firstLineOnly, value => outline.setFirstLineOnly(value));
+    const close = command('关闭大纲视图', 'closeView', () => setDocumentView(pkg()?.documentView && pkg().documentView !== 'outline' ? pkg().documentView : 'print'), { size: 'large', text: '关闭大纲视图' });
     const noSteal = (...controls) => { for (const c of controls) c.addEventListener('mousedown', e => e.preventDefault()); };
     close.classList.add('ribbon-wide');
     noSteal(toHeading1, promote, demote, toBody, up, down, expand, collapse, close);
@@ -639,11 +639,11 @@ export function createDocumentViews({ editor, pkg, host, surface, root, error, c
     when(up, () => on() && outline.canMove()); when(down, () => on() && outline.canMove());
     when(expand, () => mode === 'outline' && outline.isCollapsed()); when(collapse, () => mode === 'outline' && outline.canCollapse());
     when(showLevel, () => mode === 'outline'); when(close, () => mode === 'outline');
-    return [{ id: 'outlining', label: 'Outlining', contextual: 'outlining', selectOnAppear: true, groups: [
-      { id: 'outlineTools', label: 'Outline Tools', icon: 'outlineView', priority: 9, items: [
+    return [{ id: 'outlining', label: '大纲', contextual: 'outlining', selectOnAppear: true, groups: [
+      { id: 'outlineTools', label: '大纲工具', icon: 'outlineView', priority: 9, items: [
         rows([toHeading1, promote, levelMenu, demote, toBody], [up, down, divider(), expand, collapse, divider(), showLevel]),
         rows([formatting], [firstLine])] },
-      { id: 'outlineClose', label: 'Close', icon: 'closeView', priority: 8, items: [close] },
+      { id: 'outlineClose', label: '关闭', icon: 'closeView', priority: 8, items: [close] },
     ] }];
   }
 
@@ -652,15 +652,15 @@ export function createDocumentViews({ editor, pkg, host, surface, root, error, c
     const has = !!ready();
     // The menu bar's View menu already lists the views, Focus, Ruler, the sidebars and Zoom; these add to it.
     if (id === 'view') return [
-      { label: 'Gridlines', icon: 'gridlines', checked: gridlines, disabled: !has, onSelect: () => setGridlines(!gridlines) },
-      { label: 'Page Movement', icon: 'sideToSide', items: [
-        { label: 'Vertical', radio: true, checked: !sideToSide, disabled: !has, onSelect: () => setSideToSide(false) },
-        { label: 'Side to Side', radio: true, checked: sideToSide, disabled: !has, onSelect: () => setSideToSide(true) }] },
-      { label: 'Style Area', icon: 'styleArea', items: STYLE_AREAS.map(([value, label]) => ({ label, radio: true, checked: styleArea === value, disabled: !has || mode !== 'draft', onSelect: () => setStyleArea(value) })) },
+      { label: '网格线', icon: 'gridlines', checked: gridlines, disabled: !has, onSelect: () => setGridlines(!gridlines) },
+      { label: '页面移动', icon: 'sideToSide', items: [
+        { label: '垂直', radio: true, checked: !sideToSide, disabled: !has, onSelect: () => setSideToSide(false) },
+        { label: '翻页', radio: true, checked: sideToSide, disabled: !has, onSelect: () => setSideToSide(true) }] },
+      { label: '样式区域', icon: 'styleArea', items: STYLE_AREAS.map(([value, label]) => ({ label, radio: true, checked: styleArea === value, disabled: !has || mode !== 'draft', onSelect: () => setStyleArea(value) })) },
     ];
     if (id === 'window') return [
-      { label: 'New Window', icon: 'newWindow', disabled: !has, onSelect: newWindow },
-      { label: split ? 'Remove Split' : 'Split', icon: 'split', checked: !!split, disabled: !has || mode === 'outline' || mode === 'read', onSelect: () => toggleSplit() },
+      { label: '新建窗口', icon: 'newWindow', disabled: !has, onSelect: newWindow },
+      { label: split ? '取消拆分' : '拆分', icon: 'split', checked: !!split, disabled: !has || mode === 'outline' || mode === 'read', onSelect: () => toggleSplit() },
     ];
     return [];
   }

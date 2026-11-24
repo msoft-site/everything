@@ -10,7 +10,7 @@
  *         { note: 'Text' },                    // a line of prose, read as a note, not a dimmed item
  *         { label, icon?, items: [...] },      // a submenu written out here
  *         { label, icon?, submenu(anchor) },   // a submenu its own opener builds
- *         { separator: true }, { header: 'Label' }, { custom: HTMLElement }]
+ *         { separator: true }, { header: '标题' }, { custom: HTMLElement }]
  *
  * A submenu opens under the mouse after a moment, or on Enter or Right, and
  * its items reach the same `openMenu` from an anchor inside the menu above:

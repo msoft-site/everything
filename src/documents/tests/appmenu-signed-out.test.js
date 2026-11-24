@@ -35,16 +35,16 @@ afterEach(() => {
 it('offers the sign-in instead of sign-out while nobody is signed in', async () => {
   await session.init();
   openAppMenu(anchor);
-  expect(header()).toContain('Not signed in');
+  expect(header()).toContain('未登录');
   const labels = items();
-  expect(labels.some((l) => l.startsWith('Sign in to Puter'))).toBe(true);
-  expect(labels.some((l) => l.startsWith('Sign out'))).toBe(false);
-  [...document.querySelectorAll('[role="menuitem"]')].find((item) => item.textContent.startsWith('Sign in to Puter')).click();
+  expect(labels.some((l) => l.startsWith('登录 Puter'))).toBe(true);
+  expect(labels.some((l) => l.startsWith('退出登录'))).toBe(false);
+  [...document.querySelectorAll('[role="menuitem"]')].find((item) => item.textContent.startsWith('登录 Puter')).click();
   await vi.waitFor(() => expect(sdk.auth.signIn).toHaveBeenCalledTimes(1));
   await vi.waitFor(() => expect(session.signedIn).toBe(true));
 
   openAppMenu(anchor);
   expect(header()).toContain('nariman');
-  expect(items().some((l) => l.startsWith('Sign out'))).toBe(true);
-  expect(items().some((l) => l.startsWith('Sign in to Puter'))).toBe(false);
+  expect(items().some((l) => l.startsWith('退出登录'))).toBe(true);
+  expect(items().some((l) => l.startsWith('登录 Puter'))).toBe(false);
 });

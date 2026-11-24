@@ -11,7 +11,7 @@ import { engineApi } from '../lib/engine-api.js';
 import { openColorPalette } from '../ui/color-palette.js';
 import { TEXT_COLORS } from './text-color.js';
 const EMU_PER_INCH = 914400;
-const LINE_WEIGHTS = [['¼ pt', 3175], ['½ pt', 6350], ['¾ pt', 9525], ['1 pt', 12700], ['1½ pt', 19050], ['2¼ pt', 28575], ['3 pt', 38100], ['4½ pt', 57150], ['6 pt', 76200]];
+const LINE_WEIGHTS = [['¼ 磅', 3175], ['½ 磅', 6350], ['¾ 磅', 9525], ['1 磅', 12700], ['1½ 磅', 19050], ['2¼ 磅', 28575], ['3 磅', 38100], ['4½ 磅', 57150], ['6 磅', 76200]];
 
 /**
  * Home-tab editing commands: Format Painter, Change Case, Sort and Show/Hide ¶. Each change goes through
@@ -19,7 +19,7 @@ const LINE_WEIGHTS = [['¼ pt', 3175], ['½ pt', 6350], ['¾ pt', 9525], ['1 pt'
  */
 /** Paragraph Spacing presets: name, space before and after (pt), line spacing (lines). */
 export const PARAGRAPH_SPACING = [
-  ['No Paragraph Space', 0, 0, 1], ['Compact', 0, 4, 1], ['Tight', 0, 6, 1.15], ['Open', 0, 10, 1.15], ['Relaxed', 0, 6, 1.5], ['Double', 0, 8, 2],
+  ['无段落间距', 0, 0, 1], ['紧凑', 0, 4, 1], ['紧密', 0, 6, 1.15], ['开放', 0, 10, 1.15], ['宽松', 0, 6, 1.5], ['双倍', 0, 8, 2],
 ];
 
 // Formatting marks stay on for the next document opened in this tab: the setting is per window, not per document.
@@ -78,23 +78,23 @@ export function createEditingCommands({ editor, pkg, host, refresh, zoomControl,
         return { x: Math.round((fragment.x - page.left) * 9525), y: Math.max(0, Math.round((line.y - top) * 9525)) };
       };
       const choose = value => { const engine = ready(); if (!engine) return; engine.finishComposition(); engine.execute(() => setImageWrap(engine.model, value, value !== 'inline' && mode === 'inline' ? place() : undefined)); engine.focus(); };
-      const option = (label, value, icon) => ({ label, icon, radio: true, checked: mode === value, disabled: !image || !!wrapUnavailable(image, value), hint: image && wrapUnavailable(image, value) || undefined, onSelect: () => choose(value) });
-      const floating = !!image?.anchor && mode !== 'other';
-      return [option('In Line with Text', 'inline', 'wrapInline'), option('Square', 'square', 'wrapSquare'), option('Top and Bottom', 'topAndBottom', 'wrapTopBottom'),
-        option('Behind Text', 'behind', 'behindText'), option('In Front of Text', 'front', 'inFront'), { separator: true },
-        { label: 'Bring to Front', icon: 'bringForward', disabled: !floating, onSelect: () => { const engine = ready(); if (engine) { engine.execute(() => engine.model.arrangeImage('front')); engine.focus(); } } },
-        { label: 'Send to Back', icon: 'sendBackward', disabled: !floating, onSelect: () => { const engine = ready(); if (engine) { engine.execute(() => engine.model.arrangeImage('back')); engine.focus(); } } }];
+      const option = (label, value, icon) => ({ label, icon, radio: true, checked: mode === value, disabled: !image || !wrapUnavailable(image, value), hint: image && wrapUnavailable(image, value) || undefined, onSelect: () => choose(value) });
+      const floating = !image?.anchor && mode !== 'other';
+      return [option('嵌入型', 'inline', 'wrapInline'), option('四周型环绕', 'square', 'wrapSquare'), option('上下型环绕', 'topAndBottom', 'wrapTopBottom'),
+        option('衬于文字下方', 'behind', 'behindText'), option('浮于文字上方', 'front', 'inFront'), { separator: true },
+        { label: '置于顶层', icon: 'bringForward', disabled: !floating, onSelect: () => { const engine = ready(); if (engine) { engine.execute(() => engine.model.arrangeImage('front')); engine.focus(); } } },
+        { label: '置于底层', icon: 'sendBackward', disabled: !floating, onSelect: () => { const engine = ready(); if (engine) { engine.execute(() => engine.model.arrangeImage('back')); engine.focus(); } } }];
     },
-    canWrap: () => !!ready()?.model.selectedImage,
+    canWrap: () => !ready()?.model.selectedImage,
     /** Picture Format → Rotate and Size, for pictures (drawings keep their own geometry). */
-    pictureSelected: () => { const image = ready()?.model.selectedImage; return !!image && !image.retainedDrawing && image.kind !== 'chart'; },
+    pictureSelected: () => { const image = ready()?.model.selectedImage; return !image && !image.retainedDrawing && image.kind !== 'chart'; },
     rotateItems() {
-      const engine = ready(), image = engine?.model.selectedImage, ok = !!image && !image.retainedDrawing && image.kind !== 'chart';
+      const engine = ready(), image = engine?.model.selectedImage, ok = !image && !image.retainedDrawing && image.kind !== 'chart';
       const turn = degrees => { const engine = ready(); if (!engine) return; engine.finishComposition(); const current = engine.model.selectedImage.rotation || 0;
         engine.execute(() => engine.model.setImageProperties({ rotation: ((current + degrees * 60000) % 21600000 + 21600000) % 21600000 })); engine.focus(); };
       const flip = key => { const engine = ready(); if (!engine) return; engine.finishComposition(); engine.execute(() => engine.model.setImageProperties({ [key]: !engine.model.selectedImage[key] })); engine.focus(); };
-      return [{ label: 'Rotate Right 90°', disabled: !ok, onSelect: () => turn(90) }, { label: 'Rotate Left 90°', disabled: !ok, onSelect: () => turn(-90) },
-        { label: 'Flip Vertical', disabled: !ok, onSelect: () => flip('flipV') }, { label: 'Flip Horizontal', disabled: !ok, onSelect: () => flip('flipH') }];
+      return [{ label: '向右旋转 90°', disabled: !ok, onSelect: () => turn(90) }, { label: '向左旋转 90°', disabled: !ok, onSelect: () => turn(-90) },
+        { label: '垂直翻转', disabled: !ok, onSelect: () => flip('flipV') }, { label: '水平翻转', disabled: !ok, onSelect: () => flip('flipH') }];
     },
     pictureSize(key) { const image = ready()?.model.selectedImage; return image && !image.retainedDrawing ? Math.round(image[key] / EMU_PER_INCH * 100) / 100 : null; },
     setPictureSize(key, inches) {
@@ -107,13 +107,13 @@ export function createEditingCommands({ editor, pkg, host, refresh, zoomControl,
     },
     /** Insert → Cover Page: original designs filled with the document's name and today's date, ready to edit. */
     coverPageItems() {
-      const descriptions = { simple: 'Centered title, subtitle, author and date', banded: 'Title on a dark band', lined: 'Ruled title with author and date at the right' };
-      return [{ header: 'Built-In' }, ...COVER_DESIGNS.map(design => ({ label: design.name, hint: descriptions[design.id], disabled: !ready(), onSelect: () => {
+      const descriptions = { simple: '居中标题、副标题、作者和日期', banded: '深色条带上的标题', lined: '带有作者和日期的横线标题' };
+      return [{ header: '内置' }, ...COVER_DESIGNS.map(design => ({ label: design.name, hint: descriptions[design.id], disabled: !ready(), onSelect: () => {
         const engine = ready(); if (!engine) return;
         engine.finishComposition();
         if (engine.session.path !== null) engine.editStory(null);
         const date = new Intl.DateTimeFormat(undefined, { dateStyle: 'long' }).format(new Date());
-        engine.execute(() => insertCoverPage(engine.model, design.id, { title: documentTitle() || 'Document Title', subtitle: 'Document subtitle', author: 'Author Name', date }));
+        engine.execute(() => insertCoverPage(engine.model, design.id, { title: documentTitle() || '文档标题', subtitle: '文档副标题', author: '作者姓名', date }));
         engine.revealCaret(); engine.focus();
       } }))];
     },
@@ -132,8 +132,8 @@ export function createEditingCommands({ editor, pkg, host, refresh, zoomControl,
     shapeColorMenu(anchor, key) {
       const shape = engineApi()?.selectedShape(ready()); if (!shape) return;
       const value = shape.params[key];
-      openColorPalette({ anchor, label: key === 'fill' ? 'Shape Fill' : 'Shape Outline', value: value ?? 'none', choices: TEXT_COLORS, custom: true, customLabel: key === 'fill' ? 'fill color' : 'outline color',
-        reset: { value: 'none', label: key === 'fill' ? 'No Fill' : 'No Outline', indicator: '∅' },
+      openColorPalette({ anchor, label: key === 'fill' ? '形状填充' : '形状轮廓', value: value ?? 'none', choices: TEXT_COLORS, custom: true, customLabel: key === 'fill' ? '填充颜色' : '轮廓颜色',
+        reset: { value: 'none', label: key === 'fill' ? '无填充' : '无轮廓', indicator: '∅' },
         onPick: color => { const engine = ready(); if (engine) engineApi().updateShape(engine, { [key]: color === 'none' ? null : color }).catch(error); } });
     },
     shapeWeightItems() {
@@ -167,11 +167,11 @@ export function createEditingCommands({ editor, pkg, host, refresh, zoomControl,
         engine.focus();
       };
       const same = (a, b) => a !== null && Math.abs(a - b) < 0.01;
-      return [{ header: 'Built-In' },
-        { label: 'Style Set Default', hint: 'Inherit from the document defaults', disabled: !id || !engine || !!pkg()?.readOnly,
+      return [{ header: '内置' },
+        { label: '样式集默认值', hint: '继承文档默认值', disabled: !id || !engine || !!pkg()?.readOnly,
           onSelect: () => apply({ spaceBefore: null, spaceAfter: null, lineSpacing: null, lineRule: null }) },
         ...PARAGRAPH_SPACING.map(([label, before, after, line]) => ({
-          label, hint: `Before ${before} pt · After ${after} pt · Line ${line}`, radio: true, disabled: !id || !engine || !!pkg()?.readOnly,
+          label, hint: `段前 ${before} 磅 · 段后 ${after} 磅 · 行距 ${line}`, radio: true, disabled: !id || !engine || !!pkg()?.readOnly,
           checked: !!current && current.rule === 'auto' && same(current.before, before) && same(current.after, after) && same(current.line, line),
           onSelect: () => apply({ spaceBefore: before, spaceAfter: after, lineSpacing: line, lineRule: 'auto' }),
         }))];
@@ -186,7 +186,7 @@ export function createEditingCommands({ editor, pkg, host, refresh, zoomControl,
     sortParagraphs() {
       const engine = ready(); if (!engine) return;
       engine.finishComposition();
-      const type = el('select.input', { 'aria-label': 'Type' }, el('option', { value: 'text' }, 'Text'), el('option', { value: 'number' }, 'Number'), el('option', { value: 'date' }, 'Date'));
+      const type = el('select.input', { 'aria-label': '类型' }, el('option', { value: 'text' }, '拼音'), el('option', { value: 'number' }, '数字'), el('option', { value: 'date' }, '日期'));
       const order = name => el('input', { type: 'radio', name: 'sort-order', value: name, checked: name === 'ascending' });
       const ascending = order('ascending'), descending = order('descending');
       const caseSensitive = el('input', { type: 'checkbox' });
@@ -199,14 +199,14 @@ export function createEditingCommands({ editor, pkg, host, refresh, zoomControl,
         if (!ok && failure) { message.textContent = failure.message; message.hidden = false; return; }
         modal.close(); engine.focus();
       } },
-      el('div.ed-sort-row', {}, el('span.field-label', {}, 'Sort by'), el('span.ed-sort-value', {}, 'Paragraphs')),
-      el('label.ed-sort-row', {}, el('span.field-label', {}, 'Type'), type),
-      el('fieldset.ed-sort-order', {}, el('legend.visually-hidden', {}, 'Order'),
-        el('label', {}, ascending, 'Ascending'), el('label', {}, descending, 'Descending')),
-      el('label.ed-check', {}, caseSensitive, 'Case sensitive'),
+      el('div.ed-sort-row', {}, el('span.field-label', {}, '主要关键字'), el('span.ed-sort-value', {}, '段落数')),
+      el('label.ed-sort-row', {}, el('span.field-label', {}, '类型'), type),
+      el('fieldset.ed-sort-order', {}, el('legend.visually-hidden', {}, '顺序'),
+        el('label', {}, ascending, '升序'), el('label', {}, descending, '降序')),
+      el('label.ed-check', {}, caseSensitive, '区分大小写'),
       message,
-      el('div.row.row-end', {}, el('button.btn.btn-ghost', { type: 'button', onclick: () => modal.close() }, 'Cancel'), el('button.btn.btn-primary', { type: 'submit' }, 'OK')));
-      modal = openModal({ title: 'Sort Text', content, onClose: () => queueMicrotask(() => editor()?.focus()) });
+      el('div.row.row-end', {}, el('button.btn.btn-ghost', { type: 'button', onclick: () => modal.close() }, '取消'), el('button.btn.btn-primary', { type: 'submit' }, '确定')));
+      modal = openModal({ title: '排序文字', content, onClose: () => queueMicrotask(() => editor()?.focus()) });
       type.focus();
     },
     toggleMarks() {
@@ -237,12 +237,12 @@ export function createEditingCommands({ editor, pkg, host, refresh, zoomControl,
       const outline = (label, width) => ({ label, radio: true, disabled, checked: !!format.textOutline && format.textOutline.width === width,
         onSelect: () => apply({ textOutline: { width, color: ink, join: 'round', cap: 'flat', miter: 8 } }) });
       return [
-        { header: 'Outline' },
-        { label: 'No Outline', radio: true, disabled, checked: !format.textOutline, onSelect: () => apply({ textOutline: null }) },
-        outline('Thin Outline (¾ pt)', 9525), outline('Medium Outline (1½ pt)', 19050),
-        { separator: true }, { header: 'Shadow' },
-        { label: 'No Shadow', radio: true, disabled, checked: !format.textShadow, onSelect: () => apply({ textShadow: null }) },
-        shadow('Offset: Bottom Right', 38100, 2700000), shadow('Offset: Bottom', 38100, 5400000), shadow('Offset: Right', 38100, 0),
+        { header: '轮廓' },
+        { label: '无轮廓', radio: true, disabled, checked: !format.textOutline, onSelect: () => apply({ textOutline: null }) },
+        outline('细轮廓 (¾ 磅)', 9525), outline('中等轮廓 (1½ 磅)', 19050),
+        { separator: true }, { header: '阴影' },
+        { label: '无阴影', radio: true, disabled, checked: !format.textShadow, onSelect: () => apply({ textShadow: null }) },
+        shadow('偏移: 右下', 38100, 2700000), shadow('偏移: 下', 38100, 5400000), shadow('偏移: 右', 38100, 0),
       ];
     },
     /** Home → Font launcher and Ctrl/Cmd+D. */

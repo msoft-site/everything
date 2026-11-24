@@ -170,32 +170,32 @@ export function createProofing({ editor, pkg, error, onState = () => {} }) {
 
   /* ---- Spelling pane ---- */
   let current = null;
-  const heading = el('h2', {}, 'Spelling');
+  const heading = el('h2', {}, '拼写检查');
   const status = el('p.ed-proof-status', { role: 'status' });
   const context = el('p.ed-proof-context');
-  const suggestions = el('div.ed-proof-suggestions', { role: 'listbox', 'aria-label': 'Suggestions' });
+  const suggestions = el('div.ed-proof-suggestions', { role: 'listbox', 'aria-label': '建议' });
   const chooseSuggestion = item => { for (const other of suggestions.children) other.setAttribute('aria-selected', String(other === item)); };
   // One Tab stop, on the chosen suggestion; the arrows move through the suggestions and choose as they go.
   const settleSuggestions = listboxKeys(suggestions, chooseSuggestion);
   const button = (label, onclick, primary = false) => el(primary ? 'button.btn.btn-primary' : 'button.btn.btn-outline', { type: 'button', onclick }, label);
-  const change = button('Change', () => {
+  const change = button('更改', () => {
     const choice = selectedSuggestion(); if (!current || !choice) return;
     const at = replaceWord(current, choice);
     next(at ? at.start + choice.length : current.start);
   }, true);
-  const changeAll = button('Change All', () => {
+  const changeAll = button('全部更改', () => {
     const choice = selectedSuggestion(); if (!current || !choice) return;
     const at = locate(current);
     replaceAll(current.word, choice);
     queueMicrotask(() => next(at ? at.start : current.start));
   });
-  const ignoreOnce = button('Ignore Once', () => { if (!current) return; ignoreHere(current); next(current.end); });
-  const ignoreAllButton = button('Ignore All', () => { if (!current) return; ignoreAll(current.word); next(current.end); });
-  const add = button('Add to Dictionary', () => { if (!current) return; addToDictionary(current.word); next(current.end); });
+  const ignoreOnce = button('忽略一次', () => { if (!current) return; ignoreHere(current); next(current.end); });
+  const ignoreAllButton = button('全部忽略', () => { if (!current) return; ignoreAll(current.word); next(current.end); });
+  const add = button('添加到词典', () => { if (!current) return; addToDictionary(current.word); next(current.end); });
   const actions = el('div.ed-proof-actions', {}, change, changeAll, ignoreOnce, ignoreAllButton, add);
-  const detail = el('div.ed-proof-detail', {}, el('h3', {}, 'Not in Dictionary'), context, el('h3', {}, 'Suggestions'), suggestions, actions);
-  const pane = el('aside.canvas-outline-panel.ed-proof-pane', { 'aria-label': 'Spelling', hidden: true },
-    el('div.canvas-panel-heading', {}, heading, el('button.icon-btn', { type: 'button', 'aria-label': 'Close Spelling pane', onclick: () => closePane() }, iconEl('x', 18))),
+  const detail = el('div.ed-proof-detail', {}, el('h3', {}, '词典中没有'), context, el('h3', {}, '建议'), suggestions, actions);
+  const pane = el('aside.canvas-outline-panel.ed-proof-pane', { 'aria-label': '拼写检查', hidden: true },
+    el('div.canvas-panel-heading', {}, heading, el('button.icon-btn', { type: 'button', 'aria-label': '关闭拼写检查窗格', onclick: () => closePane() }, iconEl('x', 18))),
     el('div.canvas-panel-scroll', {}, status, detail));
   pane.addEventListener('keydown', e => { if (e.key === 'Escape' && !isComposing(e)) { e.preventDefault(); closePane(); } });
   function selectedSuggestion() { return suggestions.querySelector('[aria-selected="true"]')?.dataset.value || null; }
@@ -209,7 +209,7 @@ export function createProofing({ editor, pkg, error, onState = () => {} }) {
     current = found || null;
     detail.hidden = !current;
     if (!current) {
-      status.textContent = failure ? failure.message : 'The spelling check is complete. No spelling errors found.';
+      status.textContent = failure ? failure.message : '拼写检查完成。未发现拼写错误。';
       engine.focus(); onState(); return;
     }
     status.textContent = '';
@@ -218,7 +218,7 @@ export function createProofing({ editor, pkg, error, onState = () => {} }) {
     const text = results.text, lineStart = Math.max(text.lastIndexOf('\n', current.start) + 1, current.start - 60), lineEnd = Math.min(...[text.indexOf('\n', current.end), current.end + 60].filter(n => n >= 0));
     context.replaceChildren((lineStart > 0 && text[lineStart - 1] !== '\n' ? '…' : '') + text.slice(lineStart, current.start), el('mark', {}, text.slice(current.start, current.end)), text.slice(current.end, lineEnd));
     const options = suggestionsFor(current.word);
-    suggestions.replaceChildren(...(options.length ? options : ['(no suggestions)']).map((option, i) => {
+    suggestions.replaceChildren(...(options.length ? options : ['(无建议)']).map((option, i) => {
       const item = el('button.ed-proof-suggestion', { type: 'button', role: 'option', 'aria-selected': String(!i && !!options.length), dataset: { value: options.length ? option : '' }, disabled: !options.length,
         onclick: () => chooseSuggestion(item),
         ondblclick: () => change.click() }, option);
@@ -253,7 +253,7 @@ export function createProofing({ editor, pkg, error, onState = () => {} }) {
       const engine = engineReady(); if (!engine) return;
       rechecked = true;
       if (!enabled) this.setEnabled(true);
-      pane.hidden = false; status.textContent = 'Checking…'; detail.hidden = true; onState();
+      pane.hidden = false; status.textContent = '正在检查…'; detail.hidden = true; onState();
       try { speller ??= await loadSpeller(); } catch (e) { status.textContent = e.message; return; }
       next(engine.session.path === null ? engine.model.range[0] : 0);
     },
@@ -271,10 +271,10 @@ export function createProofing({ editor, pkg, error, onState = () => {} }) {
       if (!m || !speller) return [];
       const options = suggestionsFor(m.word).slice(0, 5);
       return [
-        ...(options.length ? options.map(option => ({ label: option, labelStyle: { fontWeight: '600' }, disabled: !editable(), onSelect: () => replaceWord(m, option) })) : [{ label: '(no spelling suggestions)', disabled: true }]),
+        ...(options.length ? options.map(option => ({ label: option, labelStyle: { fontWeight: '600' }, disabled: !editable(), onSelect: () => replaceWord(m, option) })) : [{ label: '(无拼写建议)', disabled: true }]),
         { separator: true },
-        { label: 'Ignore All', onSelect: () => ignoreAll(m.word) },
-        { label: 'Add to Dictionary', onSelect: () => addToDictionary(m.word) },
+        { label: '全部忽略', onSelect: () => ignoreAll(m.word) },
+        { label: '添加到词典', onSelect: () => addToDictionary(m.word) },
         { separator: true },
       ];
     },

@@ -33,7 +33,7 @@ export function openModal({ title, content, onClose, wide = false }) {
     el('div.sheet-handle'),
     el('div.modal-head', {},
       el('h2.modal-title', {}, title),
-      el('button.icon-btn', { type: 'button', html: icon('x', 20), 'aria-label': 'Close', onclick: () => close() })),
+      el('button.icon-btn', { type: 'button', html: icon('x', 20), 'aria-label': '关闭', title: '关闭', onclick: () => close() })),
     content);
 
   let closed = false;

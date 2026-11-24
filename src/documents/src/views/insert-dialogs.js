@@ -21,7 +21,7 @@ const select = (label, options, value) => {
   return node;
 };
 /** A modal form: content nodes, a primary action and Cancel. onSubmit returns false to keep it open. */
-export function formDialog({ title, content, submit = 'Insert', onSubmit, wide = false, className = '', onClose }) {
+export function formDialog({ title, content, submit = '插入', onSubmit, wide = false, className = '', onClose }) {
   let modal;
   const error = el('p.field-error', { role: 'alert', hidden: true });
   const primary = el('button.btn.btn-primary', { type: 'submit' }, submit);
@@ -29,7 +29,7 @@ export function formDialog({ title, content, submit = 'Insert', onSubmit, wide =
     e.preventDefault(); error.hidden = true;
     try { if (await onSubmit() !== false) modal.close(); }
     catch (failure) { error.textContent = failure.message || String(failure); error.hidden = false; }
-  } }, ...content, error, el('div.row.row-end', {}, el('button.btn.btn-ghost', { type: 'button', onclick: () => modal.close() }, 'Cancel'), primary));
+  } }, ...content, error, el('div.row.row-end', {}, el('button.btn.btn-ghost', { type: 'button', onclick: () => modal.close() }, '取消'), primary));
   modal = openModal({ title, content: form, wide, onClose });
   return { modal, form, primary, error };
 }
@@ -41,7 +41,7 @@ const store = (key, value) => { try { localStorage.setItem(key, value); } catch 
 /** Date and Time: the formats as today's date, a choice to keep it updated as a field, and a default. */
 export function openDateTime({ onInsert, onClose }) {
   const now = new Date(), preferred = stored(PICTURE_KEY, DATE_PICTURES[0]);
-  const list = el('div.ed-choice-list', { role: 'listbox', 'aria-label': 'Available formats' });
+  const list = el('div.ed-choice-list', { role: 'listbox', 'aria-label': '可用格式' });
   let chosen = DATE_PICTURES.includes(preferred) ? preferred : DATE_PICTURES[0];
   const options = DATE_PICTURES.map(picture => {
     const option = el('button.ed-choice', { type: 'button', role: 'option', 'aria-selected': String(picture === chosen), dataset: { picture }, onclick: () => pick(picture),
@@ -54,9 +54,9 @@ export function openDateTime({ onInsert, onClose }) {
   listboxKeys(list, option => pick(option.dataset.picture));
   const pick = picture => { chosen = picture; for (const o of options) o.setAttribute('aria-selected', String(o.dataset.picture === picture)); };
   const update = el('input', { type: 'checkbox', checked: stored(`${PICTURE_KEY}.update`, '0') === '1' });
-  const setDefault = el('button.btn.btn-ghost.btn-sm', { type: 'button', onclick: () => { store(PICTURE_KEY, chosen); setDefault.textContent = 'Saved as default'; } }, 'Set as Default');
-  const dialog = formDialog({ title: 'Date and Time', onClose, content: [list, el('div.row', {}, el('label.ed-check', {}, update, 'Update automatically'), el('span.spacer', { style: { flex: '1' } }), setDefault),
-    el('p.field-hint', {}, 'An automatic date is a DATE or TIME field: it shows the current date whenever fields update (F9).')],
+  const setDefault = el('button.btn.btn-ghost.btn-sm', { type: 'button', onclick: () => { store(PICTURE_KEY, chosen); setDefault.textContent = '已设为默认值'; } }, '设为默认值');
+  const dialog = formDialog({ title: '日期和时间', onClose, content: [list, el('div.row', {}, el('label.ed-check', {}, update, '自动更新'), el('span.spacer', { style: { flex: '1' } }), setDefault),
+    el('p.field-hint', {}, '自动更新的日期为 DATE 或 TIME 域：更新域 (F9) 时将显示当前日期。')],
   onSubmit: () => { store(`${PICTURE_KEY}.update`, update.checked ? '1' : '0'); onInsert({ picture: chosen, text: formatDatePicture(new Date(), chosen), field: update.checked }); } });
   (options.find(o => o.dataset.picture === chosen) || options[0]).focus();
   return dialog.modal;
@@ -65,20 +65,20 @@ export function openDateTime({ onInsert, onClose }) {
 /* ---- Field ---- */
 /** Field: a field type, its argument and switches, with the instruction and its result previewed. */
 export function openFieldDialog({ context, bookmarks = [], onInsert, onClose }) {
-  const categories = ['(All)', ...new Set(FIELD_CATALOG.map(f => f.category))];
-  const category = select('Categories', categories.map(c => [c, c]));
-  const names = el('select.input.insert-field-names', { size: 10, 'aria-label': 'Field names' });
+  const categories = ['(全部)', ...new Set(FIELD_CATALOG.map(f => f.category))];
+  const category = select('类别', categories.map(c => [c, c]));
+  const names = el('select.input.insert-field-names', { size: 10, 'aria-label': '域名' });
   const description = el('p.field-hint');
-  const argument = el('input.input', { type: 'text', 'aria-label': 'Field argument' });
-  const property = select('Property', DOCUMENT_PROPERTY_NAMES.map(([label]) => [label, label]));
-  const bookmark = select('Bookmark', bookmarks.map(b => [b, b]));
-  const picture = select('Date format', DATE_PICTURES.map(p => [p, formatDatePicture(context.now || new Date(), p)]));
-  const format = select('Format', [['', '(none)']]);
+  const argument = el('input.input', { type: 'text', 'aria-label': '域参数' });
+  const property = select('属性', DOCUMENT_PROPERTY_NAMES.map(([label]) => [label, label]));
+  const bookmark = select('书签', bookmarks.map(b => [b, b]));
+  const picture = select('日期格式', DATE_PICTURES.map(p => [p, formatDatePicture(context.now || new Date(), p)]));
+  const format = select('格式', [['', '(无)']]);
   const preserve = el('input', { type: 'checkbox', checked: true });
   const code = el('code.insert-field-code'), result = el('output.insert-field-result');
-  const argumentField = field('Argument', argument), propertyField = field('Property', property), bookmarkField = field('Bookmark name', bookmark), pictureField = field('Date and time format', picture), formatField = field('Format', format);
+  const argumentField = field('参数', argument), propertyField = field('属性', property), bookmarkField = field('书签名', bookmark), pictureField = field('日期和时间格式', picture), formatField = field('格式', format);
   const fill = () => {
-    const shown = FIELD_CATALOG.filter(f => category.value === '(All)' || f.category === category.value);
+    const shown = FIELD_CATALOG.filter(f => category.value === '(全部)' || f.category === category.value);
     const current = names.value;
     names.replaceChildren(...shown.map(f => el('option', { value: f.name }, f.name)));
     names.value = shown.some(f => f.name === current) ? current : shown[0]?.name;
@@ -101,7 +101,7 @@ export function openFieldDialog({ context, bookmarks = [], onInsert, onClose }) 
     const kind = formats.map(([v]) => v).join();
     if (format.dataset.kind !== kind) {
       const chosen = format.value;
-      format.replaceChildren(el('option', { value: '' }, '(none)'), ...formats.map(([v, label]) => el('option', { value: v }, label)));
+      format.replaceChildren(el('option', { value: '' }, '(无)'), ...formats.map(([v, label]) => el('option', { value: v }, label)));
       format.value = formats.some(([v]) => v === chosen) ? chosen : '';
       format.dataset.kind = kind;
     }
@@ -109,20 +109,20 @@ export function openFieldDialog({ context, bookmarks = [], onInsert, onClose }) 
     const text = instruction();
     code.textContent = `{${text}}`;
     const value = evaluateField(text, context);
-    result.textContent = value === null ? (entry.name === 'PAGE' ? String(context.page ?? 1) : entry.name === 'SEQ' ? '1' : entry.name === 'REF' ? 'Bookmark text (updated with fields)' : '') : value || '(empty)';
+    result.textContent = value === null ? (entry.name === 'PAGE' ? String(context.page ?? 1) : entry.name === 'SEQ' ? '1' : entry.name === 'REF' ? '书签文本（更新域时刷新）' : '') : value || '(空)';
   };
   for (const control of [category]) control.addEventListener('change', fill);
   for (const control of [names, argument, property, bookmark, picture, format, preserve]) { control.addEventListener('change', sync); control.addEventListener('input', sync); }
-  const dialog = formDialog({ title: 'Field', wide: true, className: 'insert-field', onClose, content: [
+  const dialog = formDialog({ title: '域', wide: true, className: 'insert-field', onClose, content: [
     el('div.insert-field-grid', {},
-      el('div.insert-field-list', {}, field('Categories', category), field('Field names', names)),
+      el('div.insert-field-list', {}, field('类别', category), field('域名', names)),
       el('div.insert-field-options', {}, description, argumentField, propertyField, bookmarkField, pictureField, formatField,
-        el('label.ed-check', {}, preserve, 'Preserve formatting during updates'),
-        el('div.insert-field-preview', {}, el('span.field-label', {}, 'Field code'), code, el('span.field-label', {}, 'Result'), result))),
+        el('label.ed-check', {}, preserve, '更新时保留格式'),
+        el('div.insert-field-preview', {}, el('span.field-label', {}, '域代码'), code, el('span.field-label', {}, '预览结果'), result))),
   ], onSubmit: () => {
     const entry = FIELD_CATALOG.find(f => f.name === names.value);
-    if (entry?.argument === 'identifier' && !/^\p{L}[\p{L}\p{M}\p{N}_]{0,39}$/u.test(argument.value.trim())) throw new Error('Enter a sequence name of letters and numbers, such as Figure.');
-    if (entry?.argument === 'bookmark' && !bookmark.value) throw new Error('This document has no bookmarks to refer to.');
+    if (entry?.argument === 'identifier' && !/^\p{L}[\p{L}\p{M}\p{N}_]{0,39}$/u.test(argument.value.trim())) throw new Error('请输入由字母和数字组成的题注序号名称，例如 Figure。');
+    if (entry?.argument === 'bookmark' && !bookmark.value) throw new Error('此文档中没有可引用的书签。');
     return onInsert({ name: entry.name, instruction: instruction() });
   } });
   fill(); names.focus();
@@ -132,28 +132,28 @@ export function openFieldDialog({ context, bookmarks = [], onInsert, onClose }) 
 /* ---- Format Page Numbers ---- */
 export const PAGE_FORMATS = [['decimal', '1, 2, 3, …'], ['decimalZero', '01, 02, 03, …'], ['lowerLetter', 'a, b, c, …'], ['upperLetter', 'A, B, C, …'], ['lowerRoman', 'i, ii, iii, …'], ['upperRoman', 'I, II, III, …']];
 export function openFormatPageNumbers({ current = {}, onApply, onClose }) {
-  const format = select('Number format', PAGE_FORMATS, current.format || 'decimal');
+  const format = select('编号格式', PAGE_FORMATS, current.format || 'decimal');
   let mode = Number.isInteger(current.start) ? 'start' : 'continue';
-  const start = el('input.input', { type: 'number', min: 0, max: 32767, step: 1, value: current.start ?? 1, 'aria-label': 'Start at', disabled: mode !== 'start' });
-  const modes = segmented([['continue', 'Continue from previous section'], ['start', 'Start at']], mode, value => { mode = value; start.disabled = value !== 'start'; if (!start.disabled) start.focus(); }, 'Page numbering');
-  return formDialog({ title: 'Page Number Format', submit: 'OK', onClose, content: [field('Number format', format),
-    el('fieldset.insert-fieldset', {}, el('legend.field-label', {}, 'Page numbering'), modes, field('Start at', start)),
-    el('p.field-hint', {}, 'Applies to the section with the caret. Page numbers in headers and footers follow it.')],
+  const start = el('input.input', { type: 'number', min: 0, max: 32767, step: 1, value: current.start ?? 1, 'aria-label': '起始页码', disabled: mode !== 'start' });
+  const modes = segmented([['continue', '续前节'], ['start', '起始页码']], mode, value => { mode = value; start.disabled = value !== 'start'; if (!start.disabled) start.focus(); }, '页码编号');
+  return formDialog({ title: '页码格式', submit: '确定', onClose, content: [field('编号格式', format),
+    el('fieldset.insert-fieldset', {}, el('legend.field-label', {}, '页码编号'), modes, field('起始页码', start)),
+    el('p.field-hint', {}, '应用于光标所在节。页眉和页脚中的页码将采用此设置。')],
   onSubmit: () => {
-    if (mode === 'start' && (!start.checkValidity() || start.value === '')) throw new Error('Enter a starting number from 0 to 32767.');
+    if (mode === 'start' && (!start.checkValidity() || start.value === '')) throw new Error('请输入 0 到 32767 之间的起始页码。');
     return onApply({ format: format.value, start: mode === 'start' ? Number(start.value) : null });
   } }).modal;
 }
 
 /* ---- Symbol ---- */
-export const SYMBOL_SUBSETS = [['Basic Latin', 0x21, 0x7E], ['Latin-1 Supplement', 0xA1, 0xFF], ['Latin Extended-A', 0x100, 0x17F], ['Latin Extended-B', 0x180, 0x24F], ['IPA Extensions', 0x250, 0x2AF],
-  ['Spacing Modifier Letters', 0x2B0, 0x2FF], ['Greek and Coptic', 0x370, 0x3FF], ['Cyrillic', 0x400, 0x4FF], ['Hebrew', 0x5D0, 0x5EA], ['Arabic', 0x621, 0x64A], ['General Punctuation', 0x2010, 0x205E],
-  ['Superscripts and Subscripts', 0x2070, 0x209C], ['Currency Symbols', 0x20A0, 0x20C0], ['Letterlike Symbols', 0x2100, 0x214F], ['Number Forms', 0x2150, 0x218B], ['Arrows', 0x2190, 0x21FF],
-  ['Mathematical Operators', 0x2200, 0x22FF], ['Miscellaneous Technical', 0x2300, 0x23FF], ['Enclosed Alphanumerics', 0x2460, 0x24FF], ['Box Drawing', 0x2500, 0x257F], ['Block Elements', 0x2580, 0x259F],
-  ['Geometric Shapes', 0x25A0, 0x25FF], ['Miscellaneous Symbols', 0x2600, 0x26FF], ['Dingbats', 0x2700, 0x27BF]];
+export const SYMBOL_SUBSETS = [['基本拉丁语', 0x21, 0x7E], ['拉丁语-1 补充', 0xA1, 0xFF], ['拉丁语扩充-A', 0x100, 0x17F], ['拉丁语扩充-B', 0x180, 0x24F], ['国际音标扩展', 0x250, 0x2AF],
+  ['占位修饰字符', 0x2B0, 0x2FF], ['希腊语和科普特语', 0x370, 0x3FF], ['西里尔语', 0x400, 0x4FF], ['希伯来语', 0x5D0, 0x5EA], ['阿拉伯语', 0x621, 0x64A], ['常用标点', 0x2010, 0x205E],
+  ['上标和下标', 0x2070, 0x209C], ['货币符号', 0x20A0, 0x20C0], ['类似字母的符号', 0x2100, 0x214F], ['数字形式', 0x2150, 0x218B], ['箭头', 0x2190, 0x21FF],
+  ['数学运算符', 0x2200, 0x22FF], ['其他技术符号', 0x2300, 0x23FF], ['带括号的字母数字', 0x2460, 0x24FF], ['制表符', 0x2500, 0x257F], ['方块元素', 0x2580, 0x259F],
+  ['几何图形', 0x25A0, 0x25FF], ['杂项符号', 0x2600, 0x26FF], ['装饰符号', 0x2700, 0x27BF]];
 /** Special characters: [label, character]. Names are plain descriptions. */
-export const SPECIAL_CHARACTERS = [['Em Dash', '\u2014'], ['En Dash', '\u2013'], ['Nonbreaking Hyphen', '\u2011'], ['Optional Hyphen', '\u00AD'], ['Em Space', '\u2003'], ['En Space', '\u2002'], ['Quarter Em Space', '\u2005'], ['Nonbreaking Space', '\u00A0'], ['Copyright', '\u00A9'], ['Registered', '\u00AE'], ['Trademark', '\u2122'], ['Section', '\u00A7'], ['Paragraph', '\u00B6'], ['Ellipsis', '\u2026'], ['Single Opening Quote', '\u2018'], ['Single Closing Quote', '\u2019'], ['Double Opening Quote', '\u201C'], ['Double Closing Quote', '\u201D'], ['Zero-Width Space', '\u200B'], ['Word Joiner', '\u2060'], ['Degree', '\u00B0'], ['Plus-Minus', '\u00B1'], ['Bullet', '\u2022'], ['Dagger', '\u2020'], ['Double Dagger', '\u2021']];
-export const SYMBOL_FONTS = ['(normal text)', 'Noto Sans', 'Noto Serif', 'Arial', 'Times New Roman', 'Courier New', 'Georgia', 'Segoe UI Symbol'];
+export const SPECIAL_CHARACTERS = [['长划线 (Em Dash)', '\u2014'], ['短划线 (En Dash)', '\u2013'], ['不间断连字符', '\u2011'], ['可选连字符', '\u00AD'], ['全角空格 (Em Space)', '\u2003'], ['半角空格 (En Space)', '\u2002'], ['四分之一角空格', '\u2005'], ['不间断空格', '\u00A0'], ['版权所有 (©)', '\u00A9'], ['注册商标 (®)', '\u00AE'], ['商标 (™)', '\u2122'], ['分节符号 (§)', '\u00A7'], ['段落标记 (¶)', '\u00B6'], ['省略号 (…)', '\u2026'], ['单引号（开）', '\u2018'], ['单引号（闭）', '\u2019'], ['双引号（开）', '\u201C'], ['双引号（闭）', '\u201D'], ['零宽空格', '\u200B'], ['单词连接符', '\u2060'], ['度数符号 (°)', '\u00B0'], ['正负号 (±)', '\u00B1'], ['项目符号 (•)', '\u2022'], ['短剑号 (†)', '\u2020'], ['双短剑号 (‡)', '\u2021']];
+export const SYMBOL_FONTS = ['(普通文本)', 'Noto Sans', 'Noto Serif', 'Arial', 'Times New Roman', 'Courier New', 'Georgia', 'Segoe UI Symbol'];
 const assigned = ch => /\P{C}/u.test(ch) && !/\p{Cn}/u.test(ch);
 const RECENT_KEY = 'documents.insert.recentSymbols';
 export const DEFAULT_RECENT = ['€', '£', '¥', '©', '®', '™', '±', '≠', '≤', '≥', '÷', '×', '∞', 'µ', 'α', 'β', 'π', 'Ω', '∑', '☺'];
@@ -166,16 +166,16 @@ const codeName = cp => `U+${cp.toString(16).toUpperCase().padStart(4, '0')}`;
 /** Symbol: browse by Unicode subset, type a character code, or pick a special character. Inserting keeps the dialog open. */
 export function openSymbolDialog({ onInsert, onClose }) {
   let tab = 'symbols', chosen = recentSymbols()[0];
-  const font = select('Font', SYMBOL_FONTS.map(f => [f, f]));
-  const subset = select('Subset', SYMBOL_SUBSETS.map(([name], i) => [String(i), name]));
-  const grid = el('div.insert-symbol-grid', { role: 'grid', 'aria-label': 'Characters' });
-  const recent = el('div.insert-symbol-recent', { role: 'group', 'aria-label': 'Recently used symbols' });
-  const code = el('input.input.insert-symbol-code', { type: 'text', maxLength: 6, 'aria-label': 'Character code (hexadecimal)', placeholder: '00A9' });
+  const font = select('字体', SYMBOL_FONTS.map(f => [f, f]));
+  const subset = select('子集', SYMBOL_SUBSETS.map(([name], i) => [String(i), name]));
+  const grid = el('div.insert-symbol-grid', { role: 'grid', 'aria-label': '字符' });
+  const recent = el('div.insert-symbol-recent', { role: 'group', 'aria-label': '最近使用的符号' });
+  const code = el('input.input.insert-symbol-code', { type: 'text', maxLength: 6, 'aria-label': '字符代码 (十六进制)', placeholder: '00A9' });
   const name = el('span.insert-symbol-name', { 'aria-live': 'polite' });
   const preview = el('span.insert-symbol-preview', { 'aria-hidden': 'true' });
   const describe = ch => { const cp = ch.codePointAt(0); name.textContent = `${symbolName(ch) !== ch ? `${symbolName(ch)} · ` : ''}${codeName(cp)}`; preview.textContent = ch; code.value = cp.toString(16).toUpperCase().padStart(4, '0'); };
   const choose = (ch, button) => { chosen = ch; for (const b of grid.querySelectorAll('[aria-selected="true"]')) b.setAttribute('aria-selected', 'false'); button?.setAttribute('aria-selected', 'true'); describe(ch); };
-  const fontStyle = () => font.value === '(normal text)' ? '' : `"${font.value}"`;
+  const fontStyle = () => (font.value === '(普通文本)' || font.value === '(normal text)') ? '' : `"${font.value}"`;
   const cell = (ch, onPick) => el('button.insert-symbol', { type: 'button', role: 'gridcell', tabindex: -1, title: `${symbolName(ch) !== ch ? symbolName(ch) : ch} (${codeName(ch.codePointAt(0))})`, 'aria-label': symbolName(ch),
     style: { fontFamily: fontStyle() }, onclick: e => onPick(ch, e.currentTarget), ondblclick: () => { onPick(ch); dialog.form.requestSubmit(); } }, ch);
   const drawGrid = () => {
@@ -217,7 +217,7 @@ export function openSymbolDialog({ onInsert, onClose }) {
   // Another subset chooses its first character, as the arrows choose the one they reach.
   subset.addEventListener('change', () => { drawGrid(); const first = grid.firstElementChild; if (first && first.textContent !== chosen) choose(first.textContent, first); });
   font.addEventListener('change', () => { for (const b of [...grid.children, ...recent.children]) b.style.fontFamily = fontStyle(); preview.style.fontFamily = fontStyle(); });
-  const special = el('div.ed-choice-list.insert-special', { role: 'listbox', 'aria-label': 'Special characters' }, ...SPECIAL_CHARACTERS.map(([label, ch]) =>
+  const special = el('div.ed-choice-list.insert-special', { role: 'listbox', 'aria-label': '特殊字符' }, ...SPECIAL_CHARACTERS.map(([label, ch]) =>
     el('button.ed-choice.insert-special-row', { type: 'button', role: 'option', 'aria-selected': 'false', onclick: e => { chosen = ch; for (const o of special.children) o.setAttribute('aria-selected', String(o === e.currentTarget)); describe(ch); },
       ondblclick: () => { chosen = ch; dialog.form.requestSubmit(); } },
     el('span.insert-special-char', {}, /[\s\u00AD\u200B\u2060]/.test(ch) ? '\u00B7' : ch), el('span', {}, label), el('span.insert-special-keys', {}, `U+${ch.codePointAt(0).toString(16).toUpperCase().padStart(4, '0')}`))));
@@ -229,17 +229,17 @@ export function openSymbolDialog({ onInsert, onClose }) {
     e.preventDefault(); button.click(); dialog.form.requestSubmit();
   };
   for (const node of [grid, recent, special]) node.addEventListener('keydown', insertOnEnter);
-  const symbolsPane = el('div.insert-symbol-pane', {}, el('div.insert-symbol-filters', {}, field('Font', font), field('Subset', subset)), grid,
-    el('div.insert-symbol-footer', {}, preview, el('div', {}, name, field('Character code', code))), el('span.field-label', {}, 'Recently used symbols'), recent);
+  const symbolsPane = el('div.insert-symbol-pane', {}, el('div.insert-symbol-filters', {}, field('字体', font), field('子集', subset)), grid,
+    el('div.insert-symbol-footer', {}, preview, el('div', {}, name, field('字符代码', code))), el('span.field-label', {}, '最近使用的符号'), recent);
   const specialPane = el('div.insert-symbol-pane', { hidden: true }, special);
-  const tabs = segmented([['symbols', 'Symbols'], ['special', 'Special Characters']], tab, value => { tab = value; symbolsPane.hidden = value !== 'symbols'; specialPane.hidden = value !== 'special'; }, 'Symbol pages');
-  const dialog = formDialog({ title: 'Symbol', wide: true, className: 'insert-symbols', onClose, content: [tabs, symbolsPane, specialPane], onSubmit: () => {
-    if (!chosen) throw new Error('Choose a character.');
-    const family = tab === 'symbols' && font.value !== '(normal text)' ? font.value : null;
+  const tabs = segmented([['symbols', '符号'], ['special', '特殊字符']], tab, value => { tab = value; symbolsPane.hidden = value !== 'symbols'; specialPane.hidden = value !== 'special'; }, '符号页面');
+  const dialog = formDialog({ title: '符号', wide: true, className: 'insert-symbols', onClose, content: [tabs, symbolsPane, specialPane], onSubmit: () => {
+    if (!chosen) throw new Error('请选择一个字符。');
+    const family = tab === 'symbols' && font.value !== '(普通文本)' && font.value !== '(normal text)' ? font.value : null;
     onInsert(chosen, family); rememberSymbol(chosen); drawRecent();
     return false; // Stay open for the next character, as symbol tables do.
   } });
-  dialog.primary.textContent = 'Insert';
+  dialog.primary.textContent = '插入';
   // Open on the subset that holds the chosen (most recent) symbol, with that symbol chosen and focused.
   const home = SYMBOL_SUBSETS.findIndex(([, a, b]) => chosen.codePointAt(0) >= a && chosen.codePointAt(0) <= b);
   if (home >= 0) subset.value = String(home);
@@ -250,26 +250,26 @@ export function openSymbolDialog({ onInsert, onClose }) {
 
 /* ---- Equation ---- */
 export function openEquationDialog({ initial = '', display = false, onInsert, onClose, editing = false }) {
-  const input = el('textarea.input.insert-equation-input', { rows: 3, 'aria-label': 'Equation in linear format', spellcheck: false, placeholder: 'For example: x = (-b ± √(b^2 - 4ac))/2a' }, initial);
+  const input = el('textarea.input.insert-equation-input', { rows: 3, 'aria-label': '线性格式公式', spellcheck: false, placeholder: '例如: x = (-b ± √(b^2 - 4ac))/2a' }, initial);
   const preview = el('div.insert-equation-preview', { 'aria-live': 'polite' });
   const own = el('input', { type: 'checkbox', checked: display });
-  const gallery = el('div.insert-equation-gallery', { role: 'group', 'aria-label': 'Common equations' }, ...EQUATION_GALLERY.map(entry => el('button.btn.btn-outline.btn-sm', { type: 'button', title: entry.linear, onclick: () => { input.value = entry.linear; render(); input.focus(); } }, entry.name)));
-  const symbols = el('div.insert-equation-symbols', { role: 'group', 'aria-label': 'Symbols' }, ...['±', '×', '÷', '≠', '≤', '≥', '≈', '∞', '√', '∑', '∫', '∂', 'π', 'θ', 'α', 'β', '→', '∈', '■', '█'].map(ch => el('button.insert-symbol', { type: 'button', title: symbolName(ch), onclick: () => {
+  const gallery = el('div.insert-equation-gallery', { role: 'group', 'aria-label': '常用公式' }, ...EQUATION_GALLERY.map(entry => el('button.btn.btn-outline.btn-sm', { type: 'button', title: entry.linear, onclick: () => { input.value = entry.linear; render(); input.focus(); } }, entry.name)));
+  const symbols = el('div.insert-equation-symbols', { role: 'group', 'aria-label': '符号' }, ...['±', '×', '÷', '≠', '≤', '≥', '≈', '∞', '√', '∑', '∫', '∂', 'π', 'θ', 'α', 'β', '→', '∈', '■', '█'].map(ch => el('button.insert-symbol', { type: 'button', title: symbolName(ch), onclick: () => {
     const [a, b] = [input.selectionStart, input.selectionEnd]; input.setRangeText(ch, a, b, 'end'); render(); input.focus();
   } }, ch)));
   const render = () => {
     const text = input.value.trim();
-    if (!text) { preview.replaceChildren(el('span.field-hint', {}, 'Type an equation to see it here.')); return; }
+    if (!text) { preview.replaceChildren(el('span.field-hint', {}, '键入公式以在此处查看预览。')); return; }
     try { preview.innerHTML = ommlToMathml(linearToOmml(text, { display: own.checked })); } catch { preview.textContent = text; }
   };
   input.addEventListener('input', render); own.addEventListener('change', render);
   input.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey && !isComposing(e)) { e.preventDefault(); input.form.requestSubmit(); } });
-  const dialog = formDialog({ title: editing ? 'Edit Equation' : 'Equation', submit: editing ? 'Update' : 'Insert', wide: true, className: 'insert-equation', onClose, content: [
-    field('Equation', input, 'Linear format: a/b fraction, x^2 superscript, x_i subscript, √(x) root, ∑_(i=1)^n sum, ■(a&b@c&d) matrix, \\alpha for Greek.'),
-    symbols, el('div', {}, el('span.field-label', {}, 'Preview'), preview), el('label.ed-check', {}, own, 'Display on its own line'),
-    el('details.insert-equation-more', {}, el('summary', {}, 'Common equations'), gallery)],
+  const dialog = formDialog({ title: editing ? '编辑公式' : '公式', submit: editing ? '更新' : '插入', wide: true, className: 'insert-equation', onClose, content: [
+    field('公式', input, '线性格式: a/b 分数，x^2 上标，x_i 下标，√(x) 根号，∑_(i=1)^n 求和，■(a&b@c&d) 矩阵，\\alpha 表示希腊字母。'),
+    symbols, el('div', {}, el('span.field-label', {}, '预览'), preview), el('label.ed-check', {}, own, '在其独立行上显示'),
+    el('details.insert-equation-more', {}, el('summary', {}, '常用公式'), gallery)],
   onSubmit: () => {
-    const text = input.value.trim(); if (!text) throw new Error('Type an equation first.');
+    const text = input.value.trim(); if (!text) throw new Error('请先输入公式。');
     return onInsert({ linear: text, display: own.checked });
   } });
   render(); input.focus(); input.select();
@@ -280,10 +280,10 @@ export { linearToOmml, ommlToLinear };
 /* ---- Icons ---- */
 /** Icons: search and browse the original icon set; several icons can be inserted at once, in one color. */
 export function openIconsDialog({ onInsert, onClose }) {
-  const search = el('input.input', { type: 'search', 'aria-label': 'Search icons', placeholder: 'Search icons' });
-  const category = select('Category', [['', 'All categories'], ...ICON_CATEGORIES.map(c => [c.id, c.label])]);
-  const color = el('input.insert-icon-color', { type: 'color', value: stored('documents.insert.iconColor', '#1F3864'), 'aria-label': 'Icon color' });
-  const grid = el('div.insert-icon-grid', { role: 'group', 'aria-label': 'Icons' });
+  const search = el('input.input', { type: 'search', 'aria-label': '搜索图标', placeholder: '搜索图标' });
+  const category = select('类别', [['', '所有类别'], ...ICON_CATEGORIES.map(c => [c.id, c.label])]);
+  const color = el('input.insert-icon-color', { type: 'color', value: stored('documents.insert.iconColor', '#1F3864'), 'aria-label': '图标颜色' });
+  const grid = el('div.insert-icon-grid', { role: 'group', 'aria-label': '图标' });
   const count = el('span.field-hint', { 'aria-live': 'polite' });
   const chosen = new Set();
   const draw = () => {
@@ -292,13 +292,13 @@ export function openIconsDialog({ onInsert, onClose }) {
       html: iconSvg(icon.id, { color: color.value.toUpperCase(), size: 36 }),
       onclick: e => { if (chosen.has(icon.id)) chosen.delete(icon.id); else chosen.add(icon.id); e.currentTarget.setAttribute('aria-pressed', String(chosen.has(icon.id))); sync(); },
       ondblclick: () => { chosen.add(icon.id); dialog.form.requestSubmit(); } })));
-    if (!found.length) grid.append(el('p.field-hint', {}, 'No icons match. Try another word.'));
+    if (!found.length) grid.append(el('p.field-hint', {}, '未找到匹配的图标。请尝试其他关键词。'));
     sync();
   };
-  const sync = () => { count.textContent = `${searchIcons(search.value, category.value || null).length} icons · ${chosen.size} selected`; dialog && (dialog.primary.textContent = chosen.size > 1 ? `Insert (${chosen.size})` : 'Insert'); };
+  const sync = () => { count.textContent = `${searchIcons(search.value, category.value || null).length} 个图标 · 已选择 ${chosen.size} 个`; dialog && (dialog.primary.textContent = chosen.size > 1 ? `插入 (${chosen.size})` : '插入'); };
   search.addEventListener('input', draw); category.addEventListener('change', draw); color.addEventListener('input', draw);
-  const dialog = formDialog({ title: 'Icons', wide: true, className: 'insert-icons', onClose, content: [el('div.insert-icon-filters', {}, search, category, el('label.insert-icon-color-label', {}, color, 'Color')), grid, count],
-    onSubmit: () => { if (!chosen.size) throw new Error('Choose one or more icons.'); store('documents.insert.iconColor', color.value); return onInsert([...chosen].map(id => ICONS.find(i => i.id === id)), color.value.toUpperCase()); } });
+  const dialog = formDialog({ title: '图标', wide: true, className: 'insert-icons', onClose, content: [el('div.insert-icon-filters', {}, search, category, el('label.insert-icon-color-label', {}, color, '颜色')), grid, count],
+    onSubmit: () => { if (!chosen.size) throw new Error('请选择一个或多个图标。'); store('documents.insert.iconColor', color.value); return onInsert([...chosen].map(id => ICONS.find(i => i.id === id)), color.value.toUpperCase()); } });
   draw(); search.focus();
   return dialog.modal;
 }
@@ -333,14 +333,14 @@ export function diagramSketch(layoutId, items, colors = 'blue', width = 320, hei
 /** Diagram: choose a layout and colors and type the outline; the preview follows each keystroke. */
 export function openDiagramDialog({ initial = null, editing = false, onInsert, onClose }) {
   let layout = initial?.layout || 'basicProcess';
-  const colors = select('Colors', DIAGRAM_COLORS.map(c => [c.id, c.name]), initial?.colors || 'blue');
-  const outline = el('textarea.input.insert-diagram-outline', { rows: 10, 'aria-label': 'Diagram text', spellcheck: true }, initial?.outline ?? DEFAULT_OUTLINE);
+  const colors = select('配色方案', DIAGRAM_COLORS.map(c => [c.id, c.name]), initial?.colors || 'blue');
+  const outline = el('textarea.input.insert-diagram-outline', { rows: 10, 'aria-label': '图示文本', spellcheck: true }, initial?.outline ?? DEFAULT_OUTLINE);
   const preview = el('div.insert-diagram-preview', { 'aria-hidden': 'true' });
-  const layouts = el('div.insert-diagram-layouts', { role: 'listbox', 'aria-label': 'Layouts' });
-  const sample = parseOutline('One\nTwo\nThree\nFour');
+  const layouts = el('div.insert-diagram-layouts', { role: 'listbox', 'aria-label': '版式' });
+  const sample = parseOutline('第一项\n第二项\n第三项\n第四项');
   const options = DIAGRAM_LAYOUTS.map(entry => el('button.insert-diagram-layout', { type: 'button', role: 'option', 'aria-selected': String(entry.id === layout), tabindex: entry.id === layout ? 0 : -1, title: `${entry.name}: ${entry.hint}`, dataset: { layout: entry.id },
     onclick: () => { layout = entry.id; for (const o of options) { o.setAttribute('aria-selected', String(o.dataset.layout === layout)); o.tabIndex = o.dataset.layout === layout ? 0 : -1; } render(); } },
-  diagramSketch(entry.id, entry.id === 'orgChart' ? parseOutline('Lead\n  A\n  B\n  C') : sample, 'blue', 120, 68), el('span', {}, entry.name), el('span.insert-diagram-category', {}, entry.category)));
+  diagramSketch(entry.id, entry.id === 'orgChart' ? parseOutline('负责人\n  成员A\n  成员B\n  成员C') : sample, 'blue', 120, 68), el('span', {}, entry.name), el('span.insert-diagram-category', {}, entry.category)));
   layouts.append(...options);
   layouts.addEventListener('keydown', e => {
     const at = options.indexOf(document.activeElement), step = { ArrowDown: 1, ArrowRight: 1, ArrowUp: -1, ArrowLeft: -1 }[e.key];
@@ -350,10 +350,10 @@ export function openDiagramDialog({ initial = null, editing = false, onInsert, o
   // Items the chosen layout leaves out of its picture (deeper levels, sub-items, items past its room) are named, not dropped silently.
   const omitted = el('p.field-hint.insert-diagram-omitted', { 'aria-live': 'polite', hidden: true });
   const render = () => {
-    const items = parseOutline(outline.value), hidden = hiddenDiagramItems(layout, items), name = DIAGRAM_LAYOUTS.find(entry => entry.id === layout)?.name || 'This layout';
+    const items = parseOutline(outline.value), hidden = hiddenDiagramItems(layout, items), name = DIAGRAM_LAYOUTS.find(entry => entry.id === layout)?.name || '当前版式';
     preview.replaceChildren(diagramSketch(layout, items, colors.value));
-    const list = hidden.length > 6 ? `${hidden.slice(0, 5).map(t => `“${t}”`).join(', ')} and ${hidden.length - 5} more` : hidden.map(t => `“${t}”`).join(', ');
-    omitted.textContent = hidden.length ? `${name} does not show ${hidden.length === 1 ? 'this item' : `these ${hidden.length} items`}: ${list}. ${hidden.length === 1 ? 'It stays' : 'They stay'} in the diagram's text; choose another layout to show ${hidden.length === 1 ? 'it' : 'them'}.` : '';
+    const list = hidden.length > 6 ? `${hidden.slice(0, 5).map(t => `“${t}”`).join('、')}等 ${hidden.length} 项` : hidden.map(t => `“${t}”`).join('、');
+    omitted.textContent = hidden.length ? `${name}未显示${hidden.length === 1 ? '该项目' : `这 ${hidden.length} 个项目`}: ${list}。这些项目仍保留在文本中；切换到其他版式即可显示。` : '';
     omitted.hidden = !hidden.length;
   };
   outline.addEventListener('input', render); colors.addEventListener('change', render);
@@ -368,12 +368,12 @@ export function openDiagramDialog({ initial = null, editing = false, onInsert, o
     else { outline.setRangeText('  ', start, start); outline.selectionStart = outline.selectionEnd = caret + 2; }
     render();
   });
-  const dialog = formDialog({ title: editing ? 'Edit Diagram' : 'Diagram', submit: editing ? 'Update' : 'Insert', wide: true, className: 'insert-diagram', onClose, content: [
+  const dialog = formDialog({ title: editing ? '编辑图示' : '图示', submit: editing ? '更新' : '插入', wide: true, className: 'insert-diagram', onClose, content: [
     el('div.insert-diagram-grid', {}, layouts,
-      el('div.insert-diagram-editor', {}, field('Text (one item per line; Tab at the start of a line indents it for details)', outline), field('Colors', colors), preview, omitted))],
+      el('div.insert-diagram-editor', {}, field('文本 (每行一个项目；行首按 Tab 键可缩进详细内容)', outline), field('配色方案', colors), preview, omitted))],
   onSubmit: () => {
     const items = parseOutline(outline.value);
-    if (!items.length) throw new Error('Type at least one item.');
+    if (!items.length) throw new Error('请至少输入一个项目。');
     return onInsert({ layout, colors: colors.value, items });
   } });
   render(); outline.focus();
@@ -382,11 +382,11 @@ export function openDiagramDialog({ initial = null, editing = false, onInsert, o
 
 /* ---- Signature line ---- */
 export function openSignatureDialog({ onInsert, onClose }) {
-  const signer = el('input.input', { type: 'text', 'aria-label': 'Suggested signer' }), title = el('input.input', { type: 'text', 'aria-label': 'Suggested signer’s title' });
-  const email = el('input.input', { type: 'email', 'aria-label': 'Suggested signer’s email address' }), instructions = el('textarea.input', { rows: 2, 'aria-label': 'Instructions to the signer' });
+  const signer = el('input.input', { type: 'text', 'aria-label': '建议的签署人' }), title = el('input.input', { type: 'text', 'aria-label': '建议的签署人职务' });
+  const email = el('input.input', { type: 'email', 'aria-label': '建议的签署人电子邮件地址' }), instructions = el('textarea.input', { rows: 2, 'aria-label': '向签署人提供的说明' });
   const date = el('input', { type: 'checkbox', checked: true });
-  const dialog = formDialog({ title: 'Signature Line', onClose, content: [field('Suggested signer', signer), field('Suggested signer’s title', title), field('Suggested signer’s email address', email),
-    field('Instructions to the signer', instructions, 'Kept as the line’s alternative text.'), el('label.ed-check', {}, date, 'Show the signing date line')],
+  const dialog = formDialog({ title: '签名行', onClose, content: [field('建议的签署人', signer), field('建议的签署人职务', title), field('建议的签署人电子邮件地址', email),
+    field('向签署人提供的说明', instructions, '作为该签名行的可选替代文字。'), el('label.ed-check', {}, date, '在签名行中显示签署日期')],
   onSubmit: () => onInsert({ signer: signer.value.trim(), title: title.value.trim(), email: email.value.trim(), instructions: instructions.value.trim(), date: date.checked }) });
   signer.focus();
   return dialog.modal;
@@ -395,18 +395,18 @@ export function openSignatureDialog({ onInsert, onClose }) {
 /* ---- Drop cap ---- */
 export function openDropCapDialog({ state, fonts = [], onApply, onClose }) {
   let mode = state.mode || 'none';
-  const font = select('Font', [['', '(same as text)'], ...fonts.map(f => [f, f])], state.fontFamily || '');
-  const lines = el('input.input', { type: 'number', min: 1, max: 10, step: 1, value: state.lines || 3, 'aria-label': 'Lines to drop' });
-  const distance = el('input.input', { type: 'number', min: 0, max: 72, step: 0.5, value: state.distance || 0, 'aria-label': 'Distance from text (pt)' });
-  const options = el('div.insert-dropcap-options', {}, field('Font', font), field('Lines to drop', lines), field('Distance from text (pt)', distance));
+  const font = select('字体', [['', '(正文字体)'], ...fonts.map(f => [f, f])], state.fontFamily || '');
+  const lines = el('input.input', { type: 'number', min: 1, max: 10, step: 1, value: state.lines || 3, 'aria-label': '下沉行数' });
+  const distance = el('input.input', { type: 'number', min: 0, max: 72, step: 0.5, value: state.distance || 0, 'aria-label': '距正文距离 (磅)' });
+  const options = el('div.insert-dropcap-options', {}, field('字体', font), field('下沉行数', lines), field('距正文距离 (磅)', distance));
   const sync = () => { for (const c of [font, lines, distance]) c.disabled = mode === 'none'; };
-  const position = segmented([['none', 'None'], ['drop', 'Dropped'], ['margin', 'In margin']], mode, value => { mode = value; sync(); }, 'Position');
-  const dialog = formDialog({ title: 'Drop Cap', submit: 'OK', onClose, content: [el('div', {}, el('span.field-label', {}, 'Position'), position), options],
+  const position = segmented([['none', '无'], ['drop', '下沉'], ['margin', '悬挂']], mode, value => { mode = value; sync(); }, '位置');
+  const dialog = formDialog({ title: '首字下沉', submit: '确定', onClose, content: [el('div', {}, el('span.field-label', {}, '位置'), position), options],
     onSubmit: () => {
       // The distance's arrows step by half points, but any distance in range is taken: Word steps by tenths of an
       // inch (0.1 in is 7.2 pt), and a document's own distance is kept in twentieths of a point.
       const distanceInRange = distance.value !== '' && !distance.validity.badInput && !distance.validity.rangeUnderflow && !distance.validity.rangeOverflow;
-      if (mode !== 'none' && (!lines.checkValidity() || !distanceInRange)) throw new Error('Lines to drop must be 1 to 10, and the distance 0 to 72 pt.');
+      if (mode !== 'none' && (!lines.checkValidity() || !distanceInRange)) throw new Error('下沉行数必须在 1 到 10 之间，且距离在 0 到 72 磅之间。');
       return onApply({ mode, lines: Number(lines.value), distance: Number(distance.value), fontFamily: font.value || null });
     } });
   // The fields are checked on OK, above, with the message in words.
@@ -417,22 +417,22 @@ export function openDropCapDialog({ state, fonts = [], onApply, onClose }) {
 
 /* ---- Generated picture ---- */
 export function openGenerateDialog({ generate, onInsert, onClose }) {
-  const prompt = el('textarea.input', { rows: 3, 'aria-label': 'Describe the picture', placeholder: 'A watercolor of a lighthouse at dawn' });
+  const prompt = el('textarea.input', { rows: 3, 'aria-label': '描述图片', placeholder: '例如：黎明时分的海边灯塔水彩画' });
   const preview = el('div.insert-generate-preview', { 'aria-live': 'polite' });
   let file = null, busy = false;
-  const dialog = formDialog({ title: 'Generate a Picture', submit: 'Generate', onClose, content: [field('Describe the picture', prompt), preview,
-    el('p.field-hint', {}, 'The description is sent to Puter AI to make the picture. Review it before inserting.')],
+  const dialog = formDialog({ title: '生成图片', submit: '生成', onClose, content: [field('描述图片', prompt), preview,
+    el('p.field-hint', {}, '图片描述将发送给 AI 生成图片。插入前请先检查。')],
   onSubmit: async () => {
     // The description the picture was made from is its alternative text, which screen readers announce.
     if (file) { await onInsert(file, { alt: prompt.value.trim() }); return true; }
     if (busy) return false;
-    if (!prompt.value.trim()) throw new Error('Describe the picture first.');
-    busy = true; dialog.primary.disabled = true; preview.replaceChildren(el('span.field-hint', {}, 'Generating…'));
+    if (!prompt.value.trim()) throw new Error('请先输入图片描述。');
+    busy = true; dialog.primary.disabled = true; preview.replaceChildren(el('span.field-hint', {}, '正在生成…'));
     try {
       file = await generate(prompt.value.trim());
       const url = URL.createObjectURL(file);
       preview.replaceChildren(el('img', { src: url, alt: prompt.value.trim(), onload: () => URL.revokeObjectURL(url) }));
-      dialog.primary.textContent = 'Insert';
+      dialog.primary.textContent = '插入';
     } catch (e) {
       // The error shows below; "Generating…" does not stay above it.
       preview.replaceChildren();
@@ -440,7 +440,7 @@ export function openGenerateDialog({ generate, onInsert, onClose }) {
     } finally { busy = false; dialog.primary.disabled = false; }
     return false;
   } });
-  prompt.addEventListener('input', () => { if (file) { file = null; dialog.primary.textContent = 'Generate'; preview.replaceChildren(); } });
+  prompt.addEventListener('input', () => { if (file) { file = null; dialog.primary.textContent = '生成'; preview.replaceChildren(); } });
   prompt.focus();
   return dialog.modal;
 }

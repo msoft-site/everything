@@ -800,7 +800,7 @@ export class CanvasEditor {
     const body = this.session.body;
     this.lineNumbers = this.view ? [] : lineNumberLabels(this.layout, body.paragraphs, body.numbering, body.styles, this.measure);
     this.selectionLayout = this.session.path === null ? this.layout : pageStorySelectionLayout(this.layout, this.storyLayout, this.session.path, this.storyPage);
-    this.input.setAttribute('aria-label', this.inputLabel || (this.session.path === null ? 'Document text' : ({ header: 'Header text', footer: 'Footer text', footnote: 'Footnote text', endnote: 'Endnote text' }[this.pageStories.stories[this.session.path].kind] || 'Story text')));
+    this.input.setAttribute('aria-label', this.inputLabel || (this.session.path === null ? '文档文本' : ({ header: '页眉文字', footer: '页脚文字', footnote: '脚注文字', endnote: '尾注文字' }[this.pageStories.stories[this.session.path].kind] || '正文区域')));
     this.drawingPageContexts = drawingPageContexts(this.layout, this.pageStories);
     while (this.pages.children.length > this.layout.pageCount) this.pages.lastChild.remove();
     while (this.pages.children.length < this.layout.pageCount) {
@@ -2162,7 +2162,7 @@ export class CanvasEditor {
       // The replacement ends at the paragraph's end (after any deletion Track Changes keeps): the next paragraph follows.
       this.model.select(this.model.selection.focus + 1);
       return changed;
-    }, undefined, { label: 'AutoCorrect' }, true);
+    }, undefined, { label: '自动更正' }, true);
     this.typingGroup = null;
   }
   /** Link the web address or email ending at `end` in a paragraph starting at `from`, and leave the caret at `caret`. */
@@ -2175,7 +2175,7 @@ export class CanvasEditor {
       if (linked) showLink(this.model);
       this.model.select(caret);
       return linked;
-    }, undefined, { label: 'AutoFormat' }, true);
+    }, undefined, { label: '自动套用格式' }, true);
     this.typingGroup = null;
   }
   /**

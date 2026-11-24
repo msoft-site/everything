@@ -11,20 +11,20 @@ const A = 'http://schemas.openxmlformats.org/drawingml/2006/main';
 const R = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships';
 
 export const CHART_TYPES = [
-  { id: 'column-clustered', label: 'Clustered column', group: 'Column' },
-  { id: 'column-stacked', label: 'Stacked column', group: 'Column' },
-  { id: 'column-percent', label: '100% stacked column', group: 'Column' },
-  { id: 'bar-clustered', label: 'Clustered bar', group: 'Bar' },
-  { id: 'bar-stacked', label: 'Stacked bar', group: 'Bar' },
-  { id: 'bar-percent', label: '100% stacked bar', group: 'Bar' },
-  { id: 'line', label: 'Line', group: 'Line' },
-  { id: 'line-markers', label: 'Line with markers', group: 'Line' },
-  { id: 'area', label: 'Area', group: 'Area' },
-  { id: 'area-stacked', label: 'Stacked area', group: 'Area' },
-  { id: 'pie', label: 'Pie', group: 'Pie' },
-  { id: 'doughnut', label: 'Doughnut', group: 'Pie' },
-  { id: 'scatter', label: 'Scatter', group: 'Scatter' },
-  { id: 'scatter-lines', label: 'Scatter with lines', group: 'Scatter' },
+  { id: 'column-clustered', label: '簇状柱形图', group: '柱形图' },
+  { id: 'column-stacked', label: '堆积柱形图', group: '柱形图' },
+  { id: 'column-percent', label: '百分比堆积柱形图', group: '柱形图' },
+  { id: 'bar-clustered', label: '簇状条形图', group: '条形图' },
+  { id: 'bar-stacked', label: '堆积条形图', group: '条形图' },
+  { id: 'bar-percent', label: '百分比堆积条形图', group: '条形图' },
+  { id: 'line', label: '折线图', group: '折线图' },
+  { id: 'line-markers', label: '带数据标记的折线图', group: '折线图' },
+  { id: 'area', label: '面积图', group: '面积图' },
+  { id: 'area-stacked', label: '堆积面积图', group: '面积图' },
+  { id: 'pie', label: '饼图', group: '饼图' },
+  { id: 'doughnut', label: '圆环图', group: '饼图' },
+  { id: 'scatter', label: '散点图', group: '散点图' },
+  { id: 'scatter-lines', label: '带折线的散点图', group: '散点图' },
 ];
 const BARS = { 'column-clustered': ['col', 'clustered'], 'column-stacked': ['col', 'stacked'], 'column-percent': ['col', 'percentStacked'], 'bar-clustered': ['bar', 'clustered'], 'bar-stacked': ['bar', 'stacked'], 'bar-percent': ['bar', 'percentStacked'] };
 export const CHART_PALETTE = ['2F6DB5', 'E8833A', '3FA66B', 'C94C4C', '8A63B8', 'D4B23A'];

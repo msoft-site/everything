@@ -41,13 +41,13 @@ it('writes an inserted chart as its own chart part that reopens with the same da
 it('explains labels the chart reader cannot keep', async () => {
   const pkg = createDocx([paragraph()], undefined, undefined, undefined, [], {}, WRITING_STYLES);
   const data = { ...defaultChartData('column-clustered'), categories: ['東京', 'B', 'C', 'D'] };
-  await expect(chartFragment({ assets: {} }, pkg.parts, data, { id: 1 })).rejects.toThrow(/Latin script/);
+  await expect(chartFragment({ assets: {} }, pkg.parts, data, { id: 1 })).rejects.toThrow(/拉丁字母/);
 });
 
 it('explains a chart title the chart reader cannot keep', async () => {
   const pkg = createDocx([paragraph()], undefined, undefined, undefined, [], {}, WRITING_STYLES);
   const doc = new TextDocument(pkg.paragraphs, pkg.pageSettings, pkg.numbering, pkg.styles, pkg.tables, pkg.assets);
-  await expect(chartFragment(doc, pkg.parts, { ...defaultChartData('line-markers'), title: 'Sales 📈' }, { id: 1 })).rejects.toThrow(/Chart titles must use Latin script/);
+  await expect(chartFragment(doc, pkg.parts, { ...defaultChartData('line-markers'), title: 'Sales 📈' }, { id: 1 })).rejects.toThrow(/拉丁字母/);
 });
 
 it('removes a category\'s slice color with its row, so the other slices keep theirs', () => {

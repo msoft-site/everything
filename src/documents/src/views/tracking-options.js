@@ -11,10 +11,10 @@ import { preference, hint } from './review-ui.js';
 
 const STORED = preference('documents:tracking-options', {});
 const VIEW_KEYS = ['balloons', 'insertMark', 'deleteMark', 'insertColor', 'deleteColor', 'formatMark', 'formatColor', 'moveFromMark', 'moveToMark', 'moveColor', 'changeBars', 'changeBarColor', 'authorColors', 'paneOrientation'];
-export const BALLOONS = [['balloons', 'Show Revisions in Balloons'], ['inline', 'Show All Revisions Inline'], ['commentsFormatting', 'Show Only Comments and Formatting in Balloons']];
-const MARK_NAMES = { underline: 'Underline', doubleUnderline: 'Double underline', strikethrough: 'Strikethrough', doubleStrikethrough: 'Double strikethrough', bold: 'Bold', italic: 'Italic', colorOnly: 'Color only', hidden: 'Hidden', none: '(none)' };
-export const COLORS = [['author', 'By author'], ['000000', 'Black'], ['2E6EB5', 'Blue'], ['00838F', 'Teal'], ['2F8A3A', 'Green'], ['2E7D32', 'Dark green'], ['B5082E', 'Red'], ['C25E00', 'Orange'], ['8A3FB0', 'Violet'], ['A0306E', 'Pink'], ['5B6B00', 'Olive'], ['7A7A7A', 'Gray']];
-const BAR_SIDES = [['none', 'None'], ['left', 'Left border'], ['right', 'Right border'], ['outside', 'Outside border']];
+export const BALLOONS = [['balloons', '在批注框中显示修订'], ['inline', '以嵌入方式显示所有修订'], ['commentsFormatting', '仅在批注框中显示批注和格式设置']];
+const MARK_NAMES = { underline: '下划线', doubleUnderline: '双下划线', strikethrough: '删除线', doubleStrikethrough: '双删除线', bold: '加粗', italic: '倾斜', colorOnly: '仅颜色', hidden: '隐藏', none: '(无)' };
+export const COLORS = [['author', '按作者'], ['000000', '黑色'], ['2E6EB5', '蓝色'], ['00838F', '青色'], ['2F8A3A', '绿色'], ['2E7D32', '深绿'], ['B5082E', '红色'], ['C25E00', '橙色'], ['8A3FB0', '紫罗兰色'], ['A0306E', '粉红色'], ['5B6B00', '橄榄色'], ['7A7A7A', '灰色']];
+const BAR_SIDES = [['none', '无'], ['left', '左边框'], ['right', '右边框'], ['outside', '外侧边框']];
 
 /** Apply remembered view choices at startup. */
 export function restoreTrackingOptions() {
@@ -47,39 +47,39 @@ export function openTrackingOptions({ authors = () => [], doc = {}, apply, onClo
     const bar = o.changeBars === 'none' ? '' : `border-${o.changeBars === 'right' ? 'right' : 'left'}: 2px solid ${o.changeBarColor && o.changeBarColor !== 'auto' && o.changeBarColor !== 'author' ? `#${o.changeBarColor}` : '#7a7a7a'}`;
     preview.innerHTML = '';
     preview.append(el('p', { style: bar ? `${bar}; padding-inline: 6px` : '' },
-      'Plain text, ', el('span', { style: style(o.insertMark, o.insertColor) }, 'inserted text'), ', ', el('span', { style: style(o.deleteMark, o.deleteColor) }, 'deleted text'), ', ',
-      d.trackMoves ? el('span', { style: style(o.moveFromMark, o.moveColor || MOVE_COLOR) }, 'moved from') : 'moved from', ', ',
-      d.trackMoves ? el('span', { style: style(o.moveToMark, o.moveColor || MOVE_COLOR) }, 'moved to') : 'moved to', ' and ',
-      el('span', { style: o.formatMark === 'none' ? '' : style(o.formatMark, o.formatColor) }, 'reformatted'), ' text.'));
+      '正文文字，', el('span', { style: style(o.insertMark, o.insertColor) }, '插入的文字'), '，', el('span', { style: style(o.deleteMark, o.deleteColor) }, '删除的文字'), '，',
+      d.trackMoves ? el('span', { style: style(o.moveFromMark, o.moveColor || MOVE_COLOR) }, '移自') : '移自', '，',
+      d.trackMoves ? el('span', { style: style(o.moveToMark, o.moveColor || MOVE_COLOR) }, '移至') : '移至', ' 与 ',
+      el('span', { style: o.formatMark === 'none' ? '' : style(o.formatMark, o.formatColor) }, '重新设置格式的'), ' 文字。'));
   }
   const field = (label, control) => el('label.field.rv-field', {}, el('span.field-label', {}, label), control);
   const check = (label, checked, onchange, disabled = false) => { const input = el('input', { type: 'checkbox', checked, disabled, onchange: () => { onchange(input.checked); renderPreview(); } }); return el('label.rv-check', {}, input, label); };
   const set = key => value => { o[key] = value; renderPreview(); };
-  const authorRows = authors().map(name => field(name, select(`${name} color`, o.authorColors?.[name] || 'author', [['author', 'Automatic'], ...COLORS.slice(1)], value => { o.authorColors = { ...o.authorColors }; if (value === 'author') delete o.authorColors[name]; else o.authorColors[name] = value; renderPreview(); })));
+  const authorRows = authors().map(name => field(name, select(`${name} 颜色`, o.authorColors?.[name] || 'author', [['author', '自动'], ...COLORS.slice(1)], value => { o.authorColors = { ...o.authorColors }; if (value === 'author') delete o.authorColors[name]; else o.authorColors[name] = value; renderPreview(); })));
   const content = el('form.ed-dialog-body.rv-tracking-options', { onsubmit: e => { e.preventDefault(); modal.close(); apply(o, d); } },
-    el('fieldset.rv-fieldset', {}, el('legend', {}, 'Markup'),
+    el('fieldset.rv-fieldset', {}, el('legend', {}, '标记'),
       el('div.rv-grid', {},
-        field('Insertions', select('Insertion mark', o.insertMark, markOptions(INSERT_MARKS), set('insertMark'))), field('Color', select('Insertion color', o.insertColor, COLORS, set('insertColor'))),
-        field('Deletions', select('Deletion mark', o.deleteMark, markOptions(DELETE_MARKS), set('deleteMark'))), field('Color', select('Deletion color', o.deleteColor, COLORS, set('deleteColor'))),
-        field('Changed lines', select('Change bar position', o.changeBars, BAR_SIDES, set('changeBars'))), field('Color', select('Change bar color', o.changeBarColor === 'auto' ? 'author' : o.changeBarColor, [['author', 'Automatic'], ...COLORS.slice(1)], value => { o.changeBarColor = value === 'author' ? 'auto' : value; renderPreview(); })))),
-    el('fieldset.rv-fieldset', {}, el('legend', {}, 'Moves'),
-      check('Track moves', d.trackMoves, value => { d.trackMoves = value; }),
+        field('插入', select('插入标记', o.insertMark, markOptions(INSERT_MARKS), set('insertMark'))), field('颜色', select('插入颜色', o.insertColor, COLORS, set('insertColor'))),
+        field('删除', select('删除标记', o.deleteMark, markOptions(DELETE_MARKS), set('deleteMark'))), field('颜色', select('删除颜色', o.deleteColor, COLORS, set('deleteColor'))),
+        field('修改的行', select('修订竖线位置', o.changeBars, BAR_SIDES, set('changeBars'))), field('颜色', select('修订竖线颜色', o.changeBarColor === 'auto' ? 'author' : o.changeBarColor, [['author', '自动'], ...COLORS.slice(1)], value => { o.changeBarColor = value === 'author' ? 'auto' : value; renderPreview(); })))),
+    el('fieldset.rv-fieldset', {}, el('legend', {}, '移动'),
+      check('跟踪移动', d.trackMoves, value => { d.trackMoves = value; }),
       el('div.rv-grid', {},
-        field('Moved from', select('Moved from mark', o.moveFromMark, markOptions(DELETE_MARKS.filter(m => m !== 'hidden')), set('moveFromMark'))), field('Color', select('Move color', o.moveColor || MOVE_COLOR, COLORS.slice(1), set('moveColor'))),
-        field('Moved to', select('Moved to mark', o.moveToMark, markOptions(INSERT_MARKS), set('moveToMark'))))),
-    el('fieldset.rv-fieldset', {}, el('legend', {}, 'Formatting'),
-      check('Track formatting', d.trackFormatting, value => { d.trackFormatting = value; }, !!doc.formattingLocked),
-      doc.formattingLocked ? hint('Tracking is locked, so formatting changes are tracked.') : null,
-      el('div.rv-grid', {}, field('Formatting', select('Formatting mark', o.formatMark, markOptions(FORMAT_MARKS), set('formatMark'))), field('Color', select('Formatting color', o.formatColor, COLORS, set('formatColor'))))),
-    el('fieldset.rv-fieldset', {}, el('legend', {}, 'Balloons and pane'),
-      field('Balloons', select('Balloons', o.balloons, BALLOONS, set('balloons'))),
-      field('Reviewing Pane', select('Reviewing Pane orientation', o.paneOrientation || 'vertical', [['vertical', 'Vertical (beside the pages)'], ['horizontal', 'Horizontal (below the pages)']], set('paneOrientation')))),
-    authorRows.length ? el('fieldset.rv-fieldset', {}, el('legend', {}, 'Reviewer colors'), ...authorRows) : null,
-    el('div.rv-preview-wrap', {}, el('span.field-label', {}, 'Preview'), preview),
-    hint('Marks and colors apply to how changes look on your screen. Tracking moves and formatting is saved with the document.'),
-    el('div.modal-actions', {}, el('button.btn.btn-ghost', { type: 'button', onclick: () => modal.close() }, 'Cancel'), el('button.btn.btn-primary', { type: 'submit' }, 'OK')));
+        field('移自', select('移自标记', o.moveFromMark, markOptions(DELETE_MARKS.filter(m => m !== 'hidden')), set('moveFromMark'))), field('颜色', select('移动颜色', o.moveColor || MOVE_COLOR, COLORS.slice(1), set('moveColor'))),
+        field('移至', select('移至标记', o.moveToMark, markOptions(INSERT_MARKS), set('moveToMark'))))),
+    el('fieldset.rv-fieldset', {}, el('legend', {}, '格式设置'),
+      check('跟踪格式设置', d.trackFormatting, value => { d.trackFormatting = value; }, !!doc.formattingLocked),
+      doc.formattingLocked ? hint('修订已锁定，因此格式设置更改将被跟踪。') : null,
+      el('div.rv-grid', {}, field('格式设置', select('格式设置标记', o.formatMark, markOptions(FORMAT_MARKS), set('formatMark'))), field('颜色', select('格式设置颜色', o.formatColor, COLORS, set('formatColor'))))),
+    el('fieldset.rv-fieldset', {}, el('legend', {}, '批注框和窗格'),
+      field('批注框', select('批注框', o.balloons, BALLOONS, set('balloons'))),
+      field('审阅窗格', select('审阅窗格方向', o.paneOrientation || 'vertical', [['vertical', '垂直(页面侧边)'], ['horizontal', '水平(页面下方)']], set('paneOrientation')))),
+    authorRows.length ? el('fieldset.rv-fieldset', {}, el('legend', {}, '审阅者颜色'), ...authorRows) : null,
+    el('div.rv-preview-wrap', {}, el('span.field-label', {}, '预览'), preview),
+    hint('标记和颜色仅控制修订在屏幕上的显示方式。跟踪移动和格式设置将随文档保存。'),
+    el('div.modal-actions', {}, el('button.btn.btn-ghost', { type: 'button', onclick: () => modal.close() }, '取消'), el('button.btn.btn-primary', { type: 'submit' }, '确定')));
   renderPreview();
-  const modal = openModal({ title: 'Tracking Options', content, onClose, wide: true });
+  const modal = openModal({ title: '修订选项', content, onClose, wide: true });
   return modal;
 }
 
@@ -91,14 +91,14 @@ export function showMarkupItems({ authors, ink, comments, update }) {
   const toggle = key => () => update({ [key]: !o[key] });
   const people = authors();
   return [
-    { label: 'Comments', checked: comments.shown, onSelect: () => comments.toggle() },
-    ...(ink ? [{ label: 'Ink', checked: ink.shown, onSelect: () => ink.toggle() }] : []),
-    { label: 'Insertions and Deletions', checked: o.showInsDel, onSelect: toggle('showInsDel') },
-    { label: 'Formatting', checked: o.showFormatting, onSelect: toggle('showFormatting') },
+    { label: '批注', checked: comments.shown, onSelect: () => comments.toggle() },
+    ...(ink ? [{ label: '墨迹', checked: ink.shown, onSelect: () => ink.toggle() }] : []),
+    { label: '插入和删除', checked: o.showInsDel, onSelect: toggle('showInsDel') },
+    { label: '格式设置', checked: o.showFormatting, onSelect: toggle('showFormatting') },
     { separator: true },
-    { label: 'Balloons', items: BALLOONS.map(([value, label]) => ({ label, radio: true, checked: o.balloons === value, onSelect: () => update({ balloons: value }) })) },
-    { label: 'Specific People', disabled: !people.length, items: [
-      { label: 'All Reviewers', checked: !o.hiddenAuthors.length, onSelect: () => update({ hiddenAuthors: [] }) },
+    { label: '批注框', items: BALLOONS.map(([value, label]) => ({ label, radio: true, checked: o.balloons === value, onSelect: () => update({ balloons: value }) })) },
+    { label: '特定审阅者', disabled: !people.length, items: [
+      { label: '所有审阅者', checked: !o.hiddenAuthors.length, onSelect: () => update({ hiddenAuthors: [] }) },
       { separator: true },
       ...people.map(name => ({ label: name, checked: !o.hiddenAuthors.includes(name), onSelect: () => update({ hiddenAuthors: o.hiddenAuthors.includes(name) ? o.hiddenAuthors.filter(n => n !== name) : [...o.hiddenAuthors, name] }) })),
     ] },

@@ -17,8 +17,8 @@ export async function chartFragment(model, packageParts, data, { id, width = 5.5
       { parts: [{ ...part, bytes: xml, contentType: CHART_CONTENT_TYPE, relType: CHART_RELATIONSHIP_TYPE }] });
   } catch (e) {
     // The chart reader keeps Latin text only; its own message ("…the original file…") describes opening a file.
-    if (/mixed-script/.test(e.message)) throw new Error('Chart labels must use Latin script in this version. Rename the categories or series and try again.');
-    if (/title script|line breaks/.test(e.message)) throw new Error('Chart titles must use Latin script on one line in this version, without emoji. Change the title and try again.');
+    if (/mixed-script/.test(e.message)) throw new Error('在此版本中，图表标签必须使用拉丁字母。请重命名类别或系列后重试。');
+    if (/title script|line breaks/.test(e.message)) throw new Error('在此版本中，图表标题必须为单行拉丁字母且不包含表情符号。请修改标题后重试。');
     throw e;
   }
 }
@@ -41,7 +41,7 @@ export function openChartDialog({ initial = null, onInsert, onClose }) {
   const data = structuredClone(initial || defaultChartData('column-clustered'));
   let type = data.type;
   const groups = [...new Set(CHART_TYPES.map(t => t.group))];
-  const typeList = el('div.insert-chart-types', { role: 'listbox', 'aria-label': 'Chart type' });
+  const typeList = el('div.insert-chart-types', { role: 'listbox', 'aria-label': '图表类型' });
   // One tab stop: the arrow keys, Home and End choose among the types.
   const options = CHART_TYPES.map(t => el('button.insert-chart-type', { type: 'button', role: 'option', 'aria-selected': String(t.id === type), tabindex: t.id === type ? 0 : -1, dataset: { type: t.id }, onclick: () => setType(t.id) }, t.label));
   for (const group of groups) typeList.append(el('div.menu-header', { role: 'presentation' }, group), ...options.filter(o => CHART_TYPES.find(t => t.id === o.dataset.type).group === group));
@@ -53,10 +53,10 @@ export function openChartDialog({ initial = null, onInsert, onClose }) {
     const option = options[Math.max(0, Math.min(options.length - 1, next))];
     option.focus(); setType(option.dataset.type);
   });
-  const title = el('input.input', { type: 'text', value: data.title || '', 'aria-label': 'Chart title' });
-  const legend = el('select.input', { 'aria-label': 'Legend' }, el('option', { value: 'r' }, 'Right'), el('option', { value: 'b' }, 'Bottom'), el('option', { value: '' }, 'None'));
+  const title = el('input.input', { type: 'text', value: data.title || '', 'aria-label': '图表标题' });
+  const legend = el('select.input', { 'aria-label': '图例' }, el('option', { value: 'r' }, '靠右'), el('option', { value: 'b' }, '靠下'), el('option', { value: '' }, '无'));
   legend.value = data.legend ?? '';
-  const grid = el('table.insert-chart-grid', { 'aria-label': 'Chart data' });
+  const grid = el('table.insert-chart-grid', { 'aria-label': '图表数据' });
   const preview = el('canvas.insert-chart-preview', { width: 440, height: 260, 'aria-hidden': 'true' });
   const status = el('p.field-hint', { 'aria-live': 'polite' });
   const single = () => ['pie', 'doughnut'].includes(type);
@@ -78,14 +78,14 @@ export function openChartDialog({ initial = null, onInsert, onClose }) {
   const cellInput = (value, label, onInput, numeric = false) => el('input.input', { type: 'text', inputMode: numeric ? 'decimal' : 'text', value: String(value ?? ''), 'aria-label': label,
     oninput: e => { onInput(e.target.value); if (numeric) { if (usable(e.target.value)) e.target.removeAttribute('aria-invalid'); else e.target.setAttribute('aria-invalid', 'true'); } render(); } });
   function drawGrid(focus) {
-    const head = el('tr', {}, el('th', {}, ''), ...shown().map((s, j) => el('th', {}, cellInput(s.name, `Series ${j + 1} name`, v => { s.name = v; }))),
-      el('th', {}, el('button.btn.btn-ghost.btn-sm', { type: 'button', disabled: single() || data.series.length >= 20, title: 'Add a series', dataset: { action: 'addSeries' }, onclick: () => { data.series.push({ name: `Series ${data.series.length + 1}`, values: data.categories.map(() => 0), color: CHART_PALETTE[data.series.length % CHART_PALETTE.length] }); drawGrid(() => [...grid.querySelectorAll('thead input')].at(-1)); render(); } }, '+ Series')));
-    const body = data.categories.map((category, i) => el('tr', {}, el('th', {}, cellInput(category, `Category ${i + 1}`, v => { data.categories[i] = v; })),
-      ...shown().map((s, j) => el('td', {}, cellInput(s.values[i], `${s.name || `Series ${j + 1}`}, ${category}`, v => { s.values[i] = v; }, true))),
-      el('td', {}, el('button.icon-btn.insert-chart-remove', { type: 'button', 'aria-label': `Remove ${category || `row ${i + 1}`}`, title: 'Remove row', disabled: data.categories.length <= 1, onclick: () => { removeChartRow(data, i); drawGrid(() => { const removes = grid.querySelectorAll('.insert-chart-remove'), next = removes[Math.min(i, removes.length - 1)]; return next && !next.disabled ? next : grid.querySelector('[data-action="addRow"]'); }); render(); } }, '×'))));
+    const head = el('tr', {}, el('th', {}, ''), ...shown().map((s, j) => el('th', {}, cellInput(s.name, `系列 ${j + 1} 名称`, v => { s.name = v; }))),
+      el('th', {}, el('button.btn.btn-ghost.btn-sm', { type: 'button', disabled: single() || data.series.length >= 20, title: '添加系列', dataset: { action: 'addSeries' }, onclick: () => { data.series.push({ name: `系列 ${data.series.length + 1}`, values: data.categories.map(() => 0), color: CHART_PALETTE[data.series.length % CHART_PALETTE.length] }); drawGrid(() => [...grid.querySelectorAll('thead input')].at(-1)); render(); } }, '+ 系列')));
+    const body = data.categories.map((category, i) => el('tr', {}, el('th', {}, cellInput(category, `类别 ${i + 1}`, v => { data.categories[i] = v; })),
+      ...shown().map((s, j) => el('td', {}, cellInput(s.values[i], `${s.name || `系列 ${j + 1}`}, ${category}`, v => { s.values[i] = v; }, true))),
+      el('td', {}, el('button.icon-btn.insert-chart-remove', { type: 'button', 'aria-label': `删除 ${category || `第 ${i + 1} 行`}`, title: '删除行', disabled: data.categories.length <= 1, onclick: () => { removeChartRow(data, i); drawGrid(() => { const removes = grid.querySelectorAll('.insert-chart-remove'), next = removes[Math.min(i, removes.length - 1)]; return next && !next.disabled ? next : grid.querySelector('[data-action="addRow"]'); }); render(); } }, '×'))));
     const foot = el('tr', {}, el('td', { colSpan: shown().length + 2 },
-      el('button.btn.btn-ghost.btn-sm', { type: 'button', disabled: data.categories.length >= 100, dataset: { action: 'addRow' }, onclick: () => { data.categories.push(type.startsWith('scatter') ? String(data.categories.length + 1) : `Category ${data.categories.length + 1}`); for (const s of data.series) s.values.push(0); drawGrid(() => [...grid.querySelectorAll('tbody th input')].at(-1)); render(); } }, '+ Row'),
-      shown().length > 1 ? el('button.btn.btn-ghost.btn-sm', { type: 'button', dataset: { action: 'removeSeries' }, onclick: () => { data.series.pop(); drawGrid(() => grid.querySelector('[data-action="removeSeries"]') || grid.querySelector('[data-action="addSeries"]')); render(); } }, '− Series') : null));
+      el('button.btn.btn-ghost.btn-sm', { type: 'button', disabled: data.categories.length >= 100, dataset: { action: 'addRow' }, onclick: () => { data.categories.push(type.startsWith('scatter') ? String(data.categories.length + 1) : `类别 ${data.categories.length + 1}`); for (const s of data.series) s.values.push(0); drawGrid(() => [...grid.querySelectorAll('tbody th input')].at(-1)); render(); } }, '+ 行'),
+      shown().length > 1 ? el('button.btn.btn-ghost.btn-sm', { type: 'button', dataset: { action: 'removeSeries' }, onclick: () => { data.series.pop(); drawGrid(() => grid.querySelector('[data-action="removeSeries"]') || grid.querySelector('[data-action="addSeries"]')); render(); } }, '− 系列') : null));
     grid.replaceChildren(el('thead', {}, head), el('tbody', {}, ...body, foot));
     // Rebuilding the grid removes the button just used, and focus with it: `focus` names the control that
     // takes its place (the new row's or series' name, selected so typing replaces it, or the next Remove button).
@@ -109,13 +109,13 @@ export function openChartDialog({ initial = null, onInsert, onClose }) {
     } catch (e) { if (ticket === pending) status.textContent = e.message; }
   }
   title.addEventListener('input', render); legend.addEventListener('change', render);
-  const dialog = formDialog({ title: initial ? 'Edit Chart' : 'Insert Chart', submit: initial ? 'Update' : 'Insert', wide: true, className: 'insert-chart', onClose, content: [
-    el('div.insert-chart-layout', {}, typeList, el('div.insert-chart-editor', {}, el('div.insert-chart-meta', {}, el('label.field', {}, el('span.field-label', {}, 'Title'), title), el('label.field', {}, el('span.field-label', {}, 'Legend'), legend)),
+  const dialog = formDialog({ title: initial ? '编辑图表' : '插入图表', submit: initial ? '更新' : '插入', wide: true, className: 'insert-chart', onClose, content: [
+    el('div.insert-chart-layout', {}, typeList, el('div.insert-chart-editor', {}, el('div.insert-chart-meta', {}, el('label.field', {}, el('span.field-label', {}, '标题'), title), el('label.field', {}, el('span.field-label', {}, '图例'), legend)),
       preview, status, el('div.insert-chart-data', {}, grid)))],
   onSubmit: () => {
     for (const [j, s] of shown().entries()) for (const [i, v] of s.values.entries()) {
-      if (!Number.isFinite(numberOf(v))) throw new Error(`“${String(v).trim()}” (${s.name || `Series ${j + 1}`}, ${data.categories[i]}) is not a number. Enter numbers such as 1200 or 1.5, without separators, signs or units.`);
-      if (!usable(v)) throw new Error(`“${String(v).trim()}” (${s.name || `Series ${j + 1}`}, ${data.categories[i]}) is too large for a chart. Enter numbers from −1,000,000,000,000 to 1,000,000,000,000.`);
+      if (!Number.isFinite(numberOf(v))) throw new Error(`“${String(v).trim()}” (${s.name || `系列 ${j + 1}`}, ${data.categories[i]}) 不是有效数字。请输入如 1200 或 1.5 的纯数字，不要包含分隔符、符号或单位。`);
+      if (!usable(v)) throw new Error(`“${String(v).trim()}” (${s.name || `系列 ${j + 1}`}, ${data.categories[i]}) 数值过大。请输入 −1,000,000,000,000 到 1,000,000,000,000 之间的数字。`);
     }
     return onInsert(current());
   } });
@@ -139,7 +139,7 @@ export function chartCommands({ hub, pkg, editor }) {
     if (image) {
       const xml = chartXml(image, engine.model.assets, pkg().parts);
       try { initial = xml ? chartDataFromXml(xml) : null; } catch { initial = null; }
-      if (!initial) { hub.fail(new Error('This chart’s data cannot be edited here. It is kept as it is.')); return; }
+      if (!initial) { hub.fail(new Error('此图表的数据无法在此编辑，已保留原样。')); return; }
     }
     openChartDialog({ initial, onClose: () => queueMicrotask(() => editor()?.focus()), onInsert: data => hub.insertDrawing(async (engine, id) => {
       const width = image ? image.width : Math.min(hub.textWidth(engine), 5.5 * EMU_PER_INCH), height = image ? image.height : Math.round(width * 0.58);

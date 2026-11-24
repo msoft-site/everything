@@ -18,11 +18,11 @@ function previewNavigator(mm, update) {
   const records = mm.records();
   let at = Math.min(Math.max(0, (mm.state().activeRecord || 1) - 1), Math.max(0, records.length - 1));
   const label = el('span.mm-nav-label', { role: 'status' });
-  const prev = button('◀', () => { at = Math.max(0, at - 1); sync(); }, 'btn-ghost', { 'aria-label': 'Previous recipient', title: 'Previous recipient' });
-  const next = button('▶', () => { at = Math.min(records.length - 1, at + 1); sync(); }, 'btn-ghost', { 'aria-label': 'Next recipient', title: 'Next recipient' });
+  const prev = button('◀', () => { at = Math.max(0, at - 1); sync(); }, 'btn-ghost', { 'aria-label': '上一位收件人', title: '上一位收件人' });
+  const next = button('▶', () => { at = Math.min(records.length - 1, at + 1); sync(); }, 'btn-ghost', { 'aria-label': '下一位收件人', title: '下一位收件人' });
   function sync() {
     prev.disabled = at <= 0; next.disabled = at >= records.length - 1;
-    label.textContent = records.length ? `Recipient ${at + 1} of ${records.length}` : 'Sample recipient';
+    label.textContent = records.length ? `收件人 ${at + 1} / ${records.length}` : '示例收件人';
     update(records[at] || null);
   }
   const node = el('div.mm-nav', {}, records.length > 1 ? prev : null, label, records.length > 1 ? next : null);
@@ -38,23 +38,23 @@ const conceptLookup = (mm, record) => id => {
 
 /* ---- Address Block ---- */
 export function openAddressBlock(mm) {
-  const format = el('div.mm-format-list', { role: 'listbox', 'aria-label': 'Recipient name format', tabindex: 0 });
+  const format = el('div.mm-format-list', { role: 'listbox', 'aria-label': '收件人姓名格式', tabindex: 0 });
   let chosen = 'titleFirstLast';
   const renderFormats = () => format.replaceChildren(...NAME_FORMATS.map(([id, sample]) => el('div.mm-format-item', { role: 'option', id: `mm-name-${id}`, 'aria-selected': String(id === chosen), onclick: () => { chosen = id; renderFormats(); update(); } }, sample)));
   format.addEventListener('keydown', e => {
     const i = NAME_FORMATS.findIndex(f => f[0] === chosen);
     if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); chosen = NAME_FORMATS[Math.max(0, Math.min(NAME_FORMATS.length - 1, i + (e.key === 'ArrowDown' ? 1 : -1)))][0]; renderFormats(); update(); }
   });
-  const company = checkbox('Include the company name', true);
-  const postal = checkbox('Include the postal address', true);
-  const excluded = input('United States', { 'aria-label': 'Leave out this country or region' });
-  const country = radios('Country or region', [['always', 'Always include the country or region'], ['never', 'Never include the country or region'], ['unlessExcluded', 'Include it only when it differs from:']], 'unlessExcluded', () => update());
-  const preview = el('pre.mm-preview', { 'aria-live': 'polite', 'aria-label': 'Preview' });
+  const company = checkbox('包含公司名称', true);
+  const postal = checkbox('包含邮政地址', true);
+  const excluded = input('中国', { 'aria-label': '排除此国家/地区' });
+  const country = radios('国家/地区', [['always', '始终包含国家/地区'], ['never', '从不包含国家/地区'], ['unlessExcluded', '仅当不同于以下内容时包含：']], 'unlessExcluded', () => update());
+  const preview = el('pre.mm-preview', { 'aria-live': 'polite', 'aria-label': '预览' });
   let record = null;
   const options = () => ({ name: chosen, company: company.input.checked, postal: postal.input.checked, country: country.value, excluded: excluded.value.trim() });
   function update() {
     excluded.disabled = country.value !== 'unlessExcluded';
-    preview.textContent = renderAddressBlock(addressBlockInstruction(options()), conceptLookup(mm, record)) || '(This recipient has no address details in the matched columns.)';
+    preview.textContent = renderAddressBlock(addressBlockInstruction(options()), conceptLookup(mm, record)) || '(此收件人在已匹配的列中没有地址详细信息。)';
   }
   const nav = previewNavigator(mm, r => { record = r; update(); });
   for (const box of [company, postal]) box.input.addEventListener('change', update);
@@ -62,40 +62,40 @@ export function openAddressBlock(mm) {
   renderFormats();
   const unmatched = () => ['first', 'last', 'address1', 'city'].filter(id => !mm.mapping()[id]);
   const hint = el('p.field-hint');
-  const refreshHint = () => { const missing = unmatched(); hint.textContent = mm.records().length && missing.length ? `Not matched yet: ${missing.map(id => ADDRESS_FIELDS.find(f => f.id === id).label.toLowerCase()).join(', ')}. Use Match Fields to choose their columns.` : ''; };
+  const refreshHint = () => { const missing = unmatched(); hint.textContent = mm.records().length && missing.length ? `尚未匹配：${missing.map(id => ADDRESS_FIELDS.find(f => f.id === id).label).join('、')}。使用“匹配字段”为其选择列。` : ''; };
   refreshHint();
-  dialog({ title: 'Insert Address Block', size: 'wide', submit: 'Insert', focus: format, body: [
+  dialog({ title: '插入地址块', size: 'wide', submit: '插入', focus: format, body: [
     el('div.mm-two', {},
-      el('div', {}, el('p.field-label', {}, 'Recipient name'), format, company, postal, country, excluded),
-      el('div', {}, el('p.field-label', {}, 'Preview'), preview, nav, hint, button('Match Fields…', () => openMatchFields(mm, () => { refreshHint(); update(); })))),
+      el('div', {}, el('p.field-label', {}, '收件人姓名'), format, company, postal, country, excluded),
+      el('div', {}, el('p.field-label', {}, '预览'), preview, nav, hint, button('匹配字段…', () => openMatchFields(mm, () => { refreshHint(); update(); })))),
   ], onSubmit: () => mm.insertField(addressBlockInstruction(options())) });
   nav.sync();
 }
 
 /* ---- Greeting Line ---- */
 export function openGreetingLine(mm) {
-  const salutation = select([['Dear', 'Dear'], ['To', 'To'], ['Hello', 'Hello'], ['Hi', 'Hi'], ['Greetings', 'Greetings'], ['', '(none)']], 'Dear', { 'aria-label': 'Salutation' });
-  const name = select(GREETING_NAMES.map(([id, sample]) => [id, sample]), 'titleLast', { 'aria-label': 'Name format' });
-  const punctuation = select([[',', ','], [':', ':'], ['!', '!'], ['.', '.'], ['', '(none)']], ',', { 'aria-label': 'Punctuation' });
-  const fallback = input('Dear Friend,', { 'aria-label': 'Greeting when the name is missing' });
+  const salutation = select([['尊敬的', '尊敬的'], ['致', '致'], ['您好', '您好'], ['Dear', 'Dear'], ['To', 'To'], ['', '(无)']], '尊敬的', { 'aria-label': '问候语' });
+  const name = select(GREETING_NAMES.map(([id, sample]) => [id, sample]), 'titleLast', { 'aria-label': '姓名格式' });
+  const punctuation = select([[',', '，'], [':', '：'], ['!', '！'], ['.', '。'], ['', '(无)']], '，', { 'aria-label': '标点符号' });
+  const fallback = input('尊敬的朋友：', { 'aria-label': '姓名缺失时的问候语' });
   const preview = el('p.mm-preview.mm-preview-line', { 'aria-live': 'polite' });
   let record = null;
   const options = () => ({ salutation: salutation.value, name: name.value, punctuation: punctuation.value, fallback: fallback.value });
-  const update = () => { preview.textContent = renderGreetingLine(greetingInstruction(options()), conceptLookup(mm, record)) || '(empty)'; };
+  const update = () => { preview.textContent = renderGreetingLine(greetingInstruction(options()), conceptLookup(mm, record)) || '(空)'; };
   for (const c of [salutation, name, punctuation]) c.addEventListener('change', update);
   fallback.addEventListener('input', update);
   const nav = previewNavigator(mm, r => { record = r; update(); });
-  dialog({ title: 'Insert Greeting Line', size: 'wide', submit: 'Insert', body: [
-    el('div.mm-inline.mm-greeting', {}, field('Salutation', salutation), field('Name', name), field('Ending', punctuation)),
-    field('When a name is missing', fallback, 'Used for recipients with no name in the matched columns.'),
-    el('p.field-label', {}, 'Preview'), preview, nav,
-    el('div.row', {}, button('Match Fields…', () => openMatchFields(mm, update))),
+  dialog({ title: '插入问候语', size: 'wide', submit: '插入', body: [
+    el('div.mm-inline.mm-greeting', {}, field('问候语', salutation), field('姓名格式', name), field('后缀标点', punctuation)),
+    field('姓名缺失时', fallback, '用于在已匹配列中没有姓名的收件人。'),
+    el('p.field-label', {}, '预览'), preview, nav,
+    el('div.row', {}, button('匹配字段…', () => openMatchFields(mm, update))),
   ], onSubmit: () => mm.insertField(greetingInstruction(options())) });
   nav.sync();
 }
 
 /* ---- Merge fields ---- */
-const CASES = [['', 'As typed'], ['Upper', 'UPPERCASE'], ['Lower', 'lowercase'], ['FirstCap', 'First letter capital'], ['Caps', 'Title Case']];
+const CASES = [['', '保持原样'], ['Upper', '全部大写'], ['Lower', '全部小写'], ['FirstCap', '句首字母大写'], ['Caps', '词首字母大写']];
 /** A MERGEFIELD instruction for a column with optional text before/after and capitalization. */
 export function mergeFieldInstruction(column, { before = '', after = '', format = '' } = {}) {
   return ` MERGEFIELD ${fieldName(column)}${before ? ` \\b ${quoteArgument(before)}` : ''}${after ? ` \\f ${quoteArgument(after)}` : ''}${format ? ` \\* ${format}` : ''} `;
@@ -103,44 +103,44 @@ export function mergeFieldInstruction(column, { before = '', after = '', format 
 
 export function openInsertField(mm) {
   const columns = mm.state().list?.columns || [];
-  const kind = radios('Insert', [['database', 'Database fields'], ['address', 'Address fields']], 'database', () => fill());
-  const list = el('select.input.mm-field-list', { size: 9, 'aria-label': 'Fields' });
-  const before = input('', { 'aria-label': 'Text before' }), after = input('', { 'aria-label': 'Text after' });
-  const format = select(CASES, '', { 'aria-label': 'Capitalization' });
+  const kind = radios('插入', [['database', '数据库字段'], ['address', '地址字段']], 'database', () => fill());
+  const list = el('select.input.mm-field-list', { size: 9, 'aria-label': '字段' });
+  const before = input('', { 'aria-label': '前缀文本' }), after = input('', { 'aria-label': '后缀文本' });
+  const format = select(CASES, '', { 'aria-label': '大小写格式' });
   const note = el('p.field-hint');
   function fill() {
-    const items = kind.value === 'address' ? ADDRESS_FIELDS.map(f => [f.id, `${f.label}${mm.mapping()[f.id] ? ` → ${mm.mapping()[f.id]}` : ' (not matched)'}`]) : columns.map(c => [c, c]);
+    const items = kind.value === 'address' ? ADDRESS_FIELDS.map(f => [f.id, `${f.label}${mm.mapping()[f.id] ? ` → ${mm.mapping()[f.id]}` : ' (未匹配)'}`]) : columns.map(c => [c, c]);
     list.replaceChildren(...items.map(([v, l]) => el('option', { value: v }, l)));
     if (items.length) list.value = items[0][0];
-    note.textContent = kind.value === 'database' && !columns.length ? 'Select recipients first to list their columns, or type a column name below.' : '';
+    note.textContent = kind.value === 'database' && !columns.length ? '请先选择收件人以列出其字段列，或在下方键入列名。' : '';
   }
-  const custom = input('', { 'aria-label': 'Or type a field name', placeholder: 'Field name' });
+  const custom = input('', { 'aria-label': '或键入字段名称', placeholder: '字段名称' });
   fill();
   const insert = async () => {
     let column = custom.value.trim() || list.value;
     if (kind.value === 'address' && !custom.value.trim()) {
       column = mm.mapping()[list.value];
-      if (!column) throw new Error(`Match “${ADDRESS_FIELDS.find(f => f.id === list.value)?.label}” to a column first (Match Fields).`);
+      if (!column) throw new Error(`请先将“${ADDRESS_FIELDS.find(f => f.id === list.value)?.label}”与某一列进行匹配（匹配字段）。`);
     }
-    if (!column) throw new Error('Choose a field to insert.');
+    if (!column) throw new Error('请选择要插入的字段。');
     await mm.insertField(mergeFieldInstruction(column, { before: before.value, after: after.value, format: format.value }));
     custom.value = '';
   };
   list.addEventListener('dblclick', () => insert().catch(e => modal.error(e.message)));
-  const modal = dialog({ title: 'Insert Merge Field', size: 'wide', submit: 'Insert', cancel: 'Close', body: [
-    kind, el('div.mm-two', {}, el('div', {}, list, note, field('Or type a field name', custom)),
-      el('div', {}, field('Text before (only when the field has a value)', before), field('Text after (only when the field has a value)', after), field('Capitalization', format),
-        button('Match Fields…', () => openMatchFields(mm, fill)))),
+  const modal = dialog({ title: '插入合并字段', size: 'wide', submit: '插入', cancel: '关闭', body: [
+    kind, el('div.mm-two', {}, el('div', {}, list, note, field('或键入字段名称', custom)),
+      el('div', {}, field('前缀文本（仅当字段非空时）', before), field('后缀文本（仅当字段非空时）', after), field('大小写格式', format),
+        button('匹配字段…', () => openMatchFields(mm, fill)))),
   ], onSubmit: async () => { await insert(); return false; } });
   return modal;
 }
 
 /* ---- Rules ---- */
 export const RULES = [
-  ['ask', 'Ask…'], ['fillin', 'Fill-in…'], ['if', 'If…Then…Else…'], ['mergerec', 'Merge Record #'], ['mergeseq', 'Merge Sequence #'],
-  ['next', 'Next Record'], ['nextif', 'Next Record If…'], ['set', 'Set Bookmark…'], ['skipif', 'Skip Record If…'],
+  ['ask', '提示…'], ['fillin', '填写…'], ['if', '如果…那么…否则…'], ['mergerec', '合并记录号'], ['mergeseq', '合并序号'],
+  ['next', '下一记录'], ['nextif', '如果则下一记录…'], ['set', '设置书签…'], ['skipif', '如果则跳过记录…'],
 ];
-const COMPARISONS = [['=', 'Equal to'], ['<>', 'Not equal to'], ['<', 'Less than'], ['>', 'Greater than'], ['<=', 'Less than or equal to'], ['>=', 'Greater than or equal to'], ['blank', 'Is blank'], ['notBlank', 'Is not blank']];
+const COMPARISONS = [['=', '等于'], ['<>', '不等于'], ['<', '小于'], ['>', '大于'], ['<=', '小于或等于'], ['>=', '大于或等于'], ['blank', '为空'], ['notBlank', '不为空']];
 /** The "{ MERGEFIELD x }" = "value" part of a rule. */
 export function comparison(column, operator, value) {
   const operand = `"{ MERGEFIELD ${fieldName(column)} }"`;
@@ -154,59 +154,59 @@ export function openRule(kind, mm) {
   const simple = { mergerec: ' MERGEREC ', mergeseq: ' MERGESEQ ', next: ' NEXT ' }[kind];
   if (simple) return mm.insertField(simple);
   const columns = mm.state().list?.columns || [];
-  const columnSelect = () => columns.length ? select(columns.map(c => [c, c]), columns[0], { 'aria-label': 'Field name' }) : input('', { 'aria-label': 'Field name', placeholder: 'Column name' });
+  const columnSelect = () => columns.length ? select(columns.map(c => [c, c]), columns[0], { 'aria-label': '字段名称' }) : input('', { 'aria-label': '字段名称', placeholder: '列名' });
   const condition = () => {
-    const column = columnSelect(), operator = select(COMPARISONS, '=', { 'aria-label': 'Comparison' }), value = input('', { 'aria-label': 'Compare to' });
+    const column = columnSelect(), operator = select(COMPARISONS, '=', { 'aria-label': '比较' }), value = input('', { 'aria-label': '比对值' });
     operator.addEventListener('change', () => { value.disabled = ['blank', 'notBlank'].includes(operator.value); });
-    return { column, operator, value, node: el('div.mm-inline.mm-rule-condition', {}, field('Field name', column), field('Comparison', operator), field('Compare to', value)), code: () => {
-      if (!column.value.trim()) throw new Error('Choose the field to compare.');
+    return { column, operator, value, node: el('div.mm-inline.mm-rule-condition', {}, field('字段名称', column), field('比较', operator), field('比对值', value)), code: () => {
+      if (!column.value.trim()) throw new Error('请选择要比较的字段。');
       return comparison(column.value.trim(), operator.value, value.value);
     } };
   };
-  const bookmarkName = (value = '') => input(value, { 'aria-label': 'Bookmark name', placeholder: 'For example DueDate' });
-  const checkName = name => { if (!BOOKMARK.test(name)) throw new Error('Use a bookmark name that starts with a letter and has only letters, numbers and underscores (up to 40).'); };
+  const bookmarkName = (value = '') => input(value, { 'aria-label': '书签名称', placeholder: '例如 DueDate' });
+  const checkName = name => { if (!BOOKMARK.test(name)) throw new Error('书签名称必须以字母开头，且仅包含字母、数字和下划线（最多 40 个字符）。'); };
   let body, build, title;
   if (kind === 'ask' || kind === 'fillin') {
-    const name = bookmarkName(), prompt = input('', { 'aria-label': 'Prompt' }), answer = input('', { 'aria-label': 'Default answer' });
-    const once = checkbox('Ask once, not for each record');
-    const show = checkbox('Show the answer here as well', kind === 'ask');
-    title = kind === 'ask' ? 'Ask Rule' : 'Fill-in Rule';
-    body = [kind === 'ask' ? field('Bookmark', name, 'The answer is stored under this name for use elsewhere in the document.') : null, field('Prompt', prompt), field('Default answer', answer), once, kind === 'ask' ? show : null];
+    const name = bookmarkName(), prompt = input('', { 'aria-label': '提示信息' }), answer = input('', { 'aria-label': '默认答案' });
+    const once = checkbox('只提示一次，不要每条记录都提示');
+    const show = checkbox('在此处同时显示答案', kind === 'ask');
+    title = kind === 'ask' ? '“提示”规则' : '“填写”规则';
+    body = [kind === 'ask' ? field('书签', name, '答案将以此名称存储，以供文档中其他地方引用。') : null, field('提示信息', prompt), field('默认答案', answer), once, kind === 'ask' ? show : null];
     build = () => {
-      if (!prompt.value.trim()) throw new Error('Type the question to ask.');
+      if (!prompt.value.trim()) throw new Error('请输入要提示的问题。');
       const tail = `${answer.value ? ` \\d ${quoteArgument(answer.value)}` : ''}${once.input.checked ? ' \\o' : ''}`;
       if (kind === 'fillin') return [` FILLIN ${quoteArgument(prompt.value.trim())}${tail} `];
       checkName(name.value.trim());
       return [` ASK ${name.value.trim()} ${quoteArgument(prompt.value.trim())}${tail} `, ...(show.input.checked ? [` REF ${name.value.trim()} `] : [])];
     };
   } else if (kind === 'set') {
-    const name = bookmarkName(), value = input('', { 'aria-label': 'Value' });
-    title = 'Set Bookmark Rule';
-    body = [field('Bookmark', name), field('Value', value, 'Show it elsewhere with a reference to the bookmark.')];
+    const name = bookmarkName(), value = input('', { 'aria-label': '值' });
+    title = '“设置书签”规则';
+    body = [field('书签', name), field('值', value, '通过引用该书签可在其他位置显示。')];
     build = () => { checkName(name.value.trim()); return [` SET ${name.value.trim()} ${quoteArgument(value.value)} `]; };
   } else if (kind === 'if') {
-    const c = condition(), then = el('textarea.input.mm-textarea', { rows: 2, 'aria-label': 'Insert this text' }), otherwise = el('textarea.input.mm-textarea', { rows: 2, 'aria-label': 'Otherwise insert this text' });
-    title = 'If…Then…Else Rule';
-    body = [el('p.field-label', {}, 'If'), c.node, field('Insert this text', then), field('Otherwise insert this text', otherwise)];
+    const c = condition(), then = el('textarea.input.mm-textarea', { rows: 2, 'aria-label': '插入此文本' }), otherwise = el('textarea.input.mm-textarea', { rows: 2, 'aria-label': '否则插入此文本' });
+    title = '“如果…那么…否则…”规则';
+    body = [el('p.field-label', {}, '如果'), c.node, field('插入此文本', then), field('否则插入此文本', otherwise)];
     build = () => [` IF ${c.code()} ${quoteArgument(then.value)} ${quoteArgument(otherwise.value)} `];
   } else {
     const c = condition();
-    title = kind === 'nextif' ? 'Next Record If Rule' : 'Skip Record If Rule';
-    body = [el('p.field-hint', {}, kind === 'nextif' ? 'When the comparison is true, the following fields use the next recipient without starting a new document.' : 'When the comparison is true, this recipient is left out of the merge.'), c.node];
+    title = kind === 'nextif' ? '“如果则下一记录”规则' : '“如果则跳过记录”规则';
+    body = [el('p.field-hint', {}, kind === 'nextif' ? '当比较条件为真时，后续字段将使用下一位收件人，而无需开始新文档。' : '当比较条件为真时，此收件人将从合并中排除。'), c.node];
     build = () => [` ${kind === 'nextif' ? 'NEXTIF' : 'SKIPIF'} ${c.code()} `];
   }
-  if (!columns.length && ['if', 'nextif', 'skipif'].includes(kind)) body.unshift(el('p.field-hint', {}, 'Select recipients first to choose from their columns.'));
-  return dialog({ title, size: 'wide', submit: 'Insert', body, onSubmit: async () => { for (const code of build()) await mm.insertField(code); } });
+  if (!columns.length && ['if', 'nextif', 'skipif'].includes(kind)) body.unshift(el('p.field-hint', {}, '请先选择收件人以从其列中选择。'));
+  return dialog({ title, size: 'wide', submit: '插入', body, onSubmit: async () => { for (const code of build()) await mm.insertField(code); } });
 }
 
 /* ---- Match Fields ---- */
 export function openMatchFields(mm, done = () => {}) {
   const columns = mm.state().list?.columns || [];
-  if (!columns.length) { dialog({ title: 'Match Fields', submit: null, cancel: 'Close', body: el('p.modal-text', {}, 'Select recipients first. Then you can choose which of their columns hold names and addresses.') }); return; }
+  if (!columns.length) { dialog({ title: '匹配字段', submit: null, cancel: '关闭', body: el('p.modal-text', {}, '请先选择收件人。然后您可以选择哪些列包含姓名和地址。') }); return; }
   const current = { ...autoMatchFields(columns), ...mm.mapping() };
-  const selects = ADDRESS_FIELDS.map(f => [f.id, select([['', '(not matched)'], ...columns.map(c => [c, c])], current[f.id] || '', { 'aria-label': f.label })]);
-  dialog({ title: 'Match Fields', size: 'wide', body: [
-    el('p.field-hint', {}, 'Address blocks and greeting lines read these columns. Fields that match a column name are matched for you.'),
+  const selects = ADDRESS_FIELDS.map(f => [f.id, select([['', '(未匹配)'], ...columns.map(c => [c, c])], current[f.id] || '', { 'aria-label': f.label })]);
+  dialog({ title: '匹配字段', size: 'wide', body: [
+    el('p.field-hint', {}, '地址块和问候语将读取这些列。与列名匹配的字段已自动为您匹配。'),
     el('div.mm-match-grid', {}, ...selects.map(([id, s]) => field(ADDRESS_FIELDS.find(f => f.id === id).label, s))),
   ], onSubmit: () => { mm.setState({ mapping: Object.fromEntries(selects.filter(([, s]) => s.value).map(([id, s]) => [id, s.value])) }); done(); } });
 }
@@ -214,22 +214,22 @@ export function openMatchFields(mm, done = () => {}) {
 /* ---- Find Recipient ---- */
 export function openFindRecipient(mm) {
   const columns = mm.state().list?.columns || [];
-  const text = input('', { type: 'search', 'aria-label': 'Find' });
-  const where = select([['', 'All fields'], ...columns.map(c => [c, c])], '', { 'aria-label': 'Look in' });
+  const text = input('', { type: 'search', 'aria-label': '查找内容' });
+  const where = select([['', '所有字段'], ...columns.map(c => [c, c])], '', { 'aria-label': '查找范围' });
   const result = el('p.field-hint', { role: 'status' });
-  const modal = dialog({ title: 'Find Entry', submit: 'Find Next', cancel: 'Close', body: [field('Find', text), field('Look in', where), result], onSubmit: () => {
-    const query = text.value.trim().toLowerCase(); if (!query) throw new Error('Type something to find.');
+  const modal = dialog({ title: '查找条目', submit: '查找下一个', cancel: '关闭', body: [field('查找内容', text), field('查找范围', where), result], onSubmit: () => {
+    const query = text.value.trim().toLowerCase(); if (!query) throw new Error('请输入要查找的内容。');
     const records = mm.records(), start = mm.state().activeRecord || 1;
     for (let k = 1; k <= records.length; k++) {
       const index = (start - 1 + k) % records.length, record = records[index];
       const values = where.value ? [record.values[where.value]] : Object.values(record.values);
       if (values.some(v => String(v ?? '').toLowerCase().includes(query))) {
         mm.goToRecord(index + 1);
-        result.textContent = `Showing recipient ${index + 1} of ${records.length}.`;
+        result.textContent = `显示第 ${index + 1} / ${records.length} 位收件人。`;
         return false;
       }
     }
-    result.textContent = 'No recipient matches.';
+    result.textContent = '没有匹配的收件人。';
     return false;
   } });
   return modal;
@@ -239,14 +239,14 @@ export function openFindRecipient(mm) {
 export function openCheckErrors(mm) {
   const report = mm.errorReport();
   const items = [];
-  if (report.missing.length) items.push(el('li', {}, el('strong', {}, 'Fields with no matching column: '), report.missing.join(', '), '. These show as «Field» in merged documents.'));
-  if (report.noRecipients) items.push(el('li', {}, 'No recipients are selected, so nothing will be merged.'));
-  if (report.emptyAddress.length) items.push(el('li', {}, el('strong', {}, `Empty address blocks: `), `recipients ${report.emptyAddress.slice(0, 20).join(', ')}${report.emptyAddress.length > 20 ? '…' : ''}.`));
-  if (report.noEmail.length) items.push(el('li', {}, el('strong', {}, 'No email address: '), `recipients ${report.noEmail.slice(0, 20).join(', ')}${report.noEmail.length > 20 ? '…' : ''}.`));
-  if (report.skipped) items.push(el('li', {}, `${report.skipped} ${report.skipped === 1 ? 'recipient is' : 'recipients are'} skipped by Skip Record If rules.`));
-  if (report.noFields) items.push(el('li', {}, 'The document has no merge fields yet, so every copy will be the same.'));
-  dialog({ title: 'Check for Errors', submit: null, cancel: 'Close', size: 'wide', body: [
-    el('p.modal-text', {}, items.length ? `A simulated merge of ${report.copies} ${report.copies === 1 ? 'document' : 'documents'} found:` : `A simulated merge of ${report.copies} ${report.copies === 1 ? 'document' : 'documents'} found no errors.`),
+  if (report.missing.length) items.push(el('li', {}, el('strong', {}, '没有匹配列的字段：'), report.missing.join(', '), '。这些在合并文档中将显示为 «字段»。'));
+  if (report.noRecipients) items.push(el('li', {}, '未选择任何收件人，因此不会合并任何内容。'));
+  if (report.emptyAddress.length) items.push(el('li', {}, el('strong', {}, `空白地址块：`), `收件人 ${report.emptyAddress.slice(0, 20).join('、')}${report.emptyAddress.length > 20 ? '…' : ''}。`));
+  if (report.noEmail.length) items.push(el('li', {}, el('strong', {}, '无电子邮件地址：'), `收件人 ${report.noEmail.slice(0, 20).join('、')}${report.noEmail.length > 20 ? '…' : ''}。`));
+  if (report.skipped) items.push(el('li', {}, `有 ${report.skipped} 位收件人被“如果则跳过记录”规则跳过。`));
+  if (report.noFields) items.push(el('li', {}, '文档中尚无合并字段，因此每份副本都将相同。'));
+  dialog({ title: '检查错误', submit: null, cancel: '关闭', size: 'wide', body: [
+    el('p.modal-text', {}, items.length ? `模拟合并 ${report.copies} 份文档发现：` : `模拟合并 ${report.copies} 份文档未发现任何错误。`),
     items.length ? el('ul.mm-report', {}, ...items) : null,
   ] });
 }
@@ -257,8 +257,8 @@ export function askPrompts(prompts, answers = {}) {
   return new Promise(resolve => {
     let result = null;
     const inputs = prompts.map(p => [p, input(answers[p.id] ?? p.defaultValue, { 'aria-label': p.prompt })]);
-    dialog({ title: 'Answers for the Merge', submit: 'Continue', body: [
-      el('p.field-hint', {}, 'These questions come from Ask and Fill-in fields. Each answer is used for every merged document.'),
+    dialog({ title: '合并应答', submit: '继续', body: [
+      el('p.field-hint', {}, '这些问题来自“提示”和“填写”字段。每个答案都将用于每份合并文档。'),
       ...inputs.map(([p, i]) => field(p.prompt, i)),
     ], onSubmit: () => { result = { ...answers, ...Object.fromEntries(inputs.map(([p, i]) => [p.id, i.value])) }; }, onClose: () => resolve(result) });
   });
@@ -268,29 +268,29 @@ export function askPrompts(prompts, answers = {}) {
 /** Choose records (and email options); resolves { from, to, email? } or null. */
 export function openFinish(kind, mm) {
   const total = mm.records().length, current = Math.min(mm.state().activeRecord || 1, total);
-  const range = radios('Merge records', [['all', `All (${total})`], ['current', `Current record (${current})`], ['range', 'From–to']], 'all', () => sync());
-  const from = input('1', { type: 'number', min: 1, max: total, 'aria-label': 'From record' }), to = input(String(total), { type: 'number', min: 1, max: total, 'aria-label': 'To record' });
+  const range = radios('合并记录', [['all', `全部 (${total})`], ['current', `当前记录 (${current})`], ['range', '范围']], 'all', () => sync());
+  const from = input('1', { type: 'number', min: 1, max: total, 'aria-label': '起始记录' }), to = input(String(total), { type: 'number', min: 1, max: total, 'aria-label': '终止记录' });
   const sync = () => { from.disabled = to.disabled = range.value !== 'range'; };
   sync();
-  const titles = { document: 'Merge to New Document', print: 'Merge to Printer', email: 'Merge to Email' };
+  const titles = { document: '合并到新文档', print: '合并到打印机', email: '合并到电子邮件' };
   const columns = mm.state().list?.columns || [];
-  const emailColumn = select(columns.map(c => [c, c]), mm.state().email?.to || mm.mapping().email || columns.find(c => /e-?mail/i.test(c)) || columns[0], { 'aria-label': 'To' });
-  const subject = input(mm.state().subject || '', { 'aria-label': 'Subject line' });
-  const format = select([['html', 'HTML'], ['text', 'Plain text']], mm.state().email?.format || 'html', { 'aria-label': 'Mail format' });
+  const emailColumn = select(columns.map(c => [c, c]), mm.state().email?.to || mm.mapping().email || columns.find(c => /e-?mail/i.test(c)) || columns[0], { 'aria-label': '收件人' });
+  const subject = input(mm.state().subject || '', { 'aria-label': '主题行' });
+  const format = select([['html', 'HTML'], ['text', '纯文本']], mm.state().email?.format || 'html', { 'aria-label': '邮件格式' });
   return new Promise(resolve => {
     let result = null;
-    dialog({ title: titles[kind], size: kind === 'email' ? 'wide' : '', submit: kind === 'email' ? 'Continue' : 'OK', body: [
-      ...(kind === 'email' ? [field('To', emailColumn), field('Subject line', subject), field('Mail format', format)] : []),
-      el('p.field-label', {}, 'Merge records'), range, el('div.mm-inline', {}, field('From record', from), field('To record', to)),
+    dialog({ title: titles[kind], size: kind === 'email' ? 'wide' : '', submit: kind === 'email' ? '继续' : '确定', body: [
+      ...(kind === 'email' ? [field('收件人', emailColumn), field('主题行', subject), field('邮件格式', format)] : []),
+      el('p.field-label', {}, '合并记录'), range, el('div.mm-inline', {}, field('起始记录', from), field('终止记录', to)),
     ], onSubmit: () => {
       let a = 1, b = total;
       if (range.value === 'current') a = b = current;
       if (range.value === 'range') {
         a = Number(from.value); b = Number(to.value);
-        if (!Number.isInteger(a) || !Number.isInteger(b) || a < 1 || b > total || a > b) throw new Error(`Choose records between 1 and ${total}.`);
+        if (!Number.isInteger(a) || !Number.isInteger(b) || a < 1 || b > total || a > b) throw new Error(`请选择介于 1 和 ${total} 之间的记录。`);
       }
       if (kind === 'email') {
-        if (!emailColumn.value) throw new Error('Choose the column with email addresses.');
+        if (!emailColumn.value) throw new Error('请选择包含电子邮件地址的列。');
         mm.setState({ subject: subject.value, email: { ...mm.state().email, to: emailColumn.value, format: format.value } });
       }
       result = { from: a, to: b };

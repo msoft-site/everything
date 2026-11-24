@@ -17,13 +17,13 @@ export function createLinkCard({ editor, edit, host }) {
     if (!link || !openableHyperlink(link)) return;
     hide(); editor()?.openHyperlink(link);
   } });
-  const note = el('span.link-card-note', {}, 'Can’t be opened here');
+  const note = el('span.link-card-note', {}, '无法在此打开');
   const command = (label, icon, action) => el('button.icon-btn', { type: 'button', 'aria-label': label, title: label, onclick: () => { hide(); action(); } }, iconEl(icon, 16));
-  const node = el('div.link-card', { role: 'group', 'aria-label': 'Link', hidden: true,
+  const node = el('div.link-card', { role: 'group', 'aria-label': '超链接', hidden: true,
     // The document keeps the focus (and its caret) through a press on the card.
     onpointerdown: e => e.preventDefault() },
   el('span.link-card-icon', { 'aria-hidden': 'true' }, iconEl('link', 16)), address, note,
-  command('Edit link', 'pencil', () => edit()), command('Remove link', 'unlink', () => editor()?.removeHyperlink()));
+  command('编辑超链接', 'pencil', () => edit()), command('删除超链接', 'unlink', () => editor()?.removeHyperlink()));
 
   function show({ start, end, link, rect }) {
     const ed = editor(); if (!ed) return;

@@ -11,7 +11,7 @@ import { revisionView, registerRevisionAuthors, describeFormatChange } from '../
 import { createReadAloud } from './read-aloud.js';
 import { renderMentions } from './mentions.js';
 
-export const MARKUP_VIEWS = [['simple', 'Simple Markup'], ['all', 'All Markup'], ['none', 'No Markup'], ['original', 'Original']];
+export const MARKUP_VIEWS = [['simple', '简单标记'], ['all', '所有标记'], ['none', '无标记'], ['original', '原始状态']];
 
 const AVATAR_COLORS = ['#3B6FB6', '#2E8A6E', '#B5523B', '#7B5AA6', '#A3762A', '#2F7F95', '#A04A73', '#5F7A2E'];
 const TINT = 'rgba(128,128,128,.16)', ACTIVE_TINT = 'rgba(240,188,70,.42)';
@@ -39,7 +39,7 @@ export function commentThreads(list) {
  * people() for @mentions, commentsPane(), trackingOptions(), showMarkupItems(), lockTracking().
  */
 export function createReview({ editor, pkg, host, error, author, onChange = () => {}, onShift = () => {}, hooks = {} }) {
-  const layer = el('div.ed-comments-layer', { role: 'complementary', 'aria-label': 'Comments' });
+  const layer = el('div.ed-comments-layer', { role: 'complementary', 'aria-label': '批注' });
   let markupButton = null;
   let activeId = null, pinned = false, pinnedRange = '', draft = null, editing = null, signature = '', positionsKey = '';
   // The tracked change last selected with Previous/Next Change or from the Reviewing Pane.
@@ -55,8 +55,8 @@ export function createReview({ editor, pkg, host, error, author, onChange = () =
   const paneList = el('div.review-pane-list', { role: 'list' });
   const paneSummary = el('p.review-pane-summary');
   let paneOrientation = revisionView.options.paneOrientation || 'vertical';
-  const pane = el('aside.review-pane', { 'aria-label': 'Reviewing Pane', hidden: true, dataset: { orientation: paneOrientation } },
-    el('div.canvas-panel-heading', {}, el('h2', {}, 'Revisions'), el('button.icon-btn', { type: 'button', 'aria-label': 'Close Reviewing Pane', onclick: () => { commands.toggleReviewingPane(false); editor()?.focus(); } }, '✕')),
+  const pane = el('aside.review-pane', { 'aria-label': '审阅窗格', hidden: true, dataset: { orientation: paneOrientation } },
+    el('div.canvas-panel-heading', {}, el('h2', {}, '修订'), el('button.icon-btn', { type: 'button', 'aria-label': '关闭审阅窗格', onclick: () => { commands.toggleReviewingPane(false); editor()?.focus(); } }, '✕')),
     paneSummary, paneList);
   // Escape leaves the pane for the document, closing it, as it does in the other panes.
   pane.addEventListener('keydown', e => {
@@ -71,8 +71,8 @@ export function createReview({ editor, pkg, host, error, author, onChange = () =
     // with the pane open slow in a document with many changes.
     const text = body.text, formatSummary = formatSummaries(body);
     const items = [
-      ...changes.map(c => ({ at: c.start, kind: c.move ? (c.type === 'ins' ? 'Moved (to)' : 'Moved (from)') : { ins: 'Inserted', del: 'Deleted', format: 'Formatted' }[c.type] || 'Changed', author: c.author, date: c.date, text: c.type === 'format' ? formatSummary(c) : (text.slice(c.start, Math.min(c.end, text.length)) + (c.end > text.length ? '\n' : '')).replace(/\n/g, ' ¶ ').trim(), select: () => { engine.finishComposition(); if (engine.session.path !== null) engine.editStory(null); body.select(c.start, Math.min(c.end, body.text.length)); navigated = c; engine.focus(); engine.revealCaret?.(); onChange(); } })),
-      ...notes.map(t => ({ at: t.start ?? Infinity, kind: t.root.done ? 'Comment (resolved)' : 'Comment', author: t.root.author, date: t.root.date, text: t.root.text, select: () => selectThread(t) })),
+      ...changes.map(c => ({ at: c.start, kind: c.move ? (c.type === 'ins' ? '移动(至)' : '移动(自)') : { ins: '插入', del: '删除', format: '格式设置' }[c.type] || '更改', author: c.author, date: c.date, text: c.type === 'format' ? formatSummary(c) : (text.slice(c.start, Math.min(c.end, text.length)) + (c.end > text.length ? '\n' : '')).replace(/\n/g, ' ¶ ').trim(), select: () => { engine.finishComposition(); if (engine.session.path !== null) engine.editStory(null); body.select(c.start, Math.min(c.end, body.text.length)); navigated = c; engine.focus(); engine.revealCaret?.(); onChange(); } })),
+      ...notes.map(t => ({ at: t.start ?? Infinity, kind: t.root.done ? '批注(已解决)' : '批注', author: t.root.author, date: t.root.date, text: t.root.text, select: () => selectThread(t) })),
     ].sort((a, b) => a.at - b.at);
     return { changes, notes, items };
   }
@@ -82,8 +82,7 @@ export function createReview({ editor, pkg, host, error, author, onChange = () =
     pane.hidden = false;
     const { changes, notes, items } = paneItems(engine);
     const count = type => changes.filter(c => c.type === type).length;
-    const n = (value, one, many) => `${value} ${value === 1 ? one : many}`;
-    const summary = `${n(changes.length + notes.length, 'revision', 'revisions')}: ${n(count('ins'), 'insertion', 'insertions')}, ${n(count('del'), 'deletion', 'deletions')}, ${count('format')} formatting, ${n(notes.length, 'comment', 'comments')}`;
+    const summary = `${changes.length + notes.length} 处修订: ${count('ins')} 处插入, ${count('del')} 处删除, ${count('format')} 处格式设置, ${notes.length} 条批注`;
     // Where the changes are does not change the list (an entry selects its change where it is when chosen), so
     // typing before them does not rebuild every entry.
     const entries = items.map(item => JSON.stringify([item.kind, item.author, item.date, item.text]));
@@ -95,8 +94,8 @@ export function createReview({ editor, pkg, host, error, author, onChange = () =
     // An entry selects the change or comment at its place in the list when it is chosen.
     const entry = item => {
       const node = listItem(el('button.review-pane-item', { type: 'button', onclick: () => { const current = editor(), index = [...paneList.children].indexOf(node); if (current && index >= 0) paneItems(current).items[index]?.select(); } },
-        el('span.review-pane-head', {}, el('strong', {}, item.author || 'Unknown author'), ' ', el('span', {}, item.kind)),
-        el('span.review-pane-text', {}, clipText(item.text.replace(/\ufffc/g, ''), 200) || '(formatting)')));
+        el('span.review-pane-head', {}, el('strong', {}, item.author || '未知作者'), ' ', el('span', {}, item.kind)),
+        el('span.review-pane-text', {}, clipText(item.text.replace(/\ufffc/g, ''), 200) || '(格式设置)')));
       return node;
     };
     // Typing in a tracked change changes what one entry shows: only the entries that changed are built again, so
@@ -115,7 +114,7 @@ export function createReview({ editor, pkg, host, error, author, onChange = () =
       return;
     }
     paneList.replaceChildren(...items.map(entry));
-    if (!items.length) paneList.append(el('p.field-hint', {}, 'No comments or tracked changes.'));
+    if (!items.length) paneList.append(el('p.field-hint', {}, '无批注或修订。'));
   }
   /**
    * What formatting changes did, e.g. "Bold, Font size 14 pt": summarize(change). Paragraph starts are measured
@@ -127,12 +126,12 @@ export function createReview({ editor, pkg, host, error, author, onChange = () =
     return change => {
       let low = 0, high = starts.length - 1;
       while (low < high) { const middle = (low + high + 1) >> 1; if (starts[middle] <= change.start) low = middle; else high = middle - 1; }
-      const p = body.paragraphs[low]; if (!p) return 'Formatted';
+      const p = body.paragraphs[low]; if (!p) return '格式设置';
       const size = (starts[low + 1] ?? at) - starts[low] - 1;
       if (p.formatRevision && change.end > starts[low] + size) return describeFormatChange(p).join(', ');
       let offset = starts[low];
       for (const run of p.runs) { if (offset >= change.start && run.formatRevision) return describeFormatChange(run).join(', '); offset += run.text.length; }
-      return 'Formatted';
+      return '格式设置';
     };
   }
   /** Changes shown under the current Show Markup choices (reviewers, kinds). */
@@ -142,7 +141,7 @@ export function createReview({ editor, pkg, host, error, author, onChange = () =
   const commentsRefused = () => ['readOnly', 'forms'].includes(hooks.protection?.()?.edit);
   // Protection other than locked tracking keeps Track Changes as the document has it.
   const trackingFixed = () => ['readOnly', 'comments', 'forms'].includes(hooks.protection?.()?.edit);
-  const fixedTracking = () => error(new Error('This document is protected: Track Changes cannot be turned on or off.'));
+  const fixedTracking = () => error(new Error('此文档受保护: 无法开启或关闭修订。'));
   // Changes can be accepted or rejected: not with tracking locked, nor under protection that allows no edits of the text.
   const resolvable = () => !!ready() && !locked() && !trackingFixed();
   // No Markup and Original show the document without any markup: its comments are hidden too.
@@ -207,8 +206,8 @@ export function createReview({ editor, pkg, host, error, author, onChange = () =
     canComment() { const engine = ready(); return !!engine && engine.session.path === null && !commentsRefused(); },
     newComment() {
       const engine = ready(); if (!engine) return;
-      if (engine.session.path !== null) { error(new Error('Comments can be added to the document body.')); return; }
-      if (commentsRefused()) { error(new Error('This document is protected: comments cannot be added.')); return; }
+      if (engine.session.path !== null) { error(new Error('只能在文档正文中添加批注。')); return; }
+      if (commentsRefused()) { error(new Error('此文档受保护: 无法添加批注。')); return; }
       engine.finishComposition();
       const [start, end] = engine.model.commentRange();
       revealComments();
@@ -264,7 +263,7 @@ export function createReview({ editor, pkg, host, error, author, onChange = () =
     get trackingMode() { const body = editor()?.session.body; return !body?.trackChanges ? 'off' : body.trackChangesMode === 'mine' ? 'mine' : 'everyone'; },
     setTrackingMode(mode) {
       const engine = ready(); if (!engine) return;
-      if (locked() && mode === 'off') { error(new Error('Tracking is locked. Unlock it to turn Track Changes off.')); return; }
+      if (locked() && mode === 'off') { error(new Error('修订已锁定。解除锁定后方可关闭修订。')); return; }
       if (trackingFixed()) { fixedTracking(); return; }
       engine.session.body.trackChangesMode = mode === 'mine' ? 'mine' : 'everyone';
       commands.toggleTracking(mode !== 'off', { force: true });
@@ -275,7 +274,7 @@ export function createReview({ editor, pkg, host, error, author, onChange = () =
     toggleTracking(on = !commands.tracking, { force = false } = {}) {
       const engine = ready(); if (!engine) return;
       engine.finishComposition();
-      if (!on && locked()) { error(new Error('Tracking is locked. Unlock it to turn Track Changes off.')); return; }
+      if (!on && locked()) { error(new Error('修订已锁定。解除锁定后方可关闭修订。')); return; }
       if (trackingFixed() && !!engine.session.body.trackChanges !== !!on) { fixedTracking(); return; }
       if (!!engine.session.body.trackChanges === !!on) { if (force) { engine.session.revision++; engine.onChange(); onChange(); } return; }
       engine.session.body.trackChanges = !!on;
@@ -297,7 +296,7 @@ export function createReview({ editor, pkg, host, error, author, onChange = () =
     hasRevisions() { return (editor()?.session.body.revisions || []).length > 0; },
     resolve(accept, scope = 'here', { moveNext = false, stopTracking = false, change = null } = {}) {
       const engine = ready(); if (!engine) return;
-      if (locked()) { error(new Error('Tracking is locked: changes cannot be accepted or rejected.')); return; }
+      if (locked()) { error(new Error('修订已锁定: 无法接受或拒绝修订。')); return; }
       if (engine.session.path !== null) engine.editStory(null);
       const body = engine.session.body, [a, b] = body.range;
       // A balloon's buttons act on its own change. Its range can hold others (a paragraph's formatting change spans
@@ -315,7 +314,7 @@ export function createReview({ editor, pkg, host, error, author, onChange = () =
       // "All shown" leaves the changes of reviewers and kinds hidden by Show Markup alone.
       const ok = run(() => scope === 'shown' ? body.resolveRevisions(accept, undefined, undefined, { only: change => shownChanges([change]).length > 0 })
         : scope === 'all' ? body.resolveRevisions(accept) : own ? body.resolveRevisions(accept, change.start, change.end, { only: own }) : body.resolveRevisions(accept, a, b));
-      if (!accept && body.formatRejectSkipped) error(new Error('Formatting changes cannot be rejected here yet, so they were kept. Accept them, or change the formatting back by hand.'));
+      if (!accept && body.formatRejectSkipped) error(new Error('此处尚不支持拒绝格式更改，已予以保留。请接受它们或手动还原格式。'));
       if (stopTracking) commands.toggleTracking(false);
       if (ok && moveNext) commands.goChange(1, { from: body.range[0] });
       else editor()?.focus();
@@ -375,16 +374,16 @@ export function createReview({ editor, pkg, host, error, author, onChange = () =
       onSubmit = text => { unsent.delete(key); if (!submitted(text)) { unsent.set(key, text); refresh(true); queueMicrotask(() => layer.querySelector(`textarea[data-key="${key}"]`)?.focus()); } };
       onCancel = () => { unsent.delete(key); cancelled?.(); };
     }
-    const input = el('textarea.wcc-input', { rows: 1, ...(key ? { dataset: { key } } : {}), placeholder: `${placeholder} (type @ to mention someone)`, 'aria-label': placeholder, 'aria-autocomplete': 'list' }, value);
+    const input = el('textarea.wcc-input', { rows: 1, ...(key ? { dataset: { key } } : {}), placeholder: `${placeholder} (输入 @ 提及某人)`, 'aria-label': placeholder, 'aria-autocomplete': 'list' }, value);
     input.value = value;
     const grow = () => { input.style.height = 'auto'; input.style.height = `${Math.min(200, input.scrollHeight + 2)}px`; };
     const submit = el('button.btn.btn-primary.btn-sm.wcc-post', { type: 'button', disabled: !value.trim(), onclick: () => onSubmit(input.value) }, submitLabel);
-    const cancel = el('button.btn.btn-sm.wcc-cancel', { type: 'button', onclick: () => onCancel?.() }, 'Cancel');
+    const cancel = el('button.btn.btn-sm.wcc-cancel', { type: 'button', onclick: () => onCancel?.() }, '取消');
     // @mentions: names of the people taking part in the review, offered as the name is typed.
     // The suggestions belong to the text box, which keeps the keyboard: the one chosen with the arrow keys is its
     // active descendant, so a screen reader says it.
     const listId = `wcc-mentions-${++mentionLists}`;
-    const mentions = el('div.wcc-mentions', { id: listId, role: 'listbox', 'aria-label': 'People', hidden: true });
+    const mentions = el('div.wcc-mentions', { id: listId, role: 'listbox', 'aria-label': '人员', hidden: true });
     input.setAttribute('aria-controls', listId);
     let mention = null, chosen = 0;
     const choose = index => {
@@ -428,36 +427,36 @@ export function createReview({ editor, pkg, host, error, author, onChange = () =
   }
   function entry(comment, thread, isRoot, names) {
     const editable = annotating();
-    const more = el('button.icon-btn.wcc-more', { type: 'button', 'aria-label': `More thread actions for ${comment.author || 'comment'}`, title: 'More thread actions', disabled: !editable,
-      onclick: () => openMenu({ anchor: more, label: 'Comment actions', items: [
-        { label: 'Edit comment', onSelect: () => { editing = comment.id; activeId = thread.id; pinned = true; pinnedRange = editor()?.model.range.join() ?? ''; refresh(true); queueMicrotask(() => cards.get(thread.id)?.querySelector('.wcc-entry.is-editing textarea')?.focus()); } },
-        { label: isRoot ? 'Delete thread' : 'Delete comment', onSelect: () => { run(() => editor().session.body.deleteComment(comment.id)); refresh(true); } },
-        ...(isRoot ? [{ label: thread.root.done ? 'Reopen thread' : 'Resolve thread', onSelect: () => { run(() => editor().session.body.setCommentDone(thread.id, !thread.root.done)); refresh(true); } }] : []),
+    const more = el('button.icon-btn.wcc-more', { type: 'button', 'aria-label': `批注操作`, title: '更多批注操作', disabled: !editable,
+      onclick: () => openMenu({ anchor: more, label: '批注操作', items: [
+        { label: '编辑批注', onSelect: () => { editing = comment.id; activeId = thread.id; pinned = true; pinnedRange = editor()?.model.range.join() ?? ''; refresh(true); queueMicrotask(() => cards.get(thread.id)?.querySelector('.wcc-entry.is-editing textarea')?.focus()); } },
+        { label: isRoot ? '删除批注列表' : '删除批注', onSelect: () => { run(() => editor().session.body.deleteComment(comment.id)); refresh(true); } },
+        ...(isRoot ? [{ label: thread.root.done ? '重新打开批注' : '解决批注', onSelect: () => { run(() => editor().session.body.setCommentDone(thread.id, !thread.root.done)); refresh(true); } }] : []),
       ] }) }, '⋯');
     const head = el('div.wcc-head', {}, avatar(comment.author, comment.initials),
-      el('div.wcc-meta', {}, el('span.wcc-author', {}, comment.author || 'Unknown author'), el('span.wcc-date', { title: comment.date ? new Date(comment.date).toLocaleString() : '' }, time(comment.date))), more);
+      el('div.wcc-meta', {}, el('span.wcc-author', {}, comment.author || '未知作者'), el('span.wcc-date', { title: comment.date ? new Date(comment.date).toLocaleString() : '' }, time(comment.date))), more);
     const body = editing === comment.id
-      ? textEditor({ value: comment.text, key: `edit:${comment.id}`, placeholder: 'Edit comment', submitLabel: 'Save', onSubmit: text => { editing = null; const ok = run(() => editor().session.body.editComment(comment.id, text)); if (!ok) editing = comment.id; refresh(true); return ok; }, onCancel: () => { editing = null; refresh(true); editor()?.focus(); } })
+      ? textEditor({ value: comment.text, key: `edit:${comment.id}`, placeholder: '编辑批注', submitLabel: '保存', onSubmit: text => { editing = null; const ok = run(() => editor().session.body.editComment(comment.id, text)); if (!ok) editing = comment.id; refresh(true); return ok; }, onCancel: () => { editing = null; refresh(true); editor()?.focus(); } })
       // Only text with an @ can mention anyone.
       : el('div.wcc-text', {}, ...renderMentions(comment.text, String(comment.text || '').includes('@') ? names() : []));
     return el(`div.wcc-entry${editing === comment.id ? '.is-editing' : ''}`, { dataset: { commentId: comment.id } }, head, body);
   }
   function card(thread, names) {
     const done = thread.root.done, active = thread.id === activeId;
-    const node = el(`article.ed-comment-card${done ? '.is-resolved' : ''}${active ? '.is-active' : ''}`, { dataset: { thread: thread.id }, tabIndex: 0, 'aria-label': `Comment by ${thread.root.author || 'unknown author'}${done ? ', resolved' : ''}` });
+    const node = el(`article.ed-comment-card${done ? '.is-resolved' : ''}${active ? '.is-active' : ''}`, { dataset: { thread: thread.id }, tabIndex: 0, 'aria-label': `${thread.root.author || '未知作者'} 的批注${done ? ' (已解决)' : ''}` });
     node.addEventListener('click', e => { if (!e.target.closest('button, textarea')) selectThread(thread, { focusDocument: false }); });
     node.addEventListener('keydown', e => { if (e.target === node && e.key === 'Enter') { e.preventDefault(); selectThread(thread); } });
     if (done && !active) {
-      node.append(el('div.wcc-head', {}, avatar(thread.root.author, thread.root.initials), el('div.wcc-meta', {}, el('span.wcc-author', {}, thread.root.author || 'Unknown author'), el('span.wcc-date', {}, 'Resolved'))),
+      node.append(el('div.wcc-head', {}, avatar(thread.root.author, thread.root.initials), el('div.wcc-meta', {}, el('span.wcc-author', {}, thread.root.author || '未知作者'), el('span.wcc-date', {}, '已解决'))),
         el('div.wcc-text.is-clamped', {}, thread.root.text));
       return node;
     }
     node.append(entry(thread.root, thread, true, names), ...thread.replies.map(reply => entry(reply, thread, false, names)));
-    if (done) node.append(el('div.wcc-resolved', {}, el('span', {}, 'Resolved'), el('button.btn.btn-sm', { type: 'button', disabled: !annotating(), onclick: () => { run(() => editor().session.body.setCommentDone(thread.id, false)); refresh(true); } }, 'Reopen')));
-    else if (annotating()) node.append(el('div.wcc-reply', {}, textEditor({ key: `reply:${thread.id}`, placeholder: 'Reply', submitLabel: 'Reply',
+    if (done) node.append(el('div.wcc-resolved', {}, el('span', {}, '已解决'), el('button.btn.btn-sm', { type: 'button', disabled: !annotating(), onclick: () => { run(() => editor().session.body.setCommentDone(thread.id, false)); refresh(true); } }, '重新打开')));
+    else if (annotating()) node.append(el('div.wcc-reply', {}, textEditor({ key: `reply:${thread.id}`, placeholder: '回复', submitLabel: '回复',
       onSubmit: text => { const ok = run(() => editor().session.body.replyToComment(thread.id, { ...me(), text })); refresh(true); return ok; },
       onCancel: () => { activeId = null; pinned = false; refresh(true); editor()?.focus(); } })),
-    el('button.btn.btn-sm.wcc-resolve', { type: 'button', title: 'Resolve thread', onclick: () => { run(() => editor().session.body.setCommentDone(thread.id, true)); refresh(true); } }, 'Resolve'));
+    el('button.btn.btn-sm.wcc-resolve', { type: 'button', title: '解决批注', onclick: () => { run(() => editor().session.body.setCommentDone(thread.id, true)); refresh(true); } }, '解决'));
     return node;
   }
   /**
@@ -484,7 +483,7 @@ export function createReview({ editor, pkg, host, error, author, onChange = () =
     Object.assign(draft, { start: Math.min(start, text.length), end: Math.max(Math.min(start, text.length), Math.min(end, text.length)), revision: body.revision, source: text });
   }
   function draftCard() {
-    const editorNode = textEditor({ value: draft.value || '', placeholder: 'Start a conversation', submitLabel: 'Post',
+    const editorNode = textEditor({ value: draft.value || '', placeholder: '发起对话', submitLabel: '发布',
       onSubmit: text => {
         const engine = editor(); if (engine) followDraft(engine);
         const posting = draft, { start, end } = draft; draft = null;
@@ -500,7 +499,7 @@ export function createReview({ editor, pkg, host, error, author, onChange = () =
       onCancel: () => { draft = null; activeId = null; refresh(true); editor()?.focus(); } });
     // The words typed so far belong to the draft, so a rebuilt column shows them again.
     editorNode.querySelector('textarea').addEventListener('input', e => { if (draft) draft.value = e.target.value; });
-    return el('article.ed-comment-card.ed-comment-draft.is-active', { 'aria-label': 'New comment' },
+    return el('article.ed-comment-card.ed-comment-draft.is-active', { 'aria-label': '新建批注' },
       el('div.wcc-head', {}, avatar(me().author, me().initials), el('div.wcc-meta', {}, el('span.wcc-author', {}, me().author))),
       editorNode);
   }
@@ -517,11 +516,11 @@ export function createReview({ editor, pkg, host, error, author, onChange = () =
     const text = change.type === 'format' ? formatSummary(change) : documentText.slice(change.start, Math.min(change.end, documentText.length)).replace(/\n/g, ' ¶ ');
     const editable = resolvable();
     const act = accept => { body.select(change.start, Math.min(change.end, body.text.length)); commands.resolve(accept, 'here', { change }); };
-    return el('article.ed-comment-card.ed-revision-card', { dataset: { anchor: String(change.start), kind: change.type }, 'aria-label': `${change.type === 'format' ? 'Formatted' : 'Deleted'} by ${change.author || 'unknown author'}` },
-      el('div.wcc-head', {}, avatar(change.author), el('div.wcc-meta', {}, el('span.wcc-author', {}, change.author || 'Unknown author'), el('span.wcc-date', {}, time(change.date))),
-        el('button.icon-btn.wcc-more', { type: 'button', title: 'Accept', 'aria-label': 'Accept change', disabled: !editable, onclick: () => act(true) }, '✓'),
-        el('button.icon-btn.wcc-more', { type: 'button', title: 'Reject', 'aria-label': 'Reject change', disabled: !editable, onclick: () => act(false) }, '✕')),
-      el('div.wcc-text.is-clamped', {}, el('span.ed-revision-kind', {}, change.type === 'format' ? 'Formatted: ' : 'Deleted: '), change.type === 'format' ? text : el('del', {}, clipText(text, 160))));
+    return el('article.ed-comment-card.ed-revision-card', { dataset: { anchor: String(change.start), kind: change.type }, 'aria-label': `${change.author || '未知作者'} ${change.type === 'format' ? '格式设置' : '删除'}` },
+      el('div.wcc-head', {}, avatar(change.author), el('div.wcc-meta', {}, el('span.wcc-author', {}, change.author || '未知作者'), el('span.wcc-date', {}, time(change.date))),
+        el('button.icon-btn.wcc-more', { type: 'button', title: '接受', 'aria-label': '接受更改', disabled: !editable, onclick: () => act(true) }, '✓'),
+        el('button.icon-btn.wcc-more', { type: 'button', title: '拒绝', 'aria-label': '拒绝更改', disabled: !editable, onclick: () => act(false) }, '✕')),
+      el('div.wcc-text.is-clamped', {}, el('span.ed-revision-kind', {}, change.type === 'format' ? '格式设置: ' : '删除: '), change.type === 'format' ? text : el('del', {}, clipText(text, 160))));
   }
 
   /* ---- Layout: cards level with their anchors, stacked without overlap ---- */
@@ -653,27 +652,27 @@ export function createReview({ editor, pkg, host, error, author, onChange = () =
   function extendTab(tabId, kit) {
     const { command, split, rows, when, menuButton } = kit;
     if (tabId === 'insert') {
-      const insertComment = command('New Comment', 'newComment', () => commands.newComment(), { size: 'large', text: 'Comment', shortcut: MOD_KEY === 'Cmd' ? 'Cmd+Option+A' : 'Ctrl+Alt+M' });
+      const insertComment = command('新建批注', 'newComment', () => commands.newComment(), { size: 'large', text: '批注', shortcut: MOD_KEY === 'Cmd' ? 'Cmd+Option+A' : 'Ctrl+Alt+M' });
       insertComment.addEventListener('mousedown', e => e.preventDefault());
       when(insertComment, () => commands.canComment());
-      return [{ id: 'comments', label: 'Comments', icon: 'newComment', priority: 4, after: 'links', items: [insertComment] }];
+      return [{ id: 'comments', label: '批注', icon: 'newComment', priority: 4, after: 'links', items: [insertComment] }];
     }
     if (tabId !== 'review') return [];
-    const add = command('New Comment', 'newComment', () => commands.newComment(), { size: 'large', text: 'New Comment', shortcut: MOD_KEY === 'Cmd' ? 'Cmd+Option+A' : 'Ctrl+Alt+M' });
-    const remove = command('Delete Comment', 'deleteComment', () => commands.deleteActive(), { size: 'large', text: 'Delete' });
-    const removeSplit = split(remove, { label: 'Delete options', size: 'large', open: (anchor, e) => openMenu({ anchor, label: 'Delete', pointer: !!e?.detail, onClose: e?.detail ? () => editor()?.focus() : null, items: [
-      { label: 'Delete', icon: 'deleteComment', disabled: !(commands.activeThread() || threadAtCaret()), onSelect: () => commands.deleteActive() },
-      { label: 'Delete All Resolved Comments', disabled: !threads().some(t => t.root.done), onSelect: () => commands.deleteAll({ resolvedOnly: true }) },
-      { label: 'Delete All Comments Shown', disabled: !threads().some(t => !revisionView.options.hiddenAuthors.includes(t.root.author)), onSelect: () => commands.deleteAllShown() },
-      { label: 'Delete All Comments in Document', disabled: !threads().length, onSelect: () => commands.deleteAll() },
+    const add = command('新建批注', 'newComment', () => commands.newComment(), { size: 'large', text: '新建批注', shortcut: MOD_KEY === 'Cmd' ? 'Cmd+Option+A' : 'Ctrl+Alt+M' });
+    const remove = command('删除批注', 'deleteComment', () => commands.deleteActive(), { size: 'large', text: '删除' });
+    const removeSplit = split(remove, { label: '删除选项', size: 'large', open: (anchor, e) => openMenu({ anchor, label: '删除', pointer: !!e?.detail, onClose: e?.detail ? () => editor()?.focus() : null, items: [
+      { label: '删除', icon: 'deleteComment', disabled: !(commands.activeThread() || threadAtCaret()), onSelect: () => commands.deleteActive() },
+      { label: '删除所有已解决的批注', disabled: !threads().some(t => t.root.done), onSelect: () => commands.deleteAll({ resolvedOnly: true }) },
+      { label: '删除显示的所有批注', disabled: !threads().some(t => !revisionView.options.hiddenAuthors.includes(t.root.author)), onSelect: () => commands.deleteAllShown() },
+      { label: '删除文档中的所有批注', disabled: !threads().length, onSelect: () => commands.deleteAll() },
     ] }) });
-    const previous = command('Previous Comment', 'previous', () => commands.go(-1), { text: 'Previous' });
-    const next = command('Next Comment', 'next', () => commands.go(1), { text: 'Next' });
-    const resolve = command('Resolve Comment', 'resolveComment', () => commands.resolveActive(), { text: 'Resolve' });
-    const show = command('Show Comments', 'showComments', () => commands.toggleShown(), { size: 'large', text: 'Show Comments' });
-    const showSplit = split(show, { label: 'Show Comments options', size: 'large', open: (anchor, e) => openMenu({ anchor, label: 'Show Comments', pointer: !!e?.detail, onClose: e?.detail ? () => editor()?.focus() : null, items: [
-      { label: 'Contextual', radio: true, checked: showing(), onSelect: () => { if (!showing()) commands.toggleShown(); } },
-      { label: 'List', radio: true, checked: false, onSelect: () => hooks.commentsPane?.() },
+    const previous = command('上一条批注', 'previous', () => commands.go(-1), { text: '上一条' });
+    const next = command('下一条批注', 'next', () => commands.go(1), { text: '下一条' });
+    const resolve = command('解决批注', 'resolveComment', () => commands.resolveActive(), { text: '解决' });
+    const show = command('显示批注', 'showComments', () => commands.toggleShown(), { size: 'large', text: '显示批注' });
+    const showSplit = split(show, { label: '显示批注选项', size: 'large', open: (anchor, e) => openMenu({ anchor, label: '显示批注', pointer: !!e?.detail, onClose: e?.detail ? () => editor()?.focus() : null, items: [
+      { label: '上下文', radio: true, checked: showing(), onSelect: () => { if (!showing()) commands.toggleShown(); } },
+      { label: '列表', radio: true, checked: false, onSelect: () => hooks.commentsPane?.() },
     ] }) });
     for (const b of [add, remove, previous, next, show, resolve]) b.addEventListener('mousedown', e => e.preventDefault());
     when(add, () => commands.canComment());
@@ -683,34 +682,34 @@ export function createReview({ editor, pkg, host, error, author, onChange = () =
     when(resolve, () => annotating() && !!(commands.activeThread() || threadAtCaret()));
     when(show, () => !!editor()?.session.body.comments && markupShown(), () => String(showing()));
     when(showSplit.arrow, () => !!editor()?.session.body.comments && markupShown());
-    const track = command('Track Changes', 'trackChanges', () => commands.toggleTracking(), { size: 'large', text: 'Track Changes', shortcut: `${MOD_KEY}+Shift+E` });
-    const trackSplit = split(track, { label: 'Track Changes options', size: 'large', open: (anchor, e) => openMenu({ anchor, label: 'Track Changes', pointer: !!e?.detail, onClose: e?.detail ? () => editor()?.focus() : null, items: [
-      { label: 'For Everyone', radio: true, checked: commands.trackingMode === 'everyone', disabled: !commands.canTrack(), hint: 'Saved with the document', onSelect: () => commands.setTrackingMode('everyone') },
-      { label: 'Just Mine', radio: true, checked: commands.trackingMode === 'mine', disabled: !commands.canTrack() || locked(), hint: 'Only while you edit here', onSelect: () => commands.setTrackingMode('mine') },
-      { label: 'Off', radio: true, checked: commands.trackingMode === 'off', disabled: !commands.canTrack() || locked(), onSelect: () => commands.setTrackingMode('off') },
+    const track = command('修订', 'trackChanges', () => commands.toggleTracking(), { size: 'large', text: '修订', shortcut: `${MOD_KEY}+Shift+E` });
+    const trackSplit = split(track, { label: '修订选项', size: 'large', open: (anchor, e) => openMenu({ anchor, label: '修订', pointer: !!e?.detail, onClose: e?.detail ? () => editor()?.focus() : null, items: [
+      { label: '供所有人使用', radio: true, checked: commands.trackingMode === 'everyone', disabled: !commands.canTrack(), hint: '随文档一起保存', onSelect: () => commands.setTrackingMode('everyone') },
+      { label: '仅限本人', radio: true, checked: commands.trackingMode === 'mine', disabled: !commands.canTrack() || locked(), hint: '仅在此处编辑时有效', onSelect: () => commands.setTrackingMode('mine') },
+      { label: '关闭', radio: true, checked: commands.trackingMode === 'off', disabled: !commands.canTrack() || locked(), onSelect: () => commands.setTrackingMode('off') },
       { separator: true },
-      { label: locked() ? 'Unlock Tracking…' : 'Lock Tracking…', icon: 'lockTracking', disabled: !commands.canTrack() || !hooks.lockTracking, onSelect: () => hooks.lockTracking?.() },
+      { label: locked() ? '解除修订锁定…' : '锁定修订…', icon: 'lockTracking', disabled: !commands.canTrack() || !hooks.lockTracking, onSelect: () => hooks.lockTracking?.() },
     ] }) });
-    const markup = markupButton = menuButton('Display for Review', 'markup', () => MARKUP_VIEWS.map(([mode, label]) => ({ label, radio: true, checked: revisionView.mode === mode, onSelect: () => commands.setMarkupView(mode) })), { size: 'small', text: 'All Markup' });
-    const showMarkup = menuButton('Show Markup', 'showMarkup', () => hooks.showMarkupItems?.() || [], { size: 'small', text: 'Show Markup' });
+    const markup = markupButton = menuButton('显示以供审阅', 'markup', () => MARKUP_VIEWS.map(([mode, label]) => ({ label, radio: true, checked: revisionView.mode === mode, onSelect: () => commands.setMarkupView(mode) })), { size: 'small', text: '所有标记' });
+    const showMarkup = menuButton('显示标记', 'showMarkup', () => hooks.showMarkupItems?.() || [], { size: 'small', text: '显示标记' });
     // Tracking Options is the group's settings launcher, as Page Setup's is.
-    const options = command('Tracking Options', 'trackingOptions', () => hooks.trackingOptions?.());
+    const options = command('修订选项', 'trackingOptions', () => hooks.trackingOptions?.());
     options.classList.add('ribbon-launcher-button');
     options.addEventListener('mousedown', e => e.preventDefault());
     when(showMarkup, () => !!editor() && !!hooks.showMarkupItems); when(options, () => !!editor() && !!hooks.trackingOptions);
     const resolveMenu = accept => [
-      { label: `${accept ? 'Accept' : 'Reject'} and Move to Next`, icon: accept ? 'accept' : 'reject', disabled: !commands.revisionsAround().length, onSelect: () => commands.resolve(accept, 'here', { moveNext: true }) },
-      { label: `${accept ? 'Accept' : 'Reject'} This Change`, disabled: !commands.revisionsAround().length, onSelect: () => commands.resolve(accept) },
-      { label: `${accept ? 'Accept' : 'Reject'} All Changes Shown`, disabled: !shownChanges(editor()?.session.body.revisions || []).length, onSelect: () => commands.resolve(accept, 'shown') },
-      { label: `${accept ? 'Accept' : 'Reject'} All Changes`, disabled: !commands.hasRevisions(), onSelect: () => commands.resolve(accept, 'all') },
-      { label: `${accept ? 'Accept' : 'Reject'} All Changes and Stop Tracking`, disabled: !commands.hasRevisions(), onSelect: () => commands.resolve(accept, 'all', { stopTracking: true }) },
+      { label: `${accept ? '接受' : '拒绝'}并移至下一处`, icon: accept ? 'accept' : 'reject', disabled: !commands.revisionsAround().length, onSelect: () => commands.resolve(accept, 'here', { moveNext: true }) },
+      { label: `${accept ? '接受' : '拒绝'}此更改`, disabled: !commands.revisionsAround().length, onSelect: () => commands.resolve(accept) },
+      { label: `${accept ? '接受' : '拒绝'}显示的所有更改`, disabled: !shownChanges(editor()?.session.body.revisions || []).length, onSelect: () => commands.resolve(accept, 'shown') },
+      { label: `${accept ? '接受' : '拒绝'}所有更改`, disabled: !commands.hasRevisions(), onSelect: () => commands.resolve(accept, 'all') },
+      { label: `${accept ? '接受' : '拒绝'}所有更改并停止修订`, disabled: !commands.hasRevisions(), onSelect: () => commands.resolve(accept, 'all', { stopTracking: true }) },
     ];
-    const accept = command('Accept', 'accept', () => commands.resolve(true, 'here', { moveNext: true }), { size: 'large', text: 'Accept' });
-    const reject = command('Reject', 'reject', () => commands.resolve(false, 'here', { moveNext: true }), { size: 'large', text: 'Reject' });
-    const acceptSplit = split(accept, { label: 'Accept options', size: 'large', open: (anchor, e) => openMenu({ anchor, label: 'Accept', pointer: !!e?.detail, onClose: e?.detail ? () => editor()?.focus() : null, items: resolveMenu(true) }) });
-    const rejectSplit = split(reject, { label: 'Reject options', size: 'large', open: (anchor, e) => openMenu({ anchor, label: 'Reject', pointer: !!e?.detail, onClose: e?.detail ? () => editor()?.focus() : null, items: resolveMenu(false) }) });
-    const previousChange = command('Previous Change', 'previousArrow', () => commands.goChange(-1), { text: 'Previous' });
-    const nextChange = command('Next Change', 'nextArrow', () => commands.goChange(1), { text: 'Next' });
+    const accept = command('接受', 'accept', () => commands.resolve(true, 'here', { moveNext: true }), { size: 'large', text: '接受' });
+    const reject = command('拒绝', 'reject', () => commands.resolve(false, 'here', { moveNext: true }), { size: 'large', text: '拒绝' });
+    const acceptSplit = split(accept, { label: '接受选项', size: 'large', open: (anchor, e) => openMenu({ anchor, label: '接受', pointer: !!e?.detail, onClose: e?.detail ? () => editor()?.focus() : null, items: resolveMenu(true) }) });
+    const rejectSplit = split(reject, { label: '拒绝选项', size: 'large', open: (anchor, e) => openMenu({ anchor, label: '拒绝', pointer: !!e?.detail, onClose: e?.detail ? () => editor()?.focus() : null, items: resolveMenu(false) }) });
+    const previousChange = command('上一处更改', 'previousArrow', () => commands.goChange(-1), { text: '上一处' });
+    const nextChange = command('下一处更改', 'nextArrow', () => commands.goChange(1), { text: '下一处' });
     for (const b of [track, accept, reject, previousChange, nextChange]) b.addEventListener('mousedown', e => e.preventDefault());
     when(track, () => commands.canTrack(), () => String(commands.tracking));
     when(trackSplit.arrow, () => commands.canTrack());
@@ -718,36 +717,36 @@ export function createReview({ editor, pkg, host, error, author, onChange = () =
     when(accept, () => resolvable() && commands.revisionsAround().length > 0); when(reject, () => resolvable() && commands.revisionsAround().length > 0);
     when(acceptSplit.arrow, () => resolvable() && commands.hasRevisions()); when(rejectSplit.arrow, () => resolvable() && commands.hasRevisions());
     when(previousChange, () => commands.hasRevisions()); when(nextChange, () => commands.hasRevisions());
-    const speak = command('Read Aloud', 'readAloud', () => readAloud.active ? readAloud.stop() : readAloud.start(), { size: 'large', text: 'Read Aloud', shortcut: MOD_KEY === 'Cmd' ? 'Option+Cmd+Space' : 'Ctrl+Alt+Space' });
+    const speak = command('大声朗读', 'readAloud', () => readAloud.active ? readAloud.stop() : readAloud.start(), { size: 'large', text: '大声朗读', shortcut: MOD_KEY === 'Cmd' ? 'Option+Cmd+Space' : 'Ctrl+Alt+Space' });
     speak.addEventListener('mousedown', e => e.preventDefault());
     when(speak, () => readAloud.supported && !!editor(), () => String(readAloud.active));
-    const reviewing = command('Reviewing Pane', 'reviewingPane', () => commands.toggleReviewingPane(), { text: 'Reviewing Pane' });
+    const reviewing = command('审阅窗格', 'reviewingPane', () => commands.toggleReviewingPane(), { text: '审阅窗格' });
     reviewing.addEventListener('mousedown', e => e.preventDefault());
-    const reviewingSplit = split(reviewing, { label: 'Reviewing Pane options', open: (anchor, e) => openMenu({ anchor, label: 'Reviewing Pane', pointer: !!e?.detail, onClose: e?.detail ? () => editor()?.focus() : null, items: [
-      { label: 'Reviewing Pane Vertical', radio: true, checked: paneShown && paneOrientation === 'vertical', onSelect: () => { commands.setPaneOrientation('vertical'); commands.toggleReviewingPane(true); } },
-      { label: 'Reviewing Pane Horizontal', radio: true, checked: paneShown && paneOrientation === 'horizontal', onSelect: () => { commands.setPaneOrientation('horizontal'); commands.toggleReviewingPane(true); } },
+    const reviewingSplit = split(reviewing, { label: '审阅窗格选项', open: (anchor, e) => openMenu({ anchor, label: '审阅窗格', pointer: !!e?.detail, onClose: e?.detail ? () => editor()?.focus() : null, items: [
+      { label: '垂直审阅窗格', radio: true, checked: paneShown && paneOrientation === 'vertical', onSelect: () => { commands.setPaneOrientation('vertical'); commands.toggleReviewingPane(true); } },
+      { label: '水平审阅窗格', radio: true, checked: paneShown && paneOrientation === 'horizontal', onSelect: () => { commands.setPaneOrientation('horizontal'); commands.toggleReviewingPane(true); } },
     ] }) });
     when(reviewing, () => !!editor(), () => String(paneShown));
     when(reviewingSplit.arrow, () => !!editor());
-    return [{ id: 'speech', label: 'Speech', icon: 'readAloud', priority: 2, after: 'proofing', items: [speak] },
-      { id: 'comments', label: 'Comments', icon: 'comment', priority: 8, after: 'proofing', items: [add, removeSplit, rows([previous], [next], [resolve]), showSplit] },
-      { id: 'tracking', label: 'Tracking', icon: 'trackChanges', priority: 7, after: 'proofing', items: [trackSplit, rows([markup], [showMarkup], [reviewingSplit]), el('div.ribbon-launcher', {}, options)] },
-      { id: 'changes', label: 'Changes', icon: 'accept', priority: 8, after: 'proofing', items: [acceptSplit, rejectSplit, rows([previousChange], [nextChange])] }];
+    return [{ id: 'speech', label: '语音', icon: 'readAloud', priority: 2, after: 'proofing', items: [speak] },
+      { id: 'comments', label: '批注', icon: 'comment', priority: 8, after: 'proofing', items: [add, removeSplit, rows([previous], [next], [resolve]), showSplit] },
+      { id: 'tracking', label: '跟踪', icon: 'trackChanges', priority: 7, after: 'proofing', items: [trackSplit, rows([markup], [showMarkup], [reviewingSplit]), el('div.ribbon-launcher', {}, options)] },
+      { id: 'changes', label: '更改', icon: 'accept', priority: 8, after: 'proofing', items: [acceptSplit, rejectSplit, rows([previousChange], [nextChange])] }];
   }
 
   /** Context-menu entries for the document menu. */
   function contextItems() {
     const engine = editor(); if (!engine) return [];
     const changes = engine.session.path === null && commands.revisionsAround().length ? [
-      { label: 'Accept Change', icon: 'accept', disabled: !resolvable(), onSelect: () => commands.resolve(true) },
-      { label: 'Reject Change', icon: 'reject', disabled: !resolvable(), onSelect: () => commands.resolve(false) }] : [];
+      { label: '接受更改', icon: 'accept', disabled: !resolvable(), onSelect: () => commands.resolve(true) },
+      { label: '拒绝更改', icon: 'reject', disabled: !resolvable(), onSelect: () => commands.resolve(false) }] : [];
     if (!engine.model.comments) return changes;
     const thread = threadAtCaret();
-    return [...changes,{ label: 'New Comment', disabled: !commands.canComment(), onSelect: () => commands.newComment() },
+    return [...changes,{ label: '新建批注', disabled: !commands.canComment(), onSelect: () => commands.newComment() },
       // The comment cards come after the document, where Tab types: replying from the menu is the keyboard's way in.
-      ...(thread && !thread.root.done ? [{ label: 'Reply to Comment', disabled: !annotating(), onSelect: () => commands.replyTo(thread.id) }] : []),
-      ...(thread ? [{ label: thread.root.done ? 'Reopen Comment' : 'Resolve Comment', disabled: !annotating(), onSelect: () => { activeId = thread.id; commands.resolveActive(); } },
-        { label: 'Delete Comment', disabled: !annotating(), onSelect: () => { activeId = thread.id; commands.deleteActive(); } }] : [])];
+      ...(thread && !thread.root.done ? [{ label: '回复批注', disabled: !annotating(), onSelect: () => commands.replyTo(thread.id) }] : []),
+      ...(thread ? [{ label: thread.root.done ? '重新打开批注' : '解决批注', disabled: !annotating(), onSelect: () => { activeId = thread.id; commands.resolveActive(); } },
+        { label: '删除批注', disabled: !annotating(), onSelect: () => { activeId = thread.id; commands.deleteActive(); } }] : [])];
   }
 
   const keyAbort = new AbortController();

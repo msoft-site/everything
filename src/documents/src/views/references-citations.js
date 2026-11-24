@@ -113,10 +113,10 @@ export function createCitationCommands(ctx) {
   function citationItems() {
     const { data } = documentData(), disabled = !ready();
     return [
-      ...(data.sources.length ? [{ header: 'Sources in this document' }, ...data.sources.map(source => ({ label: describe(source), hint: source.tag, disabled, onSelect: () => cite(source.tag) }))] : [{ note: 'No sources in this document yet.' }]),
+      ...(data.sources.length ? [{ header: '本文档中的源' }, ...data.sources.map(source => ({ label: describe(source), hint: source.tag, disabled, onSelect: () => cite(source.tag) }))] : [{ note: '本文档尚无可用源。' }]),
       { separator: true },
-      { label: 'Add New Source…', icon: 'citation', disabled, onSelect: () => sourceDialog({ onSave: async source => { await cite(source.tag, {}, source); rememberSources([source]); } }) },
-      { label: 'Add New Placeholder…', disabled, onSelect: () => placeholderDialog() },
+      { label: '添加新源…', icon: 'citation', disabled, onSelect: () => sourceDialog({ onSave: async source => { await cite(source.tag, {}, source); rememberSources([source]); } }) },
+      { label: '添加新占位符…', disabled, onSelect: () => placeholderDialog() },
     ];
   }
 
@@ -125,10 +125,10 @@ export function createCitationCommands(ctx) {
     const { data } = documentData();
     const taken = data.sources.map(s => s.tag);
     let n = 1; while (taken.includes(`Placeholder${n}`)) n++;
-    const name = text('Placeholder name', `Placeholder${n}`, { required: true, pattern: '[A-Za-z0-9_\\-]{1,40}' });
-    openDialog({ title: 'Placeholder Name', submitLabel: 'Insert', body: [field('Type a tag name for the source', name, 'Fill in its details later from Manage Sources.')], onSubmit: async () => {
+    const name = text('占位符名称', `Placeholder${n}`, { required: true, pattern: '[A-Za-z0-9_\\-]{1,40}' });
+    openDialog({ title: '占位符名称', submitLabel: '插入', body: [field('输入源的标签名称', name, '稍后可以在“源管理器”中填写详细信息。')], onSubmit: async () => {
       const tag = name.value.trim();
-      if (taken.some(t => t.toLowerCase() === tag.toLowerCase())) throw new Error('A source with that tag already exists in this document.');
+      if (taken.some(t => t.toLowerCase() === tag.toLowerCase())) throw new Error('本文档中已存在具有该标签名称的源。');
       await cite(tag, {}, { tag, type: 'Misc', names: {}, fields: {}, guid: bib.newGuid() });
     } });
     name.select();
@@ -143,14 +143,14 @@ export function createCitationCommands(ctx) {
   const joinNames = list => (list || []).map(p => p.corporate || [p.last, [p.first, p.middle].filter(Boolean).join(' ')].filter(Boolean).join(', ')).join('; ');
 
   /** `existing()` is the list the source belongs to (the document's, or the master list `place`): tags are unique in it. */
-  async function sourceDialog({ source = null, onSave, title = source ? 'Edit Source' : 'Create Source', existing = () => documentData().data.sources, place = 'this document' }) {
+  async function sourceDialog({ source = null, onSave, title = source ? '编辑源' : '创建源', existing = () => documentData().data.sources, place = '本文档' }) {
     const [bib, , styles] = await engineModules();
     const style = currentStyle();
     const typeOptions = bib.COMMON_SOURCE_TYPES.map(id => [id, bib.SOURCE_TYPES[id].label]).concat(Object.keys(bib.SOURCE_TYPES).filter(id => !bib.COMMON_SOURCE_TYPES.includes(id)).map(id => [id, bib.SOURCE_TYPES[id].label]));
-    const type = select('Type of source', typeOptions, source?.type || 'Book', () => build());
-    const corporate = check('Corporate author', !!source?.names?.Author?.[0]?.corporate, () => build());
-    const showAll = check('Show all bibliography fields', false, () => build());
-    const tag = text('Tag name', source?.tag || '', { required: true, pattern: '[^\\s"\\\\]{1,60}' });
+    const type = select('源类型', typeOptions, source?.type || 'Book', () => build());
+    const corporate = check('公司作者', !!source?.names?.Author?.[0]?.corporate, () => build());
+    const showAll = check('显示所有书目字段', false, () => build());
+    const tag = text('标签名称', source?.tag || '', { required: true, pattern: '[^\\s"\\\\]{1,60}' });
     let tagEdited = !!source;
     tag.addEventListener('input', () => { tagEdited = true; });
     const values = { names: structuredClone(source?.names || {}), fields: { ...(source?.fields || {}) } };
@@ -175,8 +175,8 @@ export function createCitationCommands(ctx) {
       const draft = current();
       if (!tagEdited) tag.value = bib.sourceTag(draft, documentData().data.sources.filter(s => s !== source).map(s => s.tag));
       const runs = styles.formatBibliography(style, [{ ...draft, tag: draft.tag || 'Preview' }])[0]?.runs || [];
-      preview.replaceChildren(el('span.field-label', {}, `Preview (${styles.CITATION_STYLES[style].name})`),
-        el('p.ref-source-entry', {}, ...(runs.length ? runs.map(r => r.italic ? el('i', {}, r.text) : r.text) : ['Add a title or an author to see the entry.'])));
+      preview.replaceChildren(el('span.field-label', {}, `预览 (${styles.CITATION_STYLES[style].name})`),
+        el('p.ref-source-entry', {}, ...(runs.length ? runs.map(r => r.italic ? el('i', {}, r.text) : r.text) : ['添加题名或作者以查看条目。'])));
     }
     function build() {
       read();
@@ -186,7 +186,7 @@ export function createCitationCommands(ctx) {
       inputs.clear();
       grid.replaceChildren(...roles.map(role => {
         const corp = role === 'Author' && corporate.box.checked;
-        const input = text(bib.NAME_ROLES[role] || role, corp ? values.names.Author?.[0]?.corporate || '' : joinNames(values.names[role]), { placeholder: corp ? 'Organization name' : 'Last, First; Last, First', oninput: update });
+        const input = text(bib.NAME_ROLES[role] || role, corp ? values.names.Author?.[0]?.corporate || '' : joinNames(values.names[role]), { placeholder: corp ? '组织/机构名称' : '姓, 名; 姓, 名', oninput: update });
         inputs.set(`name:${role}`, input);
         return field(bib.NAME_ROLES[role] || role, input);
       }), ...keys.map(key => {
@@ -198,15 +198,15 @@ export function createCitationCommands(ctx) {
       update();
     }
     build();
-    openDialog({ title, wide: true, className: 'ref-source-dialog', submitLabel: 'OK', body: [
-      el('div.ref-source-head', {}, field('Type of source', type), corporate),
-      grid, showAll, field('Tag name', tag, 'Citations refer to the source by this name.'), preview,
+    openDialog({ title, wide: true, className: 'ref-source-dialog', submitLabel: '确定', body: [
+      el('div.ref-source-head', {}, field('源类型', type), corporate),
+      grid, showAll, field('标签名称', tag, '引文通过此名称引用该源。'), preview,
     ], onSubmit: async () => {
       const draft = current();
-      if (!draft.tag) throw new Error('Give the source a tag name.');
+      if (!draft.tag) throw new Error('请为源指定标签名称。');
       // Editing may rename the tag too: it must not take another source's.
       const others = existing().filter(s => s.tag !== source?.tag);
-      if (others.some(s => s.tag.toLowerCase() === draft.tag.toLowerCase())) throw new Error(`A source with that tag already exists in ${place}.`);
+      if (others.some(s => s.tag.toLowerCase() === draft.tag.toLowerCase())) throw new Error(`具有该标签的源已存在于 ${place}。`);
       if (!draft.guid) draft.guid = bib.newGuid();
       await onSave(draft);
     } });
@@ -219,9 +219,9 @@ export function createCitationCommands(ctx) {
     if (!pkg()) return;
     let master = await syncMasterSources().catch(() => loadMasterSources());
     const style = currentStyle();
-    const search = text('Search sources', '', { type: 'search', placeholder: 'Search by author, title, tag or year' });
-    const masterList = el('select.input.ref-source-list', { size: 10, 'aria-label': 'Master list', multiple: true });
-    const docList = el('select.input.ref-source-list', { size: 10, 'aria-label': 'Current list', multiple: true });
+    const search = text('搜索源', '', { type: 'search', placeholder: '按作者、题名、标签或年份搜索' });
+    const masterList = el('select.input.ref-source-list', { size: 10, 'aria-label': '主列表', multiple: true });
+    const docList = el('select.input.ref-source-list', { size: 10, 'aria-label': '当前列表', multiple: true });
     const preview = el('div.ref-source-preview', { 'aria-live': 'polite' });
     const status = el('p.field-hint.ref-source-status', { 'aria-live': 'polite' });
     const cited = async () => new Set(((await engineModules())[1].citedTags(editor()?.session.body.paragraphs || [])).map(t => t.toLowerCase()));
@@ -235,7 +235,7 @@ export function createCitationCommands(ctx) {
       docList.replaceChildren(...docSources.filter(matches).map(s => option(s, true)));
       for (const o of masterList.options) o.selected = keep[0].has(o.value);
       for (const o of docList.options) o.selected = keep[1].has(o.value);
-      status.textContent = `${docSources.length} ${docSources.length === 1 ? 'source' : 'sources'} in this document · ✓ cited · ? placeholder`;
+      status.textContent = `本文档中共有 ${docSources.length} 个源 · ✓ 已引用 · ? 占位符`;
       showPreview();
     }
     function selected(list) {
@@ -245,12 +245,12 @@ export function createCitationCommands(ctx) {
     let focused = docList;
     function showPreview() {
       const [source] = selected(focused);
-      if (!source) { preview.replaceChildren(el('span.field-hint', {}, 'Select a source to preview it.')); return; }
+      if (!source) { preview.replaceChildren(el('span.field-hint', {}, '选择一个源以预览。')); return; }
       const context = styles.citationContext(style, [source], [source.tag]);
       const citation = styles.formatCitation(style, [{ source, tag: source.tag }], context);
-      const entry = styles.formatBibliography(style, [source])[0]?.runs || [{ text: `${source.tag} is a placeholder.` }];
+      const entry = styles.formatBibliography(style, [source])[0]?.runs || [{ text: `${source.tag} 是占位符。` }];
       const render = runs => runs.map(r => r.italic ? el('i', {}, r.text) : r.text);
-      preview.replaceChildren(el('span.field-label', {}, `Preview (${styles.CITATION_STYLES[style].name})`), el('p.ref-source-entry', {}, el('b', {}, 'Citation: '), ...render(citation)), el('p.ref-source-entry', {}, el('b', {}, 'Bibliography entry: '), ...render(entry)));
+      preview.replaceChildren(el('span.field-label', {}, `预览 (${styles.CITATION_STYLES[style].name})`), el('p.ref-source-entry', {}, el('b', {}, '引文: '), ...render(citation)), el('p.ref-source-entry', {}, el('b', {}, '书目条目: '), ...render(entry)));
     }
     masterList.addEventListener('focus', () => { focused = masterList; showPreview(); });
     docList.addEventListener('focus', () => { focused = docList; showPreview(); });
@@ -270,7 +270,7 @@ export function createCitationCommands(ctx) {
     const remove = async () => {
       if (focused === masterList) { const tags = new Set(selected(masterList).map(s => s.tag)); master = saveMasterSources(master.filter(s => !tags.has(s.tag))); fill(); return; }
       const picked = selected(docList);
-      if (picked.some(s => citedTags.has(s.tag.toLowerCase()))) { status.textContent = 'Cited sources stay in the document. Delete their citations first.'; return; }
+      if (picked.some(s => citedTags.has(s.tag.toLowerCase()))) { status.textContent = '已引用的源保留在文档中。请先删除其引文。'; return; }
       const tags = new Set(picked.map(s => s.tag));
       try { await saveSources(documentData().data.sources.filter(s => !tags.has(s.tag))); }
       catch (e) { status.textContent = e.message; return; }
@@ -279,7 +279,7 @@ export function createCitationCommands(ctx) {
     const edit = () => {
       const [source] = selected(focused); if (!source) return;
       const inMaster = focused === masterList;
-      sourceDialog({ source, ...(inMaster ? { existing: () => master, place: 'the master list' } : {}), onSave: async draft => {
+      sourceDialog({ source, ...(inMaster ? { existing: () => master, place: '主列表' } : {}), onSave: async draft => {
         if (inMaster) { master = saveMasterSources(master.map(s => s.tag === source.tag ? draft : s)); }
         else {
           await saveEditedSource(source, draft);
@@ -291,12 +291,12 @@ export function createCitationCommands(ctx) {
     const create = () => sourceDialog({ onSave: async draft => { await saveSources([...documentData().data.sources, draft]); master = rememberSources([draft]); fill(); } });
     const button = (label, onclick, attrs = {}) => el('button.btn.btn-outline.ref-source-button', { type: 'button', onclick, ...attrs }, label);
     fill();
-    openDialog({ title: 'Source Manager', wide: true, className: 'ref-manage-dialog', submitLabel: 'Done', cancelLabel: 'Cancel', body: [
-      field('Search', search),
+    openDialog({ title: '源管理器', wide: true, className: 'ref-manage-dialog', submitLabel: '完成', cancelLabel: '取消', body: [
+      field('搜索', search),
       el('div.ref-manage-lists', {},
-        el('div.ref-manage-column', {}, el('span.field-label', {}, 'Master list (all your documents)'), masterList),
-        el('div.ref-manage-actions', {}, button('Copy →', toDocument, { 'aria-label': 'Copy to current list' }), button('← Copy', toMaster, { 'aria-label': 'Copy to master list' }), button('Delete', remove), button('Edit…', edit), button('New…', create)),
-        el('div.ref-manage-column', {}, el('span.field-label', {}, 'Current list (this document)'), docList)),
+        el('div.ref-manage-column', {}, el('span.field-label', {}, '主列表 (所有文档)'), masterList),
+        el('div.ref-manage-actions', {}, button('复制 →', toDocument, { 'aria-label': '复制到当前列表' }), button('← 复制', toMaster, { 'aria-label': '复制到主列表' }), button('删除', remove), button('编辑…', edit), button('新建…', create)),
+        el('div.ref-manage-column', {}, el('span.field-label', {}, '当前列表 (本文档)'), docList)),
       status, preview,
     ], onSubmit: () => true });
     citedTags = await cited(); fill();
@@ -312,17 +312,18 @@ export function createCitationCommands(ctx) {
     const sample = heading => el('div.ref-preview-paper', {}, heading && el('div.ref-preview-title', {}, heading),
       el('div.ref-preview-row.ref-hanging', {}, 'Lovelace, A. (2020). ', el('i', {}, 'Notes on engines'), '. Harbor Press.'),
       el('div.ref-preview-row.ref-hanging', {}, 'Turing, A. (2018). On computable numbers. ', el('i', {}, 'Logic Review'), ', 4(2), 10–35.'));
+    const names = { 'Bibliography': '书目', 'References': '参考文献', 'Works Cited': '引用作品' };
     return [
-      { header: 'Built-in' },
-      ...['Bibliography', 'References', 'Works Cited'].map(heading => galleryItem({ label: heading, description: `A ${heading.toLowerCase()} list with a heading`, preview: sample(heading), disabled, focusEditor, onSelect: () => insertBibliography(heading) })),
+      { header: '内置' },
+      ...['Bibliography', 'References', 'Works Cited'].map(heading => galleryItem({ label: names[heading] || heading, description: `带标题的${names[heading] || heading}列表`, preview: sample(names[heading] || heading), disabled, focusEditor, onSelect: () => insertBibliography(heading) })),
       { separator: true },
-      { label: 'Insert Bibliography', icon: 'bibliography', disabled, onSelect: () => insertBibliography(null) },
+      { label: '插入书目', icon: 'bibliography', disabled, onSelect: () => insertBibliography(null) },
     ];
   }
 
   /** The style selector for the ribbon. */
   function styleControl() {
-    const control = el('select.canvas-select.ref-style-select', { 'aria-label': 'Citation style', title: 'Citation style', onchange: () => setStyle(control.value) });
+    const control = el('select.canvas-select.ref-style-select', { 'aria-label': '引用样式', title: '引用样式', onchange: () => setStyle(control.value) });
     const fill = () => {
       const styles = modules?.[2]?.CITATION_STYLES;
       if (!styles || control.options.length) return;
@@ -346,13 +347,13 @@ export function createCitationCommands(ctx) {
     return fields.citationFields(engine.session.body.paragraphs).find(r => r.start <= at && at <= r.end) || null;
   }
   async function editCitation() {
-    const range = await citationAt(); if (!range) { error(new Error('Place the cursor in a citation to edit it.')); return; }
+    const range = await citationAt(); if (!range) { error(new Error('请将光标置于引文中以进行编辑。')); return; }
     const [bib] = await engineModules();
     const c = range.citation;
-    const pages = text('Pages', c.pages), prefix = text('Prefix', c.prefix), suffix = text('Suffix', c.suffix);
-    const noAuthor = check('Author', c.noAuthor), noYear = check('Year', c.noYear), noTitle = check('Title', c.noTitle);
-    openDialog({ title: 'Edit Citation', body: [field('Pages', pages), el('div.ref-two-column.ref-tight', {}, field('Prefix', prefix), field('Suffix', suffix)),
-      el('fieldset.ref-section', {}, el('legend', {}, 'Suppress'), noAuthor, noYear, noTitle)], onSubmit: async () => {
+    const pages = text('页码', c.pages), prefix = text('前缀', c.prefix), suffix = text('后缀', c.suffix);
+    const noAuthor = check('作者', c.noAuthor), noYear = check('年份', c.noYear), noTitle = check('题名', c.noTitle);
+    openDialog({ title: '编辑引文', body: [field('页码', pages), el('div.ref-two-column.ref-tight', {}, field('前缀', prefix), field('后缀', suffix)),
+      el('fieldset.ref-section', {}, el('legend', {}, '忽略'), noAuthor, noYear, noTitle)], onSubmit: async () => {
       const instruction = bib.citationInstruction({ ...c, pages: pages.value.trim(), prefix: prefix.value.trim(), suffix: suffix.value.trim(), noAuthor: noAuthor.box.checked, noYear: noYear.box.checked, noTitle: noTitle.box.checked, lcid: c.lcid || '1033' });
       const { data, style } = documentData();
       await runBody((body, fields, generated) => {
@@ -371,7 +372,7 @@ export function createCitationCommands(ctx) {
   async function editCitedSource() {
     const range = await citationAt(); if (!range) return;
     const source = documentData().data.sources.find(s => s.tag.toLowerCase() === range.citation.tags[0].toLowerCase());
-    if (!source) { error(new Error(`This document has no source named ${range.citation.tags[0]}.`)); return; }
+    if (!source) { error(new Error(`本文档中没有名为 ${range.citation.tags[0]} 的源。`)); return; }
     sourceDialog({ source, onSave: async draft => { await saveEditedSource(source, draft); } });
   }
   function contextItems() {
@@ -379,10 +380,10 @@ export function createCitationCommands(ctx) {
     try { range = citationAtNow(); } catch { range = null; }
     if (!range) return [];
     return [{ separator: true },
-      { label: 'Edit Citation…', icon: 'citation', onSelect: () => editCitation() },
-      { label: 'Edit Source…', onSelect: () => editCitedSource() },
-      { label: 'Convert Citation to Static Text', onSelect: () => convertCitationToText() },
-      { label: 'Update Citations and Bibliography', icon: 'updateFields', onSelect: () => refreshFields() }];
+      { label: '编辑引文…', icon: 'citation', onSelect: () => editCitation() },
+      { label: '编辑源…', onSelect: () => editCitedSource() },
+      { label: '将引文转换为静态文本', onSelect: () => convertCitationToText() },
+      { label: '更新引文和书目', icon: 'updateFields', onSelect: () => refreshFields() }];
   }
 
   return { citationItems, bibliographyItems, manageSources, styleControl, setStyle, currentStyle, refreshFields, refreshAction, insertBibliography, cite, sourceDialog, editCitation, contextItems, citationAt, documentData };

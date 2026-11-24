@@ -19,7 +19,7 @@ export function openColorPalette({ anchor, label, value, choices, reset, onPick,
   const grid = (entries, name) => el('div.menu-custom-grid', {
     role: 'group', 'aria-label': name, dataset: { columns: '8' },
   }, entries.map(swatch));
-  const selected = value === null ? 'Mixed' : value === reset.value ? reset.label
+  const selected = value === null ? '多种' : value === reset.value ? reset.label
     : [...choices, ...extra].find(choice => choice.value === value)?.label || `#${value}`;
   const items = [
     { custom: el('div.palette-heading', { 'aria-hidden': 'true' }, el('span', {}, label), el('span.palette-value', {}, selected)) },
@@ -29,11 +29,11 @@ export function openColorPalette({ anchor, label, value, choices, reset, onPick,
     }, el(reset.indicator ? 'span.swatch.palette-auto' : 'span.swatch.swatch-none', { 'aria-hidden': 'true' }, reset.indicator), el('span.menu-label', {}, reset.label),
     value === reset.value && iconEl('check', 16)) },
     { separator: true },
-    { custom: grid(choices, `${label} colors`) },
+    { custom: grid(choices, `${label}颜色`) },
   ];
   // After the reset item, in the order given.
   items.splice(2, 0, ...extra.map(choice => ({ label: choice.label, checked: value === choice.value, radio: true, onSelect: () => onPick(choice.value) })));
-  if (recent.length) items.push({ header: 'Recent' }, { custom: grid(recent, 'Recent text colors') });
+  if (recent.length) items.push({ header: '最近使用' }, { custom: grid(recent, '最近使用的颜色') });
   if (custom) {
     const normalize = text => {
       const hex = text.trim().replace(/^#/, '');
@@ -44,30 +44,30 @@ export function openColorPalette({ anchor, label, value, choices, reset, onPick,
     const initial = normalize(value || '') || '000000';
     const inputId = fieldId('palette-hex');
     const hex = el('input.input.color-hex', {
-      id: inputId, type: 'text', value: `#${initial}`, 'aria-label': `Custom ${customLabel} hex value`,
+      id: inputId, type: 'text', value: `#${initial}`, 'aria-label': `自定义${customLabel}十六进制值`,
       spellcheck: false, autocomplete: 'off', maxLength: 7,
       oninput: () => {
         const color = normalize(hex.value);
-        hex.setCustomValidity(color ? '' : 'Enter a hex color, such as #123456.');
+        hex.setCustomValidity(color ? '' : '请输入十六进制颜色代码，如 #123456。');
         hex.setAttribute('aria-invalid', String(!color));
         if (color) native.value = `#${color}`;
       },
     });
     const updateDraft = () => { hex.value = native.value.toUpperCase(); hex.setCustomValidity(''); hex.removeAttribute('aria-invalid'); };
     const native = el('input.color-input', {
-      type: 'color', value: `#${initial}`, 'aria-label': `Custom ${customLabel}`,
+      type: 'color', value: `#${initial}`, 'aria-label': `自定义${customLabel}`,
       oninput: updateDraft, onchange: updateDraft,
     });
     items.push({ separator: true }, { custom: el('form.menu-custom-color', {
-      'aria-label': `Custom ${customLabel}`, onsubmit: e => {
+      'aria-label': `自定义${customLabel}`, onsubmit: e => {
         e.preventDefault();
         const color = normalize(hex.value);
         if (color) pick(color);
       },
-    }, el('label.menu-label', { htmlFor: inputId }, 'Custom'), native, hex,
-    el('button.btn.btn-outline.btn-sm', { type: 'submit', 'aria-label': `Apply custom ${customLabel}` }, 'Apply')) });
+    }, el('label.menu-label', { htmlFor: inputId }, '自定义'), native, hex,
+    el('button.btn.btn-outline.btn-sm', { type: 'submit', 'aria-label': `应用自定义${customLabel}` }, '应用')) });
   }
-  if (value === null) items.push({ note: `The selection has mixed ${custom ? 'colors' : 'highlights'}.` });
+  if (value === null) items.push({ note: `选定内容包含多种${custom ? '颜色' : '突出显示'}。` });
   popup = openMenu({ anchor, label, items, className: 'color-palette',
     closeOnWindowBlur: !custom, focusFirst: false });
   if (focusFirst && popup.menu) {

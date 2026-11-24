@@ -12,10 +12,10 @@ import { stepFontSize } from '../lib/fontsize.js';
 const IN = 1440, CM = 1440 / 2.54;
 /** The margin presets a desktop word processor offers, in inches: top, bottom, left, right. */
 export const MARGIN_PRESETS = [
-  ['Normal', 1, 1, 1, 1],
-  ['Narrow', 0.5, 0.5, 0.5, 0.5],
-  ['Moderate', 1, 1, 0.75, 0.75],
-  ['Wide', 1, 1, 2, 2],
+  ['普通', 1, 1, 1, 1],
+  ['窄', 0.5, 0.5, 0.5, 0.5],
+  ['适中', 1, 1, 0.75, 0.75],
+  ['宽', 1, 1, 2, 2],
 ];
 /** Paper sizes in twips, portrait. */
 export const PAPER_PRESETS = [
@@ -29,8 +29,8 @@ export const PAPER_PRESETS = [
   ['B5 (JIS)', '18.2 cm × 25.7 cm', 10319, 14572],
 ];
 export const PAGE_COLORS = [
-  ['White', 'FFFFFF'], ['Ivory', 'FFFDF2'], ['Light gray', 'F2F2F2'], ['Light blue', 'DEEAF6'], ['Light green', 'E2EFD9'],
-  ['Light yellow', 'FFF2CC'], ['Light orange', 'FBE4D5'], ['Light red', 'F8D7D7'], ['Light purple', 'E7DCF0'], ['Light teal', 'D9F0EF'],
+  ['白色', 'FFFFFF'], ['象牙白', 'FFFDF2'], ['浅灰', 'F2F2F2'], ['浅蓝', 'DEEAF6'], ['浅绿', 'E2EFD9'],
+  ['浅黄', 'FFF2CC'], ['浅橙', 'FBE4D5'], ['浅红', 'F8D7D7'], ['浅紫', 'E7DCF0'], ['浅青', 'D9F0EF'],
 ];
 
 /** Date formats for Insert → Date & Time, as a word processor lists them. */
@@ -107,7 +107,7 @@ export function createWordCommands({ editor, pkg, error, zoomControl, fitWidth, 
     insertDateTime() {
       const engine = ready(); if (!engine) return;
       engine.finishComposition();
-      const list = el('div.ed-choice-list', { role: 'listbox', 'aria-label': 'Available formats' });
+      const list = el('div.ed-choice-list', { role: 'listbox', 'aria-label': '可用格式' });
       let modal;
       const choose = text => { modal.close(); run(e => e.model.replace(text)); };
       for (const [i, text] of dateFormats().entries()) {
@@ -120,7 +120,7 @@ export function createWordCommands({ editor, pkg, error, zoomControl, fitWidth, 
           } }, text);
         list.append(option);
       }
-      modal = openModal({ title: 'Date and Time', content: el('div.ed-dialog-body', {}, el('p.field-hint', {}, 'Choose a format. The date is inserted as text.'), list), onClose: () => queueMicrotask(() => editor()?.focus()) });
+      modal = openModal({ title: '日期和时间', content: el('div.ed-dialog-body', {}, el('p.field-hint', {}, '选择一种格式。日期将作为文本插入。'), list), onClose: () => queueMicrotask(() => editor()?.focus()) });
       list.firstChild?.focus();
     },
     insertSymbol() {
@@ -137,14 +137,14 @@ export function createWordCommands({ editor, pkg, error, zoomControl, fitWidth, 
     marginItems() {
       const p = page();
       return MARGIN_PRESETS.map(([label, top, bottom, left, right]) => ({
-        label, hint: `Top ${top}″ · Bottom ${bottom}″ · Left ${left}″ · Right ${right}″`, radio: true,
+        label, hint: `上 ${top}″ · 下 ${bottom}″ · 左 ${left}″ · 右 ${right}″`, radio: true,
         checked: !!p && near(p.top, top * IN) && near(p.bottom, bottom * IN) && near(p.left, left * IN) && near(p.right, right * IN),
         onSelect: () => setPage({ top: top * IN, bottom: bottom * IN, left: Math.round(left * IN), right: Math.round(right * IN) }),
       }));
     },
     orientationItems() {
       const p = page();
-      return [['Portrait', 'portrait'], ['Landscape', 'landscape']].map(([label, value]) => ({
+      return [['纵向', 'portrait'], ['横向', 'landscape']].map(([label, value]) => ({
         label, radio: true, checked: p?.orientation === value,
         onSelect: () => {
           const current = page(); if (!current || current.orientation === value) return;
@@ -173,14 +173,14 @@ export function createWordCommands({ editor, pkg, error, zoomControl, fitWidth, 
       };
       const first = p?.columns?.entries?.[0]?.width, second = p?.columns?.entries?.[1]?.width;
       return [
-        ...[['One', 1], ['Two', 2], ['Three', 3]].map(([label, n]) => ({
+        ...[['一栏', 1], ['两栏', 2], ['三栏', 3]].map(([label, n]) => ({
           label, icon: 'columns', radio: true, checked: count === n && (n === 1 || equal),
           onSelect: () => setPage({ columns: n === 1 ? null : { count: n, space: 720, equalWidth: true, separator: false } }),
         })),
-        { label: 'Left', radio: true, checked: count === 2 && !equal && first < second, onSelect: () => setPage({ columns: uneven(true) }) },
-        { label: 'Right', radio: true, checked: count === 2 && !equal && first > second, onSelect: () => setPage({ columns: uneven(false) }) },
+        { label: '偏左', radio: true, checked: count === 2 && !equal && first < second, onSelect: () => setPage({ columns: uneven(true) }) },
+        { label: '偏右', radio: true, checked: count === 2 && !equal && first > second, onSelect: () => setPage({ columns: uneven(false) }) },
         { separator: true },
-        { label: 'Line Between', checked: !!p?.columns?.separator, disabled: count < 2, onSelect: () => setPage({ columns: { ...page().columns, separator: !page().columns.separator } }) },
+        { label: '分隔线', checked: !!p?.columns?.separator, disabled: count < 2, onSelect: () => setPage({ columns: { ...page().columns, separator: !page().columns.separator } }) },
       ];
     },
     pageBorderItems() {
@@ -192,19 +192,19 @@ export function createWordCommands({ editor, pkg, error, zoomControl, fitWidth, 
         const at = current.borders?.[side];
         return !!at && at.style === b.style && at.size === b.size && at.space === b.space;
       }) && Object.keys(current.borders || {}).length === Object.keys(value.borders).length;
-      const choices = [['Box, ½ pt line', 'single', 4], ['Box, 1½ pt line', 'single', 12], ['Box, 3 pt line', 'single', 24], ['Box, double line', 'double', 6], ['Box, dotted', 'dotted', 6], ['Box, dashed', 'dashed', 6]];
-      return [{ label: 'No Border', radio: true, checked: !current, onSelect: () => setPage({ pageBorders: null }) }, { separator: true },
+      const choices = [['方框，½ 磅线', 'single', 4], ['方框，1½ 磅线', 'single', 12], ['方框，3 磅线', 'single', 24], ['方框，双线', 'double', 6], ['方框，点线', 'dotted', 6], ['方框，虚线', 'dashed', 6]];
+      return [{ label: '无边框', radio: true, checked: !current, onSelect: () => setPage({ pageBorders: null }) }, { separator: true },
         ...choices.map(([label, style, size]) => { const value = box(style, size); return { label, radio: true, checked: !!current && same(value), onSelect: () => setPage({ pageBorders: value }) }; })];
     },
     pageColorItems() {
       const p = page();
-      return [{ label: 'No Color', radio: true, checked: !p || p.background === 'auto', swatch: 'none', onSelect: () => setPage({ background: 'auto' }) }, { separator: true },
+      return [{ label: '无颜色', radio: true, checked: !p || p.background === 'auto', swatch: 'none', onSelect: () => setPage({ background: 'auto' }) }, { separator: true },
         ...PAGE_COLORS.map(([label, hex]) => ({ label, radio: true, checked: p?.background === hex, swatch: `#${hex}`, onSelect: () => setPage({ background: hex }) }))];
     },
     setIndent(key, inches) {
       const engine = ready(); if (!engine) return;
       engine.finishComposition();
-      if (engine.setParagraphGeometry({ [key]: Math.round(inches * IN) }) === false) error(new Error('That indent does not fit the page.'));
+      if (engine.setParagraphGeometry({ [key]: Math.round(inches * IN) }) === false) error(new Error('缩进超出页面范围。'));
       engine.focus();
     },
     indentValue(key) {
@@ -216,10 +216,10 @@ export function createWordCommands({ editor, pkg, error, zoomControl, fitWidth, 
     wrapItems() {
       const image = editor()?.model.selectedImage;
       return [
-        { label: 'In Front of Text', icon: 'inFront', radio: true, checked: !!image?.anchor && !image.anchor.behind, disabled: !commands.canArrange(), onSelect: () => commands.arrange('inFront') },
-        { label: 'Behind Text', icon: 'behindText', radio: true, checked: !!image?.anchor?.behind, disabled: !commands.canArrange(), onSelect: () => commands.arrange('behind') },
-        { label: 'Bring to Front', icon: 'bringForward', disabled: !commands.canArrange(), onSelect: () => commands.arrange('front') },
-        { label: 'Send to Back', icon: 'sendBackward', disabled: !commands.canArrange(), onSelect: () => commands.arrange('back') },
+        { label: '浮于文字上方', icon: 'inFront', radio: true, checked: !!image?.anchor && !image.anchor.behind, disabled: !commands.canArrange(), onSelect: () => commands.arrange('inFront') },
+        { label: '衬于文字下方', icon: 'behindText', radio: true, checked: !!image?.anchor?.behind, disabled: !commands.canArrange(), onSelect: () => commands.arrange('behind') },
+        { label: '置于顶层', icon: 'bringForward', disabled: !commands.canArrange(), onSelect: () => commands.arrange('front') },
+        { label: '置于底层', icon: 'sendBackward', disabled: !commands.canArrange(), onSelect: () => commands.arrange('back') },
       ];
     },
     deleteSelection() { run(engine => engine.model.replace('')); },
@@ -231,13 +231,13 @@ export function createWordCommands({ editor, pkg, error, zoomControl, fitWidth, 
       const [a, b] = engine.model.range, selected = a !== b;
       const stats = documentStatistics(selected ? engine.model.text.slice(a, b) : engine.model.text);
       const row = (label, value) => el('tr', {}, el('th', { scope: 'row' }, label), el('td', {}, value.toLocaleString()));
-      openModal({ title: 'Word Count', onClose: () => queueMicrotask(() => editor()?.focus()), content: el('div.ed-dialog-body', {},
-        el('p.field-hint', {}, selected ? 'Statistics for the selected text:' : 'Statistics:'),
+      openModal({ title: '字数统计', onClose: () => queueMicrotask(() => editor()?.focus()), content: el('div.ed-dialog-body', {},
+        el('p.field-hint', {}, selected ? '选定内容的统计信息:' : '统计信息:'),
         el('table.ed-stats', {}, el('tbody', {},
           // The printed pages, as in Print Layout, whatever view is showing.
-          ...(selected ? [] : [row('Pages', engine.printedPages().count)]),
-          row('Words', stats.words), row('Characters (no spaces)', stats.noSpaces), row('Characters (with spaces)', stats.characters), row('Paragraphs', stats.paragraphs))),
-        el('div.modal-actions', {}, el('button.btn.btn-primary', { type: 'button', onclick: e => e.target.closest('.modal-panel')?.querySelector('.modal-head .icon-btn')?.click() }, 'Close'))) });
+          ...(selected ? [] : [row('页数', engine.printedPages().count)]),
+          row('字数', stats.words), row('字符数(不计空格)', stats.noSpaces), row('字符数(计空格)', stats.characters), row('段落数', stats.paragraphs))),
+        el('div.modal-actions', {}, el('button.btn.btn-primary', { type: 'button', onclick: e => e.target.closest('.modal-panel')?.querySelector('.modal-head .icon-btn')?.click() }, '关闭'))) });
     },
     setZoom(value, at, { focus = true } = {}) { const engine = editor(); if (!engine) return; zoomControl.set(value, at); if (focus) engine.focus(); },
     zoomSetting() { return zoomControl.value; },
@@ -249,20 +249,20 @@ export function createWordCommands({ editor, pkg, error, zoomControl, fitWidth, 
     },
     zoomDialog() {
       const engine = editor(); if (!engine) return;
-      const percent = el('input.input', { type: 'number', min: 10, max: 200, step: 1, required: true, value: Math.round(engine.zoom * 100), 'aria-label': 'Percent' });
+      const percent = el('input.input', { type: 'number', min: 10, max: 200, step: 1, required: true, value: Math.round(engine.zoom * 100), 'aria-label': '百分比' });
       let modal;
       const apply = value => { modal.close(); if (value === 'fit' || value === 'page') commands.zoomTo(value === 'fit' ? 'width' : 'page'); else commands.setZoom(value); };
       const preset = (label, value) => el('button.btn.btn-outline', { type: 'button', onclick: () => apply(value) }, label);
-      modal = openModal({ title: 'Zoom', onClose: () => queueMicrotask(() => editor()?.focus()), content: el('form.ed-dialog-body', { onsubmit: e => {
+      modal = openModal({ title: '显示比例', onClose: () => queueMicrotask(() => editor()?.focus()), content: el('form.ed-dialog-body', { onsubmit: e => {
         e.preventDefault(); if (!percent.checkValidity()) { percent.reportValidity(); return; } apply(Number(percent.value) / 100);
       } },
-      el('div.ed-zoom-presets', {}, preset('200%', 2), preset('100%', 1), preset('75%', 0.75), preset('50%', 0.5), preset('Page width', 'fit'), preset('Whole page', 'page')),
-      el('label.field', {}, el('span.field-label', {}, 'Percent'), percent),
-      el('div.modal-actions', {}, el('button.btn.btn-primary', { type: 'submit' }, 'OK'))) });
+      el('div.ed-zoom-presets', {}, preset('200%', 2), preset('100%', 1), preset('75%', 0.75), preset('50%', 0.5), preset('页宽', 'fit'), preset('整页', 'page')),
+      el('label.field', {}, el('span.field-label', {}, '百分比'), percent),
+      el('div.modal-actions', {}, el('button.btn.btn-primary', { type: 'submit' }, '确定'))) });
     },
     focusMode() {
       if (focusExit) { focusExit(); return; }
-      const exit = el('button.btn.ed-focus-exit', { type: 'button', onclick: () => focusExit?.() }, 'Exit Focus');
+      const exit = el('button.btn.ed-focus-exit', { type: 'button', onclick: () => focusExit?.() }, '退出专注模式');
       const onKey = e => { if (e.key === 'Escape' && !isComposing(e) && !document.querySelector('.modal-root, .menu')) { e.preventDefault(); focusExit?.(); } };
       root().classList.add('ed-focus');
       root().append(exit);

@@ -17,14 +17,14 @@ export function createPane(context) {
   const { editor, ready, commands, onClose, runImages } = context;
   // A list of buttons rather than a listbox: a listbox's options cannot hold buttons, and each row holds two.
   // The selected objects are the list's current items.
-  const list = el('ul.pic-selection-list', { 'aria-label': 'Objects on this page' });
+  const list = el('ul.pic-selection-list', { 'aria-label': '此页面上的对象' });
   const status = el('p.pic-hint.pic-selection-status', { 'aria-live': 'polite' });
-  const showAll = el('button.btn.btn-outline.btn-sm', { type: 'button', onclick: () => setAll(false) }, 'Show All');
-  const hideAll = el('button.btn.btn-outline.btn-sm', { type: 'button', onclick: () => setAll(true) }, 'Hide All');
-  const up = el('button.icon-btn', { type: 'button', 'aria-label': 'Bring Forward', title: 'Bring Forward', onclick: () => step(-1) }, commandIconEl('bringForward', 16));
-  const down = el('button.icon-btn', { type: 'button', 'aria-label': 'Send Backward', title: 'Send Backward', onclick: () => step(1) }, commandIconEl('sendBackward', 16));
-  const node = el('aside.pic-pane.pic-selection-pane', { 'aria-label': 'Selection pane' },
-    el('div.canvas-panel-heading', {}, el('h2', {}, 'Selection'), el('button.icon-btn', { type: 'button', 'aria-label': 'Close Selection pane', onclick: () => { node.remove(); onClose(); } }, iconEl('x', 18))),
+  const showAll = el('button.btn.btn-outline.btn-sm', { type: 'button', onclick: () => setAll(false) }, '全部显示');
+  const hideAll = el('button.btn.btn-outline.btn-sm', { type: 'button', onclick: () => setAll(true) }, '全部隐藏');
+  const up = el('button.icon-btn', { type: 'button', 'aria-label': '上移一层', title: '上移一层', onclick: () => step(-1) }, commandIconEl('bringForward', 16));
+  const down = el('button.icon-btn', { type: 'button', 'aria-label': '下移一层', title: '下移一层', onclick: () => step(1) }, commandIconEl('sendBackward', 16));
+  const node = el('aside.pic-pane.pic-selection-pane', { 'aria-label': '选择窗格' },
+    el('div.canvas-panel-heading', {}, el('h2', {}, '选择'), el('button.icon-btn', { type: 'button', 'aria-label': '关闭选择窗格', onclick: () => { node.remove(); onClose(); } }, iconEl('x', 18))),
     el('div.pic-selection-tools', {}, showAll, hideAll, el('span.pic-spacer'), up, down),
     el('div.canvas-panel-scroll', {}, list, status));
   node.addEventListener('keydown', e => { if (e.key === 'Escape' && !isComposing(e) && !e.defaultPrevented && !e.target.matches('input')) { e.preventDefault(); node.remove(); onClose(); } });
@@ -62,7 +62,7 @@ export function createPane(context) {
   }
   function rename(row, image) {
     const label = row.querySelector('.pic-selection-name');
-    const input = el('input.input.pic-selection-rename', { type: 'text', value: image.name, 'aria-label': `Rename ${image.name}`, maxLength: 255 });
+    const input = el('input.input.pic-selection-rename', { type: 'text', value: image.name, 'aria-label': `重命名 ${image.name}`, maxLength: 255 });
     let finished = false;
     const finish = commit => {
       if (finished || !input.isConnected) return;
@@ -119,10 +119,10 @@ export function createPane(context) {
           else if (e.altKey && (e.key === 'ArrowUp' || e.key === 'ArrowDown')) { e.preventDefault(); select(image, false, true); step(e.key === 'ArrowUp' ? -1 : 1); }
           else if (e.key === 'ArrowUp' || e.key === 'ArrowDown') { e.preventDefault(); const rows = [...list.querySelectorAll('.pic-selection-name')], at = rows.indexOf(e.target); rows[Math.max(0, Math.min(rows.length - 1, at + (e.key === 'ArrowUp' ? -1 : 1)))]?.focus(); }
           else if (e.key === ' ') { e.preventDefault(); select(image, e.shiftKey || e.ctrlKey || e.metaKey, true); }
-        } }, commandIconEl(KIND_ICONS[kind] || 'shapes', 16), el('span', {}, image.name || 'Object'), floating ? null : el('span.pic-hint', {}, ' · in line'));
+        } }, commandIconEl(KIND_ICONS[kind] || 'shapes', 16), el('span', {}, image.name || '对象'), floating ? null : el('span.pic-hint', {}, ' · 嵌入型'));
       // A toggle keeps one name: "Show Rectangle 1, pressed" while it shows. A name that switched to "Hide …"
       // read as "Hide Rectangle 1, pressed" for a visible object.
-      const eye = el('button.icon-btn.pic-selection-eye', { type: 'button', 'aria-pressed': String(!image.hidden), 'aria-label': `Show ${image.name}`, title: image.hidden ? 'Show' : 'Hide',
+      const eye = el('button.icon-btn.pic-selection-eye', { type: 'button', 'aria-pressed': String(!image.hidden), 'aria-label': `显示 ${image.name}`, title: image.hidden ? '显示' : '隐藏',
         onclick: async () => { await commands.setHidden(image, !image.hidden); refresh(true); } }, iconEl('eye', 16));
       const row = el('li.pic-selection-row', { dataset: { id: String(image.id) }, draggable: floating ? 'true' : 'false', className: `pic-selection-row${image.hidden ? ' is-hidden' : ''}${selected ? ' is-selected' : ''}` }, name, eye);
       if (floating) {
@@ -146,7 +146,7 @@ export function createPane(context) {
       }
       return row;
     }));
-    status.textContent = items.length ? `${items.length} ${items.length === 1 ? 'object' : 'objects'}${items.some(i => i.hidden) ? `, ${items.filter(i => i.hidden).length} hidden` : ''}` : 'There are no pictures or shapes in this part of the document.';
+    status.textContent = items.length ? `${items.length} 个对象${items.some(i => i.hidden) ? `，其中 ${items.filter(i => i.hidden).length} 个已隐藏` : ''}` : '本文档此部分没有图片或形状。';
     const anySelected = items.some(i => ids.has(i.id) && isPositionedImage(i));
     up.disabled = down.disabled = !anySelected || !ready();
     showAll.disabled = hideAll.disabled = !items.length || !ready();

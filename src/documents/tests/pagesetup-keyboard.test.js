@@ -13,7 +13,7 @@ afterEach(() => {
 });
 
 it.each([
-  ['Orientation', 'Landscape'], ['Units', 'Centimeters'], ['Vertical alignment', 'Center'],
+  ['方向', '横向'], ['单位', '厘米'], ['垂直对齐方式', '居中对齐'],
 ])('supports arrow selection and one tab stop for %s', async (label, next) => {
   const onApply = vi.fn(async () => null);
   const pending = openPageSetup({ current: { width: 8.5, height: 11, margins: { top: 1, bottom: 1, left: 1, right: 1 } }, onApply });
@@ -28,9 +28,9 @@ it.each([
   expect(buttons.filter((button) => button.tabIndex === 0)).toEqual([document.activeElement]);
   document.querySelector('form').requestSubmit();
   const result = await pending;
-  if (label === 'Orientation') expect(result.pageSetup).toMatchObject({ width: 11, height: 8.5, orientation: 'landscape' });
-  if (label === 'Units') expect(result.margins).toEqual({ top: 1, bottom: 1, left: 1, right: 1 });
-  if (label === 'Vertical alignment') expect(result.verticalAlign).toBe('center');
+  if (label === '方向') expect(result.pageSetup).toMatchObject({ width: 11, height: 8.5, orientation: 'landscape' });
+  if (label === '单位') expect(result.margins).toEqual({ top: 1, bottom: 1, left: 1, right: 1 });
+  if (label === '垂直对齐方式') expect(result.verticalAlign).toBe('center');
   expect(onApply).toHaveBeenCalledOnce();
 });
 
@@ -38,7 +38,7 @@ it('restores the entered settings and controls after an apply callback rejects',
   const onApply = vi.fn().mockRejectedValueOnce(new Error('Connection lost')).mockResolvedValue(null);
   const result = openPageSetup({ current: { width: 8.5, height: 11 }, onApply });
   const form = document.querySelector('form');
-  const margin = form.querySelector('[aria-label="Left margin"]');
+  const margin = form.querySelector('[aria-label="左边距"]');
   margin.value = '0.75';
   form.requestSubmit();
   await vi.advanceTimersByTimeAsync(0);

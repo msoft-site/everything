@@ -10,9 +10,9 @@ const QUICK_STORE = 'documents:quick-access';
 const RECENT_STORE = 'documents:recent-commands';
 export const DEFAULT_QUICK = ['home', 'save', 'undo', 'redo', 'print'];
 export const EDITING_MODES = [
-  ['editing', 'Editing', 'pencil', 'Edit the document directly.'],
-  ['reviewing', 'Reviewing', 'trackChanges', 'Edits become tracked changes.'],
-  ['viewing', 'Viewing', 'readMode', 'Read and comment without changing the text.'],
+  ['editing', '编辑', 'pencil', '直接编辑文档。'],
+  ['reviewing', '审阅', 'trackChanges', '修订记录所有更改。'],
+  ['viewing', '查看', 'readMode', '仅阅读与批注，不更改文字。'],
 ];
 
 function readList(key, fallback) {
@@ -29,35 +29,35 @@ function writeList(key, list) { try { localStore()?.setItem(key, JSON.stringify(
 export function createTitleBar({ w, c, a, local, title, status, account, menus, focusEditor, entries, openShortcuts, keymapShortcut = () => null }) {
   /* ---- Quick access ---- */
   small(c.undo, { icon: 'undo' }); small(c.redo, { icon: 'redo' });
-  const homeButton = command('All Documents', 'home', () => a.goHome?.());
-  const saveQuick = command(local ? 'Download .docx' : 'Save', 'save', () => (local ? c.exportButton : c.saveButton).click(), { shortcut: local ? null : `${MOD_KEY}+S` });
-  const printQuick = command('Print', 'print', () => c.printButton.click(), { shortcut: `${MOD_KEY}+P` });
+  const homeButton = command('所有文档', 'home', () => a.goHome?.());
+  const saveQuick = command(local ? '下载 .docx' : '保存', 'save', () => (local ? c.exportButton : c.saveButton).click(), { shortcut: local ? null : `${MOD_KEY}+S` });
+  const printQuick = command('打印', 'print', () => c.printButton.click(), { shortcut: `${MOD_KEY}+P` });
   // Undo's arrow lists what can be undone; choosing an entry undoes it and everything after it.
-  const undoArrow = el('button.ribbon-split-arrow.ed-undo-arrow', { type: 'button', 'aria-label': 'Undo history', title: 'Undo history', 'aria-haspopup': 'menu',
+  const undoArrow = el('button.ribbon-split-arrow.ed-undo-arrow', { type: 'button', 'aria-label': '撤销历史', title: '撤销历史', 'aria-haspopup': 'menu',
     onclick: e => {
       const list = w.undoHistory?.() || [];
-      openMenu({ anchor: undoArrow, label: 'Undo history', minWidth: 220, pointer: !!e.detail, onClose: e.detail ? focusEditor : null,
-        items: list.length ? list.slice(0, 20).map((label, i) => ({ label: i === 0 ? `Undo ${label}` : `Undo ${i + 1} actions (to ${label})`, onSelect: () => { focusEditor(); w.undoSteps?.(i + 1); } }))
-          : [{ note: 'Nothing to undo.' }] });
+      openMenu({ anchor: undoArrow, label: '撤销历史', minWidth: 220, pointer: !!e.detail, onClose: e.detail ? focusEditor : null,
+        items: list.length ? list.slice(0, 20).map((label, i) => ({ label: i === 0 ? `撤销 ${label}` : `撤销 ${i + 1} 个操作 (至 ${label})`, onSelect: () => { focusEditor(); w.undoSteps?.(i + 1); } }))
+          : [{ note: '没有可撤销的操作。' }] });
     } }, el('span.ribbon-caret', { 'aria-hidden': 'true' }));
   undoArrow.addEventListener('mousedown', e => e.preventDefault());
   const undoSplit = el('span.ribbon-split.is-small.ed-undo-split', {}, c.undo, undoArrow);
   const optional = {
-    new: () => command('New Document', 'filePlus', () => a.newDocument?.()),
-    open: () => command('Open', 'folderOpen', () => a.openDocument?.(), { shortcut: `${MOD_KEY}+O` }),
-    find: () => command('Find', 'find', () => a.openSearch?.(), { shortcut: `${MOD_KEY}+F` }),
-    spelling: () => w.spelling && command('Spelling', 'spelling', () => w.spelling(), { shortcut: 'F7' }),
-    pdf: () => w.savePdf && command('Save as PDF', 'pdf', () => w.savePdf()),
-    marks: () => w.toggleMarks && command('Show Formatting Marks', 'pilcrow', () => w.toggleMarks(), { shortcut: `${MOD_KEY}+8` }),
-    comment: () => w.newComment && command('New Comment', 'newComment', () => w.newComment()),
-    track: () => w.toggleTracking && command('Track Changes', 'trackChanges', () => w.toggleTracking(), { shortcut: `${MOD_KEY}+Shift+E` }),
-    wordCount: () => w.wordCount && command('Word Count', 'wordCount', () => w.wordCount()),
-    readAloud: () => w.readAloud && command('Read Aloud', 'readAloud', () => w.readAloud()),
-    repeat: () => w.repeat && command('Repeat', 'redo', () => w.repeat(), { shortcut: 'F4' }),
+    new: () => command('新建文档', 'filePlus', () => a.newDocument?.()),
+    open: () => command('打开', 'folderOpen', () => a.openDocument?.(), { shortcut: `${MOD_KEY}+O` }),
+    find: () => command('查找', 'find', () => a.openSearch?.(), { shortcut: `${MOD_KEY}+F` }),
+    spelling: () => w.spelling && command('拼写检查', 'spelling', () => w.spelling(), { shortcut: 'F7' }),
+    pdf: () => w.savePdf && command('另存为 PDF', 'pdf', () => w.savePdf()),
+    marks: () => w.toggleMarks && command('显示格式标记', 'pilcrow', () => w.toggleMarks(), { shortcut: `${MOD_KEY}+8` }),
+    comment: () => w.newComment && command('新建批注', 'newComment', () => w.newComment()),
+    track: () => w.toggleTracking && command('修订', 'trackChanges', () => w.toggleTracking(), { shortcut: `${MOD_KEY}+Shift+E` }),
+    wordCount: () => w.wordCount && command('字数统计', 'wordCount', () => w.wordCount()),
+    readAloud: () => w.readAloud && command('朗读', 'readAloud', () => w.readAloud()),
+    repeat: () => w.repeat && command('重复', 'redo', () => w.repeat(), { shortcut: 'F4' }),
   };
   const base = { home: homeButton, save: local ? null : saveQuick, undo: undoSplit, redo: c.redo, print: printQuick };
-  const LABELS = { home: 'All Documents', save: 'Save', undo: 'Undo', redo: 'Redo', print: 'Print', new: 'New Document', open: 'Open', find: 'Find', spelling: 'Spelling',
-    pdf: 'Save as PDF', marks: 'Show Formatting Marks', comment: 'New Comment', track: 'Track Changes', wordCount: 'Word Count', readAloud: 'Read Aloud', repeat: 'Repeat' };
+  const LABELS = { home: '所有文档', save: '保存', undo: '撤销', redo: '重做', print: '打印', new: '新建文档', open: '打开', find: '查找', spelling: '拼写检查',
+    pdf: '另存为 PDF', marks: '显示格式标记', comment: '新建批注', track: '修订', wordCount: '字数统计', readAloud: '朗读', repeat: '重复' };
   const built = new Map();
   const nodeFor = id => {
     if (Object.hasOwn(base, id)) return base[id];
@@ -66,18 +66,18 @@ export function createTitleBar({ w, c, a, local, title, status, account, menus, 
   };
   const available = () => Object.keys(LABELS).filter(id => nodeFor(id));
   let chosen = readList(QUICK_STORE, DEFAULT_QUICK).filter(id => LABELS[id]);
-  const quick = el('div.ed-quick', { role: 'toolbar', 'aria-label': 'Quick access' });
+  const quick = el('div.ed-quick', { role: 'toolbar', 'aria-label': '快速访问工具栏' });
   function renderQuick() {
     quick.replaceChildren(...chosen.map(nodeFor).filter(Boolean));
     refreshQuickStop();
   }
   for (const b of [homeButton, saveQuick, printQuick]) b.addEventListener('mousedown', e => e.preventDefault());
-  const customize = el('button.ed-quick-customize', { type: 'button', 'aria-label': 'Customize Quick Access Toolbar', title: 'Customize Quick Access Toolbar', 'aria-haspopup': 'menu',
-    onclick: e => openMenu({ anchor: customize, label: 'Customize Quick Access Toolbar', minWidth: 240, pointer: !!e.detail, onClose: e.detail ? focusEditor : null, items: [
-      { header: 'Show in the title bar' },
+  const customize = el('button.ed-quick-customize', { type: 'button', 'aria-label': '自定义快速访问工具栏', title: '自定义快速访问工具栏', 'aria-haspopup': 'menu',
+    onclick: e => openMenu({ anchor: customize, label: '自定义快速访问工具栏', minWidth: 240, pointer: !!e.detail, onClose: e.detail ? focusEditor : null, items: [
+      { header: '在标题栏显示' },
       ...available().map(id => ({ label: LABELS[id], checked: chosen.includes(id), onSelect: () => toggleQuick(id) })),
       { separator: true },
-      { label: 'Reset to Defaults', disabled: JSON.stringify(chosen) === JSON.stringify(DEFAULT_QUICK), onSelect: () => { chosen = [...DEFAULT_QUICK]; writeList(QUICK_STORE, chosen); renderQuick(); } },
+      { label: '重置为默认值', disabled: JSON.stringify(chosen) === JSON.stringify(DEFAULT_QUICK), onSelect: () => { chosen = [...DEFAULT_QUICK]; writeList(QUICK_STORE, chosen); renderQuick(); } },
     ] }) }, commandIconEl('more', 16));
   customize.addEventListener('mousedown', e => e.preventDefault());
   function toggleQuick(id) {
@@ -104,44 +104,44 @@ export function createTitleBar({ w, c, a, local, title, status, account, menus, 
   });
 
   /* ---- AutoSave (documents saved to the cloud) ---- */
-  const autosaveInput = el('input', { type: 'checkbox', role: 'switch', checked: w.autosaveEnabled?.() ?? true, 'aria-label': 'AutoSave',
+  const autosaveInput = el('input', { type: 'checkbox', role: 'switch', checked: w.autosaveEnabled?.() ?? true, 'aria-label': '自动保存',
     onchange: () => { w.setAutosave?.(autosaveInput.checked); focusEditor(); } });
-  const autosave = !local && w.setAutosave ? el('label.ed-autosave', { title: 'Save every change automatically' }, el('span.ed-autosave-label', {}, 'AutoSave'), autosaveInput, el('span.ed-switch', { 'aria-hidden': 'true' })) : null;
+  const autosave = !local && w.setAutosave ? el('label.ed-autosave', { title: '自动保存所作的每一项更改' }, el('span.ed-autosave-label', {}, '自动保存'), autosaveInput, el('span.ed-switch', { 'aria-hidden': 'true' })) : null;
 
   /* ---- Menu bar ---- */
   // A menu's items with the shortcuts the keymap runs now (Customize Keyboard can move a chord to another command).
   const shownItems = menu => (w.menuShortcuts ? w.menuShortcuts(menu.items(), `menu:${menu.id}`) : menu.items());
-  const menubar = createMenubar(menus.map(menu => ({ label: menu.label, open: (anchor, { pointer } = {}) => openMenu({ anchor, label: menu.label, minWidth: 240, items: shownItems(menu), pointer, onClose: pointer ? focusEditor : null, align: 'start' }) })), { label: 'Menu bar' });
+  const menubar = createMenubar(menus.map(menu => ({ label: menu.label, open: (anchor, { pointer } = {}) => openMenu({ anchor, label: menu.label, minWidth: 240, items: shownItems(menu), pointer, onClose: pointer ? focusEditor : null, align: 'start' }) })), { label: '菜单栏' });
   menubar.el.classList.add('ed-menubar');
   menubar.buttons.forEach((button, i) => { button.dataset.menu = menus[i].id; button.addEventListener('mousedown', e => { if (document.activeElement?.matches?.('.canvas-input')) e.preventDefault(); }); });
   // Narrow windows fold the menus into one button.
-  const allMenus = el('button.ed-menus-button', { type: 'button', 'aria-label': 'Menus', title: 'Menus', 'aria-haspopup': 'menu',
-    onclick: e => openMenu({ anchor: allMenus, label: 'Menus', minWidth: 200, pointer: !!e.detail, onClose: e.detail ? focusEditor : null,
+  const allMenus = el('button.ed-menus-button', { type: 'button', 'aria-label': '菜单', title: '菜单', 'aria-haspopup': 'menu',
+    onclick: e => openMenu({ anchor: allMenus, label: '菜单', minWidth: 200, pointer: !!e.detail, onClose: e.detail ? focusEditor : null,
       items: menus.map(menu => ({ label: menu.label, items: shownItems(menu) })) }) }, commandIconEl('menus', 16));
 
   /* ---- Document name: rename in place, details in a popover ---- */
-  const details = el('button.ed-title-details', { type: 'button', 'aria-label': 'Document details', title: 'Location and details', 'aria-haspopup': 'dialog',
+  const details = el('button.ed-title-details', { type: 'button', 'aria-label': '文档详情', title: '位置与详细信息', 'aria-haspopup': 'dialog',
     onclick: () => {
-      const info = w.documentLocation?.() || { location: local ? 'This device' : 'Puter' };
-      const name = el('input.input', { value: title.value, 'aria-label': 'File name', maxLength: 120 });
+      const info = w.documentLocation?.() || { location: local ? '此设备' : '云端存储' };
+      const name = el('input.input', { value: title.value, 'aria-label': '文件名', maxLength: 120 });
       const form = el('form.ed-title-popover', { onsubmit: e => { e.preventDefault(); popup.close(); if (name.value.trim() && name.value !== title.value) { title.value = name.value; title.dispatchEvent(new Event('change')); } focusEditor(); } },
-        el('label.field', {}, el('span.field-label', {}, 'File name'), name),
-        el('div.ed-title-location', {}, el('span.field-label', {}, 'Location'), el('span', {}, info.location || '')),
-        el('div.ed-title-location', {}, el('span.field-label', {}, 'Status'), el('span', {}, status.getAttribute('aria-label') || status.textContent)),
+        el('label.field', {}, el('span.field-label', {}, '文件名'), name),
+        el('div.ed-title-location', {}, el('span.field-label', {}, '位置'), el('span', {}, info.location || '')),
+        el('div.ed-title-location', {}, el('span.field-label', {}, '状态'), el('span', {}, status.getAttribute('aria-label') || status.textContent)),
         el('div.row.row-end', {},
-          w.versionHistory ? el('button.btn.btn-ghost', { type: 'button', onclick: () => { popup.close(); w.versionHistory(); } }, 'Version History') : null,
-          w.openBackstage ? el('button.btn.btn-ghost', { type: 'button', onclick: () => { popup.close(); w.openBackstage('info'); } }, 'Properties') : null,
-          el('button.btn.btn-primary', { type: 'submit' }, 'Rename')));
-      const popup = openPopover({ anchor: details, label: 'Document', content: form });
+          w.versionHistory ? el('button.btn.btn-ghost', { type: 'button', onclick: () => { popup.close(); w.versionHistory(); } }, '版本历史') : null,
+          w.openBackstage ? el('button.btn.btn-ghost', { type: 'button', onclick: () => { popup.close(); w.openBackstage('info'); } }, '属性') : null,
+          el('button.btn.btn-primary', { type: 'submit' }, '重命名')));
+      const popup = openPopover({ anchor: details, label: '文档', content: form });
       queueMicrotask(() => { name.focus(); name.select(); });
     } }, el('span.ribbon-caret', { 'aria-hidden': 'true' }));
 
   /* ---- Command search ---- */
   const listId = 'ed-command-results';
-  const searchInput = el('input.ed-search-input', { type: 'text', role: 'combobox', 'aria-label': 'Search for commands', placeholder: 'Search', autocomplete: 'off', spellcheck: false,
+  const searchInput = el('input.ed-search-input', { type: 'text', role: 'combobox', 'aria-label': '搜索功能', placeholder: '搜索 (Alt+Q)', autocomplete: 'off', spellcheck: false,
     'aria-expanded': 'false', 'aria-controls': listId, 'aria-autocomplete': 'list', 'aria-haspopup': 'listbox' });
-  const results = el('div.ed-search-results', { id: listId, role: 'listbox', 'aria-label': 'Commands', hidden: true });
-  const search = el('div.ed-search', { title: `Search for commands or text (${keymapShortcut('app.search') || ''})`.replace(' ()', '') }, commandIconEl('find', 16), searchInput, results);
+  const results = el('div.ed-search-results', { id: listId, role: 'listbox', 'aria-label': '命令', hidden: true });
+  const search = el('div.ed-search', { title: `搜索功能或文本 (${keymapShortcut('app.search') || ''})`.replace(' ()', '') }, commandIconEl('find', 16), searchInput, results);
   let options = [], active = -1;
   const recent = () => readList(RECENT_STORE, []);
   function render() {
@@ -152,18 +152,18 @@ export function createTitleBar({ w, c, a, local, title, status, account, menus, 
     else found = recent().map(id => all.find(e => e.id === id)).filter(Boolean).slice(0, 5);
     options = [
       ...found.map(entry => ({ entry, label: entry.label, detail: entry.path.filter(Boolean).join(' › '), shortcut: entry.shortcut, disabled: entry.disabled })),
-      ...(query && a.hasDocument?.() ? [{ find: query, label: `Find “${query}” in the document`, detail: 'Search' }] : []),
-      ...(!query ? [{ help: true, label: 'Keyboard shortcuts', detail: 'Help', shortcut: `${MOD_KEY}+/` }] : []),
+      ...(query && a.hasDocument?.() ? [{ find: query, label: `在文档中查找“${query}”`, detail: '搜索' }] : []),
+      ...(!query ? [{ help: true, label: '键盘快捷键', detail: '帮助', shortcut: `${MOD_KEY}+/` }] : []),
     ];
     active = options.findIndex(o => !o.disabled);
     results.replaceChildren(
-      el('div.ed-search-heading', { role: 'presentation' }, query ? 'Commands' : found.length ? 'Recently used' : 'Suggestions'),
+      el('div.ed-search-heading', { role: 'presentation' }, query ? '功能操作' : found.length ? '最近使用' : '建议操作'),
       ...options.map((option, i) => el('div.ed-search-option', { role: 'option', id: `${listId}-${i}`, 'aria-selected': String(i === active), 'aria-disabled': option.disabled ? 'true' : null,
         onmousedown: e => e.preventDefault(), onclick: () => choose(i), onmousemove: () => setActive(i) },
       option.entry?.control?.dataset.icon || option.find ? commandIconEl(option.find ? 'find' : option.entry.control.dataset.icon, 16) : el('span.ed-search-dot', { 'aria-hidden': 'true' }),
       el('span.ed-search-label', {}, option.label), el('span.ed-search-detail', {}, option.detail || ''),
       option.shortcut ? el('span.ed-search-key', {}, option.shortcut) : null)));
-    if (!options.length) results.append(el('div.ed-search-empty', {}, 'No commands match.'));
+    if (!options.length) results.append(el('div.ed-search-empty', {}, '未找到匹配的功能。'));
     setActive(active);
     open();
   }
@@ -197,20 +197,20 @@ export function createTitleBar({ w, c, a, local, title, status, account, menus, 
   });
 
   /* ---- Editing mode, Comments, Share ---- */
-  const modeLabel = el('span.ed-mode-label', {}, 'Editing');
+  const modeLabel = el('span.ed-mode-label', {}, '编辑');
   const modeIcon = el('span.ed-mode-icon', {}, commandIconEl('pencil', 16));
-  const modeButton = el('button.ed-pill.ed-mode', { type: 'button', 'aria-haspopup': 'menu', 'aria-label': 'Editing mode: Editing', title: 'Editing mode',
-    onclick: e => openMenu({ anchor: modeButton, label: 'Editing mode', minWidth: 260, align: 'end', pointer: !!e.detail, onClose: e.detail ? focusEditor : null, items: EDITING_MODES.map(([mode, label, icon, hint]) => ({
+  const modeButton = el('button.ed-pill.ed-mode', { type: 'button', 'aria-haspopup': 'menu', 'aria-label': '编辑模式: 编辑', title: '编辑模式',
+    onclick: e => openMenu({ anchor: modeButton, label: '编辑模式', minWidth: 260, align: 'end', pointer: !!e.detail, onClose: e.detail ? focusEditor : null, items: EDITING_MODES.map(([mode, label, icon, hint]) => ({
       label, icon, hint, radio: true, checked: (w.editingMode?.() || 'editing') === mode, disabled: !a.hasDocument?.() || (mode !== 'viewing' && !!w.documentReadOnly?.()) || (mode === 'reviewing' && !w.canTrack?.() && !w.isTracking?.()),
       onSelect: () => { w.setEditingMode?.(mode); focusEditor(); } })) }) }, modeIcon, modeLabel, el('span.ribbon-caret', { 'aria-hidden': 'true' }));
   modeButton.addEventListener('mousedown', e => e.preventDefault());
-  const comments = w.toggleReviewingPane ? el('button.ed-pill.ed-comments-button', { type: 'button', 'aria-label': 'Comments', title: 'Comments and changes', 'aria-pressed': 'false',
+  const comments = w.toggleReviewingPane ? el('button.ed-pill.ed-comments-button', { type: 'button', 'aria-label': '批注', title: '批注与更改', 'aria-pressed': 'false',
     onclick: () => w.toggleReviewingPane() }, commandIconEl('comment', 16)) : null;
   comments?.addEventListener('mousedown', e => e.preventDefault());
   const shareItems = w.shareItems;
-  const share = shareItems ? el('button.ed-pill.ed-share', { type: 'button', 'aria-haspopup': 'menu', 'aria-label': 'Share', title: 'Share',
-    onclick: e => openMenu({ anchor: share, label: 'Share', minWidth: 240, align: 'end', pointer: !!e.detail, onClose: e.detail ? focusEditor : null, items: shareItems() }) },
-  commandIconEl('share', 16), el('span.ed-pill-label', {}, 'Share'), el('span.ribbon-caret', { 'aria-hidden': 'true' })) : null;
+  const share = shareItems ? el('button.ed-pill.ed-share', { type: 'button', 'aria-haspopup': 'menu', 'aria-label': '共享', title: '共享',
+    onclick: e => openMenu({ anchor: share, label: '共享', minWidth: 240, align: 'end', pointer: !!e.detail, onClose: e.detail ? focusEditor : null, items: shareItems() }) },
+  commandIconEl('share', 16), el('span.ed-pill-label', {}, '共享'), el('span.ribbon-caret', { 'aria-hidden': 'true' })) : null;
 
   const left = el('div.ed-title-left', {}, autosave, quick, customize, menubar.el, allMenus);
   const middle = el('div.canvas-title-wrap', {}, title, details, status);
@@ -220,13 +220,13 @@ export function createTitleBar({ w, c, a, local, title, status, account, menus, 
 
   function refresh() {
     const searchKey = keymapShortcut('app.search');
-    const searchTitle = searchKey ? `Search for commands or text (${searchKey})` : 'Search for commands or text';
+    const searchTitle = searchKey ? `搜索功能或文本 (${searchKey})` : '搜索功能或文本';
     if (search.title !== searchTitle) search.title = searchTitle;
     undoArrow.disabled = c.undo.disabled;
     refreshQuickStop();
     const mode = w.editingMode?.() || 'editing';
     const [, label, icon] = EDITING_MODES.find(([m]) => m === mode) || EDITING_MODES[0];
-    if (modeLabel.textContent !== label) { modeLabel.textContent = label; modeIcon.replaceChildren(commandIconEl(icon, 16)); modeButton.setAttribute('aria-label', `Editing mode: ${label}`); }
+    if (modeLabel.textContent !== label) { modeLabel.textContent = label; modeIcon.replaceChildren(commandIconEl(icon, 16)); modeButton.setAttribute('aria-label', `编辑模式: ${label}`); }
     modeButton.disabled = !a.hasDocument?.();
     if (comments) { comments.setAttribute('aria-pressed', String(!!w.reviewingPaneShown?.())); comments.disabled = !a.hasDocument?.(); }
     if (share) share.disabled = !a.hasDocument?.();

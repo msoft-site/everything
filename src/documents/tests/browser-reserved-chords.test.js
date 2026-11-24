@@ -39,10 +39,10 @@ it('on Windows and Linux the keyboard sheet leaves out Ctrl+T, Ctrl+Shift+N and 
   openShortcuts();
   const text = document.querySelector('.modal-panel').textContent;
   expect(text).not.toMatch(/Ctrl \+ T|Ctrl \+ Shift \+ T|Ctrl \+ Shift \+ N|Ctrl \+ Shift \+ W/);
-  expect(text).not.toContain('Underline words only');
-  expect(text).not.toContain('Hanging indent');
+  expect(text).not.toContain('仅字下加线');
+  expect(text).not.toContain('悬挂缩进');
   // Normal style keeps the chord that reaches the page.
-  const rows = [...document.querySelectorAll('.modal-panel dd')].filter(dd => dd.textContent === 'Normal style').map(dd => dd.previousElementSibling.textContent);
+  const rows = [...document.querySelectorAll('.modal-panel dd')].filter(dd => dd.textContent === '正文样式').map(dd => dd.previousElementSibling.textContent);
   expect(rows).toEqual(['Ctrl + Alt + 0']);
 });
 
@@ -51,9 +51,9 @@ it('on a Mac the keyboard sheet keeps the Control chords, which reach the page t
   const { openShortcuts } = await import('../src/ui/shortcuts.js');
   openShortcuts();
   const chords = what => [...document.querySelectorAll('.modal-panel dd')].filter(dd => dd.textContent === what).map(dd => dd.previousElementSibling.textContent);
-  expect(chords('Underline words only')).toEqual(['Ctrl + Shift + W']);
-  expect(chords('Hanging indent, or reduce it')).toEqual(['Ctrl + T or Ctrl + Shift + T']);
-  expect(chords('Normal style')).toEqual(['Cmd + Option + 0', 'Ctrl + Shift + N']);
+  expect(chords('仅字下加线')).toEqual(['Ctrl + Shift + W']);
+  expect(chords('悬挂缩进或减少悬挂缩进')).toEqual(['Ctrl + T 或 Ctrl + Shift + T']);
+  expect(chords('正文样式')).toEqual(['Cmd + Option + 0', 'Ctrl + Shift + N']);
 });
 
 it('a ribbon command offers no tooltip chord, and lists none for Customize Keyboard, that the browser keeps', async () => {
@@ -69,11 +69,11 @@ it('Customize Keyboard explains a chord the browser keeps, and will not assign i
   const { openCustomizeKeyboard } = await import('../src/views/customize-keyboard.js');
   const keymap = createKeymap({ defaults: {}, run: () => {}, storage: localStorage, mac: false });
   openCustomizeKeyboard({ entries: () => [{ id: 'ribbon:home/font/Underline', label: 'Underline', path: ['Home', 'Font'], shortcut: 'Ctrl+U' }], keymap, select: 'ribbon:home/font/Underline' });
-  const capture = document.querySelector('.kb-capture'), assign = [...document.querySelectorAll('button')].find(b => b.textContent === 'Assign');
+  const capture = document.querySelector('.kb-capture'), assign = [...document.querySelectorAll('button')].find(b => b.textContent === '指定' || b.textContent === 'Assign');
   const press = init => capture.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, cancelable: true, ...init }));
   press({ key: 'w', code: 'KeyW', ctrlKey: true, shiftKey: true });
   expect(capture.value).toBe('Ctrl+Shift+W');
-  expect(document.querySelector('#kb-capture-hint').textContent).toContain('The browser keeps Ctrl+Shift+W');
+  expect(document.querySelector('#kb-capture-hint').textContent).toContain('保留了 Ctrl+Shift+W');
   expect(assign.disabled).toBe(true);
   press({ key: 'w', code: 'KeyW', ctrlKey: true, altKey: true });
   expect(assign.disabled).toBe(false);

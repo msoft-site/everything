@@ -12,7 +12,7 @@ export function sidePane({ title, label = title, className = '', onOpen, onClose
   const heading = el('h2', {}, title);
   const body = el('div.canvas-panel-scroll.rv-pane-body');
   const node = el(`aside.canvas-outline-panel.ed-proof-pane.rv-pane${className ? `.${className}` : ''}`, { 'aria-label': label, hidden: true },
-    el('div.canvas-panel-heading', {}, heading, el('button.icon-btn', { type: 'button', 'aria-label': `Close ${label}`, title: 'Close', onclick: () => pane.close() }, iconEl('x', 18))),
+    el('div.canvas-panel-heading', {}, heading, el('button.icon-btn', { type: 'button', 'aria-label': `关闭${label}`, title: '关闭', onclick: () => pane.close() }, iconEl('x', 18))),
     body);
   node.addEventListener('keydown', e => { if (e.key === 'Escape' && !isComposing(e) && !e.defaultPrevented && !e.target.closest?.('[role="menu"]')) { e.preventDefault(); pane.close(); } });
   const pane = {
@@ -42,8 +42,8 @@ export const hint = text => el('p.field-hint.rv-hint', {}, text);
 export const LANGUAGES = ['en-US', 'en-GB', 'en-AU', 'en-CA', 'en-IN', 'es-ES', 'es-MX', 'fr-FR', 'fr-CA', 'de-DE', 'de-CH', 'it-IT', 'pt-BR', 'pt-PT', 'nl-NL', 'sv-SE', 'nb-NO', 'da-DK', 'fi-FI', 'pl-PL', 'cs-CZ', 'sk-SK', 'hu-HU', 'ro-RO', 'el-GR', 'tr-TR', 'ru-RU', 'uk-UA', 'he-IL', 'ar-SA', 'fa-IR', 'hi-IN', 'bn-IN', 'th-TH', 'vi-VN', 'id-ID', 'ms-MY', 'zh-CN', 'zh-TW', 'ja-JP', 'ko-KR'];
 let displayNames;
 export function languageName(tag) {
-  if (!tag) return 'No language set';
-  try { displayNames ??= new Intl.DisplayNames([navigator.language || 'en'], { type: 'language' }); return displayNames.of(tag) || tag; } catch { return tag; }
+  if (!tag) return '未设置语言';
+  try { displayNames ??= new Intl.DisplayNames([navigator.language || 'zh-CN'], { type: 'language' }); return displayNames.of(tag) || tag; } catch { return tag; }
 }
 /** Translation targets are named in English for the model. */
 export function englishLanguageName(tag) {

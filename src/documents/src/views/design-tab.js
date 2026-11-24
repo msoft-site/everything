@@ -25,14 +25,14 @@ export function storeSaved(key, value) {
 }
 const remember = (key, entry) => {
   const list = loadSaved(key).filter(item => item.name !== entry.name);
-  if (!storeSaved(key, [...list, entry].slice(-24))) toast('This browser did not keep the saved item.', { icon: 'alert' });
+  if (!storeSaved(key, [...list, entry].slice(-24))) toast('当前浏览器未能保留已保存的项目。', { icon: 'alert' });
 };
 
 /** Small previews drawn in HTML: they follow the theme's colors and name its fonts. */
 const fontStack = name => `"${name}", "Canvas Noto Sans", "Noto Sans", sans-serif`;
 function themeCard(theme, { selected, onSelect, label = theme.name }) {
   const c = theme.colors;
-  return el('button.swatch.design-card.design-theme-card', { type: 'button', role: 'menuitemradio', tabindex: -1, 'aria-checked': String(!!selected), 'aria-label': `${label} theme`, title: label, onclick: onSelect },
+  return el('button.swatch.design-card.design-theme-card', { type: 'button', role: 'menuitemradio', tabindex: -1, 'aria-checked': String(!!selected), 'aria-label': `${label} 主题`, title: label, onclick: onSelect },
     el('span.design-theme-page', { 'aria-hidden': 'true', style: { background: `#${c.lt1}` } },
       el('span.design-theme-title', { style: { fontFamily: fontStack(theme.fonts.major), color: `#${c.dk2}` } }, 'Aa'),
       el('span.design-theme-bars', {}, ...['accent1', 'accent2', 'accent3', 'accent4', 'accent5', 'accent6'].map(slot => el('span', { style: { background: `#${c[slot]}` } })))),
@@ -116,12 +116,12 @@ export function createDesignTab({ editor, pkg, error, onChange = () => {}, comma
   }
   async function saveTheme() {
     await loading;
-    const name = await promptDialog({ title: 'Save Current Theme', label: 'Theme name', value: current().theme?.name || 'My theme', confirmLabel: 'Save',
-      hint: 'Saved themes appear under Custom in the Themes gallery in this browser.' });
+    const name = await promptDialog({ title: '保存当前主题', label: '主题名称', value: current().theme?.name || '我的主题', confirmLabel: '保存',
+      hint: '保存的主题将出现在此浏览器“主题”库的“自定义”下。' });
     if (!name) return;
     const xml = api.themePartXml(pkg().parts) || api.themeXml({ ...resolvedTheme('Paper'), name });
     remember('themes', { name, xml: xml.replace(/(<a:theme\b[^>]*?\sname=")[^"]*"/, `$1${name.replace(/[&<"]/g, '')}"`) });
-    toast(`Saved theme "${name}"`, { icon: 'check' });
+    toast(`已保存主题“${name}”`, { icon: 'check' });
   }
   function themeItems() {
     const enabled = editable();
@@ -133,12 +133,12 @@ export function createDesignTab({ editor, pkg, error, onChange = () => {}, comma
       const typeface = tag => new RegExp(`<a:${tag}>\\s*<a:latin typeface="([^"]*)"`).exec(entry.xml)?.[1] || 'Noto Sans';
       return { name: entry.name, xml: entry.xml, colors: { dk1: '000000', lt1: 'FFFFFF', dk2: '1F2A44', lt2: 'EEF0F3', ...colors }, fonts: { major: typeface('majorFont'), minor: typeface('minorFont') } };
     });
-    return [{ header: 'Built-In' }, { custom: gallery(THEMES.map(resolvedTheme), themeSelected) },
-      ...(saved.length ? [{ header: 'Custom' }, { custom: gallery(saved, entry => current().theme?.name === entry.name) }] : []),
+    return [{ header: '内置' }, { custom: gallery(THEMES.map(resolvedTheme), themeSelected) },
+      ...(saved.length ? [{ header: '自定义' }, { custom: gallery(saved, entry => current().theme?.name === entry.name) }] : []),
       { separator: true },
-      { label: 'Reset to Theme from Template', disabled: !enabled, onSelect: () => (openedTheme ? themeChange({ xml: openedTheme }) : themeChange({ theme: resolvedTheme('Paper') })) },
-      { label: 'Browse for Themes…', disabled: !enabled, onSelect: browseTheme },
-      { label: 'Save Current Theme…', onSelect: saveTheme }];
+      { label: '重置为模板中的主题', disabled: !enabled, onSelect: () => (openedTheme ? themeChange({ xml: openedTheme }) : themeChange({ theme: resolvedTheme('Paper') })) },
+      { label: '浏览主题…', disabled: !enabled, onSelect: browseTheme },
+      { label: '保存当前主题…', onSelect: saveTheme }];
   }
 
   /* ---- Colors, fonts, effects ---- */
@@ -148,14 +148,14 @@ export function createDesignTab({ editor, pkg, error, onChange = () => {}, comma
     const item = scheme => ({ custom: el('button.menu-item.design-row', { type: 'button', role: 'menuitemradio', tabindex: -1, disabled: !enabled,
       'aria-checked': String(!!now && now.colorName === scheme.name), onclick: choose(() => themeChange({ colors: { name: scheme.name, ...scheme.colors } })) },
     colorStrip(scheme.colors), el('span.menu-label', {}, scheme.name)) });
-    return [{ header: 'Built-In' }, ...COLOR_SCHEMES.map(item),
-      ...(saved.length ? [{ header: 'Custom' }, ...saved.map(item)] : []),
-      { separator: true }, { label: 'Customize Colors…', disabled: !enabled, onSelect: customizeColors }];
+    return [{ header: '内置' }, ...COLOR_SCHEMES.map(item),
+      ...(saved.length ? [{ header: '自定义' }, ...saved.map(item)] : []),
+      { separator: true }, { label: '自定义颜色…', disabled: !enabled, onSelect: customizeColors }];
   }
   async function customizeColors() {
     await loading;
     const now = current().theme, start = now?.colors && Object.values(now.colors).every(Boolean) ? now.colors : resolvedTheme('Paper').colors;
-    openCustomizeColors({ colors: start, name: 'Custom 1', onClose: refocus, apply: scheme => { remember('colors', scheme); return themeChange({ colors: { name: scheme.name, ...scheme.colors } }); } });
+    openCustomizeColors({ colors: start, name: '自定义 1', onClose: refocus, apply: scheme => { remember('colors', scheme); return themeChange({ colors: { name: scheme.name, ...scheme.colors } }); } });
   }
   function fontItems() {
     const enabled = editable(), now = current().theme;
@@ -166,19 +166,19 @@ export function createDesignTab({ editor, pkg, error, onChange = () => {}, comma
     el('span.design-font-names', {}, el('span.design-font-name', {}, scheme.name),
       el('span.design-font-major', { style: { fontFamily: fontStack(scheme.major) } }, scheme.major),
       el('span.design-font-minor', { style: { fontFamily: fontStack(scheme.minor) } }, scheme.minor))) });
-    return [{ header: 'Built-In' }, ...FONT_SCHEMES.map(item), ...(saved.length ? [{ header: 'Custom' }, ...saved.map(item)] : []),
-      { separator: true }, { label: 'Customize Fonts…', disabled: !enabled, onSelect: customizeFonts }];
+    return [{ header: '内置' }, ...FONT_SCHEMES.map(item), ...(saved.length ? [{ header: '自定义' }, ...saved.map(item)] : []),
+      { separator: true }, { label: '自定义字体…', disabled: !enabled, onSelect: customizeFonts }];
   }
   async function customizeFonts() {
     await loading;
     const now = current().theme?.fonts;
-    openCustomizeFonts({ fonts: now?.major ? now : FONT_SCHEMES[0], name: 'Custom 1', onClose: refocus, apply: scheme => { remember('fonts', scheme); return themeChange({ fonts: scheme }); } });
+    openCustomizeFonts({ fonts: now?.major ? now : FONT_SCHEMES[0], name: '自定义 1', onClose: refocus, apply: scheme => { remember('fonts', scheme); return themeChange({ fonts: scheme }); } });
   }
   function effectItems() {
     const enabled = editable(), now = current().theme;
-    return [{ note: 'Effects change the fills, outlines and shadows of shapes that use the theme’s styles.' },
+    return [{ note: '效果可更改使用主题样式的图形的填充、轮廓和阴影。' },
       ...EFFECT_SCHEMES.map(scheme => ({ label: scheme.name, icon: `effects${scheme.name.replace(/\s/g, '')}`, radio: true, checked: now?.effects === scheme.name, disabled: !enabled,
-        hint: scheme.effects.some(Boolean) ? 'Shadows' : scheme.fills.includes('gradient') ? 'Gradients' : 'Flat', onSelect: () => themeChange({ effects: scheme }) }))];
+        hint: scheme.effects.some(Boolean) ? '阴影' : scheme.fills.includes('gradient') ? '渐变' : '无特殊效果', onSelect: () => themeChange({ effects: scheme }) }))];
   }
 
   /* ---- Style sets ---- */
@@ -191,10 +191,10 @@ export function createDesignTab({ editor, pkg, error, onChange = () => {}, comma
     const c = theme.colors, color = spec => spec?.color ? `#${c[{ text1: 'dk1', text2: 'dk2', background1: 'lt1', background2: 'lt2' }[spec.color.theme] || spec.color.theme] || c.dk1}` : `#${c.dk1}`;
     const s = set.styles || {};
     const title = s.Title || {}, heading = s.Heading1 || {};
-    return el(tag, { type: 'button', role: tag.startsWith('button.swatch') ? 'menuitemradio' : 'option', [tag.startsWith('button.swatch') ? 'aria-checked' : 'aria-selected']: String(!!selected), title: set.description ? `${set.name}: ${set.description}` : set.name, 'aria-label': `${set.name} style set`, tabindex: tag.startsWith('button.swatch') ? -1 : null, onclick: onSelect },
+    return el(tag, { type: 'button', role: tag.startsWith('button.swatch') ? 'menuitemradio' : 'option', [tag.startsWith('button.swatch') ? 'aria-checked' : 'aria-selected']: String(!!selected), title: set.description ? `${set.name}: ${set.description}` : set.name, 'aria-label': `${set.name} 样式集`, tabindex: tag.startsWith('button.swatch') ? -1 : null, onclick: onSelect },
       el('span.design-set-page', { 'aria-hidden': 'true' },
-        el('span.design-set-title', { style: { color: color(title), fontFamily: fontStack(theme.fonts.major), fontWeight: title.bold ? '700' : '400', textTransform: title.caps ? 'uppercase' : '', textAlign: title.align === 'center' ? 'center' : 'left', borderBottom: title.border ? `1.5px solid #${c.accent1}` : '' } }, 'Title'),
-        el('span.design-set-heading', { style: { color: color(heading), fontFamily: fontStack(theme.fonts.major), fontWeight: heading.bold ? '700' : '400', textTransform: heading.caps ? 'uppercase' : '', textAlign: heading.align === 'center' ? 'center' : 'left', borderBottom: heading.border ? `1.5px solid #${c.accent1}` : '' } }, 'Heading 1'),
+        el('span.design-set-title', { style: { color: color(title), fontFamily: fontStack(theme.fonts.major), fontWeight: title.bold ? '700' : '400', textTransform: title.caps ? 'uppercase' : '', textAlign: title.align === 'center' ? 'center' : 'left', borderBottom: title.border ? `1.5px solid #${c.accent1}` : '' } }, '标题'),
+        el('span.design-set-heading', { style: { color: color(heading), fontFamily: fontStack(theme.fonts.major), fontWeight: heading.bold ? '700' : '400', textTransform: heading.caps ? 'uppercase' : '', textAlign: heading.align === 'center' ? 'center' : 'left', borderBottom: heading.border ? `1.5px solid #${c.accent1}` : '' } }, '标题 1'),
         el('span.design-set-lines', {}, el('span'), el('span'), el('span'))),
       el('span.design-card-name', {}, set.name));
   };
@@ -202,7 +202,7 @@ export function createDesignTab({ editor, pkg, error, onChange = () => {}, comma
     const now = current().theme;
     return now?.colors?.accent1 ? { colors: now.colors, fonts: now.fonts } : resolvedTheme('Paper');
   };
-  const gallery = el('div.ribbon-gallery.design-sets', { role: 'listbox', 'aria-label': 'Style Sets', 'aria-orientation': 'horizontal', dataset: { shrinkMin: '1', shrinkMax: '420' } });
+  const gallery = el('div.ribbon-gallery.design-sets', { role: 'listbox', 'aria-label': '样式集', 'aria-orientation': 'horizontal', dataset: { shrinkMin: '1', shrinkMax: '420' } });
   let gallerySignature = '';
   function refreshGallery() {
     const theme = currentTheme(), selected = current().styleSet, enabled = editable();
@@ -221,23 +221,23 @@ export function createDesignTab({ editor, pkg, error, onChange = () => {}, comma
     const saved = loadSaved('styleSets');
     const grid = sets => el('div.menu-custom-grid.design-grid.design-set-grid', { role: 'group', dataset: { columns: '4' } },
       ...sets.map(set => styleSetCard(set, theme, { selected: selected === set.name, tag: 'button.swatch.design-card.design-set', onSelect: choose(() => { if (enabled) applyStyleSet(set); }) })));
-    return [{ header: 'Built-In' }, { custom: grid(STYLE_SETS) }, ...(saved.length ? [{ header: 'Custom' }, { custom: grid(saved) }] : []),
+    return [{ header: '内置' }, { custom: grid(STYLE_SETS) }, ...(saved.length ? [{ header: '自定义' }, { custom: grid(saved) }] : []),
       { separator: true },
-      { label: 'Reset to the Default Style Set', disabled: !enabled, onSelect: () => applyStyleSet(STYLE_SETS[0]) },
-      { label: 'Save as a New Style Set…', onSelect: saveStyleSet }];
+      { label: '重置为默认样式集', disabled: !enabled, onSelect: () => applyStyleSet(STYLE_SETS[0]) },
+      { label: '另存为新样式集…', onSelect: saveStyleSet }];
   }
   async function saveStyleSet() {
     await loading;
     const engine = editor(); if (!engine) return;
-    const name = await promptDialog({ title: 'Save as a New Style Set', label: 'Style set name', value: 'My style set', confirmLabel: 'Save',
-      hint: 'Saves the look of Normal, Title, Subtitle, Heading 1–3 and Quote. Saved style sets appear under Custom in this browser.' });
+    const name = await promptDialog({ title: '另存为新样式集', label: '样式集名称', value: '我的样式集', confirmLabel: '保存',
+      hint: '保存正文、标题、副标题、标题 1–3 和引用的外观。保存的样式集将出现在此浏览器的“自定义”下。' });
     if (!name) return;
     const blob = base.exportPackage?.(); if (!blob) return;
     try {
       const parts = await api.blobParts(blob), snippets = api.captureStyleSet(parts);
       // A saved set previews with its heading's look; keep the declarations the preview reads.
       remember('styleSets', { name, snippets, styles: {} });
-      toast(`Saved style set "${name}"`, { icon: 'check' });
+      toast(`已保存样式集“${name}”`, { icon: 'check' });
       infoFor = null; onChange();
     } catch (e) { error(e); }
   }
@@ -268,13 +268,13 @@ export function createDesignTab({ editor, pkg, error, onChange = () => {}, comma
     await loading;
     const blob = base.exportPackage?.(); if (!blob) return;
     const has = !!loadSaved('defaults', null);
-    const ok = await confirmDialog({ title: 'Set as Default', danger: false, confirmLabel: 'Set as Default',
-      message: `New documents will start with this document’s theme and style set${has ? ', replacing the defaults set earlier' : ''}. Existing documents are not changed.` });
+    const ok = await confirmDialog({ title: '设为默认值', danger: false, confirmLabel: '设为默认值',
+      message: `新建文档将以此文档的主题和样式集作为默认设置${has ? '，覆盖之前设置的默认值' : ''}。现有文档不会被更改。` });
     if (!ok) return;
     try {
       const parts = await api.blobParts(blob);
-      if (!storeSaved('defaults', { themeXml: api.themePartXml(parts), styleSet: api.captureStyleSet(parts) })) throw new Error('This browser did not keep the defaults.');
-      toast('New documents will use this theme and style set', { icon: 'check' });
+      if (!storeSaved('defaults', { themeXml: api.themePartXml(parts), styleSet: api.captureStyleSet(parts) })) throw new Error('此浏览器未能保存默认设置。');
+      toast('新建文档将使用此主题和样式集', { icon: 'check' });
     } catch (e) { error(e); }
   }
   /** A new blank package with the saved defaults applied and opened, or null without defaults. */
@@ -301,12 +301,12 @@ export function createDesignTab({ editor, pkg, error, onChange = () => {}, comma
     const grid = el('div.menu-custom-grid.design-grid.design-watermark-grid', { role: 'group', dataset: { columns: '3' } },
       ...WATERMARK_PRESETS.map(preset => el('button.swatch.design-card.design-watermark-card', { type: 'button', role: 'menuitemradio', tabindex: -1, disabled: !enabled,
         'aria-checked': String(now?.kind === 'text' && now.text === preset.text && now.layout === preset.layout), 'aria-label': `${preset.text}, ${preset.layout}`, title: `${preset.text} (${preset.layout})`,
-        onclick: choose(() => setWatermark({ kind: 'text', text: preset.text, font: null, size: 'auto', color: 'C0C0C0', semitransparent: true, layout: preset.layout, language: 'en-US' })) },
+        onclick: choose(() => setWatermark({ kind: 'text', text: preset.text, font: null, size: 'auto', color: 'C0C0C0', semitransparent: true, layout: preset.layout, language: 'zh-CN' })) },
       el('span.design-watermark-page', { 'aria-hidden': 'true' }, el(`span.design-watermark-text.is-${preset.layout}`, {}, preset.text)),
       el('span.design-card-name', {}, preset.text.toLowerCase().replace(/^\w/, ch => ch.toUpperCase()) + (preset.layout === 'diagonal' ? ' 1' : ' 2')))));
-    return [{ header: 'Disclaimers and Status' }, { custom: grid }, { separator: true },
-      { label: 'Custom Watermark…', disabled: !enabled, onSelect: customWatermark },
-      { label: 'Remove Watermark', disabled: !enabled || !now, onSelect: () => setWatermark(null) }];
+    return [{ header: '免责声明与状态' }, { custom: grid }, { separator: true },
+      { label: '自定义水印…', disabled: !enabled, onSelect: customWatermark },
+      { label: '删除水印', disabled: !enabled || !now, onSelect: () => setWatermark(null) }];
   }
   async function customWatermark() {
     await loading;
@@ -319,9 +319,9 @@ export function createDesignTab({ editor, pkg, error, onChange = () => {}, comma
   function pageColorItems() {
     const enabled = editable(), fill = current().fill;
     return [...(base.pageColorItems?.() || []).map(item => item.onSelect && fill ? { ...item, checked: false } : item), { separator: true },
-      { label: 'More Colors…', disabled: !ready(), onSelect: moreColors },
-      { label: 'Fill Effects…', icon: 'fillEffects', disabled: !enabled, onSelect: fillEffects },
-      ...(fill ? [{ label: 'Remove Fill Effect', disabled: !enabled, onSelect: () => edit((parts, a) => a.setPageFillParts(parts, null), 'Remove Fill Effect') }] : [])];
+      { label: '其他颜色…', disabled: !ready(), onSelect: moreColors },
+      { label: '填充效果…', icon: 'fillEffects', disabled: !enabled, onSelect: fillEffects },
+      ...(fill ? [{ label: '删除填充效果', disabled: !enabled, onSelect: () => edit((parts, a) => a.setPageFillParts(parts, null), '删除填充效果') }] : [])];
   }
   function moreColors() {
     const engine = ready(); if (!engine) return;
@@ -343,7 +343,7 @@ export function createDesignTab({ editor, pkg, error, onChange = () => {}, comma
   }
   function pageBorderItems() {
     return [...(base.pageBorderItems?.() || []), { separator: true },
-      { label: 'Borders and Shading Options…', disabled: !ready() || !base.bordersAndShading, onSelect: () => base.bordersAndShading?.('page') }];
+      { label: '边框和底纹选项…', disabled: !ready() || !base.bordersAndShading, onSelect: () => base.bordersAndShading?.('page') }];
   }
 
   const commands = {
@@ -356,38 +356,38 @@ export function createDesignTab({ editor, pkg, error, onChange = () => {}, comma
   function extendTab(tabId, kit) {
     if (tabId !== 'design') return [];
     const { menuButton, command, rows, when, engineReady } = kit;
-    const themes = menuButton('Themes', 'themes', themeItems, { text: 'Themes' });
-    const colors = menuButton('Theme Colors', 'themeColors', colorItems, { text: 'Colors' });
-    const fonts = menuButton('Theme Fonts', 'themeFonts', fontItems, { text: 'Fonts' });
-    const spacing = menuButton('Paragraph Spacing', 'paragraphSpacing', spacingItems, { size: 'small', text: 'Paragraph Spacing' });
-    const effects = menuButton('Theme Effects', 'effects', effectItems, { size: 'small', text: 'Effects' });
-    const setDefault = command('Set as Default', 'setDefault', setAsDefault, { text: 'Set as Default' });
-    const more = command('More Style Sets', 'more', e => openMenu({ anchor: more, label: 'Style Sets', minWidth: 300, pointer: !!e?.detail, onClose: e?.detail ? () => editor()?.focus() : null, items: kit.inDocument(styleSetItems()) }));
+    const themes = menuButton('主题', 'themes', themeItems, { text: '主题' });
+    const colors = menuButton('主题颜色', 'themeColors', colorItems, { text: '颜色' });
+    const fonts = menuButton('主题字体', 'themeFonts', fontItems, { text: '字体' });
+    const spacing = menuButton('段落间距', 'paragraphSpacing', spacingItems, { size: 'small', text: '段落间距' });
+    const effects = menuButton('主题效果', 'effects', effectItems, { size: 'small', text: '效果' });
+    const setDefault = command('设为默认值', 'setDefault', setAsDefault, { text: '设为默认值' });
+    const more = command('更多样式集', 'more', e => openMenu({ anchor: more, label: '样式集', minWidth: 300, pointer: !!e?.detail, onClose: e?.detail ? () => editor()?.focus() : null, items: kit.inDocument(styleSetItems()) }));
     more.classList.add('ribbon-gallery-more'); more.setAttribute('aria-haspopup', 'menu');
     more.addEventListener('mousedown', e => e.preventDefault());
     for (const control of [themes, colors, fonts, effects]) when(control, () => engineReady() && editable());
     when(spacing, () => engineReady() && !!base.paragraphSpacingItems);
     when(setDefault, () => !!editor() && !!pkg() && !pkg().readOnly);
     when(more, () => { refreshGallery(); return engineReady() && editable(); });
-    const watermark = menuButton('Watermark', 'watermark', watermarkItems, { text: 'Watermark' });
-    const pageColor = menuButton('Page Color', 'pageColor', pageColorItems, { text: 'Page Color' });
-    const pageBorders = menuButton('Page Borders', 'pageBorders', pageBorderItems, { text: 'Page Borders' });
+    const watermark = menuButton('水印', 'watermark', watermarkItems, { text: '水印' });
+    const pageColor = menuButton('页面颜色', 'pageColor', pageColorItems, { text: '页面颜色' });
+    const pageBorders = menuButton('页面边框', 'pageBorders', pageBorderItems, { text: '页面边框' });
     when(watermark, () => engineReady() && editable());
     when(pageColor, () => !!base.pageColorItems && engineReady());
     when(pageBorders, () => !!base.pageBorderItems && engineReady());
     refreshGallery();
     return [
-      { id: 'formatting', replaces: 'formatting', label: 'Document Formatting', icon: 'themes', priority: 6,
+      { id: 'formatting', replaces: 'formatting', label: '文档格式', icon: 'themes', priority: 6,
         items: [themes, el('div.ribbon-gallery-frame', {}, gallery, more), colors, fonts, rows([spacing], [effects], [setDefault])] },
-      { id: 'background', replaces: 'background', label: 'Page Background', icon: 'pageColor', priority: 5, items: [watermark, pageColor, pageBorders] },
+      { id: 'background', replaces: 'background', label: '页面背景', icon: 'pageColor', priority: 5, items: [watermark, pageColor, pageBorders] },
     ];
   }
   /** Items for the menu bar's menus. */
   function extendMenu(menuId) {
-    if (menuId === 'insert') return [{ label: 'Watermark…', icon: 'watermark', disabled: !editable(), onSelect: customWatermark }];
+    if (menuId === 'insert') return [{ label: '水印…', icon: 'watermark', disabled: !editable(), onSelect: customWatermark }];
     if (menuId === 'format') return [
-      { label: 'Theme', icon: 'themes', disabled: !editable(), items: themeItems() },
-      { label: 'Background', icon: 'pageColor', disabled: !editable(), items: [...pageColorItems(), { separator: true }, { label: 'Watermark…', icon: 'watermark', onSelect: customWatermark }] },
+      { label: '主题', icon: 'themes', disabled: !editable(), items: themeItems() },
+      { label: '背景', icon: 'pageColor', disabled: !editable(), items: [...pageColorItems(), { separator: true }, { label: '水印…', icon: 'watermark', onSelect: customWatermark }] },
     ];
     return [];
   }

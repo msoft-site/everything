@@ -8,7 +8,7 @@ import { fieldInstructionTokens } from './docx-page-fields.js';
 import { fieldsOfType, insertEntryField, insertEntryFields, newBodyField, writeBlockField } from './generated-fields.js';
 
 /** Default category names, numbered 1–7; 8–16 are free for the document to name. */
-export const TOA_CATEGORIES = ['Cases', 'Statutes', 'Other Authorities', 'Rules', 'Treatises', 'Regulations', 'Constitutional Provisions', '8', '9', '10', '11', '12', '13', '14', '15', '16'];
+export const TOA_CATEGORIES = ['案例', '法规', '其他授权机构', '规则', '专题论文', '规章', '宪法规定', '8', '9', '10', '11', '12', '13', '14', '15', '16'];
 const quote = value => `"${String(value).replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`;
 
 /** Parse a TA instruction: { long, short, category, bold, italic, bookmark }. */

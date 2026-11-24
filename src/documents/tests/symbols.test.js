@@ -12,7 +12,7 @@ describe('symbols', () => {
     expect(all.length).toBeGreaterThan(60);
     expect(new Set(all).size).toBe(all.length);
     expect(all.every((c) => [...c].length === 1)).toBe(true);
-    expect(symbolName('—')).toBe('Em dash');
+    expect(symbolName('—')).toBe('长破折号');
     expect(symbolName('é')).toBe('é');
   });
 
@@ -22,7 +22,7 @@ describe('symbols', () => {
     const picked = [];
     openSymbolPicker({ onPick: (ch) => picked.push(ch) });
     const btn = [...document.querySelectorAll('.symbol')].find((b) => b.textContent === '→');
-    expect(btn.getAttribute('aria-label')).toBe('Right arrow');
+    expect(btn.getAttribute('aria-label')).toBe('向右箭头');
     btn.click();
     expect(picked).toEqual(['→']);
     expect(document.querySelector('.modal-root').classList.contains('closing')).toBe(true);

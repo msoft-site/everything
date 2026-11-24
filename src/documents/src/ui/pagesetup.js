@@ -23,10 +23,10 @@ const CM_PER_IN = 2.54;
 
 /** Where the text sits between the top and bottom margins (vertical alignment, `w:vAlign`). */
 export const VERTICAL_ALIGNMENTS = [
-  { id: 'top', label: 'Top' },
-  { id: 'center', label: 'Center' },
-  { id: 'bottom', label: 'Bottom' },
-  { id: 'both', label: 'Justified' },
+  { id: 'top', label: '顶端对齐' },
+  { id: 'center', label: '居中对齐' },
+  { id: 'bottom', label: '底端对齐' },
+  { id: 'both', label: '两端对齐' },
 ];
 
 export function toUnit(inches, unit) {
@@ -65,7 +65,7 @@ export function buildPageSetup({ paper, orientation, width, height, margins, uni
   else if (preset) { w = preset.width; h = preset.height; } else {
     w = exactW;
     h = exactH;
-    if (!(w >= 1 && w <= 22) || !(h >= 1 && h <= 22)) return 'Page size must be between 1 and 22 inches (2.5 to 56 cm)';
+    if (!(w >= 1 && w <= 22) || !(h >= 1 && h <= 22)) return '页面尺寸必须介于 1 到 22 英寸（2.5 到 56 厘米）之间';
   }
   // Presets are stored portrait; landscape swaps them.
   const portrait = orientation !== 'landscape';
@@ -74,11 +74,11 @@ export function buildPageSetup({ paper, orientation, width, height, margins, uni
   const m = {};
   for (const side of ['top', 'bottom', 'left', 'right']) {
     const v = fromUnit(margins[side], unit);
-    if (!(v >= 0)) return 'Margins must be zero or more';
+    if (!(v >= 0)) return '边距必须大于或等于 0';
     // Taken as it is: rounding to a thousandth of an inch put an untouched 2 cm margin (1134 twips) a twip off.
     m[side] = v;
   }
-  if (m.left + m.right >= pageW - 0.5 || m.top + m.bottom >= pageH - 0.5) return 'Margins leave no room for text';
+  if (m.left + m.right >= pageW - 0.5 || m.top + m.bottom >= pageH - 0.5) return '页边距留出的空间不足以容纳文本';
   // A size kept from the document stays exact; a preset's or typed size is rounded for reading.
   const round = (v) => (exact ? v : Math.round(v * 1000) / 1000);
   const out = { pageSetup: { width: round(pageW), height: round(pageH), orientation: portrait ? 'portrait' : 'landscape' }, margins: m };
@@ -86,14 +86,14 @@ export function buildPageSetup({ paper, orientation, width, height, margins, uni
     const hf = {};
     for (const [key, value] of [['header', headerDistance], ['footer', footerDistance]]) {
       const v = fromUnit(value, unit);
-      if (!(v >= 0)) return 'Header and footer distances must be zero or more';
-      if (v >= pageH / 2) return 'Header and footer distances must fit on the page';
+      if (!(v >= 0)) return '页眉和页脚边距必须大于或等于 0';
+      if (v >= pageH / 2) return '页眉和页脚边距必须在页面范围内';
       hf[key] = Math.round(v * 1000) / 1000;
     }
     out.headerFooter = hf;
   }
   if (verticalAlign !== undefined) {
-    if (!VERTICAL_ALIGNMENTS.some((a) => a.id === verticalAlign)) return 'Choose a vertical alignment';
+    if (!VERTICAL_ALIGNMENTS.some((a) => a.id === verticalAlign)) return '请选择垂直对齐方式';
     out.verticalAlign = verticalAlign;
   }
   return out;
@@ -111,9 +111,9 @@ export function openPageSetup({ current, unit = 'in', onApply }) {
     const preset = matchPaper(current.width, current.height);
     const landscape = current.orientation === 'landscape' || current.width > current.height;
 
-    const paperSel = el('select.select', { 'aria-label': 'Paper size' },
+    const paperSel = el('select.select', { 'aria-label': '纸张大小' },
       PAPER_SIZES.map((p) => el('option', { value: p.id, selected: preset?.id === p.id }, p.label)),
-      el('option', { value: 'custom', selected: !preset }, 'Custom'));
+      el('option', { value: 'custom', selected: !preset }, '自定义'));
 
     // Each field remembers the exact measurement it shows (in inches) and the
     // text it was given. A field the user did not touch applies that exact
@@ -124,14 +124,15 @@ export function openPageSetup({ current, unit = 'in', onApply }) {
     const inchesOf = (input, unit = u) => (input.value === shown.get(input) ? sources.get(input) : fromUnit(input.value, unit));
     // Any step: eighth-inch measurements (0.125, 0.375) must not trip the browser's step check.
     const num = (label, inches) => { const input = el('input.input', { type: 'number', step: 'any', min: '0', inputmode: 'decimal', 'aria-label': label }); show(input, inches); return input; };
-    const widthIn = num('Page width', current.width);
-    const heightIn = num('Page height', current.height);
-    const margins = Object.fromEntries(['top', 'bottom', 'left', 'right'].map((s) => [s, num(`${s[0].toUpperCase()}${s.slice(1)} margin`, current.margins?.[s] ?? 1)]));
-    const headerIn = num('Header from the top edge', current.headerFooterMargins?.header ?? 0.5);
-    const footerIn = num('Footer from the bottom edge', current.headerFooterMargins?.footer ?? 0.5);
+    const widthIn = num('页面宽度', current.width);
+    const heightIn = num('页面高度', current.height);
+    const marginLabels = { top: '上边距', bottom: '下边距', left: '左边距', right: '右边距' };
+    const margins = Object.fromEntries(['top', 'bottom', 'left', 'right'].map((s) => [s, num(marginLabels[s], current.margins?.[s] ?? 1)]));
+    const headerIn = num('页眉边距', current.headerFooterMargins?.header ?? 0.5);
+    const footerIn = num('页脚边距', current.headerFooterMargins?.footer ?? 0.5);
     let verticalAlign = VERTICAL_ALIGNMENTS.some((a) => a.id === current.verticalAlign) ? current.verticalAlign : 'top';
     const alignChoices = segmented(VERTICAL_ALIGNMENTS.map((a) => [a.id, a.label]), verticalAlign,
-      (value) => { verticalAlign = value; }, 'Vertical alignment');
+      (value) => { verticalAlign = value; }, '垂直对齐方式');
 
     const unitLabel = () => (u === 'cm' ? 'cm' : 'in');
     const unitTags = [];
@@ -140,8 +141,8 @@ export function openPageSetup({ current, unit = 'in', onApply }) {
     const withUnit = (input) => { const tag = el('span.unit-tag', { id: `pagesetup-unit-${Date.now().toString(36)}-${++unitTagCount}` }, unitLabel()); unitTags.push(tag); input.setAttribute('aria-describedby', tag.id); return el('div.unit-field', {}, input, tag); };
 
     const customRow = el('div.grid-2', {},
-      el('label.field', {}, el('span.field-label', {}, 'Width'), withUnit(widthIn)),
-      el('label.field', {}, el('span.field-label', {}, 'Height'), withUnit(heightIn)));
+      el('label.field', {}, el('span.field-label', {}, '宽度'), withUnit(widthIn)),
+      el('label.field', {}, el('span.field-label', {}, '高度'), withUnit(heightIn)));
     const syncCustom = () => { customRow.hidden = paperSel.value !== 'custom'; };
     paperSel.addEventListener('change', syncCustom);
     syncCustom();
@@ -150,7 +151,7 @@ export function openPageSetup({ current, unit = 'in', onApply }) {
     // A custom size and the orientation describe the same thing twice:
     // typing 11 × 8.5 turns the choice to Landscape, and choosing
     // Landscape for 8.5 × 11 swaps the two fields, so nothing is silently swapped on Apply.
-    const orientChoices = segmented([['portrait', 'Portrait'], ['landscape', 'Landscape']], orientation,
+    const orientChoices = segmented([['portrait', '纵向'], ['landscape', '横向']], orientation,
       (value) => {
         orientation = value;
         if (paperSel.value !== 'custom') return;
@@ -161,7 +162,7 @@ export function openPageSetup({ current, unit = 'in', onApply }) {
         sources.set(widthIn, h); sources.set(heightIn, w);
         widthIn.value = hText; heightIn.value = wText;
         shown.set(widthIn, hShown); shown.set(heightIn, wShown);
-      }, 'Orientation');
+      }, '方向');
     const followSize = () => {
       if (paperSel.value !== 'custom') return;
       const w = fromUnit(widthIn.value, u), h = fromUnit(heightIn.value, u);
@@ -172,7 +173,7 @@ export function openPageSetup({ current, unit = 'in', onApply }) {
     widthIn.addEventListener('input', followSize);
     heightIn.addEventListener('input', followSize);
 
-    const unitChoices = segmented([['in', 'Inches'], ['cm', 'Centimeters']], u,
+    const unitChoices = segmented([['in', '英寸'], ['cm', '厘米']], u,
       (v) => {
         if (u === v) return;
         // Convert what is typed so the numbers follow the unit; untouched fields show their exact value in the new unit.
@@ -183,7 +184,7 @@ export function openPageSetup({ current, unit = 'in', onApply }) {
         u = v;
         for (const t of unitTags) t.textContent = unitLabel();
       },
-    'Units');
+    '单位');
 
     const error = el('p.field-error', { hidden: true, role: 'alert' });
     const submit = async (e) => {
@@ -202,7 +203,7 @@ export function openPageSetup({ current, unit = 'in', onApply }) {
       const controls = [...content.querySelectorAll('input, select, button')].filter((control) => control !== cancelBtn);
       const disabled = controls.map((control) => control.disabled);
       controls.forEach((control) => { control.disabled = true; });
-      applyBtn.textContent = 'Applying…';
+      applyBtn.textContent = '正在应用…';
       content.setAttribute('aria-busy', 'true');
       try {
         await Promise.resolve();
@@ -213,43 +214,44 @@ export function openPageSetup({ current, unit = 'in', onApply }) {
         finish(built);
         modal.close();
       } catch (err) {
-        if (!done) { error.textContent = err?.message || 'Could not apply the page setup'; error.hidden = false; }
+        if (!done) { error.textContent = err?.message || '无法应用页面设置'; error.hidden = false; }
       } finally {
         applying = false;
         if (!done) {
           controls.forEach((control, index) => { control.disabled = disabled[index]; });
-          applyBtn.textContent = 'Apply';
+          applyBtn.textContent = '应用';
           content.setAttribute('aria-busy', 'false');
           if (!error.hidden) applyBtn.focus({ preventScroll: true });
         }
       }
     };
-    const applyBtn = el('button.btn.btn-primary', { type: 'submit' }, 'Apply');
-    const cancelBtn = el('button.btn.btn-ghost', { type: 'button', onclick: () => modal.close() }, 'Cancel');
+    const applyBtn = el('button.btn.btn-primary', { type: 'submit' }, '应用');
+    const cancelBtn = el('button.btn.btn-ghost', { type: 'button', onclick: () => modal.close() }, '取消');
+    const sideLabels = { top: '上', bottom: '下', left: '左', right: '右' };
     // The dialog validates itself; a browser bubble on a hidden custom-size field would block Apply silently.
     const content = el('form.page-setup', { novalidate: true, onsubmit: submit },
-      el('label.field', {}, el('span.field-label', {}, 'Paper size'), paperSel),
+      el('label.field', {}, el('span.field-label', {}, '纸张大小'), paperSel),
       customRow,
-      el('div.field', {}, el('span.field-label', {}, 'Orientation'), orientChoices),
-      el('div.field', {}, el('span.field-label', {}, 'Units'), unitChoices),
+      el('div.field', {}, el('span.field-label', {}, '方向'), orientChoices),
+      el('div.field', {}, el('span.field-label', {}, '单位'), unitChoices),
       el('div.field', {},
-        el('span.field-label', {}, 'Margins'),
+        el('span.field-label', {}, '页边距'),
         el('div.grid-2', {},
-          ...['top', 'bottom', 'left', 'right'].map((s) => el('label.field.field-inline', {}, el('span.field-label', {}, s[0].toUpperCase() + s.slice(1)), withUnit(margins[s]))))),
+          ...['top', 'bottom', 'left', 'right'].map((s) => el('label.field.field-inline', {}, el('span.field-label', {}, sideLabels[s]), withUnit(margins[s]))))),
       el('div.field', {},
-        el('span.field-label', {}, 'Header and footer from the edge'),
+        el('span.field-label', {}, '距边界'),
         el('div.grid-2', {},
-          el('label.field.field-inline', {}, el('span.field-label', {}, 'Header'), withUnit(headerIn)),
-          el('label.field.field-inline', {}, el('span.field-label', {}, 'Footer'), withUnit(footerIn)))),
+          el('label.field.field-inline', {}, el('span.field-label', {}, '页眉'), withUnit(headerIn)),
+          el('label.field.field-inline', {}, el('span.field-label', {}, '页脚'), withUnit(footerIn)))),
       el('div.field', {},
-        el('span.field-label', {}, 'Vertical alignment'),
+        el('span.field-label', {}, '垂直对齐方式'),
         alignChoices,
-        el('span.field-hint', {}, 'Where the text sits on a page that is not full: at the top, centered, at the bottom, or spread out.')),
+        el('span.field-hint', {}, '文本在未填满页面上的排列位置：顶部、居中、底部或两端分散。')),
       error,
-      el('p.field-hint', {}, 'Applies to every section of the document.'),
+      el('p.field-hint', {}, '应用于文档的所有节。'),
       el('div.row.row-end', {},
         cancelBtn,
         applyBtn));
-    const modal = openModal({ title: 'Page setup', content, onClose: () => { finish(null); controller?.abort(); } });
+    const modal = openModal({ title: '页面设置', content, onClose: () => { finish(null); controller?.abort(); } });
   });
 }
