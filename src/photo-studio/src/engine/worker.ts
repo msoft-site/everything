@@ -23,7 +23,7 @@ interface Wasm extends WebAssembly.Exports {
   encode_png(p: number, w: number, h: number, o: number): number;
 }
 const ready = WebAssembly.instantiateStreaming(
-  fetch("/photo-engine.wasm"),
+  fetch(typeof location !== "undefined" && location.pathname.includes("/app/photo-studio/") ? "/app/photo-studio/photo-engine.wasm" : "/photo-engine.wasm"),
 ).then((r) => r.instance.exports as Wasm);
 const worker = self as unknown as DedicatedWorkerGlobalScope;
 worker.onmessage = async (

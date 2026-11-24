@@ -181,6 +181,9 @@
     async decr(key, delta = 1) {
       return this.incr(key, -delta);
     },
+    MAX_VALUE_SIZE: 4000000,
+    async add(key, value) { return this.set(key, value); },
+    async update(key, value) { return this.set(key, value); },
     async flush() { return true; },
     async reset() { return true; },
     async share() { return 'internal-shared-link'; },
@@ -377,6 +380,17 @@
       } catch {
         return '';
       }
+    },
+    async revokeReadURL(url) {
+      try { URL.revokeObjectURL(url); } catch (e) {}
+      return true;
+    },
+    async share() { return 'internal-fs-share'; },
+    async unshare() { return true; },
+    async listShared() { return []; },
+    async getShares() { return []; },
+    async space() {
+      return { used: 1024 * 1024, total: 10 * 1024 * 1024 * 1024 };
     }
   };
 
@@ -419,8 +433,14 @@
     setWindowTitle(title) { if (title) document.title = title; },
     contextMenu() {},
     hideWindow() {},
+    showWindow() {},
     parentApp() { return null; },
-    launchApp() { return null; }
+    launchApp() { return null; },
+    onUpgraded_() { return { off: () => {}, unsubscribe: () => {} }; },
+    onLauncherOpened_() { return { off: () => {}, unsubscribe: () => {} }; },
+    onItemsOpened() { return { off: () => {}, unsubscribe: () => {} }; },
+    onLaunchedWithItems() { return { off: () => {}, unsubscribe: () => {} }; },
+    onWindowClose() { return { off: () => {}, unsubscribe: () => {} }; }
   };
 
   // =========================================================================
@@ -448,7 +468,7 @@
   whoamiObj.uuid = currentAccount.id;
 
   const puterSDK = {
-    env: 'local-internal',
+    env: 'app',
     version: '1.0.0-chinese-standalone',
     isInternalAuth: true,
     APIOrigin: (typeof window !== 'undefined' && window.location && window.location.origin) ? window.location.origin : '',
@@ -461,7 +481,23 @@
       async signIn() { openAccountModal(); return currentAccount; },
       async signOut() { openAccountModal(); return true; },
       getProfilePicture() {
-        return `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="%230284c7"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg>`;
+        const svg = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="%230284c7"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg>`;
+        const s = new String(svg);
+        s.then = function (onFulfilled) { return Promise.resolve(svg).then(onFulfilled); };
+        s.catch = function (onRejected) { return Promise.resolve(svg).catch(onRejected); };
+        return s;
+      },
+      onAuthStateChanged(handler) {
+        if (typeof handler === 'function') {
+          try { handler(currentAccount); } catch (e) {}
+        }
+        return { unsubscribe: () => {} };
+      },
+      onAuth(handler) {
+        if (typeof handler === 'function') {
+          try { handler(currentAccount); } catch (e) {}
+        }
+        return { unsubscribe: () => {} };
       },
       token: `everything-internal-token-${currentAccount.id}`
     },
@@ -480,22 +516,106 @@
     },
 
     events: {
-      async onLocal() { return { unsubscribe: () => {} }; },
-      async onPersistent() { return { subId: 'sub_local' }; },
+      _listeners: {},
+      on(channel, handler) {
+        if (!this._listeners[channel]) this._listeners[channel] = [];
+        this._listeners[channel].push(handler);
+        return {
+          off: () => { this.off(channel, handler); },
+          unsubscribe: () => { this.off(channel, handler); }
+        };
+      },
+      off(channel, handler) {
+        if (!this._listeners[channel]) return;
+        this._listeners[channel] = this._listeners[channel].filter(h => h !== handler);
+      },
+      emit(channel, data) {
+        if (!this._listeners[channel]) return;
+        for (const h of this._listeners[channel]) {
+          try { h(data); } catch (e) { console.warn(e); }
+        }
+      },
+      async onLocal(channel, handler) { return this.on(channel, handler); },
+      async onPersistent(channel, handler) { return this.on(channel, handler); },
+      async onSchedule() { return { remove: async () => {} }; },
+      async removeSchedule() { return true; },
       async list() { return []; },
       async unsubscribe() { return true; },
-      async update() { return true; },
-      async emit() { return true; }
+      async update() { return true; }
     },
 
     notifications: {
-      async show() { return true; },
-      async send() { return true; },
+      _handlers: {},
+      on(event, handler) {
+        if (!this._handlers[event]) this._handlers[event] = [];
+        this._handlers[event].push(handler);
+        return {
+          off: () => { this.off(event, handler); },
+          unsubscribe: () => { this.off(event, handler); }
+        };
+      },
+      off(event, handler) {
+        if (!this._handlers[event]) return;
+        this._handlers[event] = this._handlers[event].filter(h => h !== handler);
+      },
+      emit(event, data) {
+        if (!this._handlers[event]) return;
+        for (const h of this._handlers[event]) {
+          try { h(data); } catch (e) { console.warn(e); }
+        }
+      },
+      addEventListener(event, handler) { return this.on(event, handler); },
+      removeEventListener(event, handler) { return this.off(event, handler); },
+      async onPush(channel, handler, options) {
+        return { off: async () => {} };
+      },
+      async show(title, opts) { return true; },
+      async send(opts) { return true; },
+      async notify(options) {
+        return { scheduleId: 'sched_' + Date.now(), uid: 'uid_' + Date.now() };
+      },
+      async cancel(id) { return true; },
       async enable() { return true; },
       async disable() { return true; },
-      async status() { return 'granted'; },
-      async onPush() { return { off: async () => {} }; },
+      async status() { return 'on'; },
+      async hasPermission() { return true; },
+      async requestPermission() { return 'granted'; },
       async dismiss() { return true; }
+    },
+
+    peer: {
+      async connect() {
+        return {
+          send: () => {},
+          on: () => {},
+          close: () => {}
+        };
+      },
+      async createGuestGrant() { return 'grant_' + Date.now(); },
+      async ensureTurnRelays() { return true; },
+      async serve() { return { close: () => {} }; }
+    },
+
+    net: {
+      fetch: (typeof window !== 'undefined' && window.fetch) ? window.fetch.bind(window) : async () => ({ ok: true }),
+      Socket: class Socket {
+        connect() { return this; }
+        on() { return this; }
+        write() { return true; }
+        end() {}
+      },
+      tls: {
+        TLSSocket: class TLSSocket {
+          connect() { return this; }
+          on() { return this; }
+          write() { return true; }
+          end() {}
+        }
+      }
+    },
+
+    drivers: {
+      async call() { return { ok: true }; }
     },
 
     email: {
@@ -530,7 +650,7 @@
     signIn: async () => { openAccountModal(); return currentAccount; },
     signOut: async () => { openAccountModal(); return true; },
     requireSignedIn: async () => currentAccount,
-    getProfilePicture: () => `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="%230284c7"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg>`,
+    getProfilePicture: () => puterSDK.auth.getProfilePicture(),
     readFile: (p, ...args) => internalFS.read(p, ...args),
     writeFile: (p, ...args) => internalFS.write(p, ...args),
     readdir: (p, ...args) => internalFS.readdir(p, ...args),
@@ -552,16 +672,54 @@
     setWindowTitle: (t) => internalUI.setWindowTitle(t),
     checkForUpdates: async () => ({ hasUpdate: false }),
     updateApp: async () => false,
+    onAuthStateChanged: (handler) => {
+      if (typeof handler === 'function') {
+        try { handler(currentAccount); } catch (e) {}
+      }
+      return { unsubscribe: () => {} };
+    },
+    onAuth: (handler) => {
+      if (typeof handler === 'function') {
+        try { handler(currentAccount); } catch (e) {}
+      }
+      return { unsubscribe: () => {} };
+    },
+    onSignIn: (handler) => {
+      if (typeof handler === 'function') {
+        try { handler(currentAccount); } catch (e) {}
+      }
+      return { unsubscribe: () => {} };
+    },
+    onSignOut: (handler) => ({ unsubscribe: () => {} }),
     exit: () => { window.close?.(); },
     print: () => { window.print?.(); }
   };
 
-  // 深度挂载至全局并防止被外部 js.puter.com 脚本覆写破坏
+  // 深度挂载至全局，支持外部对象合并并防止被覆盖破坏
   try {
+    let _puter = puterSDK;
     Object.defineProperty(window, 'puter', {
-      value: puterSDK,
-      writable: false,
-      configurable: false
+      get: () => _puter,
+      set: (val) => {
+        if (val && typeof val === 'object') {
+          const origAuth = puterSDK.auth;
+          const origKv = puterSDK.kv;
+          const origFs = puterSDK.fs;
+          const origUi = puterSDK.ui;
+          const origNotifications = puterSDK.notifications;
+          const origEvents = puterSDK.events;
+          Object.assign(puterSDK, val);
+          if (val.auth) Object.assign(origAuth, val.auth);
+          puterSDK.auth = origAuth;
+          puterSDK.kv = origKv;
+          puterSDK.fs = origFs;
+          puterSDK.ui = origUi;
+          puterSDK.notifications = origNotifications;
+          puterSDK.events = origEvents;
+        }
+      },
+      configurable: true,
+      enumerable: true
     });
   } catch (e) {
     window.puter = puterSDK;
@@ -572,6 +730,9 @@
     const origFetch = window.fetch;
     window.fetch = async function (input, init) {
       const url = typeof input === 'string' ? input : (input?.url || '');
+      if (url === '/photo-engine.wasm' || url.endsWith('/photo-engine.wasm')) {
+        return origFetch.call(this, '/app/photo-studio/photo-engine.wasm', init);
+      }
       if (url.includes('/email/send') || url.includes('/v1/email') || url.includes('puter.work')) {
         return new Response(JSON.stringify({ ok: true, success: true, message: '操作已在本地安全完成' }), {
           status: 200,
@@ -770,6 +931,288 @@
   // 9. 全量中文深度本地化与全场景动态翻译字典
   // =========================================================================
   const UI_DICTIONARY = {
+    // 自动扫描与高频补全词典
+    'Skip to main content': '跳转到主要内容',
+    'Skip to content': '跳转到主要内容',
+    'Skip to workspace': '跳转到工作区',
+    'Skip to page': '跳转到页面内容',
+    'Skip to messages': '跳转到消息列表',
+    'Skip to the graphics area': '跳转到绘图区域',
+    'Ctrl K': '按快捷键 Ctrl+K 搜索',
+    'Ctrl+K': 'Ctrl+K 快捷搜索',
+    'Ctrl+Alt+N': 'Ctrl+Alt+N 新建',
+    'CtrlK': '快捷搜索 (Ctrl+K)',
+    'Welcome': '欢迎使用',
+    'Welcome back': '欢迎回来',
+    'Welcome back, admin': '欢迎回来，系统管理员',
+    'Good morning': '早上好',
+    'Good morning, admin': '早上好，系统管理员',
+    'Good morning. Tuesday, November 24.': '早上好。2026年11月24日 星期二',
+    'Powered by Puter': '本地私有独立运行',
+    'Built on Puter': '本地私有独立运行',
+    'Source on GitHub': 'GitHub 开源源码',
+    'Open source on GitHub': 'GitHub 开源项目',
+    'Free and open source. Source code · Powered by Puter': '自由与开源软件 · 本地独立安全运行',
+    'BOOKING LINKS': '预约链接',
+    'New booking link': '新建预约日程链接',
+    'Veterans Day': '退伍军人节',
+    'Thanksgiving Day': '感恩节',
+    'SUN': '日',
+    'MON': '一',
+    'TUE': '二',
+    'WED': '三',
+    'THU': '四',
+    'FRI': '五',
+    'SAT': '六',
+    'MY LISTS': '我的清单',
+    'Personal': '个人待办',
+    'Work': '工作任务',
+    'Today': '今天',
+    'Add for today': '添加今日待办',
+    'Nothing due today': '今天没有截止的事项',
+    'Add a task for today, or check Upcoming for what is ahead.': '添加今天的工作事项，或在“即将到来”中查看日程安排。',
+    'Your day, sorted': '井然有序，从容掌控每一天',
+    'Personal and shared lists, recurring reminders, priorities, and subtasks. Everything': '个人与团队协作清单、周期提醒、优先级标记与子任务拆解。完全本地离线运作。',
+    'Share classes': '股份类别',
+    'Round modeling': '融资轮次测算',
+    'Exit scenarios': '退出回报模拟',
+    'Needs attention': '待处理事项',
+    'Issue security': '签发股权证券',
+    'An overview of your company’s equity': '公司股权结构与资本分布全景',
+    'Fully diluted shares': '完全稀释后总股本',
+    'Director': '园所主管',
+    'Log or add': '记录或新增',
+    'Check-in': '入园签到',
+    'Families': '幼儿家庭',
+    'Menus': '营养食谱',
+    'Search children, families, staff...': '搜索幼儿、家长、教职工...',
+    'Tuesday, November 24 · Your school': '2026年11月24日 · 本地托幼园所',
+    'Kiosk': '自助考勤机模式',
+    'Search commands': '搜索电路设计命令',
+    'Alpha': '预览测试版',
+    'ALPHA': '预览测试版',
+    'No project open. Create one or open an existing project from the File menu.': '当前未打开工程。请从“文件”菜单新建或打开已有电路工程。',
+    'Navigator': '工程导航器',
+    'Design circuit boards in your browser': '在浏览器中专业绘制原理图与 PCB 电路板',
+    'A schematic sheet and a board, ready to go': '包含原理图图纸与 PCB 绘制层，即刻开始',
+    'Open the example': '打开官方示例工程',
+    'A 555 LED blinker with its board': '经典 555 定时器 LED 闪烁电路及 PCB 工程',
+    'Smart add': '智能添加',
+    'Your address book is empty': '您的通讯录当前为空',
+    'Add your first contact or import an existing .vcf file.': '添加您的第一位联系人，或导入现有的 .vcf 名片文件。',
+    'No contact selected': '未选中联系人',
+    'Choose someone from the list, or add a new contact to get started.': '从左侧列表选择联系人，或点击新建联系人。',
+    'Contract Manager': '合同管理中心',
+    'Where your agreements stand today': '合同协议履行与到期状态概览',
+    'New contract': '新建合同',
+    'No contracts yet': '暂无合同记录',
+    'Add your first agreement to start tracking renewals and obligations.': '添加您的第一份协议，开启续约提醒与履约义务追踪。',
+    'Add a contract': '新增一份合同',
+    'Every agreement, one calm place': '所有合同协议，一处从容管理',
+    'Renewal and notice-period tracking that warns you before deadlines': '提前进行续约通知与履约到期自动预警',
+    'Obligations extracted from contract text by AI, reviewed by you': '本地智能提取合同履约条款，待您确认',
+    'Sales CRM': '销售 CRM 客户关系管理',
+    'Let’s get you selling': '开启高效销售与线索跟进',
+    'Add a lead': '添加销售线索',
+    'Show me around': '功能导览',
+    'Your pipeline, your cloud': '掌控销售漏斗，数据本地安全沉淀',
+    'Set up my pipeline': '配置我的销售阶段',
+    'Explore with sample data': '加载演示样本数据体验',
+    'Table': '表格',
+    'Draw': '手绘涂鸦',
+    'Design': '排版设计',
+    'Layout': '页面布局',
+    'References': '参考文献与引用',
+    'Mailings': '邮件合并',
+    'Review': '审阅校对',
+    'Normal': '正文文本',
+    'Schedule': '排程调度',
+    'Clients': '服务客户',
+    'Requests': '工单需求',
+    'Quotes': '服务报价单',
+    'Jobs': '外勤任务',
+    'Payments': '款项结算',
+    'Timesheets': '工时单',
+    'Reports': '数据报表',
+    'My fleet': '我的车队',
+    'Issues': '故障隐患报告',
+    'Reminders': '维保到期提醒',
+    'Service': '维修与保养记录',
+    'Parts and inventory': '配件备件库存',
+    'Fuel and energy': '燃油与能耗统计',
+    'Search vehicles, issues, parts...': '搜索车辆、故障记录、配件...',
+    'Fleet overview': '车队运营总览',
+    'Create your help desk': '创建您的服务支持台',
+    'Help desk name': '服务台名称',
+    'Your name': '您的称呼/昵称',
+    'Create help desk': '立即创建服务台',
+    'Joining a team? Open the invite link an administrator sent you.': '加入现有团队？请打开管理员发送给您的加入邀请链接。',
+    'Interviews': '面试日程安排',
+    'Offers': '录用意向书 (Offer)',
+    'Onboarding': '入职办理协同',
+    'Your hiring at a glance': '招聘漏斗与人才储备总览',
+    'Open jobs': '正在招聘的职位',
+    'Take out': '扫码出库领料',
+    'Reorder': '智能补货建议',
+    'Stocktake': '盘点核对',
+    'Locations': '仓库与货架位',
+    'New product': '新建商品物料',
+    'Products': '物料商品库',
+    '0 units on hand': '当前在库 0 件',
+    'Stock value': '库存总价值',
+    'Invoicing': '专业发票与账单系统',
+    'Puter account': '本地独立账户',
+    'Recurring': '周期性账单',
+    'Saved items': '已存品名服务',
+    'New estimate': '新建报价单',
+    'Your billing at a glance': '收支与开票实时全景',
+    'Nothing to bill yet': '暂无待开票项目',
+    'Create your first invoice or estimate. It takes about a minute.': '创建您的第一张发票或报价单，仅需一分钟。',
+    'Communications': '法务往来沟通记录',
+    'Collapse': '收起侧边栏',
+    'Search matters, contacts, bills...': '搜索案件、当事人、账单与文书...',
+    'Record time': '记录计费工时',
+    'Firm': '律所/机构',
+    'Add yourself as a firm user to track your hours and tasks. Open firm users': '将自己添加为律所成员以记录工时与办理任务。点击打开机构成员设置',
+    'Today\'s agenda': '今日办案议程',
+    'Beat': '节拍节奏',
+    'Browser': '音色音效浏览器',
+    'INSTRUMENTS': '乐器与音源库',
+    'Poly Synth': '复音多振荡合成器',
+    'Drum Synth': '电子鼓点合成器',
+    'Sampler': '音频采样器',
+    'Styles': '段落样式',
+    'Find Tags': '按标签搜索',
+    'Dictate': '语音速记',
+    'Assist': '智能辅助',
+    'Email Page': '分享/发送笔记',
+    'Quick Notes': '快速便签便笺',
+    'New Section 1': '新建分区 1',
+    'Add section': '添加新分区',
+    'Untitled Page': '无标题笔记页',
+    'Part1': '零件模型 1',
+    'Extruded Boss': '拉伸凸台/基体',
+    'Revolved Boss': '旋转凸台/基体',
+    'Swept Boss': '扫描凸台',
+    'Lofted Boss': '放样凸台',
+    'Extruded Cut': '拉伸切除',
+    'Revolved Cut': '旋转切除',
+    'Swept Cut': '扫描切除',
+    'Page': '页面',
+    'Untitled': '未命名文档',
+    'Local file': '本地文件',
+    'Comment': '批注与注释',
+    'Fill & Sign': '表单填写与签名',
+    'Find text or tools': '搜索文本或功能工具',
+    'All tools': '查看全部 PDF 工具',
+    'Export a PDF': '转换并导出 PDF',
+    'Edit a PDF': '编辑 PDF 内容',
+    'Assisted': '智能向导模式',
+    'Pro': '专业高级模式',
+    'Color theme': '界面色彩主题',
+    'Open an image': '打开本地图片',
+    'Learn': '教程与上手指南',
+    'Recent files': '最近打开的工程',
+    'Open from Puter…': '从本地存储打开…',
+    'Start with an image.': '从一张图片开始创作。',
+    'Open a photo or a layered PSD, or create something from scratch.': '打开照片、分层 PSD 文件，或从空白画布开始自由设计。',
+    'Describe an edit': '描述您想要调整的效果',
+    'Point of Sale': '门店收银收据系统',
+    'Register': '收银台操作',
+    'No products yet': '暂无商品数据',
+    'Add your catalog in the Products tab, or ring up a one-off item below.': '在“商品”标签中录入您的商品目录，或在下方直接输入临时单品收银。',
+    'Add products': '录入商品',
+    'Custom item': '自定义临时单品',
+    'Current sale': '当前收银结算单',
+    'Hold': '挂单暂存',
+    'Tap products to start a sale': '点击上方商品开始结算',
+    'Charge': '确认收款结账',
+    'Arrange': '图层排布与对齐',
+    'Slide': '幻灯片页',
+    'Slide Show': '全屏放映演示',
+    'Untitled presentation': '无标题演示文稿',
+    'Not saved yet': '尚未保存修改',
+    'Ask AI': '智能辅助生成',
+    'Present': '开始全屏演示',
+    'Transitions': '页面切换动效',
+    'Quick add': '快速创建任务',
+    'Find a task': '搜索待办任务',
+    'Commands': '命令面板',
+    'All tasks': '全部任务列表',
+    'No projects yet': '暂无项目工程',
+    'All projects': '全部项目概览',
+    'Plan it. Move it. Ship it.': '精心规划 · 敏捷推进 · 高效交付',
+    'Rentals': '租赁房产管理',
+    'Rent roll': '租金台账清册',
+    'Rental owners': '业主房东档案',
+    'Outstanding balances': '未结清欠费明细',
+    'Leasing': '招租与签约',
+    'Accounting': '物业财务记账',
+    'Communication': '住户业主通告',
+    'Search properties, tenants, leases...': '搜索房源、租客、租赁合同...',
+    'Create base': '新建多维表格',
+    'Start from scratch': '从空白创建全新表格',
+    'A blank base with one table.': '包含单张空数据表的全新多维表格。',
+    'Start with a template': '从官方行业模板库开始',
+    'Projects, content, sales, inventory and more.': '覆盖项目协同、内容排期、销售跟进、进销存等丰富场景。',
+    'Import a spreadsheet': '从已有电子表格导入',
+    'Create a base from a CSV file.': '一键上传 CSV 或 Excel 生成多维表格。',
+    'Restore a backup': '恢复本地备份',
+    'Open a base you downloaded as JSON.': '打开之前导出的 JSON 备份工程。',
+    'Team': '团队人员库',
+    'Availability': '空闲时间申报',
+    'Swaps': '调班申请审批',
+    'Attendance': '考勤打卡记录',
+    'Backup & restore': '数据备份与还原',
+    'Signed in': '已使用管理员身份登录',
+    'Welcome to Shifts': '欢迎使用智能排班系统',
+    'Out for signature': '等待外部签署',
+    'Waiting for you': '等待您签署',
+    'Closed': '已归档完成',
+    'No documents match': '未找到匹配的文档',
+    'No documents yet': '暂无签署文件',
+    'Upload a PDF to place signature fields and send it out for signature.': '上传一份 PDF 文件，拖拽放置签名盖章位置，一键发起签署流。',
+    'Upload a PDF': '上传 PDF 文件',
+    'No workspace yet': '暂无团队聊天工作区',
+    'Create one or join one with an invite.': '新建一个工作区，或通过邀请链接加入。',
+    'Create a workspace': '新建协作工作区',
+    'Start a space for your team': '为您的团队开启高效沟通空间',
+    'Join with an invite': '通过邀请加入',
+    'Paste a code or link': '粘贴邀请码或加入链接',
+    'Welcome to Teamchat': '欢迎使用团队即时通讯',
+    'Hourly': '按时计费工时',
+    'Timer': '实时计时器',
+    'Set up a client and a project, then start tracking.': '配置客户与项目，即刻开始精准追踪工时。',
+    'Add a client': '新增合作客户',
+    'TODAY': '今日统计',
+    'THIS WEEK': '本周统计',
+    'billable this week': '本周计费工时',
+    'Nothing logged yet today.': '今天尚未开始记录工时。',
+    'Your files': '您的设计工程',
+    'Start a new file fast': '快速新建画布',
+    'Draw logos, icons, illustrations and layouts with precise vector tools.': '使用精准贝塞尔曲线与形状工具绘制 Logo、图标、插画与版面设计。',
+    'Hide': '隐藏',
+    'Letter': '美式信纸 (Letter)',
+    'Postcard': '明信片规格',
+    'Web': '网页通用尺寸',
+    'Mobile': '移动设备尺寸',
+    'Square': '正方形画布',
+    'Saved to your Puter cloud': '已安全保存在本地独立存储中',
+    '0 projects': '0 个剪辑工程',
+    'Start with an empty timeline. Its shape follows the first clip you add.': '从空白时间线开始。画布规格与帧率将自动匹配您导入的首段素材。',
+    'Import and edit': '导入多媒体素材并编辑',
+    'Open media in a new project': '在新工程中打开素材',
+    'Open project file': '打开剪辑工程文件',
+    'Restore a project exported from Video Studio': '恢复从视频剪辑套件导出的工程文件',
+    'Browse templates': '浏览精选开箱即用模板',
+    '10 ready-made projects to make your own': '10 款预设精美视频模板快速上手',
+    'Script to video': '文案智能生成视频脚本',
+    'admin\'s wiki': '系统管理员的团队知识库',
+    'admin’s wiki': '系统管理员的团队知识库',
+    'New page': '新建知识库页面',
+    'Private': '个人私密空间',
+    'Add cover': '添加页面封面图',
+
     // 菜单栏与核心导航
     'File': '文件',
     'Edit': '编辑',

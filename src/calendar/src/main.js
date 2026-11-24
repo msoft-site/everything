@@ -190,7 +190,11 @@ async function bootInner() {
   // Safe to register now: the SDK is loaded so `puter.env` is defined.
   registerServiceWorker();
   // Before sign-in, so the click that opened the calendar isn't missed.
-  startPush();
+  try {
+    startPush();
+  } catch (err) {
+    console.warn('[calendar] startPush error', err);
+  }
 
   if (!isSignedIn()) {
     // Signing in needs the network; show the offline screen rather than a dead

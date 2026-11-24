@@ -26,8 +26,10 @@ function prepareHtml(html) {
     return m.replace('<html', '<html lang="zh-CN"');
   });
 
-  // 2. Remove external js.puter.com script tag if present
-  html = html.replace(/<script\s+src=["']https:\/\/js\.puter\.com\/v2\/?["'][^>]*><\/script>/gi, '<!-- [Internal Puter Runtime Active] -->');
+  // 2. Remove external js.puter.com script tags (both static and dynamic)
+  html = html.replace(/<script\b[^>]*src=["']https:\/\/js\.puter\.com\/[^"']*["'][^>]*><\/script>/gi, '<!-- [Internal Puter Runtime Active] -->');
+  html = html.replace(/<script\b[^>]*src=["']https:\/\/plausible\.io\/[^"']*["'][^>]*><\/script>/gi, '');
+  html = html.replace(/s\.src\s*=\s*['"]https:\/\/js\.puter\.com\/v2\/?['"];?/g, '// [Internal Puter Runtime Active]');
 
   // 3. Remove old inline or external runtime tags to ensure latest version is injected
   html = html.replace(/<script id="everything-internal-runtime-inline">[\s\S]*?<\/script>/gi, '');
@@ -70,6 +72,11 @@ async function main() {
   }
   fs.copyFileSync(runtimePath, path.join(assetsDir, 'everything-internal-runtime.js'));
   console.log('  ✓ 内部集成账号与中文运行时 assets/everything-internal-runtime.js 准备就绪');
+
+  const photoWasm = path.join(SRC_DIR, 'photo-studio/public/photo-engine.wasm');
+  if (fs.existsSync(photoWasm)) {
+    fs.copyFileSync(photoWasm, path.join(DIST_DIR, 'photo-engine.wasm'));
+  }
   
   // 3. 拷贝并增强聚合主页
   let portalHtml = fs.readFileSync(path.join(ROOT_DIR, 'scripts/docker/portal.html'), 'utf8');
@@ -162,6 +169,11 @@ async function main() {
 
   // 清理测试目录以确保符合 Cloudflare Pages 限制
   execSync('find .cf-deploy-dist -type d \\( -name "tests" -o -name "test" -o -name "docs" -o -name "node_modules" -o -name ".git" -o -name "coverage" \\) -exec rm -rf {} + 2>/dev/null || true');
+
+  if (process.env.SKIP_DEPLOY) {
+    console.log('⚡ SKIP_DEPLOY is set, skipping wrangler pages deploy.');
+    return;
+  }
 
   console.log('🚀 正在部署到 Cloudflare Pages...');
   const deployCmd = `npx wrangler pages deploy .cf-deploy-dist --project-name everything --branch main`;
