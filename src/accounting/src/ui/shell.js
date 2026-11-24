@@ -16,20 +16,20 @@ import { shortcutLabel } from './shortcuts.js';
 
 export const NAV = [
   {
-    id: 'accounting', label: 'Accounting', icon: 'bank',
-    links: [['银行', 'banking'], ['对账', 'reconcile'], ['Rules', 'rules'], ['Chart of accounts', 'accounts'], ['Recurring transactions', 'recurring'], ['Audit log', 'audit']],
+    id: 'accounting', label: '财务会计', icon: 'bank',
+    links: [['银行流水', 'banking'], ['账目对账', 'reconcile'], ['对账规则', 'rules'], ['会计科目表', 'accounts'], ['周期交易', 'recurring'], ['审计日志', 'audit']],
   },
   {
-    id: 'expenses', label: 'Purchases', icon: 'wallet',
-    links: [['All purchases', 'expenses'], ['Bills', 'bills'], ['供应商', 'vendors']],
+    id: 'expenses', label: '采购支出', icon: 'wallet',
+    links: [['所有支出', 'expenses'], ['账单应付', 'bills'], ['供应商', 'vendors']],
   },
   {
-    id: 'sales', label: 'Sales', icon: 'invoice',
-    links: [['All sales', 'sales'], ['发票', 'invoices'], ['报价单', 'estimates'], ['客户', 'customers'], ['Products & services', 'items']],
+    id: 'sales', label: '销售应收', icon: 'invoice',
+    links: [['所有销售', 'sales'], ['销售发票', 'invoices'], ['业务报价单', 'estimates'], ['客户管理', 'customers'], ['商品与服务', 'items']],
   },
   {
-    id: 'tax', label: 'Sales Tax', icon: 'percent',
-    links: [['Sales tax', 'sales-tax']],
+    id: 'tax', label: '税费管理', icon: 'percent',
+    links: [['税费核算', 'sales-tax']],
   },
 ];
 
@@ -46,10 +46,10 @@ const ROUTE_LINK = { register: 'accounts', customer: 'customers', vendor: 'vendo
 const LS_PANEL = 'bookkeeping:panel';
 
 export const CREATE_MENU = [
-  { title: 'Sales', items: [['Invoice', 'invoice', 'newInvoice'], ['Record payment', 'payment', 'newPayment'], ['Estimate', 'estimate', 'newEstimate'], ['Sales receipt', 'sales-receipt'], ['Credit memo', 'credit-memo'], ['Refund receipt', 'refund-receipt'], ['Add customer', '@customer']] },
-  { title: 'Purchases', items: [['Expense', 'expense', 'newExpense'], ['Check', 'check', 'newCheck'], ['Bill', 'bill', 'newBill'], ['Pay bills', 'pay-bills'], ['Purchase order', 'purchase-order'], ['Vendor credit', 'vendor-credit'], ['Credit card refund', 'cc-credit'], ['Add vendor', '@vendor']] },
-  { title: 'Accounting', items: [['Deposit', 'deposit'], ['Transfer', 'transfer'], ['Journal entry', 'journal'], ['Credit card payment', 'cc-payment'], ['Add product or service', '@item'], ['Add account', '@account']] },
-  { title: 'Import', items: [['Bank statement', '@import'], ['客户', '@importCustomers'], ['供应商', '@importVendors'], ['Products and services', '@importItems']] },
+  { title: '销售相关', items: [['新建发票', 'invoice', 'newInvoice'], ['登记收款', 'payment', 'newPayment'], ['新建报价', 'estimate', 'newEstimate'], ['销售收据', 'sales-receipt'], ['贷记凭证', 'credit-memo'], ['退款收据', 'refund-receipt'], ['添加客户', '@customer']] },
+  { title: '采购支出', items: [['登记费用', 'expense', 'newExpense'], ['开支票', 'check', 'newCheck'], ['录入账单', 'bill', 'newBill'], ['支付账单', 'pay-bills'], ['采购订单', 'purchase-order'], ['供应商抵免', 'vendor-credit'], ['信用卡退款', 'cc-credit'], ['添加供应商', '@vendor']] },
+  { title: '总账会计', items: [['存入款项', 'deposit'], ['账户转账', 'transfer'], ['记账凭证 (分录)', 'journal'], ['信用卡还款', 'cc-payment'], ['添加商品服务', '@item'], ['添加科目', '@account']] },
+  { title: '批量导入', items: [['银行对账单', '@import'], ['客户列表', '@importCustomers'], ['供应商列表', '@importVendors'], ['商品服务列表', '@importItems']] },
 ];
 
 let createHandler = () => {};

@@ -6,7 +6,7 @@
  * left whole and unchecked (rather than broken with the wrong rules), and
  * 'none' turns both off.
  */
-export const DEFAULT_LANGUAGE = 'en-US';
+export const DEFAULT_LANGUAGE = 'zh-CN';
 
 export const LANGUAGES = [
   { code: 'none', label: 'None' },

@@ -13,13 +13,13 @@
  */
 export const MENUS = [
   {
-    label: 'File',
+    label: '文件',
     submenu: [
       'file.new',
       'file.newFromTemplate',
       'file.open',
       'file.openLocal',
-      { label: 'Open Recent Files', items: (app) => app.recentMenuItems?.() || [] },
+      { label: '打开最近文件', items: (app) => app.recentMenuItems?.() || [] },
       '-',
       'file.close',
       'file.closeAll',
@@ -35,14 +35,14 @@ export const MENUS = [
       '-',
       'file.invite',
       'file.shareReview',
-      { label: 'Export', submenu: ['file.exportScreens', 'file.exportAs', 'file.saveForWeb'] },
+      { label: '导出', submenu: ['file.exportScreens', 'file.exportAs', 'file.saveForWeb'] },
       'file.exportSelection',
       '-',
       'file.package',
-      { label: 'Scripts', source: 'scripts' },
+      { label: '脚本', source: 'scripts' },
       '-',
       'file.documentSetup',
-      { label: 'Document Color Mode', submenu: ['file.colorMode.cmyk', 'file.colorMode.rgb'] },
+      { label: '色彩模式', submenu: ['file.colorMode.cmyk', 'file.colorMode.rgb'] },
       'file.info',
       'file.documentInfo',
       '-',
@@ -50,7 +50,7 @@ export const MENUS = [
     ],
   },
   {
-    label: 'Edit',
+    label: '编辑',
     submenu: [
       'edit.undo',
       'edit.redo',
@@ -67,14 +67,14 @@ export const MENUS = [
       '-',
       'edit.findReplace',
       'edit.findNext',
-      { label: 'Spelling', submenu: ['type.spelling.auto', 'type.spelling.check'] },
+      { label: '拼写检查', submenu: ['type.spelling.auto', 'type.spelling.check'] },
       'type.spelling.dictionary',
       '-',
       {
-        label: 'Edit Colors',
+        label: '编辑颜色',
         submenu: [
           'color.recolor',
-          { label: 'Recolor with Preset', submenu: ['color.preset.library', '-', 'color.preset.one', 'color.preset.two', 'color.preset.three', 'color.preset.harmony'] },
+          { label: '预设重新着色', submenu: ['color.preset.library', '-', 'color.preset.one', 'color.preset.two', 'color.preset.three', 'color.preset.harmony'] },
           '-',
           'generative.recolor',
           '-',
@@ -102,9 +102,9 @@ export const MENUS = [
       'edit.assignProfile',
       '-',
       'edit.keyboardShortcuts',
-      { label: 'My Settings', submenu: ['edit.exportSettings', 'edit.importSettings'] },
+      { label: '我的设置', submenu: ['edit.exportSettings', 'edit.importSettings'] },
       {
-        label: 'Preferences',
+        label: '首选项',
         submenu: [
           'edit.preferences',
           '-',
@@ -114,7 +114,7 @@ export const MENUS = [
     ],
   },
   {
-    label: 'Object',
+    label: '对象',
     submenu: [
       {
         label: 'Transform',
@@ -243,7 +243,7 @@ export const MENUS = [
     ],
   },
   {
-    label: 'Type',
+    label: '文字',
     submenu: [
       { label: 'Font', items: (app) => app.fontMenuItems?.() || [] },
       { label: 'Recent Fonts', source: 'recentFonts' },
@@ -283,7 +283,7 @@ export const MENUS = [
     ],
   },
   {
-    label: 'Select',
+    label: '选择',
     submenu: [
       'select.all',
       'select.allArtboard',
@@ -345,7 +345,7 @@ export const MENUS = [
     ],
   },
   {
-    label: 'Effect',
+    label: '效果',
     submenu: [
       'effect.applyLast',
       'effect.last',
@@ -401,7 +401,7 @@ export const MENUS = [
     ],
   },
   {
-    label: 'View',
+    label: '视图',
     submenu: [
       'view.outline',
       'view.overprint',
@@ -473,12 +473,12 @@ export const MENUS = [
     ],
   },
   {
-    label: 'Window',
+    label: '窗口',
     submenu: [
       'window.newWindow',
-      { label: 'Arrange', submenu: ['window.arrange.cascade', 'window.arrange.tile', '-', 'window.arrange.float', 'window.arrange.floatAll', 'window.arrange.consolidate'] },
+      { label: '排列窗口', submenu: ['window.arrange.cascade', 'window.arrange.tile', '-', 'window.arrange.float', 'window.arrange.floatAll', 'window.arrange.consolidate'] },
       {
-        label: 'Workspace',
+        label: '工作区',
         submenu: [
           'window.workspace.automation',
           'window.workspace.essentials',
@@ -490,7 +490,7 @@ export const MENUS = [
           'window.workspace.tracing',
           'window.workspace.typography',
           'window.workspace.web',
-          { label: 'Saved Workspaces', source: 'workspaces' },
+          { label: '已存工作区', source: 'workspaces' },
           '-',
           'window.workspace.new',
           'window.workspace.manage',
@@ -500,7 +500,7 @@ export const MENUS = [
         ],
       },
       '-',
-      { label: 'Toolbars', source: 'toolbars' },
+      { label: '工具栏', source: 'toolbars' },
       'window.toolbar',
       'window.contextualTaskbar',
       'window.controlBar',
@@ -541,25 +541,25 @@ export const MENUS = [
       'panel.transform',
       'panel.transparency',
       {
-        label: 'Type',
+        label: '文字',
         submenu: ['panel.character', 'panel.characterStyles', 'panel.glyphs', 'panel.openType', 'panel.paragraph', 'panel.paragraphStyles', 'panel.tabs'],
       },
       'panel.variables',
       '-',
-      { label: 'Brush Libraries', source: 'brushLibraries' },
-      { label: 'Graphic Style Libraries', source: 'graphicStyleLibraries' },
-      { label: 'Swatch Libraries', source: 'swatchLibraries' },
-      { label: 'Symbol Libraries', source: 'symbolLibraries' },
+      { label: '画笔库', source: 'brushLibraries' },
+      { label: '图形样式库', source: 'graphicStyleLibraries' },
+      { label: '色板库', source: 'swatchLibraries' },
+      { label: '符号库', source: 'symbolLibraries' },
       '-',
-      { label: 'Interface Brightness', submenu: ['theme.system', '-', 'theme.dark', 'theme.medium-dark', 'theme.medium-light', 'theme.light'] },
+      { label: '界面亮度与主题', submenu: ['theme.system', '-', 'theme.dark', 'theme.medium-dark', 'theme.medium-light', 'theme.light'] },
       '-',
       'window.nextDocument',
       'window.previousDocument',
-      { label: 'Documents', items: (app) => app.editors.map((e) => ({ type: 'cmd', label: `${e.name}${e.doc.dirty ? '*' : ''}`, enabled: true, checked: e === app.editor, run: (a) => a.activate(e) })) },
+      { label: '文档列表', items: (app) => app.editors.map((e) => ({ type: 'cmd', label: `${e.name}${e.doc.dirty ? '*' : ''}`, enabled: true, checked: e === app.editor, run: (a) => a.activate(e) })) },
     ],
   },
   {
-    label: 'Help',
+    label: '帮助',
     submenu: ['help.shortcuts', 'help.welcome', 'help.whatsNew', '-', 'help.systemInfo', 'help.about'],
   },
 ];

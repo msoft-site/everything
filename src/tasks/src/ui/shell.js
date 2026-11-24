@@ -35,8 +35,8 @@ const ROUTES = [
 ];
 
 const MORE_SUBS = {
-  '#/logbook': 'Everything you have completed',
-  '#/settings': 'Appearance, reminders, calendar feed, your data',
+  '#/logbook': '查看所有已归档和已完成的任务',
+  '#/settings': '外观主题、提醒通知、日历订阅与数据备份',
 };
 
 export function mountShell(appRoot) {
@@ -44,7 +44,7 @@ export function mountShell(appRoot) {
   const viewWrap = el('div');
   const content = el('div.content', {}, sampleBanner, viewWrap);
   const main = el('main.main', { id: 'main' }, content);
-  const sidebarNav = el('nav', { 'aria-label': 'Main' });
+  const sidebarNav = el('nav', { 'aria-label': '导航' });
   const sidebar = el('aside.sidebar', {},
     el('div.brand', {},
       el('img.brand-mark', { src: iconUrl, width: 28, height: 28, alt: '' }),
@@ -53,11 +53,11 @@ export function mountShell(appRoot) {
     el('button.btn.btn-primary.btn-block.sidebar-new', {
       html: icon('plus', 16, 2.4),
       onclick: () => openTaskForm({}),
-    }, ' New task'),
+    }, ' 新建任务'),
     sidebarNav,
     el('div.sidebar-foot', {},
       el('button.nav-item', { html: icon('search', 18), onclick: openSearch },
-        el('span', {}, 'Search'),
+        el('span', {}, '搜索任务'),
         el('span.count', {}, el('span.kbd', {}, '/'))
       )
     )

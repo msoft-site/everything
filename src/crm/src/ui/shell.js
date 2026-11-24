@@ -22,22 +22,22 @@ import { settingsView, confirmSignOut } from '../views/settings.js';
    tab: false live in the More sheet there. The desktop sidebar shows
    everything. */
 const ROUTES = [
-  { hash: '#/', label: '首页', icon: 'dashboard', view: dashboardView },
+  { hash: '#/', label: '首页概览', icon: 'dashboard', view: dashboardView },
   { hash: '#/pipeline', label: '销售漏斗', icon: 'pipeline', view: pipelineView },
   { hash: '#/leads', label: '线索潜客', icon: 'users', view: leadsView },
-  { hash: '#/followups', label: 'Follow-ups', icon: 'followups', view: followupsView },
+  { hash: '#/followups', label: '跟进待办', icon: 'followups', view: followupsView },
   { hash: '#/companies', label: '企业客户', icon: 'company', view: companiesView, tab: false },
-  { hash: '#/activity', label: '动态', icon: 'video', view: activityView, tab: false },
-  { hash: '#/forecast', label: 'Forecast', icon: 'chart', view: forecastView, tab: false },
-  { hash: '#/settings', label: '设置', icon: 'gear', view: settingsView, tab: false },
+  { hash: '#/activity', label: '动态记录', icon: 'video', view: activityView, tab: false },
+  { hash: '#/forecast', label: '业绩预测', icon: 'chart', view: forecastView, tab: false },
+  { hash: '#/settings', label: '系统设置', icon: 'gear', view: settingsView, tab: false },
 ];
 
 /* One-line descriptions for the More sheet. */
 const MORE_SUBS = {
-  '#/companies': 'Accounts, their people, and their deals',
-  '#/activity': 'Every meeting, call, email, and note you logged',
-  '#/forecast': 'Weighted pipeline by expected close month',
-  '#/settings': 'Appearance, currency, stages, and your data',
+  '#/companies': '企业客户、联系人及关联商机管理',
+  '#/activity': '会议、电话、邮件与所有沟通动态记录',
+  '#/forecast': '基于漏斗阶段的加权回款与业绩预测',
+  '#/settings': '外观主题、币种、阶段配置及数据导入导出',
 };
 
 /** Apple keyboards say ⌘K; everyone else says Ctrl K. */

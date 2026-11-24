@@ -16,6 +16,7 @@
  */
 
 export const LANGS = [
+  { code: 'zh', label: '简体中文' },
   { code: 'en', label: 'English' },
   { code: 'es', label: 'Español' },
   { code: 'de', label: 'Deutsch' },
@@ -551,28 +552,100 @@ export const STRINGS = {
     print: 'Afdrukken',
     payNow: 'Nu betalen',
   },
+  zh: {
+    invoice: '发票账单',
+    estimate: '报价单',
+    statement: '对账单',
+    receipt: '收款收据',
+    refundReceipt: '退款收据',
+    billedTo: '付款方',
+    preparedFor: '客户名称',
+    accountOf: '账户抬头',
+    receivedFrom: '付款人',
+    refundedTo: '收款人',
+    issued: '开票日期',
+    due: '付款截止日',
+    validUntil: '有效期至',
+    onReceipt: '见票即付',
+    reference: '关联单号',
+    date: '日期',
+    for: '事由',
+    asOf: '截至',
+    description: '项目描述',
+    qty: '数量',
+    rate: '单价',
+    amount: '金额',
+    lineItems: '费用明细',
+    noLineItems: '暂无明细',
+    noClient: '未关联客户',
+    subtotal: '小计',
+    discount: '折扣优惠',
+    total: '总计应付',
+    includes: '含税项',
+    depositDue: '应付定金',
+    paymentSchedule: '分期计划',
+    installmentOpen: '第 {n} 期，共 {count} 期（待付）',
+    paid: '已付金额',
+    balanceDue: '待付余额',
+    notes: '备注说明',
+    attachments: '相关附件',
+    paymentDetails: '收款账户与支付信息',
+    lateFee: '逾期滞纳金',
+    lateFeeSentence: '逾期将加收 {fee} 的滞纳金。',
+    taxNoteLabel: '税务声明',
+    taxNoteReverseCharge: '反向征税',
+    taxNoteZeroRated: '零税率',
+    taxNoteExempt: '免税',
+    taxNoteSmallBusiness: '小微企业免税',
+    payOnline: '在线支付',
+    taxId: '纳税人识别号',
+    openInvoices: '待结发票',
+    balance: '当前余额',
+    totalDue: '总应付金额',
+    ofWhichOverdue: '其中已逾期',
+    agingTitle: '账龄分析',
+    agingCurrent: '当期未逾期',
+    aging30: '1-30 天',
+    aging60: '31-60 天',
+    aging90: '61-90 天',
+    agingOver90: '90 天以上',
+    overdueFlag: '已逾期',
+    nothingOutstanding: '无待结款项',
+    amountReceived: '实收金额',
+    amountRefunded: '退款金额',
+    via: '付款方式',
+    invoiceTotal: '发票总额',
+    paidToDate: '累计已收',
+    statusPaid: '已结清',
+    statusOverdue: '已逾期',
+    statusVoid: '已作废',
+    statusAccepted: '已接受',
+    statusDeclined: '已拒绝',
+    statusExpired: '已过期',
+    pageOf: '第 {page} 页，共 {total} 页',
+    downloadPdf: '下载 PDF',
+    print: '打印单据',
+    payNow: '立即付款',
+  },
 };
 
 /**
  * The language one document renders in: its own override first, then its
- * client's. Unknown codes read as '' so a hand-edited backup can never
- * break the paper — which means asking the table for its own entries, not
- * for what every object inherits: STRINGS['constructor'] is truthy, and a
- * document claiming that language sailed through as a real code.
+ * client's. Defaults to 'zh' (Simplified Chinese).
  */
 export function docLang(doc, client = null) {
-  const code = doc?.language || client?.language || '';
-  return Object.hasOwn(STRINGS, code) ? code : '';
+  const code = doc?.language || client?.language || 'zh';
+  return Object.hasOwn(STRINGS, code) ? code : 'zh';
 }
 
 /**
- * A lookup for one language. Missing keys fall back to English, then to the
- * key itself, so a label can never vanish from the paper.
+ * A lookup for one language. Defaults to Chinese then English.
  */
-export function translator(lang) {
-  const table = Object.hasOwn(STRINGS, lang) ? STRINGS[lang] : STRINGS.en;
+export function translator(lang = 'zh') {
+  const target = lang || 'zh';
+  const table = Object.hasOwn(STRINGS, target) ? STRINGS[target] : (STRINGS.zh || STRINGS.en);
   return (key, values = null) => {
-    let out = table[key] ?? STRINGS.en[key] ?? key;
+    let out = table[key] ?? STRINGS.zh[key] ?? STRINGS.en[key] ?? key;
     if (values) {
       for (const [k, v] of Object.entries(values)) out = out.replaceAll(`{${k}}`, String(v));
     }

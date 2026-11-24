@@ -14,7 +14,7 @@ import { readableText, insertableText } from '../lib/ai.js';
 import { LANGUAGES, languageName, englishLanguageName, sidePane, button, hint, preference } from './review-ui.js';
 
 export const DETECT_LANGUAGE = preference('documents:detect-language', true);
-export const TRANSLATION_LANGUAGE = preference('documents:translation-language', (typeof navigator !== 'undefined' && navigator.language && !/^en\b/i.test(navigator.language)) ? navigator.language : 'es-ES');
+export const TRANSLATION_LANGUAGE = preference('documents:translation-language', 'zh-CN');
 
 function languageSelect(value, label) {
   const tags = [...new Set([...(value ? [value] : []), ...LANGUAGES])];
@@ -23,9 +23,9 @@ function languageSelect(value, label) {
 
 /** The Language dialog for the selection. apply({ language, noProof }) and setDefault(language). */
 export function openLanguageDialog({ language, noProof, defaultLanguage, apply, setDefault, onClose }) {
-  const filter = el('input.input', { type: 'search', placeholder: 'Find a language', 'aria-label': 'Find a language' });
+  const filter = el('input.input', { type: 'search', placeholder: '查找语言', 'aria-label': '查找语言' });
   const options = [...new Set([...(language ? [language] : []), ...LANGUAGES])];
-  let chosen = language || defaultLanguage || 'en-US';
+  let chosen = language || defaultLanguage || 'zh-CN';
   const list = el('div.rv-language-list', { role: 'listbox', 'aria-label': 'Languages' });
   // Choosing marks the option where it is: redrawing the list took the keyboard off the option it was on.
   const choose = tag => { chosen = tag; for (const option of list.children) option.setAttribute('aria-selected', String(option.dataset.tag === chosen)); };

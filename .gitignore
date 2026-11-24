@@ -65,3 +65,4 @@ release-exe/
 release-final/
 release-assets/
 .cf-deploy-dist/
+.wrangler/

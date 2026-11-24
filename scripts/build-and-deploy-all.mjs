@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { execSync, spawn } from 'child_process';
+import { execSync } from 'child_process';
 
 const ROOT_DIR = process.cwd();
 const SRC_DIR = path.join(ROOT_DIR, 'src');
@@ -14,25 +14,75 @@ const BACK_BUTTON_HTML = `
 </a>
 `;
 
+const runtimePath = path.join(ROOT_DIR, 'scripts/shared/everything-internal-runtime.js');
+const RUNTIME_CODE = fs.readFileSync(runtimePath, 'utf8');
+
+function prepareHtml(html) {
+  // 1. Force lang="zh-CN"
+  html = html.replace(/<html(\s+[^>]*)?>/i, (m) => {
+    if (m.includes('lang=')) {
+      return m.replace(/lang="[^"]*"/, 'lang="zh-CN"');
+    }
+    return m.replace('<html', '<html lang="zh-CN"');
+  });
+
+  // 2. Remove external js.puter.com script tag if present
+  html = html.replace(/<script\s+src=["']https:\/\/js\.puter\.com\/v2\/?["'][^>]*><\/script>/gi, '<!-- [Internal Puter Runtime Active] -->');
+
+  // 3. Remove external runtime tag if present to favor inline
+  html = html.replace(/<script\s+src=["']\/assets\/everything-internal-runtime\.js["']><\/script>/gi, '');
+
+  // 4. Inject runtime code inline at the very top of <head>
+  if (!html.includes('id="everything-internal-runtime-inline"')) {
+    const inlineTag = `<script id="everything-internal-runtime-inline">\n${RUNTIME_CODE}\n</script>`;
+    if (html.includes('<head>')) {
+      html = html.replace('<head>', `<head>\n  ${inlineTag}`);
+    } else {
+      html = `${inlineTag}\n${html}`;
+    }
+  }
+
+  // 5. Inject back button if not present
+  if (!html.includes('everything-back-home')) {
+    html = html.replace('</body>', `${BACK_BUTTON_HTML}</body>`);
+  }
+
+  return html;
+}
+
 async function main() {
-  console.log('🚀 开始全量编译 51 款应用并打包上线 Cloudflare Pages...');
+  console.log('🚀 开始全量组织与构建 51 款应用并打包上线 Cloudflare Pages...');
   
   if (!fs.existsSync(DIST_DIR)) {
     fs.mkdirSync(DIST_DIR, { recursive: true });
   }
+
+  // 1. 拷贝 _headers 文件确保所有 JS/WASM MIME 类型 100% 正确
+  const headersSrc = path.join(ROOT_DIR, 'scripts/docker/_headers');
+  if (fs.existsSync(headersSrc)) {
+    fs.copyFileSync(headersSrc, path.join(DIST_DIR, '_headers'));
+    console.log('  ✓ Cloudflare Pages _headers 路由与 MIME 类型配置已同步');
+  }
+
+  // 2. 拷贝内置运行时与公共资源
+  const assetsDir = path.join(DIST_DIR, 'assets');
+  if (!fs.existsSync(assetsDir)) {
+    fs.mkdirSync(assetsDir, { recursive: true });
+  }
+  fs.copyFileSync(runtimePath, path.join(assetsDir, 'everything-internal-runtime.js'));
+  console.log('  ✓ 内部集成账号与中文运行时 assets/everything-internal-runtime.js 准备就绪');
   
-  // 1. 拷贝聚合主页
-  fs.copyFileSync(
-    path.join(ROOT_DIR, 'scripts/docker/portal.html'),
-    path.join(DIST_DIR, 'index.html')
-  );
+  // 3. 拷贝并增强聚合主页
+  let portalHtml = fs.readFileSync(path.join(ROOT_DIR, 'scripts/docker/portal.html'), 'utf8');
+  portalHtml = prepareHtml(portalHtml);
+  fs.writeFileSync(path.join(DIST_DIR, 'index.html'), portalHtml, 'utf8');
 
   const apps = fs.readdirSync(SRC_DIR).filter(name => {
     const p = path.join(SRC_DIR, name);
     return fs.statSync(p).isDirectory() && fs.existsSync(path.join(p, 'package.json'));
   });
 
-  console.log(`📋 共发现 ${apps.length} 款待构建应用`);
+  console.log(`📋 共发现 ${apps.length} 款应用`);
 
   // 并发队列
   const CONCURRENCY = 2;
@@ -47,37 +97,36 @@ async function main() {
       const appDist = path.join(appDir, 'dist');
       const targetDist = path.join(DIST_DIR, 'app', currentApp);
 
-      console.log(`[${idx}/${apps.length}] 正在编译 ${currentApp}...`);
+      console.log(`[${idx}/${apps.length}] 处理应用 ${currentApp}...`);
 
       try {
-        // 检查是否有 worker 配置
-        const hasWorker = fs.existsSync(path.join(appDir, 'vite.worker.config.js'));
-        const pkg = JSON.parse(fs.readFileSync(path.join(appDir, 'package.json'), 'utf8'));
+        const needsBuild = !fs.existsSync(path.join(appDist, 'index.html')) ||
+          process.env.REBUILD === 'all' ||
+          process.env.REBUILD === currentApp;
 
-        // 安装依赖 (如果 node_modules 不存在)
-        if (!fs.existsSync(path.join(appDir, 'node_modules'))) {
-          execSync('npm install --prefer-offline --no-audit', { cwd: appDir, stdio: 'pipe', timeout: 60000 });
-        }
+        if (needsBuild) {
+          console.log(`  -> 正在编译 ${currentApp}...`);
+          const hasWorker = fs.existsSync(path.join(appDir, 'vite.worker.config.js'));
+          const pkg = JSON.parse(fs.readFileSync(path.join(appDir, 'package.json'), 'utf8'));
 
-        // 构建 worker (如果有)
-        if (hasWorker || (pkg.scripts && pkg.scripts['build:worker'])) {
-          try {
-            execSync('npx vite build --config vite.worker.config.js', { cwd: appDir, stdio: 'pipe', timeout: 60000 });
-          } catch (e) {
-            // ignore worker error if any
+          if (!fs.existsSync(path.join(appDir, 'node_modules'))) {
+            execSync('npm install --prefer-offline --no-audit', { cwd: appDir, stdio: 'pipe', timeout: 60000 });
           }
-        }
 
-        // 构建前端 bundle
-        execSync(`npx vite build --base=/app/${currentApp}/`, { cwd: appDir, stdio: 'pipe', timeout: 120000 });
+          if (hasWorker || (pkg.scripts && pkg.scripts['build:worker'])) {
+            try {
+              execSync('npx vite build --config vite.worker.config.js', { cwd: appDir, stdio: 'pipe', timeout: 60000 });
+            } catch (e) {}
+          }
+
+          execSync(`npx vite build --base=/app/${currentApp}/`, { cwd: appDir, stdio: 'pipe', timeout: 120000 });
+        }
 
         if (fs.existsSync(appDist) && fs.existsSync(path.join(appDist, 'index.html'))) {
-          // 注入返回主页按钮
+          // 处理 index.html
           let html = fs.readFileSync(path.join(appDist, 'index.html'), 'utf8');
-          if (!html.includes('everything-back-home')) {
-            html = html.replace('</body>', `${BACK_BUTTON_HTML}</body>`);
-            fs.writeFileSync(path.join(appDist, 'index.html'), html, 'utf8');
-          }
+          html = prepareHtml(html);
+          fs.writeFileSync(path.join(appDist, 'index.html'), html, 'utf8');
 
           // 复制到目标目录
           if (fs.existsSync(targetDist)) {
@@ -86,14 +135,20 @@ async function main() {
           fs.mkdirSync(path.dirname(targetDist), { recursive: true });
           execSync(`cp -r "${appDist}" "${targetDist}"`);
 
-          console.log(`  ✓ [${currentApp}] 编译成功并已组织就绪`);
+          // 再次确保目标目录的 index.html 带有注入
+          const targetHtmlPath = path.join(targetDist, 'index.html');
+          if (fs.existsSync(targetHtmlPath)) {
+            fs.writeFileSync(targetHtmlPath, html, 'utf8');
+          }
+
+          console.log(`  ✓ [${currentApp}] 准备就绪并已注入内置账号/中文运行时`);
           successCount++;
         } else {
           console.warn(`  ⚠️ [${currentApp}] 未生成 dist 产物`);
           failCount++;
         }
       } catch (err) {
-        console.error(`  ❌ [${currentApp}] 编译异常:`, err.message);
+        console.error(`  ❌ [${currentApp}] 处理异常:`, err.message);
         failCount++;
       }
     }
@@ -103,7 +158,7 @@ async function main() {
   await Promise.all(workers);
 
   console.log(`\n==================================================`);
-  console.log(`🎉 编译全部结束！成功: ${successCount}, 失败: ${failCount}`);
+  console.log(`🎉 处理全部结束！成功: ${successCount}, 失败: ${failCount}`);
   console.log(`==================================================\n`);
 
   // 清理测试目录以确保符合 Cloudflare Pages 限制

@@ -41,6 +41,11 @@ function startLocalServer(callback) {
 
       fs.stat(finalFile, (statErr, finalStats) => {
         if (statErr || !finalStats.isFile()) {
+          const ext = path.extname(reqPath).toLowerCase();
+          if (ext && ext !== '.html') {
+            res.writeHead(404, { 'Content-Type': 'text/plain' });
+            return res.end('404 Not Found: ' + reqPath);
+          }
           finalFile = path.join(appDistDir, 'index.html');
         }
 

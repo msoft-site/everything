@@ -1812,25 +1812,25 @@ export function addTranslations(entries) {
 }
 const types = {
   __proto__: null,
-  note: "note adhésive",
-  text: "texte",
-  rect: "rectangle",
-  ellipse: "ellipse",
-  arrow: "flèche",
-  pen: "dessin",
-  frame: "cadre",
-  image: "image",
-  table: "tableau de données",
-  link: "lien",
-  file: "pièce jointe",
-  embed: "intégration",
+  note: "便签",
+  text: "文本",
+  rect: "矩形",
+  ellipse: "椭圆",
+  arrow: "箭头",
+  pen: "手绘",
+  frame: "画框",
+  image: "图片",
+  table: "数据表格",
+  link: "链接",
+  file: "附件",
+  embed: "嵌入",
 };
 // A context tells apart words that translate differently, such as "Open" as
 // a state and as an action: t("Open", "action") uses the "action|Open" entry.
 export function t(text, context) {
   // Anything other than text, such as a missing error message, passes
   // through as it does in English.
-  if (language !== "fr" || typeof text !== "string") return text;
+  if (language === "en" || typeof text !== "string") return text;
   if (context && pairs[`${context}|${text}`])
     return pairs[`${context}|${text}`];
   if (pairs[text]) return pairs[text];
@@ -1840,25 +1840,24 @@ export function t(text, context) {
       /^(Select|Pan|Sticky note|Text|Rectangle|Ellipse|Arrow|Draw|Frame) \((\w)\)$/,
     ))
   )
-    return `${pairs[m[1]]} (${m[2]})`;
+    return `${pairs[m[1]] || m[1]} (${m[2]})`;
   if ((m = text.match(/^Edit (.+)$/)) && types[m[1]])
-    return `Modifier : ${types[m[1]]}`;
-  // French counts 0 and 1 in the singular.
+    return `编辑：${types[m[1]]}`;
   if ((m = text.match(/^(\d+) results?$/)))
-    return `${m[1]} résultat${Number(m[1]) < 2 ? "" : "s"}`;
-  if ((m = text.match(/^(\d+) selected$/))) return `${m[1]} sélectionné(s)`;
+    return `${m[1]} 个结果`;
+  if ((m = text.match(/^(\d+) selected$/))) return `已选择 ${m[1]} 项`;
   if (
     (m = text.match(
       /^(All boards|Favorites|Your boards|Favorite boards) (\d+)$/,
     ))
   )
-    return `${pairs[m[1]]} ${m[2]}`;
+    return `${pairs[m[1]] || m[1]} ${m[2]}`;
   // The favorite star is a toggle: its name stays put and its pressed state
   // says whether the board is a favorite.
   if ((m = text.match(/^(Open|Favorite|Options for|Restore or delete) (.+)$/)))
-    return `${{ Open: "Ouvrir", Favorite: "Favori :", "Options for": "Options pour", "Restore or delete": "Restaurer ou supprimer" }[m[1]]} ${m[2]}`;
+    return `${{ Open: "打开", Favorite: "收藏：", "Options for": "选项：", "Restore or delete": "恢复或删除" }[m[1]] || m[1]} ${m[2]}`;
   if ((m = text.match(/^(\d+) objects/)))
-    return text.replace(`${m[1]} objects`, `${m[1]} objets`);
+    return text.replace(`${m[1]} objects`, `${m[1]} 个对象`);
   return text;
 }
 // The message for a count, with {count} filled in: `one` where the language
