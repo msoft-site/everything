@@ -2260,19 +2260,19 @@ async function embedLocalFont(file, target, request) {
     if (!current() || readOnlyDocument()) return;
     const info = readOpenTypeFont(bytes);
     const family = info.englishNames.get(1);
-    if (!family) throw Error("This font has no supported family name.");
+    if (!family) throw Error("此字体没有受支持的字体系列名称。");
     if (
       !info.permissions.canEmbed ||
       !info.permissions.canEdit ||
       (info.permissions.bitmapOnly && info.hasOutlines)
     )
-      throw Error("This font does not permit editable outline embedding.");
+      throw Error("此字体不允许可编辑的轮廓嵌入。");
     if (
       ![...presentationFontFamilies(target.pres)].some(
         (name) => name.toLowerCase() === family.toLowerCase(),
       )
     )
-      throw Error(`Use ${family} in the presentation before embedding it.`);
+      throw Error(`在嵌入字体之前，请先在演示文稿中使用 ${family}。`);
     // Validate glyph data with the browser before changing the package. This
     // face is never installed globally; the document pool owns the final faces.
     await new FontFace("Presentation font validation", bytes).load();
@@ -2283,20 +2283,20 @@ async function embedLocalFont(file, target, request) {
       body: el(
         "form",
         { class: "dialog-body" },
-        el("p", {}, `${family} — ${info.subfamily || "Regular"}`),
+        el("p", {}, `${family} — ${info.subfamily || "常规"}`),
         el(
           "p",
           { class: "muted" },
-          "The full font face will be saved in this PowerPoint file. Text keeps its authored font names.",
+          "完整的字体外观将保存在此 PowerPoint 文件中。文本保留其原作者设置的字体名称。",
         ),
         el(
           "label",
           { class: "check-field" },
           rights,
-          el("span", {}, "I have permission to embed this font."),
+          el("span", {}, "我已获得嵌入此字体的许可。"),
         ),
       ),
-      confirm: "Embed",
+      confirm: "嵌入",
     });
     const apply = rights.closest("dialog").querySelector(".primary");
     apply.disabled = true;
@@ -2310,7 +2310,7 @@ async function embedLocalFont(file, target, request) {
           (name) => name.toLowerCase() === family.toLowerCase(),
         )
       )
-        throw Error(`Use ${family} in the presentation before embedding it.`);
+        throw Error(`在嵌入字体之前，请先在演示文稿中使用 ${family}。`);
       // A separate model keeps pending shows and failed edits on their original
       // document. Publication happens only after native encoding and size checks.
       const next = await P.loadPresentation(
@@ -2343,7 +2343,7 @@ async function embedLocalFont(file, target, request) {
 }
 async function importFile(file) {
   const extension = /\.(pptx|potx|ppsx)$/i.exec(file.name)?.[1].toLowerCase();
-  if (!extension) throw new Error("Choose a PowerPoint (.pptx) file.");
+  if (!extension) throw new Error("请选择 PowerPoint (.pptx) 文件。");
   validateImportSize(file.size);
   if (
     await openDocument(async () => ({
@@ -2623,7 +2623,7 @@ async function saveCloud(
         chosen?.file ?? (await cloud.saveFile(bytes, target.name, target.path));
       target.path = file.path || target.path;
       if (!target.path)
-        throw new Error("Puter did not return the saved file location.");
+        throw new Error("云端未返回保存的文件位置。");
       if (firstSave)
         target.name = cleanName(file.name || target.path.split("/").pop(), {
           maxLength: Infinity,
@@ -2912,7 +2912,7 @@ async function copyOf(target, useDialog) {
     : file;
   if (!saved || doc !== target) return;
   if (!saved.path)
-    throw new Error("Puter did not return the saved file location.");
+    throw new Error("云端未返回保存的文件位置。");
   const copyName = cleanName(saved.name || saved.path.split("/").pop(), {
     maxLength: Infinity,
   });
@@ -6444,11 +6444,11 @@ function ribbonApi() {
     charSpacingMenu: () => {
       const current = fmtNow().spc || 0;
       return [
-        ["Very Tight", -300],
-        ["Tight", -150],
-        ["Normal", 0],
-        ["Loose", 300],
-        ["Very Loose", 600],
+        ["很紧", -300],
+        ["紧", -150],
+        ["常规", 0],
+        ["松", 300],
+        ["很松", 600],
       ].map(([label, spc]) => ({
         label,
         checked: current === spc,
@@ -6457,11 +6457,11 @@ function ribbonApi() {
     },
     changeCaseMenu: () =>
       [
-        ["sentence", "Sentence case."],
-        ["lower", "lowercase"],
-        ["upper", "UPPERCASE"],
-        ["title", "Capitalize Each Word"],
-        ["toggle", "tOGGLE cASE"],
+        ["sentence", "句首字母大写"],
+        ["lower", "全部小写"],
+        ["upper", "全部大写"],
+        ["title", "每个单词首字母大写"],
+        ["toggle", "切换大小写"],
       ].map(([mode, label]) => ({ label, onSelect: () => changeCase(mode) })),
     lastColor,
     applyLastColor,
@@ -6991,20 +6991,20 @@ function ribbonApi() {
 const TABLE_STYLES = [
   {
     id: "{2D5ABB26-0587-4C30-8999-92F81FD0307C}",
-    name: "No Style, No Grid",
+    name: "无样式，无网格",
     light: true,
     plain: true,
   },
   {
     id: "{5940675A-B579-460E-94D1-54222C63F5DA}",
-    name: "No Style, Table Grid",
+    name: "无样式，表格网格",
     light: true,
     plain: true,
     grid: true,
   },
   {
     id: "{5C22544A-7EE6-4342-B048-85BDC9FD1C3A}",
-    name: "Medium Style 2 - Accent 1",
+    name: "中度样式 2 - 着色 1",
     accent: "accent1",
   },
 ];
@@ -7349,7 +7349,7 @@ function assistantIdle() {
 // edit added or removed around them.
 async function assistantEdit(work) {
   const active = doc;
-  if (!active) throw new Error("No presentation is open.");
+  if (!active) throw new Error("未打开任何演示文稿。");
   let result,
     error = null,
     step = null;
@@ -7377,7 +7377,7 @@ async function assistantEdit(work) {
     },
   );
   if (error) throw error;
-  if (doc !== active) throw new Error("The presentation was closed.");
+  if (doc !== active) throw new Error("演示文稿已关闭。");
   return { applied, result, step };
 }
 // Shows the user a slide and selects objects on it.
@@ -8946,7 +8946,7 @@ function duplicateSlides(targets) {
     const chosen = resolveSlides(parts);
     if (!chosen.length) return SKIP_MUTATION;
     if (P.getSlides(doc.pres).length + chosen.length > 300)
-      throw new Error("The slide limit is 300.");
+      throw new Error("幻灯片数量上限为 300 张。");
     let at = positionOf(P.getSlidePartName(chosen.at(-1))) + 1;
     const copies = [];
     for (const s of chosen) {
@@ -11832,7 +11832,7 @@ async function setBackgroundImage(file) {
   if (doc !== target) return;
   await mutate(() => {
     const destinations = resolveSlides(parts);
-    if (!destinations.length) throw new Error("The slide was removed.");
+    if (!destinations.length) throw new Error("幻灯片已被删除。");
     for (const destination of destinations) {
       P.setSlideBackgroundImage(destination, bytes);
       // New bytes under the same part name leave the slide's XML as it was.
@@ -11864,9 +11864,9 @@ async function replaceImage(obj, file) {
   });
 }
 function checkImageFile(file) {
-  if (!isImageFile(file)) throw new Error("Choose a PNG or JPEG image.");
+  if (!isImageFile(file)) throw new Error("请选择 PNG 或 JPEG 图片。");
   if (file.size > 12 * 1024 * 1024)
-    throw new Error("Choose an image smaller than 12 MB.");
+    throw new Error("请选择小于 12 MB 的图片。");
 }
 // A file named like a picture but holding something else would reach the
 // slide as a broken image, or be refused in the browser's own words.
@@ -11875,7 +11875,7 @@ async function decodeImage(file) {
     return await createImageBitmap(file);
   } catch {
     throw new Error(
-      "This file could not be read as an image. Choose a PNG or JPEG.",
+      "无法将此文件作为图片读取。请选择 PNG 或 JPEG 图片。",
     );
   }
 }
@@ -12187,18 +12187,18 @@ function truncateLabel(label, max = 80) {
 }
 // The format panel's title: what is being formatted.
 function inspectorTitle(obj) {
-  if (!obj) return "Format Background";
-  if (multiSelected()) return "Format";
+  if (!obj) return "设置背景格式";
+  if (multiSelected()) return "设置格式";
   return (
     chartTools.formatTitle(obj) ||
     smartArtTools.formatTitle(obj) ||
     (P.getShapeKind(obj) === "picture"
-      ? "Format Picture"
+      ? "设置图片格式"
       : isTable(obj)
-        ? "Format Table"
+        ? "设置表格格式"
         : P.getShapeKind(obj) === "connector"
-          ? "Format Line"
-          : "Format Shape")
+          ? "设置线条格式"
+          : "设置形状格式")
   );
 }
 // Closing the panel while text is being edited goes back to the text, where
@@ -12214,7 +12214,7 @@ function renderInspectorContents(panel, obj) {
     "div",
     { class: "panel-heading" },
     el("h2", {}, inspectorTitle(obj)),
-    iconButton("Close format panel", "X", closeFormatPane, {
+    iconButton("关闭格式窗格", "X", closeFormatPane, {
       class: "btn icon-btn inspector-close",
     }),
   );
@@ -12441,7 +12441,7 @@ function paneExtras(obj, kind) {
           checked: hasShadow(obj),
           onchange: (e) => toggleShadow(e.target.checked),
         }),
-        el("span", {}, "Drop shadow"),
+        el("span", {}, "外部阴影"),
       );
   }
   if (kind === "shape" || kind === "picture" || kind === "connector") {
@@ -12468,12 +12468,12 @@ function textSections(obj) {
     const { row, col } = currentCell(obj);
     out.push(
       section(
-        "Cell text",
+        "单元格文本",
         [
           el(
             "p",
             { class: "helper" },
-            `Row ${row + 1}, column ${col + 1}. Double-click another cell to format it.`,
+            `第 ${row + 1} 行，第 ${col + 1} 列。双击其他单元格可设置其格式。`,
           ),
         ],
         { key: "cellText", open: true },
@@ -12482,10 +12482,10 @@ function textSections(obj) {
   } else
     out.push(
       section(
-        "Text",
+        "文本",
         [
           field(
-            "Content",
+            "内容",
             contentTextField(obj, {
               class: "input content-field",
               "aria-label": "对象文本",
@@ -12521,13 +12521,13 @@ function textSections(obj) {
   font.value = fmt.font || "Arial";
   out.push(
     section(
-      "Font",
+      "字体",
       [
-        field("Font family", font),
+        field("字体系列", font),
         // Arrow keys step whole points; typed half sizes such as 10.5 still
         // apply.
         numInput(
-          "Font size",
+          "字号",
           fmt.size || 24,
           (n) => applyTextFormat(obj, { size: n }),
           6,
@@ -12537,29 +12537,29 @@ function textSections(obj) {
         el(
           "div",
           { class: "format-buttons" },
-          iconButton("Bold", "Bold", () => toggleTextFormat(obj, "bold"), {
+          iconButton("加粗", "Bold", () => toggleTextFormat(obj, "bold"), {
             "aria-pressed": fmt.bold ? "true" : "false",
           }),
           iconButton(
-            "Italic",
+            "倾斜",
             "Italic",
             () => toggleTextFormat(obj, "italic"),
             { "aria-pressed": fmt.italic ? "true" : "false" },
           ),
           iconButton(
-            "Underline",
+            "下划线",
             "Underline",
             () => toggleTextFormat(obj, "underline"),
             { "aria-pressed": decorated(fmt.underline) ? "true" : "false" },
           ),
           iconButton(
-            "Strikethrough",
+            "删除线",
             "Strikethrough",
             () => toggleTextFormat(obj, "strike"),
             { "aria-pressed": decorated(fmt.strike) ? "true" : "false" },
           ),
         ),
-        colorInput("Text color", fmt.color, (c) =>
+        colorInput("文本颜色", fmt.color, (c) =>
           applyTextFormat(
             obj,
             { color: c },
@@ -12584,7 +12584,7 @@ function textSections(obj) {
         : [
             el("span", { class: "separator" }),
             iconButton(
-              "Bulleted list",
+              "项目符号",
               "List",
               () => toggleList(obj, "bullet"),
               {
@@ -12592,7 +12592,7 @@ function textSections(obj) {
               },
             ),
             iconButton(
-              "Numbered list",
+              "编号",
               "ListOrdered",
               () => toggleList(obj, "number"),
               { "aria-pressed": list === "number" ? "true" : "false" },
@@ -12626,7 +12626,7 @@ function textSections(obj) {
       );
     spacingSelect.value = String(spacing);
     paragraph.push(
-      field("Line spacing", spacingSelect),
+      field("行距", spacingSelect),
       el(
         "div",
         { class: "field-grid" },
@@ -12635,7 +12635,7 @@ function textSections(obj) {
       ),
     );
   }
-  out.push(section("Paragraph", paragraph, { key: "paragraph", open: true }));
+  out.push(section("段落", paragraph, { key: "paragraph", open: true }));
   return out;
 }
 // The object's size and turn in the editor's fields, in inches and degrees,
@@ -12649,10 +12649,10 @@ function sizeFields(obj) {
       "div",
       { class: "field-grid" },
       ...["w", "h"].map((key, i) =>
-        boundsInput(obj, key, ["Width (in)", "Height (in)"][i], b, size),
+        boundsInput(obj, key, ["宽度(英寸)", "高度(英寸)"][i], b, size),
       ),
       numInput(
-        "Rotation (°)",
+        "旋转(°)",
         Math.round((P.getShapeRotation(obj) || 0) * 10) / 10,
         (n) =>
           mutateShape(obj, (obj) => {
@@ -12680,7 +12680,7 @@ function positionFields(obj) {
       "div",
       { class: "field-grid" },
       ...["x", "y"].map((key, i) =>
-        boundsInput(obj, key, ["X (in)", "Y (in)"][i], b, size),
+        boundsInput(obj, key, ["水平位置(英寸)", "垂直位置(英寸)"][i], b, size),
       ),
     ),
   ];
@@ -12712,13 +12712,13 @@ function arrangeFields(obj, kind) {
       "div",
       { class: "arrange-buttons" },
       button(
-        "To front",
+        "置于顶层",
         "BringToFront",
         () => arrangeObject(obj, P.bringShapeToFront),
         "secondary",
       ),
       button(
-        "Forward",
+        "上移一层",
         "ArrowUp",
         () => arrangeObject(obj, P.bringShapeForward),
         "secondary",
@@ -12728,13 +12728,13 @@ function arrangeFields(obj, kind) {
       "div",
       { class: "arrange-buttons" },
       button(
-        "Backward",
+        "下移一层",
         "ArrowDown",
         () => arrangeObject(obj, P.sendShapeBackward),
         "secondary",
       ),
       button(
-        "To back",
+        "置于底层",
         "SendToBack",
         () => arrangeObject(obj, P.sendShapeToBack),
         "secondary",
@@ -12751,13 +12751,13 @@ function arrangeFields(obj, kind) {
         "div",
         { class: "arrange-buttons" },
         button(
-          "Flip horizontal",
+          "水平翻转",
           "FlipHorizontal2",
           () => flipObject(obj, "horizontal"),
           "secondary",
         ),
         button(
-          "Flip vertical",
+          "垂直翻转",
           "FlipVertical2",
           () => flipObject(obj, "vertical"),
           "secondary",
@@ -12767,7 +12767,7 @@ function arrangeFields(obj, kind) {
       el(
         "div",
         { class: "arrange-buttons" },
-        button("Ungroup", "Ungroup", ungroupSelection, "secondary"),
+        button("取消组合", "Ungroup", ungroupSelection, "secondary"),
       ),
   ].filter(Boolean);
 }
@@ -12783,20 +12783,21 @@ function pictureFields(obj) {
     brightness = P.getShapeImageBrightness(obj) ?? 0;
   } catch {}
   const signed = (n) => `${n > 0 ? "+" : ""}${n}%`;
+  const SIDES_CN = { left: "左侧", top: "顶部", right: "右侧", bottom: "底部" };
   return {
     imageFields: () => [
       el(
         "div",
         { class: "arrange-buttons" },
         button(
-          "Replace image",
+          "更改图片",
           "Replace",
           () => pickImage((file) => replaceImage(obj, file)),
           "secondary",
         ),
       ),
       field(
-        "Transparency (%)",
+        "透明度(%)",
         el(
           "div",
           { class: "range-field" },
@@ -12806,7 +12807,7 @@ function pictureFields(obj) {
             max: 100,
             step: 5,
             value: Math.round((1 - opacity) * 100),
-            "aria-label": "Transparency (%)",
+            "aria-label": "透明度(%)",
             oninput: (e) => {
               e.target.nextElementSibling.textContent = `${e.target.value}%`;
             },
@@ -12829,7 +12830,7 @@ function pictureFields(obj) {
     ],
     brightness: () =>
       field(
-        "Brightness (%)",
+        "亮度(%)",
         el(
           "div",
           { class: "range-field" },
@@ -12839,7 +12840,7 @@ function pictureFields(obj) {
             max: 100,
             step: 5,
             value: Math.round(brightness * 100),
-            "aria-label": "Brightness (%)",
+            "aria-label": "亮度(%)",
             oninput: (e) => {
               e.target.nextElementSibling.textContent = signed(
                 Number(e.target.value),
@@ -12873,7 +12874,7 @@ function pictureFields(obj) {
         { class: "field-grid" },
         ...["left", "top", "right", "bottom"].map((side) =>
           numInput(
-            `Crop ${side} (%)`,
+            `裁剪${SIDES_CN[side]}(%)`,
             Math.round((crop[side] || 0) * 100),
             (n) =>
               mutateShape(obj, (obj) => {
@@ -12903,7 +12904,7 @@ function pictureFields(obj) {
       ),
     altText: () => [
       field(
-        "Alternative text",
+        "可选文字",
         el("textarea", {
           class: "input",
           value: P.getShapeDescription(obj) || "",
@@ -12917,7 +12918,7 @@ function pictureFields(obj) {
       el(
         "p",
         { class: "helper" },
-        "Describe what the image communicates for people using screen readers.",
+        "为使用屏幕阅读器的用户描述此图片传达的信息。",
       ),
     ],
   };
@@ -12980,7 +12981,7 @@ function transitionFields() {
     select.prepend(el("option", { value: "other" }, "已导入"));
   select.value = current;
   return [
-    field("Transition", select),
+    field("切换", select),
     button(
       "全部应用",
       null,
@@ -12992,7 +12993,7 @@ function transitionFields() {
         ? {
             disabled: true,
             title:
-              "This slide's transition came with the file. Choose one of the transitions above to apply it to every slide.",
+              "此幻灯片的切换效果随文件一起提供。请从上方选择一种切换效果以应用到每张幻灯片。",
           }
         : {},
     ),
@@ -13726,11 +13727,11 @@ function showMatchCount() {
   count.textContent = !find.query
     ? ""
     : find.matches.length
-      ? `${find.at + 1} of ${find.matches.length}`
-      : "No matches";
+      ? `${find.at + 1} / ${find.matches.length}`
+      : "未找到匹配项";
   bar.classList.toggle("no-match", !!find.query && !find.matches.length);
   for (const node of bar.querySelectorAll(
-    ".find-action, [aria-label$=' match']",
+    ".find-action, [aria-label$='匹配项'], [aria-label$=' match']",
   ))
     node.disabled = !find.matches.length;
 }
@@ -13869,7 +13870,7 @@ function replaceMatch(all) {
     }
     if (!changed) {
       toast(
-        "That match runs across differently formatted text. Edit it in place instead.",
+        "该匹配项跨越了不同格式的文本。请直接就地编辑。",
       );
       return SKIP_MUTATION;
     }
@@ -14192,14 +14193,14 @@ function tableFields(obj) {
     cellFill = P.getTableCellFill(P.getTableCell(obj, row, col));
   } catch {}
   return [
-    el("h3", {}, "Table"),
+    el("h3", {}, "表格"),
     el(
       "p",
       { class: "helper" },
-      `${dims.rows} × ${dims.cols}. Row ${row + 1}, column ${col + 1} is current; rows and columns are added beside it. Double-click a cell to type in it.`,
+      `${dims.rows} × ${dims.cols}。当前为第 ${row + 1} 行，第 ${col + 1} 列；将在其旁边添加行和列。双击单元格可输入文字。`,
     ),
     colorInput(
-      "Cell fill",
+      "单元格填充",
       cellFill,
       (c) =>
         mutateShape(obj, (obj) => P.setTableCellFill(cellOf(obj), c), {
@@ -14208,7 +14209,7 @@ function tableFields(obj) {
       { empty: "无填充", fallback: THEMES[theme].accent },
     ),
     button(
-      "Remove cell fill",
+      "清除单元格填充",
       null,
       () =>
         mutateShape(obj, (obj) =>
@@ -14222,7 +14223,7 @@ function tableFields(obj) {
       "div",
       { class: "arrange-buttons" },
       button(
-        "Row above",
+        "在上方插入行",
         "ArrowUp",
         () =>
           tableAction((obj, row) => {
@@ -14232,7 +14233,7 @@ function tableFields(obj) {
         "secondary",
       ),
       button(
-        "Row below",
+        "在下方插入行",
         "ArrowDown",
         () => tableAction((obj, row) => P.insertTableRow(obj, row + 1)),
         "secondary",
@@ -14242,7 +14243,7 @@ function tableFields(obj) {
       "div",
       { class: "arrange-buttons" },
       button(
-        "Column left",
+        "在左侧插入列",
         "ArrowLeft",
         () =>
           tableAction((obj, row, col) => {
@@ -14252,7 +14253,7 @@ function tableFields(obj) {
         "secondary",
       ),
       button(
-        "Column right",
+        "在右侧插入列",
         "ArrowRight",
         () => tableAction((obj, row, col) => P.insertTableColumn(obj, col + 1)),
         "secondary",
@@ -14262,13 +14263,13 @@ function tableFields(obj) {
       "div",
       { class: "arrange-buttons" },
       button(
-        "Delete row",
+        "删除行",
         "Trash2",
         () =>
           tableAction((obj, row) => {
             if (P.getTableDimensions(obj).rows < 2) {
               toast(
-                "A table keeps at least one row. Delete the table instead.",
+                "表格至少保留一行。请改用删除表格。",
               );
               return SKIP_MUTATION;
             }
@@ -14278,13 +14279,13 @@ function tableFields(obj) {
         { disabled: dims.rows < 2 },
       ),
       button(
-        "Delete column",
+        "删除列",
         "Trash2",
         () =>
           tableAction((obj, row, col) => {
             if (P.getTableDimensions(obj).cols < 2) {
               toast(
-                "A table keeps at least one column. Delete the table instead.",
+                "表格至少保留一列。请改用删除表格。",
               );
               return SKIP_MUTATION;
             }
@@ -14294,8 +14295,8 @@ function tableFields(obj) {
         { disabled: dims.cols < 2 },
       ),
     ),
-    toggle("Header row", "firstRow"),
-    toggle("Banded rows", "bandRow"),
+    toggle("标题行", "firstRow"),
+    toggle("镶边行", "bandRow"),
   ];
 }
 async function tableDialog(place = null) {
@@ -15019,7 +15020,7 @@ async function pasteFromMenu() {
     }
   }
   if (clipboard) return pasteClipboard();
-  toast("Nothing to paste. Copy an object, an image, or text first.");
+  toast("没有可粘贴的内容。请先复制对象、图片或文本。");
 }
 // Pasted objects land where the originals were on another slide, and step
 // down and to the right with each further paste onto the same slide.
@@ -15381,10 +15382,10 @@ async function themeDialog() {
       el(
         "p",
         { class: "helper" },
-        "Applies this palette to slides created with our templates. Custom colors and imported artwork are preserved.",
+        "将此调色板应用于使用内置模板创建的幻灯片。自定义颜色和导入的插图将予以保留。",
       ),
     ),
-    confirm: "Apply theme",
+    confirm: "应用主题",
   });
   if (ok && doc === target)
     mutate(() => (recolorDeck(chosen) === false ? SKIP_MUTATION : undefined));
@@ -15465,10 +15466,10 @@ function slideBackground(target) {
   }
 }
 const BACKGROUND_LABELS = {
-  gradient: "Gradient",
-  pattern: "Pattern",
-  image: "Image",
-  inherit: "From layout",
+  gradient: "渐变",
+  pattern: "图案",
+  image: "图片",
+  inherit: "继承自版式",
 };
 // Ink drawn during a show stays on the slides only if the presenter says so.
 // `reading` plays the show in Reading View: inside the window, under its
@@ -15499,13 +15500,13 @@ async function present(options = {}) {
     all = selection.slidePartNames.map((name) => {
       const slide = byName.get(name.toLowerCase());
       if (!slide)
-        throw Error("A custom slide show references a missing slide.");
+        throw Error("自定义放映引用了缺失的幻灯片。");
       return slide;
     });
   } else {
     if (selection.kind === "range" && selection.end > slides.length)
       throw Error(
-        "The slide show range exceeds the presentation's slide count.",
+        "放映范围超出了演示文稿的总页数。",
       );
     all = (
       selection.kind === "range"
@@ -15516,8 +15517,8 @@ async function present(options = {}) {
   if (!all.length) {
     toast(
       selection.kind === "all"
-        ? "There are no visible slides to present."
-        : "The configured slide show has no slides to present.",
+        ? "没有可放映的可见幻灯片。"
+        : "配置的幻灯片放映中没有可放映的幻灯片。",
     );
     return;
   }
@@ -16088,7 +16089,7 @@ async function present(options = {}) {
         ?.focus();
   }
   const fullscreen = iconButton(
-    "Toggle fullscreen",
+    "切换全屏",
     "Maximize",
     async () => {
       status.textContent = "";
@@ -16100,8 +16101,8 @@ async function present(options = {}) {
       } catch {
         if (!d.isConnected) return;
         status.textContent = entering
-          ? "Fullscreen is unavailable in this window."
-          : "Could not exit fullscreen. Use Exit to close presentation mode.";
+          ? "在此窗口中全屏不可用。"
+          : "无法退出全屏。请使用“退出”按钮关闭放映模式。";
         stage.classList.add("has-status");
       }
     },
@@ -16145,7 +16146,7 @@ async function present(options = {}) {
     : el(
         "div",
         { class: "presenter-controls" },
-        button("Exit", "X", close),
+        button("退出", "X", close),
         previous,
         counter,
         next,
@@ -16949,8 +16950,8 @@ function dropPromise(transfer) {
   if (document.querySelector("dialog[open]")) return null;
   const file = [...transfer.items].find((item) => item.kind === "file");
   return view === "editor" && doc && file?.type.startsWith("image/")
-    ? "Drop to add the image to this slide"
-    : "Drop to open a presentation";
+    ? "松开以将图片添加到此幻灯片"
+    : "松开以打开演示文稿";
 }
 const dropOverlay = document.querySelector("#drop-overlay");
 let dropOverlayTimer;
@@ -17042,7 +17043,7 @@ window.addEventListener("online", () => {
 });
 window.addEventListener("offline", () => {
   if (!doc?.path || revision === savedRevision) return;
-  doc.saveError = { message: "You are offline.", offline: true };
+  doc.saveError = { message: "您处于离线状态。", offline: true };
   updateSaveStatus();
 });
 // Files on the drive handed to the app by the Puter desktop: the one it was
@@ -17060,8 +17061,8 @@ function openDriveItems(items) {
   if (!item) {
     toast(
       items.some(cloud.isDirItem)
-        ? "A folder can't be opened. Choose a PowerPoint (.pptx) file."
-        : "That item can't be opened. Choose a PowerPoint (.pptx) file.",
+        ? "无法打开文件夹。请选择 PowerPoint (.pptx) 文件。"
+        : "无法打开该项目。请选择 PowerPoint (.pptx) 文件。",
     );
     return;
   }

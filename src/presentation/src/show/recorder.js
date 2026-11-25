@@ -67,10 +67,10 @@ export function createRecordingStudio(ctx, session) {
       onclick: () => (state === "idle" ? start() : stop()),
     },
     el("span", { class: "show-studio-dot", "aria-hidden": "true" }),
-    el("span", { class: "label" }, "Record"),
+    el("span", { class: "label" }, "录制"),
   );
   const pauseButton = lineButton(
-    "Pause recording",
+    "暂停录制",
     "Pause",
     () => togglePause(),
     {
@@ -78,10 +78,10 @@ export function createRecordingStudio(ctx, session) {
       disabled: true,
     },
   );
-  const retakeButton = lineButton("Retake this slide", "RotateCcw", () =>
+  const retakeButton = lineButton("重新录制此幻灯片", "RotateCcw", () =>
     retake(),
   );
-  const clearButton = lineButton("Clear recordings", "Trash2", (e) =>
+  const clearButton = lineButton("清除录制内容", "Trash2", (e) =>
     openMenu({
       anchor: e.currentTarget,
       label: "清除录制",
@@ -97,14 +97,14 @@ export function createRecordingStudio(ctx, session) {
       ],
     }),
   );
-  const micButton = lineButton("Microphone", "Mic", () => toggle("micOn"), {
+  const micButton = lineButton("麦克风", "Mic", () => toggle("micOn"), {
     "aria-pressed": "true",
   });
-  const camButton = lineButton("Camera", "Video", () => toggle("cameraOn"), {
+  const camButton = lineButton("摄像头", "Video", () => toggle("cameraOn"), {
     "aria-pressed": "true",
   });
   const shapeButton = lineButton(
-    "Camera shape",
+    "摄像头形状",
     showPrefs.cameraShape === "rect" ? "Square" : "Circle",
     () => {
       showPrefs.cameraShape =
@@ -117,7 +117,7 @@ export function createRecordingStudio(ctx, session) {
       );
     },
   );
-  const devicesButton = lineButton("Camera and microphone", "Settings", (e) =>
+  const devicesButton = lineButton("摄像头和麦克风", "Settings", (e) =>
     devicesMenu(e.currentTarget),
   );
   const slideTime = el("span", { class: "show-studio-time", role: "timer" });
@@ -151,7 +151,7 @@ export function createRecordingStudio(ctx, session) {
   const side = el(
     "aside",
     { class: "show-studio-notes", "aria-label": "备注" },
-    el("h2", {}, "Notes"),
+    el("h2", {}, "备注"),
     notes,
   );
   stage.append(bar, side);
@@ -165,13 +165,13 @@ export function createRecordingStudio(ctx, session) {
     recordButton.querySelector(".label").textContent = live ? "停止" : "录制";
     recordButton.setAttribute(
       "aria-label",
-      live ? "Stop recording" : "Start recording",
+      live ? "停止录制" : "开始录制",
     );
     pauseButton.disabled = !live;
     pauseButton.setAttribute("aria-pressed", String(state === "paused"));
     pauseButton.setAttribute(
       "aria-label",
-      state === "paused" ? "Resume recording" : "Pause recording",
+      state === "paused" ? "继续录制" : "暂停录制",
     );
     pauseButton.replaceChildren(
       lineIcon(state === "paused" ? "Play" : "Pause"),
@@ -242,7 +242,7 @@ export function createRecordingStudio(ctx, session) {
   }
   async function toggle(which) {
     if (state !== "idle") {
-      say("Stop recording to change the camera or microphone.");
+      say("请先停止录制以更改摄像头或麦克风。");
       return;
     }
     showPrefs[which] = !showPrefs[which];
@@ -259,17 +259,17 @@ export function createRecordingStudio(ctx, session) {
     const pick = (key, id) => async () => {
       showPrefs[key] = id;
       if (state === "idle") await acquire();
-      else say("The new choice applies after this recording.");
+      else say("新的选择将在本次录制结束后生效。");
     };
     openMenu({
       anchor,
       label: "摄像头和麦克风",
       minWidth: 240,
       items: [
-        { header: "Camera" },
+        { header: "摄像头" },
         ...(cams.length
           ? cams.map((d, i) => ({
-              label: d.label || `Camera ${i + 1}`,
+              label: d.label || `摄像头 ${i + 1}`,
               checked: showPrefs.cameraId
                 ? showPrefs.cameraId === d.deviceId
                 : i === 0,
@@ -277,10 +277,10 @@ export function createRecordingStudio(ctx, session) {
             }))
           : [{ label: "未找到摄像头", disabled: true }]),
         { separator: true },
-        { header: "Microphone" },
+        { header: "麦克风" },
         ...(mics.length
           ? mics.map((d, i) => ({
-              label: d.label || `Microphone ${i + 1}`,
+              label: d.label || `麦克风 ${i + 1}`,
               checked: showPrefs.micId
                 ? showPrefs.micId === d.deviceId
                 : i === 0,

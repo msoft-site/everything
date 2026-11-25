@@ -355,7 +355,7 @@ export function createTransitionTools({
           advanceAfterMs: seconds == null ? null : Math.round(seconds * 1000),
         }),
       transitionSoundMenu: () => soundMenu(),
-      transitionSoundLabel: () => `Sound: ${soundLabel()}`,
+      transitionSoundLabel: () => `声音: ${soundLabel()}`,
     };
   }
 
@@ -410,8 +410,8 @@ export function createTransitionTools({
       const label = row.querySelector(".slide-number");
       (label || row).after(mark);
     }
-    const name = transitionEntry(current(target))?.label || "A transition";
-    const text = `Slide ${number} has ${name === "None" ? "a sound" : `the ${name} transition`}. Play it.`;
+    const name = transitionEntry(current(target))?.label || "切换效果";
+    const text = `幻灯片 ${number} 包含${name === "无" ? "声音" : `“${name}”切换效果`}。点击播放。`;
     mark.setAttribute("aria-label", text);
     mark.title = text;
     row.__transitionSlide = () =>

@@ -355,7 +355,7 @@ export const TRANSITIONS = [
     description: "上一张幻灯片向后倒下，展示当前幻灯片。",
     write: { effect: "fallOver" },
     matches: is("fallOver"),
-    options: inverted("Left", "Right"),
+    options: inverted("从左侧", "从右侧"),
     duration: 2000,
   },
   {
@@ -365,7 +365,7 @@ export const TRANSITIONS = [
     description: "当前幻灯片如织物般垂落覆盖在上一张幻灯片上。",
     write: { effect: "drape" },
     matches: is("drape"),
-    options: inverted("Left", "Right"),
+    options: inverted("从左侧", "从右侧"),
     duration: 2000,
   },
   {
@@ -422,7 +422,7 @@ export const TRANSITIONS = [
     description: "上一张幻灯片从一角被剥离卷起。",
     write: { effect: "peelOff" },
     matches: is("peelOff"),
-    options: inverted("Left", "Right"),
+    options: inverted("从左侧", "从右侧"),
     duration: 2000,
   },
   {
@@ -563,14 +563,14 @@ export const TRANSITIONS = [
     write: { effect: "glitter" },
     matches: is("glitter"),
     options: [
-      ["diamond", "Diamonds"],
-      ["hexagon", "Hexagons"],
+      ["diamond", "菱形"],
+      ["hexagon", "六边形"],
     ].flatMap(([pattern, name]) =>
       [
-        ["r", "From Left"],
-        ["d", "From Top"],
-        ["l", "From Right"],
-        ["u", "From Bottom"],
+        ["r", "从左侧"],
+        ["d", "从顶部"],
+        ["l", "从右侧"],
+        ["u", "从底部"],
       ].map(([direction, where]) => ({
         id: `${pattern}-${direction}`,
         label: `${name} ${where}`,

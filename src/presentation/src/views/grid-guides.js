@@ -92,14 +92,14 @@ export function createGridGuides(ctx) {
     const offset = guide.pos - center;
     const side = horizontal
       ? offset < 0
-        ? "above"
-        : "below"
+        ? "上方"
+        : "下方"
       : offset < 0
-        ? "left of"
-        : "right of";
+        ? "左侧"
+        : "右侧";
     return Math.abs(offset) < 1
-      ? `${horizontal ? "Horizontal" : "Vertical"} guide at the center`
-      : `${horizontal ? "Horizontal" : "Vertical"} guide, ${formatLength(Math.abs(offset))} ${side} center`;
+      ? `${horizontal ? "水平" : "垂直"}参考线位于中心`
+      : `${horizontal ? "水平" : "垂直"}参考线，中心${side} ${formatLength(Math.abs(offset))}`;
   }
   function guideLine(guide, i, size) {
     const horizontal = guide.orient === "horz";
@@ -157,7 +157,7 @@ export function createGridGuides(ctx) {
       moving.classList.toggle("removing", off);
       const center = length / 2;
       tip.textContent = off
-        ? "Remove"
+        ? "删除"
         : formatLength(Math.abs(pos - center)).replace(/^0\.00.*/, "0");
       tip.style.left = `${ev.clientX - rect.left + 12}px`;
       tip.style.top = `${ev.clientY - rect.top + 12}px`;
@@ -320,7 +320,7 @@ export function createGridGuides(ctx) {
       max: cm ? "5.08" : "2",
       step: "0.01",
       value: String(Math.round((spacingNow / unit) * 1000) / 1000),
-      "aria-label": `Custom spacing in ${cm ? "centimetres" : "inches"}`,
+      "aria-label": `自定义间距(${cm ? "厘米" : "英寸"})`,
     });
     const known = SPACINGS.some(([v]) => Math.abs(v - spacingNow) < 1);
     if (!known) select.value = "custom";
@@ -361,7 +361,7 @@ export function createGridGuides(ctx) {
           "div",
           { class: "grid-spacing" },
           el("label", {}, "间距", select),
-          el("label", {}, cm ? "cm" : "inches", custom),
+          el("label", {}, cm ? "厘米" : "英寸", custom),
         ),
         check(showGrid, "在幻灯片上显示网格"),
       ),
@@ -448,7 +448,7 @@ export function createGridGuides(ctx) {
       },
       { separator: true },
       {
-        label: "Grid Options…",
+        label: "网格选项…",
         icon: "o:gridlines",
         onSelect: () => gridDialog().catch(ctx.fail),
       },

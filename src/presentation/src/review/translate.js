@@ -6,37 +6,37 @@ import { el, icon, toast } from "../ui.js";
 import { aiAvailable, askJson } from "./ai.js";
 
 export const TRANSLATE_LANGUAGES = [
-  ["ar-SA", "Arabic"],
-  ["zh-CN", "Chinese (Simplified)"],
-  ["zh-TW", "Chinese (Traditional)"],
-  ["cs-CZ", "Czech"],
-  ["da-DK", "Danish"],
-  ["nl-NL", "Dutch"],
-  ["en-US", "English"],
-  ["fi-FI", "Finnish"],
-  ["fr-FR", "French"],
-  ["de-DE", "German"],
-  ["el-GR", "Greek"],
-  ["he-IL", "Hebrew"],
-  ["hi-IN", "Hindi"],
-  ["hu-HU", "Hungarian"],
-  ["id-ID", "Indonesian"],
-  ["it-IT", "Italian"],
-  ["ja-JP", "Japanese"],
-  ["ko-KR", "Korean"],
-  ["nb-NO", "Norwegian"],
-  ["fa-IR", "Persian"],
-  ["pl-PL", "Polish"],
-  ["pt-BR", "Portuguese (Brazil)"],
-  ["pt-PT", "Portuguese (Portugal)"],
-  ["ro-RO", "Romanian"],
-  ["ru-RU", "Russian"],
-  ["es-ES", "Spanish"],
-  ["sv-SE", "Swedish"],
-  ["th-TH", "Thai"],
-  ["tr-TR", "Turkish"],
-  ["uk-UA", "Ukrainian"],
-  ["vi-VN", "Vietnamese"],
+  ["ar-SA", "阿拉伯语"],
+  ["zh-CN", "中文(简体)"],
+  ["zh-TW", "中文(繁体)"],
+  ["cs-CZ", "捷克语"],
+  ["da-DK", "丹麦语"],
+  ["nl-NL", "荷兰语"],
+  ["en-US", "英语"],
+  ["fi-FI", "芬兰语"],
+  ["fr-FR", "法语"],
+  ["de-DE", "德语"],
+  ["el-GR", "希腊语"],
+  ["he-IL", "希伯来语"],
+  ["hi-IN", "印地语"],
+  ["hu-HU", "匈牙利语"],
+  ["id-ID", "印度尼西亚语"],
+  ["it-IT", "意大利语"],
+  ["ja-JP", "日语"],
+  ["ko-KR", "韩语"],
+  ["nb-NO", "挪威语"],
+  ["fa-IR", "波斯语"],
+  ["pl-PL", "波兰语"],
+  ["pt-BR", "葡萄牙语(巴西)"],
+  ["pt-PT", "葡萄牙语(葡萄牙)"],
+  ["ro-RO", "罗马尼亚语"],
+  ["ru-RU", "俄语"],
+  ["es-ES", "西班牙语"],
+  ["sv-SE", "瑞典语"],
+  ["th-TH", "泰语"],
+  ["tr-TR", "土耳其语"],
+  ["uk-UA", "乌克兰语"],
+  ["vi-VN", "越南语"],
 ];
 const PREF = "presentation:translate-to";
 
@@ -73,14 +73,14 @@ export function createTranslate(env, host) {
     if (!items.length) {
       state.error =
         state.scope === "slide"
-          ? "This slide has no text to translate."
-          : "Select some text, or an object with text, to translate.";
+          ? "此幻灯片没有要翻译的文本。"
+          : "请选择要翻译的文本或包含文本的对象。";
       host.refresh("translate");
       return;
     }
     if (!aiAvailable()) {
       state.error =
-        "Translation needs Puter's AI, which is not available here.";
+        "翻译功能需要 AI 服务，当前不可用。";
       host.refresh("translate");
       return;
     }
@@ -100,12 +100,12 @@ export function createTranslate(env, host) {
         list.length !== items.length ||
         list.some((t) => typeof t !== "string")
       )
-        throw new Error("The translation came back incomplete. Try again.");
+        throw new Error("翻译返回不完整。请重试。");
       state.result = list;
       state.detected = typeof data.detected === "string" ? data.detected : "";
     } catch (e) {
       if (request !== state.request) return;
-      state.error = e.message || "The translation failed.";
+      state.error = e.message || "翻译失败。";
     }
     state.loading = false;
     host.refresh("translate");
@@ -118,15 +118,15 @@ export function createTranslate(env, host) {
       state.items.map((item, i) => ({ ...item, text: state.result[i] })),
       to,
     );
-    if (ok) toast("Translation inserted.");
+    if (ok) toast("已插入翻译。");
   }
   async function copy() {
     if (!state.result) return;
     try {
       await navigator.clipboard.writeText(state.result.join("\n\n"));
-      toast("Translation copied.");
+      toast("已复制翻译。");
     } catch {
-      toast("The translation could not be copied.");
+      toast("无法复制翻译。");
     }
   }
 
@@ -233,12 +233,12 @@ export function createTranslate(env, host) {
           el(
             "button",
             { type: "button", class: "btn secondary small", onclick: copy },
-            "Copy",
+            "复制",
           ),
           el(
             "button",
             { type: "button", class: "btn primary small", onclick: insert },
-            "Insert",
+            "插入",
           ),
         ),
       );

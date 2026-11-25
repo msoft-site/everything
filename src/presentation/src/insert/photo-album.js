@@ -48,12 +48,12 @@ export function createPhotoAlbum(ctx) {
     const preview = el(
       "div",
       { class: "album-preview" },
-      el("p", {}, "Add pictures to begin."),
+      el("p", {}, "添加图片以开始。"),
     );
     const status = el("p", { class: "album-status", role: "status" });
     const albumTitle = el("input", {
       class: "input",
-      value: "Photo Album",
+      value: "相册",
       maxlength: 120,
       "aria-label": "相册标题",
     });
@@ -72,12 +72,12 @@ export function createPhotoAlbum(ctx) {
       selected = Math.min(selected, items.length - 1);
       render();
     };
-    const up = iconButton("Move up", "ArrowUp", () => move(-1));
-    const down = iconButton("Move down", "ArrowDown", () => move(1));
+    const up = iconButton("上移", "ArrowUp", () => move(-1));
+    const down = iconButton("下移", "ArrowDown", () => move(1));
     const removeButton = el(
       "button",
       { type: "button", class: "btn secondary", onclick: remove },
-      "Remove",
+      "删除",
     );
     function render() {
       list.replaceChildren(
@@ -119,7 +119,7 @@ export function createPhotoAlbum(ctx) {
             el("input", {
               class: "input album-caption",
               value: item.caption,
-              "aria-label": `Caption for picture ${i + 1}`,
+              "aria-label": `第 ${i + 1} 张图片的标题`,
               // Typing a caption chooses its picture, keeping the field.
               onclick: (e) => e.stopPropagation(),
               onfocus: () => choose(i),
@@ -147,12 +147,12 @@ export function createPhotoAlbum(ctx) {
       const item = items[selected] ?? items[0];
       preview.replaceChildren(
         item
-          ? el("img", { src: item.url, alt: `Preview of ${item.caption}` })
-          : el("p", {}, "Add pictures to begin."),
+          ? el("img", { src: item.url, alt: `预览：${item.caption}` })
+          : el("p", {}, "添加图片以开始。"),
       );
       const perSlide = ALBUM_LAYOUTS.find(([id]) => id === layout)[2];
       status.textContent = items.length
-        ? `${items.length} picture${items.length === 1 ? "" : "s"} on ${Math.ceil(items.length / perSlide)} slide${Math.ceil(items.length / perSlide) === 1 ? "" : "s"}.`
+        ? `在 ${Math.ceil(items.length / perSlide)} 张幻灯片上放置 ${items.length} 张图片。`
         : "";
     }
     const add = el(
@@ -175,7 +175,7 @@ export function createPhotoAlbum(ctx) {
         },
       },
       icon("Plus", 16),
-      el("span", {}, "Add Pictures…"),
+      el("span", {}, "添加图片…"),
     );
     const layoutSelect = el(
       "select",
@@ -214,21 +214,21 @@ export function createPhotoAlbum(ctx) {
           "section",
           { class: "album-side", "aria-label": "预览与选项" },
           preview,
-          fieldRow("Album title", albumTitle),
+          fieldRow("相册标题", albumTitle),
           checkbox(
-            "Start with a title slide",
+            "以标题幻灯片开始",
             titleSlide,
             (on) => (titleSlide = on),
           ),
-          fieldRow("Picture layout", layoutSelect),
-          fieldRow("Frame shape", frameSelect),
+          fieldRow("图片版式", layoutSelect),
+          fieldRow("相框形状", frameSelect),
           checkbox(
-            "Captions below pictures",
+            "所有图片下方显示标题",
             captions,
             (on) => (captions = on),
           ),
           checkbox(
-            "All pictures black and white",
+            "所有图片以黑白显示",
             blackAndWhite,
             (on) => (blackAndWhite = on),
           ),
@@ -271,10 +271,10 @@ export function createPhotoAlbum(ctx) {
     }
     if (!pictures.length) throw skipped[0].error;
     if (skipped.length === 1)
-      toast(`“${skipped[0].name}” was left out. ${skipped[0].error.message}`);
+      toast(`已跳过“${skipped[0].name}”：${skipped[0].error.message}`);
     else if (skipped.length)
       toast(
-        `${skipped.length} pictures were left out: ${skipped.map((s) => `“${s.name}”`).join(", ")}. Each must be a PNG or JPEG smaller than 12 MB.`,
+        `${skipped.length} 张图片被跳过：${skipped.map((s) => `“${s.name}”`).join("、")}。图片必须是小于 12 MB 的 PNG 或 JPEG。`,
       );
     const size = ctx.currentSize();
     const [, , perSlide, titled] = ALBUM_LAYOUTS.find(([id]) => id === layout);
@@ -288,7 +288,7 @@ export function createPhotoAlbum(ctx) {
         const inch = 914400;
         textBox(
           s,
-          albumTitle.value.trim() || "Photo Album",
+          albumTitle.value.trim() || "相册",
           1,
           size.cy / inch / 2 - 0.9,
           size.cx / inch - 2,
@@ -306,7 +306,7 @@ export function createPhotoAlbum(ctx) {
         if (titled)
           textBox(
             s,
-            albumTitle.value.trim() || "Photo Album",
+            albumTitle.value.trim() || "相册",
             0.6,
             0.35,
             size.cx / inch - 1.2,

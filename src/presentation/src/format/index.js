@@ -684,7 +684,7 @@ export function createFormatTools(ctx) {
     for (const contrast of BRIGHTNESS_CONTRAST)
       for (const bright of BRIGHTNESS_CONTRAST)
         grid.push({
-          label: `Brightness: ${bright > 0 ? "+" : ""}${bright}% Contrast: ${contrast > 0 ? "+" : ""}${contrast}%`,
+          label: `亮度: ${bright > 0 ? "+" : ""}${bright}% 对比度: ${contrast > 0 ? "+" : ""}${contrast}%`,
           render: () =>
             previewTile({
               filter: `brightness(${1 + bright / 100}) contrast(${1 + contrast / 100})`,
@@ -696,11 +696,11 @@ export function createFormatTools(ctx) {
             }),
         });
     return [
-      { header: "Sharpen/Soften" },
+      { header: "清晰/柔化" },
       {
         custom: galleryGrid(cells, { label: "清晰和柔化", columns: 5 }),
       },
-      { header: "Brightness/Contrast" },
+      { header: "亮度/对比度" },
       {
         custom: galleryGrid(grid, {
           label: "亮度和对比度",
@@ -709,7 +709,7 @@ export function createFormatTools(ctx) {
       },
       { separator: true },
       {
-        label: "Picture Corrections Options…",
+        label: "图片更正选项…",
         icon: "o:formatPane",
         onSelect: () => openPaneSection("corrections"),
       },
@@ -726,11 +726,11 @@ export function createFormatTools(ctx) {
   function colorMenuForPicture() {
     const th = theme();
     return [
-      { header: "Color Saturation" },
+      { header: "颜色饱和度" },
       {
         custom: galleryGrid(
           SATURATION_PRESETS.map((n) => ({
-            label: `Saturation: ${n}%`,
+            label: `饱和度: ${n}%`,
             render: () => previewTile({ filter: `saturate(${n / 100})` }),
             onSelect: () =>
               eachPicture("Saturation", (s) =>
@@ -740,11 +740,11 @@ export function createFormatTools(ctx) {
           { label: "饱和度", columns: 9 },
         ),
       },
-      { header: "Color Tone" },
+      { header: "色调" },
       {
         custom: galleryGrid(
           TEMPERATURE_PRESETS.map((k) => ({
-            label: `Temperature: ${k} K`,
+            label: `色温: ${k} K`,
             render: () =>
               previewTile({
                 filter: `sepia(${Math.max(0, (k - 6500) / 9000)}) hue-rotate(${k < 6500 ? (6500 - k) / 30 : 0}deg)`,
@@ -757,7 +757,7 @@ export function createFormatTools(ctx) {
           { label: "色调", columns: 9 },
         ),
       },
-      { header: "Recolor" },
+      { header: "重新着色" },
       {
         custom: galleryGrid(
           recolorPresets(th).map(([label, recolor]) => ({
@@ -789,7 +789,7 @@ export function createFormatTools(ctx) {
       },
       { separator: true },
       {
-        label: "Picture Color Options…",
+        label: "图片颜色选项…",
         icon: "o:formatPane",
         onSelect: () => openPaneSection("pictureColor"),
       },
@@ -828,7 +828,7 @@ export function createFormatTools(ctx) {
       },
       { separator: true },
       {
-        label: "Artistic Effects Options…",
+        label: "艺术效果选项…",
         icon: "o:formatPane",
         onSelect: () => openPaneSection("artistic"),
       },
@@ -995,8 +995,8 @@ export function createFormatTools(ctx) {
     });
     ctx.toast(
       count
-        ? `Replaced ${result.from} with ${result.to} in ${count} place${count === 1 ? "" : "s"}.`
-        : `${result.from} isn't used on any slide.`,
+        ? `已在 ${count} 处将 ${result.from} 替换为 ${result.to}。`
+        : `未在任何幻灯片中使用 ${result.from}。`,
     );
   }
 
@@ -1210,7 +1210,7 @@ export function createFormatTools(ctx) {
           ...effectsMenuItems(effectsCtx(), { only }),
           { separator: true },
           {
-            label: "Effect Options…",
+            label: "效果选项…",
             icon: "o:formatPane",
             onSelect: () => openPaneSection("shadow"),
           },

@@ -315,7 +315,7 @@ export function charClass(ch) {
 // The symbol palette of the equation dialog, grouped as it is shown.
 export const SYMBOL_PALETTE = [
   [
-    "Basic Math",
+    "基础数学",
     [
       "pm",
       "mp",
@@ -343,9 +343,9 @@ export const SYMBOL_PALETTE = [
       "because",
     ],
   ],
-  ["Greek Letters", Object.keys(GREEK)],
+  ["希腊字母", Object.keys(GREEK)],
   [
-    "Sets and Logic",
+    "集合与逻辑",
     [
       "in",
       "notin",
@@ -371,7 +371,7 @@ export const SYMBOL_PALETTE = [
     ],
   ],
   [
-    "Arrows",
+    "箭头",
     [
       "to",
       "leftarrow",
@@ -390,7 +390,7 @@ export const SYMBOL_PALETTE = [
     ],
   ],
   [
-    "Operators",
+    "运算符",
     [
       "oplus",
       "ominus",

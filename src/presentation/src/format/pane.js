@@ -1271,7 +1271,7 @@ function effectSections(ctx, obj, edit, theme, extra = {}) {
     const ws = (patch, key) => write({ shadow: { ...s, ...patch } }, key);
     shadowBody.push(
       segmentedField(
-        "Shadow placement",
+        "阴影位置",
         s.type,
         [
           ["outer", "外阴影"],

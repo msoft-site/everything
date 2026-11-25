@@ -495,10 +495,10 @@ export function createSmartArtFormat({
             {
               type: "large",
               id: "smartart-change-shape",
-              label: "Change\nShape",
+              label: "更改\n形状",
               icon: "editShape",
               title: "更改形状",
-              description: `Draw the chosen shape of the graphic as another shape. ${hint}`,
+              description: `将所选图形的形状更改为其他形状。${hint}`,
               enabled: () => on() && picked().shape.geom !== "custom",
               menu: () => {
                 const target = picked();
@@ -518,7 +518,7 @@ export function createSmartArtFormat({
                   label: "放大",
                   icon: "shapeLarger",
                   title: "放大",
-                  description: "Make the shape a step larger.",
+                  description: "将形状放大一级。",
                   enabled: on,
                   run: () => scaleBy(SCALE_STEP),
                 },
@@ -528,7 +528,7 @@ export function createSmartArtFormat({
                   label: "缩小",
                   icon: "shapeSmaller",
                   title: "缩小",
-                  description: "Make the shape a step smaller.",
+                  description: "将形状缩小一级。",
                   enabled: on,
                   run: () => scaleBy(1 / SCALE_STEP),
                 },
@@ -538,7 +538,7 @@ export function createSmartArtFormat({
                   label: "选择形状",
                   icon: "select",
                   title: "选择形状",
-                  description: "Choose one shape of the graphic to format.",
+                  description: "选择图形中的一个形状以设置格式。",
                   enabled: () => visible() && !h.readOnly(),
                   menu: () => selectShapeMenu(),
                 },
@@ -547,11 +547,11 @@ export function createSmartArtFormat({
             {
               type: "large",
               id: "smartart-reset-shape",
-              label: "Reset\nShape",
+              label: "重置\n形状",
               icon: "resetGraphic",
               title: "重置形状",
               description:
-                "Remove this shape's own formatting and its text style.",
+                "删除此形状自身的格式设置及其文本样式。",
               enabled: on,
               run: () => {
                 const target = picked();

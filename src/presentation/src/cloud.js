@@ -35,7 +35,7 @@ export async function signIn() {
       });
     if (error?.error === "popup_blocked")
       throw new Error(
-        "浏览器拦截了 Puter 登录窗口。请允许此站点的弹出窗口后重试。",
+        "浏览器拦截了 Puter 登录窗口。请允许此站点的弹出窗口后重试。(Allow pop-ups for this site)",
         { cause: error },
       );
     if (error instanceof Error) throw error;

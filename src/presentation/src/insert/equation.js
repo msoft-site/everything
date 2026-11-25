@@ -12,146 +12,146 @@ const P_ = PLACEHOLDER;
 // Structures, by group: [label, source]. ⬚ marks a slot to fill in.
 export const STRUCTURES = [
   [
-    "Fraction",
+    "分式",
     [
-      ["Stacked fraction", `\\frac{${P_}}{${P_}}`],
-      ["Small fraction", `\\tfrac{${P_}}{${P_}}`],
-      ["Linear fraction", `${P_}/${P_}`],
-      ["dy over dx", "\\frac{dy}{dx}"],
-      ["Partial derivative", `\\frac{\\partial ${P_}}{\\partial ${P_}}`],
+      ["竖式分数", `\\frac{${P_}}{${P_}}`],
+      ["小分数", `\\tfrac{${P_}}{${P_}}`],
+      ["横式分数", `${P_}/${P_}`],
+      ["dy/dx", "\\frac{dy}{dx}"],
+      ["偏导数", `\\frac{\\partial ${P_}}{\\partial ${P_}}`],
     ],
   ],
   [
-    "Script",
+    "上下标",
     [
-      ["Superscript", `${P_}^{${P_}}`],
-      ["Subscript", `${P_}_{${P_}}`],
-      ["Subscript and superscript", `${P_}_{${P_}}^{${P_}}`],
-      ["x squared", "x^2"],
-      ["e to the minus i omega t", "e^{-i\\omega t}"],
+      ["上标", `${P_}^{${P_}}`],
+      ["下标", `${P_}_{${P_}}`],
+      ["带下标和上标", `${P_}_{${P_}}^{${P_}}`],
+      ["x 平方", "x^2"],
+      ["e^{-iωt}", "e^{-i\\omega t}"],
     ],
   ],
   [
-    "Radical",
+    "根式",
     [
-      ["Square root", `\\sqrt{${P_}}`],
-      ["Root with degree", `\\sqrt[${P_}]{${P_}}`],
-      ["Cube root", `\\sqrt[3]{${P_}}`],
-      ["Distance", "\\sqrt{a^2+b^2}"],
+      ["平方根", `\\sqrt{${P_}}`],
+      ["带根指数的根式", `\\sqrt[${P_}]{${P_}}`],
+      ["立方根", `\\sqrt[3]{${P_}}`],
+      ["二次根式公式", "\\sqrt{a^2+b^2}"],
     ],
   ],
   [
-    "Integral",
+    "积分",
     [
-      ["Integral", `\\int ${P_}\\,d${P_}`],
-      ["Definite integral", `\\int_{${P_}}^{${P_}} ${P_}\\,d${P_}`],
-      ["Double integral", `\\iint ${P_}\\,dA`],
-      ["Triple integral", `\\iiint ${P_}\\,dV`],
-      ["Contour integral", `\\oint ${P_}\\,d${P_}`],
+      ["积分", `\\int ${P_}\\,d${P_}`],
+      ["定积分", `\\int_{${P_}}^{${P_}} ${P_}\\,d${P_}`],
+      ["二重积分", `\\iint ${P_}\\,dA`],
+      ["三重积分", `\\iiint ${P_}\\,dV`],
+      ["曲线积分", `\\oint ${P_}\\,d${P_}`],
     ],
   ],
   [
-    "Large Operator",
+    "大型运算符",
     [
-      ["Summation", `\\sum_{${P_}}^{${P_}} ${P_}`],
-      ["Product", `\\prod_{${P_}}^{${P_}} ${P_}`],
-      ["Union", `\\bigcup_{${P_}} ${P_}`],
-      ["Intersection", `\\bigcap_{${P_}} ${P_}`],
-      ["Sum over k", "\\sum_{k=0}^{n} a_k"],
+      ["求和", `\\sum_{${P_}}^{${P_}} ${P_}`],
+      ["乘积", `\\prod_{${P_}}^{${P_}} ${P_}`],
+      ["并集", `\\bigcup_{${P_}} ${P_}`],
+      ["交集", `\\bigcap_{${P_}} ${P_}`],
+      ["k 项求和", "\\sum_{k=0}^{n} a_k"],
     ],
   ],
   [
-    "Bracket",
+    "括号",
     [
-      ["Parentheses", `\\left(${P_}\\right)`],
-      ["Square brackets", `\\left[${P_}\\right]`],
-      ["Braces", `\\left\\{${P_}\\right\\}`],
-      ["Absolute value", `\\left|${P_}\\right|`],
-      ["Norm", `\\left\\|${P_}\\right\\|`],
-      ["Angle brackets", `\\left\\langle ${P_}\\right\\rangle`],
-      ["Floor", `\\left\\lfloor ${P_}\\right\\rfloor`],
-      ["Ceiling", `\\left\\lceil ${P_}\\right\\rceil`],
-      ["Cases", `\\begin{cases} ${P_} & ${P_} \\\\ ${P_} & ${P_} \\end{cases}`],
-      ["Binomial", `\\binom{${P_}}{${P_}}`],
+      ["圆括号", `\\left(${P_}\\right)`],
+      ["方括号", `\\left[${P_}\\right]`],
+      ["大括号", `\\left\\{${P_}\\right\\}`],
+      ["绝对值", `\\left|${P_}\\right|`],
+      ["范数", `\\left\\|${P_}\\right\\|`],
+      ["尖括号", `\\left\\langle ${P_}\\right\\rangle`],
+      ["向下取整", `\\left\\lfloor ${P_}\\right\\rfloor`],
+      ["向上取整", `\\left\\lceil ${P_}\\right\\rceil`],
+      ["条件分支", `\\begin{cases} ${P_} & ${P_} \\\\ ${P_} & ${P_} \\end{cases}`],
+      ["二项式", `\\binom{${P_}}{${P_}}`],
     ],
   ],
   [
-    "Function",
+    "函数",
     [
-      ["Sine", `\\sin ${P_}`],
-      ["Cosine", `\\cos ${P_}`],
-      ["Tangent", `\\tan ${P_}`],
-      ["Natural log", `\\ln ${P_}`],
-      ["Logarithm base", `\\log_{${P_}} ${P_}`],
-      ["Exponential", `\\exp ${P_}`],
-      ["Inverse sine", `\\arcsin ${P_}`],
-      ["Hyperbolic sine", `\\sinh ${P_}`],
+      ["正弦", `\\sin ${P_}`],
+      ["余弦", `\\cos ${P_}`],
+      ["正切", `\\tan ${P_}`],
+      ["自然对数", `\\ln ${P_}`],
+      ["带底对数", `\\log_{${P_}} ${P_}`],
+      ["指数函数", `\\exp ${P_}`],
+      ["反正弦", `\\arcsin ${P_}`],
+      ["双曲正弦", `\\sinh ${P_}`],
     ],
   ],
   [
-    "Accent",
+    "重音符",
     [
-      ["Hat", `\\hat{${P_}}`],
-      ["Bar", `\\bar{${P_}}`],
-      ["Vector", `\\vec{${P_}}`],
-      ["Dot", `\\dot{${P_}}`],
-      ["Double dot", `\\ddot{${P_}}`],
-      ["Tilde", `\\tilde{${P_}}`],
-      ["Overline", `\\overline{${P_}}`],
-      ["Underline", `\\underline{${P_}}`],
-      ["Arrow over", `\\overrightarrow{${P_}}`],
-      ["Overbrace", `\\overbrace{${P_}}`],
-      ["Underbrace", `\\underbrace{${P_}}`],
+      ["帽子", `\\hat{${P_}}`],
+      ["横线", `\\bar{${P_}}`],
+      ["向量", `\\vec{${P_}}`],
+      ["一点", `\\dot{${P_}}`],
+      ["两点", `\\ddot{${P_}}`],
+      ["波浪号", `\\tilde{${P_}}`],
+      ["上划线", `\\overline{${P_}}`],
+      ["下划线", `\\underline{${P_}}`],
+      ["上方箭头", `\\overrightarrow{${P_}}`],
+      ["上花括号", `\\overbrace{${P_}}`],
+      ["下花括号", `\\underbrace{${P_}}`],
     ],
   ],
   [
-    "Limit and Log",
+    "极限和对数",
     [
-      ["Limit", `\\lim_{${P_}\\to ${P_}} ${P_}`],
-      ["Limit to infinity", `\\lim_{n\\to\\infty} ${P_}`],
-      ["Maximum", `\\max_{${P_}} ${P_}`],
-      ["Minimum", `\\min_{${P_}} ${P_}`],
-      ["Log", `\\log ${P_}`],
+      ["极限", `\\lim_{${P_}\\to ${P_}} ${P_}`],
+      ["趋于无穷大极限", `\\lim_{n\\to\\infty} ${P_}`],
+      ["最大值", `\\max_{${P_}} ${P_}`],
+      ["最小值", `\\min_{${P_}} ${P_}`],
+      ["对数", `\\log ${P_}`],
     ],
   ],
   [
-    "Operator",
+    "运算符",
     [
-      ["Defined as", "\\coloneqq"],
-      ["Equals by definition", "\\triangleq"],
-      ["Over arrow", `\\overset{${P_}}{\\rightarrow}`],
-      ["Under arrow", `\\underset{${P_}}{\\rightarrow}`],
-      ["Delta equals", "\\overset{\\Delta}{=}"],
+      ["定义为", "\\coloneqq"],
+      ["按定义等于", "\\triangleq"],
+      ["箭头上方标注", `\\overset{${P_}}{\\rightarrow}`],
+      ["箭头下方标注", `\\underset{${P_}}{\\rightarrow}`],
+      ["Delta 等于", "\\overset{\\Delta}{=}"],
     ],
   ],
   [
-    "Matrix",
+    "矩阵",
     [
       [
-        "2 × 2 matrix",
+        "2 × 2 矩阵",
         `\\begin{matrix} ${P_} & ${P_} \\\\ ${P_} & ${P_} \\end{matrix}`,
       ],
       [
-        "2 × 2 in parentheses",
+        "2 × 2 圆括号矩阵",
         `\\begin{pmatrix} ${P_} & ${P_} \\\\ ${P_} & ${P_} \\end{pmatrix}`,
       ],
       [
-        "2 × 2 in brackets",
+        "2 × 2 方括号矩阵",
         `\\begin{bmatrix} ${P_} & ${P_} \\\\ ${P_} & ${P_} \\end{bmatrix}`,
       ],
       [
-        "Determinant",
+        "行列式",
         `\\begin{vmatrix} ${P_} & ${P_} \\\\ ${P_} & ${P_} \\end{vmatrix}`,
       ],
       [
-        "3 × 3 matrix",
+        "3 × 3 矩阵",
         `\\begin{pmatrix} ${P_} & ${P_} & ${P_} \\\\ ${P_} & ${P_} & ${P_} \\\\ ${P_} & ${P_} & ${P_} \\end{pmatrix}`,
       ],
       [
-        "Column vector",
+        "列向量",
         `\\begin{pmatrix} ${P_} \\\\ ${P_} \\\\ ${P_} \\end{pmatrix}`,
       ],
-      ["Identity", "\\begin{pmatrix} 1 & 0 \\\\ 0 & 1 \\end{pmatrix}"],
+      ["单位矩阵", "\\begin{pmatrix} 1 & 0 \\\\ 0 & 1 \\end{pmatrix}"],
     ],
   ],
 ];
@@ -162,17 +162,17 @@ export const BUILT_IN_EQUATIONS = [
   ["一元二次方程求根公式", "x=\\frac{-b\\pm\\sqrt{b^2-4ac}}{2a}"],
   ["勾股定理", "a^2+b^2=c^2"],
   ["二项式定理", "(x+a)^n=\\sum_{k=0}^{n}\\binom{n}{k}x^k a^{n-k}"],
-  ["Euler's identity", "e^{i\\pi}+1=0"],
+  ["欧拉公式", "e^{i\\pi}+1=0"],
   [
-    "Taylor expansion",
+    "泰勒展开式",
     "e^x=1+\\frac{x}{1!}+\\frac{x^2}{2!}+\\frac{x^3}{3!}+\\cdots",
   ],
   [
-    "Fourier series",
+    "傅里叶级数",
     "f(x)=a_0+\\sum_{n=1}^{\\infty}\\left(a_n\\cos\\frac{n\\pi x}{L}+b_n\\sin\\frac{n\\pi x}{L}\\right)",
   ],
   [
-    "Gaussian integral",
+    "高斯积分",
     "\\int_{-\\infty}^{\\infty} e^{-x^2}\\,dx=\\sqrt{\\pi}",
   ],
   ["三角恒等式", "\\sin^2\\theta+\\cos^2\\theta=1"],
@@ -219,7 +219,7 @@ export function createEquationFeatures(ctx) {
     const help = el(
       "p",
       { class: "equation-help", id: "equation-help" },
-      "Type math such as x^2, \\frac{a}{b}, \\sqrt{x} or \\alpha, or pick a structure. Tab moves to the next empty slot.",
+      "输入数学公式，如 x^2、\\frac{a}{b}、\\sqrt{x} 或 \\alpha，也可选取结构。按 Tab 键可移动至下一个空位置。",
     );
     const update = () => {
       const value = input.value;
@@ -227,7 +227,7 @@ export function createEquationFeatures(ctx) {
       preview.replaceChildren(
         el("img", {
           src: svgDataUrl(svg),
-          alt: value ? `Preview of ${value}` : "Empty equation",
+          alt: value ? `公式预览：${value}` : "空公式",
         }),
       );
     };
@@ -397,7 +397,7 @@ export function createEquationFeatures(ctx) {
         y: Math.round(at ? at.y : (size.cy - pic.h) / 2),
         w: pic.w,
         h: pic.h,
-        name: `Equation ${P.getSlideShapes(slide).length + 1}`,
+        name: `公式 ${P.getSlideShapes(slide).length + 1}`,
       },
     );
     P.setShapeObjectData(shape, {
@@ -407,7 +407,7 @@ export function createEquationFeatures(ctx) {
       pt,
       w: pic.w,
     });
-    P.setShapeDescription(shape, `Equation: ${source}`);
+    P.setShapeDescription(shape, `公式：${source}`);
     return shape;
   }
 
@@ -453,7 +453,7 @@ export function createEquationFeatures(ctx) {
         h: Math.round(pic.h * scale),
       });
       P.setShapeObjectData(target, { ...data, type: "equation", w: pic.w });
-      P.setShapeDescription(target, `Equation: ${data.source}`);
+      P.setShapeDescription(target, `公式：${data.source}`);
       ctx.pruneMedia(slide);
     });
   }

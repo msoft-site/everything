@@ -47,8 +47,8 @@ export function createZoomFeatures(ctx) {
     if (!entries.length)
       throw new Error(
         sections
-          ? "Add sections to the presentation first (Home > Section)."
-          : "There are no slides.",
+          ? "请先向演示文稿添加节(开始 > 节)。"
+          : "没有幻灯片。",
       );
     const chosen = new Set(
       entries.map((e, i) => (preselect(e, i) ? i : -1)).filter((i) => i >= 0),
@@ -88,7 +88,7 @@ export function createZoomFeatures(ctx) {
     const ok = await dialog({
       title,
       body: el("div", { class: "dialog-body zoom-pick-dialog" }, grid, count),
-      confirm: "Insert",
+      confirm: "插入",
     });
     if (!ok || !chosen.size) return [];
     return [...chosen].sort((a, b) => a - b).map((i) => entries[i]);
@@ -132,7 +132,7 @@ export function createZoomFeatures(ctx) {
           { png: pictures[i] },
           {
             ...b,
-            name: `${kind === "slide" ? "Slide" : kind === "section" ? "Section" : "Summary Section"} Zoom ${i + 1}`,
+            name: `${kind === "slide" ? "幻灯片" : kind === "section" ? "节" : "摘要节"}缩放定位 ${i + 1}`,
           },
         );
         P.setShapeStroke(shape, { color: "#D0D0D0", widthEmu: 3175 });
@@ -145,7 +145,7 @@ export function createZoomFeatures(ctx) {
           ...ZOOM_DEFAULTS[kind],
           ...(target.section ? { section: target.section } : {}),
         });
-        P.setShapeDescription(shape, `Zoom to ${target.label}`);
+        P.setShapeDescription(shape, `缩放到 ${target.label}`);
         ids.push(P.getShapeId(shape));
       });
       ctx.dedupe(slide);
@@ -190,7 +190,7 @@ export function createZoomFeatures(ctx) {
         );
         P.moveSlide(pres, P.addBlankSlide(pres), Math.max(0, at));
         const slide = P.getSlides(pres)[Math.max(0, at)];
-        ctx.titleText(slide, "Summary", size);
+        ctx.titleText(slide, "摘要", size);
         summaryIndex = Math.max(0, at);
         // The summary slide belongs to the section of the slide it precedes.
         return slide;
@@ -261,19 +261,19 @@ export function createZoomFeatures(ctx) {
           {
             type: "large",
             id: "zoom-change-image",
-            label: "Change\nImage",
+            label: "更改\n图片",
             icon: "changePicture",
             title: "更改图片",
-            description: "Show a picture of your own on the zoom.",
+            description: "在缩放定位上显示您自己的图片。",
             run: () => changeImage().catch(ctx.fail),
           },
           {
             type: "large",
             id: "zoom-reset-image",
-            label: "Reset\nImage",
+            label: "重置\n图片",
             icon: "resetPicture",
             title: "重置图片",
-            description: "Show the target slide as it looks now.",
+            description: "显示目标幻灯片当前的外观。",
             run: () => resetImage().catch(ctx.fail),
           },
         ],
@@ -322,17 +322,17 @@ export function createZoomFeatures(ctx) {
 
   const menu = () => [
     {
-      label: "Summary Zoom…",
+      label: "摘要缩放定位…",
       icon: "o:zoomSummary",
       onSelect: () => summaryZoom().catch(ctx.fail),
     },
     {
-      label: "Section Zoom…",
+      label: "节缩放定位…",
       icon: "o:zoomSection",
       onSelect: () => sectionZoom().catch(ctx.fail),
     },
     {
-      label: "Slide Zoom…",
+      label: "幻灯片缩放定位…",
       icon: "o:zoomSlide",
       onSelect: () => slideZoom().catch(ctx.fail),
     },

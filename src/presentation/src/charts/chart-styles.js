@@ -366,60 +366,60 @@ const ELEMENT_FIELDS = [
 ];
 const layout = (id, label, parts) => ({ id, label, parts });
 export const QUICK_LAYOUTS = [
-  layout("layout-1", "Title and legend at the right", {
+  layout("layout-1", "标题和靠右图例", {
     title: true,
     legend: "r",
     grid: true,
   }),
-  layout("layout-2", "Title, legend at the top and value labels", {
+  layout("layout-2", "标题、顶部图例和数据标签", {
     title: true,
     legend: "t",
     labels: true,
   }),
-  layout("layout-3", "Title and legend at the bottom", {
+  layout("layout-3", "标题和底部图例", {
     title: true,
     legend: "b",
     grid: true,
   }),
-  layout("layout-4", "Legend at the bottom and value labels", {
+  layout("layout-4", "底部图例和数据标签", {
     legend: "b",
     labels: true,
   }),
-  layout("layout-5", "Title and data table", {
+  layout("layout-5", "标题和数据表", {
     title: true,
     table: true,
     grid: true,
     axisTitles: "value",
   }),
-  layout("layout-6", "Title, axis titles and legend", {
+  layout("layout-6", "标题、坐标轴标题和图例", {
     title: true,
     legend: "r",
     axisTitles: "both",
     grid: true,
   }),
-  layout("layout-7", "Axis titles, legend and fine gridlines", {
+  layout("layout-7", "坐标轴标题、图例和次要网格线", {
     legend: "r",
     axisTitles: "both",
     grid: true,
     minor: true,
   }),
-  layout("layout-8", "Title and axis titles, no legend", {
+  layout("layout-8", "标题和坐标轴标题，无图例", {
     title: true,
     axisTitles: "both",
   }),
-  layout("layout-9", "Title, axis titles, legend and gridlines", {
+  layout("layout-9", "标题、坐标轴标题、图例和网格线", {
     title: true,
     legend: "r",
     axisTitles: "both",
     grid: true,
     vertical: true,
   }),
-  layout("layout-10", "Title with labels on the data, no legend", {
+  layout("layout-10", "带数据标签的标题，无图例", {
     title: true,
     labels: true,
     categoryLabels: true,
   }),
-  layout("layout-11", "Legend at the right only", { legend: "r" }),
+  layout("layout-11", "仅靠右图例", { legend: "r" }),
 ];
 export function applyQuickLayout(spec, layoutId) {
   const l = QUICK_LAYOUTS.find((q) => q.id === layoutId);
@@ -665,12 +665,12 @@ export const ERROR_BARS = [
   ["stdErr", "标准误差", { type: "both", valueType: "stdErr" }],
   [
     "percentage",
-    "Percentage",
+    "百分比",
     { type: "both", valueType: "percentage", value: 5 },
   ],
   [
     "stdDev",
-    "Standard Deviation",
+    "标准偏差",
     { type: "both", valueType: "stdDev", value: 1 },
   ],
 ];

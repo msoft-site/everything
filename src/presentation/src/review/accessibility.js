@@ -30,7 +30,7 @@ export const KINDS = {
     severity: "error",
     title: "缺少表格标题",
     why: "标题行向屏幕阅读器说明各列的内容以便读取单元格。",
-    action: "Use the table's first row as its header row.",
+    action: "将表格的第一行用作标题行。",
   },
   duplicateTitle: {
     severity: "warning",
@@ -40,7 +40,7 @@ export const KINDS = {
   },
   contrast: {
     severity: "warning",
-    title: "Hard-to-read text contrast",
+    title: "文本对比度较低，难以阅读",
     why: "文本颜色若与背景颜色过于接近，低视力人群或在强光下的任何人都会难以看清。",
     action: "使用与背景对比鲜明的文本颜色。",
   },
@@ -53,7 +53,7 @@ export const KINDS = {
   readingOrder: {
     severity: "tip",
     title: "检查阅读顺序",
-    why: "Screen readers read a slide's objects in the order they were added, which may not match the order they appear in.",
+    why: "屏幕阅读器会按照对象添加的顺序朗读幻灯片中的对象，这可能与它们的显示顺序不一致。",
     action:
       "打开“阅读顺序”窗格，按阅读顺序排列对象。",
   },
@@ -281,7 +281,7 @@ export function createAccessibility(env, host) {
         const short = (t) => (t.length > 28 ? `${t.slice(0, 27)}…` : t);
         return [
           candidate && {
-            label: `Use “${short(P.getShapeText(candidate).trim().split("\n")[0])}” as the Title`,
+            label: `将“${short(P.getShapeText(candidate).trim().split("\n")[0])}”用作标题`,
             run: () =>
               env.mutateShape(candidate, (x) =>
                 P.setShapeAsTitlePlaceholder(x),

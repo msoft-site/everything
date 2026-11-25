@@ -110,7 +110,7 @@ export async function fontDialog({ format, sample, fonts, theme, tab = 0 }) {
   const previewText = el(
     "span",
     {},
-    (sample || "").trim().slice(0, 60) || "Sample text",
+    (sample || "").trim().slice(0, 60) || "示例文本",
   );
   const preview = el(
     "div",
@@ -122,7 +122,7 @@ export async function fontDialog({ format, sample, fonts, theme, tab = 0 }) {
     preview.style.background = previewPaper(f, theme);
     preview.setAttribute(
       "aria-label",
-      `Preview: ${f.font || "Default font"}, ${f.size ? `${f.size} point` : "default size"}${f.bold ? ", bold" : ""}${f.italic ? ", italic" : ""}`,
+      `预览：${f.font || "默认字体"}，${f.size ? `${f.size} 磅` : "默认字号"}${f.bold ? "，加粗" : ""}${f.italic ? "，倾斜" : ""}`,
     );
   }
   const fontId = "fmt-font-family";
@@ -304,7 +304,7 @@ export async function fontDialog({ format, sample, fonts, theme, tab = 0 }) {
     let mode = spc > 0 ? "expanded" : spc < 0 ? "condensed" : "normal";
     let amount = Math.abs(spc) / 100;
     const by = numberField({
-      label: "By",
+      label: "磅值",
       value: amount,
       unit: "pt",
       min: 0,
@@ -431,7 +431,7 @@ export async function paragraphDialog({ paragraph }) {
   // the first line from there.
   const beforeText = (p.marL || 0) / IN;
   const by = numberField({
-    label: "By",
+    label: "度量值",
     value: specialBy,
     unit: "in",
     min: 0,
@@ -456,7 +456,7 @@ export async function paragraphDialog({ paragraph }) {
   let lineRule = rule;
   let lineAt = at;
   const atField = numberField({
-    label: "At",
+    label: "设置值",
     value: lineAt,
     unit: lineRule === "exactly" ? "pt" : "",
     min: 0,
@@ -638,7 +638,7 @@ export async function tabsDialog({ tabs: initial, defaultTab }) {
   // listbox's options could not hold.
   const list = el("ul", { class: "fmt-tab-list", "aria-label": "制表位" });
   const label = (a) =>
-    ({ l: "Left", ctr: "Center", r: "Right", dec: "Decimal" })[a];
+    ({ l: "左对齐", ctr: "居中", r: "右对齐", dec: "小数点对齐" })[a];
   const render = () => {
     stops.sort((a, b) => a.pos - b.pos);
     list.replaceChildren(
@@ -653,7 +653,7 @@ export async function tabsDialog({ tabs: initial, defaultTab }) {
             {
               type: "button",
               class: "btn icon-btn small",
-              "aria-label": `Clear the tab stop at ${(stop.pos / IN).toFixed(2)} inches`,
+              "aria-label": `清除位于 ${(stop.pos / IN).toFixed(2)} 英寸处的制表位`,
               title: "清除",
               onclick: () => {
                 stops.splice(i, 1);

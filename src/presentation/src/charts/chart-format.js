@@ -252,13 +252,13 @@ export function chartFormatSection({ spec, element, choose, update, h, ctx }) {
   switch (element) {
     case "chartArea":
       nodes.push(
-        el("h3", {}, "Fill and outline"),
+        el("h3", {}, "填充与轮廓"),
         color("图表填充", spec.chartAreaFill, (c) => set("chartAreaFill", c)),
         color("图表轮廓", spec.chartAreaStrokeColor, (c) =>
           set("chartAreaStrokeColor", c),
         ),
         h.numInput(
-          "Outline width (pt)",
+          "轮廓宽度(pt)",
           (spec.chartAreaStrokeWidthEmu ?? 9525) / PT,
           (n) =>
             update(
@@ -269,15 +269,15 @@ export function chartFormatSection({ spec, element, choose, update, h, ctx }) {
           20,
           0.25,
         ),
-        check("Rounded corners", spec.roundedCorners, (on) =>
+        check("圆角", spec.roundedCorners, (on) =>
           set("roundedCorners", on || undefined),
         ),
-        ...textStyle("textStyle", "All text"),
+        ...textStyle("textStyle", "所有文本"),
       );
       if (spec.kind === "doughnut")
         nodes.push(
           h.numInput(
-            "Hole size (%)",
+            "圆环图内径大小(%)",
             spec.holeSizePct ?? 50,
             (n) => update(set("holeSizePct", Math.round(n)), key("hole")),
             10,
@@ -288,7 +288,7 @@ export function chartFormatSection({ spec, element, choose, update, h, ctx }) {
       if (pies(spec))
         nodes.push(
           h.numInput(
-            "First slice angle (°)",
+            "第一扇区起始角度(°)",
             spec.firstSliceAngleDeg ?? 0,
             (n) =>
               update(set("firstSliceAngleDeg", Math.round(n)), key("angle")),
@@ -301,7 +301,7 @@ export function chartFormatSection({ spec, element, choose, update, h, ctx }) {
         nodes.push(
           el("h3", {}, "条柱"),
           h.numInput(
-            "Gap width (%)",
+            "间隙宽度(%)",
             spec.gapWidthPct ?? 150,
             (n) => update(set("gapWidthPct", Math.round(n)), key("gap")),
             0,
@@ -309,7 +309,7 @@ export function chartFormatSection({ spec, element, choose, update, h, ctx }) {
             5,
           ),
           h.numInput(
-            "Series overlap (%)",
+            "系列重叠(%)",
             spec.overlapPct ??
               (spec.grouping && spec.grouping !== "clustered" ? 100 : 0),
             (n) => update(set("overlapPct", Math.round(n)), key("overlap")),
@@ -317,19 +317,19 @@ export function chartFormatSection({ spec, element, choose, update, h, ctx }) {
             100,
             5,
           ),
-          check("Vary colors by point", spec.varyColors, (on) =>
+          check("按要素着色", spec.varyColors, (on) =>
             set("varyColors", on || undefined),
           ),
         );
       if (!pies(spec) && !isXYKind(spec.kind))
         nodes.push(
           select(
-            "Show empty cells as",
+            "空单元格显示为",
             spec.dispBlanksAs || "gap",
             [
-              ["gap", "Gaps"],
-              ["zero", "Zero"],
-              ["span", "Connect data points with line"],
+              ["gap", "空距"],
+              ["zero", "零值"],
+              ["span", "用直线连接数据点"],
             ],
             (v) => set("dispBlanksAs", v),
           ),
@@ -337,7 +337,7 @@ export function chartFormatSection({ spec, element, choose, update, h, ctx }) {
       break;
     case "plotArea":
       nodes.push(
-        el("h3", {}, "Fill and outline"),
+        el("h3", {}, "填充与轮廓"),
         color("绘图区填充", spec.plotAreaFill, (c) => set("plotAreaFill", c)),
         color("绘图区轮廓", spec.plotAreaStrokeColor, (c) =>
           set("plotAreaStrokeColor", c),
@@ -346,19 +346,19 @@ export function chartFormatSection({ spec, element, choose, update, h, ctx }) {
       break;
     case "title":
       nodes.push(
-        el("h3", {}, "Title"),
-        text("Title text", spec.title, (v) => set("title", v)),
-        check("Overlay on the chart", spec.titleOverlay, (on) =>
+        el("h3", {}, "标题"),
+        text("标题文本", spec.title, (v) => set("title", v)),
+        check("在图表上重叠显示", spec.titleOverlay, (on) =>
           set("titleOverlay", on || undefined),
         ),
-        ...textStyle("titleStyle", "Title text"),
+        ...textStyle("titleStyle", "标题文本"),
       );
       break;
     case "legend":
       nodes.push(
         el("h3", {}, "图例"),
         select(
-          "Legend position",
+          "图例位置",
           spec.legend?.position || "r",
           [
             ["t", "靠上"],
@@ -369,7 +369,7 @@ export function chartFormatSection({ spec, element, choose, update, h, ctx }) {
           ],
           (v) => setLegend({ position: v }),
         ),
-        check("Overlay on the chart", spec.legend?.overlay, (on) =>
+        check("在图表上重叠显示", spec.legend?.overlay, (on) =>
           setLegend({ overlay: on || undefined }),
         ),
         color("图例填充", spec.legend?.fill, (c) => setLegend({ fill: c })),
@@ -377,7 +377,7 @@ export function chartFormatSection({ spec, element, choose, update, h, ctx }) {
           setLegend({ strokeColor: c }),
         ),
         h.numInput(
-          "Legend text size (pt)",
+          "图例文本字号(pt)",
           spec.legend?.textStyle?.sizePt ?? 10,
           (n) =>
             update(
@@ -401,30 +401,30 @@ export function chartFormatSection({ spec, element, choose, update, h, ctx }) {
         return set("valueAxis", Object.keys(next).length ? next : undefined)(s);
       };
       nodes.push(
-        el("h3", {}, "Bounds and units"),
+        el("h3", {}, "边界与单位"),
         el(
           "div",
           { class: "field-grid" },
-          optionalNumber("Minimum", axis.min, (n) => setAxis({ min: n })),
-          optionalNumber("Maximum", axis.max, (n) => setAxis({ max: n })),
+          optionalNumber("最小值", axis.min, (n) => setAxis({ min: n })),
+          optionalNumber("最大值", axis.max, (n) => setAxis({ max: n })),
           optionalNumber(
-            "Major unit",
+            "主要单位",
             axis.majorUnit,
             (n) => setAxis({ majorUnit: n && n > 0 ? n : undefined }),
             { min: 0, step: 0.1 },
           ),
           optionalNumber(
-            "Minor unit",
+            "次要单位",
             axis.minorUnit,
             (n) => setAxis({ minorUnit: n && n > 0 ? n : undefined }),
             { min: 0, step: 0.1 },
           ),
         ),
         select(
-          "Display units",
+          "显示单位",
           axis.displayUnits || "",
           [
-            ["", "None"],
+            ["", "无"],
             ["hundreds", "百"],
             ["thousands", "千"],
             ["millions", "百万"],
@@ -433,17 +433,17 @@ export function chartFormatSection({ spec, element, choose, update, h, ctx }) {
           (v) => setAxis({ displayUnits: v || undefined }),
         ),
         select(
-          "Number format",
+          "数字格式",
           axis.numberFormat || "",
           [
-            ["", "Linked to data"],
-            ["General", "General"],
-            ["0", "Number, no decimals"],
-            ["0.0", "Number, 1 decimal"],
-            ["0.00", "Number, 2 decimals"],
-            ["#,##0", "Thousands separator"],
-            ["0%", "Percentage"],
-            ["$#,##0", "Currency"],
+            ["", "链接到数据"],
+            ["General", "常规"],
+            ["0", "整数"],
+            ["0.0", "1 位小数"],
+            ["0.00", "2 位小数"],
+            ["#,##0", "千位分隔符"],
+            ["0%", "百分比"],
+            ["$#,##0", "货币"],
           ],
           (v) =>
             setAxis(
@@ -455,35 +455,35 @@ export function chartFormatSection({ spec, element, choose, update, h, ctx }) {
                   },
             ),
         ),
-        check("Logarithmic scale", axis.logBase, (on) =>
+        check("对数刻度", axis.logBase, (on) =>
           setAxis({ logBase: on ? 10 : undefined }),
         ),
         check(
-          "Values in reverse order",
+          "逆序值",
           spec.valueAxisOrientation === "maxMin",
           (on) => set("valueAxisOrientation", on ? "maxMin" : undefined),
         ),
-        check("Hide this axis", spec.valueAxisHidden, (on) =>
+        check("隐藏此坐标轴", spec.valueAxisHidden, (on) =>
           set("valueAxisHidden", on || undefined),
         ),
-        text("Axis title", spec.valueAxisTitle, (v) =>
+        text("坐标轴标题", spec.valueAxisTitle, (v) =>
           set("valueAxisTitle", v || undefined),
         ),
-        color("Axis line", spec.valueAxisLineColor, (c) =>
+        color("坐标轴线条", spec.valueAxisLineColor, (c) =>
           set("valueAxisLineColor", c),
         ),
         select(
-          "Major tick marks",
+          "主要刻度线类型",
           spec.valueAxisMajorTickMark || "none",
           [
             ["none", "无"],
-            ["out", "Outside"],
-            ["in", "Inside"],
+            ["out", "外部"],
+            ["in", "内部"],
             ["cross", "十字形"],
           ],
           (v) => set("valueAxisMajorTickMark", v),
         ),
-        ...textStyle("valueAxisLabelStyle", "Axis labels"),
+        ...textStyle("valueAxisLabelStyle", "坐标轴标签"),
       );
       break;
     }
@@ -492,25 +492,25 @@ export function chartFormatSection({ spec, element, choose, update, h, ctx }) {
         el("h3", {}, "坐标轴选项"),
         check(
           isXYKind(spec.kind)
-            ? "Values in reverse order"
-            : "Categories in reverse order",
+            ? "逆序值"
+            : "逆序类别",
           spec.categoryAxisOrientation === "maxMin",
           (on) => set("categoryAxisOrientation", on ? "maxMin" : undefined),
         ),
-        check("Hide this axis", spec.categoryAxisHidden, (on) =>
+        check("隐藏此坐标轴", spec.categoryAxisHidden, (on) =>
           set("categoryAxisHidden", on || undefined),
         ),
-        text("Axis title", spec.categoryAxisTitle, (v) =>
+        text("坐标轴标题", spec.categoryAxisTitle, (v) =>
           set("categoryAxisTitle", v || undefined),
         ),
-        color("Axis line", spec.categoryAxisLineColor, (c) =>
+        color("坐标轴线条", spec.categoryAxisLineColor, (c) =>
           set("categoryAxisLineColor", c),
         ),
         ...(isXYKind(spec.kind)
           ? []
           : [
               optionalNumber(
-                "Label every",
+                "标签间隔",
                 spec.categoryAxisTickLabelSkip,
                 (n) =>
                   set(
@@ -521,33 +521,33 @@ export function chartFormatSection({ spec, element, choose, update, h, ctx }) {
               ),
             ]),
         select(
-          "Major tick marks",
+          "主要刻度线类型",
           spec.categoryAxisMajorTickMark || "none",
           [
             ["none", "无"],
-            ["out", "Outside"],
-            ["in", "Inside"],
+            ["out", "外部"],
+            ["in", "内部"],
             ["cross", "十字形"],
           ],
           (v) => set("categoryAxisMajorTickMark", v),
         ),
-        ...textStyle("categoryAxisLabelStyle", "Axis labels"),
+        ...textStyle("categoryAxisLabelStyle", "坐标轴标签"),
       );
       break;
     case "gridlines":
       nodes.push(
-        el("h3", {}, "Gridlines"),
-        check("Major gridlines", spec.valueAxisMajorGridlines ?? true, (on) =>
+        el("h3", {}, "网格线"),
+        check("主要网格线", spec.valueAxisMajorGridlines ?? true, (on) =>
           set("valueAxisMajorGridlines", on),
         ),
         color(
-          "Major gridline color",
+          "主要网格线颜色",
           spec.valueAxisMajorGridlineColor,
           (c) => set("valueAxisMajorGridlineColor", c),
           { none: false },
         ),
         h.numInput(
-          "Major gridline width (pt)",
+          "主要网格线宽度(pt)",
           (spec.valueAxisMajorGridlineWidthEmu ?? 9525) / PT,
           (n) =>
             update(
@@ -558,17 +558,17 @@ export function chartFormatSection({ spec, element, choose, update, h, ctx }) {
           10,
           0.25,
         ),
-        check("Minor gridlines", spec.valueAxisMinorGridlines, (on) =>
+        check("次要网格线", spec.valueAxisMinorGridlines, (on) =>
           set("valueAxisMinorGridlines", on),
         ),
         color(
-          "Minor gridline color",
+          "次要网格线颜色",
           spec.valueAxisMinorGridlineColor,
           (c) => set("valueAxisMinorGridlineColor", c),
           { none: false },
         ),
         check(
-          "Gridlines across categories",
+          "跨类别网格线",
           spec.categoryAxisMajorGridlines,
           (on) => set("categoryAxisMajorGridlines", on),
         ),
@@ -582,13 +582,13 @@ export function chartFormatSection({ spec, element, choose, update, h, ctx }) {
       const lineLike =
         kind === "line" || kind === "scatter" || kind === "radar";
       nodes.push(
-        el("h3", {}, "Series"),
-        text("Series name", s.name, (v) => setSeries(i, { name: v })),
+        el("h3", {}, "系列"),
+        text("系列名称", s.name, (v) => setSeries(i, { name: v })),
       );
       if (pies(spec)) {
         nodes.push(
           h.numInput(
-            "Point explosion (%)",
+            "点分离(%)",
             Math.max(0, ...(s.pointExplosions || [0]).map((v) => v || 0)),
             (n) =>
               update(
@@ -604,11 +604,11 @@ export function chartFormatSection({ spec, element, choose, update, h, ctx }) {
           ),
         );
         const n = Math.max(spec.categories.length, s.values.length);
-        nodes.push(el("h3", {}, "Slice colors"));
+        nodes.push(el("h3", {}, "扇区颜色"));
         for (let p = 0; p < n; p++)
           nodes.push(
             color(
-              `Slice "${spec.categories[p] ?? p + 1}"`,
+              `扇区 "${spec.categories[p] ?? p + 1}"`,
               s.pointColors?.[p] ?? undefined,
               (c) => {
                 const colors = Array.from(
@@ -627,21 +627,21 @@ export function chartFormatSection({ spec, element, choose, update, h, ctx }) {
         if (!lineLike || spec.radarStyle === "filled")
           nodes.push(
             color(
-              "Fill",
+              "填充",
               s.color,
               (c) => setSeries(i, { color: c ?? undefined }),
               { none: false },
             ),
           );
         nodes.push(
-          color(lineLike ? "Line" : "Outline", s.lineColor, (c) =>
+          color(lineLike ? "线条" : "轮廓", s.lineColor, (c) =>
             setSeries(
               i,
               lineLike && c ? { lineColor: c, color: c } : { lineColor: c },
             ),
           ),
           h.numInput(
-            lineLike ? "Line width (pt)" : "Outline width (pt)",
+            lineLike ? "线条宽度(pt)" : "轮廓宽度(pt)",
             (s.lineWidthEmu ?? (lineLike ? 28575 : 0)) / PT,
             (n) =>
               update(
@@ -653,15 +653,15 @@ export function chartFormatSection({ spec, element, choose, update, h, ctx }) {
             0.25,
           ),
           select(
-            "Dash type",
+            "短划线类型",
             s.lineDash || "solid",
             [
               ["solid", "实线"],
               ["dash", "虚线"],
-              ["sysDot", "Round dot"],
-              ["sysDash", "Square dot"],
+              ["sysDot", "圆点"],
+              ["sysDash", "方点"],
               ["dashDot", "点划线"],
-              ["lgDash", "Long dash"],
+              ["lgDash", "长划线"],
             ],
             (v) => setSeries(i, { lineDash: v === "solid" ? undefined : v }),
           ),
@@ -669,10 +669,10 @@ export function chartFormatSection({ spec, element, choose, update, h, ctx }) {
         if (lineLike && spec.radarStyle !== "filled")
           nodes.push(
             select(
-              "Marker",
+              "数据标记",
               s.markerSymbol || "auto",
               [
-                ["auto", "Automatic"],
+                ["auto", "自动"],
                 ["none", "无"],
                 ["circle", "圆形"],
                 ["square", "正方形"],
@@ -686,7 +686,7 @@ export function chartFormatSection({ spec, element, choose, update, h, ctx }) {
                 setSeries(i, { markerSymbol: v === "auto" ? undefined : v }),
             ),
             h.numInput(
-              "Marker size",
+              "标记大小",
               s.markerSizePt ?? 5,
               (n) =>
                 update(
@@ -699,13 +699,13 @@ export function chartFormatSection({ spec, element, choose, update, h, ctx }) {
               72,
               1,
             ),
-            check("Smoothed line", s.smooth, (on) =>
+            check("平滑线", s.smooth, (on) =>
               setSeries(i, { smooth: on || undefined }),
             ),
           );
         if (kind === "bar" || kind === "column")
           nodes.push(
-            check("Invert if negative", s.invertIfNegative, (on) =>
+            check("以互补色代表负值", s.invertIfNegative, (on) =>
               setSeries(i, { invertIfNegative: on }),
             ),
           );
@@ -715,7 +715,7 @@ export function chartFormatSection({ spec, element, choose, update, h, ctx }) {
           spec.series.length > 1
         )
           nodes.push(
-            check("Plot on secondary axis", s.secondaryAxis, (on) =>
+            check("在次坐标轴上绘制", s.secondaryAxis, (on) =>
               setSeries(i, { secondaryAxis: on || undefined }),
             ),
           );
@@ -735,20 +735,20 @@ export function chartFormatSection({ spec, element, choose, update, h, ctx }) {
         return setSeries(i, { dataLabels: base })(sp);
       };
       nodes.push(
-        el("h3", {}, "Data labels"),
+        el("h3", {}, "数据标签"),
         el(
           "div",
           { class: "chart-check-grid" },
-          check("Value", dl.showValue, (on) => setLabels({ showValue: on })),
-          check("Category name", dl.showCategory, (on) =>
+          check("值", dl.showValue, (on) => setLabels({ showValue: on })),
+          check("类别名称", dl.showCategory, (on) =>
             setLabels({ showCategory: on }),
           ),
-          check("Series name", dl.showSeriesName, (on) =>
+          check("系列名称", dl.showSeriesName, (on) =>
             setLabels({ showSeriesName: on }),
           ),
           ...(pies(spec)
             ? [
-                check("Percentage", dl.showPercent, (on) =>
+                check("百分比", dl.showPercent, (on) =>
                   setLabels({ showPercent: on }),
                 ),
               ]
@@ -759,9 +759,9 @@ export function chartFormatSection({ spec, element, choose, update, h, ctx }) {
       if (positions.length)
         nodes.push(
           select(
-            "Label position",
+            "标签位置",
             dl.position || "",
-            [["", "Automatic"], ...positions],
+            [["", "自动"], ...positions],
             (v) => setLabels({ position: v }),
           ),
         );
@@ -769,7 +769,7 @@ export function chartFormatSection({ spec, element, choose, update, h, ctx }) {
         nodes.push(
           el("h3", {}, "分析"),
           select(
-            "Trendline",
+            "趋势线",
             s.trendline
               ? s.trendline.forward
                 ? "forecast"
@@ -790,7 +790,7 @@ export function chartFormatSection({ spec, element, choose, update, h, ctx }) {
         };
         const out = [
           select(
-            "Error direction",
+            "误差线方向",
             bars.type,
             [
               ["both", "正负偏差"],
@@ -799,18 +799,18 @@ export function chartFormatSection({ spec, element, choose, update, h, ctx }) {
             ],
             (v) => setBars({ type: v }),
           ),
-          check("End caps", !bars.noEndCap, (on) =>
+          check("末端样式", !bars.noEndCap, (on) =>
             setBars({ noEndCap: on ? undefined : true }),
           ),
           select(
-            "Error amount",
+            "误差量",
             bars.valueType,
             [
-              ["fixedVal", "Fixed value"],
-              ["percentage", "Percentage"],
-              ["stdDev", "Standard deviation(s)"],
-              ["stdErr", "Standard error"],
-              ["cust", "Custom"],
+              ["fixedVal", "固定值"],
+              ["percentage", "百分比"],
+              ["stdDev", "标准偏差"],
+              ["stdErr", "标准误差"],
+              ["cust", "自定义"],
             ],
             (v) =>
               setBars({
@@ -834,10 +834,10 @@ export function chartFormatSection({ spec, element, choose, update, h, ctx }) {
           out.push(
             h.numInput(
               bars.valueType === "percentage"
-                ? "Percentage (%)"
+                ? "百分比(%)"
                 : bars.valueType === "stdDev"
-                  ? "Standard deviations"
-                  : "Fixed value",
+                  ? "标准偏差"
+                  : "固定值",
               bars.value ?? (bars.valueType === "percentage" ? 5 : 1),
               (n) =>
                 update(
@@ -851,8 +851,8 @@ export function chartFormatSection({ spec, element, choose, update, h, ctx }) {
           );
         if (bars.valueType === "cust")
           for (const [side, label] of [
-            ["plus", "Positive error values"],
-            ["minus", "Negative error values"],
+            ["plus", "正错误值"],
+            ["minus", "负错误值"],
           ])
             out.push(
               text(
@@ -874,7 +874,7 @@ export function chartFormatSection({ spec, element, choose, update, h, ctx }) {
             el(
               "p",
               { class: "chart-hint" },
-              "Type numbers separated by commas, or a range of the data sheet such as C2:C4.",
+              "输入以逗号分隔的数字，或数据表范围(如 C2:C4)。",
             ),
           );
         return out;
@@ -882,13 +882,13 @@ export function chartFormatSection({ spec, element, choose, update, h, ctx }) {
       if (supportsErrorBars(spec)) {
         nodes.push(
           select(
-            "Error bars",
+            "误差线",
             s.errorBars ? errorBarState({ series: [s] }) : "none",
             [
               ["none", "无"],
               ...ERROR_BARS.map(([id, label]) => [id, label]),
               ...(s.errorBars && errorBarState({ series: [s] }) === "custom"
-                ? [["custom", "Custom"]]
+                ? [["custom", "自定义"]]
                 : []),
             ],
             (v) => (sp) => {

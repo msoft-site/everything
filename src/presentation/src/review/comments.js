@@ -147,7 +147,7 @@ export function createComments(env, host) {
         ),
         el("label", {}, "姓名", input),
       ),
-      confirm: "Continue",
+      confirm: "继续",
     });
     const name = input.value.trim();
     if (!ok || !name) return null;
@@ -344,10 +344,10 @@ export function createComments(env, host) {
         el(
           "p",
           {},
-          `Delete all ${total} comment${total === 1 ? "" : "s"} and their replies from every slide of this presentation?`,
+          `是否从演示文稿的每张幻灯片中删除全部 ${total} 条批注及其回复？`,
         ),
       ),
-      confirm: "Delete All",
+      confirm: "全部删除",
       danger: true,
     });
     if (!ok) return;
@@ -484,7 +484,7 @@ export function createComments(env, host) {
       label: "筛选批注",
       align: "end",
       items: [
-        { header: "Show" },
+        { header: "显示" },
         {
           label: "所有批注",
           checked: prefs.filter === "all",
@@ -518,11 +518,11 @@ export function createComments(env, host) {
   host.register("comments", {
     title: "批注",
     tools: () => [
-      iconButton("Filter comments", "SlidersHorizontal", (e) =>
+      iconButton("筛选批注", "SlidersHorizontal", (e) =>
         filterMenu(e.currentTarget),
       ),
-      iconButton("New comment", "o:newComment", () => newComment(), {
-        "data-tip-title": `New Comment (${MOD_KEY}+Shift+M)`,
+      iconButton("新建批注", "o:newComment", () => newComment(), {
+        "data-tip-title": `新建批注 (${MOD_KEY}+Shift+M)`,
       }),
     ],
     render: renderPane,
@@ -775,7 +775,7 @@ export function createComments(env, host) {
                   refreshAll();
                 },
               },
-              "Cancel",
+              "取消",
             ),
             el(
               "button",
@@ -784,7 +784,7 @@ export function createComments(env, host) {
                 class: "btn primary small",
                 onclick: () => saveEdit(entry, replyId, box.area.value),
               },
-              "Save",
+              "保存",
             ),
           ),
         );
@@ -812,7 +812,7 @@ export function createComments(env, host) {
         ),
         !replyId &&
           iconButton(
-            resolved ? "Reopen thread" : "Resolve thread",
+            resolved ? "重新打开批注讨论" : "解决批注讨论",
             resolved ? "RotateCcw" : "CircleCheck",
             (e) => {
               e.stopPropagation();
@@ -824,7 +824,7 @@ export function createComments(env, host) {
             },
           ),
         iconButton(
-          replyId ? "Reply options" : "Comment options",
+          replyId ? "回复选项" : "批注选项",
           "MoreHorizontal",
           more(replyId, person, text),
           { class: "btn icon-btn comment-more", ...MENU },
@@ -837,7 +837,7 @@ export function createComments(env, host) {
       mentionBox({
         key: replyKey,
         label: "回复",
-        placeholder: "Reply…",
+        placeholder: "回复…",
         rows: 1,
         onSubmit: (value) => reply(entry, value),
       });
@@ -869,7 +869,7 @@ export function createComments(env, host) {
         },
       },
       resolved &&
-        el("span", { class: "comment-badge" }, icon("Check", 12), "Resolved"),
+        el("span", { class: "comment-badge" }, icon("Check", 12), "已解决"),
       onLabel &&
         el(
           "button",
@@ -882,14 +882,14 @@ export function createComments(env, host) {
             },
           },
           icon("o:select", 12),
-          `On ${onLabel}`,
+          `位于 ${onLabel}`,
         ),
       head(t.author, t.created, null, t.text),
       body(null, t.author, t.text),
       t.replies.length > 0 &&
         el(
           "ol",
-          { class: "comment-replies", "aria-label": `${total - 1} replies` },
+          { class: "comment-replies", "aria-label": `${total - 1} 条回复` },
           t.replies.map((r) =>
             el(
               "li",
@@ -910,7 +910,7 @@ export function createComments(env, host) {
               type: "button",
               class: "btn primary small comment-post",
               "aria-label": "发布回复",
-              "data-tip-title": `Post (${MOD_KEY}+Enter)`,
+              "data-tip-title": `发布 (${MOD_KEY}+Enter)`,
               onclick: () => reply(entry, replyBox.area.value),
             },
             icon("SendHorizontal", 14),
@@ -927,7 +927,7 @@ export function createComments(env, host) {
     const box = mentionBox({
       key: "new",
       label: "新建批注",
-      placeholder: "Start a conversation. Type @ to mention someone.",
+      placeholder: "开启讨论。键入 @ 可提及某人。",
       rows: 3,
       onSubmit: (value) => post(value),
       onCancel: () => {
@@ -945,7 +945,7 @@ export function createComments(env, host) {
           "span",
           { class: "comment-anchor" },
           icon("o:select", 12),
-          `On ${env.shapeLabel(shape)}`,
+          `位于 ${env.shapeLabel(shape)}`,
         ),
       el(
         "div",
@@ -971,17 +971,17 @@ export function createComments(env, host) {
               refreshAll();
             },
           },
-          "Cancel",
+          "取消",
         ),
         el(
           "button",
           {
             type: "button",
             class: "btn primary small",
-            "data-tip-title": `Post (${MOD_KEY}+Enter)`,
+            "data-tip-title": `发布 (${MOD_KEY}+Enter)`,
             onclick: () => post(box.area.value),
           },
-          "Post",
+          "发布",
         ),
       ),
     );
@@ -1003,10 +1003,9 @@ export function createComments(env, host) {
         el(
           "p",
           { class: "comment-filter-note" },
-          [filterNote, prefs.scope === "deck" ? "on all slides" : null]
+          [filterNote, prefs.scope === "deck" ? "(所有幻灯片)" : null]
             .filter(Boolean)
-            .join(" ")
-            .replace(/^on/, "On"),
+            .join(" "),
         ),
       );
     if (state.composing) wrap.append(composer());
@@ -1029,7 +1028,7 @@ export function createComments(env, host) {
                 class: "text-button",
                 onclick: () => env.chooseSlide(entry.slide),
               },
-              `Slide ${entry.index + 1}`,
+              `幻灯片 ${entry.index + 1}`,
             ),
           ),
         );
@@ -1061,7 +1060,7 @@ export function createComments(env, host) {
                 onclick: () => newComment(),
               },
               icon("o:newComment", 16),
-              el("span", {}, "New Comment"),
+              el("span", {}, "新建批注"),
             ),
         ),
       );
@@ -1103,7 +1102,7 @@ export function createComments(env, host) {
           type: "button",
           class: `comment-marker ${active ? "active" : ""} ${t.status !== "active" ? "resolved" : ""}`,
           "data-thread-id": t.id,
-          "aria-label": `Comment by ${t.author.name || "unknown"}: ${t.text.slice(0, 80)}${t.replies.length ? ` (${t.replies.length} repl${t.replies.length === 1 ? "y" : "ies"})` : ""}. Drag or use the arrow keys to move it.`,
+          "aria-label": `来自 ${t.author.name || "未知用户"} 的批注: ${t.text.slice(0, 80)}${t.replies.length ? ` (${t.replies.length} 条回复)` : ""}。可拖动或使用方向键移动。`,
           style: `left:${(at.x / size.cx) * 100}%;top:${(at.y / size.cy) * 100}%;--hue:${personHue(t.author.name)}`,
         },
         el(
@@ -1234,10 +1233,10 @@ export function createComments(env, host) {
     }
     badge.replaceChildren(icon("o:comment", 12), String(count));
     const label = thumb.getAttribute("aria-label") || "";
-    if (!/ comments?$/.test(label))
+    if (!/ 条批注$/.test(label))
       thumb.setAttribute(
         "aria-label",
-        `${label}, ${count} comment${count === 1 ? "" : "s"}`,
+        `${label}，${count} 条批注`,
       );
   }
   function syncStatus() {

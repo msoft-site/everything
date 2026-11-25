@@ -190,7 +190,7 @@ export async function chooseChartType({
       ? spec.series.map((s) => s.name)
       : sampleSpec("column-clustered").series.map((s) => s.name);
     comboBox.append(
-      el("h4", {}, "Choose the chart type and axis for each series"),
+      el("h4", {}, "为每个系列选择图表类型和坐标轴"),
       el(
         "div",
         { class: "chart-combo-rows", role: "group", "aria-label": "系列" },
@@ -203,7 +203,7 @@ export async function chooseChartType({
               "select",
               {
                 class: "input",
-                "aria-label": `Chart type for ${n}`,
+                "aria-label": `${n} 的图表类型`,
                 onchange: (e) => {
                   combo[i] = { ...combo[i], kind: e.target.value };
                   drawPreviewOnly();
@@ -219,13 +219,13 @@ export async function chooseChartType({
               el("input", {
                 type: "checkbox",
                 checked: combo[i].secondary,
-                "aria-label": `Secondary axis for ${n}`,
+                "aria-label": `${n} 的次坐标轴`,
                 onchange: (e) => {
                   combo[i] = { ...combo[i], secondary: e.target.checked };
                   drawPreviewOnly();
                 },
               }),
-              el("span", {}, "Secondary axis"),
+              el("span", {}, "次坐标轴"),
             ),
           ),
         ),

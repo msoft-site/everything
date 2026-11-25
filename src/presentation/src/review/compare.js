@@ -470,7 +470,7 @@ export function createCompare(env, host) {
           el(
             "button",
             { type: "button", class: "btn primary", onclick: () => start() },
-            "Choose a File…",
+            "选择文件…",
           ),
         ),
       );
@@ -481,7 +481,7 @@ export function createCompare(env, host) {
       el(
         "p",
         { class: "helper" },
-        `Changes in ${state.name}, compared with this presentation.`,
+        `与当前演示文稿相比，${state.name} 中的更改。`,
       ),
       el(
         "div",
@@ -490,7 +490,7 @@ export function createCompare(env, host) {
           "span",
           { class: "review-status", role: "status" },
           list.length
-            ? `${list.length} change${list.length === 1 ? "" : "s"}`
+            ? `${list.length} 处更改`
             : "没有需要审阅的更改。",
         ),
         el(
@@ -501,7 +501,7 @@ export function createCompare(env, host) {
             disabled: !list.length || null,
             onclick: () => reject(list),
           },
-          "Reject All",
+          "全部拒绝",
         ),
         el(
           "button",
@@ -511,7 +511,7 @@ export function createCompare(env, host) {
             disabled: !list.length || state.busy || null,
             onclick: () => accept(list),
           },
-          "Accept All",
+          "全部接受",
         ),
       ),
     );
@@ -520,8 +520,8 @@ export function createCompare(env, host) {
     for (const item of list) {
       const slideNo =
         item.type === "slideInserted"
-          ? `New slide ${item.bIndex + 1}`
-          : `Slide ${item.aIndex + 1}`;
+          ? `新幻灯片 ${item.bIndex + 1}`
+          : `幻灯片 ${item.aIndex + 1}`;
       if (slideNo !== lastSlide) {
         lastSlide = slideNo;
         ul.append(el("li", { class: "revision-slide" }, slideNo));
@@ -544,13 +544,13 @@ export function createCompare(env, host) {
               el(
                 "span",
                 { class: "revision-detail" },
-                el("del", {}, item.before || "(empty)"),
+                el("del", {}, item.before || "(空白)"),
                 " → ",
-                el("ins", {}, item.after || "(empty)"),
+                el("ins", {}, item.after || "(空白)"),
               ),
           ),
           iconButton(
-            `Accept: ${DESCRIBE[item.type]}, ${item.label}`,
+            `接受：${DESCRIBE[item.type]}，${item.label}`,
             "Check",
             () => accept([item]),
             {
@@ -559,7 +559,7 @@ export function createCompare(env, host) {
             },
           ),
           iconButton(
-            `Reject: ${DESCRIBE[item.type]}, ${item.label}`,
+            `拒绝：${DESCRIBE[item.type]}，${item.label}`,
             "X",
             () => reject([item]),
             {
@@ -574,7 +574,7 @@ export function createCompare(env, host) {
       el(
         "button",
         { type: "button", class: "btn secondary end-review", onclick: end },
-        "End Review",
+        "结束审阅",
       ),
     );
     return wrap;

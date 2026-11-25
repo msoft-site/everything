@@ -178,7 +178,7 @@ export function createThemeTools(host) {
         return {
           id: `deck:${m.partName}`,
           label: i?.name || m.name || "此演示文稿",
-          description: "A theme this presentation uses",
+          description: "此演示文稿中使用的设计主题",
           section: "deck",
           version: masterStamp(m.partName),
           render: () => deckTile(m.partName, i),
@@ -271,7 +271,7 @@ export function createThemeTools(host) {
         items: choices.filter((c) => c.section === "deck"),
       },
       {
-        label: "Built-in",
+        label: "内置",
         items: choices.filter((c) => c.section === "builtin"),
       },
     ].filter((s) => s.items.length);
@@ -358,13 +358,13 @@ export function createThemeTools(host) {
     return [
       { name: base, colors: c, dark: i.dark },
       {
-        name: `${base} (${i.dark ? "Light" : "Dark"})`,
+        name: `${base} (${i.dark ? "浅色" : "深色"})`,
         colors: c,
         dark: !i.dark,
       },
-      { name: `${base} (Accents turned)`, colors: turned(2), dark: i.dark },
+      { name: `${base} (强调色轮换)`, colors: turned(2), dark: i.dark },
       {
-        name: `${base} (Accents turned twice)`,
+        name: `${base} (强调色二次轮换)`,
         colors: turned(4),
         dark: i.dark,
       },
@@ -488,7 +488,7 @@ export function createThemeTools(host) {
     return [
       custom.length && { header: "自定义" },
       ...custom.map((s) => item({ ...s, dark: undefined })),
-      own.length && { header: "This theme" },
+      own.length && { header: "此主题" },
       ...builtin.filter((s) => own.includes(s.name)).map(item),
       { header: "内置" },
       ...builtin
@@ -691,13 +691,13 @@ export function createThemeTools(host) {
     let dark = !!i?.dark;
     const nameInput = el("input", {
       class: "input",
-      value: "Custom 1",
+      value: "自定义 1",
       "aria-label": "名称",
       maxlength: 60,
     });
     const used = new Set(customColorSchemes().map((s) => s.name));
     for (let n = 1; used.has(nameInput.value); n++)
-      nameInput.value = `Custom ${n + 1}`;
+      nameInput.value = `自定义 ${n + 1}`;
     const preview = el("div", {
       class: "scheme-preview",
       "aria-hidden": "true",
@@ -711,7 +711,7 @@ export function createThemeTools(host) {
             class: "scheme-preview-slide",
             style: `background:${p.bg};color:${p.ink}`,
           },
-          el("div", { class: "scheme-preview-title" }, "Text"),
+          el("div", { class: "scheme-preview-title" }, "文本"),
           el(
             "div",
             { class: "scheme-preview-bars" },
@@ -724,9 +724,9 @@ export function createThemeTools(host) {
           el(
             "div",
             { class: "scheme-preview-links" },
-            el("span", { style: `color:${colors.hlink}` }, "Hyperlink"),
+            el("span", { style: `color:${colors.hlink}` }, "超链接"),
             " ",
-            el("span", { style: `color:${colors.folHlink}` }, "Followed"),
+            el("span", { style: `color:${colors.folHlink}` }, "已访问"),
           ),
         );
       };
@@ -803,12 +803,12 @@ export function createThemeTools(host) {
       confirm: "保存",
     });
     if (!ok) return;
-    const name = nameInput.value.trim() || "Custom";
+    const name = nameInput.value.trim() || "自定义";
     const list = customColorSchemes().filter((s) => s.name !== name);
     list.unshift({ name, colors: { ...colors } });
     if (!writeList(CUSTOM_COLORS_KEY, list.slice(0, 30)))
       toast(
-        "The color scheme is applied, but this browser could not keep it for later.",
+        "配色方案已应用，但此浏览器无法保留以供以后使用。",
       );
     await applyColors(colors, name, dark);
   }
@@ -860,13 +860,13 @@ export function createThemeTools(host) {
     draw();
     const nameInput = el("input", {
       class: "input",
-      value: "Custom 1",
+      value: "自定义 1",
       "aria-label": "名称",
       maxlength: 60,
     });
     const used = new Set(customFontSchemes().map((s) => s.name));
     for (let n = 1; used.has(nameInput.value); n++)
-      nameInput.value = `Custom ${n + 1}`;
+      nameInput.value = `自定义 ${n + 1}`;
     const body = el(
       "form",
       {
@@ -944,7 +944,7 @@ export function createThemeTools(host) {
             title: "主题",
             description: "为母版应用其他主题。",
             menu: themesMenu,
-            menuLabel: "Themes",
+            menuLabel: "主题",
           },
           {
             type: "stack",
@@ -957,7 +957,7 @@ export function createThemeTools(host) {
                 icon: "colors",
                 title: "颜色",
                 menu: colorsMenu,
-                menuLabel: "Theme colors",
+                menuLabel: "主题颜色",
               },
               {
                 type: "small",
@@ -967,7 +967,7 @@ export function createThemeTools(host) {
                 icon: "fonts",
                 title: "字体",
                 menu: fontsMenu,
-                menuLabel: "Theme fonts",
+                menuLabel: "主题字体",
               },
               {
                 type: "small",
@@ -977,7 +977,7 @@ export function createThemeTools(host) {
                 icon: "effects",
                 title: "效果",
                 menu: effectsMenu,
-                menuLabel: "Theme effects",
+                menuLabel: "主题效果",
               },
             ],
           },
@@ -988,7 +988,7 @@ export function createThemeTools(host) {
             icon: "backgroundStyles",
             title: "背景样式",
             menu: backgroundStylesMenu,
-            menuLabel: "Background styles",
+            menuLabel: "背景样式",
           },
         ],
       },

@@ -15,11 +15,16 @@ const ACCENTS = [
   "accent6",
 ];
 const accentName = (a) => `辅色 ${a.slice(-1)}`;
+const ROW_LABELS = {
+  Subtle: "细微效果",
+  Moderate: "中等效果",
+  Intense: "强烈效果",
+};
 
 /** Theme-matrix rows: [row label, (accent) => refs]. */
 export const MATRIX_ROWS = [
   [
-    "细微",
+    "Subtle",
     (a) => ({
       fill: { idx: 1, color: `scheme:${a}/lumMod=20000/lumOff=80000` },
       line: { idx: 1, color: `scheme:${a}` },
@@ -28,7 +33,7 @@ export const MATRIX_ROWS = [
     }),
   ],
   [
-    "中等",
+    "Moderate",
     (a) => ({
       fill: { idx: 2, color: `scheme:${a}` },
       line: { idx: 1, color: `scheme:${a}/lumMod=75000` },
@@ -37,7 +42,7 @@ export const MATRIX_ROWS = [
     }),
   ],
   [
-    "强烈",
+    "Intense",
     (a) => ({
       fill: { idx: 3, color: `scheme:${a}` },
       line: { idx: 0, color: `scheme:${a}` },
@@ -55,15 +60,15 @@ export function matrixStyleChoices(theme) {
       const refs = make(accent);
       const base = cssColor(`scheme:${accent}`, theme) || "#4472C4";
       const fill =
-        row === "细微"
+        row === "Subtle"
           ? cssColor(refs.fill.color, theme)
-          : row === "中等"
+          : row === "Moderate"
             ? `linear-gradient(${shade(base, 0.55)}, ${shade(base, 0.25)})`
             : `linear-gradient(${base}, ${shade(base, -0.25)})`;
       out.push({
         id: `matrix|${row}|${accent}`,
-        label: `${row} Effect - ${accentName(accent)}`,
-        group: "Presets",
+        label: `${ROW_LABELS[row] || row} - ${accentName(accent)}`,
+        group: "预设",
         refs,
         render: () =>
           el(
@@ -86,11 +91,11 @@ export function wordArtStyles(theme) {
     light = c("bg1");
   return [
     [
-      "Fill: Dark",
+      "填充: 深色",
       { color: dark, outline: null, effects: null, gradient: null },
     ],
     [
-      "Fill: Accent 1, Shadow",
+      "填充: 辅色 1，阴影",
       {
         color: c("accent1"),
         outline: null,
@@ -107,7 +112,7 @@ export function wordArtStyles(theme) {
       },
     ],
     [
-      "Fill: Accent 2, Outline: Light",
+      "填充: 辅色 2，轮廓: 浅色",
       {
         color: c("accent2"),
         gradient: null,
@@ -116,7 +121,7 @@ export function wordArtStyles(theme) {
       },
     ],
     [
-      "Fill: Light, Outline: Accent 1, Glow",
+      "填充: 浅色，轮廓: 辅色 1，发光",
       {
         color: light,
         gradient: null,
@@ -127,7 +132,7 @@ export function wordArtStyles(theme) {
       },
     ],
     [
-      "Outline: Accent 1",
+      "轮廓: 辅色 1",
       {
         color: light,
         colorOpacity: 0,
@@ -137,7 +142,7 @@ export function wordArtStyles(theme) {
       },
     ],
     [
-      "Gradient: Accent 1 to Accent 5",
+      "渐变: 辅色 1 至 辅色 5",
       {
         gradient: {
           stops: [
@@ -151,7 +156,7 @@ export function wordArtStyles(theme) {
       },
     ],
     [
-      "Gradient: Warm",
+      "渐变: 暖色",
       {
         gradient: {
           stops: [
@@ -173,7 +178,7 @@ export function wordArtStyles(theme) {
       },
     ],
     [
-      "Fill: Accent 4, Reflection",
+      "填充: 辅色 4，倒影",
       {
         color: c("accent4"),
         gradient: null,
@@ -189,7 +194,7 @@ export function wordArtStyles(theme) {
       },
     ],
     [
-      "Fill: Dark, Glow: Accent 2",
+      "填充: 深色，发光: 辅色 2",
       {
         color: dark,
         gradient: null,
@@ -200,7 +205,7 @@ export function wordArtStyles(theme) {
       },
     ],
     [
-      "Fill: Accent 6, Inner Shadow",
+      "填充: 辅色 6，内部阴影",
       {
         color: c("accent6"),
         gradient: null,
@@ -218,7 +223,7 @@ export function wordArtStyles(theme) {
       },
     ],
     [
-      "Gradient: Silver",
+      "渐变: 银色",
       {
         gradient: {
           stops: [
@@ -233,7 +238,7 @@ export function wordArtStyles(theme) {
       },
     ],
     [
-      "Fill: Accent 3, Outline: Dark",
+      "填充: 辅色 3，轮廓: 深色",
       {
         color: c("accent3"),
         gradient: null,

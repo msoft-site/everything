@@ -175,26 +175,26 @@ export function createHeaderFooter(ctx) {
         el(
           "fieldset",
           { class: "hf-fields" },
-          el("legend", {}, "Include on slide"),
-          checkbox("Date and time", s.dateOn, (on) => {
+          el("legend", {}, "在幻灯片中包含"),
+          checkbox("日期和时间", s.dateOn, (on) => {
             s.dateOn = on;
             slideDate.setEnabled(on);
             refresh();
           }),
           el("div", { class: "hf-indent" }, slideDate.node),
           checkbox(
-            "Slide number",
+            "幻灯片编号",
             s.numberOn,
             (on) => ((s.numberOn = on), refresh()),
           ),
           checkbox(
-            "Footer",
+            "页脚",
             s.footerOn,
             (on) => ((s.footerOn = on), refresh()),
           ),
           el("div", { class: "hf-indent" }, footerInput),
           checkbox(
-            "Don't show on title slide",
+            "标题幻灯片中不显示",
             s.hideOnTitle,
             (on) => (s.hideOnTitle = on),
           ),
@@ -202,7 +202,7 @@ export function createHeaderFooter(ctx) {
         el(
           "div",
           { class: "hf-side" },
-          el("span", { class: "hf-caption" }, "Preview"),
+          el("span", { class: "hf-caption" }, "预览"),
           slidePreview,
         ),
       ),
@@ -219,16 +219,16 @@ export function createHeaderFooter(ctx) {
       el(
         "fieldset",
         { class: "hf-fields" },
-        el("legend", {}, "Include on notes pages and handouts"),
-        checkbox("Date and time", n.dateOn, (on) => {
+        el("legend", {}, "在备注和讲义中包含"),
+        checkbox("日期和时间", n.dateOn, (on) => {
           n.dateOn = on;
           notesDate.setEnabled(on);
         }),
         el("div", { class: "hf-indent" }, notesDate.node),
-        checkbox("Header", n.headerOn, (on) => (n.headerOn = on)),
+        checkbox("页眉", n.headerOn, (on) => (n.headerOn = on)),
         el("div", { class: "hf-indent" }, notesHeader),
-        checkbox("Page number", n.numberOn, (on) => (n.numberOn = on)),
-        checkbox("Footer", n.footerOn, (on) => (n.footerOn = on)),
+        checkbox("页码", n.numberOn, (on) => (n.numberOn = on)),
+        checkbox("页脚", n.footerOn, (on) => (n.footerOn = on)),
         el("div", { class: "hf-indent" }, notesFooter),
       ),
     );
@@ -279,8 +279,8 @@ export function createHeaderFooter(ctx) {
     const tabs = el(
       "div",
       { class: "hf-tabs", role: "tablist", "aria-label": "页眉和页脚" },
-      tabButton("slide", "Slide"),
-      tabButton("notes", "Notes and Handouts"),
+      tabButton("slide", "幻灯片"),
+      tabButton("notes", "备注和讲义"),
     );
     refresh();
     const body = el(

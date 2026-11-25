@@ -6,7 +6,7 @@ import { canvasPng } from "./util.js";
 
 async function captureFrame() {
   if (!navigator.mediaDevices?.getDisplayMedia)
-    throw new Error("This browser cannot capture the screen.");
+    throw new Error("此浏览器无法截取屏幕。");
   let stream;
   try {
     stream = await navigator.mediaDevices.getDisplayMedia({
@@ -15,7 +15,7 @@ async function captureFrame() {
     });
   } catch (error) {
     if (error?.name === "NotAllowedError") return null;
-    throw new Error("The screen could not be captured.");
+    throw new Error("无法截取屏幕。");
   }
   try {
     const video = el("video", { muted: true, playsinline: true });
@@ -45,7 +45,7 @@ async function clipRegion(source) {
   const hint = el(
     "p",
     { class: "clip-hint", role: "status" },
-    "Drag over the part to insert, or insert the whole capture.",
+    "拖动选择要插入的部分，或插入整幅屏幕截图。",
   );
   const stage = el(
     "div",
@@ -92,8 +92,8 @@ async function clipRegion(source) {
         ? { x: x * scale, y: y * scale, w: w * scale, h: h * scale }
         : null;
     hint.textContent = region
-      ? `Region ${Math.round(region.w)} × ${Math.round(region.h)} pixels.`
-      : "Drag over the part to insert, or insert the whole capture.";
+      ? `已选区域：${Math.round(region.w)} × ${Math.round(region.h)} 像素。`
+      : "拖动选择要插入的部分，或插入整幅屏幕截图。";
   });
   stage.addEventListener("pointerup", () => (start = null));
   const choice = await dialog({
@@ -108,7 +108,7 @@ async function clipRegion(source) {
   if (!choice) return null;
   if (choice === "whole" || !region) {
     if (choice === "region" && !region)
-      toast("No region was dragged; the whole capture was inserted.");
+      toast("未拖动选择区域，已插入整幅屏幕截图。");
     return source;
   }
   const out = document.createElement("canvas");
@@ -142,12 +142,12 @@ export function createScreenshotFeatures(ctx) {
   }
   const menu = () => [
     {
-      label: "Capture a Window or Screen…",
+      label: "截取窗口或屏幕…",
       icon: "o:screenshot",
       onSelect: () => screenshot().catch(ctx.fail),
     },
     {
-      label: "Screen Clipping…",
+      label: "屏幕剪辑…",
       icon: "o:crop",
       onSelect: () => screenshot({ clip: true }).catch(ctx.fail),
     },

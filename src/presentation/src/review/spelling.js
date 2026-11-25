@@ -278,7 +278,7 @@ export function createSpelling(env, host) {
         el(
           "button",
           { type: "button", class: "btn secondary", onclick: () => check() },
-          "Try Again",
+          "重试",
         ),
       );
       return wrap;
@@ -288,7 +288,7 @@ export function createSpelling(env, host) {
         el(
           "p",
           { class: "review-status", role: "status" },
-          "Loading the dictionary…",
+          "正在加载字典…",
         ),
       );
       return wrap;
@@ -299,12 +299,12 @@ export function createSpelling(env, host) {
           "div",
           { class: "review-empty", role: "status" },
           icon("o:spelling", 32),
-          el("p", {}, "Spelling check complete. No more words to review."),
+          el("p", {}, "拼写检查完成。没有需要检查的单词。"),
           state.skippedOther &&
             el(
               "p",
               { class: "helper" },
-              "Text marked as another language was skipped: the dictionary here is English (United States).",
+              "已跳过标记为其他语言的文本：当前字典为英语(美国)。",
             ),
           el(
             "button",
@@ -316,7 +316,7 @@ export function createSpelling(env, host) {
                 check({ from: 0 });
               },
             },
-            "Check Again",
+            "重新检查",
           ),
         ),
       );
@@ -353,7 +353,7 @@ export function createSpelling(env, host) {
       },
     });
     if (!state.suggestions.length)
-      list.append(el("p", { class: "helper" }, "No suggestions."));
+      list.append(el("p", { class: "helper" }, "无建议。"));
     state.suggestions.forEach((s, k) =>
       list.append(
         el(

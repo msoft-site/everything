@@ -1,21 +1,21 @@
 // Layout arithmetic for photo albums and zooms, in EMU (or any unit).
 
 export const ALBUM_LAYOUTS = [
-  ["fit", "Fit to slide", 1, false],
-  ["1", "1 picture", 1, false],
-  ["2", "2 pictures", 2, false],
-  ["4", "4 pictures", 4, false],
-  ["1t", "1 picture with title", 1, true],
-  ["2t", "2 pictures with title", 2, true],
-  ["4t", "4 pictures with title", 4, true],
+  ["fit", "适应幻灯片", 1, false],
+  ["1", "1 张图片", 1, false],
+  ["2", "2 张图片", 2, false],
+  ["4", "4 张图片", 4, false],
+  ["1t", "1 张图片(含标题)", 1, true],
+  ["2t", "2 张图片(含标题)", 2, true],
+  ["4t", "4 张图片(含标题)", 4, true],
 ];
 export const ALBUM_FRAMES = [
-  ["rect", "Rectangle"],
-  ["roundRect", "Rounded Rectangle"],
-  ["whiteFrame", "Simple Frame, White"],
-  ["blackFrame", "Simple Frame, Black"],
-  ["shadow", "Soft Shadow"],
-  ["ellipse", "Oval"],
+  ["rect", "矩形"],
+  ["roundRect", "圆角矩形"],
+  ["whiteFrame", "简单框架，白色"],
+  ["blackFrame", "简单框架，黑色"],
+  ["shadow", "居中阴影矩形"],
+  ["ellipse", "椭圆"],
 ];
 
 /**

@@ -755,13 +755,13 @@ export function createChartTools(h) {
       ctx: ctx(),
     });
     nodes.push(
-      el("h3", {}, "Data"),
+      el("h3", {}, "数据"),
       el(
         "div",
         { class: "arrange-buttons" },
         button("编辑数据", "o:editData", () => editData(obj), "secondary"),
         button(
-          "Change Chart Type",
+          "更改图表类型",
           "o:changeChartType",
           () => changeType(obj),
           "secondary",
@@ -774,7 +774,7 @@ export function createChartTools(h) {
     if (!isChart(obj)) return null;
     const spec = specOf(obj);
     return spec
-      ? `Format ${elementLabel(spec, currentElement(obj))}`
+      ? `设置${elementLabel(spec, currentElement(obj))}格式`
       : "设置图表格式";
   }
 
@@ -796,11 +796,11 @@ export function createChartTools(h) {
             {
               type: "large",
               id: "chart-add-element",
-              label: "Add Chart\nElement",
+              label: "添加图表\n元素",
               icon: "chartElement",
               title: "添加图表元素",
               description:
-                "Add or remove titles, labels, gridlines, a legend and more.",
+                "添加或删除标题、数据标签、网格线、图例等。",
               enabled,
               menu: () => addElementMenu(),
               menuWidth: 240,
@@ -808,10 +808,10 @@ export function createChartTools(h) {
             {
               type: "large",
               id: "chart-quick-layout",
-              label: "Quick\nLayout",
+              label: "快速\n布局",
               icon: "quickLayout",
               title: "快速布局",
-              description: "Change the overall layout of the chart's elements.",
+              description: "更改图表元素的整体布局。",
               enabled,
               menu: () => quickLayoutMenu(),
             },
@@ -826,10 +826,10 @@ export function createChartTools(h) {
             {
               type: "large",
               id: "chart-change-colors",
-              label: "Change\nColors",
+              label: "更改\n颜色",
               icon: "chartColors",
               title: "更改颜色",
-              description: "Choose a set of colors for the chart's data.",
+              description: "为图表数据选择一组配色。",
               enabled,
               menu: () => colorsMenu(),
               menuWidth: 260,
@@ -857,10 +857,10 @@ export function createChartTools(h) {
             {
               type: "large",
               id: "chart-switch",
-              label: "Switch Row/\nColumn",
+              label: "切换\n行/列",
               icon: "switchRowColumn",
               title: "切换行/列",
-              description: "Swap what is plotted as series and as categories.",
+              description: "切换在系列和分类中绘制的数据。",
               enabled: () =>
                 enabled() && canSwitchRowColumn(specOf(selectedChart())?.kind),
               run: () => updateSelected((s) => switchRowColumn(s)),
@@ -868,21 +868,21 @@ export function createChartTools(h) {
             {
               type: "large",
               id: "chart-select-data",
-              label: "Select\nData",
+              label: "选择\n数据",
               icon: "selectData",
               title: "选择数据",
               description:
-                "Rename, add, remove and reorder the chart's series and categories.",
+                "重命名、添加、删除和重新排序图表的系列及分类。",
               enabled,
               run: () => selectData(),
             },
             {
               type: "large",
               id: "chart-edit-data",
-              label: "Edit\nData",
+              label: "编辑\n数据",
               icon: "editData",
               title: "编辑数据",
-              description: "Open the data sheet to change the chart's numbers.",
+              description: "打开数据工作表以更改图表中的数值。",
               enabled,
               run: () => editData(),
             },
@@ -896,10 +896,10 @@ export function createChartTools(h) {
             {
               type: "large",
               id: "chart-change-type",
-              label: "Change\nChart Type",
+              label: "更改\n图表类型",
               icon: "changeChartType",
               title: "更改图表类型",
-              description: "Show the data as a different kind of chart.",
+              description: "将数据以其他类型的图表显示。",
               enabled,
               run: () => changeType(),
             },
@@ -1072,7 +1072,7 @@ export function createChartTools(h) {
       return [
         {
           label:
-            "This element has no " + (which === "fill" ? "fill" : "outline"),
+            "此元素没有" + (which === "fill" ? "填充" : "轮廓"),
           disabled: true,
           onSelect: () => {},
         },

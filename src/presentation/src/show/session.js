@@ -28,27 +28,27 @@ const ZOOM_STEPS = [1, 2, 3, 4];
 
 /** The show's shortcuts, as the help lists them. */
 export const SHOW_SHORTCUTS = [
-  ["Next slide or animation", "N, Space, Right, Down, Page Down, Enter, click"],
-  ["Previous slide or animation", "P, Left, Up, Page Up, Backspace"],
-  ["Go to slide number", "Number, then Enter"],
-  ["First or last slide", "Home, End"],
-  ["查看所有幻灯片", "G or -"],
-  ["Zoom in, zoom out", "+ and -"],
-  ["Black screen, or back", "B or ."],
-  ["White screen, or back", "W or ,"],
-  ["Pause or resume automatic advance", "S"],
-  ["Laser pointer", `L or ${CTRL}+L`],
-  ["Pen", `${CTRL}+P`],
-  ["Highlighter", `${CTRL}+I`],
-  ["Eraser", `${CTRL}+E`],
-  ["Erase all ink on the slide", "E"],
-  ["Show or hide ink", `${CTRL}+M`],
-  ["Show the pointer as an arrow", `${CTRL}+A`],
-  ["Hide the pointer", `${CTRL}+H`],
-  ["Hide the pointer when it rests", `${CTRL}+U`],
-  ["Live subtitles on or off", `${CTRL}+J`],
-  ["Shortcuts", "? or F1"],
-  ["End the show", "Esc"],
+  ["下一张幻灯片或下一个动画", "N、空格、向右键、向下键、Page Down、Enter 或单击"],
+  ["上一张幻灯片或上一个动画", "P、向左键、向上键、Page Up 或 Backspace"],
+  ["转到指定幻灯片编号", "输入数字，然后按 Enter"],
+  ["第一张或最后一张幻灯片", "Home、End"],
+  ["查看所有幻灯片", "G 或 -"],
+  ["放大、缩小", "+ 和 -"],
+  ["黑屏或恢复", "B 或 ."],
+  ["白屏或恢复", "W 或 ,"],
+  ["暂停或恢复自动推进", "S"],
+  ["激光指针", `L 或 ${CTRL}+L`],
+  ["笔", `${CTRL}+P`],
+  ["荧光笔", `${CTRL}+I`],
+  ["橡皮擦", `${CTRL}+E`],
+  ["擦除幻灯片上的所有墨迹", "E"],
+  ["显示或隐藏墨迹", `${CTRL}+M`],
+  ["将指针显示为箭头", `${CTRL}+A`],
+  ["隐藏指针", `${CTRL}+H`],
+  ["在停止移动时隐藏指针", `${CTRL}+U`],
+  ["开启或关闭实时字幕", `${CTRL}+J`],
+  ["快捷键帮助", "? 或 F1"],
+  ["结束放映", "Esc"],
 ];
 
 /**
@@ -291,7 +291,7 @@ export function createShowSession(ctx, show) {
       el(
         "div",
         { class: "show-grid-head" },
-        el("h2", {}, "All slides"),
+        el("h2", {}, "所有幻灯片"),
         iconButton("关闭所有幻灯片", "X", () => closeGrid()),
       ),
       list,
@@ -544,10 +544,10 @@ export function createShowSession(ctx, show) {
     },
   );
   const subtitlesButton = lineButton(
-    "Subtitles",
+    "字幕",
     "Captions",
     () => toggleSubtitles(),
-    { "aria-pressed": "false", title: `Subtitles (${CTRL}+J)` },
+    { "aria-pressed": "false", title: `实时字幕 (${CTRL}+J)` },
   );
   const moreButton = lineButton(
     "更多幻灯片放映选项",
@@ -755,7 +755,7 @@ export function createShowSession(ctx, show) {
       const ended = show.isEnded();
       counter.textContent = ended
         ? "放映结束"
-        : `Slide ${n + 1} of ${all.length}`;
+        : `幻灯片 ${n + 1} / ${all.length}`;
       const coming = ended
         ? null
         : n + 1 < all.length
@@ -767,7 +767,7 @@ export function createShowSession(ctx, show) {
         nextImage.src = show.picture(coming);
         nextImage.hidden = false;
         const at = all.indexOf(coming);
-        nextLabel.textContent = `Slide ${at + 1}${show.title(coming) ? `: ${show.title(coming)}` : ""}`;
+        nextLabel.textContent = `幻灯片 ${at + 1}${show.title(coming) ? `: ${show.title(coming)}` : ""}`;
       } else {
         nextImage.removeAttribute("src");
         nextImage.hidden = true;
@@ -776,7 +776,7 @@ export function createShowSession(ctx, show) {
       // The last slide's builds come before the end, too.
       const steps = ended ? 0 : (show.animationSteps?.() ?? 0);
       if (step < steps)
-        nextLabel.textContent = `Next click: animation ${step + 1} of ${steps} on this slide, then ${coming ? nextLabel.textContent : "the end of the slide show"}`;
+        nextLabel.textContent = `下一次单击：此幻灯片上的第 ${step + 1} / ${steps} 个动画，随后${coming ? nextLabel.textContent : "放映结束"}`;
       const notes = ended ? "" : P.getSlideNotes(all[n]) || "";
       notesText.textContent = notes || "此幻灯片没有备注。";
       notesText.classList.toggle("empty", !notes);
@@ -815,12 +815,12 @@ export function createShowSession(ctx, show) {
             if (win) attachAudience(win);
             else
               status(
-                "The browser blocked the audience window. Allow pop-ups for this site to use a second screen.",
+                "浏览器阻止了观众窗口。请允许此网站的弹出式窗口以使用第二屏幕。",
               );
           }
           b.firstChild.textContent = audience
-            ? "One window"
-            : "Audience window";
+            ? "单一窗口"
+            : "观众窗口";
         },
       },
       el("span", {}, options.audience ? "单一窗口" : "观众窗口"),
@@ -989,7 +989,7 @@ export function createShowSession(ctx, show) {
           image.src = show.currentPicture?.() ?? show.picture(all[n]);
           stale = false;
         }
-        image.alt = show.isEnded() ? "幻灯片放映结束" : `Slide ${n + 1}`;
+        image.alt = show.isEnded() ? "幻灯片放映结束" : `幻灯片 ${n + 1}`;
       },
       dispose() {
         observer.disconnect();

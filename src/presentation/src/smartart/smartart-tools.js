@@ -117,7 +117,7 @@ export function createSmartArtTools(h) {
             if (!warnedForeign.has(key)) {
               warnedForeign.add(key);
               toast(
-                `The graphic now uses the ${layoutInfo(next.layout)?.name || "closest"} layout so it can take the change.`,
+                `此图形现在使用${layoutInfo(next.layout)?.name || "最接近的"}布局以支持此更改。`,
               );
             }
           }
@@ -507,7 +507,7 @@ export function createSmartArtTools(h) {
     }
     const items = itemsFromParagraphs(paragraphsOf(obj));
     if (!items.length) {
-      toast("The text box has no text to convert.");
+      toast("文本框中没有要转换的文本。");
       return;
     }
     const b = h.bounds(obj);
@@ -608,7 +608,7 @@ export function createSmartArtTools(h) {
     return [
       el("h3", {}, "SmartArt 图形"),
       select(
-        "Layout",
+        "布局",
         model.layout,
         [
           ...(model.layout ? [] : [["", "导入的布局"]]),
@@ -617,7 +617,7 @@ export function createSmartArtTools(h) {
         (m, v) => (v ? { ...m, layout: v } : null),
       ),
       select(
-        "Colors",
+        "颜色",
         model.colors,
         P.SMARTART_COLOR_SCHEMES.map((c) => [c.id, c.name]),
         (m, v) => ({
@@ -627,7 +627,7 @@ export function createSmartArtTools(h) {
         }),
       ),
       select(
-        "Style",
+        "样式",
         model.style,
         P.SMARTART_STYLES.map((s) => [s.id, s.name]),
         (m, v) => ({
@@ -656,7 +656,7 @@ export function createSmartArtTools(h) {
         { class: "arrange-buttons" },
         button("文本窗格", "o:textPane", () => openPane(obj), "secondary"),
         button(
-          "Convert to Shapes",
+          "转换为形状",
           "o:convertToShapes",
           () => convertToShapes(),
           "secondary",
@@ -695,11 +695,11 @@ export function createSmartArtTools(h) {
               {
                 type: "large",
                 id: "smartart-add-shape",
-                label: "Add\nShape",
+                label: "添加\n形状",
                 icon: "addShape",
                 title: "添加形状",
                 description:
-                  "Add a shape after the current one, or choose where.",
+                  "在当前形状后添加形状，或选择添加位置。",
                 split: true,
                 enabled,
                 run: () => outline(addAfter),
@@ -713,7 +713,7 @@ export function createSmartArtTools(h) {
                   ),
                   small(
                     "smartart-text-pane",
-                    "Text Pane",
+                    "文本窗格",
                     "textPane",
                     () => openPane(),
                     null,
@@ -725,7 +725,7 @@ export function createSmartArtTools(h) {
                   ),
                   small(
                     "smartart-rtl",
-                    "Right to Left",
+                    "从右向左",
                     "rightToLeft",
                     () =>
                       updateSelected((m) => ({
@@ -748,14 +748,14 @@ export function createSmartArtTools(h) {
                 items: [
                   small(
                     "smartart-promote",
-                    "Promote",
+                    "升级",
                     "promote",
                     () => outline(promote),
                     canPromote,
                   ),
                   small(
                     "smartart-demote",
-                    "Demote",
+                    "降级",
                     "demote",
                     () => outline(demote),
                     canDemote,
@@ -767,14 +767,14 @@ export function createSmartArtTools(h) {
                 items: [
                   small(
                     "smartart-move-up",
-                    "Move Up",
+                    "上移",
                     "moveUp",
                     () => outline(moveUp),
                     canMoveUp,
                   ),
                   small(
                     "smartart-move-down",
-                    "Move Down",
+                    "下移",
                     "moveDown",
                     () => outline(moveDown),
                     canMoveDown,
@@ -815,10 +815,10 @@ export function createSmartArtTools(h) {
               {
                 type: "large",
                 id: "smartart-colors",
-                label: "Change\nColors",
+                label: "更改\n颜色",
                 icon: "chartColors",
                 title: "更改颜色",
-                description: "Choose a color scheme for the graphic.",
+                description: "为图形选择配色方案。",
                 enabled,
                 menu: () => colorsMenu(),
                 menuWidth: 340,
@@ -852,11 +852,11 @@ export function createSmartArtTools(h) {
               {
                 type: "large",
                 id: "smartart-reset-graphic",
-                label: "Reset\nGraphic",
+                label: "重置\n图形",
                 icon: "resetGraphic",
                 title: "重置图形",
                 description:
-                  "Discard the colors and style changes made to the graphic.",
+                  "放弃对该图形所做的颜色和样式更改。",
                 enabled,
                 run: () => resetGraphic(),
               },
@@ -867,7 +867,7 @@ export function createSmartArtTools(h) {
                 icon: "convertToShapes",
                 title: "转换",
                 description:
-                  "Turn the graphic into bulleted text or into ordinary shapes.",
+                  "将图形转换为项目符号文本或普通形状。",
                 enabled,
                 menu: () => [
                   {

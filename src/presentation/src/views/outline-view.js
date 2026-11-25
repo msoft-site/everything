@@ -120,7 +120,7 @@ export function createOutlineView(ctx) {
     titleHints = new Map(
       [...slides].map(([part, s]) => [
         part,
-        s.hasTitle ? "Slide title" : "Add a title",
+        s.hasTitle ? "幻灯片标题" : "添加标题",
       ]),
     );
     const current = P.getSlidePartName(ctx.currentSlide());

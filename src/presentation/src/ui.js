@@ -357,8 +357,8 @@ export function toast(message) {
 export async function dialog({
   title,
   body,
-  confirm = "Done",
-  cancel = "Cancel",
+  confirm = "完成",
+  cancel = "取消",
   danger = false,
   returnFocus,
   actions = null,
@@ -382,7 +382,7 @@ export async function dialog({
         "div",
         { class: "dialog-head" },
         el("h2", { id: "dialog-title" }, title),
-        iconButton("Close", "X", () => finish(dismissed)),
+        iconButton("关闭", "X", () => finish(dismissed)),
       ),
       body,
       el(
@@ -432,7 +432,7 @@ export async function promptName(
   title,
   value,
   returnFocus,
-  { keep = false, confirm = "Save" } = {},
+  { keep = false, confirm = "保存" } = {},
 ) {
   const input = el("input", {
     class: "input",
@@ -443,7 +443,7 @@ export async function promptName(
   });
   const response = dialog({
     title,
-    body: el("form", { class: "dialog-body" }, el("label", {}, "Name", input)),
+    body: el("form", { class: "dialog-body" }, el("label", {}, "名称", input)),
     confirm,
     returnFocus,
   });
@@ -508,7 +508,7 @@ export function openMenu({
   x = null,
   y = null,
   align = "start",
-  label = "Options",
+  label = "选项",
   minWidth = null,
   onClose = null,
   contextual = false,
@@ -940,7 +940,7 @@ function position(panel, anchor, x, y, align, parentPanel) {
 export function menu(
   anchor,
   items,
-  { at = null, contextual = false, label = "Options" } = {},
+  { at = null, contextual = false, label = "选项" } = {},
 ) {
   return openMenu({
     anchor,
@@ -983,7 +983,7 @@ export function refocus(node) {
 }
 export function createMenubar(
   entries,
-  { label = "Menu bar", returnFocus = null } = {},
+  { label = "菜单栏", returnFocus = null } = {},
 ) {
   const bar = el("nav", {
     class: "menubar",

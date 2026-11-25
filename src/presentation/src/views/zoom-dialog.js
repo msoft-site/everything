@@ -37,8 +37,8 @@ export async function zoomDialog({ current, fit, set, min = 10, max = 400 }) {
   const presets = el(
     "fieldset",
     { class: "zoom-presets" },
-    el("legend", {}, "Zoom to"),
-    radio("fit", "Fit", fit),
+    el("legend", {}, "缩放至"),
+    radio("fit", "最佳大小", fit),
     ...ZOOM_PRESETS.map((level) =>
       radio(String(level), `${Math.round(level * 100)}%`, matches(level)),
     ),
@@ -47,7 +47,7 @@ export async function zoomDialog({ current, fit, set, min = 10, max = 400 }) {
     "form",
     { class: "dialog-body zoom-dialog" },
     presets,
-    el("label", { class: "zoom-percent" }, "Percent", percent, "%"),
+    el("label", { class: "zoom-percent" }, "百分比", percent, "%"),
   );
   // Choosing a preset shows its percentage; typing one clears the preset.
   presets.addEventListener("change", (e) => {

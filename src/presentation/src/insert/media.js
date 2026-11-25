@@ -53,7 +53,7 @@ function loadMedia(url, kind) {
     media.onerror = () =>
       reject(
         new Error(
-          `This ${kind} could not be played by the browser. Choose an ${kind === "video" ? "MP4, WebM or MOV" : "MP3, WAV, M4A or OGG"} file.`,
+          `此${kind === "video" ? "视频" : "音频"}无法在浏览器中播放。请选择 ${kind === "video" ? "MP4、WebM 或 MOV" : "MP3、WAV、M4A 或 OGG"} 文件。`,
         ),
       );
     media.src = url;
@@ -137,12 +137,12 @@ export function createMediaFeatures(ctx) {
     if (!type || (kindWanted && type.kind !== kindWanted))
       throw new Error(
         kindWanted === "audio"
-          ? "Choose an MP3, WAV, M4A or OGG sound file."
-          : "Choose an MP4, WebM or MOV video file.",
+          ? "请选择 MP3、WAV、M4A 或 OGG 音频文件。"
+          : "请选择 MP4、WebM 或 MOV 视频文件。",
       );
     if (file.size > MAX_BYTES)
       throw new Error(
-        "Choose a file smaller than 150 MB; large media makes the presentation slow to save and share.",
+        "请选择小于 150 MB 的文件；大型媒体文件会导致演示文稿保存和共享变慢。",
       );
     const data = await fileBytes(file);
     const url = bytesUrl(data, type.contentType);
@@ -229,7 +229,7 @@ export function createMediaFeatures(ctx) {
       !navigator.mediaDevices?.getUserMedia ||
       typeof MediaRecorder === "undefined"
     )
-      throw new Error("This browser cannot record sound.");
+      throw new Error("此浏览器无法录制声音。");
     const name = el("input", {
       class: "input",
       value: "录制的声音",
@@ -244,7 +244,7 @@ export function createMediaFeatures(ctx) {
     const status = el(
       "p",
       { class: "record-status", role: "status" },
-      "Press Record to start.",
+      "按“录制”以开始。",
     );
     const level = el(
       "div",
@@ -264,24 +264,24 @@ export function createMediaFeatures(ctx) {
       "button",
       { type: "button", class: "btn secondary record-btn" },
       icon("o:recordAudio", 16),
-      el("span", {}, "Record"),
+      el("span", {}, "录制"),
     );
     const stopBtn = el(
       "button",
       { type: "button", class: "btn secondary", disabled: true },
       icon("Square", 16),
-      el("span", {}, "Stop"),
+      el("span", {}, "停止"),
     );
     const playBtn = el(
       "button",
       { type: "button", class: "btn secondary", disabled: true },
       icon("Play", 16),
-      el("span", {}, "Play"),
+      el("span", {}, "播放"),
     );
     const insert = el(
       "button",
       { type: "button", class: "btn primary", disabled: true },
-      "Insert",
+      "插入",
     );
     const tick = () => {
       time.textContent = formatTime(Date.now() - started);
@@ -306,7 +306,7 @@ export function createMediaFeatures(ctx) {
         stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       } catch {
         status.textContent =
-          "The microphone is not available. Allow access to it and try again.";
+          "麦克风不可用。请允许访问麦克风并重试。";
         return;
       }
       chunks = [];
@@ -317,7 +317,7 @@ export function createMediaFeatures(ctx) {
         releasePlayer();
         blob = new Blob(chunks, { type: recorder.mimeType || "audio/webm" });
         stopStream();
-        status.textContent = `Recorded ${time.textContent}. Play it back, record again, or insert it.`;
+        status.textContent = `已录制 ${time.textContent}。可以回放、重新录制或插入。`;
         playBtn.disabled = insert.disabled = false;
         recordBtn.disabled = false;
         stopBtn.disabled = true;
@@ -330,7 +330,7 @@ export function createMediaFeatures(ctx) {
       recorder.start();
       started = Date.now();
       timer = setInterval(tick, 50);
-      status.textContent = "Recording… Press Stop when you are done.";
+      status.textContent = "正在录制… 完成后请按“停止”。";
       recordBtn.disabled = playBtn.disabled = insert.disabled = true;
       stopBtn.disabled = false;
       stopBtn.focus();
@@ -359,7 +359,7 @@ export function createMediaFeatures(ctx) {
     const body = el(
       "div",
       { class: "dialog-body record-dialog" },
-      fieldRow("Name", name),
+      fieldRow("名称", name),
       el("div", { class: "record-row" }, time, level),
       el("div", { class: "record-row" }, recordBtn, stopBtn, playBtn),
       status,
@@ -373,7 +373,7 @@ export function createMediaFeatures(ctx) {
       title: "录制声音",
       body,
       confirm: null,
-      cancel: "Cancel",
+      cancel: "取消",
     });
     if (recorder?.state === "recording") recorder.stop();
     stopStream();
@@ -488,7 +488,7 @@ export function createMediaFeatures(ctx) {
     });
     startInput.addEventListener("change", syncRange);
     endInput.addEventListener("change", syncRange);
-    const play = iconButton("Play the trimmed part", "o:mediaPlay", () => {
+    const play = iconButton("播放剪裁部分", "o:mediaPlay", () => {
       if (!player.paused) return player.pause();
       if (
         player.currentTime * 1000 < startMs() ||
@@ -508,7 +508,7 @@ export function createMediaFeatures(ctx) {
       el(
         "div",
         { class: "trim-row" },
-        fieldRow("Start Time", startInput),
+        fieldRow("开始时间", startInput),
         el(
           "button",
           {
@@ -519,13 +519,13 @@ export function createMediaFeatures(ctx) {
               syncRange()
             ),
           },
-          "Set to current",
+          "设为当前时间",
         ),
       ),
       el(
         "div",
         { class: "trim-row" },
-        fieldRow("End Time", endInput),
+        fieldRow("结束时间", endInput),
         el(
           "button",
           {
@@ -536,7 +536,7 @@ export function createMediaFeatures(ctx) {
               syncRange()
             ),
           },
-          "Set to current",
+          "设为当前时间",
         ),
       ),
     );
@@ -545,7 +545,7 @@ export function createMediaFeatures(ctx) {
     const ok = await dialog({
       title: media.kind === "video" ? "剪裁视频" : "剪裁音频",
       body,
-      confirm: "OK",
+      confirm: "确定",
     });
     player.pause();
     if (!ok) return;
@@ -554,7 +554,7 @@ export function createMediaFeatures(ctx) {
     const end = Math.max(start, Math.min(endMs(), full));
     if (end - start < 100)
       throw new Error(
-        "Leave at least a tenth of a second between the start and end.",
+        "开始和结束之间请至少保留 0.1 秒。",
       );
     await setOptions(
       { trimStart: start, trimEnd: Math.max(0, full - end) },
@@ -596,13 +596,13 @@ export function createMediaFeatures(ctx) {
     if (!media) return;
     const player = players.get(keyOf(obj))?.element;
     if (!player) {
-      toast("Play the media and pause where the bookmark should go.");
+      toast("请播放媒体并在需要添加书签的位置暂停。");
       return;
     }
     const time = Math.round(player.currentTime * 1000);
     const bookmarks = [
       ...media.options.bookmarks,
-      { name: `Bookmark ${media.options.bookmarks.length + 1}`, time },
+      { name: `书签 ${media.options.bookmarks.length + 1}`, time },
     ].sort((a, b) => a.time - b.time);
     await setOptions({ bookmarks }, obj);
   }
@@ -733,7 +733,7 @@ export function createMediaFeatures(ctx) {
       },
     });
     const play = iconButton(
-      playing ? "Pause" : "Play",
+      playing ? "暂停" : "播放",
       playing ? "o:mediaPause" : "o:mediaPlay",
       (e) => {
         e.stopPropagation();
@@ -742,7 +742,7 @@ export function createMediaFeatures(ctx) {
     );
     const volumeOn = !media?.options.muted && (media?.options.volume ?? 1) > 0;
     const mute = iconButton(
-      volumeOn ? "Mute" : "Unmute",
+      volumeOn ? "静音" : "取消静音",
       volumeOn ? "o:volume" : "o:mute",
       (e) => {
         e.stopPropagation();
@@ -824,7 +824,7 @@ export function createMediaFeatures(ctx) {
             label: "播放",
             icon: "mediaPlay",
             title: "播放",
-            description: "Play the selected video or audio here.",
+            description: "在此处播放所选的视频或音频。",
             run: () => current() && toggle(current()),
           },
         ],
@@ -842,7 +842,7 @@ export function createMediaFeatures(ctx) {
                 id: "playback-add-bookmark",
                 label: "添加书签",
                 icon: "bookmarkAdd",
-                description: "Mark the current playing position.",
+                description: "标记当前的播放位置。",
                 run: () => addBookmark().catch(ctx.fail),
               },
               {
@@ -872,7 +872,7 @@ export function createMediaFeatures(ctx) {
             label: "剪裁",
             icon: "trim",
             title: "剪裁",
-            description: "Cut time from the start and end.",
+            description: "从开头和结尾剪裁时间。",
             run: () => trimDialog().catch(ctx.fail),
           },
           {
@@ -1008,17 +1008,17 @@ export function createMediaFeatures(ctx) {
           {
             type: "large",
             id: "playback-poster-frame",
-            label: "Poster\nFrame",
+            label: "标牌\n框架",
             icon: "posterFrame",
             title: "标牌框架",
-            description: "The picture shown before the video plays.",
+            description: "在播放视频之前显示的图像。",
             menu: () => [
               {
                 label: "当前帧",
                 onSelect: () => posterFromCurrentFrame().catch(ctx.fail),
               },
               {
-                label: "Image from File…",
+                label: "文件中的图像…",
                 onSelect: () => posterFromFile().catch(ctx.fail),
               },
             ],
