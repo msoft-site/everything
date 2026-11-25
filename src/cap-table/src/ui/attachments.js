@@ -1,7 +1,7 @@
 /**
  * Document attachments: the paper behind the records. A signed SPA behind a
  * certificate, the option agreement behind a grant, the 409A report behind a
- * valuation - stored as files in the user's own Puter cloud via puter.fs,
+ * valuation - stored as files in the user's own local storage via puter.fs,
  * with the record keeping only the path and a display name.
  */
 
@@ -168,7 +168,7 @@ export function attachmentsSection({ getAttachments, upload, remove }) {
             onclick: async () => {
               const ok = await confirmDialog({
                 title: `Remove ${a.name}?`,
-                message: 'The file is deleted from your Puter cloud along with the reference, unless another company or a restore point still names it.',
+                message: 'The file is deleted from local storage along with the reference, unless another company or a restore point still names it.',
                 confirmLabel: 'Remove',
               });
               if (!ok) return;
@@ -230,7 +230,7 @@ export function attachmentChoiceDialog({ title, count, message = null }) {
       onClose: () => settle(null),
       content: el('div', {},
         el('p.confirm-message', {}, message
-          || `This record carries ${count} attachment${count === 1 ? '' : 's'} in your Puter cloud. Undo restores the record, but never a deleted file.`),
+          || `This record carries ${count} attachment${count === 1 ? '' : 's'} in local storage. Undo restores the record, but never a deleted file.`),
         /* Wrapping and right-aligned: three labelled buttons want about 380px
            and a phone sheet gives 280, so they stack rather than being cut
            off - the same rule the CSV wizard's template pair follows. */

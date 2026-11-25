@@ -13,7 +13,7 @@ import { EXPIRY_CHOICES, REMINDER_CHOICES } from '../lib/model.js';
 export async function confirmSignOut() {
   const ok = await confirmDialog({
     title: 'Sign out?',
-    message: 'Your documents stay safe in your Puter account. Sign back in anytime.',
+    message: 'Your documents stay safe in your local account. Sign back in anytime.',
     confirmLabel: 'Sign out',
     danger: false,
   });
@@ -57,7 +57,7 @@ export function settingsView({ navigate } = {}) {
       el('span.avatar.c1', { style: { width: '42px', height: '42px', fontSize: '15px' } },
         initialsOf(store.settings.fullName || user?.username || '?')),
       el('div.grow', {},
-        el('div', { style: { fontWeight: 650 } }, user?.username || 'Puter user'),
+        el('div', { style: { fontWeight: 650 } }, user?.username || 'Local user'),
         user?.email && el('div.small.faint', {}, user.email))),
     el('div.field', {},
       el('label', { for: nameId }, 'Name shown to signers'),
@@ -118,7 +118,7 @@ export function settingsView({ navigate } = {}) {
     notifyWrap.append(el('p.small.faint', { style: { marginTop: '12px' } },
       user?.email
         ? `Sent to ${user.email} by your own signing service, so they arrive even when this app is closed.`
-        : 'Sent to your Puter account address.'));
+        : 'Sent to your local account address.'));
   }
   renderNotify();
   const notifyCard = el('div.card', {},
@@ -269,12 +269,12 @@ export function settingsView({ navigate } = {}) {
         el('span', { html: icon('externalLink', 19), style: { color: 'var(--ink-3)' } }),
         el('div.grow', {},
           el('div.title', {}, 'Signatures on GitHub'),
-          el('div.sub', {}, 'Send documents for signature, powered by Puter'))),
+          el('div.sub', {}, 'Send documents for signature, '))),
       el('a.settings-row', { href: 'https://puter.com', target: '_blank', rel: 'noopener' },
         el('span', { html: icon('cloud', 19), style: { color: 'var(--ink-3)' } }),
         el('div.grow', {},
           el('div.title', {}, 'Puter'),
-          el('div.sub', {}, 'Your documents live in your own Puter cloud')))),
+          el('div.sub', {}, 'Your documents live in your own local storage')))),
     // Hidden on the desktop layout while puter.js's account menu is at the
     // head of the view (shell.css): Sign out is there.
     !inPuterApp && el('button.btn.btn-danger.btn-block.settings-signout', {

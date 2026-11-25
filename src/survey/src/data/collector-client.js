@@ -157,7 +157,7 @@ export function createCollectorClient({
     if (Date.now() < verifyBlockedUntil) {
       throw new WorkerError('The response collector is still starting. Try again shortly.', { code: 'cooldown' });
     }
-    if (!workers || !fs) throw new WorkerError('Publishing needs a Puter account.', { code: 'unavailable' });
+    if (!workers || !fs) throw new WorkerError('Publishing needs an account.', { code: 'unavailable' });
 
     if (cfg && cfg.name) {
       // Upgrade in place: same name and URL, so shared links keep working.
@@ -204,7 +204,7 @@ export function createCollectorClient({
           lastErr = err;
           if (/verif/i.test(String(err && (err.message || err.code || err)))) {
             await discard();
-            throw new WorkerError('Verify the email address on your Puter account to start collecting responses.', {
+            throw new WorkerError('Verify the email address on your local account to start collecting responses.', {
               code: 'email_unverified',
             });
           }

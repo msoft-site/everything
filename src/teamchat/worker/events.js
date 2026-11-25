@@ -277,7 +277,7 @@ export async function eventsBlock(ws, uuid, doc = null, user = null) {
  * releaseHandle is the only other place a handle is given back, and it reads
  * `ev.h`, which this is about to overwrite, so a handle abandoned here would
  * sit on one of the owner's live-handle slots (10,000 per app, 2,000 on free)
- * until cleared by hand from a Puter session. Revoking is idempotent and
+ * until cleared by hand from a local session. Revoking is idempotent and
  * already answers ok on a 404/subject_does_not_exist, so the ordinary case
  * here — a handle that is already gone, which is why this was called at all
  * — costs one wasted round trip, while the uncommon one (an app binding

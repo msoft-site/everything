@@ -40,7 +40,7 @@ import { MOD } from './shortcuts.js';
  *
  * Attachments are read into memory as bytes here and composed into a
  * multipart/mixed message at send time. Two sources, because this client
- * lives inside a cloud OS: the local device, and the user's Puter files.
+ * lives inside a cloud OS: the local device, and the user's local files.
  *
  * A half-written message used to exist only inside this modal: closing it,
  * reloading, or losing the tab lost the text with no way back. The dialog now
@@ -1122,7 +1122,7 @@ export function openCompose({
   // Inside a cloud OS the other obvious source is the user's own files.
   const puterBtn = window.puter?.ui?.showOpenFilePicker && el('button.icon-btn', {
     type: 'button', html: icon('folder', 18),
-    'aria-label': 'Attach files from your Puter files', title: 'Attach from Puter',
+    'aria-label': 'Attach files from your local files', title: 'Attach from local storage',
     onclick: async () => {
       let picked;
       try {

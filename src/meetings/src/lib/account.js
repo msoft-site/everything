@@ -1,7 +1,7 @@
 import { getPuter, hasPuter } from './env.js';
 
 /**
- * The Puter session a meeting runs on — or the lack of one.
+ * The local session a meeting runs on — or the lack of one.
  *
  * Hosting takes an account: the host serves the room, publishes its link,
  * and pays for the relays. Joining takes none. A guest goes in with an
@@ -21,13 +21,13 @@ import { getPuter, hasPuter } from './env.js';
  * The one flow that still signs in is a one-time link from an older deploy:
  * there is no room to carry a grant, so a guest without a session has Puter
  * make them an account on the spot instead (`attempt_temp_user_creation`).
- * What comes back is a full Puter user — `/whoami` reports it as `is_temp`,
+ * What comes back is a full Local user — `/whoami` reports it as `is_temp`,
  * which means only that it has no email or password yet — so nothing here
  * treats such a session as second class.
  */
 
 /**
- * Whether this page has no Puter session: puter.js is here, does accounts,
+ * Whether this page has no local session: puter.js is here, does accounts,
  * and says nobody is signed in. A puter.js with no auth module (a stub, or
  * a build that doesn't do accounts) is not anonymous by this measure — the
  * peer API then speaks for itself.
@@ -38,7 +38,7 @@ export function isAnonymous() {
 }
 
 /**
- * Make sure there is a Puter session. Call it straight from a click:
+ * Make sure there is a local session. Call it straight from a click:
  * signing in is a popup, and browsers only allow those during a gesture.
  *
  * With `autoCreate`, a visitor who isn't signed in has an account made for

@@ -7,7 +7,7 @@ export function authView({ onSignedIn }) {
   const cta = el('button.btn.btn-primary.auth-cta', {
     onclick: async () => {
       cta.disabled = true;
-      cta.textContent = '正在等待 Puter…';
+      cta.textContent = '正在加载本地工作区…';
       try {
         await puter.auth.signIn();
         onSignedIn();
@@ -25,7 +25,7 @@ export function authView({ onSignedIn }) {
     el('div.auth-features', {},
       feature('board', '支持拖拽、标签、优先级和负责人的看板'),
       feature('timeline', '一目了然展现所有带日期任务与里程碑的时间线'),
-      feature('cloud', '每个任务均支持评论与附件，保存在您自己的 Puter 云端')
+      feature('cloud', '每个任务均支持评论与附件，保存在您自己的 本地存储')
     ),
     cta,
     el('p.auth-note', {}, '免费 · 无广告 · 由 ',

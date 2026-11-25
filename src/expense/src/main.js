@@ -22,7 +22,7 @@ function showError(title, message, onRetry) {
 
 async function start() {
   if (typeof puter === 'undefined') {
-    showError('无法连接到 Puter', 'Puter SDK 加载失败，请检查网络连接后重试。', () => location.reload());
+    showError('无法连接到本地存储服务', '本地环境加载失败，请刷新重试。', () => location.reload());
     return;
   }
   let signedIn = false;
@@ -39,7 +39,7 @@ async function boot() {
     await store.init();
   } catch (err) {
     console.error(err);
-    showError('无法加载您的数据', navigator.onLine ? '与您的 Puter 云端通信时出现问题。' : '您当前似乎处于离线状态。', () => location.reload());
+    showError('无法加载您的数据', navigator.onLine ? '与您的 本地存储通信时出现问题。' : '您当前似乎处于离线状态。', () => location.reload());
     return;
   }
   // Settings win over the pre-paint localStorage value (they sync across devices).

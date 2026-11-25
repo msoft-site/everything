@@ -26,7 +26,7 @@ export const sharedOf = (s: DocumentSession) => shared.get(s);
 const local = new WeakMap<DocumentSession, { docId: string; store: LocalComments }>();
 let puterName = '';
 onSignOut(() => (puterName = ''));
-/** The name local comments are signed with: the Puter account when signed in. */
+/** The name local comments are signed with: the account when signed in. */
 export function localAuthor(): CommentAuthor {
   const p = (globalThis as { puter?: { auth?: { isSignedIn?: () => boolean; getUser?: () => Promise<{ username?: string }> } } }).puter;
   try {

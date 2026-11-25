@@ -1,6 +1,6 @@
 /**
  * Dev-only mock of the Puter SDK slices this app uses, for working on the UI
- * without a live Puter session: open http://localhost:5173/?mock=1.
+ * without a live local session: open http://localhost:5173/?mock=1.
  *
  * kv/fs live in memory (a reload starts fresh). workers.create actually
  * instantiates src/workers/sign-worker.js in-page and window.fetch is patched

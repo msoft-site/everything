@@ -96,7 +96,7 @@ export function scriptUI(e: Editor, scriptName: string, progress: (fraction: num
         scriptName,
         opts.multiple ? 'Choose Files' : 'Choose a File',
         `<p class="script-message">The script asks to read ${opts.multiple ? 'files' : 'a file'}. It receives only what you choose.</p><p class="script-picked muted" aria-live="polite">Nothing chosen yet.</p>`,
-        [['cancel', 'Cancel'], ['device', 'From this device…', 'stay'], ['puter', 'From Puter…', 'stay'], ['ok', 'Use']],
+        [['cancel', 'Cancel'], ['device', 'From this device…', 'stay'], ['puter', 'From Local…', 'stay'], ['ok', 'Use']],
         (d) => {
           const use = d.querySelector<HTMLButtonElement>('button[type="submit"]')!;
           use.disabled = true;
@@ -128,7 +128,7 @@ export function scriptUI(e: Editor, scriptName: string, progress: (fraction: num
       const total = files.reduce((n, f) => n + f.data.length, 0);
       const size = total < 1024 * 1024 ? `${Math.max(1, Math.round(total / 1024))} KB` : `${(total / 1048576).toFixed(1)} MB`;
       const what = files.length === 1 ? `“${files[0].name}”` : `${files.length} files as “${zipName}”`;
-      const r = await scriptDialog(scriptName, 'Save Files', `<p class="script-message">The script wants to save ${esc(what)} (${size}).</p>`, [['cancel', 'Cancel'], ['puter', 'Save to Puter…'], ['download', 'Download']]);
+      const r = await scriptDialog(scriptName, 'Save Files', `<p class="script-message">The script wants to save ${esc(what)} (${size}).</p>`, [['cancel', 'Cancel'], ['puter', 'Save to Local…'], ['download', 'Download']]);
       if (!r) return false;
       let blob: Blob, name: string;
       if (files.length === 1) {

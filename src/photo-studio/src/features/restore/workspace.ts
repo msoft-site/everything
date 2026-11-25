@@ -205,7 +205,7 @@ export async function openRestore(e: Editor, opts: RestoreDialogOptions = {}): P
         .map((f) => {
           const en = entry(f.id).enabled;
           const ai = f.id === 'scene' ? 'AI' : f.id === 'colorize' || f.id === 'style' ? 'AI option' : '';
-          return `<div class="pr-item ${f.id === selected ? 'selected' : ''}" data-filter="${f.id}"><input type="checkbox" class="pr-toggle" data-toggle="${f.id}" ${en ? 'checked' : ''} aria-label="Use ${escapeXML(f.label)}"><button type="button" class="pr-name" data-select="${f.id}" aria-pressed="${f.id === selected}">${escapeXML(f.label)}</button>${ai ? `<span class="pr-badge" title="${ai === 'AI' ? 'Uses Puter AI' : 'Has an optional Puter AI mode'}">AI</span>` : ''}</div>`;
+          return `<div class="pr-item ${f.id === selected ? 'selected' : ''}" data-filter="${f.id}"><input type="checkbox" class="pr-toggle" data-toggle="${f.id}" ${en ? 'checked' : ''} aria-label="Use ${escapeXML(f.label)}"><button type="button" class="pr-name" data-select="${f.id}" aria-pressed="${f.id === selected}">${escapeXML(f.label)}</button>${ai ? `<span class="pr-badge" title="${ai === 'AI' ? 'Uses 本地智能引擎' : 'Has an optional 本地智能引擎 mode'}">AI</span>` : ''}</div>`;
         })
         .join('');
       return `<div class="pr-group" role="group" aria-label="${g}"><h3>${g}</h3>${items}</div>`;
@@ -241,8 +241,8 @@ export async function openRestore(e: Editor, opts: RestoreDialogOptions = {}): P
       });
   };
   const aiNotice = (what: string) =>
-    `<div class="ai-notice pr-ai-notice" role="note"><strong>Uses your Puter account</strong><p>${escapeXML(what)} This needs a Puter account (you may be asked to sign in) and can use credits from your Puter balance. Nothing is sent until you press the button.</p></div>`;
-  const sendNote = `The layer’s pixels with the filters that run before this one applied (reduced to at most 1024 pixels on the longer side) and the instruction are sent to Puter’s AI service.`;
+    `<div class="ai-notice pr-ai-notice" role="note"><strong>Uses your local account</strong><p>${escapeXML(what)} This needs an account (you may be asked to sign in) and can use credits from your Puter balance. Nothing is sent until you press the button.</p></div>`;
+  const sendNote = `The layer’s pixels with the filters that run before this one applied (reduced to at most 1024 pixels on the longer side) and the instruction are sent to local AI service.`;
   const sourceOptions = (current: string, withNone: string) => {
     const docs = e.sessions.filter((s) => s.hasDocument && s !== e.session);
     const layers: Layer[] = [];

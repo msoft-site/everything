@@ -55,7 +55,7 @@ export const WHATS_NEW: WhatsNewEntry[] = [
   {
     id: 'assistant',
     title: 'Describe an Edit',
-    text: 'Describe a change in words and the Assistant plans it with Photo Studio’s own commands. Review or change the steps, then run them as one undo step (Puter AI).',
+    text: 'Describe a change in words and the Assistant plans it with Photo Studio’s own commands. Review or change the steps, then run them as one undo step (本地智能引擎).',
     release: 'October 2026',
     action: { commands: ['assistant.ask'] },
   },

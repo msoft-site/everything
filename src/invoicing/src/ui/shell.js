@@ -242,12 +242,12 @@ export function mountShell(appRoot) {
    * actually signed in — so it follows the store instead.
    *
    * The business name leads, because that is what the paper is printed for,
-   * with the Puter account it is stored in beneath. Until Settings has a
+   * with the account it is stored in beneath. Until Settings has a
    * business name the account carries both lines' worth on its own.
    */
   let drawnUser = null;
   function renderUser() {
-    const user = store.user?.username || 'Puter user';
+    const user = store.user?.username || 'Local user';
     const business = (store.settings.business?.name || '').trim();
     const key = `${business}|${user}`;
     if (key === drawnUser) return;
@@ -255,7 +255,7 @@ export function mountShell(appRoot) {
     avatar.textContent = (business || user).charAt(0).toUpperCase();
     acctName.textContent = business || user;
     acctName.title = business || user;
-    acctSub.textContent = business ? user : 'Puter account';
+    acctSub.textContent = business ? user : 'Account';
     acctSub.title = acctSub.textContent;
   }
   renderUser();

@@ -471,7 +471,7 @@ function openAccountMenu(anchor, onSignIn) {
         link('Source code on GitHub', 'github', { href: REPO_URL, target: '_blank', rel: 'noopener noreferrer', onClick: () => close() }),
       ];
       let footer = null;
-      if (app.demo) footer = link('Sign in with Puter', 'log-in', { onClick: () => (close(), onSignIn?.()) });
+      if (app.demo) footer = link('Sign in', 'log-in', { onClick: () => (close(), onSignIn?.()) });
       else if (canSignOut())
         footer = link('退出登录', 'log-out', {
           onClick: async () => {
@@ -505,7 +505,7 @@ function openAccountMenu(anchor, onSignIn) {
         h(
           'div.row.account-head',
           avatar(app.user?.username || 'Guest', { color: '#55606e', img: app.avatarUrl, size: 'lg' }),
-          h('div.grow', h('div.account-name', app.demo ? 'Demo mode' : app.user?.username || ''), h('div.subtle.account-sub', app.demo ? 'Nothing is saved' : 'Signed in with Puter')),
+          h('div.grow', h('div.account-name', app.demo ? 'Demo mode' : app.user?.username || ''), h('div.subtle.account-sub', app.demo ? 'Nothing is saved' : 'Signed in')),
         ),
         h('div.menu-sep'),
         h(

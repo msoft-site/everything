@@ -27,7 +27,7 @@ import { heal } from '../retouch/heal';
 import { boundingBox, feather } from '../segment/mask-ops';
 
 type PuterImage = { src: string } | HTMLImageElement;
-type PuterAI = {
+type 本地智能引擎 = {
   ai: {
     txt2img(prompt: string, options?: Record<string, unknown>): Promise<PuterImage>;
     chat(prompt: string, media?: string | File | string[], testMode?: boolean, options?: Record<string, unknown>): Promise<unknown>;
@@ -67,8 +67,8 @@ export type AIImageOptions = {
 export const INPAINT_MODEL = '@cf/runwayml/stable-diffusion-v1-5-inpainting';
 const MAX_SIDE = 1024;
 
-function api(): PuterAI {
-  const p = (globalThis as unknown as { puter?: PuterAI }).puter;
+function api(): 本地智能引擎 {
+  const p = (globalThis as unknown as { puter?: 本地智能引擎 }).puter;
   if (!p?.ai?.txt2img) throw new AIError('unavailable', 'AI features need Puter. Check your connection and try again.');
   return p;
 }
@@ -569,7 +569,7 @@ export function parseChatReply(res: unknown): ChatReply {
 /** One chat turn with tools. Sends exactly the messages given (the caller
  * decides what document information and pixels they contain). */
 export async function chatWithTools(messages: ChatMessage[], opts: ChatOptions = {}): Promise<ChatReply> {
-  const p = (globalThis as unknown as { puter?: PuterAI }).puter;
+  const p = (globalThis as unknown as { puter?: 本地智能引擎 }).puter;
   if (!p?.ai?.chat) throw new AIError('unavailable', 'The Assistant needs Puter. Check your connection and try again.');
   checkAbort(opts.signal);
   const options: Record<string, unknown> = {};

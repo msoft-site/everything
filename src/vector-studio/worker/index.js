@@ -1,7 +1,7 @@
 /**
  * Vector Studio collaboration worker (Puter worker runtime: `router`, `me`).
  * Built into public/worker/vector-studio-worker.js by `npm run build:worker`
- * and deployed by a document's owner into their own Puter account.
+ * and deployed by a document's owner into their own account.
  */
 import { DocService } from './service.js';
 import { authenticate } from './auth.js';
@@ -36,7 +36,7 @@ router.get('/health', () => Response.json({ ok: true, protocol: 1, build: __WORK
 
 router.post('/api', async ({ request, user }) => {
   try {
-    if (!user?.puter) return Response.json({ message: 'Sign in with Puter to continue.' }, { status: 401 });
+    if (!user?.puter) return Response.json({ message: 'Sign in to continue.' }, { status: 401 });
     const text = await readBody(request);
     if (text === null) return Response.json({ message: 'A JSON request body is required.' }, { status: 400 });
     const input = JSON.parse(text);

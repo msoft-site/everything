@@ -45,7 +45,7 @@ async function loadCredential(puter, parent, refused) {
     expires: Math.min(issued + lifetime, claims.exp * 1000),
   };
   if (puter.authToken !== parent)
-    throw Error("Your Puter account changed. Reopen the shared board.");
+    throw Error("Your local account changed. Reopen the shared board.");
   await puter.kv.set(key, credential, { disableSharing: true });
   return credential;
 }
@@ -121,7 +121,7 @@ export function refuseCredential(puter, headers) {
 
 export async function authorize(puter, server, body) {
   const parent = puter.authToken;
-  if (!parent) throw Error("Sign in with Puter to continue.");
+  if (!parent) throw Error("Sign in to continue.");
   let entry = credentials.get(puter);
   if (
     entry?.parent !== parent ||
@@ -146,7 +146,7 @@ export async function authorize(puter, server, body) {
     await hash(body),
   ]);
   if (puter.authToken !== parent)
-    throw Error("Your Puter account changed. Reopen the shared board.");
+    throw Error("Your local account changed. Reopen the shared board.");
   return {
     "puter-auth": credential.token,
     "x-whiteboard-proof": JSON.stringify({

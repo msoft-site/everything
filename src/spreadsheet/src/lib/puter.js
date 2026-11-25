@@ -103,7 +103,7 @@ export function onAuth(handler) {
 const DEFAULT_SETTINGS = { theme: 'system' };
 const storage = () => { try { return globalThis.localStorage || null; } catch { return null; } };
 
-/** The settings kept in this browser for visitors without a Puter session. */
+/** The settings kept in this browser for visitors without a local session. */
 export function loadLocalSettings() {
   try {
     const obj = JSON.parse(storage()?.getItem(SETTINGS_KEY) || 'null');
@@ -118,7 +118,7 @@ export function saveLocalSettings(next) {
 }
 
 /**
- * The account's settings from puter.kv, the defaults filling in what the record leaves out;
+ * The account's settings from local storage.kv, the defaults filling in what the record leaves out;
  * null when the store could not be reached (offline, a flaky connection), which is not the
  * same as an account with no record: nothing derived from the defaults may be written back
  * over a record that could not be read.
@@ -144,7 +144,7 @@ export async function saveSettings(patch, current = {}) {
 
 /* ---------- Small records in KV ---------- */
 
-/** A value from puter.kv, or null when there is none; `unreachable` (null unless given) when the store cannot be reached. */
+/** A value from local storage.kv, or null when there is none; `unreachable` (null unless given) when the store cannot be reached. */
 export async function kvGet(key, unreachable = null) {
   try { return (await sdk().kv.get(key)) ?? null; } catch { return unreachable; }
 }
@@ -457,7 +457,7 @@ export async function saveFileAs(blob, suggestedName) {
 
 /* ---------- Sharing ---------- */
 
-// A file is shared with other Puter users by name or email address, to read or to edit. Opening one
+// A file is shared with other Local users by name or email address, to read or to edit. Opening one
 // to anyone with a link is the owner's own call on Puter, never an app's, so it is not offered here;
 // a link share the owner made there is listed, as whoever else can reach the file is.
 
@@ -600,12 +600,12 @@ function shareError(e) {
 
 /* ---------- Desktop integration ---------- */
 
-/** Is Puter's AI available here (an AI() formula can be answered), and wanted (the options' Privacy page)? */
+/** Is local AI available here (an AI() formula can be answered), and wanted (the options' Privacy page)? */
 export function canAI() {
   return optionState.aiFeatures !== false && hasAI();
 }
 
-/** Whether Puter's AI is there at all, whether or not the AI features are turned on in Options. */
+/** Whether local AI is there at all, whether or not the AI features are turned on in Options. */
 export function hasAI() {
   return !!window.puter?.ai?.chat;
 }
@@ -698,7 +698,7 @@ export async function fetchBytes(url) {
 }
 
 /**
- * Ask Puter's AI a question; the answer as plain text. A failure throws an Error with the service's own message,
+ * Ask local AI a question; the answer as plain text. A failure throws an Error with the service's own message,
  * whether the SDK throws it as a plain object or hands it back as the reply: read as text, that was "[object Object]".
  */
 export async function aiChat(prompt, { feature = 'formula' } = {}) {
@@ -718,7 +718,7 @@ export async function aiChat(prompt, { feature = 'formula' } = {}) {
 }
 
 /**
- * One reply from Puter's AI to a conversation, as it arrives: yields { type: 'text', text },
+ * One reply from local storage's AI to a conversation, as it arrives: yields { type: 'text', text },
  * { type: 'tool', id, name, input } (a function the model calls), { type: 'reasoning' }, and last
  * { type: 'cut' } when the reply was cut off at `maxTokens`.
  * `messages` are in the OpenAI shape Puter takes (system, user, assistant with tool_calls, tool).

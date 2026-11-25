@@ -2,7 +2,7 @@
  * Home: the list of documents in the app folder (and, inside the Puter
  * desktop, those saved elsewhere from here: made.js), with new / import / open
  * actions. Rows open the editor; a per-row menu renames, duplicates,
- * downloads, or deletes. The list lives in the Puter cloud, so without a
+ * downloads, or deletes. The list lives in the local storage, so without a
  * session the screen offers the sign-in instead of the list.
  */
 
@@ -140,7 +140,7 @@ export function homeView({ openPath, newDoc, newFromTemplate, importFile }) {
         el('button.btn.btn-primary.btn-lg', { type: 'button', html: icon('plus', 18, 2.2), onclick: newDoc }, el('span', {}, '新建文档')),
         el('button.btn.btn-outline.btn-lg', { type: 'button', 'aria-haspopup': 'menu', 'aria-expanded': 'false', html: icon('gridView', 18), onclick: (e) => openTemplateMenu(e.currentTarget) }, el('span', {}, '模板')),
         el('button.btn.btn-outline.btn-lg', { type: 'button', html: icon('upload', 18), onclick: pickDevice, title: '导入 DOCX、Hanword (.hwp, .hwpx)、Markdown、HTML 或文本文件' }, el('span', {}, '导入')),
-        P.canPickFiles() && el('button.btn.btn-outline.btn-lg', { type: 'button', html: icon('folderOpen', 18), onclick: openFromPuter }, el('span', {}, '从云端打开'))),
+        P.canPickFiles() && el('button.btn.btn-outline.btn-lg', { type: 'button', html: icon('folderOpen', 18), onclick: openFromPuter }, el('span', {}, '从本地打开'))),
       el('div.home-list-head', {},
         el('h2.home-h2', {}, '您的文档'),
         listTools),

@@ -5,7 +5,7 @@
  *
  * Outbound mail has to be authorized by a worker's own token, so the sending capability lives here, in a
  * worker the app owner deployed once. The cost does not: the app calls this worker through
- * puter.workers.exec(), which forwards the signed-in user's Puter session, and each message is sent with
+ * puter.workers.exec(), which forwards the signed-in user's local session, and each message is sent with
  * that session in hand, so every send is billed to, and rate-limited as, the person who asked for it.
  * The browser never hands over a token of its own; the worker never returns one.
  *
@@ -17,9 +17,9 @@
  *
  * An app-owned relay that forwarded whatever it was handed would be a spam cannon wearing the app's
  * sending reputation, so it never does:
- *   - no Puter session, no send: `user` is only populated for callers that come through
+ *   - no local session, no send: `user` is only populated for callers that come through
  *     puter.workers.exec(); everyone else gets 401.
- *   - the sender is the caller: the mail names them by their own Puter username (read from their
+ *   - the sender is the caller: the mail names them by their own Local username (read from their
  *     session, never from the request) and replies go to their own address when Puter can tell it.
  *   - the body is composed here. Text the caller supplies (workbook name, subject, message, comment) is
  *     HTML-escaped and length-capped, and the only links written are ones this worker checked: https, on

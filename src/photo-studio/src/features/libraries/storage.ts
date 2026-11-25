@@ -183,7 +183,7 @@ export class PuterLibraryCloud implements CloudLibraryStore {
   ) {}
   private async readPath(path: string): Promise<Blob | undefined> {
     try {
-      return await withTimeout(this.fs.read(path), this.timeout, 'Reading from Puter');
+      return await withTimeout(this.fs.read(path), this.timeout, 'Reading from local storage');
     } catch (error) {
       if (notFound(error)) return undefined;
       throw error;

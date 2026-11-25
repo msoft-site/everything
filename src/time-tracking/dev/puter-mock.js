@@ -1,6 +1,6 @@
 /**
  * Dev-only mock of the Puter SDK, used by /mock.html. Lets you develop and
- * test the full signed-in UI without a Puter account. Backed by
+ * test the full signed-in UI without an account. Backed by
  * localStorage so reloads keep data (which is how the timer's reload
  * survival gets exercised). Not part of the production build (vite only
  * builds index.html).

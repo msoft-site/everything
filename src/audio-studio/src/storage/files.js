@@ -1,4 +1,4 @@
-// Opening and saving audio: local files, drag and drop, Puter files, downloads.
+// Opening and saving audio: local files, drag and drop, local files, downloads.
 
 import { decodeAudio, extensionOf, AUDIO_ACCEPT } from '../audio/decode.js';
 import { Channel } from '../audio/channel.js';
@@ -216,7 +216,7 @@ export async function openFromPuter(app) {
     const ok = await puter.signIn().catch(() => false);
     if (!ok) {
       // Declined or blocked sign-in: say where else files can come from.
-      app.notify?.('Sign in to Puter to open files from it, or use File > Open from This Device.');
+      app.notify?.('Sign in to open files from it, or use File > Open from This Device.');
       return [];
     }
   }

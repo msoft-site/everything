@@ -1,7 +1,7 @@
 {
   "name": "Puter Mail",
   "short_name": "Puter Mail",
-  "description": "A fast, private email client for your Puter account.",
+  "description": "A fast, private email client for your local account.",
   "lang": "en",
   "dir": "ltr",
   "categories": ["productivity", "utilities"],

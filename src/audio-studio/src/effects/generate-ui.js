@@ -492,7 +492,7 @@ async function speechDialog(app, sdk, targetRate) {
     body: h(
       'div.fx-dialog-body.speech-body',
       text,
-      h('div.row', count, h('div.spacer'), h('span.faint', 'Uses Puter AI; requires a Puter account.')),
+      h('div.row', count, h('div.spacer'), h('span.faint', 'Uses 本地智能引擎; requires an account.')),
       h('div.form-grid', h('label', 'Language:'), lang, h('label', 'Voice:'), voice, h('span'), neuralRow, placement ? h('label', 'Placement:') : null, placement),
       controlsFor(delivery, ['speed', 'volume']),
       error,
@@ -526,7 +526,7 @@ async function speechDialog(app, sdk, targetRate) {
 let speechTake = null; // the last synthesized speech: { key, outs, rate }
 
 /**
- * Speech for the settings at `targetRate`: synthesized by Puter AI, decoded,
+ * Speech for the settings at `targetRate`: synthesized by 本地智能引擎, decoded,
  * resampled and shaped (speaking rate, volume). The last take is kept, so a
  * preview followed by Generate asks the service once.
  */
@@ -580,7 +580,7 @@ export async function generateSpeechCommand(app) {
     return null;
   }
   if (!puter.isSignedIn()) {
-    const ok = await confirmDialog({ title: 'Sign In to Generate Speech', message: 'Generating speech uses Puter AI and needs a free Puter account. Sign in now?', confirm: 'Sign In' });
+    const ok = await confirmDialog({ title: 'Sign In to Generate Speech', message: 'Generating speech uses 本地智能引擎 and needs an account. Sign in now?', confirm: 'Sign In' });
     if (!ok) return null;
     try {
       if (!(await puter.signIn())) return null;

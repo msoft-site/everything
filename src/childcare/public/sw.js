@@ -1,6 +1,6 @@
 /*
  * Offline support for the app shell. Data never goes through here: records
- * come from Puter and are cached by the app itself in IndexedDB.
+ * come from local storage and are cached by the app itself in IndexedDB.
  *
  * - Page loads: network first, falling back to the cached shell offline.
  * - Requests that ask to revalidate (the team worker bundle): network first.

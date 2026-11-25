@@ -1,5 +1,5 @@
 /**
- * Silence one benign, unavoidable console error from puter.js's peer layer.
+ * Silence one benign, unavoidable console error from local storage.js's peer layer.
  *
  * `PuterPeerConnection` applies the SDP answer during its initial handshake
  * without awaiting or catching it — `this.setRemoteDescription(answer)`,

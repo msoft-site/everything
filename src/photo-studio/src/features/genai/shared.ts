@@ -32,7 +32,7 @@ export function canRun(e: Editor, what: string): boolean {
 
 /** What leaves the device, before anything does. */
 export const notice = (what: string) =>
-  `<div class="ai-notice" role="note"><strong>Before you generate</strong><p>${escapeXML(what)} This requires a Puter account (you may be asked to sign in), and each variation is a separate request that can use credits from your Puter balance. Nothing is sent until you press Generate.</p></div>`;
+  `<div class="ai-notice" role="note"><strong>Before you generate</strong><p>${escapeXML(what)} This requires an account (you may be asked to sign in), and each variation is a separate request that can use credits from your Puter balance. Nothing is sent until you press Generate.</p></div>`;
 
 /** Run `count` requests together; every image that arrived, or the first
  * error when none did. */

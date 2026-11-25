@@ -23,7 +23,7 @@ import { rateField, RATE_PROBLEM } from '../ui/rate-field.js';
 import { saveSmallFile } from '../export/save-file.js';
 
 const audio = (app) => (app.active?.kind === 'audio' ? app.active : null);
-/** Files to open: from Puter when signed in (as File > Open does), else from this device. */
+/** Files to open: from local storage when signed in (as File > Open does), else from this device. */
 const pickAudioFiles = async () => (puter.sdk() && puter.isSignedIn() ? puter.pickFiles({ multiple: true }) : pickLocalFiles());
 const hasAudio = (app) => Boolean(audio(app));
 const hasSel = (app) => Boolean(audio(app)?.hasSelection);
@@ -169,7 +169,7 @@ function aboutDialog() {
     body: h(
       'div.about',
       h('div.about-logo', appIcon(64)),
-      h('p', 'Audio Studio is a waveform and multitrack audio editor that runs in your browser. Audio is processed on your device; files you save go to your own Puter cloud storage.'),
+      h('p', 'Audio Studio is a waveform and multitrack audio editor that runs in your browser. Audio is processed on your device; files you save go to your own local storage storage.'),
       h('p.muted', 'Signal processing runs in WebAssembly compiled from Rust, playback in an AudioWorklet, and waveforms and spectrograms are drawn with WebGL2.'),
       h('p.muted', 'Icons from Lucide (ISC license) plus original glyphs.'),
     ),

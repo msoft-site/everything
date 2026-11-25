@@ -21,7 +21,7 @@ export function offlineNotice() {
       el('span.offline-ic', { html: icon('cloudOff', 15, 2), 'aria-hidden': 'true' }),
       el('span.grow', {}, pending
         ? `Offline. ${pending} project${pending === 1 ? '' : 's'} saved on this device, `
-          + 'waiting to reach Puter'
+          + 'loading local workspace'
         : 'Offline. Showing the last version saved on this device'),
       el('button.btn.btn-ghost.btn-sm', {
         type: 'button',

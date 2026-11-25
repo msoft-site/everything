@@ -12,7 +12,7 @@
  * outside the app folder (the Puter file picker, "Open with") save back to
  * where they came from.
  *
- * Without a Puter session there is nowhere to write: autosaves wait, and an
+ * Without a local session there is nowhere to write: autosaves wait, and an
  * explicit save fails with SIGN_IN_TO_SAVE so the view can ask for a sign-in.
  *
  * status: 'saved' | 'unsaved' | 'saving' | 'error' | 'offline'

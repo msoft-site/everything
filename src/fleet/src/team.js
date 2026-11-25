@@ -1,6 +1,6 @@
 /**
  * Team access. A fleet owner turns it on once: the app copies the team
- * worker (public/worker/fleet-team-worker.js) into their Puter drive
+ * worker (public/worker/fleet-team-worker.js) into their local drive
  * and deploys it with puter.workers.create, so the worker runs in, and stores
  * data in, the owner's own account. The owner's records are copied into it,
  * and from then on everyone in the fleet (owner included) reads and
@@ -243,7 +243,7 @@ export async function enableTeam({ store, onProgress = () => {} }) {
       lastErr = err;
     }
   }
-  if (!dep) throw new Error(`Could not create the team server in your Puter account. ${lastErr?.message || ''}`.trim());
+  if (!dep) throw new Error(`Could not create the team server in your local account. ${lastErr?.message || ''}`.trim());
   const url = normalizeWorkerUrl(dep.url || `https://${name}.puter.work`);
   // A setup that fails from here on removes the half-made server, so a
   // retry does not leave another copy of the fleet behind in the account.

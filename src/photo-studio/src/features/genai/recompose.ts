@@ -111,7 +111,7 @@ export async function recomposeDialog(e: Editor) {
     <label class="rw-check"><input type="checkbox" id="ga-remove"> Remove the object (fill its place only)</label>
     <button type="button" id="ga-reset">Reset Arrangement</button>
     <h4>Blend</h4>
-    ${notice('The area around the object and its old place (reduced to at most 1024 pixels on the longer side) and your note are sent to Puter’s AI service to blend the seams, shadow and lighting.')}
+    ${notice('The area around the object and its old place (reduced to at most 1024 pixels on the longer side) and your note are sent to local AI service to blend the seams, shadow and lighting.')}
     ${field('Note (optional)', `<textarea id="ga-note" rows="2" placeholder="e.g. “soft evening light”"></textarea>`)}
     <div class="ga-gen-row">${field(
       'Variations',

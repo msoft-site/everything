@@ -241,7 +241,7 @@ export function mountSurvey(root, { survey, collector = null, preview = false, o
   const foot = el(
     'footer',
     { class: 'sv-foot' },
-    el('a', { href: 'https://developer.puter.com', target: '_blank', rel: 'noopener' }, 'Powered by Puter'),
+    el('a', { href: 'https://developer.puter.com', target: '_blank', rel: 'noopener' }, ''),
   );
 
   if (preview) {

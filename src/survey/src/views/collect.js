@@ -214,11 +214,11 @@ export async function mount(container, ctx) {
       h(
         'p',
         { class: 'muted' },
-        'Create a link to send by email, post anywhere, or embed in a website. Anyone with the link can answer, no account needed, and responses come straight back to your Puter account.',
+        'Create a link to send by email, post anywhere, or embed in a website. Anyone with the link can answer, no account needed, and responses come straight back to your local account.',
       ),
       !cfg
         ? h('p', { class: 'start-note' }, icon('info', { size: 14 }),
-            'The first time, a small response collector is set up in your Puter account. This can take up to 30 seconds.')
+            'The first time, a small response collector is set up in your local account. This can take up to 30 seconds.')
         : null,
       working
         ? h(

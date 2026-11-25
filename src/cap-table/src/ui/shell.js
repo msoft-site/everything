@@ -232,7 +232,7 @@ export function mountShell(appRoot) {
   }
 
   /* Sidebar (desktop) */
-  const username = store.user?.username || 'Puter user';
+  const username = store.user?.username || 'Local user';
   /* The shortcut is on the button, so it is discoverable rather than folklore.
      Cmd on Apple keyboards, Ctrl everywhere else. */
   const searchButton = el('button.sidebar-search', {

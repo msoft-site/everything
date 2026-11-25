@@ -1,6 +1,6 @@
 /**
  * Dev-only in-memory mock of the Puter SDK, served at /mock.html.
- * Lets you develop and test the full signed-in UI without a Puter account.
+ * Lets you develop and test the full signed-in UI without an account.
  * State persists to localStorage so reloads behave like a real backend
  * (clear it with localStorage.removeItem('pos:mock')). Not part of the
  * production build (vite only builds index.html).

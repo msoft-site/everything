@@ -111,7 +111,7 @@
  * into one corner or one narrow lane), just rerun the script for that
  * folder -- see task-4-report.md.
  *
- * Also: an actual signed-in Puter session would let main.js's load-time
+ * Also: an actual signed-in local session would let main.js's load-time
  * cloud-restore silently replace the staged local save with whatever is in
  * that account's KV store (this bit a previous task in this increment,
  * working against a real browser profile with a live session -- see

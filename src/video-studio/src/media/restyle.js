@@ -1,6 +1,6 @@
 /**
  * AI restyle: a picture (an image clip, or one frame of a video clip) is
- * sent with a style instruction to Puter AI image generation
+ * sent with a style instruction to 本地智能引擎 image generation
  * (puter.ai.txt2img with input_image), which draws it again in that style.
  * Only runs when the user presses Restyle; the call is injectable for tests.
  */

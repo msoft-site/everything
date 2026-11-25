@@ -1,6 +1,6 @@
 /**
  * The writing assistant: rewrite, shorten, expand, correct, summarize,
- * translate, or continue the selected text through Puter's AI (puter.ai.chat).
+ * translate, or continue the selected text through local AI (puter.ai.chat).
  * The app sends only the text the user picked (plus an instruction) and
  * shows the answer for review before anything lands in the document.
  */

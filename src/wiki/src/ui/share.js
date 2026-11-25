@@ -58,7 +58,7 @@ function renderPrivate(app, dlg, body, space, pageId) {
     page = getPage(space.tree, pageId);
   }
   if (!app.ws.canShare) {
-    body.replaceChildren(h('div.share-intro', h('span.share-badge', icon('users', 20)), h('p', 'Sharing needs a Puter account. Sign in with Puter to invite people.')));
+    body.replaceChildren(h('div.share-intro', h('span.share-badge', icon('users', 20)), h('p', 'Sharing needs an account. Sign in to invite people.')));
     return;
   }
   const status = h('p.share-progress', { role: 'status', 'aria-live': 'polite' });
@@ -80,7 +80,7 @@ function renderPrivate(app, dlg, body, space, pageId) {
   const subpages = childrenOf(space.tree, pageId).length;
   body.replaceChildren(
     h('div.share-intro', h('span.share-badge', pageIcon(page, 22)), h('div', h('h3', displayTitle(page)), h('p', 'Private: only you can see this page.'))),
-    h('p.share-text', `Sharing lets people you invite view, comment on or edit this page${subpages ? ` and its ${subpages} subpage${subpages === 1 ? '' : 's'}` : ''}. It moves to Shared in your sidebar and stays stored in your Puter account.`),
+    h('p.share-text', `Sharing lets people you invite view, comment on or edit this page${subpages ? ` and its ${subpages} subpage${subpages === 1 ? '' : 's'}` : ''}. It moves to Shared in your sidebar and stays stored in your local account.`),
     h('div.share-actions', go),
     status,
   );

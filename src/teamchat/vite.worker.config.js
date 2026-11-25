@@ -9,7 +9,7 @@ import { defineConfig } from 'vite';
  * that references them without importing anything.
  *
  * The bundle lands in public/worker/ so the app ships it as a static asset:
- * each workspace owner's browser deploys it to their own Puter account (see
+ * each workspace owner's browser deploys it to their own account (see
  * src/lib/deploy.js). A build id derived from the worker's source files is
  * compiled in and written in the first line, which is how the app tells a
  * deployed worker is out of date without a version to bump by hand.

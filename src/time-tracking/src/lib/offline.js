@@ -211,7 +211,7 @@ export const offline = {
    * and write queue then serve the whole app from local data.
    */
   installStub() {
-    const fail = () => Promise.reject(new TypeError('Offline: Puter is unreachable'));
+    const fail = () => Promise.reject(new TypeError('Offline: Local storage unreachable'));
     window.puter = {
       env: 'web',
       auth: {

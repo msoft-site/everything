@@ -3,7 +3,7 @@
  * pixel size, effective resolution, placed size, scale, rotation, file
  * size, linked or embedded), and Relink, Go To Link, Update Link, Edit
  * Original and Embed. Images are always embedded in the document (so a file
- * opens anywhere); an image placed from Puter also keeps `node.link`
+ * opens anywhere); an image placed from local storage also keeps `node.link`
  * ({ source: 'puter', path, name, size, modified }) to its file, which
  * Update Link re-reads and Edit Original opens. Embed drops the link;
  * Unembed saves the image as a file and links to it. The panel menu adds
@@ -162,7 +162,7 @@ async function pickImage(app) {
     const source = await app.dialogs.open({
       title: 'Relink',
       body: h('p.dialog-message', 'Choose the replacement image.'),
-      buttons: [{ label: 'Cancel', value: null }, { label: 'From This Device...', value: 'device' }, { label: 'From Puter...', value: 'puter', primary: true }],
+      buttons: [{ label: 'Cancel', value: null }, { label: 'From This Device...', value: 'device' }, { label: 'From Local...', value: 'puter', primary: true }],
     });
     if (!source) return null;
     if (source === 'puter') {
@@ -191,7 +191,7 @@ export async function relink(app, editor, ids) {
   return true;
 }
 
-/** Re-read linked files from Puter. Returns the number of images updated. */
+/** Re-read linked files from local storage. Returns the number of images updated. */
 export async function updateLinks(app, editor, ids) {
   const doc = editor.doc;
   const fs = app.puter?.fs;
@@ -435,7 +435,7 @@ export class LinksPanel extends Panel {
     });
   }
 
-  /** Stat linked Puter files and mark the ones changed since they were placed or updated. */
+  /** Stat linked local files and mark the ones changed since they were placed or updated. */
   async checkModified() {
     const ed = this.app.editor;
     const fs = this.app.puter?.fs;
@@ -472,7 +472,7 @@ export class LinksPanel extends Panel {
       (this.updateBtn = btn('refresh-cw-2', 'Update Link', async (ed, ids) => {
         const eligible = ids.some((id) => ed.doc.get(id)?.link?.path);
         const n = await updateLinks(this.app, ed, ids);
-        const message = n ? `Updated ${n} link${n === 1 ? '' : 's'}.` : eligible ? 'No links were updated.' : 'Only images placed from Puter can be updated.';
+        const message = n ? `Updated ${n} link${n === 1 ? '' : 's'}.` : eligible ? 'No links were updated.' : 'Only images placed from local storage can be updated.';
         this.app.notify(message, { polite: Boolean(n) || eligible });
       })),
       (this.editBtn = btn('external-link', 'Edit Original', (ed, ids) => editOriginal(this.app, ed, ids[0]))),

@@ -46,7 +46,7 @@ async function start() {
       await boot();
       return;
     }
-    showError('无法连接到 Puter', 'Puter SDK 加载失败，请检查网络连接后重试。', () => location.reload());
+    showError('无法连接到本地存储服务', '本地环境加载失败，请刷新重试。', () => location.reload());
     return;
   }
 
@@ -77,7 +77,7 @@ async function boot() {
     if (!navigator.onLine) {
       showError('当前处于离线状态', '此设备尚未缓存您的数据副本。请先连接一次网络，之后即可离线使用。', () => location.reload());
     } else {
-      showError('无法加载您的数据', '与您的 Puter 云端通信时出现问题。', () => location.reload());
+      showError('无法加载您的数据', '与您的 本地存储通信时出现问题。', () => location.reload());
     }
     return;
   }
@@ -142,7 +142,7 @@ async function syncPending() {
 }
 
 /**
- * Pull in what another device did. One Puter account holds the data, so
+ * Pull in what another device did. One account holds the data, so
  * the intended user tracks on a phone and reviews on a laptop; a tab left
  * open used to show a stale month forever. Quiet by design: nothing is
  * said unless something actually changed, and a hidden tab does not bother

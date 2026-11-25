@@ -1388,7 +1388,7 @@ export async function placeViewDialog(app, viewId) {
 
 export async function shareDialog(app) {
   if (!puterAvailable() || !(await isSignedIn().catch(() => false))) {
-    const ok = await confirmDialog('Share Project', 'Sharing uses your Puter account: the project is saved to your Puter storage and shared with the people you choose. Sign in now?', { confirm: 'Sign in' });
+    const ok = await confirmDialog('Share Project', 'Sharing uses your local account: the project is saved to your Puter storage and shared with the people you choose. Sign in now?', { confirm: 'Sign in' });
     if (!ok || !(await app.signIn())) return;
   }
   if (app.file?.source !== 'cloud' || !app.file.path) {

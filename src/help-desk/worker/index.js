@@ -1,6 +1,6 @@
 /**
  * Puter worker entry. Each help desk owner deploys this bundle into their own
- * Puter account (the app does it for them), so the desk's data lives in the
+ * account (the app does it for them), so the desk's data lives in the
  * owner's key-value store and files, and every agent and help center visitor
  * reaches it through this worker.
  *
@@ -45,7 +45,7 @@ function getBackend() {
   return backend;
 }
 
-/** Who is calling, from the Puter session puter.workers.exec() attaches. */
+/** Who is calling, from the local session puter.workers.exec() attaches. */
 async function identify(user) {
   if (!user || !user.puter) return null;
   const token = user.puter.authToken;
@@ -100,7 +100,7 @@ function register(method, pattern) {
     let raw = null;
     if (method === 'POST' && /\/files$/.test(url.pathname)) {
       // Uploads are for signed-in agents only; do not read the bytes otherwise.
-      if (!user || !user.puter) return json(401, { error: 'unauthorized', message: 'Sign in with Puter to continue' });
+      if (!user || !user.puter) return json(401, { error: 'unauthorized', message: 'Sign in to continue' });
       const bytes = await readBody(request, FILE_LIMIT);
       if (!bytes) return json(413, { error: 'too_large', message: 'Files can be up to 20 MB' });
       raw = new Blob([bytes], { type: request.headers.get('content-type') || 'application/octet-stream' });

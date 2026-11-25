@@ -1,4 +1,4 @@
-// Sharing a cloud part with other Puter users. Sharing is per file: the other
+// Sharing a cloud part with other Local users. Sharing is per file: the other
 // person opens it from "Shared with me" in the Open dialog; with edit access
 // their saves update the same file.
 
@@ -53,7 +53,7 @@ export async function shareDialog(app: App, files: FileOps) {
   if (!cloudAvailable()) {
     toast({
       title: 'Share',
-      message: 'Sign in to Puter to save this part to your cloud and share it with others.',
+      message: 'Sign in to save this part to your cloud and share it with others.',
       actions: [{ label: 'Sign in', primary: true, run: () => void signIn().then(() => { if (!signal.aborted) return shareDialog(app, files); }).catch((e) => toast({ kind: 'error', message: (e as Error).message })) }],
       timeout: 9000,
     });
@@ -68,7 +68,7 @@ export async function shareDialog(app: App, files: FileOps) {
       const local = ok && app.location?.type === 'local';
       toast({
         title: 'Share',
-        message: local ? 'This part is saved in this browser. Save a copy to your Puter cloud, then share it.' : 'Save the part to your Puter cloud first, then share it.',
+        message: local ? 'This part is saved in this browser. Save a copy to local storage, then share it.' : 'Save the part to local storage first, then share it.',
         actions: local ? [{ label: 'Save As...', primary: true, run: () => void Promise.resolve(files.saveAs()).then(() => { if (app.location?.type === 'cloud') return shareDialog(app, files); }) }] : undefined,
         timeout: local ? 12000 : undefined,
       });
@@ -78,7 +78,7 @@ export async function shareDialog(app: App, files: FileOps) {
   const path = (app.location as { path: string }).path;
   let open = true;
   const isCurrent = () => open && !signal.aborted && app.store.doc.name === name && app.location?.type === 'cloud' && app.location.path === path;
-  const who = h('input', { class: 'input', placeholder: 'Puter username or email', 'aria-label': 'Person to share with', autocomplete: 'off', spellcheck: 'false' }) as HTMLInputElement;
+  const who = h('input', { class: 'input', placeholder: 'Local username or email', 'aria-label': 'Person to share with', autocomplete: 'off', spellcheck: 'false' }) as HTMLInputElement;
   const mode = h('select', { class: 'input', 'aria-label': 'Access', style: { width: 'auto' } }, MODES.map(([v, l]) => h('option', { value: v }, l))) as HTMLSelectElement;
   const status = h('div', { class: 'field-label', role: 'status', style: { minHeight: '18px' } });
   const list = h('div');
@@ -200,7 +200,7 @@ export async function shareDialog(app: App, files: FileOps) {
       void render();
     } catch (e) {
       const code = (e as { code?: string })?.code;
-      status.textContent = code === 'user_does_not_exist' ? `There is no Puter user called ${v}.` : code === 'cannot_share_with_self' ? 'You already own this part.' : `Could not share: ${storageError(e)}`;
+      status.textContent = code === 'user_does_not_exist' ? `There is no Local user called ${v}.` : code === 'cannot_share_with_self' ? 'You already own this part.' : `Could not share: ${storageError(e)}`;
     } finally {
       adding = false;
       setPending(v, false);

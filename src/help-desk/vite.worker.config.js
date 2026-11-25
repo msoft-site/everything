@@ -10,7 +10,7 @@ import { defineConfig } from 'vite';
  *
  * The bundle is written to public/worker/ and shipped as a static file. When
  * a help desk owner turns on team access, their browser writes it to their
- * Puter drive and deploys it from there (see src/client/deploy.js). The build
+ * local drive and deploys it from there (see src/client/deploy.js). The build
  * id is a hash of the sources, so the app can tell when a deployed worker is
  * out of date and quietly redeploy it.
  */

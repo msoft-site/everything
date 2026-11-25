@@ -813,8 +813,8 @@ export class App extends Emitter {
             title: '关于 Vector Studio',
             body: h(
               'div.about',
-              h('p', 'Vector Studio 是一款免费、开源的矢量插画编辑器。您的文件存储在您自己的 Puter 云端。'),
-              h('p', h('a', { href: 'https://developer.puter.com', target: '_blank', rel: 'noopener' }, '由 Puter 提供技术支持')),
+              h('p', 'Vector Studio 是一款免费、开源的矢量插画编辑器。您的文件存储在您自己的 本地存储。'),
+              h('p', h('a', { href: 'https://developer.puter.com', target: '_blank', rel: 'noopener' }, '')),
             ),
             buttons: [{ label: '确定', value: true, primary: true }],
           }),

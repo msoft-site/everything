@@ -1,7 +1,7 @@
 /**
  * Shared-list snapshots.
  *
- * Viewers need no Puter account (KV shares need one), so this works through
+ * Viewers need no account (KV shares need one), so this works through
  * fs: the owner's app writes a JSON snapshot of the list to their cloud
  * drive and hands out a temporary read URL (puter.fs.getReadURL). Anyone
  * with the link sees a read-only,

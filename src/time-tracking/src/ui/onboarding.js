@@ -41,7 +41,7 @@ export function openOnboarding() {
       el('div.onboard-hero', {},
         el('img', { src: './icons/icon-192.png', width: 64, height: 64, alt: '' }),
         el('h3.onboard-title', {}, '每一小时，都清晰可查'),
-        el('p.onboard-sub', {}, '按客户、项目或任务追踪可计费工时。数据存储在您自己的 Puter 账户中，绝不出售或共享。')
+        el('p.onboard-sub', {}, '按客户、项目或任务追踪可计费工时。数据存储在您自己的 本地账户中，绝不出售或共享。')
       ),
       el('button.btn.btn-primary.btn-block.btn-tall', {
         type: 'button',

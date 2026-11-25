@@ -367,7 +367,7 @@ export function mountHome(root, ctx) {
     ctx.openPrejoin({ mode: 'join', code });
   }
 
-  /** The signed-in Puter user, or null. */
+  /** The signed-in Local user, or null. */
   async function fetchUser() {
     if (!hasPuter()) return null;
     try {

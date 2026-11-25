@@ -86,7 +86,7 @@ function build() {
     title: '在新标签页中打开', 'aria-label': '在新标签页中打开应用',
   });
   frame = el('iframe.apps-frame', {
-    title: '您的 Puter 应用', referrerpolicy: 'strict-origin-when-cross-origin', allow: 'clipboard-read; clipboard-write',
+    title: '本地应用中心', referrerpolicy: 'strict-origin-when-cross-origin', allow: 'clipboard-read; clipboard-write',
   });
   const body = el('div.apps-panel-body.is-loading', {},
     el('div.apps-panel-loading', { role: 'status', 'aria-label': '正在加载应用' },

@@ -4,7 +4,7 @@
   "private": true,
   "license": "AGPL-3.0-only",
   "type": "module",
-  "description": "A clean, accessible presentation editor with real PPTX files and Puter cloud storage.",
+  "description": "A clean, accessible presentation editor with real PPTX files and local storage storage.",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
     "build": "vite build",

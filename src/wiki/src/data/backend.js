@@ -143,7 +143,7 @@ export function memoryBackend() {
 
 /**
  * IndexedDB backend for the development sandbox (?local), so the app can
- * be tried without a Puter account. Development builds only.
+ * be tried without an account. Development builds only.
  */
 export async function indexedDbBackend(name = 'wiki-local') {
   const db = await new Promise((resolve, reject) => {

@@ -784,7 +784,7 @@ export class App {
       const blob = await this.encode(doc, kind);
       let downloaded = false;
       if (doc.file.source === 'cloud') {
-        if (!(await this.ensureSignedIn('保存到您的 Puter 云盘'))) return false;
+        if (!(await this.ensureSignedIn('保存到本地存储'))) return false;
         await this.cloudWrite(doc.file.path, blob, true, doc.file.name || doc.name);
       } else {
         const r = await storage.deviceSave(blob, doc.file.name || `${doc.name}${kindExt(kind)}`, doc.file.handle);
@@ -844,7 +844,7 @@ export class App {
       const fileName = `${target.name}${kindExt(target.kind)}`;
       let downloaded = false;
       if (target.source === 'cloud') {
-        if (!(await this.ensureSignedIn('保存到您的 Puter 云盘'))) return false;
+        if (!(await this.ensureSignedIn('保存到本地存储'))) return false;
         const path = `${storage.CLOUD_DIR}/${fileName}`;
         const same = !!doc.file?.path && (doc.file.path === path || doc.file.path.endsWith(`/${path}`));
         let item;
@@ -883,7 +883,7 @@ export class App {
   }
 
   /**
-   * Write to the Puter drive. When the session has expired, offer to sign in
+   * Write to the local drive. When the session has expired, offer to sign in
    * again and retry once; declining rejects with an AbortError.
    */
   async cloudWrite(path, blob, overwrite, name) {
@@ -893,7 +893,7 @@ export class App {
       if (!storage.isAuthError(err)) throw err;
       this.signedIn = false;
       this.renderAccount();
-      const ok = await confirmDialog('重新登录', `您的 Puter 会话已过期。请重新登录以将 "${name}" 保存到您的 Puter 云盘。`, { confirm: '登录' });
+      const ok = await confirmDialog('重新登录', `您的 Puter 会话已过期。请重新登录以将 "${name}" 保存到本地存储。`, { confirm: '登录' });
       if (!ok || !(await this.signIn())) throw new DOMException('Sign-in declined', 'AbortError');
       return storage.cloudWrite(path, blob, overwrite);
     }
@@ -964,7 +964,7 @@ export class App {
   }
 
   /**
-   * Open entries of the Puter drive (launch items or a drop from a desktop
+   * Open entries of the local drive (launch items or a drop from a desktop
    * folder) where they live, so Save writes back to the same file. Folders
    * and files that are not drawings are left out.
    */
@@ -1105,9 +1105,9 @@ export class App {
           'button.btn.sm.signin',
           {
             type: 'button',
-            'aria-label': '使用 Puter 登录',
-            'data-tip': '使用 Puter 登录',
-            'data-tip-desc': '将图形保存到您的 Puter 云盘并同步设置。无需账户也可正常绘图。',
+            'aria-label': '登录账户',
+            'data-tip': '登录账户',
+            'data-tip-desc': '将图形保存到本地存储并同步设置。无需账户也可正常绘图。',
             onClick: () => this.signIn(),
           },
           icon('log-in', 15),
@@ -1130,14 +1130,14 @@ export class App {
   accountMenu(anchor) {
     const items = [{ header: `已登录为 ${this.user?.username ?? ''}` }];
     if (platform.canSignOut()) items.push({ label: '退出登录', icon: 'log-out', action: () => this.signOut() });
-    else items.push({ label: '已通过 Puter 登录', disabled: true });
+    else items.push({ label: '已通过本地账户登录', disabled: true });
     showMenu(anchor, items, { alignRight: true, label: '账户' });
   }
 
   async signIn() {
     // Offline, or the SDK is blocked or still loading: there is nothing to sign in with yet.
     if (!platform.puterAvailable()) {
-      toast('无法连接到 Puter，目前无法登录。请检查网络连接后重试。', { kind: 'error', timeout: 7000 });
+      toast('无法连接到本地存储服务，目前无法登录。请重试。', { kind: 'error', timeout: 7000 });
       return false;
     }
     try {
@@ -1160,7 +1160,7 @@ export class App {
     this.signedIn = await platform.isSignedIn();
     if (!this.signedIn) return;
     await this.onSignedIn();
-    toast('已登录。您现在可以将图形保存到 Puter 云盘。', { kind: 'success' });
+    toast('已登录。您现在可以将图形保存到本地存储。', { kind: 'success' });
   }
 
   async signOut() {
@@ -1183,7 +1183,7 @@ export class App {
 
   async ensureSignedIn(reason) {
     if (this.signedIn) return true;
-    const ok = await confirmDialog('登录以继续', `请使用 Puter 登录以${reason}。您的图形在您的账户中保持私密。`, { confirm: '登录' });
+    const ok = await confirmDialog('登录以继续', `请登录账户以${reason}。您的图形在您的账户中保持私密。`, { confirm: '登录' });
     if (!ok) return false;
     return this.signIn();
   }
@@ -1814,7 +1814,7 @@ export class App {
 
   async openRecent(r) {
     if (r.source === 'cloud') {
-      if (!(await this.ensureSignedIn('从您的 Puter 云盘打开文件'))) return;
+      if (!(await this.ensureSignedIn('打开本地文件'))) return;
       try {
         await this.openBuffer(await storage.cloudRead(r.path), r.name, { source: 'cloud', path: r.path });
       } catch (err) {

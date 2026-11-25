@@ -74,7 +74,7 @@ export async function findOwnServer() {
 export async function deployServer({ onProgress } = {}) {
   onProgress?.('Preparing the server');
   const { source, build } = await fetchBundle();
-  onProgress?.('Copying the server to your Puter drive');
+  onProgress?.('Copying the server to local storage');
   const path = await writeBundle(FILE_NAME, source);
   let lastError = null;
   for (let attempt = 0; attempt < 4; attempt++) {
@@ -93,8 +93,8 @@ export async function deployServer({ onProgress } = {}) {
     return { name, path: dep?.file_path || path, build };
   }
   const msg = lastError?.message || String(lastError || 'unknown error');
-  const hint = /verif/i.test(msg) ? ' Confirm your Puter account email address, then try again.' : '';
-  throw new Error(`Could not create the server in your Puter account: ${msg}.${hint}`);
+  const hint = /verif/i.test(msg) ? ' Confirm your local account email address, then try again.' : '';
+  throw new Error(`Could not create the server in your local account: ${msg}.${hint}`);
 }
 
 /**

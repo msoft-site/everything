@@ -33,7 +33,7 @@ export function renderIntro(root, { onSignIn }) {
   screen(root,
     brandMark(),
     el('h1.gate-title', {}, 'Puter Mail'),
-    el('p.gate-tagline', {}, 'A fast, private email client for your Puter account.'),
+    el('p.gate-tagline', {}, 'A fast, private email client for your local account.'),
     el('ul.gate-features', {},
       feature('shield', 'Private by design', `Your mail lives as files in the ${MAIL_DIR} folder of your account. Nothing is copied anywhere else.`),
       feature('send', 'Send and receive', 'Compose mail from your @puter.email address, to any address on Puter or off.'),

@@ -50,7 +50,7 @@ export function openRecentMenu(): MenuItem[] {
 /** File ▸ Open's other source: this device inside the Puter desktop (where Open shows Puter's dialog), else Puter. */
 export function openFromMenu(): MenuItem[] {
   if (opensFromPuter()) return [{ label: 'Open from This Device…', icon: 'file_folder', description: 'Open a file from this device', op: 'wm.open_mainfile', props: { source: 'DEVICE' } }];
-  if (canOpenFromPuter()) return [{ label: 'Open from Puter…', icon: 'file_folder', description: 'Open a file from your Puter drive', op: 'wm.open_mainfile', props: { source: 'PUTER' } }];
+  if (canOpenFromPuter()) return [{ label: 'Open from Local…', icon: 'file_folder', description: 'Open a file from local storage', op: 'wm.open_mainfile', props: { source: 'PUTER' } }];
   return [];
 }
 

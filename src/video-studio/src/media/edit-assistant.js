@@ -1,5 +1,5 @@
 /**
- * Edit assistant: describe an edit in plain words and Puter AI turns it
+ * Edit assistant: describe an edit in plain words and 本地智能引擎 turns it
  * into calls to a small set of edit tools, which the app checks and then
  * performs (see ui/assistant-actions.js).
  *

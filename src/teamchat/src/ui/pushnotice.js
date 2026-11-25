@@ -24,8 +24,8 @@ const REACH = {
   events_kv_handle_not_delegated: 'The owner of this workspace has not allowed Teamchat to share with members yet, so it cannot notify you. Ask them to open Teamchat.',
   account_is_not_verified: 'The owner of this workspace has not confirmed their Puter email, so it cannot notify you yet.',
   events_kv_handle_limit_reached: 'This workspace\'s server has reached its limit of members it can notify.',
-  events_kv_handle_requires_account: 'Temporary Puter accounts cannot get notifications. Save your account to get them.',
-  recipient_not_accepting_shares: 'Your Puter account is not accepting shares from this workspace\'s owner, so it cannot notify you. Check your Puter sharing settings.',
+  events_kv_handle_requires_account: 'Temporary accounts cannot get notifications. Save your account to get them.',
+  recipient_not_accepting_shares: 'Your local account is not accepting shares from this workspace\'s owner, so it cannot notify you. Check your Puter sharing settings.',
   no_app_uid: 'This workspace\'s server cannot send notifications. Its owner needs to set it up again.',
 };
 

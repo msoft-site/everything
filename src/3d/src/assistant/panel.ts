@@ -26,7 +26,7 @@ export const ASSISTANT_MODELS: { id: string; label: string; title: string }[] = 
 const DEFAULT_MODEL = 'claude-opus-5-5';
 const SETTINGS_KEY = 'p3d:assistant';
 
-/** Development builds and browser tests may stand in for Puter AI with window.__assistantChat. */
+/** Development builds and browser tests may stand in for 本地智能引擎 with window.__assistantChat. */
 const devChat = (): ChatFn | null => (import.meta.env.DEV ? ((window as unknown as { __assistantChat?: ChatFn }).__assistantChat ?? null) : null);
 
 function loadModel(): string {
@@ -241,7 +241,7 @@ export class AssistantPanel {
       { class: 'assistant', 'aria-label': 'AI Assistant' },
       el('div', { class: 'as-bar' }, el('span', { class: 'as-title' }, ic('assistant'), 'Assistant'), modelSel, newChat, close),
       this.log,
-      el('div', { class: 'as-bottom' }, this.status, composer, el('div', { class: 'as-note' }, 'Sends your messages and a description of the scene to Puter AI.')),
+      el('div', { class: 'as-bottom' }, this.status, composer, el('div', { class: 'as-note' }, 'Sends your messages and a description of the scene to 本地智能引擎.')),
     );
     this.bindDrop();
     this.renderEmpty();
@@ -333,7 +333,7 @@ export class AssistantPanel {
     if (!on) this.say('');
   }
 
-  /** Whether Puter AI can be used; otherwise explains why in the conversation. */
+  /** Whether 本地智能引擎 can be used; otherwise explains why in the conversation. */
   private async ready(): Promise<boolean> {
     if (this.chat || devChat()) return true;
     // Turned off, nothing is fetched (not even Puter's SDK), and "check your connection" would be wrong.
@@ -345,11 +345,11 @@ export class AssistantPanel {
     const sdk = await loadPuter();
     this.say('');
     if (!sdk?.ai) {
-      this.notice('The assistant runs on Puter AI, which could not be reached. Check your connection and try again.');
+      this.notice('The assistant runs on 本地智能引擎, which could not be reached. Check your connection and try again.');
       return false;
     }
     if (!inPuterDesktop() && !isSignedIn()) {
-      const btn = el('button', { class: 'as-btn primary', type: 'button' }, 'Sign in to Puter');
+      const btn = el('button', { class: 'as-btn primary', type: 'button' }, 'Sign in');
       btn.addEventListener('click', () => {
         void signIn()
           .then((ok) => {
@@ -360,7 +360,7 @@ export class AssistantPanel {
           })
           .catch((e) => this.flash((e as Error).message));
       });
-      this.notice('Sign in to your Puter account to use the assistant (it runs on Puter AI).', btn);
+      this.notice('Sign in to use the assistant (it runs on 本地智能引擎).', btn);
       return false;
     }
     return true;

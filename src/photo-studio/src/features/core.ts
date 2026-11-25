@@ -121,7 +121,7 @@ export function installCore(e: Editor) {
     }
   }, { shortcut: 'F12', enabled: (e) => !!e.saved && e.doc !== e.saved });
   cmd('file.export-original-psd', 'Download Original PSD', () => performAction(e, 'save-original-psd'), { enabled: (e) => !!e.doc.psdOriginal, recordable: false });
-  cmd('app.account', 'Puter Account', () => performAction(e, 'account'), { hidden: true, recordable: false });
+  cmd('app.account', 'Account', () => performAction(e, 'account'), { hidden: true, recordable: false });
 
   // ----- Edit -----
   cmd('edit.undo', 'Undo', () => performAction(e, 'undo'), { shortcut: 'Mod+Z', enabled: (e) => e.history.canUndo || e.transform.active || e.session.hasPendingEdits, recordable: false });

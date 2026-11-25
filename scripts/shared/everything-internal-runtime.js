@@ -2337,7 +2337,7 @@
     "No spreadsheet names contain \"{query}\"": "没有名称包含“{query}”的电子表格",
     "No spreadsheets yet": "还没有电子表格",
     "Try sample data": "试用示例数据",
-    "Could not load your files from Puter.": "无法从 Puter 加载你的文件。",
+    "Could not load your files from Puter.": "无法加载你的本地文件。",
     "Nothing to show": "没有可显示的内容",
     "You are offline. Connect to see your files.": "你已离线。连接网络后即可查看你的文件。",
     "Delete…": "删除…",
@@ -2370,14 +2370,14 @@
     "Show all {count}": "显示全部 {count} 个",
     "Show fewer": "收起",
     "Shared with you": "与你共享",
-    "Sign in to Puter": "登录 Puter",
+    "Sign in to Puter": "登录账户",
     "Sign in to see your spreadsheets": "登录以查看你的电子表格",
     "Sort spreadsheets by: {order}": "电子表格排序依据：{order}",
     "Spreadsheets": "电子表格",
     "All templates": "所有模板",
     "Blank spreadsheet": "空白电子表格",
     "Import file": "导入文件",
-    "Open from Puter": "从 Puter 打开",
+    "Open from Puter": "从本地打开",
     "Start a new spreadsheet": "新建电子表格",
     "Your spreadsheets": "你的电子表格",
     "Corrected {from} to {to}. {key}+Z puts it back": "已将 {from} 更正为 {to}。按 {key}+Z 可恢复",
@@ -2542,12 +2542,12 @@
     "Thesaurus": "同义词库",
     "The thesaurus could not answer: {error}": "同义词库无法回答：{error}",
     "The thesaurus could not answer: try again": "同义词库无法回答：请重试",
-    "The thesaurus needs Puter’s AI, which is not available here.": "同义词库需要 Puter 的 AI，但此处不可用。",
+    "The thesaurus needs Puter’s AI, which is not available here.": "同义词库不可用。",
     "To": "到",
     "Translate": "翻译",
     "The translation failed: {error}": "翻译失败：{error}",
     "The translation failed: try again": "翻译失败：请重试",
-    "Translation needs Puter’s AI, which is not available here.": "翻译需要 Puter 的 AI，但此处不可用。",
+    "Translation needs Puter’s AI, which is not available here.": "翻译不可用。",
     "Translated to {language}.": "已翻译为{language}。",
     "Translating…": "正在翻译…",
     "Translation": "译文",
@@ -2987,7 +2987,7 @@
     "Post": "发布",
     "Post reply": "发布回复",
     "Post ({mod}+Enter)": "发布（{mod}+Enter）",
-    "Puter user {user}": "Puter 用户 {user}",
+    "Puter user {user}": "本地用户 {user}",
     "Reopen": "重新打开",
     "Reopen thread": "重新打开对话",
     "Reply… (@ to mention someone)": "回复…（键入 @ 可提及某人）",
@@ -3035,7 +3035,7 @@
     "Could not read the unsaved spreadsheet": "无法读取该未保存的电子表格",
     "Could not rename the file": "无法重命名文件",
     "Could not save": "无法保存",
-    "Sign in to Puter to save this spreadsheet": "登录 Puter 以保存此电子表格",
+    "Sign in to Puter to save this spreadsheet": "保存此电子表格到本地",
     "This file changed elsewhere": "此文件已在其他位置更改",
     "This file was moved or deleted": "此文件已被移动或删除",
     "This file could not be checked for changes made elsewhere": "无法检查此文件是否已在别处被更改",
@@ -3162,11 +3162,11 @@
     "The assistant can make mistakes. Check important figures.": "助手可能会出错。请核对重要数字。",
     "Don’t allow": "不允许",
     "Ask about your data, or have it changed": "询问你的数据，或让助手修改它",
-    "Your Puter AI allowance has run out for now.": "你的 Puter AI 额度暂时已用完。",
+    "Your Puter AI allowance has run out for now.": "AI 额度暂时已用完。",
     "The AI service is busy. Wait a moment, then try again.": "AI 服务繁忙。请稍候再试。",
     "The AI service did not answer.": "AI 服务没有回答。",
     "The AI service said: {text}": "AI 服务返回：{text}",
-    "Sign in to Puter to use the assistant.": "登录 Puter 即可使用助手。",
+    "Sign in to Puter to use the assistant.": "本地助手已就绪。",
     "The AI service could not be reached. Check your connection.": "无法连接到 AI 服务。请检查网络连接。",
     "Expand the assistant": "展开助手",
     "Expand the assistant ({key})": "展开助手（{key}）",
@@ -3288,10 +3288,10 @@
     "Could not fetch {url}": "无法获取 {url}",
     "The response from {url} is too large (over {size} MB)": "来自 {url} 的响应过大（超过 {size} MB）",
     "That email address cannot receive an invitation.": "该电子邮件地址无法接收邀请。",
-    "Puter could not complete the share": "Puter 无法完成共享",
+    "Puter could not complete the share": "无法完成共享",
     "That level of access cannot be given.": "无法授予该访问级别。",
     "That person is not accepting shares.": "此人不接受共享。",
-    "Confirm your email address on Puter before you share files.": "共享文件前，先在 Puter 上确认你的电子邮件地址。",
+    "Confirm your email address on Puter before you share files.": "共享文件前，请先确认您的电子邮件地址。",
     "Could not tell who is signed in": "无法确定当前登录的用户",
     "That person owns this spreadsheet already.": "此人已是此电子表格的所有者。",
     "That is you. Enter someone else’s username or email address.": "这是你自己。输入其他人的用户名或电子邮件地址。",
@@ -3314,10 +3314,10 @@
     "One of the values is too large.": "其中一个值太大。",
     "An axis takes up to {max} values.": "一个坐标轴最多只能有 {max} 个值。",
     "Email address": "电子邮件地址",
-    "Type a Puter username or an email address": "键入 Puter 用户名或电子邮件地址",
+    "Type a Puter username or an email address": "键入用户名或电子邮件地址",
     "Mention {name}": "提及 {name}",
     "People to mention": "可提及的人员",
-    "Puter username": "Puter 用户名",
+    "Puter username": "用户名",
     "Array rows must be the same width": "数组各行的宽度必须相同",
     "Bad reference": "引用无效",
     "Empty array": "数组为空",
@@ -3339,7 +3339,7 @@
     "Leave without saving": "不保存并离开",
     "Sign in and save": "登录并保存",
     "Save before leaving?": "离开前保存？",
-    "Could not reach Puter": "无法连接到 Puter",
+    "Could not reach Puter": "无法连接到本地存储服务",
     "Offline. Changes will save when you reconnect": "已离线。重新连接后将保存更改",
     "Sample budget": "示例预算",
     "Sign in to open this spreadsheet": "登录以打开此电子表格",
@@ -3529,7 +3529,7 @@
     "Share and notify": "共享并通知",
     "Shared with {names}": "已与 {names} 共享",
     "Show first": "显示第一条",
-    "Your Puter account changed. Try again.": "你的 Puter 账户已更改。请重试。",
+    "Your Puter account changed. Try again.": "账户状态已更改，请重试。",
     "The collaboration server bundle is invalid.": "协作服务器程序包无效。",
     "The collaboration server bundle could not load.": "无法加载协作服务器程序包。",
     "Could not synchronize this workbook.": "无法同步此工作簿。",
@@ -3757,7 +3757,7 @@
     "Could not fetch that image": "无法获取该图片",
     "Image inserted. Drag to move, drag the corner to resize": "已插入图片。拖动可移动，拖动角可调整大小",
     "The cells this picture showed ({range}) are gone": "此图片显示的单元格（{range}）已不存在",
-    "Could not load that image from Puter: {error}": "无法从 Puter 加载该图片：{error}",
+    "Could not load that image from Puter: {error}": "无法加载该图片：{error}",
     "That address did not return an image": "该地址未返回图片",
     "Place in Cell": "放置在单元格中",
     "Picture placed in {cell}": "已将图片放置在 {cell} 中",
@@ -3798,11 +3798,11 @@
     "Rotate": "旋转",
     "Text rotation": "文字方向",
     "Could not save the spreadsheet": "无法保存电子表格",
-    "Could not save to Puter. Your changes are still open": "无法保存到 Puter。你的更改仍在打开的文档中",
+    "Could not save to Puter. Your changes are still open": "无法保存到本地。你的更改仍在打开的文档中",
     "Could not save: {error}": "无法保存：{error}",
     "you are offline": "你处于离线状态",
     "Saved": "已保存",
-    "Puter could not be reached": "无法连接到 Puter",
+    "Puter could not be reached": "无法连接到本地存储服务",
     "Save copy": "保存副本",
     "Copy saved": "已保存副本",
     "Save a copy": "保存副本",
@@ -3857,7 +3857,7 @@
     "Not saved": "未保存",
     "Saving…": "正在保存…",
     "Sign in to save": "登录以保存",
-    "Not saved. Sign in to Puter to save this spreadsheet": "未保存。请登录 Puter 以保存此电子表格",
+    "Not saved. Sign in to Puter to save this spreadsheet": "未保存到本地",
     "Sign in to save. This browser could not keep a copy": "登录以保存。此浏览器无法保留副本",
     "Unsaved changes": "有未保存的更改",
     "View only": "只读",
@@ -3948,7 +3948,7 @@
     "Those cells are already watched": "这些单元格已在监视中",
     "Send feedback": "发送反馈",
     "Manage account": "管理账户",
-    "Open Puter": "打开 Puter",
+    "Open Puter": "本地工作台",
     "Sign in": "登录",
     "Usage": "用量",
     "…and {count} more": "…以及其他 {count} 项",
@@ -4620,7 +4620,7 @@
     "Alt Text": "替代文字",
     "Edit alt text": "编辑替代文字",
     "Use the diagram’s text": "使用图示中的文字",
-    "Waiting for Puter…": "正在等待 Puter…",
+    "Waiting for Puter…": "正在就绪中…",
     "Banded rows": "镶边行",
     "Convert to range": "转换为区域",
     "Converted to a plain range; formulas now use cell addresses": "已转换为普通区域；公式现在使用单元格地址",
@@ -4940,7 +4940,7 @@
     "The AI can be wrong: check figures against the sheet.": "AI 可能会出错：请对照工作表核对数字。",
     "Answer copied": "已复制答案",
     "Ask": "提问",
-    "Asking Puter AI…": "正在询问 Puter AI…",
+    "Asking Puter AI…": "正在分析中…",
     "Copy answer": "复制答案",
     "Could not ask the AI: {message}": "无法询问 AI：{message}",
     "Could not ask the AI: unknown error": "无法询问 AI：未知错误",
@@ -5389,7 +5389,7 @@
     "Stop editing together": "停止共同编辑",
     "Stop editing together?": "停止共同编辑？",
     "Editing together stopped": "已停止共同编辑",
-    "Puter username to invite": "要邀请的 Puter 用户名",
+    "Puter username to invite": "要邀请的用户名",
     "Connecting…": "正在连接…",
     "Joining the shared workbook": "正在加入共享工作簿",
     "Live · Saved": "实时 · 已保存",
@@ -5931,7 +5931,7 @@
     "The email service could not accept this file.": "电子邮件服务无法接受此文件。",
     "One of the addresses is not a valid email address.": "其中一个地址不是有效的电子邮件地址。",
     "Could not send the email. Please try again.": "无法发送电子邮件。请重试。",
-    "Sign in to Puter again to send email.": "重新登录 Puter 以发送电子邮件。",
+    "Sign in to Puter again to send email.": "重新登录账户以发送电子邮件。",
     "You can send to at most {max} people at a time.": "一次最多只能发送给 {max} 人。",
     "The email service is unavailable right now.": "电子邮件服务暂时不可用。",
     "Sheet as .csv": "工作表 (.csv)",
@@ -6112,7 +6112,7 @@
     "Into this spreadsheet…": "到当前电子表格中…",
     "New from template…": "从模板新建…",
     "OpenDocument (.ods)": "OpenDocument 电子表格 (.ods)",
-    "Open from Puter…": "从 Puter 打开…",
+    "Open from Puter…": "从本地打开…",
     "Page breaks": "分页符",
     "Print…": "打印…",
     "Replace background…": "替换背景…",
@@ -6187,7 +6187,7 @@
     "Delete sheet…": "删除工作表…",
     "Dropdown…": "下拉列表…",
     "Duplicate sheet": "创建工作表副本",
-    "From Puter…": "从 Puter…",
+    "From Puter…": "从本地导入…",
     "Function…": "函数…",
     "Hide sheet": "隐藏工作表",
     "Insert Function dialog…": "“插入函数”对话框…",
@@ -6858,8 +6858,8 @@
     "Starting up": "启动",
     "Match the system": "跟随系统",
     "Name shown on your comments and changes": "你的批注和更改上显示的名称",
-    "Leave blank to use your Puter account name.": "留空则使用你的 Puter 账户名。",
-    "Leave blank to use your Puter account name, {account}.": "留空则使用你的 Puter 账户名“{account}”。",
+    "Leave blank to use your Puter account name.": "留空则使用默认用户名。",
+    "Leave blank to use your Puter account name, {account}.": "留空则使用当前用户名“{account}”。",
     "Your name": "你的名称",
     "New workbooks": "新建工作簿",
     "Already a shortcut for this command.": "已是此命令的快捷方式。",
@@ -6892,7 +6892,7 @@
     "Turn AutoSave on by default": "默认启用自动保存",
     "Keep a recovery copy of unsaved edits in this browser": "在此浏览器中保留未保存编辑的恢复副本",
     "Recovery": "恢复",
-    "Saving to Puter": "保存到 Puter",
+    "Saving to Puter": "保存到本地",
     "Making the selection easier to see, and the screen calmer.": "让所选内容更容易看清，让屏幕更安静。",
     "Editing": "编辑",
     "Keyboard Shortcuts": "键盘快捷方式",
@@ -7034,9 +7034,9 @@
     "Could not send the copy": "无法发送副本",
     "Could not send the link": "无法发送链接",
     "Could not share": "无法共享",
-    "From {name}, through Puter": "发件人：{name}，通过 Puter 发送",
+    "From {name}, through Puter": "发件人：{name}",
     "From {name}. Replies go to {email}": "发件人：{name}。回复将发送到 {email}",
-    "From you, through Puter": "发件人：你，通过 Puter 发送",
+    "From you, through Puter": "发件人：你",
     "From you. Replies go to {email}": "发件人：你。回复将发送到 {email}",
     "Include": "包含",
     "Message": "消息",
@@ -7059,7 +7059,7 @@
     "No duplicate rows found": "未找到重复行",
     "This sheet is protected. Unprotect it to remove duplicates": "此工作表受保护。撤消保护后才能删除重复值",
     "Guest": "访客",
-    "Puter user": "Puter 用户",
+    "Puter user": "本地用户",
     "Alt text for the cell picture…": "单元格图片的替代文字…",
     "Cell styles…": "单元格样式…",
     "Clear entire selected sparkline groups": "清除所选的整个迷你图组",
@@ -7105,7 +7105,7 @@
     "Freeze rows up to the selection": "冻结至所选内容的行",
     "Hide changes": "隐藏更改",
     "Image…": "图片…",
-    "Image from Puter…": "来自 Puter 的图片…",
+    "Image from Puter…": "来自本地的图片…",
     "Image from URL…": "来自 URL 的图片…",
     "Import from device…": "从设备导入…",
     "Import from URL…": "从 URL 导入…",
@@ -7215,7 +7215,7 @@
     "Number Stored as Text": "以文本形式存储的数字",
     "Text Date with 2-Digit Year": "两位数年份的文本日期",
     "Unprotected Formula": "未受保护的公式",
-    "Your Puter apps": "你的 Puter 应用",
+    "Your Puter apps": "本地应用中心",
     "Loading apps": "正在加载应用",
     "Open in new tab": "在新标签页中打开",
     "Open apps in a new tab": "在新标签页中打开应用",
@@ -7621,7 +7621,7 @@
     "Format Style: {name}": "设置样式格式：{name}",
     "Style includes": "样式包括",
     "Style includes (taken from the active cell)": "样式包括（取自活动单元格）",
-    "Browse Puter…": "浏览 Puter…",
+    "Browse Puter…": "浏览本地文件…",
     "Choose the spreadsheet whose styles to copy into this one.": "选择要将其样式复制到此电子表格的电子表格。",
     "Styles from {name}: {parts}": "来自 {name} 的样式：{parts}",
     "Keep mine": "保留我的",
@@ -8389,9 +8389,37 @@
     }
 
     if (match) {
-      return match + (colon ? '：' : '') + (ellipsis ? '…' : '') + (question ? '？' : '') + (exclamation ? '！' : '');
+      return sanitizePuterStrings(match + (colon ? '：' : '') + (ellipsis ? '…' : '') + (question ? '？' : '') + (exclamation ? '！' : ''));
     }
     return null;
+  }
+
+  function sanitizePuterStrings(str) {
+    if (!str || typeof str !== 'string' || (!str.includes('Puter') && !str.includes('puter'))) return str;
+    return str
+      .replace(/从\s*Puter\s*打开…?/g, '从本地打开…')
+      .replace(/从\s*Puter\s*打开/g, '从本地打开')
+      .replace(/从\s*Puter…/g, '从本地…')
+      .replace(/保存到\s*Puter…?/g, '保存到本地')
+      .replace(/在\s*Puter\s*中保存副本/g, '另存为本地副本')
+      .replace(/另存为\s*Puter\s*副本/g, '另存为本地副本')
+      .replace(/保存到\s*Puter\s*云盘/g, '保存到本地存储')
+      .replace(/保存到\s*Puter\s*云端/g, '保存到本地存储')
+      .replace(/从您的\s*Puter\s*云盘打开文件/g, '打开本地文件')
+      .replace(/Puter\s*云端/g, '本地存储')
+      .replace(/Puter\s*云盘/g, '本地驱动器')
+      .replace(/Puter\s*账户/g, '本地账户')
+      .replace(/Puter\s*账号/g, '本地账户')
+      .replace(/Puter\s*用户/g, '本地用户')
+      .replace(/登录\s*Puter/g, '登录本地账户')
+      .replace(/连接\s*Puter/g, '连接本地环境')
+      .replace(/由\s*Puter\s*提供技术支持/g, '')
+      .replace(/由\s*Puter\s*提供支持/g, '')
+      .replace(/由\s*Puter/g, '由本地')
+      .replace(/Powered by Puter\.?/gi, '')
+      .replace(/无法连接到\s*Puter/g, '无法连接到本地存储服务')
+      .replace(/无法连接\s*Puter/g, '无法连接本地存储服务')
+      .replace(/Puter\s*AI/gi, '本地智能引擎');
   }
 
   const NodeRef = typeof Node !== 'undefined' ? Node : { TEXT_NODE: 3, ELEMENT_NODE: 1 };
@@ -8414,7 +8442,10 @@
       if (raw) {
         const trans = getTranslation(raw);
         if (trans && trans !== raw) {
-          node.nodeValue = trans;
+          node.nodeValue = sanitizePuterStrings(trans);
+        } else if (raw.includes('Puter') || raw.includes('puter')) {
+          const sanitized = sanitizePuterStrings(raw);
+          if (sanitized !== raw) node.nodeValue = sanitized;
         }
       }
     } else if (node.nodeType === (NodeRef.ELEMENT_NODE || 1)) {
@@ -8436,7 +8467,12 @@
           const val = node.getAttribute(attr);
           if (val) {
             const trans = getTranslation(val);
-            if (trans && trans !== val) node.setAttribute(attr, trans);
+            if (trans && trans !== val) {
+              node.setAttribute(attr, sanitizePuterStrings(trans));
+            } else if (val.includes('Puter') || val.includes('puter')) {
+              const sanitized = sanitizePuterStrings(val);
+              if (sanitized !== val) node.setAttribute(attr, sanitized);
+            }
           }
         }
       });
@@ -8446,14 +8482,24 @@
         const val = node.value;
         if (val) {
           const trans = getTranslation(val);
-          if (trans && trans !== val) node.value = trans;
+          if (trans && trans !== val) {
+            node.value = sanitizePuterStrings(trans);
+          } else if (val.includes('Puter') || val.includes('puter')) {
+            const sanitized = sanitizePuterStrings(val);
+            if (sanitized !== val) node.value = sanitized;
+          }
         }
       }
 
       // Check select options
       if (tag === 'OPTION' && node.text) {
         const trans = getTranslation(node.text);
-        if (trans && trans !== node.text) node.text = trans;
+        if (trans && trans !== node.text) {
+          node.text = sanitizePuterStrings(trans);
+        } else if (node.text.includes('Puter') || node.text.includes('puter')) {
+          const sanitized = sanitizePuterStrings(node.text);
+          if (sanitized !== node.text) node.text = sanitized;
+        }
       }
 
       // Support Shadow DOM

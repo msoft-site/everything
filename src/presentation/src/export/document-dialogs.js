@@ -100,7 +100,7 @@ export function createDocumentDialogs(ctx) {
       el("dt", {}, "Name"),
       el("dd", {}, target.name),
       el("dt", {}, "Location"),
-      el("dd", {}, target.path || "This device (not saved to Puter yet)"),
+      el("dd", {}, target.path || "This device (not saved to local storage yet)"),
       el("dt", {}, "Size"),
       size,
       el("dt", {}, "创建时间"),

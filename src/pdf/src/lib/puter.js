@@ -46,7 +46,7 @@ export async function currentUser() {
   }
 }
 /**
- * Whether a Puter session exists. The desktop always has one; a missing SDK never does; a tab
+ * Whether a local session exists. The desktop always has one; a missing SDK never does; a tab
  * Puter opened has one once its token arrives, moments after loading.
  */
 export async function isSignedIn() {

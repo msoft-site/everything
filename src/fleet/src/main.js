@@ -75,7 +75,7 @@ async function startSignedIn() {
     user = offline ? localUser() : null;
     if (!user) {
       console.error(err);
-      showWelcome('We could not reach your Puter account. Check your connection and try again.');
+      showWelcome('We could not reach your local account. Check your connection and try again.');
       return;
     }
   }
@@ -90,7 +90,7 @@ async function startSignedIn() {
   } catch (err) {
     // Guessing "your own fleet" here could open the wrong one.
     console.error('[fleet] could not read workspaces', err);
-    showWelcome('We could not load your fleets from Puter. Check your connection and try again.');
+    showWelcome('We could not load your fleets from local storage. Check your connection and try again.');
     return;
   }
   const join = location.hash.startsWith('#/join') ? team.parseJoin(Object.fromEntries(new URLSearchParams(location.hash.split('?')[1] || ''))) : null;
@@ -186,11 +186,11 @@ async function acceptInvite(kv, ws, { url, token }) {
       return { ...ws, current: url };
     }
   }
-  // Joining sends your Puter session to that fleet's server, so ask first.
+  // Joining sends your local session to that fleet's server, so ask first.
   const host = new URL(url).hostname;
   const ok = await confirmDialog({
     title: 'Join a fleet?',
-    message: `You opened an invitation to a fleet whose team server is ${host}. Joining lets its owner see your Puter username, and what you add there is stored in their account. Only accept invitations from people you know.`,
+    message: `You opened an invitation to a fleet whose team server is ${host}. Joining lets its owner see your Local username, and what you add there is stored in their account. Only accept invitations from people you know.`,
     confirmLabel: 'Join fleet',
   });
   if (!ok) return ws;
@@ -250,8 +250,8 @@ function showWelcome(error) {
         h('h1', 'Keep every vehicle on the road.'),
         h('p.lead', 'Track vehicles, inspections, issues, maintenance, fuel, and costs for your whole fleet in one place. Free and open source.'),
         error ? h('div.notice.danger', { role: 'alert' }, icon('alert'), h('span', error)) : null,
-        location.hash.startsWith('#/join') ? h('div.notice.accent', icon('users'), h('span', 'You have been invited to join a fleet. Sign in with Puter to accept the invitation.')) : null,
-        !available ? h('div.notice.warning', { role: 'alert' }, icon('warning'), h('span', 'Puter could not be loaded, so signing in is unavailable right now. You can still explore the sample fleet.')) : null,
+        location.hash.startsWith('#/join') ? h('div.notice.accent', icon('users'), h('span', 'You have been invited to join a fleet. Sign in to accept the invitation.')) : null,
+        !available ? h('div.notice.warning', { role: 'alert' }, icon('warning'), h('span', 'Storage service could not be loaded, so signing in is unavailable right now. You can still explore the sample fleet.')) : null,
         h('div.cta', signInBtn, demoBtn),
         h(
           'ul.welcome-points',
@@ -265,7 +265,7 @@ function showWelcome(error) {
         h(
           'div.welcome-foot',
           h('a', { href: REPO_URL, target: '_blank', rel: 'noopener noreferrer' }, icon('github', 16), 'Source on GitHub'),
-          h('span', 'Your data is stored in your own Puter account.'),
+          h('span', 'Your data is stored locally.'),
         ),
       ),
       h('div.welcome-art', { 'aria-hidden': 'true', html: WELCOME_ART }),

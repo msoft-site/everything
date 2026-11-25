@@ -603,7 +603,7 @@ function dataSection() {
       h('div.card-head', h('h2.grow', 'Your data')),
       h(
         'div.card-body.stack',
-        h('p.muted', app.demo ? 'This is a demo. Nothing is saved to the cloud.' : 'Your records are stored in your own Puter account and cached on this device so the app works offline.'),
+        h('p.muted', app.demo ? 'This is a demo. Nothing is saved to the cloud.' : 'Your records are stored locally and cached on this device so the app works offline.'),
         h('dl.kv', counts.filter(([, n]) => n).map(([c, n]) => [h('dt', LABELS[c] || c), h('dd', String(n))])),
         h('div.row', { style: { flexWrap: 'wrap' } }, h('button.btn', { type: 'button', onClick: exportJSON }, icon('download', 16), 'Download backup'), h('button.btn', { type: 'button', onClick: importJSON }, icon('upload', 16), 'Restore from backup')),
         h('p.subtle', { style: { fontSize: '13px' } }, 'CSV exports are available from the Clients, Invoices, Payments, Expenses, Timesheets and Reports pages.'),
@@ -639,7 +639,7 @@ function aboutSection() {
       h('div.row', h('img', { src: './icons/icon-192.png', alt: '', width: 48, height: 48, style: { borderRadius: '12px' } }), h('div', h('div', { style: { fontWeight: '700', fontSize: '16px' } }, 'Field Service'), h('div.subtle', 'Early alpha'))),
       h('p.muted', 'Free and open-source field service management, part of the Everything project. Built with vanilla JavaScript and Puter.'),
       h('div.notice.warning', icon('warning'), h('span', 'This app is in early development. Features may change and data could be lost, so keep backups and do not rely on it for real business records yet.')),
-      h('div.row', { style: { flexWrap: 'wrap' } }, h('a.btn', { href: REPO_URL, target: '_blank', rel: 'noopener noreferrer' }, icon('github', 16), 'Source code on GitHub'), h('a.btn.ghost', { href: 'https://developer.puter.com', target: '_blank', rel: 'noopener noreferrer' }, 'Powered by Puter', icon('external', 14))),
+      h('div.row', { style: { flexWrap: 'wrap' } }, h('a.btn', { href: REPO_URL, target: '_blank', rel: 'noopener noreferrer' }, icon('github', 16), 'Source code on GitHub'), h('a.btn.ghost', { href: 'https://developer.puter.com', target: '_blank', rel: 'noopener noreferrer' }, '', icon('external', 14))),
     ),
   );
 }

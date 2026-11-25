@@ -565,7 +565,7 @@ function accountItems({ ownAccount = true } = {}) {
       ? [
           { separator: true },
           {
-            label: "使用 Puter 登录",
+            label: "登录账户",
             icon: "User",
             hint: "将演示文稿保存到您自己的云端",
             onSelect: () => login(),
@@ -679,7 +679,7 @@ function saveButton() {
     "secondary save-button",
     account
       ? {}
-      : { title: "登录 Puter 以将此演示文稿保存在您的云端" },
+      : { title: "保存此演示文稿到本地" },
   );
 }
 // The header's account and save buttons follow the account; a focused button
@@ -746,9 +746,9 @@ async function shortcutsDialog() {
       "div",
       { class: "dialog-body shortcuts" },
       ...[
-        ["Ctrl / ⌘ + S", "保存到 Puter"],
-        ["Ctrl / ⌘ + Shift + S", "在 Puter 中保存副本"],
-        ["Ctrl / ⌘ + O", "从 Puter 打开"],
+        ["Ctrl / ⌘ + S", "保存到本地"],
+        ["Ctrl / ⌘ + Shift + S", "另存为本地副本"],
+        ["Ctrl / ⌘ + O", "从本地打开"],
         ["Ctrl / ⌘ + P", "打印"],
         ["Ctrl / ⌘ + F 或 H", "查找或查找和替换"],
         ["Ctrl / ⌘ + G 或 Shift + G", "查找下一个或上一个"],
@@ -878,7 +878,7 @@ async function applyAccount(connected, request) {
     toast(
       recovered
         ? `Signed in as ${account.username}. Save to keep this presentation in Puter.`
-        : `Signed in as ${account.username}. Local recovery is unavailable. Save to Puter to keep your work.`,
+        : `Signed in as ${account.username}. Local recovery is unavailable. Save to Local to keep your work.`,
     );
   }
   return request === accountRequest;
@@ -1000,7 +1000,7 @@ function renderHome() {
         el(
           "div",
           { class: "header-right" },
-          button("从 Puter 打开", "FolderOpen", run(openPicker), "secondary"),
+          button("从本地打开", "FolderOpen", run(openPicker), "secondary"),
           appsButton(),
           accountButton(),
           sdkUserMenu(),
@@ -1103,10 +1103,10 @@ function renderHome() {
               el(
                 "p",
                 {},
-                "登录以在您的 Puter 云端保存真实的 PowerPoint 文件。",
+                "保存真实的 PowerPoint 文件到本地设备。",
               ),
             ),
-            button("连接 Puter", "ArrowRight", () => login(), "secondary"),
+            button("本地账户", "ArrowRight", () => login(), "secondary"),
           ),
         el(
           "section",
@@ -1181,7 +1181,7 @@ function renderHome() {
         "footer",
         { class: "home-footer" },
         el("span", {}, "专为您的思考方式打造。"),
-        el("span", {}, "PPTX files · Powered by Puter"),
+        el("span", {}, "PPTX 演示文稿"),
       ),
     ),
   );
@@ -1468,8 +1468,8 @@ function renderFileList() {
           f.kind === "draft"
             ? "此设备"
             : f.kind === "recent"
-              ? `Puter · ${cloud.folderName(f.path) || "主目录"}`
-              : "Puter",
+              ? `本地存储 · ${cloud.folderName(f.path) || "主目录"}`
+              : "本地存储",
         ),
         el(
           "span",
@@ -1680,8 +1680,8 @@ function libraryFileMenu(e, f) {
               "p",
               { class: "dialog-body" },
               f.kind === "draft"
-                ? "这将从此设备中删除恢复草稿。未保存到 Puter 或未下载的工作将会丢失。"
-                : "这将从您的 Puter 云端永久删除该文件。此操作无法撤消。",
+                ? "这将从此设备中删除恢复草稿。未保存到本地或未下载的工作将会丢失。"
+                : "这将从本地存储中永久删除该文件。此操作无法撤消。",
             ),
             confirm: "删除",
             danger: true,
@@ -1800,7 +1800,7 @@ async function leaveEditor() {
         body: el(
           "p",
           { class: "dialog-body" },
-          "您的最新更改无法在此设备上保存。离开前请下载副本或保存到 Puter 以保留它们。",
+          "您的最新更改无法在此设备上保存。离开前请下载副本或保存到本地以保留它们。",
         ),
         confirm: "仍然离开",
         danger: true,
@@ -1823,7 +1823,7 @@ function saveFailedPrompt(target) {
       ? ` (${String(error.message).replace(/\.$/, "")})`
       : "";
   return {
-    title: "您的最新更改尚未保存到 Puter",
+    title: "您的最新更改尚未保存到本地",
     body: el(
       "p",
       { class: "dialog-body" },
@@ -2056,11 +2056,11 @@ async function openCloud(file, { offerDraft = true } = {}) {
         body: el(
           "p",
           { class: "dialog-body" },
-          `“${name}” has changes on this device that were not saved to Puter.`,
+          `“${name}” has changes on this device that were not saved to local storage.`,
         ),
         actions: [
           { label: "取消", value: null },
-          { label: "打开 Puter 版本", value: "file" },
+          { label: "打开本地存储版本", value: "file" },
           { label: "恢复更改", value: "draft", kind: "primary" },
         ],
       });
@@ -2103,7 +2103,7 @@ async function openCloud(file, { offerDraft = true } = {}) {
   }
 }
 // The newest recovery draft, other than the open presentation's, with
-// changes to `file` not saved to Puter.
+// changes to `file` not saved to local storage.
 async function unsavedDraftOf(file) {
   const list = await drafts.listDrafts(owner()).catch(() => []);
   return list.find(
@@ -2206,7 +2206,7 @@ async function openPicker() {
   if (request !== documentRequest) return;
   if (!cloud.canPickFiles())
     throw new Error(
-      "Puter's file picker is unavailable. Reload and try again.",
+      "File picker is unavailable. Reload and try again.",
     );
   const accountVersion = accountRequest;
   const file = await cloud.pickFile();
@@ -2363,7 +2363,7 @@ async function importFile(file) {
 // keeps failing, whatever the browser's own words for it; the save status
 // goes on showing that the work is unsaved.
 const STORAGE_WARNING =
-  "Device storage is unavailable. Save to Puter or download a copy to keep your work.";
+  "Device storage is unavailable. Save to Local or download a copy to keep your work.";
 function warnStorage() {
   if (doc?.storageWarned) return;
   if (doc) doc.storageWarned = true;
@@ -2655,7 +2655,7 @@ async function saveCloud(
         // The dialog's folder is named, so the file can be found there.
         const where = chosen
           ? `Saved to ${cloud.folderName(target.path) || "Home"} in your Puter.`
-          : "Saved to your Puter cloud.";
+          : "Saved to local storage.";
         if (explicit)
           toast(recovered ? where : `${where} Local recovery is unavailable.`);
       } else if (firstSave) {
@@ -2680,7 +2680,7 @@ async function saveCloud(
       // few seconds, so the pauses grow.
       target.saveError = {
         message:
-          error?.message || error?.msg || "Puter could not save the file.",
+          error?.message || error?.msg || "Could not save the file.",
         offline: navigator.onLine === false,
       };
       if (doc === target && target.path && account) {
@@ -3622,7 +3622,7 @@ function editorTopbar() {
           "aria-label": "快速访问工具栏",
         },
         quick(
-          "保存到 Puter",
+          "保存到本地",
           "save",
           run(() => saveCloud()),
           {
@@ -7272,7 +7272,7 @@ function updatePanelToggles() {
 }
 window.addEventListener("resize", updatePanelToggles);
 /* ---------- AI assistant ----------
- * A chat beside the slide in which Puter's AI reads and edits the deck
+ * A chat beside the slide in which local AI reads and edits the deck
  * (assistant-panel.js). Its edits go through mutate like any other, one undo
  * step each, and keep the user on the slide and selection they had.
  */
@@ -7500,7 +7500,7 @@ function fileMenu(anchor) {
         onSelect: run(() => newDeck("blank")),
       },
       {
-        label: "从 Puter 打开",
+        label: "从本地打开",
         icon: "FolderOpen",
         shortcut: `${M}+O`,
         onSelect: run(openPicker),
@@ -7513,13 +7513,13 @@ function fileMenu(anchor) {
       { label: "导入 PPTX", icon: "Upload", onSelect: pickLocal },
       { separator: true },
       {
-        label: "保存到 Puter",
+        label: "保存到本地",
         icon: "Save",
         shortcut: `${M}+S`,
         onSelect: run(() => saveCloud()),
       },
       {
-        label: "在 Puter 中保存副本",
+        label: "另存为本地副本",
         icon: "CopyPlus",
         shortcut: `${M}+Shift+S`,
         onSelect: run(saveCopy),
@@ -8083,8 +8083,8 @@ async function aboutDialog() {
         "p",
         { class: "muted" },
         cloud.asksWhereToSave()
-          ? "保存的演示文稿存放在您自己的 Puter 云端中您首次保存时选择的文件夹中。恢复草稿保留在此设备上。"
-          : "保存的演示文稿存放在您自己的 Puter 云端中的 Presentations/ 目录下。恢复草稿保留在此设备上。",
+          ? "保存的演示文稿存放在本地存储中您首次保存时选择的文件夹中。恢复草稿保留在此设备上。"
+          : "保存的演示文稿存放在本地存储中的 Presentations/ 目录下。恢复草稿保留在此设备上。",
       ),
     ),
     cancel: null,
@@ -17159,7 +17159,7 @@ async function readyToClose() {
     if (doc !== target) return false;
     const kept = revision === draftRevision;
     const choice = await dialog({
-      title: `关闭前是否将“${target.name}”保存到 Puter？`,
+      title: `关闭前是否将“${target.name}”保存到本地？`,
       body: el(
         "p",
         { class: "dialog-body" },

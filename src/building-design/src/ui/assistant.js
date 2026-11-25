@@ -1,6 +1,6 @@
 /**
  * The assistant: a side panel where you ask about the project or ask for
- * changes in plain words. It answers through Puter's AI and acts with the
+ * changes in plain words. It answers through local AI and acts with the
  * functions in assistant/tools.js; every change it makes is an ordinary
  * undo step.
  */
@@ -100,7 +100,7 @@ export class Assistant {
     this.add('as-user', q);
     if (!puterAvailable() || !(await whenPuter(4000))) return this.add('as-bot.as-err', 'The assistant needs Puter, which could not be reached. Check your connection.');
     if (!(await isSignedIn())) {
-      const m = this.add('as-bot', 'Sign in with Puter to use the assistant. ');
+      const m = this.add('as-bot', 'Sign in to use the assistant. ');
       m.append(h('button.btn.sm', { type: 'button', onClick: async () => (await this.app.signIn()) && this.send(q) }, 'Sign in'));
       return;
     }

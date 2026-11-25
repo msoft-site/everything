@@ -120,7 +120,7 @@ export function uniqueName(name, taken) {
 
 /**
  * Output names for items in order, unique within the batch. With the Puter output
- * folder `dir`, names of Puter files queued from that folder are kept free except
+ * folder `dir`, names of local files queued from that folder are kept free except
  * for the item's own file: with "Replace the existing file" an earlier output would
  * otherwise overwrite a later item's source before it was read.
  */

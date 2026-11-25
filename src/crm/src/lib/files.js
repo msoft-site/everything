@@ -2,7 +2,7 @@
  * Thin wrapper around puter.fs, the way store.js wraps puter.kv.
  *
  * Attachments are the app's first use of the file system: the bytes live
- * under an attachments/ directory in the user's own Puter cloud (relative
+ * under an attachments/ directory in the user's own local storage (relative
  * paths resolve inside the app's directory), while KV keeps only the
  * metadata. No server, no third-party bucket - the file's fate stays in
  * the user's account.

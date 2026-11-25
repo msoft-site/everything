@@ -1,7 +1,7 @@
 /**
  * Language: mark text's proofing language (§17.3.2.20 lang) or exclude it from proofing
  * (§17.3.2.21 noProof), set the document's default language, and translate the selection or the
- * whole document with Puter's AI into a pane (with Insert) or a new document.
+ * whole document with local AI into a pane (with Insert) or a new document.
  */
 import { el, listboxKeys, isComposing } from '../ui/dom.js';
 import { languageProperty } from '../engine/font-families.js';

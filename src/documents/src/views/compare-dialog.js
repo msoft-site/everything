@@ -1,6 +1,6 @@
 /**
  * Compare Documents and Combine Documents. The reader picks an original and a revised document
- * (this one, a file from the device, or one from Puter); the result is a new document whose
+ * (this one, a file from the device, or one from local storage); the result is a new document whose
  * differences are tracked changes, shown first beside both sources and then opened or downloaded.
  */
 import { el } from '../ui/dom.js';
@@ -48,7 +48,7 @@ export function openCompareDialog({ mode = 'compare', editor, pkg, documentName,
       el('div.rv-actions', {},
         el('button.btn.btn-outline.btn-sm', { type: 'button', onclick: current }, '当前文档'),
         el('button.btn.btn-outline.btn-sm', { type: 'button', onclick: () => fileInput.click() }, '从设备选取…'),
-        P.canPickFiles() ? el('button.btn.btn-outline.btn-sm', { type: 'button', onclick: fromPuter }, '从云端选取…') : null), fileInput) };
+        P.canPickFiles() ? el('button.btn.btn-outline.btn-sm', { type: 'button', onclick: fromPuter }, '从本地选取…') : null), fileInput) };
   };
   const original = slot('original', '原文档'), revised = slot('revised', '修订的文档');
   const label = el('input.input', { value: '', placeholder: combine ? '修订副本的作者' : '修订文档的作者', 'aria-label': '标签修订为' });

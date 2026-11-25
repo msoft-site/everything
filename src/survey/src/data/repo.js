@@ -1,5 +1,5 @@
 /**
- * The creator's own data, in their Puter account.
+ * The creator's own data, in their account.
  *
  * Storage plan (puter.kv is DynamoDB-backed: billed per KB read and written,
  * no secondary indexes, so every read path is a key):

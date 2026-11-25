@@ -1,6 +1,6 @@
 /**
  * The user's own ICC profiles (.icc / .icm files they loaded), kept as
- * files named by the profile's id in the user's Puter cloud (app data
+ * files named by the profile's id in the user's local storage (app data
  * folder "profiles") when signed in, else in this browser's private
  * storage. They register with the color engine as they load, so they can
  * be working spaces, document profiles, proof devices and output profiles.

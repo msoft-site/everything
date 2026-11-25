@@ -1,6 +1,6 @@
 /**
  * A puter.kv look-alike over a plain Map, persisted to localStorage when one
- * is given. Backs the local demo mode (no Puter account) and the tests. It
+ * is given. Backs the local demo mode (no account) and the tests. It
  * implements the subset of puter.kv this app uses, with the same semantics:
  * prefix patterns, cursor paging, reverse order, incr/decr, dotted update
  * paths.

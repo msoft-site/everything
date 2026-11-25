@@ -1,5 +1,5 @@
 /**
- * Text to speech through Puter AI. The call returns an audio element; its
+ * Text to speech through 本地智能引擎. The call returns an audio element; its
  * source is fetched into a Blob so the speech can be imported like any
  * other audio file and saved with the project.
  */
@@ -17,7 +17,7 @@ export const TTS_VOICES = [
   })),
 ];
 
-/** Puter AI is present and the user is signed in (the project lives in Puter). */
+/** 本地智能引擎 is present and the user is signed in (the project lives in Puter). */
 export function aiAvailable(ctx) {
   return typeof puter !== 'undefined' && Boolean(puter.ai) && ctx.library?.backend?.kind === 'puter';
 }

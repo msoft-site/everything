@@ -853,7 +853,7 @@ export function createOrganizationHome({
       const parsed = link ? readOrganizationLink(link) : null;
       modal(
         "Join an organization",
-        `<form id="org-join"><label class="field">${t("Organization link")}<input id="org-link" type="url" required value="${escape(link)}" placeholder="https://…#org=…"></label><p class="dialog-copy">${t("Sign in with Puter. If your organization uses domain capture, you can join by verifying your work email instead of an invitation.")}</p><p id="org-join-status" class="dialog-status" role="status"></p><div class="dialog-footer"><button type="button" class="secondary" id="org-join-setup">${t("Set up an organization")}</button><button class="primary">${t("Join organization")}</button></div></form>`,
+        `<form id="org-join"><label class="field">${t("Organization link")}<input id="org-link" type="url" required value="${escape(link)}" placeholder="https://…#org=…"></label><p class="dialog-copy">${t("Sign in. If your organization uses domain capture, you can join by verifying your work email instead of an invitation.")}</p><p id="org-join-status" class="dialog-status" role="status"></p><div class="dialog-footer"><button type="button" class="secondary" id="org-join-setup">${t("Set up an organization")}</button><button class="primary">${t("Join organization")}</button></div></form>`,
         (d) => {
           d.querySelector("#org-join-setup").onclick = () => {
             d.close();
@@ -1012,7 +1012,7 @@ export function createOrganizationHome({
     setupDialog() {
       modal(
         "Set up an organization",
-        `<form id="org-setup"><p class="dialog-copy">${t("Your Puter account becomes the organization's account owner. Organization boards, audit logs, and settings are stored in this account.")}</p><label class="field">${t("Organization name")}<input id="setup-name" required maxlength="120"></label><label class="field">${t("Email domains (optional)")}<input id="setup-domains"></label><p id="setup-status" class="dialog-status" role="status"></p><div class="dialog-footer"><button class="primary">${t("Create organization")}</button></div></form>`,
+        `<form id="org-setup"><p class="dialog-copy">${t("Your local account becomes the organization's account owner. Organization boards, audit logs, and settings are stored in this account.")}</p><label class="field">${t("Organization name")}<input id="setup-name" required maxlength="120"></label><label class="field">${t("Email domains (optional)")}<input id="setup-domains"></label><p id="setup-status" class="dialog-status" role="status"></p><div class="dialog-footer"><button class="primary">${t("Create organization")}</button></div></form>`,
         (d) => {
           d.querySelector("#org-setup").onsubmit = async (e) => {
             e.preventDefault();
@@ -1141,7 +1141,7 @@ addTranslations({
   Update: "更新",
   "You're all caught up.": "您已查看全部内容。",
   "Organization link": "组织链接",
-  "Sign in with Puter. If your organization uses domain capture, you can join by verifying your work email instead of an invitation.":
+  "Sign in. If your organization uses domain capture, you can join by verifying your work email instead of an invitation.":
     "登录系统。如果您的组织使用域名捕获，可以通过验证工作邮箱直接加入，无需邀请。",
   "Join organization": "加入组织",
   "Join {name} at {host}?": "加入位于 {host} 的 {name}？",
@@ -1162,7 +1162,7 @@ addTranslations({
   "Email verified. You're in the organization.":
     "邮箱已验证，您已成功加入组织。",
   "Email verified.": "邮箱已验证。",
-  "Your Puter account becomes the organization's account owner. Organization boards, audit logs, and settings are stored in this account.":
+  "Your local account becomes the organization's account owner. Organization boards, audit logs, and settings are stored in this account.":
     "您的账户将成为该组织的主账号。组织的白板、审计日志和设置均保存在此账户中。",
   "Email domains (optional)": "邮箱域名（可选）",
   "Create organization": "创建组织",

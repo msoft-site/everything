@@ -119,7 +119,7 @@ const REFRESH_SPAN = 3 * BLOCK_SIZE;
 /** Messages loaded on each side of a permalinked one. */
 const AROUND = 25;
 
-/** The user's own photo, in their Puter drive, the copy every worker is seeded from. */
+/** The user's own photo, in their local drive, the copy every worker is seeded from. */
 const AVATAR_FILE = 'teamchat/avatar.jpg';
 /** A sidebar section's name, in UTF-16 units as the dialog's maxlength counts them (the sections live in the user's own document; no worker holds them). */
 const SECTION_NAME_MAX = 40;
@@ -422,7 +422,7 @@ const LATER_REUSE_MS = 30_000;
 class Store extends EventTarget {
   constructor() {
     super();
-    this.identity = null; // { uuid, username } from Puter
+    this.identity = null; // { uuid, username } from local storage
     this.user = null; // the user's own document (lib/user.js)
     this._flags = {}; // per-ref UI flags from the last reconciliation (unreachable)
     this._forgotten = new Map(); // workspace ref -> when the user's list dropped it here (see refreshWorkspaces)
@@ -444,7 +444,7 @@ class Store extends EventTarget {
     this._readTimers = new Map(); // `${wsId}:${conv}` -> the debounce of a read about to be sent (see markRead)
     this._readPending = new Map(); // the same keys -> what the debounce will do, for the page going away to do it now (see _flushReads)
     this.pushStatus = 'off';
-    this.pushKnown = false; // pushStatus read from Puter at least once
+    this.pushKnown = false; // pushStatus read from local storage at least once
     this.pushReach = null; // the open workspace's word on reaching this member ({ reach, team }, see worker/events.js pushStatus)
     this._localSeen = new Map(); // conv -> highest seq the user has actually seen on screen
     this._wsFetch = 0; // refreshWorkspace() calls made, and the newest one applied: answers apply in order asked
@@ -609,7 +609,7 @@ class Store extends EventTarget {
    */
   async loadMe() {
     const who = await puter.auth.getUser();
-    if (!who || !who.uuid) throw new ApiError(401, 'unauthorized', 'Your Puter session is not valid');
+    if (!who || !who.uuid) throw new ApiError(401, 'unauthorized', 'Your local session is not valid');
     this.identity = { uuid: String(who.uuid), username: String(who.username || '').toLowerCase() };
     this._claimDevice();
     this.user = await loadUserDoc();
@@ -646,7 +646,7 @@ class Store extends EventTarget {
 
   /**
    * The device may have served another account before this one (a sign-out
-   * and a sign-in, or a switch of Puter accounts): what that account left on
+   * and a sign-in, or a switch of accounts): what that account left on
    * it unsent is not this one's to see. Drafts are dropped, and so is the
    * offline cache (the last bootstrap and pages the other account read,
    * their direct messages among them); queued messages stay in the outbox

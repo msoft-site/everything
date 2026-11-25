@@ -18,7 +18,7 @@ function authScreen({ puterAvailable }) {
       onClick: async (e) => {
         const button = e.currentTarget;
         button.disabled = true;
-        button.textContent = 'Waiting for Puter…';
+        button.textContent = 'Loading local workspace…';
         try {
           await puter.auth.signIn();
         } catch {
@@ -66,7 +66,7 @@ function authScreen({ puterAvailable }) {
           feature('kanban', 'A pipeline that shows every candidate, stage by stage, per job'),
           feature('calendar-check', 'Interviews export as calendar invites and carry video-call links'),
           feature('signature', 'Offer letters generated for you, with recorded e-signatures'),
-          feature('cloud', 'Your data lives in your own Puter cloud, not on our servers')
+          feature('cloud', 'Your data lives in your own local storage, not on our servers')
         ),
         signInButton,
         !puterAvailable
@@ -74,7 +74,7 @@ function authScreen({ puterAvailable }) {
               'div',
               { class: 'form-error', style: { marginTop: '10px' } },
               icon('circle-alert', 15),
-              'Puter.js could not be loaded. Check your connection and reload the page.'
+              'Storage engine could not be loaded. Check your connection and reload the page.'
             )
           : null
       ),
@@ -168,7 +168,7 @@ window.addEventListener('unhandledrejection', (event) => {
 
 async function boot() {
   await domReady();
-  // Local development without a Puter session: `npm run dev` then open
+  // Local development without a local session: `npm run dev` then open
   // http://localhost:5173/?mock — data persists in localStorage.
   if (import.meta.env.DEV && new URLSearchParams(location.search).has('mock')) {
     await import('../dev/puter-mock.js');

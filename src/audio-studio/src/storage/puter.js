@@ -90,7 +90,7 @@ export async function writeFile(path, data, options = {}) {
   } catch (err) {
     const why = String(err?.message || err?.error?.message || 'Puter did not answer');
     const name = String(path).split('/').pop();
-    const error = new Error(`"${name}" could not be saved to Puter (${why.replace(/\.$/, '')}).`);
+    const error = new Error(`"${name}" could not be saved to local storage (${why.replace(/\.$/, '')}).`);
     error.cause = err;
     error.code = err?.code ?? err?.error?.code;
     throw error;

@@ -16,7 +16,7 @@ import { sheetFilters } from '../core/sheet-filters.js';
  * Unsaved edits are also copied to this browser's storage (see drafts.js);
  * a file opened while such a draft exists offers the draft back.
  *
- * Without a Puter session there is nowhere to write: autosaves wait (the
+ * Without a local session there is nowhere to write: autosaves wait (the
  * local draft still keeps the edits) and an explicit save fails with
  * signInToSaveText() so the view can ask for a sign-in.
  *
@@ -204,7 +204,7 @@ export const UNTITLED = tSource('doc.untitled');
 export const CANCELLED = Symbol('cancelled');
 /** How long a shared workbook waits after its last change before its owner's browser writes the .xlsx file. */
 const SHARED_FILE_MS = 15_000;
-/** Why a save asked for without a Puter session did not happen, in the interface language. */
+/** Why a save asked for without a local session did not happen, in the interface language. */
 export const signInToSaveText = () => t('doc.signInToSave');
 /** Why a spreadsheet shared with the user only to view is not saved, in the interface language. */
 export const viewOnlyText = () => t('doc.viewOnly');

@@ -20,7 +20,7 @@
  *
  * An app-owned relay that forwarded whatever it was handed would be a spam
  * cannon wearing Teamchat's sending reputation, so it never does:
- *   - no Puter session, no send. `user` is only populated for callers that
+ *   - no local session, no send. `user` is only populated for callers that
  *     come through puter.workers.exec(); everyone else gets 401.
  *   - the caller supplies the PARTS of an invitation (server, code, names, a
  *     note), never a message. Subject, body, and above all the link are
@@ -438,7 +438,7 @@ router.get('/whoami', async (ctx) => {
 
 router.post('/invites', async (ctx) => {
   // A caller context exists only for requests that came through
-  // puter.workers.exec(), which forwards their Puter session. No session, no
+  // puter.workers.exec(), which forwards their local session. No session, no
   // send — and no way to bill anyone for one either.
   const caller = callerOf(ctx);
   if (!caller || !caller.puter) return json({ error: 'sign_in_required', detail: 'no_caller' }, 401);

@@ -48,7 +48,7 @@ export function parseRecipients(input) {
 /** Why a send did not happen, in words the user can act on. */
 export function failureMessage(status, data) {
   const code = (data && data.error) || '';
-  if (status === 401 || code === 'sign_in_required') return '请重新登录 Puter 以发送邮件。';
+  if (status === 401 || code === 'sign_in_required') return '请重新登录本地账户 以发送邮件。';
   if (status === 429 || code === 'daily_limit') return '您已达到今日邮件发送上限，请明天再试。';
   if (status === 503 || code === 'temporarily_unavailable') return '邮件服务繁忙，请稍后重试，或在您的邮件应用中打开此邮件。';
   if (status === 404) return '邮件服务不可用，请改为在您的邮件应用中打开此邮件。';

@@ -71,7 +71,7 @@ const POLL_MS = 30_000;
 const USER_RETRY_MS = 5 * 60_000; // how often to re-ask getUser() for a still-missing email
 const ORPHAN_GRACE_MS = 10 * 60_000;
 // How often the host's profile picture is re-read for the pages that publish
-// it. It lives in their Puter drive and changes almost never, while a pass runs
+// it. It lives in their local drive and changes almost never, while a pass runs
 // on every calendar change — so a settled answer is reused for half an hour,
 // and only an inconclusive one is retried soon.
 const PICTURE_TTL_MS = 30 * 60_000;

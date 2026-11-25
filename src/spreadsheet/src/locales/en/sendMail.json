@@ -12,7 +12,7 @@
   "fromYouReplies": "From you. Replies go to {email}",
   "include": "Include",
   "invalidEntries": "{count, plural, one {{count} entry is not an email address} other {{count} entries are not an email address}}",
-  "linkHintFile": "Each address is given access to the file. Someone without a Puter account is invited to join.",
+  "linkHintFile": "Each address is given access to the file. Someone without an account is invited to join.",
   "linkHintRoom": "They get an invitation into this live workbook, valid for 7 days.",
   "message": "Message",
   "messagePlaceholder": "Add a message (optional)",

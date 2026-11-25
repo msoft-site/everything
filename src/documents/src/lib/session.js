@@ -1,6 +1,6 @@
 /**
  * Per-session state that is not part of any document: whether anyone is
- * signed in to Puter, who, and the theme preference. Views subscribe to
+ * signed in, who, and the theme preference. Views subscribe to
  * 'change' to re-render the pieces that show these. The theme lives in
  * localStorage so the pre-paint script in index.html can apply it before the
  * first frame.
@@ -48,7 +48,7 @@ class Session extends EventTarget {
     return this.state === 'in';
   }
 
-  /** Known to have no Puter session: cloud actions ask for a sign-in first. */
+  /** Known to have no local session: cloud actions ask for a sign-in first. */
   get signedOut() {
     return this.state === 'out';
   }
@@ -71,7 +71,7 @@ class Session extends EventTarget {
 
   /** The name to show and to sign comments with. */
   get username() {
-    return this.user?.username || (this.state === 'out' ? 'Guest' : 'Puter user');
+    return this.user?.username || (this.state === 'out' ? 'Guest' : 'Local user');
   }
 
   get accountId() {

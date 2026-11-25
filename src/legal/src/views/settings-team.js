@@ -17,7 +17,7 @@ import * as teamModule from '../team.js';
 // team.js is already part of the main bundle, so import it directly.
 const team = async () => teamModule;
 
-/** Link the signed-in Puter account to one firm user record. */
+/** Link the signed-in account to one firm user record. */
 function whoAmI() {
   const users = app.store.all('users').filter((u) => u.active !== false);
   if (!app.user || !users.length) return null;
@@ -58,7 +58,7 @@ async function enableFlow() {
   const ok = await confirmDialog({
     title: 'Turn on team sign-in?',
     message:
-      'This sets up a small firm server in your Puter account and copies your firm’s records and documents into it. Everyone you invite then works on the same data with their own Puter account. The data stays in your account, and you pay for its storage.',
+      'This sets up a small firm server in your local account and copies your firm’s records and documents into it. Everyone you invite then works on the same data with their own account. The data stays in your account, and you pay for its storage.',
     confirmLabel: 'Turn on team sign-in',
   });
   if (!ok) return;
@@ -95,7 +95,7 @@ function skippedNotice(names) {
       title: names.length === 1 ? '1 document could not be copied' : `${names.length} documents could not be copied`,
       body: h(
         'div.stack',
-        h('p', 'These files are still in your own Puter drive but not in the shared firm. Files over 8 MB cannot be stored in a shared firm; upload the others again from Documents.'),
+        h('p', 'These files are still in local storage but not in the shared firm. Files over 8 MB cannot be stored in a shared firm; upload the others again from Documents.'),
         h(
           'ul.bullets',
           names.map((n) => h('li', n)),
@@ -113,7 +113,7 @@ export function teamSection() {
     wrap.append(
       card({
         title: 'Team sign-in',
-        body: emptyState({ compact: true, icon: 'users', title: 'Not available in the sample firm', text: 'Sign in with Puter to create your own firm and invite colleagues.', headingLevel: 3 }),
+        body: emptyState({ compact: true, icon: 'users', title: 'Not available in the sample firm', text: 'Sign in to create your own firm and invite colleagues.', headingLevel: 3 }),
       }),
     );
     return wrap;
@@ -133,12 +133,12 @@ export function teamSection() {
         title: 'Team sign-in',
         body: h(
           'div.stack',
-          h('p', 'Work with colleagues in the same firm. Each person signs in with their own Puter account, and everyone sees the same matters, time, bills, and documents.'),
+          h('p', 'Work with colleagues in the same firm. Each person signs in with their own account, and everyone sees the same matters, time, bills, and documents.'),
           h(
             'ul.bullets',
             h('li', 'Invitations are single-use links that expire after 7 days.'),
             h('li', 'Admins can invite and remove people. Members work on the firm’s records.'),
-            h('li', 'Your data stays in your Puter account. You can remove anyone at any time.'),
+            h('li', 'Your data stays in your local account. You can remove anyone at any time.'),
           ),
           h('div', h('button.btn.primary', { type: 'button', onClick: enableFlow }, icon('users', 16), 'Turn on team sign-in')),
         ),
@@ -237,7 +237,7 @@ export function teamSection() {
             'thead',
             h(
               'tr',
-              h('th', { scope: 'col' }, 'Puter account'),
+              h('th', { scope: 'col' }, 'account'),
               h('th', { scope: 'col' }, 'Role'),
               h('th', { scope: 'col' }, 'Firm user'),
               h('th', { scope: 'col' }, 'Joined'),

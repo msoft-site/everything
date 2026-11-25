@@ -3,14 +3,14 @@ import { escape } from "./model.js";
 
 addTranslations({
   "Sign in": "Se connecter",
-  "Sign in to Puter": "Se connecter à Puter",
+  "Sign in": "Se connecter à Puter",
   Account: "Compte",
   "Account menu": "Menu du compte",
-  "Signed in with Puter": "Connecté avec Puter",
+  "Signed in": "Connecté avec Puter",
   "Loading your account…": "Chargement de votre compte…",
   "Sign out": "退出登录",
   "Signed in as {name}.": "Connecté en tant que {name}.",
-  "Signed in with Puter.": "Connecté avec Puter.",
+  "Signed in.": "Connecté avec Puter.",
   "Signed out. Your local boards are still available.":
     "Déconnexion effectuée. Vos tableaux locaux restent disponibles.",
   "Could not sign in. Try again.": "Connexion impossible. Réessayez.",
@@ -71,11 +71,11 @@ export function createAccountUI({
     const detail = user?.email && user.email !== label ? user.email : "";
     const heading = label
       ? `<strong data-user-content>${escape(label)}</strong>`
-      : `<strong>${loading ? "Loading your account…" : "Signed in with Puter"}</strong>`;
+      : `<strong>${loading ? "Loading your account…" : "Signed in"}</strong>`;
     const line = detail
       ? `<small data-user-content>${escape(detail)}</small>`
       : label
-        ? `<small>Signed in with Puter</small>`
+        ? `<small>Signed in</small>`
         : "";
     // Only menu items are read inside a menu, so the account's name and
     // email describe the menu instead.

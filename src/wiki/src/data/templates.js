@@ -103,7 +103,7 @@ export function templateById(id) {
 /** The first page in a brand new workspace. */
 export function welcomeBlocks() {
   return [
-    { type: 'callout', icon: 'sparkles', bg: 'purple', text: '欢迎使用您的知识库。这里的一切都作为文件保存在您专属的 Puter 云端。' },
+    { type: 'callout', icon: 'sparkles', bg: 'purple', text: '欢迎使用您的知识库。这里的一切都作为文件保存在您专属的 本地存储。' },
     h(2, '撰写内容'),
     t('点击任意位置即可开始输入。输入 / 可插入标题、列表、待办、折叠块、引用、代码、图片、表格等。'),
     bullet('支持 Markdown 快捷输入：# 标题，- 列表，[] 待办，> 折叠块，``` 代码。'),

@@ -1669,10 +1669,10 @@ export function liveUpdatesState(info, appUid) {
     return { state: 'on', detail: '', canTurnOn: false };
   }
   if (ev.why === 'events_kv_handle_limit_reached') {
-    return { state: 'limit', detail: 'Paused: your Puter account is holding as many of these as it allows. Teamchat tries again on its own, and room frees whenever someone leaves.', canTurnOn: false };
+    return { state: 'limit', detail: 'Paused: your local account is holding as many of these as it allows. Teamchat tries again on its own, and room frees whenever someone leaves.', canTurnOn: false };
   }
   if (ev.why === 'account_is_not_verified') {
-    return { state: 'unverified', detail: 'Paused: your Puter account’s email address is not confirmed yet. Teamchat tries again on its own once it is.', canTurnOn: false };
+    return { state: 'unverified', detail: 'Paused: your local account’s email address is not confirmed yet. Teamchat tries again on its own once it is.', canTurnOn: false };
   }
   return { state: 'consent', detail: 'Off: needs your permission. Until then, everyone’s tabs check for themselves every few seconds.', canTurnOn: true };
 }
@@ -1798,7 +1798,7 @@ export function workspaceSettingsDialog() {
     el('span', { html: icon('users', 18) }), el('span.details-text', {}, el('strong', {}, 'Members'), el('span', {}, Object.keys(ws.members).length === 1 ? '1 person' : `${Object.keys(ws.members).length} people`))));
   if (admin) {
     actions.append(el('button.details-row', { type: 'button', onclick: () => { modal.close(); exportDialog(); } },
-      el('span', { html: icon('download', 18) }), el('span.details-text', {}, el('strong', {}, 'Export workspace'), el('span', {}, 'Every message and file, as JSON and readable pages, into your Puter drive'))));
+      el('span', { html: icon('download', 18) }), el('span.details-text', {}, el('strong', {}, 'Export workspace'), el('span', {}, 'Every message and file, as JSON and readable pages, into local storage'))));
   }
   if (owner && Object.values(ws.members).some((m) => m.role === 'admin')) {
     actions.append(el('button.details-row', { type: 'button', onclick: () => { modal.close(); transferDialog(); } },
@@ -1890,7 +1890,7 @@ export function workspaceSettingsDialog() {
   const others = Object.keys(ws.members).length - 1;
   if (owner && others > 0 && !otherAdmins && !ws.movedTo) {
     content.append(el('div.callout.mt', { html: icon('shield', 16) }, el('span', {},
-      'This workspace lives in your Puter account. Name a backup admin from ', el('strong', {}, 'Members'), ' so the team can export or take over the workspace if you ever cannot; and export a copy from time to time.')));
+      'This workspace lives in your local account. Name a backup admin from ', el('strong', {}, 'Members'), ' so the team can export or take over the workspace if you ever cannot; and export a copy from time to time.')));
   }
   if (admin) {
     const built = ws.search?.built;
@@ -1923,7 +1923,7 @@ export function workspaceSettingsDialog() {
   content.append(el('p.small.muted', { style: { marginTop: '14px' } },
     owner ? 'This workspace runs on your server ' : `This workspace runs on ${ownerName}\u2019s server `,
     el('code', {}, server || 'unknown'),
-    owner ? ', in your Puter account.' : ', in their Puter account.'));
+    owner ? ', in your local account.' : ', in their account.'));
 
   /**
    * The row's own state, read after the dialog is open (the way
@@ -1953,7 +1953,7 @@ export function workspaceSettingsDialog() {
     const grantAppUid = info.events?.appUid;
     // Nothing to press without a real way to ask for the permission: the
     // sentence above stands on its own, and the owner can still grant it
-    // from an actual Puter session.
+    // from an actual local session.
     const hasPerms = typeof puter !== 'undefined' && typeof puter.perms?.request === 'function';
     const canPress = state.canTurnOn && hasPerms && !!grantAppUid && !!url;
     liveTurnOn.hidden = !canPress;
@@ -3174,7 +3174,7 @@ function colorSlotFor(input) {
  */
 const exportState = new Map();
 
-/** Export the whole workspace into the user's Puter drive, with progress. */
+/** Export the whole workspace into the user's local drive, with progress. */
 export function exportDialog() {
   const ws = store.ws;
   if (!ws) return;
@@ -3202,7 +3202,7 @@ export function exportDialog() {
       // writeArchiveToDrive): said with the folder, since "Saved" alone
       // stood over a files folder with some of them missing, and the reader
       // found out when a page's link led nowhere.
-      status.replaceChildren('Done. Saved to ', el('code', {}, folder), ' in your Puter drive: open index.html to read it, or import messages.json into another account\u2019s Teamchat.',
+      status.replaceChildren('Done. Saved to ', el('code', {}, folder), ' in local storage: open index.html to read it, or import messages.json into another account\u2019s Teamchat.',
         missing ? ` Every message is there; ${missing === 1 ? 'one attachment' : `${missing} attachments`} could not be written into its files folder (the bytes were not on the server, or the drive refused them), so ${missing === 1 ? 'its link' : 'their links'} on the pages ${missing === 1 ? 'leads' : 'lead'} nowhere.` : '');
       // Done, the button is disabled for good, the keyboard moved on to Close first.
       start.removeAttribute('aria-busy');
@@ -3249,7 +3249,7 @@ export function exportDialog() {
       el('li', {}, el('code', {}, 'messages.json'), ' — the archive, which another account can import'),
       el('li', {}, el('code', {}, 'index.html'), ' and one page per conversation — plain HTML, readable years from now, searchable with your browser'),
       el('li', {}, el('code', {}, 'files/'), ' — the attachments')),
-    el('p.small.muted', { style: { marginTop: '8px' } }, 'It is written into your own Puter drive under Teamchat exports. Large workspaces take a while; keep this tab open.'),
+    el('p.small.muted', { style: { marginTop: '8px' } }, 'It is written into local storage under Teamchat exports. Large workspaces take a while; keep this tab open.'),
     status,
     el('div.modal-actions', {}, done, start)), onClose: () => { if (state.shown === shown) state.shown = null; } });
 }
@@ -3303,7 +3303,7 @@ export function transferDialog() {
   }));
   const modal = openModal({ title: 'Transfer ownership', content: el('div', {},
     el('p', { style: { color: 'var(--ink-2)', fontSize: '14px', marginBottom: '10px' } },
-      'The workspace and all of its data move to the new owner\u2019s Puter account. You nominate an admin here; when they accept, their app copies everything onto their own server, members are carried across without re-joining, and this copy becomes read-only so nothing is lost while links catch up. You can delete the old copy afterwards. Webhooks and bot tokens do not move: the new owner makes them again from Workspace settings, and anything posting through the old ones stops.'),
+      'The workspace and all of its data move to the new owner\u2019s account. You nominate an admin here; when they accept, their app copies everything onto their own server, members are carried across without re-joining, and this copy becomes read-only so nothing is lost while links catch up. You can delete the old copy afterwards. Webhooks and bot tokens do not move: the new owner makes them again from Workspace settings, and anything posting through the old ones stops.'),
     admins.length ? list : el('p.muted', {}, 'Make someone an admin first, from Members.'),
     el('div.modal-actions', { style: { justifyContent: 'space-between' } }, cancel || el('span'), el('div.row', {}, el('button.btn.btn-ghost', { type: 'button', onclick: () => modal.close() }, 'Close'), submit))) });
 }
@@ -3395,7 +3395,7 @@ export async function acceptTransferDialog() {
     title: `Take over ${ws.name}?`,
     content: el('div', {},
       el('p', { style: { color: 'var(--ink-2)', fontSize: '14px' } },
-        `${store.member(ws.owner).name} asked you to become the owner. Accepting copies the whole workspace onto a server in your Puter account (created now if you have none), keeps every member, and leaves the old copy read-only. Storage and execution for it will count against your Puter allowance from then on. Webhooks and bot tokens stay behind: make them again from Workspace settings once the workspace is here.`),
+        `${store.member(ws.owner).name} asked you to become the owner. Accepting copies the whole workspace onto a server in your local account (created now if you have none), keeps every member, and leaves the old copy read-only. Storage and execution for it will count against your Puter allowance from then on. Webhooks and bot tokens stay behind: make them again from Workspace settings once the workspace is here.`),
       status,
       el('div.modal-actions', {}, dismiss, start)),
     onClose: () => {
@@ -3957,7 +3957,7 @@ export function settingsDialog({ section = null } = {}) {
       el('button.btn.btn-ghost', {
         type: 'button', html: icon('logout', 16),
         onclick: async () => {
-          const ok = await confirmDialog({ title: 'Sign out?', message: 'You can sign back in with your Puter account anytime.', confirmLabel: 'Sign out', danger: false });
+          const ok = await confirmDialog({ title: 'Sign out?', message: 'You can sign back in with your local account anytime.', confirmLabel: 'Sign out', danger: false });
           if (!ok) return;
           try {
             await store.signOut();

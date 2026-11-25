@@ -28,7 +28,7 @@
  * before it goes out. So the subject and body arrive from the caller. What
  * holds instead:
  *
- *   - no Puter session, no send, and no session token to name on the bill, no
+ *   - no local session, no send, and no session token to name on the bill, no
  *     send either. `user` is only populated for callers that come through
  *     puter.workers.exec(); everyone else gets 401, and so does a caller whose
  *     session arrived without a form that charges THEM (see sendForms). Every
@@ -602,7 +602,7 @@ router.get('/whoami', async (ctx) => {
  */
 router.post('/send', async (ctx) => {
   // A caller context exists only for requests that came through
-  // puter.workers.exec(), which forwards their Puter session. No session, no
+  // puter.workers.exec(), which forwards their local session. No session, no
   // send — and no way to bill anyone for one either. `detail` separates "no
   // session arrived" from "a session arrived that we could not pin to a
   // person"; GET /whoami reports the same picture in full.

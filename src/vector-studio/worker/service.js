@@ -6,7 +6,7 @@
  *
  *   vs:<room>:meta              owner, name, room signing keys, closed time
  *   vs:<room>:member:<uuid>     role (owner, editor, commenter, viewer, removed)
- *   vs:<room>:named:<username>  role for a Puter user invited by name
+ *   vs:<room>:named:<username>  role for a Local user invited by name
  *   vs:<room>:invite:<hash>     link invitation: role, review link, expiry
  *   vs:<room>:seq               the last edit's sequence number (atomic counter)
  *   vs:<room>:log:<seq>         one edit batch, or a file reference when large
@@ -52,7 +52,7 @@ const usernameKey = (v) => {
   const s = String(v || '')
     .trim()
     .replace(/^@/, '');
-  if (!/^[A-Za-z0-9_][A-Za-z0-9_.-]{0,63}$/.test(s)) fail(400, 'Enter a Puter username.');
+  if (!/^[A-Za-z0-9_][A-Za-z0-9_.-]{0,63}$/.test(s)) fail(400, 'Enter a Local username.');
   return s.toLowerCase();
 };
 
@@ -99,7 +99,7 @@ export class DocService {
   }
 
   async call(user, input) {
-    if (!user?.uuid) fail(401, 'Sign in with Puter to continue.');
+    if (!user?.uuid) fail(401, 'Sign in to continue.');
     if (!input || typeof input !== 'object') fail(400, 'Invalid request.');
     const op = input.op;
     if (op === 'create') return this.create(user, input);

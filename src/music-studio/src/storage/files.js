@@ -136,14 +136,14 @@ export class ProjectFiles {
     if (r.missing.length && !quiet && isCurrent()) {
       const list = r.missing.slice(0, 3).join(', ') + (r.missing.length > 3 ? ` and ${r.missing.length - 3} more` : '');
       const signIn = !this.signedIn() && Object.values(project.samples).some((s) => s.path);
-      this.app.notify(`${r.missing.length === 1 ? 'A sample was' : `${r.missing.length} samples were`} not found (${list}). Their channels are kept.${signIn ? ' Sign in to load samples from your Puter cloud.' : ''}`, { error: true, timeout: 9000 });
+      this.app.notify(`${r.missing.length === 1 ? 'A sample was' : `${r.missing.length} samples were`} not found (${list}). Their channels are kept.${signIn ? ' Sign in to load samples from local storage.' : ''}`, { error: true, timeout: 9000 });
     }
     if (!quiet && isCurrent() && this.lib.hasTemporarySamples?.(this.store.project)) this.temporarySampleNotice();
     return r;
   }
 
   temporarySampleNotice() {
-    this.app.notify('Some audio could not be saved in this browser and is kept only for this session. Use File > Save to your device or save to Puter before closing.', { error: true, timeout: 12000 });
+    this.app.notify('Some audio could not be saved in this browser and is kept only for this session. Use File > Save to your device before closing.', { error: true, timeout: 12000 });
   }
 
   // ---------------------------------------------------------------- open
@@ -257,7 +257,7 @@ export class ProjectFiles {
     const cloud = this.signedIn();
     const name = await promptDialog({
       title: 'Save project as',
-      label: cloud ? 'Name (saved to your Puter cloud)' : 'Name (saved in this browser)',
+      label: cloud ? 'Name (saved to local storage)' : 'Name (saved in this browser)',
       value: this.app.file?.name || this.store.project.name,
       confirm: 'Save',
       validate: (v) => (v.trim() ? '' : 'Enter a name.'),
@@ -273,7 +273,7 @@ export class ProjectFiles {
       if (this.loads !== loads) return false;
       if (path !== this.app.file?.path && (await puter.exists(path))) {
         if (this.loads !== loads) return false;
-        const ok = await confirmDialog({ title: 'Replace project?', message: `A project named "${baseName(path)}" already exists in your Puter cloud. Replace it?`, confirm: 'Replace', danger: true });
+        const ok = await confirmDialog({ title: 'Replace project?', message: `A project named "${baseName(path)}" already exists in local storage. Replace it?`, confirm: 'Replace', danger: true });
         if (!ok) return false;
       }
     }
@@ -303,7 +303,7 @@ export class ProjectFiles {
       if (this.store.project === snapshot) this.store.markSaved();
       this.setFile({ path: r.path, name });
       if (r.missing.length) this.app.notify(`Saved, but ${r.missing.length === 1 ? 'one sample is' : `${r.missing.length} samples are`} not on this device and could not be uploaded.`, { error: true });
-      else if (!auto) this.app.notify(`Saved to your Puter cloud`);
+      else if (!auto) this.app.notify(`Saved to local storage`);
       return true;
     } catch (err) {
       if (auto) {
@@ -367,10 +367,10 @@ export class ProjectFiles {
       body: h(
         'div.save-notice-body',
         h('p', temporary ? 'Some audio could not be saved in this browser and is kept only for this session. Download a copy to keep it.' : persistent ? 'Your project is saved in this browser on this device. Find it again with File > Open.' : 'This browser blocks site storage, so the project is kept only until you close the tab. Download a copy to keep it.'),
-        h('p', 'To keep a copy elsewhere, save the project file to your device. ', canSignIn ? 'Or sign in to Puter to save projects to your cloud and open them anywhere.' : ''),
+        h('p', 'To keep a copy elsewhere, save the project file to your device. ', canSignIn ? 'Or Sign in to save projects to your cloud and open them anywhere.' : ''),
       ),
       buttons: [
-        ...(canSignIn ? [{ label: 'Sign in to Puter', value: 'signin' }] : []),
+        ...(canSignIn ? [{ label: 'Sign in', value: 'signin' }] : []),
         { label: 'Save to your device', value: 'download' },
         { label: 'OK', value: 'ok', primary: true },
       ],
@@ -520,7 +520,7 @@ export class ProjectFiles {
     return this.importAudio(blob, { name: baseName(path), path, ...opts });
   }
 
-  /** File > Import audio: from this device, or from Puter when signed in. */
+  /** File > Import audio: from this device, or from local storage when signed in. */
   async importAudioCommand() {
     const check = this.importGuard();
     let source = 'device';
@@ -530,7 +530,7 @@ export class ProjectFiles {
         body: h('p', 'Add audio files as sampler channels. Choose where the files are.'),
         buttons: [
           { label: 'Cancel', value: null },
-          { label: 'From Puter', value: 'puter' },
+          { label: 'From Local', value: 'puter' },
           { label: 'From this device', value: 'device', primary: true },
         ],
       });

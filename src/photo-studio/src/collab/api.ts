@@ -57,7 +57,7 @@ type Deployment = { name: string; server: string; path: string; build: string };
 export async function deploy(puter: CollabPuter, progress: (text: string) => void = () => {}, fetchBundle: () => Promise<string> = defaultBundle): Promise<string> {
   const account = puter.authToken;
   const check = () => {
-    if (puter.authToken !== account) throw new Error('Your Puter account changed. Try again.');
+    if (puter.authToken !== account) throw new Error('Your local account changed. Try again.');
   };
   let config = (await puter.kv.get(WORKER_KEY)) as Deployment | null;
   check();

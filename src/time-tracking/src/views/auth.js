@@ -7,7 +7,7 @@ export function authView({ onSignedIn }) {
   const cta = el('button.btn.btn-primary.auth-cta', {
     onclick: async () => {
       cta.disabled = true;
-      cta.textContent = 'Waiting for Puter…';
+      cta.textContent = 'Loading local workspace…';
       try {
         await puter.auth.signIn();
         onSignedIn();
@@ -25,7 +25,7 @@ export function authView({ onSignedIn }) {
     el('div.auth-features', {},
       feature('timer', 'One-tap timer that survives reloads, plus quick manual entries'),
       feature('banknote', 'Rates per client, project, or entry, with billing-ready rounding'),
-      feature('cloud', 'Your data lives in your own Puter cloud, not on our servers')
+      feature('cloud', 'Your data lives in your own local storage, not on our servers')
     ),
     cta,
     el('p.auth-note', {}, 'Free', el('span.dot-sep'), 'No ads', el('span.dot-sep'), 'Powered by ',

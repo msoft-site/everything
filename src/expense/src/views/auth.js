@@ -7,7 +7,7 @@ export function authView({ onSignedIn }) {
     type: 'button',
     onclick: async () => {
       cta.disabled = true;
-      cta.textContent = '正在等待 Puter…';
+      cta.textContent = '正在加载本地工作区…';
       try {
         await puter.auth.signIn();
         onSignedIn();
@@ -27,7 +27,7 @@ export function authView({ onSignedIn }) {
         feature('scan', 'AI 智能识别票据', '自动读取商家、日期、总额、税额与分类，核对确认即可保存。'),
         feature('folder', '费用报销单', '将多笔费用归集到报销单，全程跟踪草稿、已提交、已批准与已报销状态。'),
         feature('scale', '账单对账', '导入信用卡或银行账单，自动将每条账单记录与费用匹配。'),
-        feature('cloud', '您的数据，您的云端', '所有数据均保存在您自己的 Puter 账户中，绝不外传。')
+        feature('cloud', '您的数据，您的云端', '所有数据均保存在您自己的 本地账户中，绝不外传。')
       ),
       cta,
       el('p.auth-note', {}, '免费 · 无广告 · 由 ',

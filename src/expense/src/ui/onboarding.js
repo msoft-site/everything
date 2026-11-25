@@ -35,7 +35,7 @@ export function openOnboarding({ onCapture } = {}) {
       el('div.empty', { style: { padding: '8px 8px 4px' } },
         el('div.empty-icon', { html: icon('scan', 28), style: { background: 'var(--accent-wash)', color: 'var(--accent-strong)' } }),
         el('h3', {}, '采集票据，轻松报销'),
-        el('p', {}, '拍照或上传票据交由 AI 自动识别，汇总生成报销单，并与银行账单对账。数据安全存储在您自己的 Puter 账户中。')
+        el('p', {}, '拍照或上传票据交由 AI 自动识别，汇总生成报销单，并与银行账单对账。数据安全存储在您自己的 本地账户中。')
       ),
       el('button.btn.btn-primary.btn-block.btn-lg', { type: 'button', onclick: renderCurrency }, '设置我的费用报销'),
       el('button.btn.btn-outline.btn-block', {

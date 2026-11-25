@@ -470,7 +470,7 @@ export class App {
     this.hooks.saveSettings?.(this.settings);
   }
 
-  /** Loads settings saved in the user's Puter account (set by main). */
+  /** Loads settings saved in the user's account (set by main). */
   loadRemoteSettings: () => Promise<void> | void = () => {};
 
   /** Local choices take precedence over account reads already in flight. */

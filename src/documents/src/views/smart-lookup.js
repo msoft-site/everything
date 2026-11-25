@@ -1,5 +1,5 @@
 /**
- * Smart Lookup: a side pane that explains the selected word or phrase through Puter's AI
+ * Smart Lookup: a side pane that explains the selected word or phrase through local AI
  * (puter.ai.chat), with a short definition and related topics to look up next. Only the chosen
  * text and the sentence around it are sent. The command is hidden when AI is unavailable.
  */
@@ -59,7 +59,7 @@ export function createSmartLookup({ editor }) {
     el('div.canvas-panel-scroll', {},
       el('div.ref-lookup-search', {}, query, el('button.btn.btn-outline', { type: 'button', onclick: () => run({ phrase: query.value.trim(), sentence: query.value.trim() }) }, '查找')),
       status, result,
-      el('p.field-hint.ref-lookup-note', {}, '使用 Puter AI 查找选中的文本及其所在句子。结果仅供参考，请核对重要事实。')));
+      el('p.field-hint.ref-lookup-note', {}, '使用 本地智能引擎 查找选中的文本及其所在句子。结果仅供参考，请核对重要事实。')));
   pane.addEventListener('keydown', e => { if (e.key === 'Escape' && !isComposing(e)) { e.preventDefault(); close(); } });
   let request = 0;
   function close() { pane.hidden = true; request++; editor()?.focus(); }
@@ -85,8 +85,8 @@ export function createSmartLookup({ editor }) {
       if (id !== request) return;
       // The pane says what went wrong; the SDK's error (often an object, not an Error) is for the console.
       const detail = `${e?.message || ''} ${e?.error?.message || ''} ${e?.error?.code || ''}`;
-      status.textContent = /insufficient|balance|credit|funds|quota|allowance|402/i.test(detail) ? '您的 Puter AI 配额已用尽。'
-        : '智能查找无法连接 Puter AI。请稍后重试。';
+      status.textContent = /insufficient|balance|credit|funds|quota|allowance|402/i.test(detail) ? 'AI 配额已用尽。'
+        : '智能查找服务暂时不可用。请稍后重试。';
       result.replaceChildren();
       console.error(e);
     }

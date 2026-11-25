@@ -196,13 +196,13 @@ function stepProgress(steps, label) {
 
 /** Sign-in prompt for the AI caption tools when signed out. */
 function signInState(ctx, title, text) {
-  const btn = ctx.account?.onSignIn ? h('button.btn.primary', { type: 'button', onclick: () => ctx.account.onSignIn() }, icon('cloud', 16), 'Sign in to Puter') : null;
+  const btn = ctx.account?.onSignIn ? h('button.btn.primary', { type: 'button', onclick: () => ctx.account.onSignIn() }, icon('cloud', 16), 'Sign in') : null;
   return { el: emptyState('user', title, text, btn), sync() {} };
 }
 
 function autoPanel(ctx, opts, save) {
   const { store } = ctx;
-  if (!aiAvailable(ctx)) return signInState(ctx, 'Sign in to generate captions', 'Generated captions turn speech into text with Puter AI, so they need a Puter account. You can still import subtitle files or add captions by hand.');
+  if (!aiAvailable(ctx)) return signInState(ctx, 'Sign in to generate captions', 'Generated captions turn speech into text with 本地智能引擎, so they need an account. You can still import subtitle files or add captions by hand.');
   const lang = selectField({ label: 'Spoken language', options: LANGUAGES, value: opts.language, onChange: (v) => { opts.language = v; save(); } });
   const scope = segmented({
     label: 'Listen to',
@@ -319,7 +319,7 @@ function songLabel(clip, asset) {
  */
 function lyricsPanel(ctx, opts, save) {
   const { store } = ctx;
-  if (!aiAvailable(ctx)) return signInState(ctx, 'Sign in to create lyrics', 'Lyrics are heard with Puter AI speech to text, so they need a Puter account. You can still import a lyrics subtitle file or type lines in the Captions list.');
+  if (!aiAvailable(ctx)) return signInState(ctx, 'Sign in to create lyrics', 'Lyrics are heard with 本地智能引擎 speech to text, so they need an account. You can still import a lyrics subtitle file or type lines in the Captions list.');
   const song = h('select.select', { id: `lyr-song-${uid('x')}` });
   song.addEventListener('change', () => syncButton());
   const songField = h('div.field', h('label.field-label', { for: song.id }, 'Song'), song);
@@ -883,7 +883,7 @@ function openTranslate(ctx, { onClose } = {}) {
   const source = editingContext(store);
   const current = () => !closed && editingContext(store) === source;
   // However the dialog closes (Cancel, Escape, the X, the backdrop), stop translating.
-  const d = openDialog({ title: 'Translate captions', body: h('div.cap-form', h('p.dialog-text', `${clips.length} caption${clips.length === 1 ? '' : 's'} will be translated with Puter AI.`), lang.el, h('div.field', h('span.field-label', 'Put the translation'), how.el), status), actions: [cancel, go], className: 'small', onClose: () => { closed = true; abort?.abort(); off(); onClose?.(); } });
+  const d = openDialog({ title: 'Translate captions', body: h('div.cap-form', h('p.dialog-text', `${clips.length} caption${clips.length === 1 ? '' : 's'} will be translated with 本地智能引擎.`), lang.el, h('div.field', h('span.field-label', 'Put the translation'), how.el), status), actions: [cancel, go], className: 'small', onClose: () => { closed = true; abort?.abort(); off(); onClose?.(); } });
   off = store.on('change', () => {
     if (current()) return;
     d.close();
@@ -940,7 +940,7 @@ function openTranslate(ctx, { onClose } = {}) {
 /** Stores with a caption AI request (emojis, key words) out. */
 const aiCaptionJobs = new WeakSet();
 
-/** Let Puter AI pick an emoji for captions where one fits, appended to the line. */
+/** Let 本地智能引擎 pick an emoji for captions where one fits, appended to the line. */
 export async function addEmojis(ctx) {
   const { store } = ctx;
   const clips = captionClips(store.project);
@@ -983,7 +983,7 @@ export async function addEmojis(ctx) {
 
 /**
  * Mark the key words of every caption (drawn in the caption's highlight
- * color): picked on this device, or by Puter AI when ai is set.
+ * color): picked on this device, or by 本地智能引擎 when ai is set.
  */
 export async function highlightKeywords(ctx, { ai = false } = {}) {
   const { store } = ctx;

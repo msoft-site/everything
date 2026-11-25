@@ -2,7 +2,7 @@
 // 'effect:<type>' or 'instrument:<type>'. A preset is
 // { id, kind, name, params, updated } (updated: ms since epoch).
 //
-// They always live in localStorage. When the user is signed in to Puter they
+// They always live in localStorage. When the user is signed in they
 // are also kept in one small JSON file in the app's own folder
 // (Presets/presets.json): merged on startup and on sign-in, and written a
 // moment after each change (one write for a burst of edits). Merging keeps

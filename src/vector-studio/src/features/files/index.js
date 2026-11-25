@@ -1,6 +1,6 @@
 /**
  * Files feature: documents as PDF-compatible .ai files, opening and saving in the
- * Puter cloud or on this computer, recent files, autosave and recovery,
+ * local storage or on this computer, recent files, autosave and recovery,
  * New Document / New from Template, Document Setup, Document Info and
  * Preferences, Puter launch items and window close handling.
  */

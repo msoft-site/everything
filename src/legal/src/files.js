@@ -59,7 +59,7 @@ export async function readFile(ref) {
 }
 
 // Object URLs share the app's origin, so opening one as a page (in a frame or
-// a new tab) runs its scripts with the person's Puter session. Only passive
+// a new tab) runs its scripts with the person's local session. Only passive
 // types keep their type; SVG becomes a data: URL, which has no origin.
 const PASSIVE_TYPES = /^(image\/(png|jpeg|gif|webp|avif)|application\/pdf)$/i;
 

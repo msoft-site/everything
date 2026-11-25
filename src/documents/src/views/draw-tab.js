@@ -1,7 +1,7 @@
 /**
  * The Draw tab: write and sketch on the page with pens, pencils and highlighters; erase whole strokes
  * or parts of them; select ink with a lasso to move, delete or convert it; draw against an on-page
- * ruler; turn ink into shapes or (with Puter's AI) into an equation; replay ink in the order it was
+ * ruler; turn ink into shapes or (with local AI) into an equation; replay ink in the order it was
  * drawn; hide it; and add a drawing canvas. Ribbon controls come from extraTabs(kit), menu-bar items
  * from extendMenu and right-click items from contextMenuItems.
  *

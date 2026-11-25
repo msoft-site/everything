@@ -247,7 +247,7 @@ export function mountPrejoin(root, params, ctx) {
    * Fill an empty name field with the name used last time. It is stored
    * locally, so the common case is already in the input above; on a device
    * that has never joined from here it may still be on its way down from
-   * puter.kv, which is what the wait is for. The Puter account username is
+   * puter.kv, which is what the wait is for. The account username is
    * only a fallback, and typing beats both.
    */
   async function prefillName() {
@@ -391,14 +391,14 @@ export function mountPrejoin(root, params, ctx) {
       if (!hasPuter()) {
         throw new Error('Puter.js 加载失败。请检查您的网络连接并刷新页面。');
       }
-      // Starting a meeting takes a Puter account: the host serves the room,
+      // Starting a meeting takes an account: the host serves the room,
       // publishes its link and pays for its relays. Joining a room takes
       // none — the guest goes in anonymously, on the grant the host published
       // next to the invite. Only a one-time link from an older deploy still
       // needs a session, having no room to carry a grant; Puter makes that
       // guest an account on the spot (see src/lib/account.js).
       if (params.mode === 'create') {
-        if (isAnonymous()) toast('请登录 Puter 以继续', { icon: 'info' });
+        if (isAnonymous()) toast('请登录本地账户 以继续', { icon: 'info' });
         await ensureSession();
       } else if (!roomCode) {
         await ensureSession({ autoCreate: true });
@@ -451,7 +451,7 @@ export function mountPrejoin(root, params, ctx) {
 
   /**
    * Persistent room: ask the directory what is running, then join the
-   * meeting that is, or start one — anyone with a Puter account does, the
+   * meeting that is, or start one — anyone with an account does, the
    * first to arrive hosting. A visitor with no account, or a room the
    * directory cannot be asked about, sits in the waiting room polling until
    * a meeting appears. Resolves null when the wait is cancelled or the view
@@ -601,7 +601,7 @@ export function mountPrejoin(root, params, ctx) {
 
       // Nothing is running — or the meeting that is cannot be reached from
       // here, or is still being set up. Whoever holds the link and has a
-      // Puter account starts the meeting as a matter of course when nothing
+      // account starts the meeting as a matter of course when nothing
       // runs: the first to arrive is the host, the way it works on a call
       // with friends, rather than being told to wait for a host who may be
       // them. Only a visitor with no account has to ask: hosting takes an
@@ -747,12 +747,12 @@ export function mountPrejoin(root, params, ctx) {
           : Date.now() - unreachableSince >= UNREACHABLE_HELP_AFTER_MS
             ? '仍在尝试为您接入。请让主持人检查其网络连接，或重新分享链接。'
             : unreachableReason === 'signaller'
-              ? '无法连接到 Puter 连接服务 —— 正在重试…'
+              ? '无法连接到本地存储服务 连接服务 —— 正在重试…'
               : '主持人已在线，但其链接正在刷新。正在为您连接 —— 通常只需几秒钟。'
         : !sawRoom && attempt >= ROOM_MISSING_HINT_AFTER
           ? '目前无法连接到会议服务。请检查您的网络连接 —— 恢复后您将自动加入。'
           : isAnonymous()
-            ? '会议尚未开始。会议开始后您将自动加入 —— 或者登录 Puter 亲自发起会议。'
+            ? '会议尚未开始。会议开始后您将自动加入 —— 或者登录本地账户 亲自发起会议。'
             : '会议尚未开始。会议开始后您将自动加入，或者您也可以立即发起会议。';
     if (sideTitle.textContent !== title) sideTitle.textContent = title;
     // Rewriting the live region with identical text would re-announce it to
@@ -800,14 +800,14 @@ export function mountPrejoin(root, params, ctx) {
     startRoomBtn.disabled = true;
     startRoomBtn.textContent = '正在发起…';
     errorLine.textContent = '';
-    // Starting a meeting takes a Puter account, here as on the home page:
+    // Starting a meeting takes an account, here as on the home page:
     // the host serves the room, publishes its link and pays for its relays.
     // A guest waiting here may well have none — joining never asked. The
     // sign-in is a popup, which browsers allow only during the click, so it
     // is asked for now rather than from the waiting loop; declined, the
     // button is theirs to try again.
     if (isAnonymous()) {
-      toast('请登录 Puter 以继续', { icon: 'info' });
+      toast('请登录本地账户 以继续', { icon: 'info' });
       try {
         await ensureSession();
       } catch (err) {
@@ -944,7 +944,7 @@ export function friendlyError(err) {
   if (/version-mismatch/i.test(msg))
     return '您与主持人使用的 Puter 视频会议版本不同。请双方强制刷新页面（⌘/Ctrl+Shift+R），并使用新的会议链接重试。';
   if (isSignallerUnreachableError(err))
-    return '无法连接到 Puter 连接服务。请检查您的网络连接并重试。';
+    return '无法连接到本地存储服务 连接服务。请检查您的网络连接并重试。';
   if (err?.kind === 'no-media-path')
     return '您的网络阻止了连接。请尝试切换其他网络或使用手机热点，或者请主持人检查访客是否可以使用中继服务。';
   if (/handshake-timeout/i.test(msg))

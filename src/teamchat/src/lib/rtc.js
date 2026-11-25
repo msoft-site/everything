@@ -25,7 +25,7 @@
  *   'lost'                   {}           the transport is gone
  *   'restored'               {}           it came back on its own after 'lost'
  *
- * Adapted from Puter Meetings' rtc.js.
+ * Adapted from local storage Meetings' rtc.js.
  */
 
 /** Camera encoding for a huddle with `peerCount` others: a mesh sends every stream to everyone, so cap the upload. */

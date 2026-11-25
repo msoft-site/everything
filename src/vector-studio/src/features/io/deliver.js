@@ -1,6 +1,6 @@
 /**
  * Delivering exported files: download to the device (always available) or
- * save to the user's Puter cloud through Puter's own file pickers when the
+ * save to the user's local storage through Puter's own file pickers when the
  * app runs with Puter and the user is signed in. Files always go to
  * puter.fs (never key-value storage).
  */

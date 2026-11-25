@@ -1,6 +1,6 @@
 /**
  * Per-session state that is not part of any document: whether anyone is
- * signed in to Puter, who, and the small settings record (theme, regional
+ * signed in, who, and the small settings record (theme, regional
  * format). Views subscribe to 'change' to re-render the pieces that show these.
  *
  * Nobody has to sign in to work: the grid runs in the browser and Puter is
@@ -136,7 +136,7 @@ class Session extends EventTarget {
     return this.state === 'in';
   }
 
-  /** Known to have no Puter session: cloud actions ask for a sign-in first. */
+  /** Known to have no local session: cloud actions ask for a sign-in first. */
   get signedOut() {
     return this.state === 'out';
   }

@@ -19,7 +19,7 @@
  *    flaky connection never loses an edit and ten quick edits cost one batch.
  *
  * Files (attachments, backups, statement imports) never go to KV; they live
- * in the user's Puter drive.
+ * in the user's local drive.
  */
 
 const LOG_TTL_DAYS = 30;

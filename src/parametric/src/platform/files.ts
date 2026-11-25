@@ -86,7 +86,7 @@ async function writeFile(dir: FileSystemDirectoryHandle, name: string, text: str
 
 async function localWrite(id: string, name: string, text: string) {
   const dir = await opfsDir();
-  if (!dir) throw new Error('This browser cannot store parts locally. Download the part or sign in to save it to your Puter cloud.');
+  if (!dir) throw new Error('This browser cannot store parts locally. Download the part or sign in to save it to local storage.');
   await writeFile(dir, `${id}${EXT}`, text);
   const list = readIndex().filter((p) => p.id !== id);
   list.unshift({ id, name, modified: Date.now(), size: text.length });
@@ -119,14 +119,14 @@ async function cloudWrite(path: string, text: string) {
   const fs = puter()?.fs;
   if (!fs) throw new Error('Puter storage is not available.');
   // Signed out (in another tab, say): writing would open Puter's sign-in instead.
-  if (!cloudAvailable()) throw new Error('Sign in to Puter to save this part to your cloud, or use Save As to keep it in this browser.');
+  if (!cloudAvailable()) throw new Error('Sign in to save this part to your cloud, or use Save As to keep it in this browser.');
   return fs.write(path, new Blob([text], { type: 'application/json' }), { overwrite: true, createMissingParents: true });
 }
 
 async function cloudRead(path: string): Promise<string> {
   const p = puter();
   if (!p?.fs) throw new Error('Puter is not available right now. Check your connection and try again.');
-  if (!cloudAvailable()) throw new Error('Sign in to Puter to open parts saved in your cloud.');
+  if (!cloudAvailable()) throw new Error('Sign in to open parts saved in your cloud.');
   const blob = await p.fs.read(path);
   return blob.text();
 }
@@ -239,7 +239,7 @@ export async function deletePart(location: Location) {
 }
 
 export async function renameCloud(location: Location & { type: 'cloud' }, newName: string): Promise<Location> {
-  if (!cloudAvailable()) throw new Error('Sign in to Puter to rename parts saved in your cloud.');
+  if (!cloudAvailable()) throw new Error('Sign in to rename parts saved in your cloud.');
   const item = await puter()!.fs.rename(location.path, `${safeName(newName)}${EXT}`);
   const renamed: Location = { type: 'cloud', path: item?.path || location.path.replace(/[^/]+$/, `${safeName(newName)}${EXT}`) };
   partsChanged();
@@ -316,7 +316,7 @@ export function forgetRecent(location: Location) {
 export const locationLabel = (loc?: Location | null) =>
   !loc ? 'Not saved' : loc.type === 'cloud' ? loc.path.replace(/^.*\/AppData\/[^/]+\//, '') : 'This browser';
 
-/** Opens a file chosen from Puter storage: a part, or a STEP or SolidWorks file to import. */
+/** Opens a file chosen from local storage storage: a part, or a STEP or SolidWorks file to import. */
 export async function pickCloudFile(): Promise<{ blob: Blob; fileName: string; location: Location; name: string } | null> {
   const p = puter();
   if (!p?.ui?.showOpenFilePicker) return null;

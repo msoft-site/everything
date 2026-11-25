@@ -115,7 +115,7 @@ export function decodeRaw(bytes, { encoding, channels, bigEndian = false, offset
   return out;
 }
 
-/** One file of any type, from Puter when signed in, else from this device. */
+/** One file of any type, from local storage when signed in, else from this device. */
 async function pickAnyFile() {
   if (puter.sdk() && puter.isSignedIn()) {
     const [item] = await puter.pickFiles({ multiple: false });

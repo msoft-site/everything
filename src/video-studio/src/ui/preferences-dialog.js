@@ -117,7 +117,7 @@ function mediaCacheRow(library) {
       () => (usage.textContent = 'Could not read the media copies.'),
     );
   del.addEventListener('click', async () => {
-    const ok = await confirmDialog({ title: 'Delete media copies?', message: 'Media is downloaded from your Puter cloud again when a project needs it. Your media and projects are not changed.', confirm: 'Delete', danger: true });
+    const ok = await confirmDialog({ title: 'Delete media copies?', message: 'Media is downloaded from local storage again when a project needs it. Your media and projects are not changed.', confirm: 'Delete', danger: true });
     if (!ok) return;
     del.disabled = true;
     const n = await library.clearCache().catch(() => 0);

@@ -58,11 +58,11 @@ export class ReviewPage {
     if (this._disposed) return;
     const { puter } = this;
     if (!puter) {
-      this.splash(h('h1.splash-title', 'Sign in needed'), h('p.splash-sub', 'Reviews open in Video Studio with a Puter account. Open this link where Puter is available.'));
+      this.splash(h('h1.splash-title', 'Sign in needed'), h('p.splash-sub', 'Reviews open in Video Studio with an account. Open this link where Puter is available.'));
       return;
     }
     if (puter.env !== 'app' && !puter.auth.isSignedIn()) {
-      const btn = h('button.btn.primary', { type: 'button' }, 'Sign in with Puter');
+      const btn = h('button.btn.primary', { type: 'button' }, 'Sign in');
       btn.addEventListener('click', async () => {
         btn.disabled = true;
         try {
@@ -74,7 +74,7 @@ export class ReviewPage {
           btn.disabled = false;
         }
       });
-      this.splash(h('h1.splash-title', 'You are invited to review a video'), h('p.splash-sub', 'Sign in with Puter to watch it and leave comments. Your Puter username is shown next to your comments.'), btn);
+      this.splash(h('h1.splash-title', 'You are invited to review a video'), h('p.splash-sub', 'Sign in to watch it and leave comments. Your Local username is shown next to your comments.'), btn);
       return;
     }
     this.root.setAttribute('aria-busy', 'true');

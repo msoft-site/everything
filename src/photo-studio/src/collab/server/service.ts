@@ -419,7 +419,7 @@ export class RoomService {
   // ----- Requests -----
 
   async call(user: Identity, input: Record<string, unknown>) {
-    if (!user?.uuid) fail(401, 'Sign in with Puter to continue.');
+    if (!user?.uuid) fail(401, 'Sign in to continue.');
     if (!input || typeof input !== 'object') fail(400, 'Invalid request.');
     const room = id(input.room),
       prefix = `ps:${room}:`;
@@ -706,7 +706,7 @@ export class RoomService {
     }
     if (input.op === 'invite-user') {
       const name = typeof input.username === 'string' ? input.username.trim().replace(/^@/, '') : '';
-      if (!/^[A-Za-z0-9._-]{1,64}$/.test(name)) fail(400, 'Enter a Puter username.');
+      if (!/^[A-Za-z0-9._-]{1,64}$/.test(name)) fail(400, 'Enter a Local username.');
       const role = (input.role ?? 'editor') as string;
       if (!INVITE_ROLES.includes(role as never)) fail(400, 'Choose a role an invitation can give.');
       const expires = this.now() + days * DAY;

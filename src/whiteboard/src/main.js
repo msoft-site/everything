@@ -589,7 +589,7 @@ let boards = [],
   librarySort = "recent",
   cloud = null,
   cloudIds = new Set(),
-  // Boards the signed-in account keeps in its Puter drive, by the index
+  // Boards the signed-in account keeps in its local drive, by the index
   // read at sign-in; the library marks them.
   cloudIndex = new Set(),
   cloudTitles = new Map(),
@@ -1398,7 +1398,7 @@ async function openMigration() {
       return toast("Your organization has turned off Miro imports.");
     await migration.open();
   } catch (error) {
-    toast(error.message || "Could not connect to Puter.");
+    toast(error.message || "Could not connect to storage service.");
   }
 }
 const adminLoader = lazily(() =>
@@ -3325,7 +3325,7 @@ function save({ outlined = false } = {}) {
         current?.id === snapshot.id &&
         status(
           cloudIds.has(snapshot.id)
-            ? "Saving to Puter…"
+            ? "Saving to local storage…"
             : "Saved on this device",
         )
       );
@@ -3362,7 +3362,7 @@ async function upload(snapshot) {
   const report = (text) => current?.id === snapshot.id && status(text);
   let writing = false;
   try {
-    report("Saving to Puter…");
+    report("Saving to local storage…");
     if (cloudStamps.has(snapshot.id)) {
       // Another device may have saved this board since this page last
       // read or wrote it; that copy is kept rather than written over.
@@ -3384,10 +3384,10 @@ async function upload(snapshot) {
         cloudIds.delete(snapshot.id);
         cloudIndex.delete(snapshot.id);
         pendingCloud.delete(snapshot.id);
-        report("Newer copy in Puter");
+        report("Newer copy in local storage");
         renderBoardTag();
         refreshLibrary();
-        toast("A newer copy of this board is saved in Puter.", {
+        toast("A newer copy of this board is saved in local storage.", {
           label: "Open newer copy",
           run: () =>
             openCloudBoard(
@@ -3409,7 +3409,7 @@ async function upload(snapshot) {
     cloudIndex.add(snapshot.id);
     if (pendingCloud.get(snapshot.id) <= snapshot.updated)
       pendingCloud.delete(snapshot.id);
-    report("Saved to Puter");
+    report("Saved to local storage");
   } catch {
     // A write whose answer was lost may still have landed: the copy in
     // Puter may be this one, which the next check must not take for
@@ -3420,7 +3420,7 @@ async function upload(snapshot) {
     }
     report("Cloud save failed");
     toast(
-      "Cloud save failed. Your local copy is safe. Use Save to Puter to retry.",
+      "Save failed. Your local copy is safe. Use Save to retry.",
     );
   }
 }
@@ -3598,7 +3598,7 @@ async function home({
       ),
     ].map((canvas) => [canvas.dataset.preview, canvas]),
   );
-  app.innerHTML = `<div class="workspace"><aside class="sidebar"><a class="brand" href="#" aria-label="Whiteboard home">${logo}</a><div class="workspace-label">Personal workspace</div><nav aria-label="Board library"><button data-filter="all" class="nav-item ${filter === "all" ? "active" : ""}">${icon("layout-dashboard")}All boards<span>${libraryFigure(boards.filter((b) => !b.deletedAt).length + cloudOnly().length)}</span></button><button data-filter="favorites" class="nav-item ${filter === "favorites" ? "active" : ""}">${icon("star")}Favorites<span>${libraryFigure(boards.filter((b) => b.favorite && !b.deletedAt).length)}</span></button><button data-filter="trash" class="nav-item ${filter === "trash" ? "active" : ""}">${icon("trash-2")}Trash</button>${organizationHome.notificationsItem()}</nav>${organizationHome.sidebar()}<div class="sidebar-bottom">${window.puter?.auth?.isSignedIn?.() ? "" : `<div class="sidebar-note" role="note">${icon("hard-drive")}<span>${t("Boards stay in this browser until you sign in.")}</span><button class="text-btn" data-action="sign-in">${t("Sign in")}</button></div>`}${feedbackAvailable() ? `<button class="nav-item feedback-item" data-action="feedback">${icon("message-square-heart")}${t("Send feedback")}</button>` : ""}${themeControl(true)}<a class="powered" href="https://developer.puter.com" target="_blank" rel="noopener">Powered by Puter ${icon("arrow-up-right")}</a></div></aside><main class="library"><h1 class="sr-only">Whiteboard</h1><header class="library-top"><span class="crumbs"><span class="crumb-parent">Workspace <span class="slash">/</span></span> <strong>${filter === "trash" ? "Trash" : filter === "favorites" ? "Favorites" : "All boards"}</strong></span><div class="top-right">${button("command", "Command palette (Ctrl/Cmd K)", "commands")}${button("users", "Join shared board", "join-shared")}${button("circle-help", "Help and training", "help-center")}${button("keyboard", "Keyboard shortcuts", "help")}${accountCorner()}</div></header><div class="library-body">${
+  app.innerHTML = `<div class="workspace"><aside class="sidebar"><a class="brand" href="#" aria-label="Whiteboard home">${logo}</a><div class="workspace-label">Personal workspace</div><nav aria-label="Board library"><button data-filter="all" class="nav-item ${filter === "all" ? "active" : ""}">${icon("layout-dashboard")}All boards<span>${libraryFigure(boards.filter((b) => !b.deletedAt).length + cloudOnly().length)}</span></button><button data-filter="favorites" class="nav-item ${filter === "favorites" ? "active" : ""}">${icon("star")}Favorites<span>${libraryFigure(boards.filter((b) => b.favorite && !b.deletedAt).length)}</span></button><button data-filter="trash" class="nav-item ${filter === "trash" ? "active" : ""}">${icon("trash-2")}Trash</button>${organizationHome.notificationsItem()}</nav>${organizationHome.sidebar()}<div class="sidebar-bottom">${window.puter?.auth?.isSignedIn?.() ? "" : `<div class="sidebar-note" role="note">${icon("hard-drive")}<span>${t("Boards stay in this browser until you sign in.")}</span><button class="text-btn" data-action="sign-in">${t("Sign in")}</button></div>`}${feedbackAvailable() ? `<button class="nav-item feedback-item" data-action="feedback">${icon("message-square-heart")}${t("Send feedback")}</button>` : ""}${themeControl(true)}<span class="powered"></span></div></aside><main class="library"><h1 class="sr-only">Whiteboard</h1><header class="library-top"><span class="crumbs"><span class="crumb-parent">Workspace <span class="slash">/</span></span> <strong>${filter === "trash" ? "Trash" : filter === "favorites" ? "Favorites" : "All boards"}</strong></span><div class="top-right">${button("command", "Command palette (Ctrl/Cmd K)", "commands")}${button("users", "Join shared board", "join-shared")}${button("circle-help", "Help and training", "help-center")}${button("keyboard", "Keyboard shortcuts", "help")}${accountCorner()}</div></header><div class="library-body">${
     filter === "trash"
       ? ""
       : `<section aria-labelledby="start-heading"><div class="section-heading"><h2 id="start-heading">Start with a little inspiration</h2><button class="text-btn" data-action="templates">Browse all templates ${icon("arrow-up-right")}</button></div><div class="templates">${featuredTemplates()
@@ -3751,11 +3751,11 @@ function cloudOnly() {
   const here = new Set(boards.map((b) => b.id));
   return [...cloudTitles].filter(([id]) => !here.has(id));
 }
-// Cards for boards in the account's Puter drive that are not on this device.
-// The card of a board in the account's Puter drive that is not on this
+// Cards for boards in the account's local drive that are not on this device.
+// The card of a board in the account's local drive that is not on this
 // device.
 function cloudCard({ id, title }, n) {
-  return `<article class="board-card cloud-card"><button class="board-open" data-open-cloud="${escape(id)}" aria-label="Open ${escape(title)}" aria-describedby="cloud-card-${n}-meta"><div class="board-preview"><span class="empty-preview">${icon("cloud")}<span>${t("Open from Puter")}</span></span></div><div class="board-info"><h3>${escape(title)}</h3><p id="cloud-card-${n}-meta"><span class="meta-count"></span><span class="meta-date">${t("Not on this device yet")}</span></p><span class="card-storage" data-storage="cloud">${icon("cloud")}${t("Saved to Puter")}</span></div></button></article>`;
+  return `<article class="board-card cloud-card"><button class="board-open" data-open-cloud="${escape(id)}" aria-label="Open ${escape(title)}" aria-describedby="cloud-card-${n}-meta"><div class="board-preview"><span class="empty-preview">${icon("cloud")}<span>${t("Open from Local")}</span></span></div><div class="board-info"><h3>${escape(title)}</h3><p id="cloud-card-${n}-meta"><span class="meta-count"></span><span class="meta-date">${t("Not on this device yet")}</span></p><span class="card-storage" data-storage="cloud">${icon("cloud")}${t("Saved to local storage")}</span></div></button></article>`;
 }
 // A card's badge says where the board is kept, in the words the open
 // board uses.
@@ -10561,7 +10561,7 @@ function boardStorage(b) {
 }
 const STORAGE_TAGS = {
   shared: ["users", "Shared board"],
-  cloud: ["cloud", "Saved to Puter"],
+  cloud: ["cloud", "Saved to local storage"],
   device: ["hard-drive", "On this device"],
 };
 // A shared board this person may not change says so for as long as that
@@ -10593,7 +10593,7 @@ function storageTag(b) {
 // The status a board shows when it opens, before any save of this visit.
 function savedStatus(b) {
   return boardStorage(b) === "cloud"
-    ? "Saved to Puter"
+    ? "Saved to local storage"
     : "Saved on this device";
 }
 // The header's cloud button says whether the board is already in Puter.
@@ -10601,8 +10601,8 @@ function cloudSaveLabel(b) {
   return b.shared
     ? "Save shared changes now"
     : boardStorage(b) === "cloud"
-      ? "Saved to Puter · Save again"
-      : "Save to Puter";
+      ? "Saved to Local · Save again"
+      : "Save to Local";
 }
 function renderBoardTag() {
   const tag = document.querySelector(".board-tag");
@@ -11358,13 +11358,13 @@ function shareProgress(target) {
   return state;
 }
 // What sharing a personal board does, before it does it: the board moves
-// into the person's Puter account and stays shared.
+// into the person's account and stays shared.
 function confirmSharing(target) {
   return new Promise((resolve) => {
     let chosen = false;
     modal(
       "Share this board?",
-      `<p class="dialog-copy">${t("Sharing moves this board into your Puter account, so the people you invite can open it and work on it with you. It stays a shared board from then on; Duplicate still makes a personal copy.")}</p><div class="dialog-footer"><button class="secondary" id="cancel-share">${t("Cancel")}</button><button class="primary" id="confirm-share">${icon("users")}${t("Share board")}</button></div>`,
+      `<p class="dialog-copy">${t("Sharing moves this board into your local account, so the people you invite can open it and work on it with you. It stays a shared board from then on; Duplicate still makes a personal copy.")}</p><div class="dialog-footer"><button class="secondary" id="cancel-share">${t("Cancel")}</button><button class="primary" id="confirm-share">${icon("users")}${t("Share board")}</button></div>`,
       (d) => {
         d.querySelector("#cancel-share").onclick = () => d.close();
         d.querySelector("#confirm-share").onclick = () => {
@@ -11737,7 +11737,7 @@ async function shareBoard() {
     progress?.finish();
     if (current === target && !collaboration)
       status("Sharing failed · try again");
-    toast(error.message || "Could not connect to Puter.");
+    toast(error.message || "Could not connect to storage service.");
   } finally {
     progress?.finish();
     if (sharing === progress) sharing = null;
@@ -11894,7 +11894,7 @@ function joinDialog(link = "") {
   // what it is rather than asking for it.
   const invited = /[#&]invite=[^&]/.test(link);
   const guidance = !window.puter?.auth?.isSignedIn?.()
-    ? "Sign in with Puter to join this board."
+    ? "Sign in to join this board."
     : invited
       ? "You were invited to a shared board. Choose Join board to open it."
       : link
@@ -12265,7 +12265,7 @@ async function connect() {
     await window.puter.auth.signIn().catch((error) => {
       throw error instanceof Error
         ? error
-        : Error("Sign in with Puter to continue.");
+        : Error("Sign in to continue.");
     });
     await accountArrived();
   }
@@ -12309,7 +12309,7 @@ async function cloudSave() {
     cloudIds.add(target.id);
     await sync(clone(target));
   } catch (e) {
-    toast(e.message || "Could not connect to Puter.");
+    toast(e.message || "Could not connect to storage service.");
   }
 }
 // Which boards the account keeps in Puter, so the library and the open
@@ -12353,7 +12353,7 @@ function greetAccount() {
   toast(
     name
       ? t("Signed in as {name}.").replace("{name}", () => name)
-      : "Signed in with Puter.",
+      : "Signed in.",
   );
 }
 async function signOutAccount() {
@@ -12400,7 +12400,7 @@ async function accountLeft() {
   }
   toast("Signed out. Your local boards are still available.");
 }
-// Open a board from the account's Puter drive: its saved copy, unless this
+// Open a board from the account's local drive: its saved copy, unless this
 // device holds a newer one. The library's Puter cards and the notice about
 // a newer copy both use it.
 async function openCloudBoard(f, { replace = false } = {}) {
@@ -12420,7 +12420,7 @@ async function openCloudBoard(f, { replace = false } = {}) {
     boards.push(kept);
     await local.save(kept);
     toast(
-      "Opened the copy from Puter. The edits made on this device are kept as their own board.",
+      "Opened the copy from local storage. The edits made on this device are kept as their own board.",
     );
   } else if (existing && existing.updated > b.updated) {
     toast("A newer local copy was kept.");
@@ -13159,7 +13159,7 @@ function help() {
       ["Ctrl/Cmd + Alt/Option + Shift + H", "Version history"],
       ["Ctrl or Cmd + Z", "Undo"],
       ["Ctrl or Cmd + Shift + Z or Ctrl or Cmd + Y", "Redo"],
-      ["Ctrl or Cmd + S", "Save to Puter"],
+      ["Ctrl or Cmd + S", "Save to Local"],
       ["Ctrl or Cmd + A", "Select all objects"],
       ["Ctrl or Cmd + G / Shift + G", "Group / ungroup selection"],
       ["Ctrl or Cmd + D", "Duplicate selection"],

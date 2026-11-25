@@ -431,7 +431,7 @@ function renderJobDetail(ctx, jobId) {
             // the one thing this dialog has to say out loud.
             const pooled = jobCandidates.filter((c) => c.pool).length;
             // And their uploaded files, which are not in the app's storage
-            // at all: they sit in the user's own Puter drive, and the
+            // at all: they sit in the user's own local drive, and the
             // directory goes with the candidate.
             const files = jobCandidates.reduce((n, c) => n + (c.attachments?.length ?? 0), 0);
             const ok = await confirmDialog({
@@ -439,7 +439,7 @@ function renderJobDetail(ctx, jobId) {
               message: [
                 `“${job.title}” and its ${plural(jobCandidates.length, 'candidate')} will be permanently removed, including their interviews, scorecards, offers, and onboarding checklists.`,
                 pooled > 0 ? `${plural(pooled, 'talent-pool member')} ${pooled === 1 ? 'is' : 'are'} among them.` : null,
-                files > 0 ? `${plural(files, 'uploaded file')} ${files === 1 ? 'is' : 'are'} deleted from your Puter drive too.` : null,
+                files > 0 ? `${plural(files, 'uploaded file')} ${files === 1 ? 'is' : 'are'} deleted from local storage too.` : null,
               ]
                 .filter(Boolean)
                 .join(' '),

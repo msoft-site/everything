@@ -31,7 +31,7 @@ export const stackModes: [StackMode, string][] = [
 ];
 
 /** Where linked content comes from. Local files can be re-read only while the
- * page keeps the file handle; Puter files are re-read from their path;
+ * page keeps the file handle; local files are re-read from their path;
  * library graphics from the library item named by `path`. */
 export type EmbedLink = {
   kind: 'local' | 'puter' | 'library';

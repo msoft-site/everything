@@ -113,7 +113,7 @@
   "group.undo": "撤消",
   "historySteps": "{label}（{steps} 步）",
   "image.fromDevice": "从此设备…",
-  "image.fromPuter": "从 Puter…",
+  "image.fromPuter": "从本地…",
   "image.fromUrl": "从 URL…",
   "image.placeInCell": "放置在单元格中",
   "increaseFontSize": "增大字号",

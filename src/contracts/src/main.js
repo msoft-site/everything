@@ -19,7 +19,7 @@ const appRoot = document.getElementById('app');
 function showBooting() {
   const boot = el('div.boot', {},
     el('span.spinner', { 'aria-hidden': 'true' }),
-    el('p', {}, 'Connecting to your Puter cloud…')
+    el('p', {}, 'Connecting to local storage…')
   );
   appRoot.replaceChildren(boot);
   // A boot that lands in under half a second should not flash a spinner at
@@ -40,8 +40,8 @@ function showError(title, message, onRetry) {
 async function start() {
   showBooting();
   if (typeof puter === 'undefined') {
-    showError('Could not reach Puter',
-      'The Puter SDK failed to load. Check your connection and try again.',
+    showError('Could not reach storage service',
+      'Local storage engine failed to load. Please reload.',
       () => location.reload());
     return;
   }
@@ -56,7 +56,7 @@ async function start() {
   if (!signedIn) {
     // The sign-in view stays on screen until the shell replaces it, which is
     // the whole boot later. Without this the last thing it said — a disabled
-    // "Waiting for Puter…" button — stayed up for the seconds the data took
+    // "Loading local workspace…" button — stayed up for the seconds the data took
     // to load, after Puter had already answered.
     appRoot.replaceChildren(authView({ onSignedIn: () => { showBooting(); boot(); } }));
     return;
@@ -70,7 +70,7 @@ async function boot() {
   } catch (err) {
     console.error(err);
     showError('Could not load your data',
-      'Something went wrong talking to your Puter cloud. Check your connection and try again.',
+      'Something went wrong talking to local storage. Check your connection and try again.',
       () => location.reload());
     return;
   }

@@ -14,7 +14,7 @@ export function authView({ onSignedIn, pendingInvite = null }) {
     onclick: async () => {
       if (busy()) return;
       cta.setAttribute('aria-busy', 'true');
-      cta.textContent = 'Waiting for Puter';
+      cta.textContent = 'Loading local workspace…';
       try {
         await puter.auth.signIn();
       } catch {

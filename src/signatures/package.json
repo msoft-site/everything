@@ -1,7 +1,7 @@
 {
   "name": "signatures",
   "version": "1.0.0",
-  "description": "Send documents for signature and manage them, powered by Puter",
+  "description": "Send documents for signature and manage them, ",
   "type": "module",
   "private": true,
   "scripts": {

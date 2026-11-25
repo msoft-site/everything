@@ -1,5 +1,5 @@
 /**
- * Private pages, saved as files in the user's own Puter cloud:
+ * Private pages, saved as files in the user's own local storage:
  *
  *   wiki/tree.ywk            the page tree
  *   wiki/pages/<id>.ywk      one file per page (Yjs state)

@@ -92,7 +92,7 @@ export function describeResult(out) {
 export function failureMessage(status, data) {
   const code = (data && data.error) || '';
   if (status === 401 || code === 'sign_in_required') {
-    return 'Sign in to Puter again to send emails.';
+    return 'Sign in again to send emails.';
   }
   if (status === 429 || code === 'daily_limit') {
     return 'You have reached the daily email limit. Try again tomorrow.';

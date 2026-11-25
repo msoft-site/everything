@@ -248,7 +248,7 @@ export async function performAction(e: Editor, action: string): Promise<void> {
         .then(() => {
           e.saved = doc;
           e.update();
-          e.message('Saved to Puter');
+          e.message('Saved to local storage');
         })
         .catch((error) => e.message(String(error)));
       break;
@@ -336,7 +336,7 @@ export async function performAction(e: Editor, action: string): Promise<void> {
         const user = await p.auth.getUser();
         if (canSignOut(p.env)) {
           const v = await formDialog(
-            'Puter account',
+            'account',
             [],
             'Sign out',
             `Signed in as ${user.username}. Your local document will stay open.`,
@@ -347,7 +347,7 @@ export async function performAction(e: Editor, action: string): Promise<void> {
             signedOut();
             e.message('Signed out');
           }
-        } else information('Puter account', `<p>Signed in as ${escapeXML(user.username)}</p>`);
+        } else information('account', `<p>Signed in as ${escapeXML(user.username)}</p>`);
       }
       break;
     }

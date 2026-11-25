@@ -2,7 +2,7 @@
  * Runs the collector worker inside the page, for the local demo mode. The
  * builder and the respondent page (another tab, same origin) each run their
  * own copy over the same localStorage-backed KV, so a survey published in the
- * builder can be answered in a second tab with no Puter account at all.
+ * builder can be answered in a second tab with no account at all.
  */
 import { createLocalKv } from './local-kv.js';
 

@@ -201,10 +201,10 @@ const HEALTH_TEXT = {
   revoked: 'New mail notifications are off: Puter Mail no longer has permission to notify you.',
   'not-set-up': 'New mail notifications are off in this browser.',
   'suspended:permission_revoked': 'New mail notifications are off: Puter Mail needs permission to run while it is closed.',
-  'suspended:no_credit': 'New mail notifications are paused until your Puter account has credit.',
+  'suspended:no_credit': 'New mail notifications are paused until your local account has credit.',
   'suspended:handler_not_found': 'New mail notifications are off: the notification handler is not published on this Puter.',
   'suspended:handler_suspended': 'New mail notifications are off: the notification handler needs to be published again.',
-  'suspended:requires_account': 'New mail notifications need a full Puter account.',
+  'suspended:requires_account': 'New mail notifications need a full account.',
 };
 
 /** What to tell the user about a health state, or null when there is nothing to say. */
@@ -245,7 +245,7 @@ export function openHomeScreenHint() {
 /** How to let notifications through again once the browser blocks them. */
 export function openUnblockHint() {
   const body = el('div', {},
-    el('p.onboard-lead', {}, 'This browser is blocking notifications from Puter Mail. To allow them:'),
+    el('p.onboard-lead', {}, 'This browser is blocking notifications from local storage Mail. To allow them:'),
     el('ol.push-steps', {},
       el('li', {}, 'Click the icon at the left of the address bar (a lock or sliders).'),
       el('li', {}, 'Set Notifications to Allow.'),

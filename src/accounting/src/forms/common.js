@@ -206,7 +206,7 @@ export function filledLines(lines, isBlank) {
 // ------------------------------------------------------------ attachments
 
 /**
- * Files attached to a transaction live in the user's Puter drive, under
+ * Files attached to a transaction live in the user's local drive, under
  * attachments/<transaction id>/, never in the key-value store. The record
  * only keeps their names and paths.
  */

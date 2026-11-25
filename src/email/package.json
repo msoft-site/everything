@@ -1,7 +1,7 @@
 {
   "name": "puter-mail",
   "version": "1.0.0",
-  "description": "A fast, private email client for your Puter account",
+  "description": "A fast, private email client for your local account",
   "type": "module",
   "private": true,
   "license": "AGPL-3.0-only",

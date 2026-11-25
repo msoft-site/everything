@@ -1,6 +1,6 @@
 /**
  * Check Spelling: the words people read on drawings (text notes, room,
- * view and sheet names, keynotes and comments) are checked by Puter's AI,
+ * view and sheet names, keynotes and comments) are checked by local AI,
  * and each suggested correction can be accepted or skipped.
  */
 import { h } from './dom.js';

@@ -7,7 +7,7 @@
   "askNote.sheet": "发送的数据：{sheet} 上的 {sent}（工作表的数据；如只想询问其中一部分，请先选择单元格），按显示的值发送，并附带工作表、表格和命名区域的名称。",
   "askNote.sheetCut": "发送的数据：{sheet} 上的 {sent}（工作表数据 {whole} 的前 {rows} 行和前 {cols} 列；如只想询问其中一部分，请先选择单元格），按显示的值发送，并附带工作表、表格和命名区域的名称。",
   "askPlaceholder": "例如：哪个类别超出预算最多？用两句话总结这些支出。",
-  "asking": "正在询问 Puter AI…",
+  "asking": "正在分析数据…",
   "cellProtected": "{cell} 受保护。请先取消保护，再插入结果。",
   "copyAnswer": "复制答案",
   "couldNotAsk": "无法询问 AI：{message}",

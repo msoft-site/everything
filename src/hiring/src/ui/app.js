@@ -1004,7 +1004,7 @@ export function startApp({ store, user, canSignOut, onSignOut }) {
         ),
         snapshotNote
       ),
-      el('p', { class: 'muted small' }, 'The backup file holds every job, candidate, interview, scorecard, offer, and setting. Attachments live in your Puter cloud and are not part of it. The app also keeps its own dated snapshots in your drive, including one taken before anything irreversible.')
+      el('p', { class: 'muted small' }, 'The backup file holds every job, candidate, interview, scorecard, offer, and setting. Attachments live in local storage and are not part of it. The app also keeps its own dated snapshots in your drive, including one taken before anything irreversible.')
     );
   }
 

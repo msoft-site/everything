@@ -1,5 +1,5 @@
 /**
- * Find highlights: show Puter AI the transcript of a long video as numbered
+ * Find highlights: show 本地智能引擎 the transcript of a long video as numbered
  * lines, let it pick the most engaging self-contained moments, check every
  * number it sends back, and turn the chosen moments into short clips with
  * captions (a new project each, or compound clips in the open project).

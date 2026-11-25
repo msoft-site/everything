@@ -37,7 +37,7 @@ async function start() {
     installMockPuter();
   }
   if (typeof puter === 'undefined') {
-    showError('Could not reach Puter', 'The Puter SDK failed to load. Check your connection and try again.', () => location.reload());
+    showError('Could not reach storage service', 'Local storage engine failed to load. Please reload.', () => location.reload());
     return;
   }
 
@@ -60,7 +60,7 @@ async function boot() {
     await store.init();
   } catch (err) {
     console.error(err);
-    showError('Could not load your documents', 'Something went wrong talking to your Puter cloud.', () => location.reload());
+    showError('Could not load your documents', 'Something went wrong talking to local storage.', () => location.reload());
     return;
   }
 

@@ -1,6 +1,6 @@
 // Invite to Edit, Share for Review, access management, Stop Sharing and
 // opening invitation links. Sharing deploys (or reuses) a room worker in the
-// owner's Puter account, uploads the document there and turns the tab into
+// owner's account, uploads the document there and turns the tab into
 // a shared document.
 import * as Y from 'yjs';
 import type { Editor } from '../../editor';
@@ -37,7 +37,7 @@ async function startSharing(e: Editor, purpose: 'edit' | 'review'): Promise<Coll
     purpose === 'edit' ? 'Invite to Edit' : 'Share for Review',
     [],
     'Start Sharing',
-    `${purpose === 'edit' ? 'People you invite edit this document with you live; each person undoes only their own changes.' : 'Reviewers see this document with zoom and pan and can leave comments; they cannot change it.'}\n\nSharing sets up a collaboration server in your Puter account and stores the document there (about ${bytes(tiles.bytes)} of pixels before compression). Everyone who opens a link signs in with Puter.\n\nThis tab becomes the shared document, and its earlier undo steps are cleared.`,
+    `${purpose === 'edit' ? 'People you invite edit this document with you live; each person undoes only their own changes.' : 'Reviewers see this document with zoom and pan and can leave comments; they cannot change it.'}\n\nSharing sets up a collaboration server in your local account and stores the document there (about ${bytes(tiles.bytes)} of pixels before compression). Everyone who opens a link signs in with Puter.\n\nThis tab becomes the shared document, and its earlier undo steps are cleared.`,
   );
   if (!ok) return;
   const puter = collabPuter();
@@ -74,11 +74,11 @@ async function accessDialog(e: Editor, cs: CollabSession, purpose: 'edit' | 'rev
   const roleOptions = (selected: string, list = roles) => list.map((r) => `<option value="${r}" ${r === selected ? 'selected' : ''}>${escapeXML(roleLabel(r))}</option>`).join('');
   const days = `<option value="1">1 day</option><option value="7" selected>7 days</option><option value="30">30 days</option>`;
   dialog.innerHTML = `<form method="dialog" class="collab-dialog"><h2>${purpose === 'edit' ? 'Invite to Edit' : 'Share for Review'}</h2>
-<p class="muted">${purpose === 'edit' ? 'Anyone with an invitation link joins with the access it gives. People need a Puter account.' : 'A review link opens a review view: the image with zoom, pan and comments, without editing tools. Reviewers sign in with Puter.'}</p>
+<p class="muted">${purpose === 'edit' ? 'Anyone with an invitation link joins with the access it gives. People need an account.' : 'A review link opens a review view: the image with zoom, pan and comments, without editing tools. Reviewers sign in.'}</p>
 <section aria-labelledby="collab-link-title"><h3 id="collab-link-title">Invitation link</h3>
 <div class="collab-row"><label>Access <select name="role">${roleOptions(purpose === 'edit' ? 'editor' : 'commenter')}</select></label><label>Expires after <select name="days">${days}</select></label><button type="button" data-act="link">${svg('link', 14)}Create Link</button></div>
 <div class="collab-row collab-link" hidden><input readonly aria-label="Invitation link" spellcheck="false"><button type="button" data-act="copy">${svg('copy', 14)}Copy</button></div></section>
-${purpose === 'edit' ? `<section aria-labelledby="collab-user-title"><h3 id="collab-user-title">Invite by Puter username</h3><div class="collab-row"><input name="username" placeholder="username" aria-label="Puter username" spellcheck="false" autocomplete="off"><select name="userrole" aria-label="Access">${roleOptions('editor')}</select><button type="button" data-act="user" disabled>Invite</button></div><p class="muted collab-small">Then send them the document’s link (Copy Link, in the people list beside the sharing status); they open it after signing in.</p></section>` : ''}
+${purpose === 'edit' ? `<section aria-labelledby="collab-user-title"><h3 id="collab-user-title">Invite by username</h3><div class="collab-row"><input name="username" placeholder="username" aria-label="Username" spellcheck="false" autocomplete="off"><select name="userrole" aria-label="Access">${roleOptions('editor')}</select><button type="button" data-act="user" disabled>Invite</button></div><p class="muted collab-small">Then send them the document’s link (Copy Link, in the people list beside the sharing status); they open it after signing in.</p></section>` : ''}
 <section aria-labelledby="collab-members-title"><h3 id="collab-members-title">People with access</h3><ul class="collab-members"><li class="muted">Loading…</li></ul><div class="collab-row"><span class="muted collab-invites"></span><span class="panel-tabs-spacer"></span><button type="button" data-act="revoke">Revoke Invitation Links</button></div></section>
 <p class="collab-error" role="alert" hidden></p>
 <div class="dialog-actions"><button class="primary" value="done">Done</button></div></form>`;
@@ -208,7 +208,7 @@ export async function openLink(e: Editor, link: RoomLink) {
     }
   const puter = collabPuter();
   if (!puter.auth.isSignedIn()) {
-    const ok = await formDialog(link.review ? 'Open for Review' : 'Open Shared Document', [], 'Sign In', 'This link opens a shared document. Sign in with your Puter account to join.');
+    const ok = await formDialog(link.review ? 'Open for Review' : 'Open Shared Document', [], 'Sign In', 'This link opens a shared document. Sign in with your local account to join.');
     if (!ok) return;
     await puter.auth.signIn();
   }

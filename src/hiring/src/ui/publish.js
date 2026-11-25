@@ -1,6 +1,6 @@
 /**
  * Publishing service: renders job pages into a public directory in the
- * user's Puter cloud and serves it on a per-account subdomain via
+ * user's local storage and serves it on a per-account subdomain via
  * puter.hosting. One site per account; one page per published job, plus
  * an index of open roles at the root.
  */

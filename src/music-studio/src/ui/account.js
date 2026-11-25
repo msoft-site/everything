@@ -36,7 +36,7 @@ export function createAccount(app) {
           'button.btn.account-signin',
           {
             type: 'button',
-            title: 'Sign in to Puter to save projects to your cloud',
+            title: 'Sign in to save projects to your cloud',
             onclick: async () => {
               try {
                 if (await puter.signIn()) await refresh();

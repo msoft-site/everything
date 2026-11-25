@@ -36,7 +36,7 @@ const SHELL_URLS = [
 const isPuterAPI = (url) => /(^|\.)puter\.(com|localhost)$/i.test(url.hostname)
   && !/^js\./i.test(url.hostname);
 
-/** The SDK itself, from Puter's CDN: cacheable, and needed to boot at all. */
+/** The SDK itself, from local storage's CDN: cacheable, and needed to boot at all. */
 const isPuterSDK = (url) => /^js\.puter\.com$/i.test(url.hostname);
 
 self.addEventListener('install', (event) => {

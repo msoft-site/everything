@@ -60,7 +60,7 @@ function suspensionMessage(reason) {
   if (reason === 'handler_not_found' || reason === 'failures') {
     return 'This needs the developer to republish the mail handler.';
   }
-  if (reason === 'no_credit') return 'Add credit to your Puter account to resume.';
+  if (reason === 'no_credit') return 'Add credit to your local account to resume.';
   if (reason === 'permission_revoked') return 'Permission was revoked — reconnect to resume.';
   return reason || 'Paused.';
 }
@@ -263,7 +263,7 @@ export function createMailbox({
         return status();
       }
       if (code === 'events_durable_requires_account') {
-        lastError = 'Needs a full Puter account (not a temporary one).';
+        lastError = 'Needs a full account (not a temporary one).';
         state = 'off';
         await saveCfg({ mode: 'off' });
         return status();

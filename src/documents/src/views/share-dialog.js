@@ -1,5 +1,5 @@
 /**
- * The Share dialog: invite people by Puter username or email address with a
+ * The Share dialog: invite people by Local username or email address with a
  * role (can edit, can comment, can view), copy a link that admits whoever
  * opens it with a chosen role, see and change who has access, send a copy of
  * the document by email (Word or PDF), and stop sharing.

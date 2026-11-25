@@ -16,7 +16,7 @@ const NS = 'shifts.v1';
 export function createPuterBackend(puterInstance) {
   const kv = () => {
     const p = puterInstance ?? globalThis.puter;
-    if (!p?.kv) throw new Error('Puter.js is not available');
+    if (!p?.kv) throw new Error('Storage engine is not available');
     return p.kv;
   };
 

@@ -7,7 +7,7 @@
   "askNote.sheet": "Data sent: {sent} (the sheet's data; select cells first to ask about part of it) on {sheet}, values as shown, with the names of the sheets, tables, and named ranges.",
   "askNote.sheetCut": "Data sent: {sent} (the first {rows} rows and {cols} columns of the sheet's data {whole}; select cells first to ask about part of it) on {sheet}, values as shown, with the names of the sheets, tables, and named ranges.",
   "askPlaceholder": "e.g. Which category is most over budget? Summarize these expenses in two sentences.",
-  "asking": "Asking Puter AI…",
+  "asking": "Asking 本地智能引擎…",
   "cellProtected": "{cell} is protected. Unprotect it before inserting the result.",
   "copyAnswer": "Copy answer",
   "couldNotAsk": "Could not ask the AI: {message}",

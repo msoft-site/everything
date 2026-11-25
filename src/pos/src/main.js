@@ -32,7 +32,7 @@ function showError(title, message, onRetry) {
 
 async function start() {
   if (typeof puter === 'undefined') {
-    showError('Couldn’t reach Puter', 'The Puter SDK failed to load. Check your connection and try again.', () => location.reload());
+    showError('Could not reach storage service', 'Local storage engine failed to load. Please reload.', () => location.reload());
     return;
   }
 
@@ -67,7 +67,7 @@ async function boot({ freshSignIn = false } = {}) {
       });
       return;
     }
-    showError('Couldn’t load your store', 'Something went wrong talking to your Puter cloud.', () => location.reload());
+    showError('Couldn’t load your store', 'Something went wrong talking to local storage.', () => location.reload());
     return;
   }
 

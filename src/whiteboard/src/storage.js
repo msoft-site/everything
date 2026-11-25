@@ -862,7 +862,7 @@ export class CloudStore {
       // The rows that are still sound go with the error, so a save can
       // rebuild the index around them.
       throw Object.assign(
-        Error("The cloud board index is invalid. Your files remain in Puter."),
+        Error("The cloud board index is invalid. Your files remain in local storage."),
         { rows: Array.isArray(data) ? data.filter(valid) : [] },
       );
     return (this.catalog = data);

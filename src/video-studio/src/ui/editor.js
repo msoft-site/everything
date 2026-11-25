@@ -416,8 +416,8 @@ export class Editor {
       body: h('div.about',
         h('div.about-logo', appIcon(64)),
         h('p', 'A multi-track video editor that runs in your browser. Decoding and encoding use your device\'s hardware through WebCodecs, the preview is drawn with WebGL2, and audio math runs in WebAssembly.'),
-        h('p', 'Projects and media are saved as files in your Puter cloud.'),
-        h('p', h('a', { href: 'https://developer.puter.com', target: '_blank', rel: 'noopener' }, 'Powered by Puter')),
+        h('p', 'Projects and media are saved as files in local storage.'),
+        h('p', h('a', { href: 'https://developer.puter.com', target: '_blank', rel: 'noopener' }, '')),
       ),
     });
   }

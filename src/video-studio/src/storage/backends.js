@@ -7,7 +7,7 @@
  *   remove(path)                         (missing is not an error)
  *   list(dir) -> [{ name, isDir, modified, size }]
  *
- * Projects and media are always files: in the user's Puter cloud when signed
+ * Projects and media are always files: in the user's local storage when signed
  * in, otherwise in this browser's private file system (OPFS). puter.kv is
  * never used for content.
  */

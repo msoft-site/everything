@@ -3451,7 +3451,7 @@ export function renderApp(root, ctx) {
   };
 
   /**
-   * Save an attachment into the user's own Puter files, through the OS's save
+   * Save an attachment into the user's own local files, through the OS's save
    * dialog. Inside a cloud OS the download folder of the device is the wrong
    * place for a file half the time: the file belongs next to the other files,
    * where the other apps are. The picker writes the bytes itself and rejects
@@ -3472,7 +3472,7 @@ export function renderApp(root, ctx) {
     } catch {
       return; // dismissed
     }
-    toast(`Saved ${saved?.name || name} to your Puter files.`, { iconName: 'cloudUpload' });
+    toast(`Saved ${saved?.name || name} to your local files.`, { iconName: 'cloudUpload' });
   };
 
   const downloadBlob = (blob, name) => {
@@ -3528,7 +3528,7 @@ export function renderApp(root, ctx) {
         el('span.spacer'),
         ctx.saveToPuter && el('button.btn', {
           type: 'button', onclick: () => saveAttachment(attachment),
-        }, el('span.btn-icon', { html: icon('cloudUpload', 15) }), 'Save to Puter'),
+        }, el('span.btn-icon', { html: icon('cloudUpload', 15) }), 'Save to Local'),
         el('button.btn.btn-primary', {
           type: 'button', onclick: () => downloadAttachment(attachment),
         }, el('span.btn-icon', { html: icon('download', 15) }), 'Download'),
@@ -4169,14 +4169,14 @@ export function renderApp(root, ctx) {
             el('span.attachment-dl', { html: icon(preview ? 'eye' : 'download', 14) }),
           );
           // The other place a file can go inside a cloud OS: the user's own
-          // Puter files, the way the compose dialog can attach from them.
+          // local files, the way the compose dialog can attach from them.
           if (!ctx.saveToPuter) return download;
           return el('span.attachment-group', {},
             download,
             el('button.attachment-save', {
               type: 'button', html: icon('cloudUpload', 15),
-              title: `Save ${name} to your Puter files`,
-              'aria-label': `Save ${name} to your Puter files`,
+              title: `Save ${name} to your local files`,
+              'aria-label': `Save ${name} to your local files`,
               onclick: () => saveAttachment(a),
             }),
           );
@@ -5049,11 +5049,11 @@ export function renderApp(root, ctx) {
       case 'events_handler_suspended':
         return 'The notification handler needs to be published again.';
       case 'insufficient_funds':
-        return 'Background notifications are paused until your Puter account has credit.';
+        return 'Background notifications are paused until your local account has credit.';
       case 'events_background_consent_required':
         return 'Notifications need permission to run while Puter Mail is closed.';
       case 'events_durable_requires_account':
-        return 'Notifications need a full Puter account.';
+        return 'Notifications need a full account.';
       case 'events_disabled':
         return 'This Puter server cannot run tasks in the background.';
       case 'events_subscription_limit':

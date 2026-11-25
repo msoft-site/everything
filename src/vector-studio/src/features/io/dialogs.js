@@ -544,7 +544,7 @@ async function pickPuterFiles(app) {
     const ext = name.split('.').pop().toLowerCase();
     const type = blob.type || (ext === 'svg' ? 'image/svg+xml' : ext === 'jpg' ? 'image/jpeg' : ext === 'pdf' || ext === 'ai' ? 'application/pdf' : ext === 'eps' || ext === 'ps' ? 'application/postscript' : ext === 'dxf' ? 'application/dxf' : `image/${ext === 'tif' ? 'tiff' : ext}`);
     const file = new File([blob], name, { type });
-    // Images placed from Puter stay linked to their file (Links panel: Update Link, Edit Original).
+    // Images placed from local storage stay linked to their file (Links panel: Update Link, Edit Original).
     if (it.path) file.puterPath = it.path;
     files.push(file);
   }
@@ -559,7 +559,7 @@ export async function placeCommand(app) {
     source = await app.dialogs.open({
       title: 'Place',
       className: 'io-dialog',
-      body: h('div.io-place', h('p.dialog-message', 'Place artwork (SVG, PDF, EPS, DXF) or an image (PNG, JPEG, WebP, GIF, TIFF, BMP, PSD) in the center of the view.'), h('div.io-place-buttons', h('button.btn.block', { type: 'button', 'data-src': 'device' }, icon('file-down', 16), 'From This Device...'), h('button.btn.block', { type: 'button', 'data-src': 'puter' }, icon('folder-open', 16), 'From Puter...'))),
+      body: h('div.io-place', h('p.dialog-message', 'Place artwork (SVG, PDF, EPS, DXF) or an image (PNG, JPEG, WebP, GIF, TIFF, BMP, PSD) in the center of the view.'), h('div.io-place-buttons', h('button.btn.block', { type: 'button', 'data-src': 'device' }, icon('file-down', 16), 'From This Device...'), h('button.btn.block', { type: 'button', 'data-src': 'puter' }, icon('folder-open', 16), 'From Local...'))),
       buttons: [{ label: 'Cancel', value: null }],
       onOpen: ({ content, close }) => {
         for (const b of content.querySelectorAll('[data-src]')) b.addEventListener('click', () => close(b.dataset.src));

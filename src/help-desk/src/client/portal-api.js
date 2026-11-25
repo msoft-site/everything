@@ -1,7 +1,7 @@
 /**
  * The help center's connection to a desk's server. Visitors need no Puter
  * account: reads and requests go out as plain fetch() calls. A visitor who
- * is signed in to Puter sends request calls through puter.workers.exec(),
+ * is signed in sends request calls through puter.workers.exec(),
  * which attaches their session so "My requests" can list everything they
  * filed from any device.
  *

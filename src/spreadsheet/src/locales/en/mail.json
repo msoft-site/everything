@@ -6,7 +6,7 @@
   "failure.invalidLink": "The email service could not accept the link to this workbook.",
   "failure.invalidRecipient": "One of the addresses is not a valid email address.",
   "failure.other": "Could not send the email. Please try again.",
-  "failure.signIn": "Sign in to Puter again to send email.",
+  "failure.signIn": "Sign in again to send email.",
   "failure.tooManyRecipients": "You can send to at most {max} people at a time.",
   "failure.unavailable": "The email service is unavailable right now.",
   "format.csv": "Sheet as .csv",

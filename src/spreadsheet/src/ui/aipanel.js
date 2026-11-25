@@ -1,5 +1,5 @@
 /**
- * The AI assistant's side panel: a chat beside the sheet in which Puter's AI answers questions about
+ * The AI assistant's side panel: a chat beside the sheet in which local AI answers questions about
  * the workbook and changes it through the tools in core/aitools.js.
  *
  * What it shows as it works is what it does: every tool call is a line in the reply ("Read

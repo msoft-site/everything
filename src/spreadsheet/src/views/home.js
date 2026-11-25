@@ -2,7 +2,7 @@
  * Home: the list of spreadsheets in the app folder, with new / import / open
  * actions. Rows open the editor; a per-row menu renames, shares, duplicates,
  * downloads, or deletes. Spreadsheets other people shared with the user are
- * listed on their own. The list lives in the Puter cloud, so without a
+ * listed on their own. The list lives in the local storage, so without a
  * session the screen offers the sign-in instead of the list.
  */
 

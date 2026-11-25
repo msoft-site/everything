@@ -16,7 +16,7 @@ import { steadyInterval, steadyTimeout } from './timers.js';
  * one clock (the worker's). There is nothing to propagate, nothing to
  * cache, no copy that can lag another, and no account that has to own
  * anything: a room code is the capability, as the link already is. A
- * visitor with no Puter session reads and writes it like anyone else.
+ * visitor with no local session reads and writes it like anyone else.
  *
  * The record is a LEASE. The first host to write claims the room under a
  * secret of its choosing; every later write repeats the secret, and a write

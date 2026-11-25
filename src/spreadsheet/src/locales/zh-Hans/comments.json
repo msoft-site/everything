@@ -23,7 +23,7 @@
   "post": "发布",
   "postReply": "发布回复",
   "postShortcut": "发布（{mod}+Enter）",
-  "puterUser": "Puter 用户 {user}",
+  "puterUser": "本地用户 {user}",
   "reopen": "重新打开",
   "reopenThread": "重新打开会话",
   "replyPlaceholder": "回复…（键入 @ 可提及某人）",

@@ -2,7 +2,7 @@
  * Development only (?local): the real collaboration service (worker/service.js)
  * running in the browser on storage kept in localStorage, so sharing,
  * invitations, roles, presence and live editing can be tried without a
- * Puter account. Every tab of the dev server shares this one "server";
+ * account. Every tab of the dev server shares this one "server";
  * open another tab with ?local&as=<name> to act as someone else.
  */
 import { WikiService } from '../../worker/service.js';

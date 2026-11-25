@@ -178,7 +178,7 @@ export function openCalendarExport({ projectId = null } = {}) {
     type: 'button',
     html: icon('cloud', 15, 2),
     onclick: () => run(true, puterBtn),
-  }, ' Save to Puter…');
+  }, ' Save to Local…');
 
   const modal = openModal({
     title: 'Calendar file',

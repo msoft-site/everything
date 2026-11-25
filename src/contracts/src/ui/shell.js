@@ -118,7 +118,7 @@ export function mountShell(appRoot) {
 
   /* Sidebar (desktop) */
   const isApp = typeof puter !== 'undefined' && puter.env === 'app';
-  const username = store.user?.username || 'Puter user';
+  const username = store.user?.username || 'Local user';
   const sidebarNav = el('div', { style: { display: 'contents' } });
   const sidebar = el('nav.sidebar', { 'aria-label': 'Main navigation' },
     el('div.brand', {},

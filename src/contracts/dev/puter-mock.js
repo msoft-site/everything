@@ -1,6 +1,6 @@
 /**
  * Dev-only in-memory mock of the Puter SDK, used by /mock.html.
- * Lets you develop and test the full signed-in UI without a Puter account.
+ * Lets you develop and test the full signed-in UI without an account.
  * Not part of the production build (vite only builds index.html).
  *
  * The dataset starts empty so the onboarding flow runs; choose

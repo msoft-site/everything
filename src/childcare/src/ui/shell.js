@@ -343,7 +343,7 @@ function openAccountMenu(anchor, onSignIn) {
         link('Source code on GitHub', 'github', { href: REPO_URL, target: '_blank', rel: 'noopener noreferrer', onClick: () => close() }),
       ];
       let footer = null;
-      if (app.demo) footer = link('Sign in with Puter', 'log-in', { onClick: () => (close(), onSignIn?.()) });
+      if (app.demo) footer = link('Sign in', 'log-in', { onClick: () => (close(), onSignIn?.()) });
       else if (canSignOut())
         footer = link('退出登录', 'log-out', {
           onClick: async () => {
@@ -371,7 +371,7 @@ function openAccountMenu(anchor, onSignIn) {
           h(
             'div.grow',
             h('div', { style: { fontWeight: '700' } }, app.demo ? (app.demoRole === 'family' ? 'Family preview' : 'Demo mode') : app.user?.username || ''),
-            h('div.subtle', { style: { fontSize: '12px' } }, app.demo ? 'Nothing is saved' : `${roleLabel()} · Signed in with Puter`),
+            h('div.subtle', { style: { fontSize: '12px' } }, app.demo ? 'Nothing is saved' : `${roleLabel()} · Signed in`),
           ),
         ),
         h('div.menu-sep'),

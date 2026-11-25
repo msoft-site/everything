@@ -33,7 +33,7 @@ const ms = (item) => {
 
 const WRITE_OPTS = { overwrite: true, dedupeName: false, createMissingParents: true };
 
-/** Files under ~/AppData/<app>/<root>/ in the person's Puter cloud. */
+/** Files under ~/AppData/<app>/<root>/ in the person's local storage. */
 export function puterBackend(puter, root = 'records') {
   const p = (path) => `${root}/${path}`;
   return {

@@ -1,4 +1,4 @@
-// Puter AI chat with tool calling, streamed. Messages are in the OpenAI shape
+// 本地智能引擎 chat with tool calling, streamed. Messages are in the OpenAI shape
 // Puter takes (system, user, assistant with tool_calls, tool); replies come
 // back as text pieces and tool calls as they arrive.
 
@@ -40,7 +40,7 @@ export interface ChatOptions {
 
 export type ChatFn = (messages: ChatMessage[], opts: ChatOptions) => AsyncIterable<StreamPart>;
 
-interface PuterAI {
+interface 本地智能引擎 {
   ai?: { chat: (messages: unknown, opts?: Record<string, unknown>) => Promise<unknown> };
 }
 
@@ -180,7 +180,7 @@ export function withCacheBreakpoints(messages: ChatMessage[]): unknown[] {
 /** puter.ai.chat, streamed. A reply the SDK hands back whole is yielded in the same pieces. */
 export async function* puterChat(messages: ChatMessage[], opts: ChatOptions = {}): AsyncIterable<StreamPart> {
   if (!prefs.use_online_access) throw Object.assign(new Error('The assistant works online, but online access is turned off (Preferences ▸ System ▸ Network).'), { code: 'online_access_off' });
-  const p = (globalThis as unknown as { puter?: PuterAI }).puter;
+  const p = (globalThis as unknown as { puter?: 本地智能引擎 }).puter;
   if (!p?.ai?.chat) throw Object.assign(new Error('The assistant needs Puter, which is not available right now. Check your connection and reload.'), { code: 'puter_unavailable' });
   const options: Record<string, unknown> = { stream: true };
   if (opts.model) options.model = opts.model;
@@ -219,7 +219,7 @@ export async function* puterChat(messages: ChatMessage[], opts: ChatOptions = {}
           // Puter ends a reply the account's credits ran out during like one that reached the length limit,
           // marked metadata.usage_limited (ChatCompletionDriver ranOutOfFunds); the reply did not finish.
           if ((part.metadata as { usage_limited?: boolean } | undefined)?.usage_limited) {
-            throw Object.assign(new Error('Your Puter account ran out of AI credits, so the reply stopped.'), { code: 'insufficient_funds' });
+            throw Object.assign(new Error('Your local account ran out of AI credits, so the reply stopped.'), { code: 'insufficient_funds' });
           }
           if (reachedLimit(part.usage as never, opts.maxTokens)) yield { type: 'cut' };
         }

@@ -19,8 +19,8 @@ addTranslations({
     "Cette modification ajoute un fichier qui n’a pas été téléversé.",
   "Too much feedback at once. Try again in an hour.":
     "Trop de commentaires d’un coup. Réessayez dans une heure.",
-  "Sign in with Puter to continue.":
-    "Connectez-vous avec Puter pour continuer.",
+  "Sign in to continue.":
+    "Connectez-vous pour continuer.",
   "Board not found.": "Tableau introuvable.",
   "You no longer have access to this board.":
     "Vous n’avez plus accès à ce tableau.",

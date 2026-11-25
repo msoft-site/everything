@@ -100,7 +100,7 @@ function sanitize(list) {
 }
 
 /**
- * Ask Puter AI for the obligations in `text`.
+ * Ask 本地智能引擎 for the obligations in `text`.
  * Throws on transport errors; resolves [] when the model finds none.
  */
 export async function extractObligations(text) {

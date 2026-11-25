@@ -72,8 +72,8 @@ function sameAccount(first, second) {
   if (first.uuid && second.uuid) return first.uuid === second.uuid;
   // The desktop's provisional label resolves to its existing account, not a new session.
   return (
-    first.username === 'Puter user' ||
-    second.username === 'Puter user' ||
+    first.username === 'Local user' ||
+    second.username === 'Local user' ||
     first.username === second.username
   );
 }
@@ -148,7 +148,7 @@ function refreshSDKAccount(hint) {
     if (signedIn && !user) {
       // A confirmed session can be signed out while its profile is still loading.
       // Callback metadata may be stale, so only the verified profile supplies its name.
-      setAccount({ username: 'Puter user' });
+      setAccount({ username: 'Local user' });
       version = accountGeneration;
     }
     return signedIn ? P.currentUser() : null;
@@ -202,7 +202,7 @@ async function ensureSignedIn({ signal = accountController.signal } = {}) {
       .then(async (account) => {
         await settleAccount(controller.signal);
         controller.signal.throwIfAborted();
-        if (!user) setAccount(account || { username: 'Puter user' });
+        if (!user) setAccount(account || { username: 'Local user' });
         return user;
       })
       .finally(() => {
@@ -215,7 +215,7 @@ async function ensureSignedIn({ signal = accountController.signal } = {}) {
 }
 /**
  * Signs out, one request at a time, once the open PDF may be left. From Settings (`dialog`) the
- * library follows only while that dialog is still up; from puter.js's user menu it always does.
+ * library follows only while that dialog is still up; from local storage.js's user menu it always does.
  */
 async function signOut(dialog = null) {
   // Settings can be reopened while the SDK is pending. Claim this operation
@@ -284,7 +284,7 @@ function settings() {
     const focused = accountActions.contains(document.activeElement);
     accountSummary.textContent = user
       ? `Signed in as ${user.username}`
-      : 'Work locally, or sign in to save PDFs in your Puter cloud.';
+      : 'Work locally. PDFs are saved on your device.';
     const nextAction = !user ? 'sign-in' : P.isApp() ? null : 'sign-out';
     if (nextAction === accountAction) return;
     accountAction = nextAction;
@@ -305,7 +305,7 @@ function settings() {
     if (!user)
       accountActions.append(
         button(
-          'Sign in with Puter',
+          'Sign in',
           'Cloud',
           run(async () => {
             await ensureSignedIn();
@@ -331,10 +331,10 @@ function shortcuts() {
       'div',
       { class: 'shortcut-list' },
       ...[
-        [P.launchedByPuter() ? 'Open from Puter' : 'Open a PDF', 'Ctrl / ⌘ O'],
-        ['Save to Puter', 'Ctrl / ⌘ S'],
+        ['Open a PDF', 'Ctrl / ⌘ O'],
+        ['Save', 'Ctrl / ⌘ S'],
         [
-          P.launchedByPuter() ? 'Save to another Puter folder' : 'Download',
+          'Download',
           'Ctrl / ⌘ Shift S',
         ],
         ['Undo', 'Ctrl / ⌘ Z'],
@@ -463,7 +463,7 @@ async function canLeave(signal) {
       el(
         'p',
         {},
-        'This PDF is not saved anywhere yet. Sign in to Puter to save it to your own cloud, or leave and discard the changes. To download it instead, keep editing and choose Download.',
+        'This PDF is not saved anywhere yet. Sign in to save it to your own cloud, or leave and discard the changes. To download it instead, keep editing and choose Download.',
       ),
       [
         button('Keep editing', null, () => dialog.close()),
@@ -855,10 +855,10 @@ function showHome({ accountRefresh = false } = {}) {
             filter
               ? 'Try another file name.'
               : user
-                ? 'Open a PDF and save it to Puter to find it here.'
-                : 'Sign in with Puter to save and access your files across devices.',
+                ? 'Open a PDF and save it to find it here.'
+                : 'Save and access your files locally on this device.',
           ),
-          !user && !filter && button('Sign in with Puter', 'Cloud', run(ensureSignedIn)),
+          !user && !filter && button('Account', 'Cloud', run(ensureSignedIn)),
         ),
       );
       return;
@@ -1002,7 +1002,7 @@ function showHome({ accountRefresh = false } = {}) {
             if (
               await confirmAction(
                 'Delete PDF?',
-                `Delete ${file.name} from your Puter cloud? This cannot be undone.`,
+                `Delete ${file.name} from local storage? This cannot be undone.`,
                 'Delete PDF',
                 { signal },
               )
@@ -1095,7 +1095,7 @@ function showHome({ accountRefresh = false } = {}) {
               'quick-action',
             ),
             button('Pictures to PDF', 'Images', pickPictures, 'quick-action'),
-            button('Open from Puter', 'Cloud', pickCloud, 'quick-action'),
+            button('Open from Local', 'Cloud', pickCloud, 'quick-action'),
             button(
               'Try a sample PDF',
               'BookOpen',
@@ -1127,7 +1127,7 @@ function showHome({ accountRefresh = false } = {}) {
           el(
             'span',
             {},
-            'PDFs are processed on your device. Cloud files are saved in your Puter account.',
+            'PDFs are processed on your device and saved locally.',
           ),
         ),
       ),
@@ -1257,7 +1257,7 @@ const initPuter = async () => {
   }
   if (P.isApp()) {
     // The desktop already has a session. File and close events must not wait for its profile.
-    setAccount({ username: 'Puter user' });
+    setAccount({ username: 'Local user' });
     // A second press of the close button while its question is open must not stack another
     // on top; the first answer decides. Only the question counts: a save it started that
     // never settles must not leave the button dead.
@@ -1284,7 +1284,7 @@ const initPuter = async () => {
     const account = await P.currentUser();
     if (version !== accountGeneration) return;
     if (token !== P.sessionToken()) return refreshSDKAccount();
-    setAccount(account || { username: 'Puter user' }, { profileOnly: P.isApp() });
+    setAccount(account || { username: 'Local user' }, { profileOnly: P.isApp() });
   } else {
     accountToken = token;
     sessionState = 'out';

@@ -66,7 +66,7 @@ export function openReceiptViewer(exp) {
       body.append(el('div.empty', {},
         el('div.empty-icon', { html: icon('imageOff', 26) }),
         el('h3', {}, '无法加载此票据'),
-        el('p', {}, '该文件可能已从您的 Puter 云盘中移动或删除。')
+        el('p', {}, '该文件可能已从您的 本地驱动器中移动或删除。')
       ));
       return;
     }

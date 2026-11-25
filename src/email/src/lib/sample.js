@@ -38,7 +38,7 @@ const MESSAGES = [
       ``,
       `Hi there,`,
       ``,
-      `This inbox lives entirely in your Puter account. Messages sent to your`,
+      `This inbox lives entirely in your local account. Messages sent to your`,
       `address are stored as files under /you/.mail, and this app simply reads`,
       `them. Nothing is copied anywhere else.`,
       ``,

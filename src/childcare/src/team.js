@@ -280,7 +280,7 @@ export async function enableTeam({ store, onProgress = () => {} }) {
       lastErr = err;
     }
   }
-  if (!dep) throw new Error(`Could not create the school server in your Puter account. ${lastErr?.message || ''}`.trim());
+  if (!dep) throw new Error(`Could not create the school server in your local account. ${lastErr?.message || ''}`.trim());
   const url = normalizeWorkerUrl(dep.url || `https://${name}.puter.work`);
   onProgress('Waiting for the server to come online');
   await waitForHealth(url, build);

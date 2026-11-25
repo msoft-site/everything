@@ -204,9 +204,9 @@ const SECTION_VIEWS = {
       title: 'About',
       body: h(
         'div.stack',
-        h('p', 'Childcare is free and open-source childcare center management, part of the Everything project. Your data is stored in your own Puter account.'),
+        h('p', 'Childcare is free and open-source childcare center management, part of the Everything project. Your data is stored locally.'),
         h('div.notice.warning', icon('warning'), h('span', 'This app is in early development. Features may change and data could be lost, so keep backups and do not rely on it for real records yet.')),
-        h('div.row', h('a.btn', { href: REPO_URL, target: '_blank', rel: 'noopener noreferrer' }, icon('github', 16), 'Source code on GitHub'), h('a.btn.ghost', { href: 'https://developer.puter.com', target: '_blank', rel: 'noopener noreferrer' }, 'Powered by Puter')),
+        h('div.row', h('a.btn', { href: REPO_URL, target: '_blank', rel: 'noopener noreferrer' }, icon('github', 16), 'Source code on GitHub'), h('a.btn.ghost', { href: 'https://developer.puter.com', target: '_blank', rel: 'noopener noreferrer' }, '')),
       ),
     });
   },

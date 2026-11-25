@@ -189,7 +189,7 @@ export function renderTeam(container) {
     let created = null;
     const dlg = openDialog({
       title: 'Invite an agent',
-      description: 'Create a single-use link and send it to your teammate. They sign in with Puter and join right away.',
+      description: 'Create a single-use link and send it to your teammate. They sign in and join right away.',
       body: h('div.stack', h('div.field', h('label.field-label', { for: noteId }, 'Who is it for?', h('span.subtle', ' (optional)')), note), h('div.field', h('span.field-label', 'Role'), roles), result),
       actions: [
         { label: 'Close' },
@@ -259,7 +259,7 @@ export function renderTeam(container) {
       h('div.online-icon', icon('server', { size: 22 })),
       h('div.grow',
         h('h2', 'This help desk runs only in your account'),
-        h('p', 'To invite agents, publish your help center and email customers, turn on team access. This starts a small server (a Puter worker) in your own Puter account. Your data stays in your account and you pay only for what it uses.'),
+        h('p', 'To invite agents, publish your help center and email customers, turn on team access. This starts a small server (a Puter worker) in local storage. Your data stays in your account and you pay only for what it uses.'),
         isOwner ? null : h('p.muted', 'Only the owner can turn on team access.')),
       start);
     const box = h('section.online-panel', { 'aria-label': 'Team access' }, intro, stepsEl, errEl);

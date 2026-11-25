@@ -1,6 +1,6 @@
 /**
  * What belongs to the user rather than to a workspace, kept in the user's
- * own Puter account through `puter.kv` (scoped to this app): their profile
+ * own account through `puter.kv` (scoped to this app): their profile
  * card, preferences, the list of workspaces they are in (each on someone's
  * worker), and the worker they deployed themselves, if any. One document,
  * one read at boot.
@@ -27,7 +27,7 @@ export async function loadUserDoc() {
   try {
     doc = await puter.kv.get(USER_DOC_KEY);
   } catch (e) {
-    throw new Error(`Could not read your Teamchat settings from Puter: ${e?.message || e}`);
+    throw new Error(`Could not read your Teamchat settings from local storage: ${e?.message || e}`);
   }
   const d = { ...empty(), ...(doc && typeof doc === 'object' ? doc : {}) };
   d.profile = d.profile && typeof d.profile === 'object' ? d.profile : {};

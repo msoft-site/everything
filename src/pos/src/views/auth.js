@@ -6,7 +6,7 @@ export function authView({ onSignedIn }) {
   const cta = el('button.btn.btn-primary.auth-cta', {
     onclick: async () => {
       cta.disabled = true;
-      cta.textContent = 'Waiting for Puter…';
+      cta.textContent = 'Loading local workspace…';
       try {
         await puter.auth.signIn();
         onSignedIn();

@@ -1,5 +1,5 @@
 /**
- * The Editor pane: spelling (local dictionary), optional grammar and style suggestions from Puter's
+ * The Editor pane: spelling (local dictionary), optional grammar and style suggestions from local storage's
  * AI (off until the reader turns it on, and marked as AI), and document statistics with readability
  * scores computed on this device. Corrections are ordinary edits, one undo step each.
  */

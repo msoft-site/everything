@@ -141,7 +141,7 @@ export function mountShell(appRoot) {
   }
 
   /* Sidebar (desktop) */
-  const username = store.user?.username || 'Puter user';
+  const username = store.user?.username || 'Local user';
   const isPuterApp = typeof puter !== 'undefined' && puter.env === 'app';
   const sidebarNav = el('div', { style: { display: 'contents' } });
   const isMac = /Mac|iP/.test(navigator.platform || '');

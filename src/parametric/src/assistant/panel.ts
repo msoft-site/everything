@@ -20,7 +20,7 @@ import { changesDocument, runTool, toolSpecs } from './tools';
 
 export const ASSISTANT_MODEL = 'claude-opus-5-5';
 
-/** Development builds and browser tests may stand in for Puter AI with window.__assistantChat. */
+/** Development builds and browser tests may stand in for 本地智能引擎 with window.__assistantChat. */
 const devChat = (): ChatFn | null => (import.meta.env.DEV ? (window as unknown as { __assistantChat?: ChatFn }).__assistantChat ?? null : null);
 
 const short = (s: string, n: number) => {
@@ -195,7 +195,7 @@ export class AssistantPanel {
     this.el = h('div', { class: 'assistant' },
       this.log,
       h('div', { class: 'as-bottom' }, this.status, composer, this.limit,
-        h('div', { class: 'as-note' }, 'Sends your messages and a description of the part to Puter AI. Check designs before relying on them.')));
+        h('div', { class: 'as-note' }, 'Sends your messages and a description of the part to 本地智能引擎. Check designs before relying on them.')));
     this.bindDrop();
     this.renderEmpty();
     app.store.on((reason) => {
@@ -309,7 +309,7 @@ export class AssistantPanel {
   /** What the footer of a stopped reply says. */
   private stopReason = 'Stopped.';
 
-  /** Whether Puter AI can be used. Signs in to Puter first when needed. */
+  /** Whether 本地智能引擎 can be used. Signs in to Puter first when needed. */
   private async ready(): Promise<boolean> {
     if (this.chat || devChat()) return true;
     const sdk = puter() as unknown as { ai?: unknown } | null;
@@ -386,7 +386,7 @@ export class AssistantPanel {
 
   // ---------- attachments ----------
 
-  /** Attaches files of the Puter drive. Folders and files the assistant cannot read are not read. */
+  /** Attaches files of the local drive. Folders and files the assistant cannot read are not read. */
   async attachDriveItems(items: unknown[]) {
     type Entry = PuterFSItem & { isDirectory?: boolean; fsentry_is_dir?: boolean };
     const entries = items.filter((it): it is Entry => !!it && typeof it === 'object' && typeof (it as Entry).path === 'string' && !!(it as Entry).path);

@@ -23,7 +23,7 @@ export function installGenAI(e: Editor) {
         (m) => m.recomposeDialog,
       ),
       description:
-        'Move, scale, rotate, flip or remove an object; its old place is filled at once and an optional Puter AI pass blends seams and shadows.',
+        'Move, scale, rotate, flip or remove an object; its old place is filled at once and an optional 本地智能引擎 pass blends seams and shadows.',
     },
     {
       id: 'edit.remove-reflections',
@@ -35,7 +35,7 @@ export function installGenAI(e: Editor) {
         (m) => m.reflectionDialog,
       ),
       description:
-        'Take window and glass reflections out of the selection or layer with Puter AI (needs a Puter account).',
+        'Take window and glass reflections out of the selection or layer with 本地智能引擎 (needs an account).',
     },
     {
       id: 'edit.rotate-object',
@@ -47,7 +47,7 @@ export function installGenAI(e: Editor) {
         (m) => m.rotateObjectDialog,
       ),
       description:
-        'Turn an object in depth (around its vertical axis, or tilted) with Puter AI and place it where it stands.',
+        'Turn an object in depth (around its vertical axis, or tilted) with 本地智能引擎 and place it where it stands.',
     },
   );
   contributeMenu('edit', ['edit.ai-recompose', 'edit.remove-reflections'], 'assistant.ask');

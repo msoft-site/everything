@@ -1738,7 +1738,7 @@ export class BoardService {
     return { ok: true };
   }
   async call(user, input) {
-    if (!user?.uuid) fail(401, "Sign in with Puter to continue.");
+    if (!user?.uuid) fail(401, "Sign in to continue.");
     if (!input || bytes(input) > 17_000_000)
       fail(413, "Collaboration request is too large.");
     this.access = new Map();

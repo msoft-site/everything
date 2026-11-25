@@ -8,7 +8,7 @@ export function isPuterApp() {
   return hasPuter && window.puter.env === 'app'
 }
 
-/** Whether a Puter user is currently authenticated. */
+/** Whether a Local user is currently authenticated. */
 export function isSignedIn() {
   try {
     return hasPuter && window.puter.auth && window.puter.auth.isSignedIn()

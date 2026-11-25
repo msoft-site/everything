@@ -1,5 +1,5 @@
 // Batch Process panel: a list of files (open documents, files from this
-// device or from Puter), a Favorite to apply to each (or none), export
+// device or from local storage), a Favorite to apply to each (or none), export
 // settings (format, sample type, location: a Puter folder, or downloads,
 // zipped when there are several files), and Run with per-file progress,
 // status and Cancel. Decoding, effects and encoding all run in workers, and
@@ -34,7 +34,7 @@ export function batchPanel(app) {
   // ------------------------------------------------------------ toolbar
   const addOpenBtn = h('button.btn', { type: 'button', onclick: () => addOpen(), title: 'Add every open audio file', 'aria-label': 'Add Open Files' }, icon('file-audio', 14), h('span', 'Add Open Files'));
   const addLocalBtn = h('button.btn', { type: 'button', onclick: () => addLocal(), title: 'Add audio files from this device', 'aria-label': 'Add Files from this device' }, icon('hard-drive', 14), h('span', 'Add Files...'));
-  const addPuterBtn = h('button.btn', { type: 'button', onclick: () => addPuter(), title: 'Add audio files from Puter', 'aria-label': 'Add Files from Puter' }, icon('cloud', 14), h('span', 'From Puter...'));
+  const addPuterBtn = h('button.btn', { type: 'button', onclick: () => addPuter(), title: 'Add audio files from local storage', 'aria-label': 'Add Files from local storage' }, icon('cloud', 14), h('span', 'From Local...'));
   const removeBtn = h('button.icon-btn', { type: 'button', 'aria-label': 'Remove selected files', title: 'Remove selected files', onclick: () => removeSelected() }, icon('trash-2', 14));
   const clearBtn = h('button.icon-btn', { type: 'button', 'aria-label': 'Clear the list', title: 'Clear the list', onclick: () => clearAll() }, icon('x', 14));
   const toolbar = h('div.panel-toolbar.batch-toolbar', { role: 'toolbar', 'aria-label': 'Batch files' }, addOpenBtn, addLocalBtn, addPuterBtn, h('div.spacer'), removeBtn, clearBtn);
@@ -353,7 +353,7 @@ export function batchPanel(app) {
 
   function renderRows() {
     if (!items.length) {
-      body.replaceChildren(h('tr', h('td.empty-row', { colspan: '4' }, h('span.empty-text', 'Add open files, files from this device or from Puter, or drop files here.'))));
+      body.replaceChildren(h('tr', h('td.empty-row', { colspan: '4' }, h('span.empty-text', 'Add open files, files from this device or from local storage, or drop files here.'))));
       return;
     }
     probeLocal();
@@ -437,7 +437,7 @@ export function batchPanel(app) {
       return [
         btn(addOpenBtn, 'Add Open Files'),
         btn(addLocalBtn, 'Add Files...'),
-        ...(addPuterBtn.hidden ? [] : [btn(addPuterBtn, 'Add Files from Puter...')]),
+        ...(addPuterBtn.hidden ? [] : [btn(addPuterBtn, 'Add Files from local storage...')]),
         btn(removeBtn, 'Remove Selected Files'),
         btn(clearBtn, 'Clear List'),
         { type: 'sep' },

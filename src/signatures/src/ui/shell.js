@@ -85,7 +85,7 @@ export function mountShell(appRoot) {
   renderSampleBanner();
 
   /* Sidebar (desktop) */
-  const username = store.user?.username || 'Puter user';
+  const username = store.user?.username || 'Local user';
   const inPuterApp = typeof puter !== 'undefined' && puter.env === 'app';
   const sidebarNav = el('div', { style: { display: 'contents' } });
   const sidebar = el('nav.sidebar', { 'aria-label': 'Main navigation' },

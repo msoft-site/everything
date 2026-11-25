@@ -901,7 +901,7 @@ export function openSettingsDialog(app, section = 'general') {
     counts();
     const user = app.session?.user?.username;
     const storage = signedIn
-      ? h('div.callout', { dataset: { kind: 'info' } }, icon('cloud', 16), h('div', h('strong', 'Synced to your Puter account'), h('div', `Collections, environments and history are saved on this device and synced to ${user ? `${user}'s` : 'your'} Puter account. Cookies and saved responses stay on this device.`)))
+      ? h('div.callout', { dataset: { kind: 'info' } }, icon('cloud', 16), h('div', h('strong', 'Synced to your local account'), h('div', `Collections, environments and history are saved on this device and synced to ${user ? `${user}'s` : 'your'} account. Cookies and saved responses stay on this device.`)))
       : h(
           'div.callout',
           icon('database', 16),
@@ -970,7 +970,7 @@ export function openSettingsDialog(app, section = 'general') {
         h('img.st-about-icon', { src: './icon-192.png', alt: '', width: 48, height: 48 }),
         h('div', h('div.st-about-name', 'API Client'), h('div.st-about-version', `Version ${APP_VERSION}`)),
       ),
-      h('p.st-about-text', 'Build, send and test HTTP requests in your browser. Organize them in collections, switch between environments, and optionally sync everything with your Puter account.'),
+      h('p.st-about-text', 'Build, send and test HTTP requests in your browser. Organize them in collections, switch between environments, and optionally sync everything with your local account.'),
       h(
         'div.st-about-links',
         h('a.btn', { href: SOURCE_URL, target: '_blank', rel: 'noopener' }, icon('github', 15), h('span', 'Source code'), h('span.sr-only', '(opens in a new tab)')),

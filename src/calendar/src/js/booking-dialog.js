@@ -452,7 +452,7 @@ export function openBookingEditor({
         img.src = res.picture;
         avatarPreview.replaceChildren(img);
       } else if (res.state === 'none') {
-        avatarNote.textContent = 'No picture is available from your Puter account';
+        avatarNote.textContent = 'No picture is available from your local account';
       }
     })
     .catch(() => {});

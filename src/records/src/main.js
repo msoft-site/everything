@@ -35,7 +35,7 @@ function signInScreen(onSignedIn) {
   const error = h('p.field-error', { role: 'alert' });
   btn.addEventListener('click', async () => {
     btn.disabled = true;
-    btn.textContent = '正在等待 Puter...';
+    btn.textContent = '正在加载本地工作区…...';
     error.textContent = '';
     try {
       await puter.auth.signIn();
@@ -57,7 +57,7 @@ function signInScreen(onSignedIn) {
       feature('vGrid', '拥有丰富字段类型的高速电子表格视图'),
       feature('fLink', '跨表关联记录，支持查找与汇总计算'),
       feature('fFormula', '支持公式、筛选、排序、分组与汇总统计'),
-      feature('cloud', '以文件形式安全存储在您的专属 Puter 云端'),
+      feature('cloud', '以文件形式安全存储在您的专属 本地存储'),
     ),
     btn,
     error,
@@ -106,13 +106,13 @@ async function start({ backend, kv, journal, user, env, onSignOut, picture }) {
 async function boot() {
   const params = new URLSearchParams(location.search);
   if (import.meta.env.DEV && params.has('local')) {
-    // Development sandbox: everything stays in this browser, no Puter account.
+    // Development sandbox: everything stays in this browser, no account.
     const backend = await indexedDbBackend('records-local');
     start({ backend, kv: localKv('records-local:'), journal: await indexedDbJournal('records-local-journal'), user: { username: 'you' }, env: 'web', onSignOut: null, picture: null });
     return;
   }
   if (typeof puter === 'undefined') {
-    errorScreen('无法连接 Puter', 'Records 将您的数据库保存在您的 Puter 云端。请检查您的网络连接后重试。', () => location.reload());
+    errorScreen('无法连接本地环境', 'Records 将您的数据库保存在您的 本地存储。请检查您的网络连接后重试。', () => location.reload());
     return;
   }
   const env = puter.env;

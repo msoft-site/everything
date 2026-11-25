@@ -183,7 +183,7 @@ async function printout(app, file, range) {
   }
 }
 
-/** Inserts pictures or attachments picked from the user's Puter files. */
+/** Inserts pictures or attachments picked from the user's local files. */
 export async function pickFromCloud(app, { accept = '*/*', attach = false } = {}) {
   const picker = app.cloudPicker();
   if (!picker) return;
@@ -1143,7 +1143,7 @@ export async function importBackup(app, backup) {
   return nb;
 }
 
-/** The files Import takes, from this device or from Puter: Markdown, HTML, text and notebook backups. */
+/** The files Import takes, from this device or from local storage: Markdown, HTML, text and notebook backups. */
 const IMPORT_EXTENSIONS = '.md,.markdown,.txt,.html,.htm,.json';
 export const isImportable = (name) => /\.(md|markdown|txt|html?|json)$/i.test(String(name || ''));
 
@@ -1209,14 +1209,14 @@ export async function importFileList(app, files) {
   return count;
 }
 
-// ------------------------------------------------------------ Puter files
+// ------------------------------------------------------------ local files
 
 const isDriveDir = (it) => Boolean(it.is_dir || it.isDir || it.isDirectory || it.fsentry_is_dir);
 const driveName = (it) => it.name || it.path.replace(/\/+$/, '').split('/').pop();
 const PICTURE_TYPES = { png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', gif: 'image/gif', webp: 'image/webp', bmp: 'image/bmp' };
 
 /**
- * The files among entries of the Puter drive (launch items, picked files or
+ * The files among entries of the local drive (launch items, picked files or
  * a drop from a desktop folder). Folders are left out, with a word when there
  * is nothing else.
  */
@@ -1238,7 +1238,7 @@ export async function readDriveFile(it, name = driveName(it)) {
 const readError = (err) => err?.message || err?.error?.message || 'the file could not be read';
 
 /**
- * Opens Puter files in Notes: double-click, Open with, Import > From Puter
+ * Opens local files in Notes: double-click, Open with, Import > From Local
  * and a drop outside the page. Notes keeps its notebooks itself, so a file
  * is imported as File > Import does it.
  */
@@ -1282,7 +1282,7 @@ export async function openLaunchItems(app, given) {
   return items.length ? openDriveItems(app, items) : 0;
 }
 
-/** Import > From Puter: Puter's Open dialog. */
+/** Import > From Local: Puter's Open dialog. */
 export async function importFromCloud(app) {
   const picker = app.cloudPicker();
   if (!picker) return 0;
@@ -1295,7 +1295,7 @@ export async function importFromCloud(app) {
   return openDriveItems(app, picked);
 }
 
-/** Puter files dropped on the page go into it as files dropped from this device do: pictures shown, other files attached. */
+/** local files dropped on the page go into it as files dropped from this device do: pictures shown, other files attached. */
 export async function dropDriveItems(app, given, point) {
   const page = app.editor.page;
   const files = [];
@@ -1440,7 +1440,7 @@ export function helpDialog(app) {
       tip('todo', 'Tags', `Mark paragraphs with tags such as To Do (${shortcutLabel('Mod+1')}) and Important (${shortcutLabel('Mod+2')}). Find Tags lists them all.`),
       tip('pen', 'Draw', 'On the Draw tab, pick a pen or highlighter to write by hand. Use Lasso Select to move ink and Insert Space to make room.'),
       tip('search', 'Search', `Press ${shortcutLabel('Mod+E')} to search every notebook, or ${shortcutLabel('Mod+F')} to find on the current page.`),
-      tip('cloud', 'Saved to your cloud', 'Everything saves automatically to your Puter account. Deleted items stay in Deleted Notes for 60 days.'),
+      tip('cloud', 'Saved to your cloud', 'Everything saves automatically to local storage. Deleted items stay in Deleted Notes for 60 days.'),
     ),
     actions: [{ label: 'Keyboard Shortcuts', run: () => setTimeout(() => app.shortcutsDialog()) }, { label: 'Close', primary: true }],
   });
@@ -1452,7 +1452,7 @@ export function aboutDialog() {
     width: 440,
     body: h('div.about',
       h('img', { src: './favicon.svg', alt: '', width: 56, height: 56 }),
-      h('p', h('strong', 'Notes'), ' is a free-form digital notebook. Your notebooks are stored as files in your own Puter cloud storage.'),
+      h('p', h('strong', 'Notes'), ' is a free-form digital notebook. Your notebooks are stored as files in your own local storage storage.'),
       h('p.field-hint', 'Built with Puter.js. Icons from Lucide (ISC license). Ink smoothing by perfect-freehand (MIT license). Equations by Temml (MIT license). PDF printouts by pdf.js (Apache-2.0 license).'),
     ),
     actions: [{ label: 'Close', primary: true }],

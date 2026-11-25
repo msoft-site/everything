@@ -391,7 +391,7 @@ export function openExportDialog(ctx) {
     else audioHint.textContent = s.video ? 'Also saves the sound as a separate file.' : 'Audio only: exports just the sound.';
     const wavTooLong = s.audio && s.audioFormat === 'wav' && duration > WAV_MAX_US;
     if (wavTooLong) audioHint.replaceChildren(icon('alert', 14), WAV_TOO_LONG);
-    destHint.textContent = s.destination === 'puter' ? 'Saved to the Videos folder in your Puter account.' : 'Downloaded by your browser.';
+    destHint.textContent = s.destination === 'puter' ? 'Saved to the local Videos folder.' : 'Downloaded by your browser.';
     const gifW = Math.min(s.gifWidth, projW);
     const gifFrames = Math.ceil((duration / US) * s.gifFps);
     // GIFs land around half a byte per pixel per frame for video content.
@@ -568,29 +568,29 @@ export function openExportDialog(ctx) {
   }
 
   async function saveToVideos(r, statusEl) {
-    statusEl.textContent = 'Saving to Puter...';
+    statusEl.textContent = 'Saving to local storage...';
     try {
       const user = ctx.account?.user || (await puter.auth.getUser());
       const item = await puter.fs.write(`/${user.username}/Videos/${r.fileName}`, r.blob, { dedupeName: true, createMissingParents: true, overwrite: false });
       statusEl.textContent = `Saved to ${item?.path || `Videos/${r.fileName}`}`;
-      announce(`Saved ${r.fileName} to Puter`);
+      announce(`Saved ${r.fileName} to local storage`);
     } catch (err) {
-      statusEl.textContent = 'Could not save to Puter.';
-      toast(`Could not save to Puter: ${err?.message || err}`, { kind: 'error' });
+      statusEl.textContent = 'Could not save to local.';
+      toast(`Could not save to local: ${err?.message || err}`, { kind: 'error' });
     }
   }
 
   async function saveWithPicker(r, statusEl) {
     if (!puter.ui?.showSaveFilePicker) return saveToVideos(r, statusEl);
-    statusEl.textContent = 'Choose where to save it in Puter.';
+    statusEl.textContent = 'Choose where to save it.';
     try {
       // The picker never resolves when dismissed, so the status just stays as a prompt.
       const item = await puter.ui.showSaveFilePicker(r.blob, r.fileName);
       statusEl.textContent = `Saved to ${item?.path || item?.name || 'Puter'}`;
-      announce(`Saved ${r.fileName} to Puter`);
+      announce(`Saved ${r.fileName} to local storage`);
     } catch (err) {
-      statusEl.textContent = 'Could not save to Puter.';
-      toast(`Could not save to Puter: ${err?.message || err}`, { kind: 'error' });
+      statusEl.textContent = 'Could not save to local.';
+      toast(`Could not save to local: ${err?.message || err}`, { kind: 'error' });
     }
   }
 
@@ -604,7 +604,7 @@ export function openExportDialog(ctx) {
       // Several files each have these buttons: their spoken names say which file.
       const dl = h('button.btn', { type: 'button', 'aria-label': `Download ${r.fileName}` }, icon('download', 16), 'Download');
       dl.addEventListener('click', () => download(r));
-      const save = cloud ? h('button.btn', { type: 'button', 'aria-label': `Save ${r.fileName} to Puter` }, icon('cloud', 16), 'Save to Puter') : null;
+      const save = cloud ? h('button.btn', { type: 'button', 'aria-label': `Save ${r.fileName} to Local` }, icon('cloud', 16), 'Save to Local') : null;
       save?.addEventListener('click', () => saveWithPicker(r, status));
       const meta = r.kind === 'video' || r.kind === 'gif'
         ? `${r.width} x ${r.height}, ${clock(r.duration)}, ${formatBytes(r.blob.size)}`

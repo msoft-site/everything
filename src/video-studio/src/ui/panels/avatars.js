@@ -1,7 +1,7 @@
 /**
  * Avatars tab: pick an original presenter, write or paste a script, choose
  * a voice, the framing, background and position, and add a talking avatar
- * clip with its voice. The voice comes from text to speech (Puter AI, so
+ * clip with its voice. The voice comes from text to speech (本地智能引擎, so
  * signed-out users see the sign-in prompt) or from an audio clip already on
  * the timeline, which works on the device alone.
  */
@@ -21,8 +21,8 @@ import { characterGrid, framingControl, backgroundControl, positionControl, avat
 import { tabLayout, emptyState } from './common.js';
 
 function signInHint(ctx) {
-  const btn = ctx.account?.onSignIn ? h('button.btn.small.primary', { type: 'button', onclick: () => ctx.account.onSignIn() }, icon('cloud', 14), 'Sign in to Puter') : null;
-  return h('div.avatar-signin', emptyState('user', 'Sign in for spoken scripts', 'Text to speech runs on Puter AI, so it needs a Puter account. You can still give an avatar the voice of an audio clip on the timeline.', btn));
+  const btn = ctx.account?.onSignIn ? h('button.btn.small.primary', { type: 'button', onclick: () => ctx.account.onSignIn() }, icon('cloud', 14), 'Sign in') : null;
+  return h('div.avatar-signin', emptyState('user', 'Sign in for spoken scripts', 'Text to speech runs on 本地智能引擎, so it needs an account. You can still give an avatar the voice of an audio clip on the timeline.', btn));
 }
 
 export function avatarsTab(ctx) {
@@ -128,7 +128,7 @@ export function avatarsTab(ctx) {
   /** Why the avatar cannot be added yet ('' when it can). */
   const blocker = () => {
     if (source === 'clip') return clipSel.value ? '' : 'Add an audio clip to the timeline first, or take the voice from a script.';
-    if (!aiAvailable(ctx)) return 'Sign in to Puter to speak a script, or take the voice from an audio clip.';
+    if (!aiAvailable(ctx)) return 'Sign in to speak a script, or take the voice from an audio clip.';
     return script.value.trim() ? '' : 'Write a script under Voice first.';
   };
   const paintWhere = () => {

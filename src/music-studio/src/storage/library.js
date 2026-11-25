@@ -2,7 +2,7 @@
 //
 //   This device (IndexedDB, works signed out): projects saved with Save while
 //   signed out, the bytes of every imported sample, and the autosaved session.
-//   Puter cloud (signed in only): Projects/<name>.msproj and
+//   local storage (signed in only): Projects/<name>.msproj and
 //   Samples/<storage key>.<ext> in the app's own Puter folder (~/AppData/<app id>) (each sample is uploaded once, the
 //   first time a project using it is saved to the cloud).
 //

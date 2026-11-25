@@ -112,7 +112,7 @@ export async function openLocalProjects(app) {
     list,
     empty,
     canSignIn
-      ? h('div.lp-cloud', icon('cloud', 16), h('span', '登录 Puter 以将工程保存到云端，并在任何设备上打开。'), h('button.btn.sm', { type: 'button', onclick: () => (closeDialog?.(null), app.signIn?.()) }, '登录'))
+      ? h('div.lp-cloud', icon('cloud', 16), h('span', '登录本地账户 以将工程保存到云端，并在任何设备上打开。'), h('button.btn.sm', { type: 'button', onclick: () => (closeDialog?.(null), app.signIn?.()) }, '登录'))
       : null,
   );
   const footerStart = h('button.btn', { type: 'button', onclick: () => (closeDialog?.(null), app.commands.run('file.openLocal')) }, icon('upload', 14), h('span', '从当前设备打开...'));

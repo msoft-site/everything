@@ -15,7 +15,7 @@
  *   graphicStyle    { style }                         fill, stroke, effects, ...
  *   text            { text }                          plain text
  *
- * Libraries live in the user's Puter cloud (app data folder "libraries")
+ * Libraries live in the user's local storage (app data folder "libraries")
  * when signed in, else in this browser's private storage, so they follow
  * the user across devices whenever possible.
  */

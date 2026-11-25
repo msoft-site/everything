@@ -1,5 +1,5 @@
 /**
- * The email channel. Every Puter account has an address, <username>@puter.email,
+ * The email channel. Every account has an address, <username>@puter.email,
  * whose mail is stored in the account's own drive. When the owner turns this
  * on, their browser checks that mailbox while the app is open and hands new
  * messages to the help desk, which opens tickets or threads replies (see

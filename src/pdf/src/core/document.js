@@ -1342,7 +1342,7 @@ export async function samplePdf() {
     [
       '03',
       'Take your work with you',
-      'Download a PDF to your device, or save a copy to Puter.\nYour files stay in your own cloud.',
+      'Download a PDF to your device, or save a copy locally.\nYour files stay in your own cloud.',
     ],
   ];
   sections.forEach(([n, title, body], i) => {

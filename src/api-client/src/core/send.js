@@ -8,7 +8,7 @@
  * - relay: a raw HTTP/1.1 client over puter.net sockets, Puter's socket
  *   relay (TLS runs in the browser). Works with any server, sends every
  *   header as written and shows every response header, but needs a
- *   signed-in Puter account.
+ *   signed-in account.
  *
  * 'auto' sends through the relay when signed in, and from the browser for
  * local servers (the relay cannot reach them) and when signed out. When the
@@ -72,7 +72,7 @@ export class SendError extends Error {
   }
 }
 
-/** True when puter.net refused to open a socket because the Puter session is missing or expired. */
+/** True when puter.net refused to open a socket because the local session is missing or expired. */
 function isAuthFailure(err) {
   return /relay token[^]*\b40[13]\b|\b(unauthori[sz]ed|not signed in|authentication)\b/i.test(err?.message || '');
 }
@@ -250,7 +250,7 @@ export function puterSockets(puter) {
 }
 
 export async function sendRelay(resolved, { files, signal, timeoutMs = 0, followRedirects: follow = true, openSocket, cookieJar, maxBytes = 100 * 1048576 } = {}) {
-  if (!openSocket) throw new SendError('Sign in to Puter to send requests through the Puter relay.', { code: 'signed-out', transport: 'relay', beforeConnect: true });
+  if (!openSocket) throw new SendError('Sign in to send requests through the Puter relay.', { code: 'signed-out', transport: 'relay', beforeConnect: true });
   let payload = null;
   let contentType = null;
   try {
@@ -299,7 +299,7 @@ export async function sendRelay(resolved, { files, signal, timeoutMs = 0, follow
     if (err instanceof SendError) throw err;
     const beforeConnect = !!err?.beforeConnect && !answered;
     if (beforeConnect && isAuthFailure(err)) {
-      throw new SendError('Your Puter session has expired.', { code: 'signed-out', hint: 'Sign in again to send requests through the Puter relay.', transport: 'relay', beforeConnect: true, cause: err });
+      throw new SendError('Your local session has expired.', { code: 'signed-out', hint: 'Sign in again to send requests through the Puter relay.', transport: 'relay', beforeConnect: true, cause: err });
     }
     throw new SendError(err?.message || 'Could not get a response through the relay.', { code: 'network', transport: 'relay', beforeConnect, cause: err });
   } finally {
@@ -359,7 +359,7 @@ export async function send(resolved, options = {}) {
         : `The browser does not let pages set ${dropped.join(', ')}. Send through the Puter relay to include ${dropped.length > 1 ? 'them' : 'it'}.`,
     );
   }
-  if (relayError) warnings.unshift(relayError.code === 'signed-out' ? 'Your Puter session has expired, so this was sent from the browser. Sign in again to use the Puter relay.' : `The Puter relay could not connect (${relayError.message}), so this was sent from the browser.`);
+  if (relayError) warnings.unshift(relayError.code === 'signed-out' ? 'Your local session has expired, so this was sent from the browser. Sign in again to use the Puter relay.' : `The Puter relay could not connect (${relayError.message}), so this was sent from the browser.`);
   try {
     const res = await sendBrowser(resolved, options);
     res.warnings.unshift(...warnings);
@@ -370,7 +370,7 @@ export async function send(resolved, options = {}) {
     if (relayError) throw relayError;
     if (!relay) {
       const again = err.code === 'mixed-content' || canRetry(resolved) ? '' : ' The request may already have reached the server, so check before sending it again.';
-      err.hint = `${err.hint} Sign in to Puter to send it through the Puter relay.${again}`.trim();
+      err.hint = `${err.hint} Sign in to send it through the Puter relay.${again}`.trim();
       if (err.code !== 'mixed-content') err.code = 'cors';
     }
     throw err;

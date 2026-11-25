@@ -1,6 +1,6 @@
 /**
- * Writing help powered by Puter AI. Requests run with the signed-in agent's
- * own Puter account (user pays), and nothing is sent until the agent asks.
+ * Writing help powered by 本地智能引擎. Requests run with the signed-in agent's
+ * own account (user pays), and nothing is sent until the agent asks.
  */
 import { h } from '../ui/dom.js';
 import { openMenu } from '../ui/popover.js';

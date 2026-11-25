@@ -1,5 +1,5 @@
 /**
- * Each workspace owner runs the Teamchat worker in their own Puter account.
+ * Each workspace owner runs the Teamchat worker in their own account.
  * This module puts it there: it fetches the bundle the app ships
  * (public/worker/teamchat-worker.js), writes it to the user's drive, and
  * creates a worker from it with puter.workers.create(). The worker's KV is
@@ -69,7 +69,7 @@ async function waitForBuild(url, build, { attempts = 20, delay = 1000 } = {}) {
 export async function deployOwnWorker({ onProgress } = {}) {
   onProgress?.('Preparing your workspace server');
   const { source, build } = await fetchBundle();
-  onProgress?.('Copying the server to your Puter drive');
+  onProgress?.('Copying the server to local storage');
   const path = await writeBundle(FILE_NAME, source);
   let lastError = null;
   for (let attempt = 0; attempt < 4; attempt++) {
@@ -92,7 +92,7 @@ export async function deployOwnWorker({ onProgress } = {}) {
     await waitForBuild(url, build);
     return { name, url, path: dep?.file_path || path, build, createdAt: Date.now() };
   }
-  throw new Error(`Could not create a worker in your Puter account: ${lastError?.message || lastError}`);
+  throw new Error(`Could not create a worker in your local account: ${lastError?.message || lastError}`);
 }
 
 /** The user's own worker of exactly this name, from the account's list, or null (never another account's: names are global, the list is ours). */

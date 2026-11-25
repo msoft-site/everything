@@ -1132,7 +1132,7 @@ export function mountShell(appRoot) {
   // elsewhere, lapsed, or Puter not answering the worker for a moment. The
   // worker answers each poll and each send 401, and nothing on the screen
   // said why nothing arrived any more and every send came back "not sent"
-  // with "Your Puter session is not valid". Said once, kept until acted on
+  // with "Your local session is not valid". Said once, kept until acted on
   // (a reload finds the account out of reach and leads to the sign-in page;
   // see main.js boot), or put away: a moment's failure at Puter mends
   // itself, and the words allow for it.

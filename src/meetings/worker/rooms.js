@@ -33,7 +33,7 @@
  * Bodies are JSON sent as text/plain, so browsers make no CORS preflight
  * and `navigator.sendBeacon` can post the same thing on the way out. The
  * runtime adds `Access-Control-Allow-Origin: *`; nothing here needs a
- * Puter session — a room code is the capability, as the link already is.
+ * local session — a room code is the capability, as the link already is.
  *
  * Deploy (once; later deploys overwrite the file behind the same name):
  *   puter worker deploy worker/rooms.js puter-meetings-rooms

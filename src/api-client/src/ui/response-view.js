@@ -118,7 +118,7 @@ export class ResponseView {
     if (err.code !== 'aborted') actions.push(h('button.btn.sm', { type: 'button', onclick: () => this.onRetry?.() }, icon('refresh', 14), 'Try again'));
     const signInSend = (transport) => h('button.btn.sm.primary', { type: 'button', onclick: () => this.onSignInSend?.(transport) }, icon('logIn', 14), 'Sign in and send');
     if (err.code === 'signed-out') {
-      // Signed out, or the Puter session expired: the relay needs an account.
+      // Signed out, or the local session expired: the relay needs an account.
       if (this.app.session.puter) actions.push(signInSend(err.transport === 'relay' ? 'relay' : null));
     } else if (['cors', 'network', 'mixed-content'].includes(err.code) && err.transport !== 'relay') {
       if (signedIn) actions.push(h('button.btn.sm.primary', { type: 'button', onclick: () => this.onRelay?.() }, icon('server', 14), 'Send through Puter relay'));

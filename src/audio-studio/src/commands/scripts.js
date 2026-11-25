@@ -153,7 +153,7 @@ log(ok ? 'Amplified' : 'Nothing was changed');`,
   },
   {
     name: 'Export every open file as MP3',
-    about: 'Writes each open file as a 192 kbps MP3 (to ~/AudioStudio/MP3 when signed in to Puter).',
+    about: 'Writes each open file as a 192 kbps MP3 (to ~/AudioStudio/MP3 when signed in).',
     code: `const folder = app.prefs.get('exportFolder') ? app.prefs.get('exportFolder') + '/MP3' : '~/AudioStudio/MP3';
 for (const doc of app.documents.filter((d) => d.kind === 'audio')) {
   const r = await exportFile(doc, { format: 'mp3', settings: { bitrate: 192 }, folder });
@@ -214,7 +214,7 @@ export function scriptsDialog(app) {
     name = file.name;
     nameText.textContent = file.name;
     output.textContent = '';
-    status.textContent = `Loaded ${file.name}. Read it before running: scripts can change and close files and use your Puter account.`;
+    status.textContent = `Loaded ${file.name}. Read it before running: scripts can change and close files and use your local account.`;
   });
   const save = h('button.btn', { type: 'button' }, icon('download', 14), 'Download');
   save.addEventListener('click', () => downloadBlob(new Blob([editor.value], { type: 'text/javascript' }), /\.m?js$/i.test(name) ? name : `${name}.js`));

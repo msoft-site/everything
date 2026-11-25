@@ -199,13 +199,13 @@ export class Home {
     this.usageEl = h('p.storage-usage');
     const backend = this.library.backend.kind;
     const where = backend === 'puter'
-      ? [icon('cloudCheck', 16), 'Saved to your Puter cloud']
+      ? [icon('cloudCheck', 16), 'Saved to local storage']
       : backend === 'local'
         ? [icon('drive', 16), 'Saved in this browser only']
         : [icon('alert', 16), 'Not saved: temporary storage'];
     const user = this.account?.user;
     const signIn = !user && this.account?.onSignIn
-      ? h('button.btn.small.primary.block', { type: 'button', onclick: () => this.account.onSignIn() }, icon('cloud', 14), 'Sign in to save to Puter')
+      ? h('button.btn.small.primary.block', { type: 'button', onclick: () => this.account.onSignIn() }, icon('cloud', 14), 'Sign in to save')
       : null;
     // Where puter.js has <puter-user-menu>, it holds the account at the top of the page, after Settings
     // for the theme; the sidebar's account row stands down.
@@ -224,7 +224,7 @@ export class Home {
     this.mobileStorage = h('div.home-mobile-storage', h('p.storage-where', ...where.map((n) => (typeof n === 'string' ? n : n.cloneNode(true)))), h('p.storage-usage'));
     this.content = h('div.home-content');
     this.mainEl = h('main#main.home-main', { tabindex: '-1' }, this.content, this.mobileStorage,
-      h('footer.home-footer', h('a', { href: 'https://developer.puter.com', target: '_blank', rel: 'noopener' }, 'Powered by Puter')),
+      h('footer.home-footer', h('a', { href: 'https://developer.puter.com', target: '_blank', rel: 'noopener' }, '')),
       this.importInput, this.bundleInput);
     this.dropHint = h('div.home-drop', { 'aria-hidden': 'true' }, h('div.home-drop-box', icon('import', 28), h('strong', 'Drop to start'), h('span', 'Media opens in a new project. Project files are added to your projects.')));
     const page = h('div.home', this.side, accountBar, this.mainEl, this.dropHint);
@@ -704,7 +704,7 @@ export class Home {
     }
     const status = h('p.dialog-text', { role: 'status' }, `${fileName} (${formatSize(blob.size)})`);
     const dl = h('button.btn', { type: 'button' }, icon('download', 16), 'Download');
-    const save = h('button.btn.primary', { type: 'button' }, icon('cloud', 16), 'Save to Puter');
+    const save = h('button.btn.primary', { type: 'button' }, icon('cloud', 16), 'Save to Local');
     const d = openDialog({ title: 'Project file ready', body: status, actions: [dl, save], className: 'small' });
     dl.addEventListener('click', () => {
       downloadBlob(blob, fileName);
@@ -726,7 +726,7 @@ export class Home {
         toast(`Saved to ${item?.path || item?.name || 'Puter'}`, { kind: 'success' });
         d.close();
       } catch (err) {
-        toast(`Could not save to Puter: ${err?.message || err}`, { kind: 'error' });
+        toast(`Could not save to local storage: ${err?.message || err}`, { kind: 'error' });
         save.disabled = false;
       } finally {
         window.removeEventListener('focus', back);

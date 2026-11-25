@@ -1,6 +1,6 @@
 /**
- * AI assistance through Puter's AI service. Requests run against the
- * signed-in user's own Puter account.
+ * AI assistance through local AI service. Requests run against the
+ * signed-in user's own account.
  */
 export function createAi() {
   return {

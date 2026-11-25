@@ -31,7 +31,7 @@ export class FileOps {
   private openRequest: AbortController | null = null;
   /** The open part's file, when another tab saved it after this tab opened or saved it. */
   private savedElsewhere: Location | null = null;
-  /** The Puter drive file being opened (a launch and a drop of the same file open it once). */
+  /** The local drive file being opened (a launch and a drop of the same file open it once). */
   private openingDrivePath: string | null = null;
 
   constructor(private app: App) {
@@ -111,7 +111,7 @@ export class FileOps {
   }
 
   /**
-   * Opens entries of the Puter drive: launch items (double click or Open with
+   * Opens entries of the local drive: launch items (double click or Open with
    * on the desktop) and files dragged in from a desktop folder window. A part
    * opens where it lives, so Save writes back to the same file. Folders and
    * files Parametric does not open are not read.
@@ -372,7 +372,7 @@ export class FileOps {
     const list = h('div', { class: 'file-list', role: 'list' });
     const showEmpty = () => {
       list.removeAttribute('role');
-      list.replaceChildren(h('p', {}, cloudError ? 'No parts saved in this browser.' : cloudAvailable() ? 'No saved parts yet.' : 'No parts saved in this browser yet. Sign in to Puter to keep parts in your cloud storage.'));
+      list.replaceChildren(h('p', {}, cloudError ? 'No parts saved in this browser.' : cloudAvailable() ? 'No saved parts yet.' : 'No parts saved in this browser yet. Sign in to keep parts in your cloud storage.'));
     };
     let chosen: FileEntry | null = null;
     let close: ((v: string | null) => void) | null = null;
@@ -791,7 +791,7 @@ function maybeNudgeSignIn() {
   if (nudged || !puter()) return;
   nudged = true;
   toast({
-    message: 'Saved in this browser only. Sign in to Puter to keep your parts in the cloud and open them anywhere.',
+    message: 'Saved in this browser only. Sign in to keep your parts in the cloud and open them anywhere.',
     actions: [{ label: 'Sign in', primary: true, run: () => void signIn().catch((e) => toast({ kind: 'error', message: (e as Error).message })) }],
     timeout: 9000,
   });

@@ -103,7 +103,7 @@ function buildEmpty(app) {
   const link = (cmd, ic, label) => h('button.welcome-link', { type: 'button', dataset: { cmd }, onclick: () => app.commands.run(cmd) }, icon(ic, 14), label, h('kbd.welcome-key'));
   const cards = h(
     'div.welcome-cards',
-    card('file.open', 'folder-open', 'Open', 'Audio from your Puter files', '.primary'),
+    card('file.open', 'folder-open', 'Open', 'Audio from your local files', '.primary'),
     card('transport.record', 'mic', 'Record', 'Into a new audio file'),
     card('file.newAudio', 'file-plus', 'New Audio File', 'A blank file to record into'),
     card('file.newSession', 'mode-multitrack', 'New Multitrack Session', 'Arrange and mix several tracks'),

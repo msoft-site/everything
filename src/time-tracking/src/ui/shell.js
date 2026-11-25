@@ -130,7 +130,7 @@ export function mountShell(appRoot) {
   }
 
   /* Sidebar (desktop) */
-  const username = store.user?.username || 'Puter 用户';
+  const username = store.user?.username || '本地用户';
   const sidebarNav = el('div', { style: { display: 'contents' } });
   const sidebar = el('nav.sidebar', { 'aria-label': '主导航' },
     el('div.brand', {},

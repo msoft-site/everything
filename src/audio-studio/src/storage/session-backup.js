@@ -373,7 +373,7 @@ export function installSessionBackup(app, { store, tab, now = () => Date.now() }
         const key = files.get(src.file);
         return key ? store.readMedia(key) : null;
       });
-      // Saving a restored session asks where unless it came from Puter; its media are written again.
+      // Saving a restored session asks where unless it came from local storage; its media are written again.
       if (m.source?.type === 'puter') {
         session.source = { type: 'puter', path: m.source.path };
       }

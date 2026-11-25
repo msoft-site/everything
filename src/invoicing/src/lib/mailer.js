@@ -225,7 +225,7 @@ export function describeUnreached(email, outcome, { copySent = false } = {}) {
 /** Why a send did not happen, in words the user can act on. */
 export function failureMessage(status, data) {
   const code = (data && data.error) || '';
-  if (status === 401 || code === 'sign_in_required') return 'Sign in to Puter again to send email.';
+  if (status === 401 || code === 'sign_in_required') return 'Sign in again to send email.';
   if (status === 429 || code === 'daily_limit') return "You've reached today's email limit. Try again tomorrow.";
   // The worker could not read its own books (the daily counter), so it sent
   // nothing rather than guess. Transient, and nothing to change on this end.

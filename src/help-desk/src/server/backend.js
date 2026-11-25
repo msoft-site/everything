@@ -43,7 +43,7 @@ export function createBackend(options) {
 
   async function identity(req) {
     const who = await req.who?.();
-    if (!who || !who.uuid) fail(401, 'unauthorized', '请登录 Puter 以继续');
+    if (!who || !who.uuid) fail(401, 'unauthorized', '请登录本地账户 以继续');
     return who;
   }
 
@@ -924,7 +924,7 @@ export function createBackend(options) {
     };
   }
 
-  /** The requester behind a help center call: a link key or their Puter account. */
+  /** The requester behind a help center call: a link key or their account. */
   async function requestAccess(req, p, id) {
     const ticket = await store.get(p.K.ticket(id));
     if (!ticket || ticket.deleted || ticket.spam) fail(404, 'not_found', '未找到该请求');

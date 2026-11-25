@@ -4,7 +4,7 @@
   "private": true,
   "license": "AGPL-3.0-only",
   "type": "module",
-  "description": "A private, framework-free PDF workspace powered by Puter.",
+  "description": "A private, framework-free PDF workspace .",
   "scripts": {
     "dev": "vite",
     "build": "npm run licenses && vite build",

@@ -27,7 +27,7 @@ async function start() {
   // opened on the sign-in screen would never have a shell to launch.
   registerWorker();
   if (typeof puter === 'undefined') {
-    showError('Couldn’t reach Puter', 'The Puter SDK failed to load. Check your connection and try again.', () => location.reload());
+    showError('Could not reach storage service', 'Local storage engine failed to load. Please reload.', () => location.reload());
     return;
   }
 
@@ -71,7 +71,7 @@ async function boot() {
     await store.init();
   } catch (err) {
     console.error(err);
-    showError('Couldn’t load your data', 'Something went wrong talking to your Puter cloud.', () => location.reload());
+    showError('Couldn’t load your data', 'Something went wrong talking to local storage.', () => location.reload());
     return;
   }
 

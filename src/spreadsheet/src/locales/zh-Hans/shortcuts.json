@@ -85,7 +85,7 @@
   "what.nudgeObject": "将所选图表、图片或文本框微移 8px 或一整个单元格（{mod} + C 将其复制为图片，Enter 编辑，Delete 删除，Esc 取消选择）",
   "what.numberFormats": "数值/时间/日期/货币/百分比/科学记数格式",
   "what.openDropdown": "打开下拉列表、日期单元格的日历，或从该列已有的条目中选取",
-  "what.openFromPuter": "从 Puter 打开",
+  "what.openFromPuter": "从本地打开",
   "what.openLink": "打开链接（指向工作表或区域的链接会跳转到该处）",
   "what.openMenu": "打开所选单元格或当前工作表标签的菜单",
   "what.outlineBorder": "外侧框线",

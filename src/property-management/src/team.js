@@ -1,6 +1,6 @@
 /**
  * Team access. A business owner turns it on once: the app copies the team
- * worker (public/worker/property-management-team-worker.js) into their Puter drive
+ * worker (public/worker/property-management-team-worker.js) into their local drive
  * and deploys it with puter.workers.create, so the worker runs in, and stores
  * data in, the owner's own account. The owner's records are copied into it,
  * and from then on everyone in the business (owner included) reads and
@@ -225,7 +225,7 @@ export async function enableTeam({ store, onProgress = () => {} }) {
       lastErr = err;
     }
   }
-  if (!dep) throw new Error(`Could not create the team server in your Puter account. ${lastErr?.message || ''}`.trim());
+  if (!dep) throw new Error(`Could not create the team server in your local account. ${lastErr?.message || ''}`.trim());
   const url = normalizeWorkerUrl(dep.url || `https://${name}.puter.work`);
   // A setup that does not finish removes its server, so retrying does not
   // leave unused workers behind in the account.

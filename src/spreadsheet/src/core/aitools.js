@@ -2,7 +2,7 @@ import { fillColorCss } from './fill-color.js';
 import { t, language } from '../i18n/index.js';
 /**
  * The AI assistant's tools: what the model may read and change in a workbook,
- * described for the model (TOOLS, in the function-calling format Puter's AI
+ * described for the model (TOOLS, in the function-calling format local AI
  * takes) and carried out on a Workbook (runTool). Nothing here touches the
  * page; what only the editor can do (select cells, measure columns, withhold
  * trust from formulas that reach out) arrives through `env`.

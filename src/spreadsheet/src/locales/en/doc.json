@@ -9,7 +9,7 @@
   "restoreChanged": "The spreadsheet changed while preparing to restore. Your edits are intact; try restoring again.",
   "saveFailed": "Could not save",
   "sharedFile": "This spreadsheet is shared for editing together, and the shared workbook could not be reached: it writes this file, and would write over changes saved here. Open the spreadsheet again once connected, or use File > Save a copy to keep your changes",
-  "signInToSave": "Sign in to Puter to save this spreadsheet",
+  "signInToSave": "Sign in to save this spreadsheet",
   "status.changedElsewhere": "This file changed elsewhere",
   "status.movedOrDeleted": "This file was moved or deleted",
   "status.notChecked": "This file could not be checked for changes made elsewhere",

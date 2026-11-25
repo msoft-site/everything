@@ -18,7 +18,7 @@ import { avatar, field, textInput } from '../ui/bits.js';
 export async function confirmSignOut() {
   const ok = await confirmDialog({
     title: 'Sign out?',
-    message: 'Your data stays safe in your Puter account.',
+    message: 'Your data stays safe in your local account.',
     confirmLabel: 'Sign out',
     danger: false,
   });
@@ -42,7 +42,7 @@ export function settingsView() {
   );
 
   /* --- Account --- */
-  const username = store.user?.username || 'Puter user';
+  const username = store.user?.username || 'Local user';
   root.append(group('Account',
     el('div.user-chip', {},
       avatar(username),
@@ -53,7 +53,7 @@ export function settingsView() {
         el('div.row-title', {}, username),
         // A sentence, and the only place it is said: on a phone the one-line
         // cut left "Synced with …" beside the Sign out button.
-        el('div.row-sub.wrap', {}, 'Synced with your Puter cloud')
+        el('div.row-sub.wrap', {}, 'Synced with your local storage')
       ),
       !isApp && el('button.btn.btn-ghost', { onclick: confirmSignOut }, 'Sign out')
     )
@@ -366,7 +366,7 @@ export function settingsView() {
   /* --- About --- */
   root.append(group('About',
     el('p.about-text', {},
-      'Contract Manager stores everything in your own Puter cloud: nothing is sent anywhere else. Obligation extraction sends the text you give it to the AI; a scan with no text in it is sent as page images, and only once you have agreed to that. Built on ',
+      'Contract Manager stores everything in your own local storage: nothing is sent anywhere else. Obligation extraction sends the text you give it to the AI; a scan with no text in it is sent as page images, and only once you have agreed to that. Built on ',
       el('a', { href: 'https://developer.puter.com', target: '_blank', rel: 'noopener' }, 'Puter'),
       '.')
   ));

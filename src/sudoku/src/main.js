@@ -988,7 +988,7 @@ function renderAccount() {
     el.accountName.textContent = '登录';
     el.accountBtn.disabled = false;
     el.accountBtn.title = '登录以在多台设备间同步您的谜题进度和用时记录';
-    el.accountBtn.setAttribute('aria-label', '使用 Puter 登录');
+    el.accountBtn.setAttribute('aria-label', '登录账户');
     return;
   }
 
@@ -998,11 +998,11 @@ function renderAccount() {
   // https://docs.puter.com/Utils/env/
   el.accountBtn.disabled = hosted;
   el.accountBtn.title = hosted
-    ? `已登录为 ${state.accountName ?? '您的 Puter 账户'}`
+    ? `已登录为 ${state.accountName ?? '您的 本地账户'}`
     : '退出登录';
   el.accountBtn.setAttribute(
     'aria-label',
-    hosted ? `已登录为 ${state.accountName ?? '您的 Puter 账户'}` : '退出登录',
+    hosted ? `已登录为 ${state.accountName ?? '您的 本地账户'}` : '退出登录',
   );
 }
 

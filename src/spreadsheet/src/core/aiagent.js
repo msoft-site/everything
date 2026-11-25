@@ -5,7 +5,7 @@
  * question put to the user before a change that takes away data all come from the caller, so the
  * whole exchange can be played out in a test with a scripted model.
  *
- * The transcript is kept in the shape Puter's AI takes (OpenAI's): user, assistant (with its
+ * The transcript is kept in the shape local AI takes (OpenAI's): user, assistant (with its
  * tool_calls), and one tool message answering each call. Every call gets an answer, even one the
  * user declined or stopped, or the next request would be refused as malformed.
  */
@@ -17,7 +17,7 @@ import { attachmentsIntro, attachmentsGone, attachmentWeight, attachmentsFit, se
 import { t, tSource } from '../i18n/index.js';
 import { languageNote } from './aiformula.js';
 
-/** The model the assistant runs on, through Puter's AI. */
+/** The model the assistant runs on, through local AI. */
 export const AI_MODEL = 'claude-opus-5-5';
 
 /**

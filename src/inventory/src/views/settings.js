@@ -59,8 +59,8 @@ export async function confirmSignOut() {
   const ok = await confirmDialog({
     title: 'Sign out?',
     message: unsynced
-      ? `${unsynced} change${unsynced === 1 ? ' hasn’t' : 's haven’t'} synced to your Puter account yet and will be lost if you sign out now. Everything already synced stays safe.`
-      : 'Your inventory stays safe in your Puter account and will be here when you sign back in.',
+      ? `${unsynced} change${unsynced === 1 ? ' hasn’t' : 's haven’t'} synced to your local account yet and will be lost if you sign out now. Everything already synced stays safe.`
+      : 'Your inventory stays safe in your local account and will be here when you sign back in.',
     confirmLabel: 'Sign out',
     danger: unsynced > 0,
   });
@@ -401,14 +401,14 @@ function renderInto(root) {
       el('div.settings-row.row-stacks', {},
         el('span.user-avatar', {}, (username || 'P').charAt(0).toUpperCase()),
         el('div.grow', {},
-          el('div.title', {}, username || 'Puter user'),
-          el('div.sub', {}, isPuterApp ? 'Signed in with Puter' : 'Signed in with Puter cloud storage')
+          el('div.title', {}, username || 'Local user'),
+          el('div.sub', {}, isPuterApp ? 'Signed in' : 'Signed in cloud storage')
         ),
         !isPuterApp && el('button.btn.btn-secondary', { onclick: confirmSignOut }, 'Sign out')
       )
     ),
     el('p.small.muted', { style: { margin: '18px 4px' } },
-      'Inventory stores everything in your own Puter account. Powered by ',
+      'Inventory stores everything in local storage. Powered by ',
       el('a', { href: 'https://developer.puter.com', target: '_blank', rel: 'noopener' }, 'Puter'), '.')
   );
 }

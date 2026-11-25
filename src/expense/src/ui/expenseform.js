@@ -82,7 +82,7 @@ export function openExpenseForm({ expense = null, prefill = {}, receiptFile = nu
           thumb,
           el('div.grow', {},
             el('div.title.truncate', {}, name),
-            el('div.sub', {}, [pendingFile ? '准备上传' : '已存储在您的 Puter 云盘', size].filter(Boolean).join('，'))
+            el('div.sub', {}, [pendingFile ? '准备上传' : '已存储在您的 本地驱动器', size].filter(Boolean).join('，'))
           ),
           hasStored && !pendingFile && el('button.icon-btn', { type: 'button', html: icon('eye', 18, 2), 'aria-label': '查看票据', onclick: () => openReceiptViewer(expense) }),
           el('button.icon-btn', { type: 'button', html: icon('swap', 18, 2), 'aria-label': '替换票据', title: '替换', onclick: () => fileInput.click() }),

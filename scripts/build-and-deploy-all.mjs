@@ -138,7 +138,28 @@ async function main() {
       console.log(`[${idx}/${apps.length}] 处理应用 ${currentApp}...`);
 
       try {
-        const needsBuild = !fs.existsSync(path.join(appDist, 'index.html')) ||
+        const isOutdated = () => {
+          if (!fs.existsSync(path.join(appDist, 'index.html'))) return true;
+          const distMtime = fs.statSync(path.join(appDist, 'index.html')).mtimeMs;
+          const checkDirs = [path.join(appDir, 'src'), path.join(appDir, 'index.html'), path.join(appDir, 'public')];
+          for (const d of checkDirs) {
+            if (!fs.existsSync(d)) continue;
+            if (fs.statSync(d).isDirectory()) {
+              const files = fs.readdirSync(d, { recursive: true });
+              for (const f of files) {
+                const fp = path.join(d, f);
+                try {
+                  if (fs.statSync(fp).mtimeMs > distMtime) return true;
+                } catch {}
+              }
+            } else {
+              if (fs.statSync(d).mtimeMs > distMtime) return true;
+            }
+          }
+          return false;
+        };
+
+        const needsBuild = isOutdated() ||
           process.env.REBUILD === 'all' ||
           process.env.REBUILD === currentApp;
 

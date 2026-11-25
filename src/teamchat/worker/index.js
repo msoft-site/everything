@@ -5,7 +5,7 @@
  * account (the app deploys it for them), so a workspace's data lives in its
  * owner's key-value store (me.puter.kv), which is what lets every member
  * read and write the same channels, and the owner pays for it. Callers are
- * identified by the Puter session that puter.workers.exec() forwards;
+ * identified by the local session that puter.workers.exec() forwards;
  * nothing about identity is trusted from request bodies. Only the owner may
  * create workspaces here (see assertMayCreate); members of other people's
  * workspaces only ever touch data inside those workspaces.
@@ -8127,7 +8127,7 @@ router.post('/api/ws/:ws/search/reindex', route(async ({ params, request, user }
  * the id makes the record a direct get, the secret is stored only as a
  * SHA-256 hash and compared in constant time, and the token is shown to the
  * admin exactly once. These are the only routes besides /health that take
- * no Puter session, so they are rate-limited per token and reject oversized
+ * no local session, so they are rate-limited per token and reject oversized
  * bodies before touching storage.
  */
 const TOKEN_RE = /^(tch|tcb)_([a-z0-9]{10})_([a-z0-9]{32})$/;

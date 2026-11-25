@@ -560,7 +560,7 @@ class Store extends EventTarget {
     this.#lastContact = null;
     this.#links = null;
     // The signed-in user, remembered locally: an offline start can't ask
-    // the platform who this is, and "Puter user" in the sidebar of your own
+    // the platform who this is, and "Local user" in the sidebar of your own
     // CRM reads like a different account.
     try {
       this.user = await puter.auth.getUser();

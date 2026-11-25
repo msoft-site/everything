@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Drive a real MCP session against the real server, with no Puter account and no
+ * Drive a real MCP session against the real server, with no account and no
  * desktop:
  *
  *   node scripts/mcp-demo.js

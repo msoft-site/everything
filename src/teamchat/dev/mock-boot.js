@@ -4,7 +4,7 @@
  * surface the app uses: auth, the user's own kv, fs, and workers (create,
  * get, list, exec). Each mock user "deploys" their own fake worker the way
  * a real user does, and every fake worker sees its own slice of the store,
- * so the per-owner model is exercised end to end without a Puter account.
+ * so the per-owner model is exercised end to end without an account.
  * Tabs share the store: open one as ?as=alice and another as ?as=bob to
  * watch messages flow between them.
  *

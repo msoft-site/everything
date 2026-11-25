@@ -23,7 +23,7 @@
   "post": "Post",
   "postReply": "Post reply",
   "postShortcut": "Post ({mod}+Enter)",
-  "puterUser": "Puter user {user}",
+  "puterUser": "Local user {user}",
   "reopen": "Reopen",
   "reopenThread": "Reopen thread",
   "replyPlaceholder": "Reply… (@ to mention someone)",

@@ -80,7 +80,7 @@ export async function openFileDialog(app) {
       'div.open-sources',
       h('button.btn.big', { type: 'button', onClick: () => ((pick = { source: 'device' }), closeFn()) }, icon('upload', 20), h('span', h('strong', 'Open from this device'), h('small', 'A .dwg or .dxf file on your computer'))),
     ),
-    h('h3.dlg-sub', 'Your Puter drive'),
+    h('h3.dlg-sub', '本地存储'),
     status,
     list,
   );
@@ -91,7 +91,7 @@ export async function openFileDialog(app) {
       list.append(
         h(
           'li.file-empty',
-          h('p', 'Sign in with Puter to open and save drawings in your cloud drive.'),
+          h('p', '在此处打开和保存本地图形。'),
           h('button.btn.primary', { type: 'button', onClick: async () => ((await app.signIn()) ? render() : null) }, icon('log-in', 16), 'Sign in'),
         ),
       );
@@ -181,7 +181,7 @@ export async function saveAsDialog(app, doc) {
   const where = radios(
     'where',
     [
-      ['cloud', 'Puter drive', app.signedIn ? `Saved in ${storage.CLOUD_DIR} and available anywhere` : 'Requires signing in'],
+      ['cloud', '本地存储', app.signedIn ? `Saved in ${storage.CLOUD_DIR} and available anywhere` : 'Requires signing in'],
       ['device', 'This device', 'Download or save a file on your computer'],
     ],
     doc.file?.source === 'device' || !app.signedIn ? 'device' : 'cloud',

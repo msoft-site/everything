@@ -2,7 +2,7 @@
  * Email from the spreadsheet: the app's side of src/workers/email-worker.js. Send a Copy (the workbook as an
  * attachment), Send a Link (a link that opens it) and comment @mentions (a note to the person mentioned) all go
  * through the app's one shared email worker at EMAIL_WORKER_URL. The call goes through puter.workers.exec(),
- * which forwards the signed-in user's Puter session: that is what lets the worker send at all, and what bills
+ * which forwards the signed-in user's local session: that is what lets the worker send at all, and what bills
  * the send to the person sending, never the app owner. No token or credential of the user's is ever put in a
  * request body here; the worker names the sender from the session it receives.
  *

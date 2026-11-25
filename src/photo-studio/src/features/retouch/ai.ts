@@ -1,4 +1,4 @@
-// Edit > AI Fill… and AI Expand…: generative edits through Puter's AI service.
+// Edit > AI Fill… and AI Expand…: generative edits through local AI service.
 // Pixels leave the device only after the user reads the notice and presses
 // Generate in these dialogs; results arrive as new, masked layers.
 import type { Editor } from '../../editor';
@@ -27,7 +27,7 @@ function prefillOf(arg: unknown): AIPrefill {
 const attr = (v: unknown) => escapeXML(String(v ?? ''));
 
 type PuterAuth = { auth?: { isSignedIn?: () => boolean; signIn?: () => Promise<unknown> } };
-/** Make sure a Puter session exists; must run inside the click that asked for it. */
+/** Make sure a local session exists; must run inside the click that asked for it. */
 export async function ensureSignedIn() {
   const p = (globalThis as unknown as { puter?: PuterAuth }).puter;
   if (!p) throw new AIError('unavailable', 'AI features need Puter. Check your connection and try again.');
@@ -35,13 +35,13 @@ export async function ensureSignedIn() {
     try {
       await p.auth.signIn?.();
     } catch {
-      throw new AIError('unavailable', 'Sign in to your Puter account to use AI features.');
+      throw new AIError('unavailable', 'Sign in to use AI features.');
     }
-    if (!p.auth.isSignedIn()) throw new AIError('unavailable', 'Sign in to your Puter account to use AI features.');
+    if (!p.auth.isSignedIn()) throw new AIError('unavailable', 'Sign in to use AI features.');
   }
 }
 const notice = (what: string) =>
-  `<div class="ai-notice" role="note"><strong>Before you generate</strong><p>${escapeXML(what)} is sent to Puter's AI service to create the new pixels. This requires a Puter account (you may be asked to sign in) and can use credits from your Puter balance. Nothing is sent until you press Generate.</p></div>`;
+  `<div class="ai-notice" role="note"><strong>Before you generate</strong><p>${escapeXML(what)} is sent to local AI service to create the new pixels. This requires an account (you may be asked to sign in) and can use credits from your Puter balance. Nothing is sent until you press Generate.</p></div>`;
 
 /** Shared dialog flow: collect inputs, run the generation with cancel, return the result. */
 async function aiDialog<T>(title: string, body: string, generate: (ws: ReturnType<typeof openWorkspace>, signal: AbortSignal) => Promise<T>): Promise<T | undefined> {

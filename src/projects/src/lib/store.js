@@ -247,7 +247,7 @@ export class Store extends EventTarget {
       this.#mirrorMeta();
     } catch (err) {
       // No connection: boot from what this device already knows rather than
-      // showing the "could not reach Puter" wall.
+      // showing the "Could not reach storage service" wall.
       const cached = await mirror.get(MIRROR_META);
       if (!cached) throw err;
       console.error(err);

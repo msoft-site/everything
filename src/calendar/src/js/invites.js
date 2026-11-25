@@ -72,7 +72,7 @@ export const NO_HOST_EMAIL =
 
 /** The worker's answer to a temporary account, or one with an unconfirmed email. */
 export const ACCOUNT_NOT_VERIFIED =
-  'Sending email needs a Puter account with a confirmed email address. Create one or confirm yours, then send again.';
+  'Sending email needs an account with a confirmed email address. Create one or confirm yours, then send again.';
 
 /** A stored or reported address, or '' for anything that isn't one. */
 function normalizeEmail(value) {
@@ -782,7 +782,7 @@ export function createInvites({
   function cancelFailureMessage(status, data) {
     const code = (data && data.error) || '';
     if (status === 401 || code === 'sign_in_required') {
-      return 'Sign in to Puter again to send the cancellation.';
+      return 'Sign in again to send the cancellation.';
     }
     if (code === 'account_not_verified') return ACCOUNT_NOT_VERIFIED;
     if (status === 429 || code === 'daily_limit') {
@@ -866,7 +866,7 @@ export function createInvites({
   function failureMessage(status, data) {
     const code = (data && data.error) || '';
     if (status === 401 || code === 'sign_in_required') {
-      return 'Sign in to Puter again to send invitations.';
+      return 'Sign in again to send invitations.';
     }
     if (status === 429 || code === 'daily_limit') {
       return "You've reached today's invitation limit. Try again tomorrow.";
@@ -876,7 +876,7 @@ export function createInvites({
     // The worker binds the mail's organizer to the signed-in account; a
     // mismatch means the session and this window disagree about who that is.
     if (status === 403 || code === 'organizer_mismatch') {
-      return 'Sign in to Puter again — this invitation would not be sent from your account.';
+      return 'Sign in again — this invitation would not be sent from your account.';
     }
     // The worker read our own .ics and refused it: the deployed worker is
     // behind the app's ics.js (a new property it doesn't know yet). Retrying

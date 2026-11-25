@@ -1,5 +1,5 @@
 /**
- * Receipt OCR through Puter AI. The vision model gets the image and a strict
+ * Receipt OCR through 本地智能引擎. The vision model gets the image and a strict
  * JSON contract; the response is parsed defensively because models wrap
  * JSON in prose or code fences. Falls back to plain img2txt plus a text
  * extraction pass when the vision call fails.

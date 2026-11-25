@@ -135,7 +135,7 @@ function build() {
   );
   frame = el("iframe", {
     class: "apps-frame",
-    title: "您的 Puter 应用",
+    title: "本地应用中心",
     referrerpolicy: "strict-origin-when-cross-origin",
     allow: "clipboard-read; clipboard-write",
   });

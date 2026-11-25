@@ -1,5 +1,5 @@
 /**
- * Access to Puter AI for the generative features.
+ * Access to 本地智能引擎 for the generative features.
  *
  * aiClient(app) is { txt2img(prompt, options), chat(prompt, image?) }: the
  * client set on app.generativeAI (tests and embedders inject one there),
@@ -27,9 +27,9 @@ export function aiStatus(app) {
   if (app.generativeAI) return { ok: true };
   const ai = app.puter?.ai;
   if (!ai || typeof ai.chat !== 'function') {
-    return { ok: false, reason: 'unavailable', message: 'Generative features run on Puter AI. Open Vector Studio from Puter to use them.' };
+    return { ok: false, reason: 'unavailable', message: 'Generative features run on 本地智能引擎. Open Vector Studio from local storage to use them.' };
   }
-  if (!app.user) return { ok: false, reason: 'signedOut', message: 'Sign in to Puter to use generative features.' };
+  if (!app.user) return { ok: false, reason: 'signedOut', message: 'Sign in to use generative features.' };
   return { ok: true };
 }
 
@@ -52,7 +52,7 @@ export function aiClient(app) {
 export async function requireAI(app, { ask = true } = {}) {
   let st = aiStatus(app);
   if (!st.ok && st.reason === 'signedOut' && ask && app.onSignIn) {
-    const go = await app.dialogs.confirm({ title: 'Sign In to Generate', message: 'Generative features use Puter AI with your Puter account. Sign in to continue.', okLabel: 'Sign In' });
+    const go = await app.dialogs.confirm({ title: 'Sign In to Generate', message: 'Generative features use 本地智能引擎 with your local account. Sign in to continue.', okLabel: 'Sign In' });
     if (go) {
       await app.onSignIn();
       st = aiStatus(app);
@@ -99,9 +99,9 @@ export function aiErrorMessage(err, fallback = 'The request did not go through. 
   if (err instanceof AIError) return err.message;
   const code = String(err.code || err.error?.code || '');
   if (code === 'moderation_flagged' || /moderat|content policy|safety/i.test(err.message || '')) return 'The request was declined by the content filter. Try a different description.';
-  if (code === 'insufficient_funds') return 'Your Puter AI balance is too low for this request.';
-  if (code === 'network_error' || code === 'request_timeout' || err instanceof TypeError) return 'Puter AI could not be reached. Check your connection and try again.';
-  if (code === 'unauthorized' || code === 'token_auth_failed') return 'Your Puter session expired. Sign in again and retry.';
+  if (code === 'insufficient_funds') return 'Your 本地智能引擎 balance is too low for this request.';
+  if (code === 'network_error' || code === 'request_timeout' || err instanceof TypeError) return '本地智能引擎 could not be reached. Check your connection and try again.';
+  if (code === 'unauthorized' || code === 'token_auth_failed') return 'Your local session expired. Sign in again and retry.';
   return err.error?.message || err.message || (typeof err.error === 'string' ? err.error : '') || fallback;
 }
 

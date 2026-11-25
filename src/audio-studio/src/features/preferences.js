@@ -64,7 +64,7 @@ export function importSettingsValues(app, values) {
   if (app.dock && app.layoutMode === 'desktop') app.setWorkspace(app.prefs.get('workspace'));
 }
 
-/** A settings file: from Puter when signed in, else from this device. */
+/** A settings file: from local storage when signed in, else from this device. */
 async function pickSettingsFile() {
   if (puter.sdk() && puter.isSignedIn()) {
     const [item] = await puter.pickFiles({ multiple: false, accept: '.json' });

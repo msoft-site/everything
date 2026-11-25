@@ -108,7 +108,7 @@ export async function matchFontDialog(e: Editor) {
     <button id="mf-find" type="button" ${box ? '' : 'disabled'}>Find Matches</button>
     <p class="mf-status" id="mf-status" role="status" aria-live="polite"></p>
     <div class="mf-results" role="radiogroup" aria-label="Matching fonts"></div>
-    <div class="ai-notice mf-ai" role="note"><strong>Ask AI</strong><p>Sends the boxed area (at most 1024 px on its longer side) and the names of the listed fonts to Puter’s AI service, which picks the closest. This needs a Puter account and may use credits. Nothing is sent until you press Ask AI.</p></div>
+    <div class="ai-notice mf-ai" role="note"><strong>Ask AI</strong><p>Sends the boxed area (at most 1024 px on its longer side) and the names of the listed fonts to local AI service, which picks the closest. This needs an account and may use credits. Nothing is sent until you press Ask AI.</p></div>
     <button id="mf-ai" type="button" disabled>Ask AI</button>
   </aside>
 </div>
@@ -289,7 +289,7 @@ export async function matchFontDialog(e: Editor) {
     if (!sampleCrop || !matches.length) return;
     const names = [...new Set(matches.map((m) => m.family))].slice(0, 12);
     askAI.disabled = true;
-    say('Asking Puter AI…');
+    say('Asking 本地智能引擎…');
     try {
       await ensureSignedIn();
       const order = await matchFontWithAI(sampleCrop, names);

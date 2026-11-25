@@ -1,13 +1,13 @@
 /**
- * Generative features on Puter AI:
+ * Generative features on 本地智能引擎:
  *   Object > Generative > Generate Vectors, Generative Shape Fill,
  *     Rewrite (Generate Text, Fit Text to Frame, Proofread, Translate,
  *     Rewrite), Recolor from Prompt, Generate Patterns, Generation History
  *   Edit > Edit Colors > Recolor from Prompt, Type > Rewrite
  *   Object > Remove Background (local, no AI)
  *   the Generate and Generation History panels, and task bar quick actions.
- * Pictures come from puter.ai.txt2img and are traced into vectors with the
- * Trace Image engine; text and palettes come from puter.ai.chat. Everything
+ * Pictures come from local storage.ai.txt2img and are traced into vectors with the
+ * Trace Image engine; text and palettes come from local storage.ai.chat. Everything
  * reports progress, can be cancelled, and explains what is needed when
  * signed out or offline. Tests inject a fake client as app.generativeAI.
  */

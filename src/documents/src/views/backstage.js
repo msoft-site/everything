@@ -121,8 +121,8 @@ export function createBackstage(api) {
     return [...heading('打开'),
       el('section.bs-section', {}, el('div.bs-tiles', {},
         tile('浏览此设备…', 'folderOpen', act(() => api.openDocument()), { hint: '.docx、.hwp、Markdown、HTML 或纯文本', primary: true }),
-        api.openFromCloud ? tile('浏览云端…', 'folderOpen', act(() => api.openFromCloud()), { hint: 'Puter 云端中的文档' }) : null,
-        api.goHome ? tile('所有文档', 'home', act(() => api.goHome()), { hint: local ? '文档列表' : '云端文档列表' }) : null)),
+        api.openFromCloud ? tile('浏览本地存储…', 'folderOpen', act(() => api.openFromCloud()), { hint: '本地存储中的文档' }) : null,
+        api.goHome ? tile('所有文档', 'home', act(() => api.goHome()), { hint: '文档列表' }) : null)),
       api.recentDocuments ? el('section.bs-section', {}, el('h2', {}, '最近'), list) : null];
   }
 

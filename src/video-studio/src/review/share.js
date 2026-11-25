@@ -1,6 +1,6 @@
 /**
  * Owner side of Share for review: render a review copy with the exporter,
- * save it in the owner's Puter files (video-studio/reviews/<project>/),
+ * save it in the owner's local files (video-studio/reviews/<project>/),
  * then publish it on the owner's review worker as a new version.
  */
 import { exportProject, detectCapabilities, outputSize, CONTAINERS } from '../engine/exporter.js';

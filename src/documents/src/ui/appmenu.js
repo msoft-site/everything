@@ -57,7 +57,7 @@ export function openAppMenu(anchor, { extraItems = [], account = true } = {}) {
   ];
   if (account && !P.isApp()) {
     items.push({ separator: true });
-    if (session.signedOut) items.push({ label: '登录 Puter', icon: 'login', hint: '将文档保存到您的云端空间', onSelect: () => session.signIn() });
+    if (session.signedOut) items.push({ label: '登录账户', icon: 'login', hint: '将文档保存到本地空间', onSelect: () => session.signIn() });
     else items.push({ label: '退出登录', icon: 'logout', onSelect: confirmSignOut });
   }
   opened = openMenu({ anchor, items: items.filter(Boolean), align: 'end', label: account ? '账户' : '设置', minWidth: 250 });
@@ -134,7 +134,7 @@ export function openUnitsMenu(anchor) {
 export async function confirmSignOut() {
   const ok = await confirmDialog({
     title: '退出登录？',
-    message: '您的文档保存在您的 Puter 账户中。打开文档中的任何未保存更改将首先保存。',
+    message: '您的文档已保存在本地设备。打开文档中的任何未保存更改将首先保存。',
     confirmLabel: '退出登录', danger: false,
   });
   if (!ok) return;
@@ -160,10 +160,10 @@ export function openAbout() {
   openModal({
     title: '文档 (Documents)',
     content: el('div', {},
-      el('p.modal-text', {}, '基于原生 Canvas 编辑器的私有文字处理软件。文件以 .docx 格式保存在您自己的 Puter 云端。'),
+      el('p.modal-text', {}, '基于原生 Canvas 编辑器的私有文字处理软件。文件以 .docx 格式保存在本地设备。'),
       el('p.modal-text', {}, '当前版本支持文本和段落格式设置、选区、撤销/重做以及 DOCX 导出下载。'),
       el('p.small.muted', {}, '基于原生 JavaScript、Vite、Lucide 图标、fflate、思源黑体与 ',
-        el('a', { href: 'https://developer.puter.com', target: '_blank', rel: 'noopener' }, 'Puter'), ' 构建。'),
+        el('span', {}, '本地私有引擎构建。')),
       el('p.small.muted', {}, el('a', { href: `${import.meta.env.BASE_URL}licenses/THIRD_PARTY.txt`, target: '_blank', rel: 'noopener' }, '第三方开源许可')),
       el('p.small.muted', { lang: 'ko' }, '본 제품은 한글과컴퓨터의 한글 문서 파일(.hwp) 공개 문서를 참고하여 개발하였습니다.')),
   });

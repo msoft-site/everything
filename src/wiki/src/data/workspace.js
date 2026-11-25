@@ -445,7 +445,7 @@ export class Workspace extends Emitter {
    * shared space on this person's collaboration server. Returns the space.
    */
   async sharePage(pageId, progress = () => {}) {
-    if (!this.collab) throw new Error('共享功能需要 Puter 账户。');
+    if (!this.collab) throw new Error('共享功能需要 本地账户。');
     const from = this.personal;
     const root = getPage(from.tree, pageId);
     if (!root) throw new Error('此页面已不存在。');

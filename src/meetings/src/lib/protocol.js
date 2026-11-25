@@ -13,13 +13,13 @@
  * host itself.
  *
  * The host role is not fixed. When the host leaves, the survivors elect a
- * successor (lowest participant id, among those with a Puter account while
+ * successor (lowest participant id, among those with an account while
  * any is left) which serves a fresh room and floods HOST_CLAIM across the
  * mesh; everyone else re-points their host link at it. `term` counts
  * migrations so a late or duplicate claim can't unseat a newer host —
  * highest term wins, lowest id breaks a tie.
  *
- * Guests need no Puter account. The host's GUEST GRANT — its word that lets
+ * Guests need no account. The host's GUEST GRANT — its word that lets
  * someone without a session use the relays on its account — reaches them
  * in WELCOME, and again in GRANT whenever the host renews it, so a redial
  * or a guest<->guest link hours in still gets a relay. An identity's `acct`
@@ -62,7 +62,7 @@ const RELAYABLE = Object.freeze([...BROADCASTABLE, MSG.LINK_INVITE]);
 
 /**
  * Shape of the participant identity carried by hello / welcome / peer-joined.
- * `acct` — a Puter account stands behind this participant — is read as true
+ * `acct` — an account stands behind this participant — is read as true
  * when absent: a peer on a build that never said had to have one.
  */
 export function makeIdentity({ id, name, mic, cam, hand, presenting, acct }) {
@@ -98,7 +98,7 @@ export function makeHello(identity, token = '') {
 /**
  * The host's answer to a HELLO: who it is, who else is here, how many times
  * the meeting has changed hands — the guest grant, for a guest joining with
- * no Puter session to reach the relays on (empty when the host has none to
+ * no local session to reach the relays on (empty when the host has none to
  * give) — and the MEETING SECRET: what the room directory's lease on this
  * meeting's link is held under (lib/rooms.js). Every participant learns it
  * so that whoever inherits the host role can carry the lease on. It is as

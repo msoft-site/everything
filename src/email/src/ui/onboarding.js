@@ -60,15 +60,15 @@ export function openOnboarding({ onNotify = null, notificationsOn = false } = {}
   };
 
   body.append(
-    el('p.onboard-lead', {}, 'Your mail lives in your own Puter account. This app reads and sends it for you.'),
+    el('p.onboard-lead', {}, 'Your mail lives in local storage. This app reads and sends it for you.'),
     row('shield', 'Your mail stays yours',
       'Messages are files in your .mail folder. Puter Mail only writes what you ask it to: your copy of a message you send, and the moves behind archive, delete, and restore. Nothing is deleted unless you empty it from Trash.'),
     row('mailOpen', 'Safe rendering',
       'Messages open as plain text. You can show the original formatting per message; it renders in a sandbox where scripts cannot run and remote images stay blocked until you allow them.'),
     row('star', 'Follows your account',
-      'What you have read and starred is kept in your Puter account, so it is the same on every device you sign in from.'),
+      'What you have read and starred is kept in your local account, so it is the same on every device you sign in from.'),
     row('send', 'Sending',
-      'Compose sends from your @puter.email address, with light formatting, and attachments from this device or your Puter files. Every message carries a plain-text version, so it reads properly wherever it lands. Your first send asks for write access to your mailbox, which is also where the Sent copy goes.'),
+      'Compose sends from your @puter.email address, with light formatting, and attachments from this device or your local files. Every message carries a plain-text version, so it reads properly wherever it lands. Your first send asks for write access to your mailbox, which is also where the Sent copy goes.'),
     row('pencil', 'Drafts are kept',
       'Close a half-written message and it is saved as a draft on this device. Reopen Compose to carry on where you left off.'),
     onNotify && notifyRow(),

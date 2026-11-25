@@ -800,7 +800,7 @@ export class RackView {
       if (!blob && path) {
         const puter = window.puter;
         if (!puter?.auth?.isSignedIn?.() || !puter.fs?.read) {
-          app.notify('Sign in to use files from your Puter cloud.', { error: true });
+          app.notify('Sign in to use files from local storage.', { error: true });
           return false;
         }
         blob = await puter.fs.read(path);

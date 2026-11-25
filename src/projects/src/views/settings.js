@@ -20,7 +20,7 @@ import { notificationState, requestNotificationPermission } from '../ui/reminder
 export async function confirmSignOut() {
   const ok = await confirmDialog({
     title: '退出登录？',
-    message: '您的数据将安全地保留在 Puter 账户中，下次登录时即可恢复。',
+    message: '您的数据将安全地保留在 本地账户中，下次登录时即可恢复。',
     confirmLabel: '退出登录',
     danger: false,
   });
@@ -32,7 +32,7 @@ export async function confirmSignOut() {
     // the very changes the dialog above promised were safe.
     const discard = await confirmDialog({
       title: '部分更改尚未保存',
-      message: '您的最新更改无法同步到 Puter，如果现在退出登录将会丢失。请检查网络连接后重试，或仍然退出登录。',
+      message: '您的最新更改尚未保存到本地，如果现在退出登录将会丢失。请检查网络连接后重试，或仍然退出登录。',
       confirmLabel: '仍然退出登录',
     });
     if (!discard) return;
@@ -43,7 +43,7 @@ export async function confirmSignOut() {
 }
 
 export function settingsView() {
-  const username = store.user?.username || 'Puter 用户';
+  const username = store.user?.username || '本地用户';
 
   /* Appearance */
   const themeGroup = el('div.seg', { role: 'radiogroup', 'aria-label': '主题' });
@@ -259,15 +259,15 @@ export function settingsView() {
       row({ ic: 'users', title: username, sub: '已通过 Puter 登录' }),
       // Inside the Puter desktop, the session belongs to the OS — no sign-out.
       puter.env !== 'app' && row({
-        ic: 'logout', title: '退出登录', sub: '您的数据将保留在您的 Puter 账户中',
+        ic: 'logout', title: '退出登录', sub: '您的数据将保留在您的 本地账户中',
         control: el('button.btn.btn-ghost.btn-sm', { onclick: confirmSignOut }, '退出登录'),
       })
     ),
 
     section('关于',
-      row({ ic: 'board', title: '项目管理', sub: '看板、时间线与里程碑。您的数据保存在您自己的 Puter 云端。' }),
+      row({ ic: 'board', title: '项目管理', sub: '看板、时间线与里程碑。您的数据保存在您自己的 本地存储。' }),
       row({
-        ic: 'cloud', title: '由 Puter 提供支持',
+        ic: 'cloud', title: '',
         control: el('a.btn.btn-ghost.btn-sm', { href: 'https://developer.puter.com', target: '_blank', rel: 'noopener' }, '了解更多'),
       })
     )

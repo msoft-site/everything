@@ -1,6 +1,6 @@
 /**
  * Browser-only backend on IndexedDB, used by the development sandbox
- * (?local) so the app can be tried without a Puter account.
+ * (?local) so the app can be tried without an account.
  */
 function open() {
   return new Promise((resolve, reject) => {

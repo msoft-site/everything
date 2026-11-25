@@ -54,7 +54,7 @@ export class StartScreen {
           this.hide();
           app.newDocument('Part1');
         }),
-        action('open', 'Open', cloudAvailable() ? 'Open a part from your Puter cloud or this browser' : 'Open a part saved in this browser', () => { this.hide(); void this.files.open(); }),
+        action('open', 'Open', cloudAvailable() ? 'Open a part from local storage or this browser' : 'Open a part saved in this browser', () => { this.hide(); void this.files.open(); }),
         action('upload', 'Open from device', 'Open a part file, or a STEP or SolidWorks file', () => { this.hide(); void this.files.openFromDevice(); }),
       ),
       h('div', { class: 'row' }, h('label', { class: 'field-label' }, 'Units for new parts'), unitSel),
@@ -117,7 +117,7 @@ export async function doSignIn(app: App): Promise<boolean> {
 }
 
 async function signedIn(app: App) {
-  toast({ kind: 'success', message: 'Signed in. Your parts will now be saved to your Puter cloud.' });
+  toast({ kind: 'success', message: 'Signed in. Your parts will now be saved to local storage.' });
   await refreshAccount(app);
   app.loadRemoteSettings();
 }
@@ -154,7 +154,7 @@ export function bindAccountMenu(app: App) {
     const theme = getThemeChoice();
     const items: MenuItem[] = [];
     if (signedIn) items.push({ group: user?.username ? `Signed in as ${user.username}` : 'Signed in' });
-    else if (puter()) items.push({ label: 'Sign in with Puter', icon: 'signIn', run: () => void doSignIn(app) });
+    else if (puter()) items.push({ label: 'Sign in', icon: 'signIn', run: () => void doSignIn(app) });
     else items.push({ group: 'Cloud storage is unavailable offline' });
     items.push(
       { separator: true },

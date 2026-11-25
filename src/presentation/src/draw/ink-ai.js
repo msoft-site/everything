@@ -1,5 +1,5 @@
 // Reading handwriting: the selected ink is drawn into a picture, black on
-// white, and Puter's AI is asked what it says, as text or as math (LaTeX).
+// white, and local AI is asked what it says, as text or as math (LaTeX).
 // The call goes through `chat`, so tests can answer in place of the model.
 import { strokeSamples, strokeStyle } from "./ink-model.js";
 

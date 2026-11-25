@@ -14,9 +14,9 @@ export function appShell(root: HTMLElement) {
   <nav class="menubar" aria-label="Application menu"></nav>
   <div class="top-actions">
     <button class="top-search" data-command="edit.search" title="Search commands (${formatShortcut('Mod+F')})" aria-label="Search commands">${svg('search', 16)}</button>
-    <button data-command="file.save" class="save-button" title="Save to Puter">${svg('cloud-upload', 16)}<span>Save</span></button>
+    <button data-command="file.save" class="save-button" title="Save">${svg('cloud-upload', 16)}<span>Save</span></button>
     <button data-command="file.export-as" class="export-button" title="Export">Export ${svg('arrow-up-right', 16)}</button>
-    <button data-command="app.account" id="account" class="account" title="Puter account" aria-label="Puter account">${svg('user-round', 16)}</button>
+    <button data-command="app.account" id="account" class="account" title="Account" aria-label="Account">${svg('user-round', 16)}</button>
   </div>
 </header>
 <div class="optionsbar" role="toolbar" aria-label="Tool options">
@@ -69,7 +69,7 @@ Right-click, hold or press → for the list" aria-label="Change screen mode">${s
           <button type="button" data-start-view="learn">${svg('graduation-cap', 16)}Learn</button>
           <button type="button" data-start-view="files">${svg('file-clock', 16)}Recent files</button>
         </div>
-        <div class="start-rail-foot"><button type="button" data-command="file.open-cloud">${svg('cloud', 16)}Open from Puter…</button></div>
+        <div class="start-rail-foot"><button type="button" data-command="file.open-cloud">${svg('cloud', 16)}Open from Local…</button></div>
       </nav>
       <div class="start-main">
         <div class="start-head">
@@ -95,7 +95,7 @@ Right-click, hold or press → for the list" aria-label="Change screen mode">${s
   <span class="status-zoom"><button data-command="view.zoom-out" class="icon-button" aria-label="Zoom out" title="Zoom out">${svg('minus', 14)}</button><input id="zoom-label" class="zoom-field" value="100%" aria-label="Zoom level" title="Type a zoom level and press Enter" spellcheck="false" autocomplete="off"><button data-command="view.zoom-in" class="icon-button" aria-label="Zoom in" title="Zoom in">${svg('plus', 14)}</button></span>
   <span id="tab-size">1600 × 1000</span><span class="canvas-color-mode">RGB / 8</span><span id="pointer-info" aria-live="off"></span>
   <span id="status" role="status">Ready</span>
-  <span class="status-end"><span id="engine-status">Starting graphics…</span><a href="https://developer.puter.com" target="_blank" rel="noopener">Puter</a></span>
+  <span class="status-end"><span id="engine-status">Starting graphics…</span></span>
 </footer>
 <input id="file-input" type="file" accept="image/png,image/jpeg,image/webp,image/avif,image/gif,image/bmp,image/tiff,image/svg+xml,.photo,.psd,.psb,.tif,.tiff,.bmp,.ico,.tga,.ppm,.pgm,.pbm,.pnm" multiple hidden>
 <dialog id="dialog"></dialog><div id="toast" role="status" hidden></div>`;

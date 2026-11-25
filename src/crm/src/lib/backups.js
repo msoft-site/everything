@@ -1,5 +1,5 @@
 /**
- * Rolling automatic backups to the user's own Puter cloud.
+ * Rolling automatic backups to the user's own local storage.
  *
  * The whole book of business lives in a handful of KV keys; the trash
  * covers deletes for 30 days, but a corrupt write or a bad bulk edit

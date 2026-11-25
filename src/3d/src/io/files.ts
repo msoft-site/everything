@@ -384,7 +384,7 @@ export function importMenu(): MenuItem[] {
   const other: MenuItem[] = opensFromPuter()
     ? [{ label: 'From This Device…', icon: 'file_folder', description: 'Import a file from this device with the format that reads it', op: 'wm.import', props: { source: 'DEVICE' } }, { separator: true }]
     : canOpenFromPuter()
-      ? [{ label: 'From Puter…', icon: 'file_folder', description: 'Import a file from your Puter drive with the format that reads it', op: 'wm.import', props: { source: 'PUTER' } }, { separator: true }]
+      ? [{ label: 'From Local…', icon: 'file_folder', description: 'Import a file with the format that reads it', op: 'wm.import', props: { source: 'PUTER' } }, { separator: true }]
       : [];
   return [...other, ...ordered().filter((f) => f.import || f.importOp).map((f) => (f.importOp ? { label: f.label, description: f.description, op: f.importOp } : { label: f.label, description: f.description, op: 'wm.import', props: { format: f.id } }))];
 }

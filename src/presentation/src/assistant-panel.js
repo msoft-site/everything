@@ -1,4 +1,4 @@
-// The AI assistant's side panel: a chat beside the slide in which Puter's AI
+// The AI assistant's side panel: a chat beside the slide in which local AI
 // answers questions about the presentation and changes it through the tools
 // in assistant-tools.js.
 //

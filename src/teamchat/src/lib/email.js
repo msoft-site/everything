@@ -87,7 +87,7 @@ export function parseEmails(text) {
 const SEND_TIMEOUT_MS = 60_000;
 
 const FRIENDLY = {
-  sign_in_required: 'Sign in with Puter to send invitations.',
+  sign_in_required: 'Sign in to send invitations.',
   daily_limit: 'You have sent as many invitation emails as one account can in a day. Try again tomorrow, or share the link directly.',
   too_many_recipients: 'That is too many addresses at once; send to 10 at a time.',
   invalid: 'The invitation could not be composed. Copy the link and share it directly.',

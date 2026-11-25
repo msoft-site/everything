@@ -233,7 +233,7 @@ function isQuotaError(err) {
  * the difference; the message is safe to show as-is.
  */
 function quotaError(cause) {
-  const err = new Error('Saved on this device. Your Puter storage is full');
+  const err = new Error('Saved on this device. Your local storage is full');
   err.quota = true;
   err.cause = cause;
   return err;
@@ -1534,13 +1534,13 @@ export class Store extends EventTarget {
     return { mode: 'kv' };
   }
 
-  /** Owner (KV): share the list at write level with a Puter username. */
+  /** Owner (KV): share the list at write level with a Local username. */
   async inviteMember(listId, username) {
     const list = this.listById(listId);
     const c = list?.collab;
     if (c?.mode !== 'kv' || c.role !== 'owner') throw new Error('Only the owner can invite people');
     const name = String(username || '').trim().replace(/^@/, '');
-    if (!name) throw new Error('Enter a Puter username');
+    if (!name) throw new Error('Enter a Local username');
     if (name.toLowerCase() === c.memberId.toLowerCase()) throw new Error('That is your own account');
     const share = (label) => this.cloud.kv.share({ prefix: c.prefix, recipient: name, access: 'write', label });
     let res;

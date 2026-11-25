@@ -43,7 +43,7 @@
  * `Authorization: Bearer <secret>`. Only SHA-256(secret) is baked into this
  * source, so the deployed file itself contains no credential.
  *
- * The owner also gets told. This worker runs inside their own Puter account
+ * The owner also gets told. This worker runs inside their own account
  * and is the only piece that is awake when the app is closed, so when a
  * signer signs, declines, or a document completes it mails the owner from
  * their own account (see notifyOwner). Every attempt is recorded, success or

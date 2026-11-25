@@ -40,9 +40,9 @@ const PLACE = {
 
 /** The tools that only look. */
 export const READ_TOOLS = new Set(['get_project', 'list_media', 'get_clip']);
-/** The tools that make video through Puter AI: the costly ones. */
+/** The tools that make video through 本地智能引擎: the costly ones. */
 export const VIDEO_TOOLS = new Set(['generate_video', 'animate_image', 'extend_clip', 'generate_transition']);
-/** The tools that make other media through Puter AI (pictures, speech). */
+/** The tools that make other media through 本地智能引擎 (pictures, speech). */
 export const MEDIA_TOOLS = new Set(['generate_image', 'edit_image', 'add_voiceover']);
 
 const MAKE_TOOLS = [
@@ -63,7 +63,7 @@ const MAKE_TOOLS = [
   },
   {
     name: 'generate_video',
-    description: 'Make a new video clip with Puter AI from a description, optionally starting from a picture (image to video) and/or ending on one. Takes from about half a minute to a few minutes, and costs the user Puter credits by its length.',
+    description: 'Make a new video clip with 本地智能引擎 from a description, optionally starting from a picture (image to video) and/or ending on one. Takes from about half a minute to a few minutes, and costs the user Puter credits by its length.',
     parameters: obj({
       prompt: { type: 'string', description: 'What happens in the clip: subject, action, setting, camera movement, lighting and mood. With a first frame, describe the motion from that picture.' },
       seconds: SECONDS('Length (default 5; the model rounds to what it makes)'),
@@ -107,7 +107,7 @@ const MAKE_TOOLS = [
   },
   {
     name: 'generate_image',
-    description: 'Make a picture with Puter AI and add it as an image clip (a backdrop, a title card, a still to animate later).',
+    description: 'Make a picture with 本地智能引擎 and add it as an image clip (a backdrop, a title card, a still to animate later).',
     parameters: obj({
       prompt: { type: 'string', description: 'What the picture shows.' },
       aspect: { type: 'string', enum: IMAGE_ASPECTS.map((a) => a.id), description: 'Shape (default: the project\'s)' },
@@ -119,7 +119,7 @@ const MAKE_TOOLS = [
   },
   {
     name: 'edit_image',
-    description: 'Change a picture as described with Puter AI ("make it night", "remove the car", "add snow"). From an image clip it replaces that clip\'s picture (unless replace is false); from a video frame or media it makes a new image clip.',
+    description: 'Change a picture as described with 本地智能引擎 ("make it night", "remove the car", "add snow"). From an image clip it replaces that clip\'s picture (unless replace is false); from a video frame or media it makes a new image clip.',
     parameters: obj({
       source: PICTURE('The picture to change'),
       instruction: { type: 'string', description: 'The change to make.' },

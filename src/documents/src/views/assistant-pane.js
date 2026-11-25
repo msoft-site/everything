@@ -1,5 +1,5 @@
 /**
- * The Assistant pane: a conversation with Puter's AI beside the pages, about
+ * The Assistant pane: a conversation with local AI beside the pages, about
  * and for this document. Above the box the person chooses what goes with a
  * message, the selected text or the whole document, and the chip says how
  * much that is; nothing else is sent. Replies that are text for the document
@@ -7,7 +7,7 @@
  * applies them, as one change Undo takes back (the reply offers Undo too).
  *
  * The pane, its button on the Home tab and the floating button beside the
- * pages are offered only where Puter's AI is available.
+ * pages are offered only where local AI is available.
  */
 import { el, isComposing, MOD_KEY, shortcutCode } from '../ui/dom.js';
 import { clipText } from '../core/text.js';
@@ -55,7 +55,7 @@ export function createAssistantPane({ editor, pkg, error, available = () => P.ca
   });
   pane.body.append(log, form);
 
-  // A small button at the edge of the pages opens the pane (where Puter's AI is available).
+  // A small button at the edge of the pages opens the pane (where local AI is available).
   // In the title bar beside Comments, as the other apps' assistants sit in their top bars.
   const titleButton = el('button.ed-pill.as-title-button', { type: 'button', 'aria-label': '助手', title: `助手 (${MOD_KEY}+Shift+I)`, 'aria-pressed': 'false', hidden: true, onclick: () => toggle() }, commandIconEl('assistant', 16));
   titleButton.addEventListener('mousedown', e => e.preventDefault());

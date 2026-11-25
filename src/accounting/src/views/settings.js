@@ -84,7 +84,7 @@ export function renderSettings(main, route) {
             try {
               const path = `backups/books-backup-${today()}-${Date.now()}.json`;
               await sdk().fs.write(path, JSON.stringify(exportBackup(store)), { createMissingParents: true });
-              toast('Backup saved to your Puter drive');
+              toast('Backup saved to local storage');
             } catch (e) { toastError(`Could not save: ${e.message || e}`); }
           } }, el('span', { html: icon('cloud', 16) }), 'Save backup to Puter'),
           el('button.btn', { type: 'button', onclick: restore }, el('span', { html: icon('upload', 16) }), 'Restore from backup'))),
@@ -117,7 +117,7 @@ export function renderSettings(main, route) {
           el('dt', {}, 'Transactions'), el('dd', {}, String(stats.txns)),
           el('dt', {}, 'Ledger postings'), el('dd', {}, String(stats.postings)),
           el('dt', {}, 'Ledger balance check'), el('dd', {}, stats.imbalance === 0 ? 'Debits equal credits' : `Out of balance by ${formatMoney(stats.imbalance)}`),
-          el('dt', {}, 'Storage'), el('dd', {}, 'Your own Puter account. ', el('a', { href: 'https://developer.puter.com', target: '_blank', rel: 'noopener' }, 'Powered by Puter')))));
+          el('dt', {}, 'Storage'), el('dd', {}, 'Your local storage. ', el('a', { href: 'https://developer.puter.com', target: '_blank', rel: 'noopener' }, '')))));
   }
 
   swap(main, el('div.page.settings', {},

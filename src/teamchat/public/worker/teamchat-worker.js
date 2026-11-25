@@ -1,4 +1,4 @@
-/* teamchat-worker build=778be0dba3ce at=1795462822112 */
+/* teamchat-worker build=7db98ef85c23 at=1795622212075 */
 (function() {
 	/**
 	* Past this a block takes no write that grows it by more than a few bytes
@@ -553,9 +553,9 @@
 	* ships to know when an owner's deployed worker needs refreshing. Running
 	* from source (tests, mock.html) reports 'dev'.
 	*/
-	var WORKER_BUILD = "778be0dba3ce";
+	var WORKER_BUILD = "7db98ef85c23";
 	/** When the bundle was built, so two builds can be ordered (0 from source). */
-	var WORKER_BUILT_AT = 1795462822112;
+	var WORKER_BUILT_AT = 1795622212075;
 	/** The puter.js build the platform baked into this deploy (its preamble's first
 	*  line); read on each call because the preamble exists only once deployed.
 	*  Null from source (tests, mock.html). */
@@ -713,7 +713,7 @@
 	* So an answer is kept for this long, against a hash of the token that
 	* earned it. The cost is that a session ended elsewhere — signed out,
 	* revoked — goes on being accepted by an already-running isolate for up to
-	* this long. Half a minute is short against how long a Puter session lives
+	* this long. Half a minute is short against how long a local session lives
 	* and close to the poll interval the app already runs on, and it is the
 	* whole of the exposure: nothing is cached across isolates, nothing is
 	* written down, and a token that was never valid is never cached at all.
@@ -764,7 +764,7 @@
 		return null;
 	}
 	async function identify(user) {
-		if (!user || !user.puter) fail(401, "unauthorized", "Sign in with Puter to continue");
+		if (!user || !user.puter) fail(401, "unauthorized", "Sign in to continue");
 		const key = await identityKey(user);
 		if (key) {
 			const hit = identityCache.get(key);
@@ -783,7 +783,7 @@
 			info = null;
 		}
 		authMs.set(user, Date.now() - started);
-		if (!info || !info.uuid) fail(401, "unauthorized", "Your Puter session is not valid");
+		if (!info || !info.uuid) fail(401, "unauthorized", "Your local session is not valid");
 		const id = {
 			uuid: String(info.uuid),
 			username: String(info.username || "").toLowerCase()
@@ -3593,7 +3593,7 @@
 	* releaseHandle is the only other place a handle is given back, and it reads
 	* `ev.h`, which this is about to overwrite, so a handle abandoned here would
 	* sit on one of the owner's live-handle slots (10,000 per app, 2,000 on free)
-	* until cleared by hand from a Puter session. Revoking is idempotent and
+	* until cleared by hand from a local session. Revoking is idempotent and
 	* already answers ok on a 404/subject_does_not_exist, so the ordinary case
 	* here — a handle that is already gone, which is why this was called at all
 	* — costs one wasted round trip, while the uncommon one (an app binding
@@ -4086,7 +4086,7 @@
 	var SECRET_RE = /^[a-z0-9]{32}$/;
 	/** A workspace reference as the client writes it: `{wsId}@{server}`. */
 	var REF_RE = /^[a-z0-9]{6,20}@[a-z0-9][a-z0-9._:-]{0,120}$/;
-	/** An invite code from puter.peer.serve() (`NJ-7F3A9C`), or a room name; nothing else is written. */
+	/** An invite code from local storage.peer.serve() (`NJ-7F3A9C`), or a room name; nothing else is written. */
 	var INVITE_RE = /^[A-Za-z0-9][A-Za-z0-9_-]{2,63}$/;
 	/** A tab's session id for its seat, made by the client; nothing else is written. */
 	var SESSION_RE = /^[A-Za-z0-9_-]{1,64}$/;
@@ -4161,7 +4161,7 @@
 	* account (the app deploys it for them), so a workspace's data lives in its
 	* owner's key-value store (me.puter.kv), which is what lets every member
 	* read and write the same channels, and the owner pays for it. Callers are
-	* identified by the Puter session that puter.workers.exec() forwards;
+	* identified by the local session that puter.workers.exec() forwards;
 	* nothing about identity is trusted from request bodies. Only the owner may
 	* create workspaces here (see assertMayCreate); members of other people's
 	* workspaces only ever touch data inside those workspaces.
@@ -10735,7 +10735,7 @@
 	* the id makes the record a direct get, the secret is stored only as a
 	* SHA-256 hash and compared in constant time, and the token is shown to the
 	* admin exactly once. These are the only routes besides /health that take
-	* no Puter session, so they are rate-limited per token and reject oversized
+	* no local session, so they are rate-limited per token and reject oversized
 	* bodies before touching storage.
 	*/
 	var TOKEN_RE = /^(tch|tcb)_([a-z0-9]{10})_([a-z0-9]{32})$/;

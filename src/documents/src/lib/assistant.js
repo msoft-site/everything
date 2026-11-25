@@ -1,5 +1,5 @@
 /**
- * The Assistant pane's conversation with Puter's AI: prompts that carry only
+ * The Assistant pane's conversation with local AI: prompts that carry only
  * the text the person chose to send (the selection or the whole document),
  * and replies read as either text for the document or an answer about it.
  */

@@ -260,7 +260,7 @@ export class App extends Emitter {
   }
 
   /**
-   * Opens entries of the Puter drive: launch items (double click or Open with
+   * Opens entries of the local drive: launch items (double click or Open with
    * on the desktop) and files dragged in from a desktop folder window. A
    * project opens where it lives, so saving writes back to the same file.
    * Folders and files Circuits does not open are not read. True when
@@ -652,7 +652,7 @@ export class App extends Emitter {
     if (!P.puter()) return;
     if (!this.user) {
       if (this.env === 'app') return;
-      el.append(h('button.btn.sm', { type: 'button', onClick: () => this.signIn(), 'data-tip': 'Sign in to save projects to your Puter cloud' }, icon('login', 14), h('span.phone-hide', 'Sign in')));
+      el.append(h('button.btn.sm', { type: 'button', onClick: () => this.signIn(), 'data-tip': 'Sign in to save projects to local storage' }, icon('login', 14), h('span.phone-hide', 'Sign in')));
       return;
     }
     const avatar = this.picture ? h('img.avatar', { src: this.picture, alt: '' }) : h('span.avatar.initial', (this.user.username || '?')[0].toUpperCase());
@@ -680,7 +680,7 @@ export class App extends Emitter {
     await this._loadUser();
     this.renderAccount();
     this.userLibrary.load();
-    toast(`Signed in as ${this.user?.username || 'you'}. New projects are saved to your Puter cloud.`, { kind: 'success' });
+    toast(`Signed in as ${this.user?.username || 'you'}. New projects are saved to local storage.`, { kind: 'success' });
     if (this.project && this.location?.type === 'local') {
       toast('This project is stored in this browser only.', {
         title: 'Keep it in your cloud?', timeout: 0,
@@ -712,7 +712,7 @@ export class App extends Emitter {
     this.location = await storage.newLocation(this.project.name, this.project.id);
     await this.save();
     if (old?.type === 'local' && this.location.type === 'cloud') await storage.deleteProject(old).catch(() => {});
-    toast('Project moved to your Puter cloud.', { kind: 'success' });
+    toast('Project moved to local storage.', { kind: 'success' });
     this.panels.projects.refresh();
   }
 
@@ -1198,10 +1198,10 @@ export class App extends Emitter {
       h('div.start-actions',
         card('new', 'New project', 'A schematic sheet and a board, ready to go', () => this.newProject()),
         card('chip', 'Open the example', 'A 555 LED blinker with its board', () => this.openExample()),
-        card('open', 'Open a project', P.cloudAvailable() ? 'From your Puter cloud or this browser' : 'Stored in this browser', () => this.openProjectDialog()),
+        card('open', 'Open a project', P.cloudAvailable() ? 'From your local storage or this browser' : 'Stored in this browser', () => this.openProjectDialog()),
         card('upload', 'Open a file', 'A .circuits project, or KiCad schematic and board files', () => this.importFromDevice())),
       recent.length ? h('section.start-section', h('h2', 'Recent'), list) : null,
-      signedOut ? h('p.muted', { style: { marginTop: '24px' } }, h('button.btn', { type: 'button', onClick: () => this.signIn() }, icon('login', 14), 'Sign in to Puter'), ' to keep projects in your own cloud storage and open them anywhere.') : null));
+      signedOut ? h('p.muted', { style: { marginTop: '24px' } }, h('button.btn', { type: 'button', onClick: () => this.signIn() }, icon('login', 14), 'Sign in'), ' to keep projects in your own cloud storage and open them anywhere.') : null));
     this.editorHost.append(this.start);
     this.updateTitle();
   }

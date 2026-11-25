@@ -1,5 +1,5 @@
 // Edit → Generate Image… and Edit → Edit with Prompt…: text-to-image and
-// image-to-image through Puter's AI service. Nothing is sent until Generate is
+// image-to-image through local AI service. Nothing is sent until Generate is
 // pressed in the dialog; every variation is its own request. The chosen
 // result is added as a new layer (masked to the selection when there is one)
 // above the current layer, and the prompt is kept with the layer.
@@ -79,8 +79,8 @@ async function studio(s: Session) {
   const gen = mode === 'generate';
   const { width: tw, height: th } = target.rect;
   const sentNote = gen
-    ? 'Your prompt is sent to Puter’s AI service. No pixels from your document are sent.'
-    : `${s.sourceLabel} (${tw} × ${th} px${Math.max(tw, th) > EDIT_MAX_SIDE ? `, reduced to ${EDIT_MAX_SIDE} px on the longer side` : ''}) and your instruction are sent to Puter’s AI service.`;
+    ? 'Your prompt is sent to local AI service. No pixels from your document are sent.'
+    : `${s.sourceLabel} (${tw} × ${th} px${Math.max(tw, th) > EDIT_MAX_SIDE ? `, reduced to ${EDIT_MAX_SIDE} px on the longer side` : ''}) and your instruction are sent to local AI service.`;
   const sizeNote = gen
     ? `Results are about ${(() => {
         const r = requestSize(tw, th);
@@ -94,7 +94,7 @@ async function studio(s: Session) {
     'ai-workspace assist-studio',
     `<form class="as-body" novalidate>
   <div class="as-form">
-    <div class="ai-notice" role="note"><strong>Before you generate</strong><p>${escapeXML(sentNote)} This requires a Puter account (you may be asked to sign in), and each variation is a separate request that can use credits from your Puter balance. Nothing is sent until you press Generate.</p></div>
+    <div class="ai-notice" role="note"><strong>Before you generate</strong><p>${escapeXML(sentNote)} This requires an account (you may be asked to sign in), and each variation is a separate request that can use credits from your Puter balance. Nothing is sent until you press Generate.</p></div>
     ${field(gen ? 'Prompt' : 'Instruction', `<textarea id="as-prompt" rows="3" placeholder="${gen ? 'Describe the image, e.g. “a red kite over green hills”' : 'Describe the change, e.g. “turn the sky into a sunset”'}"></textarea>`)}
     ${gen ? `<div class="as-row">${field('Style', options('as-style', remembered.style, STYLES.map((x) => [x.id, x.label])))}${field('Aspect', options('as-aspect', remembered.aspect, ASPECTS.map((a) => [a.id, a.label])))}</div>` : ''}
     <div class="as-row">${field('Model', options('as-model', MODELS[mode].some(([v]) => v === remembered.model) ? remembered.model : '', MODELS[mode]))}${field('Quality', options('as-quality', remembered.quality, [['draft', 'Draft'], ['standard', 'Standard'], ['high', 'High']]))}</div>

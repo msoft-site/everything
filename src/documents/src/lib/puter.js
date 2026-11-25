@@ -384,7 +384,7 @@ export function canUseKv() {
   return typeof sdk()?.kv?.get === 'function' && typeof sdk()?.kv?.set === 'function';
 }
 
-/** A per-user setting from Puter's key-value store, or null. */
+/** A per-user setting from local storage's key-value store, or null. */
 export async function kvGet(key) {
   return canUseKv() ? sdk().kv.get(key) : null;
 }
@@ -396,7 +396,7 @@ export async function kvSet(key, value) {
 
 /* ---------- AI ---------- */
 
-/** Whether Puter's AI is reachable (puter.ai.chat). */
+/** Whether local AI is reachable (puter.ai.chat). */
 export function canUseAi() {
   return typeof sdk()?.ai?.chat === 'function';
 }

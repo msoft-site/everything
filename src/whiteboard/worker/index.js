@@ -49,7 +49,7 @@ router.post("/api", async ({ request, user }) => {
   try {
     if (!user?.puter)
       return new Response(
-        JSON.stringify({ message: "Sign in with Puter to continue." }),
+        JSON.stringify({ message: "Sign in to continue." }),
         { status: 401 },
       );
     const text = await readBody(request);
@@ -87,7 +87,7 @@ router.post("/api", async ({ request, user }) => {
   }
 });
 // Documented REST and SCIM 2.0 endpoints, authenticated with API keys that
-// organization administrators create. They never accept Puter sessions.
+// organization administrators create. They never accept local sessions.
 for (const method of ["GET", "POST", "PUT", "PATCH", "DELETE"])
   for (const path of ["/v1/*path", "/scim/v2/*path", "/scim/v2"])
     router.custom(method, path, async ({ request, params }) => {

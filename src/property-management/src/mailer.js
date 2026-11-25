@@ -73,7 +73,7 @@ export function parseRecipients(input, { max = MAX_TOTAL_RECIPIENTS } = {}) {
 /** Why a send did not happen, in words the user can act on. */
 export function failureMessage(status, data) {
   const code = (data && data.error) || '';
-  if (status === 401 || code === 'sign_in_required') return 'Sign in to Puter again to send email.';
+  if (status === 401 || code === 'sign_in_required') return 'Sign in again to send email.';
   if (status === 429 || code === 'daily_limit') return "You've reached today's email limit. Try again tomorrow.";
   if (status === 503 || code === 'temporarily_unavailable') return 'The email service is busy. Try again in a moment, or open the message in your email app.';
   if (status === 404) return 'The email service is not available. Open the message in your email app instead.';
@@ -115,7 +115,7 @@ async function post(getPuter, workerUrl, payload, timeoutMs) {
  * message fit for a toast when nothing could be sent.
  */
 export async function sendEmail({ id, kind = 'email', to, subject, body, senderName = '', replyTo = '', force = false }, { getPuter = puterOf, workerUrl = EMAIL_WORKER_URL, timeoutMs = SEND_TIMEOUT_MS } = {}) {
-  if (!mailerAvailable(getPuter)) throw new Error('Sending email needs a Puter session. Open the message in your email app instead.');
+  if (!mailerAvailable(getPuter)) throw new Error('Sending email needs a local session. Open the message in your email app instead.');
   const parsed = parseRecipients(to);
   if (parsed.error) throw new Error(parsed.error);
   if (String(subject || '').trim().length > MAX_SUBJECT_CHARS) throw new Error(failureMessage(400, { error: 'subject_too_long' }));

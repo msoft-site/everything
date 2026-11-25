@@ -31,7 +31,7 @@ export const TAB_ERROR =
   "This sheet tab no longer exists. It may have been deleted from the spreadsheet.";
 
 // Google's export endpoints let any page read files shared by link, so they
-// are asked directly, signed in to Puter or not. Puter's CORS-free fetch,
+// are asked directly, signed in or not. Puter's CORS-free fetch,
 // which needs a signed-in account (and opens a sign-in window without one),
 // is tried only when a direct request is refused. Without it, a refusal
 // while online means Google would not hand the file over, as it does for a

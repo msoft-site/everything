@@ -432,7 +432,7 @@ function openAccountMenu(anchor, onSignIn) {
         link('Source code on GitHub', 'github', { href: REPO_URL, target: '_blank', rel: 'noopener noreferrer', onClick: () => close() }),
       ];
       let footer = null;
-      if (app.demo) footer = link('Sign in with Puter', 'log-in', { onClick: () => (close(), onSignIn?.()) });
+      if (app.demo) footer = link('Sign in', 'log-in', { onClick: () => (close(), onSignIn?.()) });
       else if (canSignOut())
         footer = link('退出登录', 'log-out', {
           onClick: async () => {

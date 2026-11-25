@@ -6,7 +6,7 @@
   "alert.mentioned": "{author} 在 {where} 上提及了你",
   "ask.noAccess": "{list} 目前无法打开此电子表格。要与{count, plural, other {他们}}共享，以便他们看到此批注吗？",
   "ask.otherFile": "{file} 不保存批注，因此在电子表格另存为 .xlsx 文件之前，{list} 无法打开此批注。要保存并与{count, plural, other {他们}}共享吗？",
-  "ask.unsaved": "此电子表格尚未保存到 Puter，因此 {list} 无法打开此批注。要保存并与{count, plural, other {他们}}共享吗？",
+  "ask.unsaved": "此电子表格尚未保存到本地，因此 {list} 无法打开此批注。要保存并与{count, plural, other {他们}}共享吗？",
   "askTitle": "与你提及的人共享？",
   "couldNotNotify": "无法通知你提及的人",
   "couldNotShare": "无法共享此电子表格",

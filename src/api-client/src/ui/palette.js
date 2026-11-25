@@ -287,7 +287,7 @@ function commandEntries(app) {
   for (const e of app.ws.environments) {
     list.push(cmd(`env-${e.id}`, `Select environment: ${e.name}`, 'globe', () => app.setEnvironment(e.id), { keywords: 'switch use', detail: e.id === app.environmentId ? 'Active' : '' }));
   }
-  if (app.session?.puter && !signedIn) list.push(cmd('sign-in', 'Sign in to Puter', 'logIn', () => app.signIn(), { keywords: 'account sync login' }));
+  if (app.session?.puter && !signedIn) list.push(cmd('sign-in', 'Sign in', 'logIn', () => app.signIn(), { keywords: 'account sync login' }));
   return list;
 }
 

@@ -139,7 +139,7 @@ export async function rotateObjectDialog(e: Editor) {
     <h4>Turn</h4>
     <div class="ga-turn"><div id="ga-dial"></div><div class="ga-turn-fields">${field('Turn (°)', `<input type="number" id="ga-yaw" min="-180" max="180" step="1" value="${remembered.yaw}">`)}<p class="ga-note">Drag the marker: it shows where the front of the object faces (bottom = toward you).</p></div></div>
     ${field('Tilt (°)', range('ga-tilt', -60, 60, remembered.tilt), 'Positive shows more of the top, negative more of the underside.')}
-    ${notice('The object on a plain backdrop (reduced to at most 1024 pixels on the longer side), the angles and your note are sent to Puter’s AI service.')}
+    ${notice('The object on a plain backdrop (reduced to at most 1024 pixels on the longer side), the angles and your note are sent to local AI service.')}
     ${field('Note (optional)', `<textarea id="ga-note" rows="2" placeholder="e.g. “the back has a zipper”"></textarea>`)}
     <div class="ga-gen-row">${field(
       'Variations',

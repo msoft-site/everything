@@ -98,7 +98,7 @@ export function installIo(app) {
   app.preferenceSections = app.preferenceSections || [];
   app.preferenceSections.push({ category: 'audioHardware', title: '设备', keywords: 'input microphone device latency output 输入 麦克风 设备 延迟 输出', build: audioHardwarePrefs });
 
-  // Open Recent: Puter files, reopened through their path. Sessions come first, then audio
+  // Open Recent: local files, reopened through their path. Sessions come first, then audio
   // files; a name shared by files in different folders shows its folder.
   app.recentMenuItems = () => {
     const list = app.prefs.get('recent') || [];

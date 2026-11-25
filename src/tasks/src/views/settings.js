@@ -179,7 +179,7 @@ export function settingsView() {
           onclick: async () => {
             const ok = await confirmDialog({
               title: 'Sign out?',
-              message: 'Your data stays in your Puter account and reappears when you sign back in.',
+              message: 'Your data stays in your local account and reappears when you sign back in.',
               confirmLabel: 'Sign out',
               danger: false,
             });
@@ -200,7 +200,7 @@ export function settingsView() {
   }
 
   root.append(el('p.small.muted', { style: { margin: '22px 2px', textAlign: 'center' } },
-    'Tasks stores everything in your own Puter cloud. Free, no ads.'));
+    'Tasks stores everything in your own local storage. Free, no ads.'));
 
   return root;
 

@@ -622,7 +622,7 @@ export function createMailIntake({
     // Only reachable when mailInvitesShowUnknown surfaced this row at all
     // (see getPending) — the pill is how the tray says why it's asking.
     else if (!known) hint = 'Unknown sender';
-    else if (record.auth && record.auth.internal) hint = 'Puter user';
+    else if (record.auth && record.auth.internal) hint = 'Local user';
 
     let whenText = '';
     try {

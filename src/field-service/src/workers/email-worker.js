@@ -17,7 +17,7 @@
  * An app-owned relay that forwarded whatever it was handed would be a spam
  * cannon wearing this app's sending reputation, so:
  *
- *   - no Puter session, no send. `user` is only populated for callers that
+ *   - no local session, no send. `user` is only populated for callers that
  *     come through puter.workers.exec(); everyone else gets 401, and so does
  *     a caller whose session arrived without a form that bills THEM.
  *   - the caller supplies TEXT, never markup. The body is HTML-escaped here
@@ -490,7 +490,7 @@ router.get('/whoami', async (ctx) => {
  */
 router.post('/send', async (ctx) => {
   // A caller context exists only for requests that came through
-  // puter.workers.exec(), which forwards their Puter session. No session, no
+  // puter.workers.exec(), which forwards their local session. No session, no
   // send - and no way to bill anyone for one either. `detail` separates "no
   // session arrived" from "a session arrived that we could not pin to a
   // person"; GET /whoami reports the same picture in full.

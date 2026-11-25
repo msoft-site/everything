@@ -21,7 +21,7 @@ export function authView({ onSignIn, error = null }) {
     el('div.auth-card', {},
       el('div.auth-mark', { html: appMark(56) }),
       el('h1.auth-title', {}, 'Accounting'),
-      el('p.auth-sub', {}, 'Invoices, bills, banking, reconciliation, and financial reports, in your own Puter cloud.'),
+      el('p.auth-sub', {}, 'Invoices, bills, banking, reconciliation, and financial reports, in your own local storage.'),
       error ? el('p.field-error', { role: 'alert' }, error) : null,
       btn,
       el('ul.auth-points', {},

@@ -28,7 +28,7 @@ import { fileSize } from '../lib/util.js';
 export async function confirmSignOut() {
   const ok = await confirmDialog({
     title: 'Sign out?',
-    message: 'Your data stays safe in your Puter account and is here when you sign back in.',
+    message: 'Your data stays safe in your local account and is here when you sign back in.',
     confirmLabel: 'Sign out',
     danger: false,
   });
@@ -1028,7 +1028,7 @@ export function settingsView({ navigate }) {
 
   const dataCard = el('section.card.settings-card', {},
     el('h2.card-title', {}, 'Your data'),
-    el('p.card-sub', {}, 'Everything lives in your own Puter cloud. Download a copy anytime, and put one back if you ever need to.'),
+    el('p.card-sub', {}, 'Everything lives in your own local storage. Download a copy anytime, and put one back if you ever need to.'),
     el('div.side-actions', {},
       el('button.btn', {
         html: icon('download', 15, 1.6),

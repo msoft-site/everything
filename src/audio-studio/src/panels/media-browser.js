@@ -1,4 +1,4 @@
-// Media Browser panel: browse Puter files and folders on this device with a
+// Media Browser panel: browse local files and folders on this device with a
 // folder tree and a list (Name, Duration, Format, Size), filter to audio,
 // search, preview with a small transport, open (double-click / Enter), insert
 // into a multitrack session, and drag into the editor. Durations come from
@@ -227,7 +227,7 @@ export function mediaBrowserPanel(app) {
     if (ok) return;
     gate.replaceChildren(
       icon('cloud', 28),
-      h('p', puter.sdk() ? 'Sign in to Puter to browse your audio files.' : 'Puter is not available. Check your connection to browse your files.'),
+      h('p', puter.sdk() ? 'Sign in to browse your audio files.' : 'Puter is not available. Check your connection to browse your files.'),
       // Outlined: the app bar's Sign In is the one filled button for this, so a first launch has a single call to action.
       puter.sdk() ? h('button.btn', { type: 'button', onclick: signIn }, icon('log-in', 14), 'Sign In') : null,
       local.supported() ? h('p.faint', 'Or browse a folder on this device.') : null,

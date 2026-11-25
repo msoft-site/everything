@@ -3,7 +3,7 @@
  * pretend user's key-value store in localStorage, runs deployed "workers"
  * in this page with the real backend code, and routes plain fetch() calls
  * to *.puter.work there too, so the whole app (help center included) can
- * be exercised without a Puter account.
+ * be exercised without an account.
  *
  *   mock.html?as=olivia   sign in as another pretend user (default: olivia)
  *   mock.html?env=app     behave as if running inside the Puter desktop

@@ -49,7 +49,7 @@ async function loadCredential(puter, parent, refused) {
     expires: Math.min(issued + lifetime, claims.exp * 1000),
   };
   if (puter.authToken !== parent)
-    throw Error('您的 Puter 账户已更改。请重新打开共享空间。');
+    throw Error('您的 本地账户已更改。请重新打开共享空间。');
   await puter.kv.set(key, credential, { disableSharing: true });
   return credential;
 }
@@ -125,7 +125,7 @@ export function refuseCredential(puter, headers) {
 
 export async function authorize(puter, server, body) {
   const parent = puter.authToken;
-  if (!parent) throw Error('请使用 Puter 登录以继续。');
+  if (!parent) throw Error('请登录账户以继续。');
   let entry = credentials.get(puter);
   if (
     entry?.parent !== parent ||
@@ -150,7 +150,7 @@ export async function authorize(puter, server, body) {
     await hash(body),
   ]);
   if (puter.authToken !== parent)
-    throw Error('您的 Puter 账户已更改。请重新打开共享空间。');
+    throw Error('您的 本地账户已更改。请重新打开共享空间。');
   return {
     'puter-auth': credential.token,
     'x-wiki-proof': JSON.stringify({

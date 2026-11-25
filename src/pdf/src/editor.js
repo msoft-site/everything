@@ -469,7 +469,7 @@ export function createEditor({
   /** A tooltip naming a command and its shortcut, as this platform writes it. */
   const withShortcut = (label, spec) => `${label} (${formatShortcut(spec)})`;
   const saveButton = button(
-    'Save to Puter',
+    'Save to Local',
     'Cloud',
     safe(() => save()),
     'btn primary',
@@ -2594,7 +2594,7 @@ export function createEditor({
             : unsaved
               ? 'Unsaved changes'
               : path && cloudRevision === session.revision
-                ? 'Saved to Puter'
+                ? 'Saved to local storage'
                 : downloadedRevision === session.revision
                   ? 'Downloaded'
                   : 'Local file',
@@ -2602,7 +2602,7 @@ export function createEditor({
     saveStatus.title = saveStatus.textContent;
     saveButton.disabled = saving || busy;
     // Without a session the button says what saving needs first.
-    const saveLabel = signedOut() ? 'Sign in to save' : path ? 'Save' : 'Save to Puter';
+    const saveLabel = signedOut() ? 'Sign in to save' : path ? 'Save' : 'Save to Local';
     setText(saveButton.querySelector('span'), saveLabel);
     saveButton.setAttribute('aria-label', saveLabel);
     saveButton.title = withShortcut(saveLabel, 'Mod+S');
@@ -6987,7 +6987,7 @@ export function createEditor({
     if (!file) {
       const choice = await choose(
         'This PDF was moved or deleted',
-        `${name} is no longer where it was opened from in your Puter cloud. Your changes are still here: save them as a new file, or put the file back where it was.`,
+        `${name} is no longer where it was opened from in local storage. Your changes are still here: save them as a new file, or put the file back where it was.`,
         [
           ['Keep editing', 'cancel'],
           ['Put it back', 'restore'],
@@ -7001,7 +7001,7 @@ export function createEditor({
     if (!changed) return { path: file.path, name: file.name };
     const choice = await choose(
       'This PDF changed elsewhere',
-      `${file.name} was saved in your Puter cloud after you opened it here, perhaps in another window or on another device. Replace that version with yours, or keep both by saving yours as a new file.`,
+      `${file.name} was saved in local storage after you opened it here, perhaps in another window or on another device. Replace that version with yours, or keep both by saving yours as a new file.`,
       [
         ['Keep editing', 'cancel'],
         ['Replace it', 'replace', 'btn danger'],
@@ -7108,7 +7108,7 @@ export function createEditor({
         if (protection === savedProtection) protectionDirty = false;
         remote = await written(item, path, bytes.length, signal);
         if (destroyed || token !== saveGeneration) return;
-        toast(created ? `Saved to Puter as ${name}.` : 'PDF saved to Puter.');
+        toast(created ? `Saved to local as ${name}.` : 'PDF saved locally.');
       }
     } catch (error) {
       if (!signal.aborted) throw error;
@@ -7261,7 +7261,7 @@ export function createEditor({
         // The picker wrote a new file: later saves check that one, not the file opened before.
         remote = null;
         updateStatus();
-        toast(`Saved to Puter as ${name}.`);
+        toast(`Saved to local as ${name}.`);
         const savedPath = path;
         const info = await written(item, savedPath, size);
         if (!destroyed && token === saveGeneration && path === savedPath) remote = info;
@@ -7491,7 +7491,7 @@ export function createEditor({
                 onSelect: () => onOpen(),
               },
               onOpenCloud && {
-                label: 'From Puter…',
+                label: 'From Local…',
                 glyph: 'Cloud',
                 onSelect: () => onOpenCloud(),
               },
@@ -8329,27 +8329,27 @@ export function createEditor({
     return [
       { label: 'New blank PDF', icon: 'FilePlus2', onSelect: onNew },
       desktop
-        ? { label: 'Open from Puter…', icon: 'Cloud', shortcut: 'Mod+O', onSelect: onOpenCloud }
+        ? { label: 'Open from Local…', icon: 'Cloud', shortcut: 'Mod+O', onSelect: onOpenCloud }
         : { label: 'Open…', icon: 'FolderOpen', shortcut: 'Mod+O', onSelect: onOpen },
       desktop
         ? { label: 'Open from this device…', icon: 'FolderOpen', onSelect: onOpen }
-        : onOpenCloud && { label: 'Open from Puter…', icon: 'Cloud', onSelect: onOpenCloud },
+        : onOpenCloud && { label: 'Open from Local…', icon: 'Cloud', onSelect: onOpenCloud },
       { separator: true },
       {
-        label: signedOut() ? 'Sign in to save' : path ? 'Save' : 'Save to Puter',
+        label: path ? 'Save' : 'Save to Local',
         icon: 'CloudUpload',
         shortcut: 'Mod+S',
         disabled: cloud,
         onSelect: safe(() => save()),
       },
       {
-        label: 'Save a copy to Puter',
+        label: 'Save a copy locally',
         icon: 'Copy',
         disabled: cloud,
         onSelect: safe(() => save(true)),
       },
       {
-        label: 'Save to another Puter folder…',
+        label: 'Save to another folder…',
         icon: 'FolderInput',
         ...(desktop && { shortcut: 'Mod+Shift+S' }),
         disabled: cloud,

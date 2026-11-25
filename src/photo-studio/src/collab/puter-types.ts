@@ -36,6 +36,6 @@ export interface CollabPuter {
 export function collabPuter(): CollabPuter {
   const p = (globalThis as { puter?: Partial<CollabPuter> }).puter;
   if (!p?.workers?.exec || !p.workers.create || !p.kv?.get || !p.fs?.getReadURL || !p.auth?.getUser)
-    throw new Error('Shared documents need Puter. Open Photo Studio from Puter or check your connection, then try again.');
+    throw new Error('Shared documents need Puter. Open Photo Studio from local storage or check your connection, then try again.');
   return p as CollabPuter;
 }

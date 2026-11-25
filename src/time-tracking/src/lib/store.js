@@ -151,7 +151,7 @@ const LOGO_EXT = { 'image/png': 'png', 'image/jpeg': 'jpg', 'image/webp': 'webp'
 const logoPath = (stamp, ext) => `${DATA_DIR}/logo-${stamp}.${ext}`;
 
 /* ---------- reconciling two copies of the same list ----------
-   One Puter account, several devices: the phone tracks, the laptop
+   One account, several devices: the phone tracks, the laptop
    reviews. Every document here is written whole, so a stale copy used to
    overwrite whatever the other device had done. Reconciliation is per
    record, by id, newest write winning, with one extra piece of knowledge
@@ -383,7 +383,7 @@ export const DEFAULT_SETTINGS = {
   paymentTermsDays: null, // net days used to date invoices; null = no due date
   taxRate: 0, // default tax percentage prefilled on new invoices
   paymentDetails: '', // how to pay: account or IBAN, BIC, a payment link
-  businessLogo: '', // path of the logo file in the user's own Puter files
+  businessLogo: '', // path of the logo file in the user's own local files
 };
 
 /**
@@ -604,7 +604,7 @@ class Store extends EventTarget {
   /* ---------- picking up another device's work ---------- */
 
   /**
-   * Re-read from Puter and reconcile: the whole point of one account
+   * Re-read from local storage and reconcile: the whole point of one account
    * holding the data is tracking on a phone and reviewing on a laptop, and
    * until now nothing here ever looked at the server again after boot.
    *

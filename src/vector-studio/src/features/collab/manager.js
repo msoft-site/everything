@@ -56,7 +56,7 @@ export class CollabManager extends Emitter {
   /** Why sharing cannot work right now, or null when it can. */
   unavailable() {
     if (!this.puter && !this.transportFor) return 'Sharing needs Puter, which could not be reached. Check your connection and reload the app.';
-    if (!this.identity()) return 'Sign in with Puter to share documents and open documents others share with you.';
+    if (!this.identity()) return 'Sign in to share documents and open documents others share with you.';
     if (typeof navigator !== 'undefined' && navigator.onLine === false) return 'You are offline. Sharing needs a connection; your own files keep working.';
     return null;
   }
@@ -80,7 +80,7 @@ export class CollabManager extends Emitter {
   /** Share an open personal document: it becomes a shared document this account owns. */
   async share(editor, progress = () => {}) {
     const user = this.identity();
-    if (!user) throw new CollabError('Sign in with Puter to share documents.');
+    if (!user) throw new CollabError('Sign in to share documents.');
     if (this.sessionOf(editor)) return this.sessionOf(editor);
     const server = this.deployServer ? await this.deployServer(progress) : await deploy(this.puter, progress);
     const doc = editor.doc;
@@ -123,7 +123,7 @@ export class CollabManager extends Emitter {
 
   async #join(link, activate) {
     const user = this.identity();
-    if (!user) throw new CollabError('Sign in with Puter to open shared documents.');
+    if (!user) throw new CollabError('Sign in to open shared documents.');
     const session = new CollabSession({ transport: this.transport(link.server), server: link.server, room: link.room, user, puter: this.puter, outbox: this.outbox, ...this.sessionOptions });
     const data = await session.join(link.invite);
     const doc = VDocument.fromJSON({ nodes: data.nodes, assets: data.assets, comments: data.comments });

@@ -223,7 +223,7 @@ async function signOut() {
   if (unsent) {
     const ok = await confirmDialog({
       title: 'Some changes are not saved yet',
-      message: `${unsent === 1 ? '1 change' : `${unsent} changes`} could not be saved to your Puter account, perhaps because you are offline. Signing out now deletes ${unsent === 1 ? 'it' : 'them'} from this device. Stay signed in and ${unsent === 1 ? 'it is' : 'they are'} saved when the connection returns.`,
+      message: `${unsent === 1 ? '1 change' : `${unsent} changes`} could not be saved to your local account, perhaps because you are offline. Signing out now deletes ${unsent === 1 ? 'it' : 'them'} from this device. Stay signed in and ${unsent === 1 ? 'it is' : 'they are'} saved when the connection returns.`,
       confirmLabel: 'Sign out and discard',
       cancelLabel: 'Stay signed in',
       danger: true,
@@ -249,7 +249,7 @@ async function boot() {
   } catch (err) {
     // No SDK (no connection, and no cached copy): open the books from this
     // device if they were opened here before. Edits wait in the outbox.
-    if (!(await bootOffline())) root.replaceChildren(errorView({ title: 'Could not reach Puter', message: err.message, onRetry: () => location.reload() }));
+    if (!(await bootOffline())) root.replaceChildren(errorView({ title: 'Could not reach storage service', message: err.message, onRetry: () => location.reload() }));
     return;
   }
   if (!puter.auth.isSignedIn()) {
@@ -322,7 +322,7 @@ async function openBooks(kv, { offline = false } = {}) {
       // Said once per record; the status pill keeps showing "Not saved".
       const fresh = detail.keys.filter((k) => !refusedShown.has(k));
       for (const k of fresh) refusedShown.add(k);
-      if (fresh.length) toast(`${fresh.length === 1 ? 'A change' : `${fresh.length} changes`} could not be saved to your Puter account (${detail.error?.message || 'refused'}). ${fresh.length === 1 ? 'It is' : 'They are'} kept on this device and will be retried.`);
+      if (fresh.length) toast(`${fresh.length === 1 ? 'A change' : `${fresh.length} changes`} could not be saved to your local account (${detail.error?.message || 'refused'}). ${fresh.length === 1 ? 'It is' : 'They are'} kept on this device and will be retried.`);
     }
   });
   store.on(() => queueRefresh());

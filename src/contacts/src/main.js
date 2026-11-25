@@ -51,7 +51,7 @@ function showSignIn() {
       <div class="gate__card">
         <img class="gate__mark" src="/icon.svg" width="76" height="76" alt="" />
         <h1 class="gate__title">Contacts</h1>
-        <p class="gate__lead">Your private address book, synced to your Puter cloud. Free, no ads — your data stays in your account.</p>
+        <p class="gate__lead">Your private address book, synced to local storage. Free, no ads — your data stays in your account.</p>
         <button class="btn btn--primary btn--lg" data-signin>Sign in</button>
         <p class="gate__error" data-signin-error hidden></p>
       </div>
@@ -196,7 +196,7 @@ function renderServicePanel(callerApp, allowed) {
   // as markup.
   const app = callerApp ? callerApp[0].toUpperCase() + callerApp.slice(1) : 'Another app'
   root.querySelector('[data-service-lead]').textContent = allowed
-    ? `${app} is using your contacts. Nothing leaves your Puter account, and you can close this window at any time.`
+    ? `${app} is using your contacts. Nothing leaves your local account, and you can close this window at any time.`
     : `${app} asked to use your contacts and was not allowed to. You can close this window.`
 }
 
@@ -229,7 +229,7 @@ function exit() {
 
 function init() {
   if (!hasPuter) {
-    fatal('Connection problem', 'Could not reach Puter. Check your connection and reload.')
+    fatal('Connection problem', 'Could not reach storage service. Check your connection and reload.')
     return
   }
   launch = readLaunchContext(window)

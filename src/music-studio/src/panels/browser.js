@@ -177,8 +177,8 @@ function createBrowser(app, host) {
     if (!puter.sdk()) return [{ id: 'files:offline', label: 'Puter is not available right now. Check your connection, then reload.', kind: 'note' }];
     if (!puter.isSignedIn()) {
       return [
-        { id: 'files:why', label: 'Sign in to keep projects, samples and exports in your Puter cloud and open them on any device.', kind: 'note' },
-        { id: 'files:signin', label: 'Sign in to Puter', kind: 'action', icon: 'log-in', data: { run: () => app.signIn?.() } },
+        { id: 'files:why', label: 'Sign in to keep projects, samples and exports in local storage and open them on any device.', kind: 'note' },
+        { id: 'files:signin', label: 'Sign in', kind: 'action', icon: 'log-in', data: { run: () => app.signIn?.() } },
         { id: 'files:import', label: 'Import audio from this device...', kind: 'action', icon: 'upload', data: { run: () => app.commands.run('file.importAudio') } },
         { id: 'files:open', label: 'Open a project from this device...', kind: 'action', icon: 'folder-open', data: { run: () => app.commands.run('file.openLocal') } },
       ];

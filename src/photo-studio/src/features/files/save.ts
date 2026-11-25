@@ -1,5 +1,5 @@
-// Saving to Puter (a native project, or the PSD or single image file a
-// document came from), opening from Puter, and Open Recent.
+// Saving to local (a native project, or the PSD or single image file a
+// document came from), opening from local storage, and Open Recent.
 import type { Editor } from '../../editor';
 import type { DocumentSession } from '../../app/session';
 import type { PhotoDocument } from '../../model/document';
@@ -155,7 +155,7 @@ async function store(e: Editor, s: DocumentSession, w: Written, to: { pick?: boo
   if (!to.pick && path && nameFormat(path) === w.format && (w.format !== 'psd' || extension(path) === w.ext)) {
     const item = await cloudWrite(path, w.blob);
     markSaved(e, s, w, item);
-    e.message(`Saved ${item.name} to Puter`);
+    e.message(`Saved ${item.name} to local`);
     return;
   }
   // The Puter picker never settles when dismissed: do not hold the editor busy.
@@ -168,7 +168,7 @@ async function store(e: Editor, s: DocumentSession, w: Written, to: { pick?: boo
         return;
       }
       markSaved(e, s, w, item);
-      e.message(`Saved ${item.name} to Puter`);
+      e.message(`Saved ${item.name} to local`);
     })
     .catch((error) => e.message(errorText(error)));
 }

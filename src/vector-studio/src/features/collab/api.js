@@ -64,7 +64,7 @@ export async function deploy(puter, progress = () => {}) {
   if (!puter?.workers?.create || !puter.fs?.write || !puter.kv) throw new CollabError('Sharing needs the Puter workers service, which is not available here.');
   const account = puter.authToken;
   const sameAccount = () => {
-    if (puter.authToken !== account) throw new CollabError('Your Puter account changed. Try sharing again.');
+    if (puter.authToken !== account) throw new CollabError('Your local account changed. Try sharing again.');
   };
   let config = await puter.kv.get(WORKER_KEY);
   sameAccount();

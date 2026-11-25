@@ -66,7 +66,7 @@ async function boot() {
     await store.init();
   } catch (err) {
     console.error(err);
-    showError('Couldn’t load your inventory', err.recovery ? err.message : 'Something went wrong talking to your Puter cloud. Check your connection and try again.', () => location.reload());
+    showError('Couldn’t load your inventory', err.recovery ? err.message : 'Something went wrong talking to local storage. Check your connection and try again.', () => location.reload());
     if (err.recovery) appRoot.firstElementChild.append(el('button.btn', { onclick: () =>
       downloadFile('inventory-recovery.json', JSON.stringify(err.recovery, null, 2), 'application/json'),
     }, 'Download recovery data'));

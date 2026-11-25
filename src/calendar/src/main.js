@@ -93,7 +93,7 @@ function showSignIn() {
         el('h1', { class: 'auth-card__title', text: '日历' }),
         el('p', {
           class: 'auth-card__sub',
-          text: '使用免费的 Puter 账号登录，在所有设备间同步您的日程。您的数据始终保存在您自己的存储空间中。',
+          text: '使用免费的 本地账户登录，在所有设备间同步您的日程。您的数据始终保存在您自己的存储空间中。',
         }),
         btn,
       ]),
@@ -240,7 +240,7 @@ async function bootInner() {
     // offline is refused exactly like one of the user's own.
     if (launch.callerApp) serveApi(launch.callerApp, { store });
     // Self-serve RSVP links for guests, served by a worker in the user's own
-    // Puter account (deployed on first use). Uses the gated store, so its
+    // account (deployed on first use). Uses the gated store, so its
     // response merges are offline-guarded like every other write.
     const rsvp = createRsvpLinks({ kv, store, user });
     // Emailing those links out, through the calendar's shared email worker.
@@ -403,7 +403,7 @@ async function bootService() {
     // When the desktop can't close us, the window that gets shown must explain
     // itself: without a render it would still hold the boot spinner, stuck
     // "loading" (aria-busy and all) forever.
-    console.warn('[calendar] the calendar API needs a signed-in Puter session');
+    console.warn('[calendar] the calendar API needs a signed-in local session');
     renderServicePanel(launch.callerApp, 'signed-out');
     if (!exit()) showWindow();
     return;
@@ -450,10 +450,10 @@ async function bootService() {
 
 const SERVICE_PANEL_COPY = {
   serving: (app) =>
-    `${app} 正在使用您的日历。任何数据都不会离开您的 Puter 账号，您可以随时关闭此窗口。`,
+    `${app} 正在使用您的日历。任何数据都不会离开您的 本地账户，您可以随时关闭此窗口。`,
   denied: (app) => `${app} 请求使用您的日历但未被允许。您可以关闭此窗口。`,
   'signed-out': (app) =>
-    `${app} 请求使用您的日历，但当前未登录 Puter。您可以关闭此窗口。`,
+    `${app} 请求使用您的日历，但当前未登录本地账户。您可以关闭此窗口。`,
   idle: (app) => `${app} 已完成对您日历的使用。您可以关闭此窗口。`,
 };
 

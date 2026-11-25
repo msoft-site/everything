@@ -847,7 +847,7 @@ export function commandEntries({
     );
     add(
       "cloud-save",
-      "Save to Puter",
+      "Save to Local",
       "Board",
       "save backup cloud sauvegarder nuage",
       "Ctrl/Cmd+S",

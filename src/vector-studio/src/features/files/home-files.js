@@ -77,7 +77,7 @@ function yourFilesSection(app, files, host) {
       list.replaceChildren(
         h(
           'div.files-signin-card',
-          h('p.muted', 'Sign in to keep your files in your own Puter cloud and see them here.'),
+          h('p.muted', 'Keep your files in local storage and see them here.'),
           app.onSignIn ? h('button.btn.primary', { type: 'button', onclick: () => app.onSignIn() }, icon('login', 14), 'Sign in') : null,
           h('button.btn', { type: 'button', onclick: () => files.service.openLocal() }, icon('folder-open', 14), 'Open from this computer'),
         ),

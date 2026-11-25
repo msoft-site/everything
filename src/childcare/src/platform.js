@@ -70,7 +70,7 @@ export async function getUser() {
 
 const USER_KEY = 'childcare.lastUser';
 
-/** A hash of the current Puter session token, or null if it is not known. */
+/** A hash of the current local session token, or null if it is not known. */
 async function sessionHash() {
   const token = globalThis.puter?.authToken;
   if (typeof token !== 'string' || !token || !globalThis.crypto?.subtle) return null;

@@ -10,7 +10,7 @@ import { confirmDialog, toast } from './dialog.js';
  * media: how many media files aren't stored. Resolves true to leave.
  */
 export function confirmLeave(library, { edits = false, media = 0 }) {
-  const where = library.backend.kind === 'local' ? 'in this browser' : 'to your Puter cloud';
+  const where = library.backend.kind === 'local' ? 'in this browser' : 'to local storage';
   const what = [edits ? 'your latest changes' : null, media ? `${media} media file${media === 1 ? '' : 's'}` : null].filter(Boolean).join(' and ');
   const answer = confirmDialog({
     title: "Couldn't save your changes",

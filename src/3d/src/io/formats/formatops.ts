@@ -165,7 +165,7 @@ const TEMP_DIRS = /^\/(tmp|var\/tmp|private\/tmp|temp)\//i;
 export const isTempPath = (p: string) => TEMP_DIRS.test(normPath(p)) || /\/temp\//i.test(normPath(p));
 
 function pickFiles(accept: string, multiple: boolean): Promise<File[]> {
-  // inside the Puter desktop the files come from Puter's Open dialog (File ▸ Import ▸ From This Device for others)
+  // inside the Puter desktop the files come from local storage's Open dialog (File ▸ Import ▸ From This Device for others)
   if (opensFromPuter()) return pickFilesFromPuter(accept, multiple);
   return new Promise((res) => {
     const input = document.createElement('input');

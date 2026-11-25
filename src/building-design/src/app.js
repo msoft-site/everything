@@ -233,7 +233,7 @@ export class App {
   /** Synchronizing needs the project in the cloud; offer to put it there. */
   async requireShared() {
     if (this.sync.active) return true;
-    const ok = await confirmDialog('Save to Puter first', 'Working together needs the project in your Puter cloud storage. Save it there now? You can then share it with Share Project.', { confirm: 'Save to Puter' });
+    const ok = await confirmDialog('Save project first', 'Working together needs the project in local storage storage. Save it there now? You can then share it with Share Project.', { confirm: 'Save to Local' });
     if (ok) await this.saveAs();
     return this.sync.active;
   }
@@ -1766,7 +1766,7 @@ export class App {
   }
 
   accountMenu(anchor) {
-    const items = [{ header: this.user?.username || 'Signed in' }, { label: 'Open from Puter', icon: 'cloud', action: () => this.openDialog('cloud') }, { label: 'Shared With Me', icon: 'users', action: () => this.openDialog('shared') }];
+    const items = [{ header: this.user?.username || 'Signed in' }, { label: 'Open from Local', icon: 'cloud', action: () => this.openDialog('cloud') }, { label: 'Shared With Me', icon: 'users', action: () => this.openDialog('shared') }];
     if (canSignOut()) items.push({ separator: true }, { label: 'Sign out', icon: 'log-out', action: () => this.signOut() });
     showMenu(anchor, items, { alignRight: true, label: 'Account' });
   }

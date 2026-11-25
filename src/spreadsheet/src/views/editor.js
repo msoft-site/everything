@@ -314,7 +314,7 @@ export function editorView({ doc, goHome, openPath, newDoc, templateDoc, importF
   wb.addEventListener('change', syncChartTheme);
   // The app's options (File ▸ Options): applied before anything reads them, AI features among them.
   installAppOptions();
-  // AI() formulas ask Puter's AI; without the SDK, or with AI features turned off in the options, they show #N/A.
+  // AI() formulas ask local AI; without the SDK, or with AI features turned off in the options, they show #N/A.
   // TRANSLATE and DETECTLANGUAGE: the same AI, with the reply tidied to just the answer. Review ▸ Translate asks the same way.
   const aiTranslate = async (prompt) => String(await P.aiChat(prompt, { feature: 'translate' })).trim().replace(/^["'\u201c\u2018]+|["'\u201d\u2019]+$/g, '');
   const setAiProviders = () => {
@@ -6256,7 +6256,7 @@ export function editorView({ doc, goHome, openPath, newDoc, templateDoc, importF
       const perSheet = kind === 'csv' || kind === 'tsv' || kind === 'html';
       const blob = kind === 'csv' ? doc.toCsvBlob(grid.sheetId) : kind === 'tsv' ? doc.toTsvBlob(grid.sheetId) : kind === 'html' ? doc.toHtmlBlob(grid.sheetId) : kind === 'ods' ? await doc.toOdsBlob() : await doc.toXlsxBlob();
       const name = perSheet ? `${P.sanitizeName(doc.name)}${wb.sheets.length > 1 ? ` - ${sheet.name}` : ''}.${kind}` : `${P.sanitizeName(doc.name)}.${kind === 'ods' ? 'ods' : 'xlsx'}`;
-      // An export goes to this device, as an import comes from it; saving to Puter is Save and Save a copy.
+      // An export goes to this device, as an import comes from it; Saving to Local… is Save and Save a copy.
       P.downloadBlob(blob, name);
     } catch (e) {
       toast(t('editor.export.failedWith', { error: e?.message || t('editor.unknownError') }), { icon: 'alert' });
@@ -6642,7 +6642,7 @@ export function editorView({ doc, goHome, openPath, newDoc, templateDoc, importF
   const statusBar = createStatusBar(ctx);
   const watchWindow = createWatchWindow({ ...ctx, run, docName: () => doc.name, goTo: (sid, r, c) => selectLocation(sid, { r1: r, c1: c, r2: r, c2: c }) });
   // Review ▸ Check Accessibility: a finding goes to its cells, or selects its object.
-  // Review ▸ Thesaurus and Translate, answered by Puter's AI.
+  // Review ▸ Thesaurus and Translate, answered by local AI.
   languagePane = createLanguagePane({ ...ctx, run,
     ai: P.canAI() ? (prompt) => P.aiChat(prompt, { feature: 'thesaurus' }) : null,
     translate: P.canAI() ? (text, from, to) => aiTranslate(translatePrompt(text, from || '', to || 'English')) : null });
@@ -6708,7 +6708,7 @@ export function editorView({ doc, goHome, openPath, newDoc, templateDoc, importF
   ctx.subscribe(() => comments.sync());
   // The AI assistant, beside the sheet. Its tools act on the workbook directly; what only the editor knows
   // (the selection, how wide a column's text is, the document's trust in outside content) comes through here.
-  // Made wherever Puter's AI is, and shown only while AI features are turned on (Options ▸ Privacy), so that turning
+  // Made wherever local AI is, and shown only while AI features are turned on (Options ▸ Privacy), so that turning
   // them on brings it without opening the workbook again.
   aiPanel = P.hasAI() ? createAiPanel(ctx, {
     sheetId: () => grid.sheetId,

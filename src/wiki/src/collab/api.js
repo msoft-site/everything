@@ -99,7 +99,7 @@ async function bundle() {
 export async function deploy(puter, progress = () => {}, expectedServer) {
   const account = puter.authToken;
   const checkAccount = () => {
-    if (puter.authToken !== account) throw new Error('您的 Puter 账户已更改。请重新打开共享空间。');
+    if (puter.authToken !== account) throw new Error('您的 本地账户已更改。请重新打开共享空间。');
   };
   let config = await puter.kv.get(WORKER_KEY);
   checkAccount();

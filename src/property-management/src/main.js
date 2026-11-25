@@ -74,7 +74,7 @@ async function startSignedIn() {
     user = await platform.getUser();
   } catch (err) {
     console.error(err);
-    showWelcome('We could not reach your Puter account. Check your connection and try again.');
+    showWelcome('We could not reach your local account. Check your connection and try again.');
     return;
   }
   app.user = { username: user.username, uuid: user.uuid };
@@ -87,7 +87,7 @@ async function startSignedIn() {
     ws = await team.loadWorkspaces(kv);
   } catch (err) {
     console.error('[property-management] could not read workspaces', err);
-    showWelcome('We could not load your companies from your Puter account. Check your connection and try again.');
+    showWelcome('We could not load your companies from your local account. Check your connection and try again.');
     return;
   }
   const join = location.hash.startsWith('#/join') ? team.parseJoin(Object.fromEntries(new URLSearchParams(location.hash.split('?')[1] || ''))) : null;
@@ -139,11 +139,11 @@ async function acceptInvite(kv, ws, { url, token }) {
   // A company already joined still gets the invitation (a member who was
   // removed and invited back); joining again is harmless for a member.
   if (!ws.joined.some((j) => j.url === url)) {
-    // Joining sends your Puter session to that business's server, so ask first.
+    // Joining sends your local session to that business's server, so ask first.
     const host = new URL(url).hostname;
     const ok = await confirmDialog({
       title: 'Join a company?',
-      message: `You opened an invitation to a company whose team server is ${host}. Its owner will see your Puter username, and what you add there is stored in their account. While you work in it, their server acts with your Puter session, so a dishonest owner could use it to read this app's data in your own account or use up your Puter allowance. Only accept invitations from people you trust.`,
+      message: `You opened an invitation to a company whose team server is ${host}. Its owner will see your Local username, and what you add there is stored in their account. While you work in it, their server acts with your local session, so a dishonest owner could use it to read this app's data in your own account or use up your Puter allowance. Only accept invitations from people you trust.`,
       confirmLabel: 'Join company',
     });
     if (!ok) return ws;
@@ -216,8 +216,8 @@ function showWelcome(error) {
         h('h1', 'Every property, lease and dollar in one place.'),
         h('p.lead', 'Collect rent, track leases and renewals, handle maintenance, pay bills, and keep owner-ready books. Free and open source.'),
         error ? h('div.notice.danger', { role: 'alert' }, icon('alert'), h('span', error)) : null,
-        location.hash.startsWith('#/join') ? h('div.notice.accent', icon('users'), h('span', 'You have been invited to join a company. Sign in with Puter to accept the invitation.')) : null,
-        !available ? h('div.notice.warning', { role: 'alert' }, icon('warning'), h('span', 'Puter could not be loaded, so signing in is unavailable right now. You can still explore the sample portfolio.')) : null,
+        location.hash.startsWith('#/join') ? h('div.notice.accent', icon('users'), h('span', 'You have been invited to join a company. Sign in to accept the invitation.')) : null,
+        !available ? h('div.notice.warning', { role: 'alert' }, icon('warning'), h('span', 'Storage service could not be loaded, so signing in is unavailable right now. You can still explore the sample portfolio.')) : null,
         h('div.cta', signInBtn, demoBtn),
         h(
           'ul.welcome-points',
@@ -231,7 +231,7 @@ function showWelcome(error) {
         h(
           'div.welcome-foot',
           h('a', { href: REPO_URL, target: '_blank', rel: 'noopener noreferrer' }, icon('github', 16), 'Source on GitHub'),
-          h('span', 'Your data is stored in your own Puter account.'),
+          h('span', 'Your data is stored locally.'),
         ),
       ),
       h('div.welcome-art', { 'aria-hidden': 'true', html: WELCOME_ART }),

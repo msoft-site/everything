@@ -1,5 +1,5 @@
 /**
- * The Puter account, and the cloud storage that comes with it.
+ * The account, and the cloud storage that comes with it.
  *
  * Puter is optional here by design: the whole game runs from localStorage, and
  * signing in adds carrying your times and your unfinished puzzle between

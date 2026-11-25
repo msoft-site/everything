@@ -25,7 +25,7 @@
  *
  * An app-owned relay that forwarded whatever it was handed would be a spam
  * cannon wearing the calendar's sending reputation, so it never does:
- *   - no Puter session, no send. `user` is only populated for callers that
+ *   - no local session, no send. `user` is only populated for callers that
  *     come through puter.workers.exec(); everyone else gets 401.
  *   - no real account, no send. A temporary account, or one whose email is
  *     still unconfirmed, gets 403 account_not_verified (accountProblemOf).
@@ -41,7 +41,7 @@
  *     description stays plain text a mail client may auto-detect and make
  *     clickable (in the text/plain part especially). The guard against a rogue
  *     host is therefore not that its text can't be linkified, but that every
- *     send needs the host's own Puter session and is billed to and
+ *     send needs the host's own local session and is billed to and
  *     rate-limited as that host (below).
  *   - recipients are capped per request (MAX_RECIPIENTS) and per user per day
  *     (DAILY_LIMIT), and an invitation a guest already received is skipped
@@ -76,7 +76,7 @@
 //      email.sendTransactional); /health and /whoami now report it as runtime.
 // '11': POST /replies — an iTIP REPLY to an invitation the calendar received
 //      by mail, for when the user's own puter.email.send cannot carry it.
-// '12': the sender's identity comes from their Puter session alone. Reply-To
+// '12': the sender's identity comes from their local session alone. Reply-To
 //      is always the caller's own <username>@puter.email, never an address
 //      from the request; the organizer (and, on /replies, the attendee) must
 //      be one of the caller's own addresses; and a session that cannot be
@@ -142,7 +142,7 @@ async function callerIdOf(caller) {
   }
 }
 
-/** A Puter username, lowercased, if it is one an address can be built from. */
+/** A Local username, lowercased, if it is one an address can be built from. */
 function usernameOf(value) {
   const name = typeof value === 'string' ? value.trim().toLowerCase() : '';
   return /^[a-z0-9][a-z0-9._-]{0,63}$/.test(name) ? name : '';
@@ -150,7 +150,7 @@ function usernameOf(value) {
 
 /**
  * Who the caller is, in the two addresses a mail may speak for them as —
- * read from their Puter session and NEVER from the request body:
+ * read from their local session and NEVER from the request body:
  *
  *   mailbox  `<username>@puter.email`, the address Puter itself gives the
  *            account. It is every mail's Reply-To: derived here, so no request
@@ -189,7 +189,7 @@ function isCallerAddress(self, address) {
 }
 
 /**
- * Why this account may not send — '' when it may. Any Puter session reaches
+ * Why this account may not send — '' when it may. Any local session reaches
  * this worker, and a temporary account is handed out with no signup at all, so
  * a session alone is not a person. The account must be permanent, and its email
  * must not be awaiting confirmation (the platform's own verified-account rule).
@@ -809,7 +809,7 @@ router.get('/whoami', async (ctx) => {
  */
 async function deliver(ctx, forcedKind = '') {
   // A caller context exists only for requests that came through
-  // puter.workers.exec(), which forwards their Puter session. No session, no
+  // puter.workers.exec(), which forwards their local session. No session, no
   // send — and no way to bill anyone for one either. `detail` separates "no
   // session arrived" from "a session arrived that we could not pin to a
   // person"; GET /whoami reports the same picture in full.
@@ -835,7 +835,7 @@ async function deliver(ctx, forcedKind = '') {
 
   // The organizer a mail speaks for — its .ics ORGANIZER, the "Organizer"
   // line, where a mail client's own RSVP buttons answer — must be one of the
-  // caller's own addresses. This worker answers any signed-in Puter user;
+  // caller's own addresses. This worker answers any signed-in Local user;
   // without the check anyone could put the calendar's sender behind a mail
   // that names someone else as its host. An address the session cannot vouch
   // for is refused, not waved through: "the platform did not say" is exactly
@@ -889,7 +889,7 @@ async function deliver(ctx, forcedKind = '') {
 
   const subject = subjectFor(req);
   const attachments = attachmentsFor(req);
-  // Never from the request: a guest's reply goes to the Puter account that
+  // Never from the request: a guest's reply goes to the account that
   // sent the mail, whatever the event claims about its host.
   const replyTo = self.mailbox;
   let sent = 0;

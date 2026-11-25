@@ -1,6 +1,6 @@
 /**
  * Where projects live:
- *   cloud   the user's Puter drive (needs sign-in)
+ *   cloud   the user's local drive (needs sign-in)
  *   device  files on this computer (File System Access API where available,
  *           otherwise download and file input)
  *   local   IndexedDB recovery copies of open projects, so work survives a

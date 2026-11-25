@@ -142,9 +142,9 @@ export function createReviewPanel(ctx, { deps = {} } = {}) {
 
   async function open() {
     if (!reviewAvailable(ctx)) {
-      const signIn = ctx.account?.onSignIn ? h('button.btn.small', { type: 'button' }, 'Sign in to Puter') : null;
+      const signIn = ctx.account?.onSignIn ? h('button.btn.small', { type: 'button' }, 'Sign in') : null;
       signIn?.addEventListener('click', () => ctx.account.onSignIn());
-      message('Review comments need a Puter account.', signIn);
+      message('Review comments need an account.', signIn);
       return;
     }
     message('Loading review comments...');

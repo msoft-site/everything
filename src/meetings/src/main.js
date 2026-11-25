@@ -38,7 +38,7 @@ const root = document.getElementById('app');
 let activeCall = null;
 /** @type {(() => void)|null} cleanup for the mounted view */
 let unmount = null;
-/** In-memory name (the Puter account username, when we have nothing else). */
+/** In-memory name (the account username, when we have nothing else). */
 let userName = null;
 
 const ctx = {
@@ -47,7 +47,7 @@ const ctx = {
   calendar: createCalendar(),
 
   // A name the user actually entered outranks the account username: it is
-  // stored locally the moment they join, and synced down from puter.kv on a
+  // stored locally the moment they join, and synced down from local storage.kv on a
   // device that has never joined here.
   getUserName: () => getPref('name') ?? userName,
   setUserName: (name) => {
@@ -86,7 +86,7 @@ const ctx = {
   async startInstantMeeting() {
     const from = unmount; // the view the click came from
     // A device that has never joined from here may still be waiting on the
-    // saved name to come down from puter.kv.
+    // saved name to come down from local storage.kv.
     await prefsReady();
     if (unmount !== from) return; // they went elsewhere meanwhile
     if (!canStartWithoutPrejoin()) {
@@ -369,7 +369,7 @@ function onGrantFailed(call, inForce) {
   if (call !== activeCall || !call.session.isHost || inForce) return;
   notifyOnce('grant-failed', LINK_TROUBLE_TOAST_EVERY_MS, () => {
     call.grantAlerted = true;
-    toast('在重新连接到 Puter 之前，没有 Puter 账号的访客可能无法连接。', {
+    toast('在重新连接到 Puter 之前，没有 本地账户的访客可能无法连接。', {
       icon: 'info',
     });
   });

@@ -36,7 +36,7 @@ export const localAvailable = async () => !!(await opfsDir());
 
 async function localWrite(id, name, text) {
   const dir = await opfsDir();
-  if (!dir) throw new Error('This browser cannot store projects locally. Download the project or sign in to save it to your Puter cloud.');
+  if (!dir) throw new Error('This browser cannot store projects locally. Download the project or sign in to save it to local storage.');
   const fh = await dir.getFileHandle(`${id}${EXT}`, { create: true });
   const w = await fh.createWritable();
   await w.write(text);
@@ -188,7 +188,7 @@ export function forgetRecent(location) {
 
 export const locationLabel = (loc) => (loc?.type === 'cloud' ? loc.path.replace(/^.*\/AppData\/[^/]+\//, '') : 'This browser');
 
-/** Opens a .circuits file chosen from Puter storage. Returns { text, location, name } or null. */
+/** Opens a .circuits file chosen from local storage storage. Returns { text, location, name } or null. */
 export async function pickCloudFile() {
   const p = puter();
   if (!p?.ui?.showOpenFilePicker) return null;

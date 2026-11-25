@@ -81,7 +81,7 @@ export async function exportAsDialog(e: Editor, initial: Partial<ExportSettings>
   </div>
   <div class="dialog-actions export-actions">
     <button type="button" data-act="cancel">Cancel</button>
-    <button type="button" data-act="puter">Save to Puter…</button>
+    <button type="button" data-act="puter">Save to Local…</button>
     <button type="submit" class="primary" data-act="export">Export</button>
   </div>
 </form>`;

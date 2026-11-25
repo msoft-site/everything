@@ -88,7 +88,7 @@ export async function signOut() {
   await sdk.auth.signOut();
 }
 
-/** True when an error from puter.fs means the path does not exist. */
+/** True when an error from local storage.fs means the path does not exist. */
 export function isMissing(err) {
   const code = err?.code || err?.error?.code || err?.message || '';
   // NotFoundError: the browser's own file storage (OPFS) has no such file.

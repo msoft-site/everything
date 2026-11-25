@@ -1,5 +1,5 @@
 /**
- * Where bases live. Layout in the app's folder of the person's Puter cloud:
+ * Where bases live. Layout in the app's folder of the person's local storage:
  *
  *   records/index.json                      list of bases (name, color, starred, trash)
  *   records/bases/<baseId>/base.json        schema: tables, fields, views
@@ -913,7 +913,7 @@ export class BaseSession extends Emitter {
       // Put the changes back so the next try includes them.
       this.requeue(u);
       const offline = typeof navigator !== 'undefined' && navigator.onLine === false;
-      this.setStatus(offline ? 'offline' : 'error', isQuota(err) ? '您的 Puter 存储空间已满。请释放空间以继续保存。' : err?.message || String(err));
+      this.setStatus(offline ? 'offline' : 'error', isQuota(err) ? '您的本地存储空间已满。请释放空间以继续保存。' : err?.message || String(err));
       const wait = RETRY[Math.min(this.retry, RETRY.length - 1)];
       this.retry++;
       this.schedule(wait, { retry: true });

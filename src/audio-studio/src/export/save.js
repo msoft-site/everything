@@ -276,7 +276,7 @@ export async function saveFlow(app, doc, { mode = 'export', range = null } = {})
     let dir = null;
     if (r.location.type === 'puter') {
       if (!puter.isSignedIn() && !(await puter.signIn().catch(() => false))) {
-        app.notify('Sign in to Puter to save there, or choose This device.', { error: true });
+        app.notify('Sign in to save there, or choose This device.', { error: true });
         initial = r;
         continue;
       }

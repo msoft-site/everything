@@ -31,7 +31,7 @@ export function openCalendarShare(ctx) {
     el(
       'p',
       { class: 'muted small' },
-      'The link is public but unlisted: anyone who has it can read the calendar, because a calendar app cannot sign in to your Puter account. It carries only the date, time, format, and — unless you turn on full names below — each candidate’s first name and role. No notes, no panel, no meeting links. Stop sharing at any time; the link stops working immediately, and sharing again creates a different one.'
+      'The link is public but unlisted: anyone who has it can read the calendar, because a calendar app cannot sign in to your local account. It carries only the date, time, format, and — unless you turn on full names below — each candidate’s first name and role. No notes, no panel, no meeting links. Stop sharing at any time; the link stops working immediately, and sharing again creates a different one.'
     );
 
   function renderOff() {

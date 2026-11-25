@@ -109,7 +109,7 @@ export async function exportFileDialog(app, doc, { mode = 'export', frames = doc
     state.name = withExtension(state.name, 'wav');
   }
   const sdk = Boolean(puter.sdk());
-  // Signed out, a file that did not come from Puter starts on This device (Puter would ask
+  // Signed out, a file that did not come from local storage starts on This device (Puter would ask
   // to sign in first) until a Puter save makes that the remembered choice.
   const lastLocation = app.prefs.get('exportLocation');
   const puterFirst = lastLocation === 'puter' || (lastLocation !== 'download' && (puter.isSignedIn() || doc.source?.type === 'puter'));

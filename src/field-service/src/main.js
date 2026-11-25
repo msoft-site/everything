@@ -66,7 +66,7 @@ async function startSignedIn() {
     user = await platform.getUser();
   } catch (err) {
     console.error(err);
-    showWelcome('无法连接到您的 Puter 账户。请检查网络连接后重试。');
+    showWelcome('无法连接到您的 本地账户。请检查网络连接后重试。');
     return;
   }
   app.user = { username: user.username, uuid: user.uuid };
@@ -80,7 +80,7 @@ async function startSignedIn() {
   } catch (err) {
     // Guessing "your own business" here could open the wrong one.
     console.error('[field-service] could not read workspaces', err);
-    showWelcome('无法从 Puter 加载您的企业信息。请检查网络连接后重试。');
+    showWelcome('无法加载您的企业信息。请检查网络连接后重试。');
     return;
   }
   const join = location.hash.startsWith('#/join') ? team.parseJoin(Object.fromEntries(new URLSearchParams(location.hash.split('?')[1] || ''))) : null;
@@ -183,7 +183,7 @@ async function acceptInvite(kv, ws, { url, token }) {
       return { ...ws, current: url };
     }
   }
-  // Joining sends your Puter session to that business's server, so ask first.
+  // Joining sends your local session to that business's server, so ask first.
   const host = new URL(url).hostname;
   const ok = await confirmDialog({
     title: '加入企业？',
@@ -254,7 +254,7 @@ function showWelcome(error) {
           '用清晰的报价单赢得业务、排班调度团队、跟踪每次上门服务并更快收款。免费且开源。',
         ),
         error ? h('div.notice.danger', { role: 'alert' }, icon('alert'), h('span', error)) : null,
-        location.hash.startsWith('#/join') ? h('div.notice.accent', icon('users'), h('span', '您受邀加入一家企业。请使用 Puter 登录以接受邀请。')) : null,
+        location.hash.startsWith('#/join') ? h('div.notice.accent', icon('users'), h('span', '您受邀加入一家企业。请登录账户以接受邀请。')) : null,
         !available ? h('div.notice.warning', { role: 'alert' }, icon('warning'), h('span', '无法加载 Puter，暂时无法登录。您仍然可以体验演示版。')) : null,
         h('div.cta', signInBtn, demoBtn),
         h(
@@ -269,7 +269,7 @@ function showWelcome(error) {
         h(
           'div.welcome-foot',
           h('a', { href: REPO_URL, target: '_blank', rel: 'noopener noreferrer' }, icon('github', 16), 'GitHub 源码'),
-          h('span', '您的数据存储在您自己的 Puter 账户中。'),
+          h('span', '您的数据存储在您自己的 本地账户中。'),
         ),
       ),
       h('div.welcome-art', { 'aria-hidden': 'true', html: WELCOME_ART }),

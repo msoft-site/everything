@@ -120,7 +120,7 @@ function listenForNotificationClicks() {
   });
 }
 
-// Whether "Could not reach Puter" is the page showing, for the retry the
+// Whether "Could not reach storage service" is the page showing, for the retry the
 // network's return brings (see start); and whether an entry is in flight, so
 // that retry cannot run two at once.
 let sdkFailed = false;
@@ -154,7 +154,7 @@ async function enter() {
       // content blocker stops it as surely as a lost connection does, so
       // "check your connection" alone sent a reader who was online looking
       // in the wrong place.
-      showError('Could not reach Puter', 'The Puter script (js.puter.com) did not load. Check your connection or a content blocker, then try again.', () => location.reload());
+      showError('Could not reach storage service', 'The Puter script (js.puter.com) did not load. Check your connection or a content blocker, then try again.', () => location.reload());
       return;
     }
     listenForNotificationClicks();
@@ -204,7 +204,7 @@ async function boot() {
       appRoot.replaceChildren(authView({ onSignedIn: boot }));
     } else {
       accountFailed = true;
-      showError('Could not load your account', e?.message || 'Something went wrong talking to Puter.', () => location.reload());
+      showError('Could not load your account', e?.message || 'Could not connect to storage service.', () => location.reload());
     }
     return;
   }

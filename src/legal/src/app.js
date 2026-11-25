@@ -7,7 +7,7 @@ import { contactName } from './core/format.js';
 
 export const app = {
   store: null,
-  user: null, // { username, uuid } of the Puter account, or null in the demo
+  user: null, // { username, uuid } of the account, or null in the demo
   demo: false,
   env: 'web',
   avatarUrl: null,
@@ -20,7 +20,7 @@ export const app = {
 };
 
 /**
- * Which firm user is "me": the one linked to this Puter username, else the
+ * Which firm user is "me": the one linked to this Local username, else the
  * first active lawyer (a solo practitioner's own record).
  */
 export function meId() {

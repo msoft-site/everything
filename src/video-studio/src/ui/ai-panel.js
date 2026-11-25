@@ -1,5 +1,5 @@
 /**
- * The AI sidebar: a chat docked at the right of the editor in which Puter AI
+ * The AI sidebar: a chat docked at the right of the editor in which 本地智能引擎
  * makes video clips, pictures and voiceovers and edits the timeline with the
  * editor's own tools (media/ai-tools.js, performed by ui/ai-tool-runner.js).
  * Built after the Spreadsheet app's assistant panel.
@@ -306,8 +306,8 @@ export function createAiPanel(ctx, { chat = null, services = {}, readFile = read
     log.hidden = !ok;
     form.hidden = !ok;
     if (!ok && !signedOut.childElementCount) {
-      const btn = ctx.account?.onSignIn ? h('button.btn.primary', { type: 'button', onclick: () => ctx.account.onSignIn() }, icon('cloud', 16), 'Sign in to Puter') : null;
-      signedOut.append(emptyState('user', 'Sign in to use the AI assistant', 'The assistant makes videos and edits with Puter AI, so it needs a Puter account.', btn));
+      const btn = ctx.account?.onSignIn ? h('button.btn.primary', { type: 'button', onclick: () => ctx.account.onSignIn() }, icon('cloud', 16), 'Sign in') : null;
+      signedOut.append(emptyState('user', 'Sign in to use the AI assistant', 'The assistant makes videos and edits with 本地智能引擎, so it needs an account.', btn));
     }
   }
 

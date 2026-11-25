@@ -78,7 +78,7 @@
   "insert.dropdown": "Dropdown…",
   "insert.fillSeries": "Fill series…",
   "insert.image": "Image…",
-  "insert.imageFromPuter": "Image from Puter…",
+  "insert.imageFromPuter": "Image from Local…",
   "insert.imageFromUrl": "Image from URL…",
   "insert.menu": "Insert…",
   "insert.rowsBelow": "{count, plural, =1 {Row below} other {{count} rows below}}",

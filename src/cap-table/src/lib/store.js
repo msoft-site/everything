@@ -261,7 +261,7 @@ const byteLength = (value) => textBytes(JSON.stringify(value));
    for the marker and for a backend that counts a little differently. */
 const KV_VALUE_MAX_BYTES = 380_000;
 
-/** The one directory attachments may live in, in the user's Puter cloud. */
+/** The one directory attachments may live in, in the user's local storage. */
 const ATTACHMENT_ROOT = 'captable-attachments';
 /** How many files one record carries. */
 const ATTACHMENTS_MAX = 20;
@@ -784,7 +784,7 @@ export class Store extends EventTarget {
 
   /**
    * Attachment references on a record: the file itself lives in the user's
-   * Puter cloud; the record keeps only the path and a display name.
+   * local storage; the record keeps only the path and a display name.
    *
    * A path is only ever written by #attachmentPath, so anything outside that
    * directory arrived through an imported backup - and the app both reads
@@ -6481,7 +6481,7 @@ export class Store extends EventTarget {
 
   /**
    * Where an attachment lives: under the app's own directory in the user's
-   * Puter cloud, namespaced by company and record so nothing collides and a
+   * local storage, namespaced by company and record so nothing collides and a
    * backup manifest can name every file.
    */
   #attachmentPath(recordId, fileName) {
@@ -7154,7 +7154,7 @@ export class Store extends EventTarget {
       hiring: this.hiring,
       activity: this.activity,
       // What files belong to this backup. Contents stay in the user's own
-      // Puter cloud; the manifest tells a backup which paths are its.
+      // local storage; the manifest tells a backup which paths are its.
       attachmentManifest: this.attachmentManifest(),
     };
   }

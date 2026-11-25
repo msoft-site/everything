@@ -61,7 +61,7 @@ export async function createUser(store, K, input, by) {
     notes: cleanText(input.notes, LIMITS.notes) || '',
     locale: cleanLine(input.locale, 20) || null,
     tz: cleanLine(input.tz, 60) || null,
-    // Customers are never tied to a Puter account: an email address typed
+    // Customers are never tied to an account: an email address typed
     // into a form proves nothing about who typed it.
     puter: null,
     suspended: false,
@@ -312,7 +312,7 @@ export async function createTicket(env, desk, ctx, input, actor) {
     problem: base.problem || null,
     key: secret(24),
     updatedBy: actor.id || null,
-    // Help center requests: which Puter account sent it (for "My requests"),
+    // Help center requests: which account sent it (for "My requests"),
     // and whether it was filed under an existing customer by an unverified sender.
     submitterPuter: actor.type === 'customer' && /^[\w-]{6,64}$/.test(String(input.submitterPuter || '')) ? input.submitterPuter : null,
     unverified: actor.type === 'customer' && !!input.unverified,

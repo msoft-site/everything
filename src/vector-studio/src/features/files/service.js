@@ -98,7 +98,7 @@ export class FileService {
     return this.app.puter;
   }
 
-  /** Files go to the Puter cloud when signed in or running inside the Puter desktop. */
+  /** Files go to the local storage when signed in or running inside the Puter desktop. */
   get cloud() {
     return Boolean(this.puter?.fs && (this.app.env === 'app' || this.app.user));
   }
@@ -421,7 +421,7 @@ export class FileService {
       title: copy ? 'Save a Copy' : 'Save',
       body: h(
         'div.files-signin',
-        h('p.dialog-message', 'Sign in to save to your Puter cloud. Your files stay in your own storage and open from any device.'),
+        h('p.dialog-message', 'Sign in to save to local storage. Your files stay in your own storage.'),
         h('p.dialog-message.muted', 'Or save the file to this computer instead.'),
         h('div.form-row.check', skip, h('label', { for: 'files-skip-signin' }, "Don't ask again")),
       ),
@@ -444,7 +444,7 @@ export class FileService {
     if (target.picker) {
       const ui = this.puter.ui;
       if (!ui?.showSaveFilePicker) {
-        this.app.notify('The Puter Save dialog is not available here.', { error: true });
+        this.app.notify('Save dialog is not available here.', { error: true });
         return false;
       }
       try {
@@ -487,7 +487,7 @@ export class FileService {
   async #saveDialog(editor, suggested, { copy }) {
     const dir = await this.defaultDir({ prompt: false });
     const nameInput = h('input', { type: 'text', id: 'files-save-name', value: stripExtension(suggested), spellcheck: false, autocomplete: 'off' });
-    const where = h('p.form-help', { id: 'files-save-where' }, `Saves to Your files (${dir === APPDATA_DIR ? 'Vector Studio app folder' : dir.replace(/^\/[^/]+\//, '')}) in your Puter cloud.`);
+    const where = h('p.form-help', { id: 'files-save-where' }, `Saves to Your files (${dir === APPDATA_DIR ? 'Vector Studio app folder' : dir.replace(/^\/[^/]+\//, '')}) in local storage.`);
     const error = h('p.form-error', { role: 'alert' });
     // A message about the name goes away once the name changes.
     nameInput.addEventListener('input', () => (error.textContent = ''));
@@ -696,7 +696,7 @@ export class FileService {
     return request.job;
   }
 
-  /** Open a file from the Puter cloud by path. */
+  /** Open a file from the local storage by path. */
   openPath(path, opts = {}) {
     return this.#openOnce(`puter:${path}`, () => this.#openPath(path, opts));
   }

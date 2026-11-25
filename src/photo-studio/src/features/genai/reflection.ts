@@ -97,7 +97,7 @@ export async function reflectionDialog(e: Editor) {
     `<div class="rw-body">
   <div class="rw-stage single"><div class="rw-view ga-view ga-compare-view"><canvas class="ga-compare" tabindex="0" role="img" aria-label="Before and after preview"></canvas><span class="ga-tag left">Original</span><span class="ga-tag right">Result</span></div></div>
   <aside class="rw-side ga-side">
-    ${notice(`${target.label} (${rect.width} × ${rect.height} px${reduced ? `, reduced to ${EDIT_MAX_SIDE} px on the longer side` : ''}) and your note are sent to Puter’s AI service.`)}
+    ${notice(`${target.label} (${rect.width} × ${rect.height} px${reduced ? `, reduced to ${EDIT_MAX_SIDE} px on the longer side` : ''}) and your note are sent to local AI service.`)}
     ${field(
       'Strength',
       options('ga-strength', remembered.strength, [

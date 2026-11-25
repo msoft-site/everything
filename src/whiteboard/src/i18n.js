@@ -219,8 +219,8 @@ const pairs = {
     "点击添加形状 · 拖动绘制指定大小",
   "Align and distribute": "对齐与分布",
   "Share this board?": "分享此白板？",
-  "Sharing moves this board into your Puter account, so the people you invite can open it and work on it with you. It stays a shared board from then on; Duplicate still makes a personal copy.":
-    "分享会将此白板移至您的 Puter 账户中，以便受邀人员打开并与您协作。此后它将保持为共享白板；“复制”仍可创建个人副本。",
+  "Sharing moves this board into your local account, so the people you invite can open it and work on it with you. It stays a shared board from then on; Duplicate still makes a personal copy.":
+    "分享会将此白板移至您的 本地账户中，以便受邀人员打开并与您协作。此后它将保持为共享白板；“复制”仍可创建个人副本。",
   "Clear search": "清除搜索",
   "Vertical alignment": "垂直对齐",
   "Align text top": "文本顶端对齐",
@@ -854,7 +854,7 @@ const pairs = {
   "Join shared board": "Join shared board",
   "Board link": "Lien du tableau",
   "Join board": "Rejoindre le tableau",
-  "Sign in with Puter to join this board.":
+  "Sign in to join this board.":
     "Connectez-vous à Puter pour rejoindre ce tableau.",
   "Paste the link you were given to open the board.":
     "Collez le lien que vous avez reçu pour ouvrir le tableau.",
@@ -974,7 +974,7 @@ const pairs = {
     "Adresse de serveur Whiteboard non valide.",
   "The collaboration server is still starting. Try Share again shortly.":
     "Le serveur de collaboration démarre encore. Réessayez Partager dans un instant.",
-  "Your Puter account changed. Reopen the shared board.":
+  "Your local account changed. Reopen the shared board.":
     "Votre compte Puter a changé. Rouvrez le tableau partagé.",
   "Could not synchronize this board.": "Impossible de synchroniser ce tableau.",
   "Could not reach the shared board. Check your connection and try again.":
@@ -1192,7 +1192,7 @@ const pairs = {
   System: "跟随系统",
   Light: "明亮模式",
   Dark: "暗黑模式",
-  "Powered by Puter": "本地独立运行",
+  "": "本地独立运行",
   Workspace: "工作区",
   "Keyboard shortcuts": "键盘快捷键",
   "Start with a little inspiration": "从灵感模板开始",
@@ -1231,13 +1231,13 @@ const pairs = {
   "Back to boards": "返回白板列表",
   "Board name": "白板名称",
   "Saved on this device": "已保存在本地设备",
-  "Save to Puter": "保存至本地存储",
-  "Saved to Puter · Save again": "已保存 · 再次保存",
+  "Save to Local": "保存至本地存储",
+  "Saved to local storage · Save again": "已保存 · 再次保存",
   "Save shared changes now": "立即保存共享更改",
   "On this device": "在此设备上",
   "Boards stay in this browser until you sign in.":
     "未登录时，白板保存在当前浏览器本地。",
-  "Open from Puter": "从本地打开",
+  "Open from Local": "从本地打开",
   "Not on this device yet": "尚未在此设备下载",
   "Export board": "导出白板",
   "Drawing tools": "绘图与创作工具",
@@ -1351,19 +1351,19 @@ const pairs = {
   "Saving…": "Enregistrement…",
   "Saved locally": "Saved locally",
   "Storage full": "Stockage plein",
-  "Saving to Puter…": "Enregistrement sur Puter…",
-  "Saved to Puter": "Saved to Puter",
+  "Saving to local storage…": "Enregistrement sur Puter…",
+  "Saved to local storage": "Saved to local storage",
   "Cloud save failed": "Cloud save failed",
-  "Newer copy in Puter": "Newer copy in Puter",
-  "A newer copy of this board is saved in Puter.":
+  "Newer copy in local storage": "Newer copy in local storage",
+  "A newer copy of this board is saved in local storage.":
     "Une copie plus récente de ce tableau est enregistrée sur Puter.",
   "Open newer copy": "打开newer copy",
   "copy on this device": "copie sur cet appareil",
-  "Opened the copy from Puter. The edits made on this device are kept as their own board.":
+  "Opened the copy from local storage. The edits made on this device are kept as their own board.":
     "La copie de Puter est ouverte. Les modifications faites sur cet appareil sont conservées dans un tableau à part.",
   "Could not open the copy in Puter.":
     "Impossible d’ouvrir la copie sur Puter.",
-  "The cloud board index is invalid. Your files remain in Puter.":
+  "The cloud board index is invalid. Your files remain in local storage.":
     "L’index des tableaux dans le nuage est invalide. Vos fichiers restent dans Puter.",
   "Invalid board identifier.": "Identifiant de tableau invalide.",
   "The AI request failed.": "The AI request failed.",
@@ -1378,7 +1378,7 @@ const pairs = {
     "Impossible d’enregistrer cette modification sur cet appareil.",
   "Could not save locally. Export your board to keep a copy.":
     "Enregistrement local impossible. Exportez votre tableau pour en conserver une copie.",
-  "Cloud save failed. Your local copy is safe. Use Save to Puter to retry.":
+  "Cloud save failed. Your local copy is safe. Use Save to Local to retry.":
     "Échec de l’enregistrement sur Puter. Votre copie locale est conservée. Réessayez avec Enregistrer sur Puter.",
   "Board imported.": "Board imported.",
   "A newer local copy was kept.":

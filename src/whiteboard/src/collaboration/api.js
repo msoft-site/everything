@@ -89,7 +89,7 @@ export async function deploy(puter, progress = () => {}, expectedServer) {
   const account = puter.authToken;
   const checkAccount = () => {
     if (puter.authToken !== account)
-      throw Error("Your Puter account changed. Reopen the shared board.");
+      throw Error("Your local account changed. Reopen the shared board.");
   };
   // A room URL alone never authorizes deployment. Only update an existing
   // worker that this account previously created and recorded in private KV.

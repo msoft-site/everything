@@ -31,7 +31,7 @@ export default function collabDevServer() {
           for await (const chunk of req) chunks.push(chunk);
           const input = JSON.parse(Buffer.concat(chunks).toString('utf8'));
           const user = JSON.parse(req.headers['x-collab-dev-user'] || 'null');
-          if (!user?.uuid) return reply(401, { message: 'Sign in with Puter to continue.' });
+          if (!user?.uuid) return reply(401, { message: 'Sign in to continue.' });
           const { RoomService } = await server.ssrLoadModule('/src/collab/server/service.js');
           // In development everyone may create rooms: the service's owner is whoever asks.
           const service = new RoomService({ kv: store, fs, auth: { getUser: async () => user } });

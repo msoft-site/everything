@@ -18,7 +18,7 @@ export function canSignOut(sdk = globalThis.puter) {
 }
 
 export async function confirmSignOut() {
-  const ok = await confirmDialog({ title: 'Sign out?', message: 'Your data stays in your Puter account. Sign back in anytime.', confirmLabel: 'Sign out', danger: false });
+  const ok = await confirmDialog({ title: 'Sign out?', message: 'Your data stays in your local account. Sign back in anytime.', confirmLabel: 'Sign out', danger: false });
   if (!ok) return;
   try { puter.auth.signOut(); } catch { /* ignore */ }
   location.reload();
@@ -78,7 +78,7 @@ export function settingsView() {
             try { await wipeSampleData(store); location.hash = '#/'; openOnboarding({ onCapture: () => openCapture() }); } catch (err) { console.error(err); toast('Couldn’t wipe', { icon: 'wifiOff' }); }
           } }, el('span', { html: icon('sparkle', 20, 1.8) }), el('div.grow', {}, el('div.title', {}, 'Wipe sample data'), el('div.sub', {}, 'Start fresh with your own expenses')))
           : el('button.settings-row.clickable', { type: 'button', onclick: async () => {
-            const ok = await confirmDialog({ title: 'Delete everything?', message: 'All expenses, receipts, reports and statements in this app are permanently deleted from your Puter account.', confirmLabel: 'Delete everything' });
+            const ok = await confirmDialog({ title: 'Delete everything?', message: 'All expenses, receipts, reports and statements in this app are permanently deleted from your local account.', confirmLabel: 'Delete everything' });
             if (!ok) return;
             try { await store.wipeAll({ keepSettings: { onboarded: true } }); toast('All data deleted', { icon: 'trash' }); location.hash = '#/'; } catch (err) { console.error(err); toast('Couldn’t delete', { icon: 'wifiOff' }); }
           } }, el('span', { html: icon('trash', 20, 1.8), style: { color: 'var(--critical)' } }), el('div.grow', {}, el('div.title', { style: { color: 'var(--critical)' } }, 'Delete all data'), el('div.sub', {}, 'Cannot be undone')))),
@@ -86,10 +86,10 @@ export function settingsView() {
       el('h2.section-title', {}, 'Account'),
       el('div.settings-list', {},
         el('div.settings-row', {}, el('span.user-avatar', { 'aria-hidden': 'true' }, (store.user?.username || 'P').charAt(0).toUpperCase()),
-          el('div.grow', {}, el('div.title', {}, store.user?.username || 'Puter user'), el('div.sub', {}, store.user?.email || 'Signed in with Puter')),
+          el('div.grow', {}, el('div.title', {}, store.user?.username || 'Local user'), el('div.sub', {}, store.user?.email || 'Signed in')),
           canSignOut() && el('button.btn.btn-outline.btn-sm', { type: 'button', html: icon('logout', 14, 2.2), onclick: confirmSignOut }, 'Sign out'))),
 
-      el('p.small.muted', { style: { textAlign: 'center', margin: '8px 0 24px' } }, 'Expenses stores everything in your own Puter account. Powered by ',
+      el('p.small.muted', { style: { textAlign: 'center', margin: '8px 0 24px' } }, 'Expenses stores everything in local storage. Powered by ',
         el('a', { href: 'https://developer.puter.com', target: '_blank', rel: 'noopener' }, 'Puter'), '.')
     );
   }

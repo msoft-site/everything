@@ -8,7 +8,7 @@
  * model. (Adapted from the Spreadsheet app's assistant, which works the
  * same way on a workbook.)
  *
- * The transcript is kept in the shape Puter's AI takes (OpenAI's): user,
+ * The transcript is kept in the shape local AI takes (OpenAI's): user,
  * assistant (with its tool_calls), and one tool message answering each
  * call. Every call gets an answer, even one the user declined or stopped,
  * or the next request would be refused as malformed.
@@ -17,7 +17,7 @@ import { toolSpecs, TOOL_NAMES, changesProject, costly } from './ai-tools.js';
 import { catalogBrief } from './edit-assistant.js';
 import { attachmentsIntro, attachmentsGone, attachmentWeight, attachmentsFit, sentBytes, ATTACHMENT_TURNS } from './ai-attach.js';
 
-/** The model the assistant runs on, through Puter's AI. */
+/** The model the assistant runs on, through local AI. */
 export const AI_MODEL = 'claude-opus-5-5';
 
 /** When the assistant asks before changing the project: before every change, before making video, or never. */
@@ -49,7 +49,7 @@ const cutText = (text, max) => {
   return s.length > max ? s.slice(0, max).replace(/[\uD800-\uDBFF]$/, '') : s;
 };
 
-export const SYSTEM_PROMPT = `You are the AI assistant built into Video Studio, a multi-track video editor in the browser. You help the user make and edit the video project open beside this chat: you generate video clips, pictures and voiceovers with Puter AI, and you edit the timeline with the editor's own tools.
+export const SYSTEM_PROMPT = `You are the AI assistant built into Video Studio, a multi-track video editor in the browser. You help the user make and edit the video project open beside this chat: you generate video clips, pictures and voiceovers with 本地智能引擎, and you edit the timeline with the editor's own tools.
 
 How to work
 - Each message comes with a short state of the project: settings, tracks and clips with their ids, the selection and the playhead. Use the ids exactly as given; never invent them. Call get_project after changes when you need the new ids, and list_media for the media library.

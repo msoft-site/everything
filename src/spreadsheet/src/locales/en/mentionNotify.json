@@ -6,7 +6,7 @@
   "alert.mentioned": "{author} mentioned you on {where}",
   "ask.noAccess": "{list} cannot open this spreadsheet yet. Share it with {count, plural, one {them} other {them all}} so they can see the comment?",
   "ask.otherFile": "{file} keeps no comments, so {list} cannot open this one until the spreadsheet is saved as an .xlsx file. Save it and share it with {count, plural, one {them} other {them all}}?",
-  "ask.unsaved": "This spreadsheet is not saved to Puter yet, so {list} cannot open the comment. Save it and share it with {count, plural, one {them} other {them all}}?",
+  "ask.unsaved": "This spreadsheet is not saved to local storage yet, so {list} cannot open the comment. Save it and share it with {count, plural, one {them} other {them all}}?",
   "askTitle": "Share with the people you mentioned?",
   "couldNotNotify": "Could not notify the people you mentioned",
   "couldNotShare": "Could not share the spreadsheet",

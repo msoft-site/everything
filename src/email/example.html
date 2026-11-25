@@ -590,7 +590,7 @@ const canRead = async (path) => {
 
 const start = async () => {
     if (!puter.auth.isSignedIn()) {
-        const button = el('button', { className: 'primary', textContent: 'Sign in to Puter' });
+        const button = el('button', { className: 'primary', textContent: 'Sign in' });
         button.onclick = async () => {
             await puter.auth.signIn();
             start();

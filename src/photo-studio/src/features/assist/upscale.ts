@@ -1,6 +1,6 @@
 // Image → Upscale…: enlarge the whole document with Enhanced Upscale (an
 // edge-directed method that runs in a worker and works offline), with a
-// side-by-side comparison against bicubic. Optionally, Puter's AI service
+// side-by-side comparison against bicubic. Optionally, local AI service
 // re-renders the visible image at the new size as an extra layer on top; that
 // pass is generative, so it stays a separate layer the user can compare,
 // mask or delete.
@@ -97,8 +97,8 @@ export async function upscaleDialog(e: Editor, arg?: unknown) {
   compare.append(fig(before, 'Bicubic'), fig(after, 'Enhanced Upscale'));
   const aiNote = h('p', { class: 'assist-note' });
   aiNote.textContent =
-    `Also sends the visible image (up to ${UPSCALE_INPUT_MAX_SIDE} px on the longer side) to Puter’s AI service after you press OK, and adds its re-rendered version as a separate layer on top. ` +
-    'This is generative: it can invent or change fine detail, and providers return at most about 4K pixels, so very large results are enlarged further. Needs a Puter account and may use credits.';
+    `Also sends the visible image (up to ${UPSCALE_INPUT_MAX_SIDE} px on the longer side) to local AI service after you press OK, and adds its re-rendered version as a separate layer on top. ` +
+    'This is generative: it can invent or change fine detail, and providers return at most about 4K pixels, so very large results are enlarged further. Needs an account and may use credits.';
   const sync = () => {
     const sz = upscaleSize(W, H, s.percent);
     readout.innerHTML = `New size: <strong>${sz.width} × ${sz.height} px</strong> <span class="assist-note">(was ${W} × ${H})</span>`;

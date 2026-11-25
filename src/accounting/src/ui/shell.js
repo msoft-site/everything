@@ -189,7 +189,7 @@ export function mountShell(root, { user, picture, onSignOut }) {
     nodes.push(el('div.panel-foot', {},
       'Your books are stored in your own ',
       el('a', { href: 'https://developer.puter.com', target: '_blank', rel: 'noopener' }, 'Puter'),
-      ' account. Powered by Puter.'));
+      ' account. .'));
     swap(panel, ...nodes);
     panel.scrollTop = scroll;
   }
@@ -240,7 +240,7 @@ export function mountShell(root, { user, picture, onSignOut }) {
     const text = status === 'saving' ? 'Saving' : status === 'offline' ? `Offline${pending ? `, ${pending} unsaved` : ''}` : status === 'error' ? 'Not saved' : store.readOnly ? 'Read only' : 'Saved';
     const ico = status === 'offline' || status === 'error' ? 'offline' : status === 'saving' ? 'refresh' : 'cloud';
     sync.replaceChildren(el('span', { html: icon(ico, 15) }), el('span.sync-text', {}, text));
-    sync.title = status === 'error' ? 'Changes could not be saved to your Puter account. They are kept on this device and will be retried.' : text;
+    sync.title = status === 'error' ? 'Changes could not be saved to your local account. They are kept on this device and will be retried.' : text;
   }
   setSync({ status: 'idle', pending: 0 });
 

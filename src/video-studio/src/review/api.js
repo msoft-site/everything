@@ -1,5 +1,5 @@
 /**
- * The owner's review worker: deploying it to their own Puter account,
+ * The owner's review worker: deploying it to their own account,
  * keeping it up to date, and calling it (from any account).
  *
  * The worker's address and build are kept in the owner's private app KV.
@@ -79,7 +79,7 @@ async function bundle(fetcher) {
 export async function deploy(puter, { progress = () => {}, fetcher = (...a) => fetch(...a), wait = (ms) => new Promise((r) => setTimeout(r, ms)), attempts = 20 } = {}) {
   const account = puter.authToken;
   const sameAccount = () => {
-    if (puter.authToken !== account) throw new Error('您的 Puter 账号已更改，请重新加载页面。');
+    if (puter.authToken !== account) throw new Error('您的 本地账户已更改，请重新加载页面。');
   };
   let config = await puter.kv.get(WORKER_KEY);
   progress('正在准备审阅服务器...');

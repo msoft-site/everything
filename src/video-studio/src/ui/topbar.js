@@ -41,7 +41,7 @@ export function accountButton({ user, picture, env, onSignOut, onSignIn, extraIt
     user && env !== 'app' && onSignOut ? 'separator' : null,
     user && env !== 'app' && onSignOut ? { label: 'Sign out', icon: 'logout', onSelect: onSignOut } : null,
     !user && onSignIn ? 'separator' : null,
-    !user && onSignIn ? { label: 'Sign in to save to Puter', icon: 'cloud', onSelect: onSignIn } : null,
+    !user && onSignIn ? { label: 'Sign in to save', icon: 'cloud', onSelect: onSignIn } : null,
   ].filter(Boolean), { align: 'end', label: 'Account' });
   return btn;
 }

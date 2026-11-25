@@ -91,11 +91,11 @@ function guestNameFor(event, email) {
  *  for the worker's /replies route. */
 function replyFailureMessage(status, data) {
   const code = (data && data.error) || '';
-  if (status === 401 || code === 'sign_in_required') return 'Sign in to Puter again to send your reply.';
+  if (status === 401 || code === 'sign_in_required') return 'Sign in again to send your reply.';
   if (status === 429 || code === 'daily_limit') return "You've reached today's email limit. Try again tomorrow.";
   if (code === 'account_not_verified') return ACCOUNT_NOT_VERIFIED;
   if (status === 403 || code === 'attendee_mismatch') {
-    return 'Sign in to Puter again — this reply would not be sent from your account.';
+    return 'Sign in again — this reply would not be sent from your account.';
   }
   if (status === 404 || code === 'invalid_ics') return 'The email service needs an update before it can send your reply.';
   return 'Could not send the reply. Please try again.';

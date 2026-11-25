@@ -28,7 +28,7 @@
   let signedIn = !new URLSearchParams(location.search).has('signedout');
 
   /**
-   * A stand-in Drive, so "Add from Puter" and "Save to Puter" can be
+   * A stand-in Drive, so "Add from Local" and "Save to Local" can be
    * exercised without an account. The open picker seeds a couple of files
    * the first time and then hands them back in turn.
    */
@@ -36,7 +36,7 @@
   let pickIndex = 0;
   async function seedDrive() {
     const seeds = [
-      { name: 'spec.txt', body: 'Mock spec living in Puter Drive.\n', type: 'text/plain' },
+      { name: 'spec.txt', body: 'Mock spec living in Local Storage.\n', type: 'text/plain' },
       { name: 'notes.md', body: '# Notes\n\nLinked, not copied.\n', type: 'text/markdown' },
     ];
     for (const s of seeds) {

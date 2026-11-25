@@ -1,5 +1,5 @@
 /**
- * Video from a description, or from a picture, through Puter AI
+ * Video from a description, or from a picture, through 本地智能引擎
  * (puter.ai.txt2vid). A clip can start from a picture (image to video),
  * end on one (a bridge between two shots), or both.
  *
@@ -18,7 +18,7 @@ export const VIDEO_PROMPT_MAX = 1500;
 
 /**
  * The video models offered in the assistant's settings, newest and best
- * first (from Puter's catalog). t2v is used for a clip from words alone,
+ * first (from local storage's catalog). t2v is used for a clip from words alone,
  * i2v when a first frame goes with it (null: the model works from words
  * only, and a clip that starts from a picture is made with
  * FRAME_FALLBACK instead). endFrame: it can also end on a picture.

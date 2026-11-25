@@ -1,6 +1,6 @@
 // Linked embedded objects: content placed from a file that stays associated
 // with it. The project keeps a cached copy, so it always opens; Update
-// Modified Content re-reads the file. Puter files are re-read from their
+// Modified Content re-reads the file. local files are re-read from their
 // path. A local file can be re-read only while this page holds its handle
 // (browsers allow no access by path), so after a reload Relink re-picks it.
 import type { Editor } from '../../editor';
@@ -69,7 +69,7 @@ async function pickLinked(e: Editor, from: 'local' | 'puter', then: (p: Picked) 
   });
 }
 
-/** File → Place Linked… (local file) or Place Linked from Puter…. */
+/** File → Place Linked… (local file) or Place Linked from local storage…. */
 export function placeLinked(e: Editor, from: 'local' | 'puter') {
   return pickLinked(e, from, async (picked) => {
     const c = { ...(await contentsFromFile(e, e.doc, e.assets, picked.blob, picked.name)), link: picked.link };

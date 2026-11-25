@@ -12,7 +12,7 @@
   "fromYouReplies": "发件人：你。回复将发送到 {email}",
   "include": "包含",
   "invalidEntries": "{count, plural, other {有 {count} 项不是电子邮件地址}}",
-  "linkHintFile": "每个地址都将获得此文件的访问权限。没有 Puter 账户的人会收到加入邀请。",
+  "linkHintFile": "每个地址都将获得此文件的访问权限。没有 本地账户的人会收到加入邀请。",
   "linkHintRoom": "他们会收到加入此实时工作簿的邀请，有效期为 7 天。",
   "message": "消息",
   "messagePlaceholder": "添加消息（可选）",

@@ -128,7 +128,7 @@ function leaveDialog(doc, { unsaveable = false, undelivered = false } = {}) {
   if (unsaveable) {
     return confirmDialog({
       title: LEAVE_TITLES[0],
-      message: `此文档无法打开进行编辑，因此尚未保存到 Puter。${doc.blob ? '留下以下载副本，或直接离开。' : '确定直接离开吗？'}`,
+      message: `此文档无法打开进行编辑，因此尚未保存到本地。${doc.blob ? '留下以下载副本，或直接离开。' : '确定直接离开吗？'}`,
       confirmLabel: '不保存并离开', cancelLabel: '留下',
     }).then((leave) => (leave ? 'leave' : 'stay'));
   }
@@ -148,7 +148,7 @@ function leaveDialog(doc, { unsaveable = false, undelivered = false } = {}) {
   }
   return new Promise((resolve) => {
     const content = el('div', {},
-      el('p.modal-text', {}, '此文档尚未保存在任何位置。登录 Puter 将其保存到您的个人云端，或离开并放弃该文档。'),
+      el('p.modal-text', {}, '此文档尚未保存在任何位置。将其保存到本地设备，或离开并放弃该文档。'),
       el('div.row.row-end', { style: { flexWrap: 'wrap' } },
         el('button.btn.btn-ghost', { type: 'button', onclick: () => modal.close() }, '继续编辑'),
         el('button.btn.btn-danger', { type: 'button', onclick: () => { resolve('leave'); modal.close(); } }, '不保存并离开'),
@@ -174,7 +174,7 @@ function mountSignInGate(requestedHash, what) {
   document.title = '文档';
   mount('gate', { el: signInView({
     title: `登录以打开此${whatZh}`,
-    message: `文档保存在您自己的 Puter 云端。请登录以打开此${whatZh}，或在不登录的情况下新建空白文档。`,
+    message: `文档保存在本地设备。请登录以打开此${whatZh}，或在不登录的情况下新建空白文档。`,
     onSignIn: async () => { if (await session.signIn() && location.hash === requestedHash) route(); },
     onSkip: () => go('#/'),
   }) });
@@ -423,7 +423,7 @@ async function openInvitation(link, requestedHash) {
  */
 async function start() {
   if (!P.hasSDK()) {
-    appRoot.replaceChildren(errorView('无法连接到 Puter', 'Puter SDK 加载失败。请检查网络连接后重试。', () => location.reload()));
+    appRoot.replaceChildren(errorView('无法连接到存储服务', '本地存储加载失败。请重试。', () => location.reload()));
     return;
   }
   P.onLaunchedWithItems((items) => {

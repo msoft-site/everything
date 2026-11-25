@@ -1,4 +1,4 @@
-/** Local document data belongs to a Puter account, not to the browser origin. */
+/** Local document data belongs to an account, not to the browser origin. */
 const anonymousScope = () => `session:${Array.from(crypto.getRandomValues(new Uint32Array(4)), (n) => n.toString(16).padStart(8, '0')).join('')}`;
 let scope = anonymousScope();
 

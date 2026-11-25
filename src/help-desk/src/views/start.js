@@ -38,7 +38,7 @@ export function signInScreen(root, { onSignIn }) {
   }, 'Sign in');
   frame(root,
     h('h1', 'Help Desk'),
-    h('p.start-lead', 'Answer customer requests as a team, with a shared inbox, a help center and reports. Your data stays in your own Puter account.'),
+    h('p.start-lead', 'Answer customer requests as a team, with a shared inbox, a help center and reports. Your data stays in local storage.'),
     h('ul.start-points',
       h('li', icon('inbox', { size: 16 }), 'Tickets with public replies and internal notes'),
       h('li', icon('book-open', { size: 16 }), 'A help center where customers find answers'),

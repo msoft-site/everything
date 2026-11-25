@@ -117,8 +117,8 @@ export async function goOnline(deps, { desk, deskName, known, appUrl, onStep = (
 /** Turn platform errors into something the owner can act on. */
 export function friendlyError(e) {
   const msg = String(e?.message || e || 'Something went wrong');
-  if (/verif/i.test(msg)) return 'Puter needs a confirmed email address before it can run a server for you. Confirm your email in your Puter account settings, then try again.';
-  if (/insufficient_funds|credit/i.test(msg)) return 'Your Puter account is out of usage credit. Add credit or upgrade your plan, then try again.';
-  if (/Failed to fetch|NetworkError|offline|reach/i.test(msg)) return 'Could not reach Puter. Check your connection and try again.';
+  if (/verif/i.test(msg)) return 'Puter needs a confirmed email address before it can run a server for you. Confirm your email in your local account settings, then try again.';
+  if (/insufficient_funds|credit/i.test(msg)) return 'Your local account is out of usage credit. Add credit or upgrade your plan, then try again.';
+  if (/Failed to fetch|NetworkError|offline|reach/i.test(msg)) return 'Could not reach storage service. Check your connection and try again.';
   return msg;
 }

@@ -1,5 +1,5 @@
 // Saving a small file the app makes (a marker list, the application settings):
-// signed in to Puter, a dialog asks for the name and a Puter folder (or This
+// signed in, a dialog asks for the name and a Puter folder (or This
 // device); otherwise the file downloads at once.
 
 import { h } from '../lib/dom.js';

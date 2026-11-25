@@ -50,7 +50,7 @@ export async function exportPagesToFiles(e: Editor, opts: Options) {
       <label class="dialog-field">Scale<select name="scale">${[50, 100, 150, 200, 300].map((s) => `<option value="${s}" ${s === 100 ? 'selected' : ''}>${s}%</option>`).join('')}</select></label>
       <label class="dialog-field">File name prefix<input name="prefix" type="text" value="${opts.base.replace(/"/g, '&quot;')}_"></label>
       <label class="dialog-field checkbox-field">Keep transparency (PNG and WebP)<input name="transparency" type="checkbox" ${remembered.transparency ? 'checked' : ''}></label>
-      <label class="dialog-field">Destination<select name="dest"><option value="zip">Download as ZIP archive</option><option value="puter">Save to a Puter folder…</option></select></label>`,
+      <label class="dialog-field">Destination<select name="dest"><option value="zip">Download as ZIP archive</option><option value="puter">Save to a local folder…</option></select></label>`,
     bind: (dialog) => {
       const format = dialog.querySelector<HTMLSelectElement>('[name=format]')!;
       const quality = dialog.querySelector<HTMLInputElement>('[name=quality]')!;

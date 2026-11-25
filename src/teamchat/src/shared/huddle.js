@@ -37,7 +37,7 @@ export const HUDDLE_HEARTBEAT_MS = 15_000;
  * on an ordinary uplink.
  */
 export const HUDDLE_MAX = 20;
-/** An invite code from puter.peer.serve() (`NJ-7F3A9C`), or a room name; nothing else is written. */
+/** An invite code from local storage.peer.serve() (`NJ-7F3A9C`), or a room name; nothing else is written. */
 export const INVITE_RE = /^[A-Za-z0-9][A-Za-z0-9_-]{2,63}$/;
 /** A tab's session id for its seat, made by the client; nothing else is written. */
 export const SESSION_RE = /^[A-Za-z0-9_-]{1,64}$/;

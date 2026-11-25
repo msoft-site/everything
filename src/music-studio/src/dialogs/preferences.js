@@ -163,14 +163,14 @@ export async function openPreferences(app, { section = 'general' } = {}) {
 
   // ---------------------------------------------------------------- saving
   const signedIn = puter.isSignedIn();
-  const where = h('p.pref-note', signedIn ? '工程将保存到您的 Puter 云端（Music Studio 文件 > Projects）。当前会话也会保存在此浏览器中，因此刷新页面不会丢失工作内容。' : '您尚未登录，因此工程将保存在当前设备的此浏览器中。当前会话会自动保留，刷新页面不会丢失工作内容。');
+  const where = h('p.pref-note', signedIn ? '工程将保存到您的 本地存储（Music Studio 文件 > Projects）。当前会话也会保存在此浏览器中，因此刷新页面不会丢失工作内容。' : '您尚未登录，因此工程将保存在当前设备的此浏览器中。当前会话会自动保留，刷新页面不会丢失工作内容。');
   const saving = h(
     'div.pref-section',
     where,
-    checkRow('自动保存云端工程', prefs.get('cloudAutosave') !== false, (v) => prefs.set('cloudAutosave', v), '在您停止编辑一分钟后以及离开页面时，自动保存位于 Puter 云端的工程。'),
+    checkRow('自动保存云端工程', prefs.get('cloudAutosave') !== false, (v) => prefs.set('cloudAutosave', v), '在您停止编辑一分钟后以及离开页面时，自动保存位于 本地存储的工程。'),
   );
   if (!signedIn && puter.sdk() && puter.env() !== 'app') {
-    saving.append(buttonRow('Puter 云端', '登录', () => app.signIn?.(), '将工程保存到您的 Puter 云端，并在任何设备上打开。'));
+    saving.append(buttonRow('本地存储', '登录', () => app.signIn?.(), '将工程保存到您的 本地存储，并在任何设备上打开。'));
   }
   const usage = h('div.pref-hint');
   saving.append(h('div.pref-row', h('span.pref-label', '当前浏览器'), h('div.pref-control', usage)));

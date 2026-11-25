@@ -113,7 +113,7 @@
   "group.undo": "Undo",
   "historySteps": "{label} ({steps} steps)",
   "image.fromDevice": "From this device…",
-  "image.fromPuter": "From Puter…",
+  "image.fromPuter": "From Local…",
   "image.fromUrl": "From a URL…",
   "image.placeInCell": "Place in Cell",
   "increaseFontSize": "Increase font size",

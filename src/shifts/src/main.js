@@ -24,7 +24,7 @@ function authScreen({ puterAvailable }) {
       onClick: async (e) => {
         const button = e.currentTarget;
         button.disabled = true;
-        button.textContent = 'Waiting for Puter…';
+        button.textContent = 'Loading local workspace…';
         try {
           await puter.auth.signIn();
         } catch {
@@ -62,7 +62,7 @@ function authScreen({ puterAvailable }) {
         el(
           'div',
           { class: 'feature-list' },
-          feature('cloud', 'Your data lives in your own Puter cloud, not on our servers'),
+          feature('cloud', 'Your data lives in your own local storage, not on our servers'),
           feature('calendar-check', 'Availability-aware scheduling that catches conflicts as you assign'),
           feature('arrow-left-right', 'Shift swaps and attendance reviewed and resolved in one place')
         ),
@@ -72,7 +72,7 @@ function authScreen({ puterAvailable }) {
               'div',
               { class: 'form-error', style: { marginTop: '10px' } },
               icon('circle-alert', 15),
-              'Puter.js could not be loaded. Check your connection and reload the page.'
+              'Storage engine could not be loaded. Check your connection and reload the page.'
             )
           : null
       ),
@@ -227,7 +227,7 @@ function splashScreen(message) {
 
 /**
  * Dev-only preview harness (stripped from production builds): boots against
- * an in-memory store so screens can be exercised without a Puter account.
+ * an in-memory store so screens can be exercised without an account.
  * `?dev-preview` starts empty (onboarding), `?dev-preview=sample` seeds data.
  */
 async function devPreview(mode) {

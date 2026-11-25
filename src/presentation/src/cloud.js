@@ -3,7 +3,7 @@ export const FOLDER = "Presentations";
 const sdk = () => {
   if (!globalThis.puter)
     throw new Error(
-      "Puter 不可用。请检查您的网络连接后重试。",
+      "本地服务暂不可用，请重试。",
     );
   return globalThis.puter;
 };
@@ -288,10 +288,10 @@ export class SaveQueue {
     return next;
   }
 }
-// Puter's AI answers the assistant. It is there wherever the SDK loaded; the
+// local AI answers the assistant. It is there wherever the SDK loaded; the
 // SDK asks for a sign-in itself on the first request made without one.
 export const canAI = () => !!globalThis.puter?.ai?.chat;
-// One reply from Puter's AI to a conversation, as it arrives: yields
+// One reply from local storage's AI to a conversation, as it arrives: yields
 // { type: "text", text } and { type: "tool", id, name, input } for each
 // function the model calls. `messages` take the OpenAI shape Puter accepts
 // (system, user, assistant with tool_calls, tool). A reply the SDK hands back

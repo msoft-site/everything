@@ -1,6 +1,6 @@
 /**
  * Team access. A business owner turns it on once: the app copies the team
- * worker (public/worker/field-service-team-worker.js) into their Puter drive
+ * worker (public/worker/field-service-team-worker.js) into their local drive
  * and deploys it with puter.workers.create, so the worker runs in, and stores
  * data in, the owner's own account. The owner's records are copied into it,
  * and from then on everyone in the business (owner included) reads and
@@ -205,7 +205,7 @@ export async function enableTeam({ store, onProgress = () => {} }) {
       lastErr = err;
     }
   }
-  if (!dep) throw new Error(`无法在您的 Puter 账户中创建团队服务器。${lastErr?.message || ''}`.trim());
+  if (!dep) throw new Error(`无法在您的 本地账户中创建团队服务器。${lastErr?.message || ''}`.trim());
   const url = normalizeWorkerUrl(dep.url || `https://${name}.puter.work`);
   // A setup that fails from here on removes the half-made server, so a
   // retry does not leave another one behind in the owner's account.
@@ -341,7 +341,7 @@ async function saveOrReport(ws) {
   } catch (err) {
     console.warn('[field-service] could not save the business list', err);
     const { toast } = await import('./ui/toast.js');
-    toast('无法连接 Puter，未做任何更改。请检查网络连接后重试。', { type: 'error' });
+    toast('无法连接本地环境，未做任何更改。请检查网络连接后重试。', { type: 'error' });
     return false;
   }
 }

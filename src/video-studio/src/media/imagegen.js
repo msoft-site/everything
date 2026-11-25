@@ -1,5 +1,5 @@
 /**
- * Pictures from a description through Puter AI (puter.ai.txt2img). The SDK
+ * Pictures from a description through 本地智能引擎 (puter.ai.txt2img). The SDK
  * answers with an <img>; its source (a data URL or a web address) is read
  * into a Blob, cropped to the chosen frame shape and imported as media.
  */
@@ -41,7 +41,7 @@ export function aspectForSize(width, height) {
 }
 
 /**
- * The picture models the AI assistant offers (from Puter's catalog); every
+ * The picture models the AI assistant offers (from local storage's catalog); every
  * one can also change a picture it is given (input_image). 'default' sends
  * no model and lets Puter choose (GPT Image 2). options go with each request.
  */

@@ -78,7 +78,7 @@ async function startSignedIn() {
     const refused = [401, 403].includes(Number(err?.status));
     user = refused ? null : await platform.lastUser();
     if (!user) {
-      showWelcome('We could not reach your Puter account. Check your connection and try again.');
+      showWelcome('We could not reach your local account. Check your connection and try again.');
       return;
     }
   }
@@ -197,11 +197,11 @@ async function acceptInvite(kv, ws, { url, token }) {
   // member who was removed comes back.
   const listed = ws.joined.some((j) => j.url === url);
   if (!listed) {
-    // Joining sends your Puter session to that school's server, so ask first.
+    // Joining sends your local session to that school's server, so ask first.
     const host = new URL(url).hostname;
     const ok = await confirmDialog({
       title: 'Join a school?',
-      message: `You opened an invitation from a school whose server is ${host}. Joining lets the school see your Puter username, and what you add there is stored in the school's account. Only accept invitations you were expecting.`,
+      message: `You opened an invitation from a school whose server is ${host}. Joining lets the school see your Local username, and what you add there is stored in the school's account. Only accept invitations you were expecting.`,
       confirmLabel: 'Join school',
     });
     if (!ok) return ws;
@@ -261,8 +261,8 @@ function showWelcome(error) {
         h('h1', 'Everything your center does in a day, in one calm place.'),
         h('p.lead', 'Check children in and out, log meals, naps, and photos, keep families in the loop, and get tuition paid. Free and open source.'),
         error ? h('div.notice.danger', { role: 'alert' }, icon('alert'), h('span', error)) : null,
-        location.hash.startsWith('#/join') ? h('div.notice.accent', icon('users'), h('span', 'You have been invited to a school. Sign in with Puter to accept the invitation.')) : null,
-        !available ? h('div.notice.warning', { role: 'alert' }, icon('warning'), h('span', 'Puter could not be loaded, so signing in is unavailable right now. You can still explore the demo.')) : null,
+        location.hash.startsWith('#/join') ? h('div.notice.accent', icon('users'), h('span', 'You have been invited to a school. Sign in to accept the invitation.')) : null,
+        !available ? h('div.notice.warning', { role: 'alert' }, icon('warning'), h('span', 'Storage service could not be loaded, so signing in is unavailable right now. You can still explore the demo.')) : null,
         h(
           'div.cta',
           h('button.btn.primary.lg', { type: 'button', disabled: !available || null, onClick: handleSignIn }, icon('log-in', 18), 'Sign in'),
@@ -281,7 +281,7 @@ function showWelcome(error) {
         h(
           'div.welcome-foot',
           h('a', { href: REPO_URL, target: '_blank', rel: 'noopener noreferrer' }, icon('github', 16), 'Source on GitHub'),
-          h('span', 'Your data is stored in your own Puter account.'),
+          h('span', 'Your data is stored locally.'),
         ),
       ),
       h('div.welcome-art', { 'aria-hidden': 'true', html: WELCOME_ART }),

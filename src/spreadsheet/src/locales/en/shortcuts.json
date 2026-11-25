@@ -85,7 +85,7 @@
   "what.nudgeObject": "Nudge the selected chart, image, or text box 8px, or a whole cell ({mod} + C copies it as a picture, Enter edits it, Delete removes it, Escape deselects)",
   "what.numberFormats": "Number / time / date / currency / percent / scientific format",
   "what.openDropdown": "Open a dropdown list, a calendar on a date cell, or pick from the column’s entries",
-  "what.openFromPuter": "Open from Puter",
+  "what.openFromPuter": "Open from Local",
   "what.openLink": "Open a link (a link to a sheet or range jumps there)",
   "what.openMenu": "Open the menu for the selected cells, or for the focused sheet tab",
   "what.outlineBorder": "Outline border",

@@ -119,7 +119,7 @@ function withTimeout(promise, ms) {
 async function start() {
   if (typeof puter === 'undefined') {
     if (bootOffline()) return;
-    showError('Could not reach Puter', 'The Puter SDK failed to load. Check your connection and try again.', () => location.reload());
+    showError('Could not reach storage service', 'Local storage engine failed to load. Please reload.', () => location.reload());
     return;
   }
 
@@ -147,7 +147,7 @@ async function boot() {
   } catch (err) {
     console.error(err);
     if (bootOffline()) return;
-    showError('Could not load your data', 'Something went wrong talking to your Puter cloud.', () => location.reload());
+    showError('Could not load your data', 'Something went wrong talking to local storage.', () => location.reload());
     return;
   }
 
@@ -177,7 +177,7 @@ async function boot() {
  * and the store have answered over the network, and by then `load` has
  * almost always already fired. A listener added after the event never runs,
  * which left every signed-in visit without a worker: nothing was precached,
- * and the offline launch this exists for opened to "Could not reach Puter".
+ * and the offline launch this exists for opened to "Could not reach storage service".
  */
 function registerServiceWorker() {
   if (!import.meta.env?.PROD || !('serviceWorker' in navigator)) return;

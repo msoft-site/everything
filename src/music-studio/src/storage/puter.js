@@ -80,7 +80,7 @@ export async function writeFile(path, data, options = {}) {
 
 let accountGeneration = 0;
 const requireCurrentAccount = (generation) => {
-  if (generation !== accountGeneration) throw new Error('Your Puter account changed. Please try again.');
+  if (generation !== accountGeneration) throw new Error('Your local account changed. Please try again.');
 };
 
 let cachedHome = null; // { username, home } for the signed-in session
@@ -110,7 +110,7 @@ export function resetAccountCache() {
 let cachedAppDir = null;
 
 /**
- * The app's own folder in the user's Puter cloud (~/AppData/<app id>/).
+ * The app's own folder in the user's local storage (~/AppData/<app id>/).
  * Puter confines an app to this folder unless the user grants more, so every
  * file the app writes on its own lives here; files the user picks elsewhere
  * with the Puter file dialogs keep their own paths. Relative paths resolve
@@ -185,7 +185,7 @@ export function joinPath(dir, name) {
 
 /** Throws a friendly error unless signed in (so no call can pop up a sign-in prompt). */
 export function requireSignedIn() {
-  if (!isSignedIn()) throw new Error('Sign in to use your Puter cloud storage.');
+  if (!isSignedIn()) throw new Error('Sign in to use your local storage storage.');
 }
 
 /** A folder in the app's Puter folder ('Projects', 'Samples', 'Exports'). */
@@ -202,7 +202,7 @@ export async function deleteFile(path) {
   return sdk().fs.delete(path);
 }
 
-/** Whether an error from Puter means the storage quota is used up. */
+/** Whether an error from local storage means the storage quota is used up. */
 export function isQuotaError(err) {
   const code = err?.code || err?.error?.code || '';
   return code === 'storage_limit_reached' || code === 'input_too_large' || err?.status === 413;
@@ -216,7 +216,7 @@ export function isPermissionError(err) {
 
 /** A user-facing message for a Puter error. */
 export function errorMessage(err, fallback = 'Something went wrong with Puter storage.') {
-  if (isQuotaError(err)) return 'Your Puter storage is full. Free some space or save to your device instead.';
+  if (isQuotaError(err)) return 'Your local storage is full. Free some space or save to your device instead.';
   if (err?.code === 'subject_does_not_exist' || err?.status === 404) return 'The file was not found. It may have been moved or deleted.';
   return err?.message || err?.error?.message || fallback;
 }

@@ -294,7 +294,7 @@ export function createMemoryKv({ strictAdd = false, strictPaths = false, strictS
 /**
  * A view of a KV that prefixes every key, so several fake workers (one per
  * mock user) can share one persisted store while seeing separate data, the
- * way separate Puter accounts would. `prefix()` is read per call, so the
+ * way separate accounts would. `prefix()` is read per call, so the
  * harness can point it at whichever worker is handling the current request.
  */
 export function namespacedKv(kv, prefix) {

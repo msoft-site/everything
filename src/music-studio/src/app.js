@@ -168,7 +168,7 @@ export class App extends Emitter {
     const syncCloud = () => {
       const signedIn = Boolean(window.puter?.auth?.isSignedIn?.());
       cloud.replaceChildren(icon(signedIn ? 'cloud' : 'hard-drive', 12), h('span', signedIn ? '云端存储已开启' : '在当前设备上工作'));
-      cloud.title = signedIn ? '工程将保存到您的 Puter 云端' : '登录以将工程保存到您的 Puter 云端';
+      cloud.title = signedIn ? '工程将保存到您的 本地存储' : '登录以将工程保存到您的 本地存储';
     };
     this.on('account', syncCloud);
     syncCloud();

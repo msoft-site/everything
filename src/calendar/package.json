@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "description": "A modern, minimal calendar app for the web, powered by Puter.js.",
+  "description": "A modern, minimal calendar app for the web, .js.",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

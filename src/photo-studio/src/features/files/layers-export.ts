@@ -48,7 +48,7 @@ export async function exportLayers(e: Editor) {
       <label class="dialog-field">File name prefix<input name="prefix" type="text" value="${doc.name.replace(/"/g, '&quot;')}_"></label>
       <label class="dialog-field checkbox-field">Visible layers only<input name="visible" type="checkbox" checked></label>
       <label class="dialog-field checkbox-field">Trim transparent pixels<input name="trim" type="checkbox"></label>
-      <label class="dialog-field">Destination<select name="dest"><option value="zip">Download as ZIP archive</option><option value="puter">Save to a Puter folder…</option></select></label>`,
+      <label class="dialog-field">Destination<select name="dest"><option value="zip">Download as ZIP archive</option><option value="puter">Save to a local folder…</option></select></label>`,
   });
   if (!result) return;
   const format = fieldValue(result.form, 'format') as ExportFormat;

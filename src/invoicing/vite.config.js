@@ -6,7 +6,7 @@ import puterLocalhost from '../../dev/puter-localhost.mjs';
  *
  * The app looks installable — manifest, maskable icons, a bottom tab bar, a
  * boot splash — but without this it is a plain network-dependent page: on a
- * train it opened to "Could not reach Puter" and stayed there. The shell is
+ * train it opened to "Could not reach storage service" and stayed there. The shell is
  * precached under a name that changes with the build, so a new deploy never
  * serves half of one version and half of another, and old caches go on
  * activate.

@@ -28,7 +28,7 @@ import '../styles/dialogs.css';
 /** Longest the startup waits for the last session before showing the app. */
 export const RESTORE_WAIT_MS = 1500;
 
-/** Preference: autosave projects that live in the Puter cloud (default on). */
+/** Preference: autosave projects that live in the local storage (default on). */
 export const cloudAutosaveOn = (prefs) => prefs.get('cloudAutosave') !== false;
 
 export function install(app, { db = openDB(), tab = claimTab() } = {}) {

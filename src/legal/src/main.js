@@ -70,7 +70,7 @@ async function startSignedIn() {
     user = await platform.getUser();
   } catch (err) {
     console.error(err);
-    showWelcome('We could not reach your Puter account. Check your connection and try again.');
+    showWelcome('We could not reach your local account. Check your connection and try again.');
     return;
   }
   app.user = { username: user.username, uuid: user.uuid };
@@ -147,14 +147,14 @@ async function startSignedIn() {
 async function acceptInvite(kv, ws, { url, token }) {
   history.replaceState(null, '', location.pathname + location.search + '#/');
   if (ws.own?.url === url) return { ...ws, current: 'own' };
-  // Joining sends your Puter session to that firm's server, so ask first.
+  // Joining sends your local session to that firm's server, so ask first.
   // A firm already on the list is joined again without asking: the person
   // may have been removed and invited back since they last opened it.
   if (!ws.joined.some((j) => j.url === url)) {
     const host = new URL(url).hostname;
     const ok = await confirmDialog({
       title: 'Join a firm?',
-      message: `You opened an invitation to a firm whose server is ${host}. While you work in that firm, its server acts with your Puter sign-in, so its owner could reach what this app keeps in your Puter account, including your own firm. What you add there is stored in their account. Only accept invitations from people you trust.`,
+      message: `You opened an invitation to a firm whose server is ${host}. While you work in that firm, its server acts with your Puter sign-in, so its owner could reach what this app keeps in your local account, including your own firm. What you add there is stored in their account. Only accept invitations from people you trust.`,
       confirmLabel: 'Join firm',
     });
     if (!ok) return ws;
@@ -204,9 +204,9 @@ function showWelcome(error) {
         h('h1', 'Run your law practice from one place.'),
         h('p.lead', 'Matters, contacts, time tracking, billing, trust accounting, calendar, tasks, and documents in a fast, focused workspace. Free and open source.'),
         error ? h('div.notice.danger', { role: 'alert' }, icon('alert', 16), h('span', error)) : null,
-        location.hash.startsWith('#/join') ? h('div.notice.info', icon('users', 16), h('span', 'You have been invited to join a firm. Sign in with Puter to accept the invitation.')) : null,
+        location.hash.startsWith('#/join') ? h('div.notice.info', icon('users', 16), h('span', 'You have been invited to join a firm. Sign in to accept the invitation.')) : null,
         !available
-          ? h('div.notice.warning', { role: 'alert' }, icon('warning', 16), h('span', 'Puter could not be loaded, so signing in is unavailable right now. You can still explore the sample firm.'))
+          ? h('div.notice.warning', { role: 'alert' }, icon('warning', 16), h('span', 'Storage service could not be loaded, so signing in is unavailable right now. You can still explore the sample firm.'))
           : null,
         h(
           'div.cta',
@@ -235,7 +235,7 @@ function showWelcome(error) {
         h(
           'div.welcome-foot',
           h('a', { href: REPO_URL, target: '_blank', rel: 'noopener noreferrer' }, icon('github', 16), 'Source on GitHub'),
-          h('span', 'Your data is stored in your own Puter account.'),
+          h('span', 'Your data is stored locally.'),
         ),
       ),
       h('div.welcome-art', { 'aria-hidden': 'true', html: WELCOME_ART }),

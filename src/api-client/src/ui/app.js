@@ -150,7 +150,7 @@ export class App {
     if (Date.now() - (this.storageErrorAt || 0) < 10000) return;
     this.storageErrorAt = Date.now();
     console.error(err);
-    const where = this.sync ? '更改仍会保存到您的 Puter 云端。' : '关闭应用后更改将会丢失。';
+    const where = this.sync ? '更改仍会保存到您的 本地存储。' : '关闭应用后更改将会丢失。';
     const cause = err?.name === 'QuotaExceededError' ? '此浏览器的存储空间已满。' : '此浏览器拒绝存储数据。';
     toast({ kind: 'error', title: '无法在此设备上保存', text: `${cause}${where}` });
   }
@@ -425,7 +425,7 @@ export class App {
   async signOut() {
     const ok = await confirmDialog({
       title: '确定退出登录吗？',
-      message: '您的集合仍将保留在 Puter 账户中。此浏览器将切换到未登录的工作区。',
+      message: '您的集合仍将保留在 本地账户中。此浏览器将切换到未登录的工作区。',
       confirmLabel: '退出登录',
     });
     if (ok) await this.onSignOut();
@@ -433,7 +433,7 @@ export class App {
 
   #renderSync() {
     if (!this.session.signedIn) {
-      fill(this.syncEl, h('span.sync-local', { title: '仅保存在此浏览器中。登录即可与您的 Puter 账户同步。' }, icon('cloudOff', 15), h('span.sr-only', '仅保存在此浏览器中')));
+      fill(this.syncEl, h('span.sync-local', { title: '仅保存在此浏览器中。登录即可与您的 本地账户同步。' }, icon('cloudOff', 15), h('span.sr-only', '仅保存在此浏览器中')));
       return;
     }
     const status = this.sync?.status || 'idle';
@@ -442,7 +442,7 @@ export class App {
       synced: ['cloudCheck', '所有更改已保存至 Puter'],
       pending: ['cloud', '正在保存更改...'],
       syncing: ['refresh', '正在与 Puter 同步...'],
-      error: ['cloudOff', '无法连接到 Puter。更改已保存在此设备上，稍后将自动同步。'],
+      error: ['cloudOff', '无法连接到本地存储服务。更改已保存在此设备上，稍后将自动同步。'],
     };
     const [ic, text] = map[status] || map.idle;
     fill(this.syncEl, h(`span.sync-state${status === 'syncing' ? '.spin' : ''}${status === 'error' ? '.error' : ''}`, { title: text }, icon(ic, 15), h('span.sr-only', text)));
@@ -1047,7 +1047,7 @@ export class App {
 
   async shareCollection(id) {
     if (!this.session.signedIn || !this.shared) {
-      toast({ kind: 'info', title: '登录后即可共享', text: '共享功能需要使用您的 Puter 账户。', actions: this.session.puter ? [{ label: '登录', run: () => this.signIn() }] : [] });
+      toast({ kind: 'info', title: '登录后即可共享', text: '共享功能需要使用您的 本地账户。', actions: this.session.puter ? [{ label: '登录', run: () => this.signIn() }] : [] });
       return;
     }
     const { openShareDialog } = await import('./share-dialog.js');

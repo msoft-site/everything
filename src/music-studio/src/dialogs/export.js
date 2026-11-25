@@ -96,7 +96,7 @@ export async function openExportDialog(app, { stems = false } = {}) {
     range,
     h('div.form-grid', h('label', { for: rateId }, '采样率'), rate, h('label', { for: bitsId }, '格式'), bits),
     h('label.check', { for: tailId }, tail, h('span', '包含效果尾音（保留混响与延迟余音）')),
-    signedIn ? h('label.check', { for: cloudId }, cloud, h('span', '同时在您的 Puter 云端 Exports 文件夹中保存副本')) : null,
+    signedIn ? h('label.check', { for: cloudId }, cloud, h('span', '同时在您的 本地存储 Exports 文件夹中保存副本')) : null,
     progress,
     status,
   );
@@ -241,10 +241,10 @@ async function runExport(app, { mode, rate, bits, tail, stems, signal, cloudCopy
       const directory = await puter.appSubdir('Exports');
       if (signal.aborted) return true;
       const item = await puter.writeNew(puter.joinPath(directory, filename), blob);
-      app.notify(`已导出 ${filename}（副本已保存至 Puter 云端 Exports 文件夹，文件名为 ${item?.name || filename}）`);
+      app.notify(`已导出 ${filename}（副本已保存至 本地存储 Exports 文件夹，文件名为 ${item?.name || filename}）`);
     } catch (err) {
       if (signal.aborted) return true;
-      app.notify(`已下载 ${filename}，但保存到 Puter 失败：${puter.errorMessage(err)}`, { error: true });
+      app.notify(`已下载 ${filename}，但保存到本地 失败：${puter.errorMessage(err)}`, { error: true });
     }
   } else {
     app.notify(`已导出 ${filename}`);

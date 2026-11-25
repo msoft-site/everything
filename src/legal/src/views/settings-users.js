@@ -1,6 +1,6 @@
 /**
  * Firm users: the lawyers and staff whose time, tasks, and matters the app
- * tracks. A firm user can be linked to a Puter username so the app knows
+ * tracks. A firm user can be linked to a Local username so the app knows
  * who is signed in.
  */
 import '../styles/settings.css';
@@ -61,8 +61,8 @@ export function openUserDialog(user = null) {
         field('Role', select({ name: 'role', value: user?.role || 'lawyer', options: USER_ROLES.map((r) => ({ value: r.id, label: r.label })) })),
         field('Hourly rate', moneyInput({ name: 'rate', cents: user?.rateCents || 0 }), { hint: 'Used for new time entries unless a matter sets its own rate.' }),
         field('Monthly billable target (hours)', textInput({ name: 'targetHours', type: 'number', min: '0', step: '1', value: String(user?.targetHours ?? ''), cls: 'num' })),
-        field('Puter username', textInput({ name: 'puterUsername', value: user?.puterUsername || '', placeholder: 'Optional', autocapitalize: 'off', spellcheck: 'false' }), {
-          hint: 'Links this person to their Puter account.',
+        field('Local username', textInput({ name: 'puterUsername', value: user?.puterUsername || '', placeholder: 'Optional', autocapitalize: 'off', spellcheck: 'false' }), {
+          hint: 'Links this person to their account.',
         }),
       ),
       h('fieldset.field', h('legend', 'Color'), color),
@@ -146,7 +146,7 @@ export function usersSection(ctx) {
                   h('th', { scope: 'col' }, 'Role'),
                   h('th.r', { scope: 'col' }, 'Rate'),
                   h('th.r', { scope: 'col' }, 'Target'),
-                  h('th', { scope: 'col' }, 'Puter account'),
+                  h('th', { scope: 'col' }, 'account'),
                   h('th', { scope: 'col' }, 'Status'),
                   h('th', { scope: 'col' }, h('span.sr-only', 'Actions')),
                 ),

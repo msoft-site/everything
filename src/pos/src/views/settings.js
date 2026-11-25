@@ -34,7 +34,7 @@ export async function confirmSignOut() {
       ? `${plural(pending, 'sale hasn’t', 'sales haven’t')} reached your cloud yet. `
         + 'They stay saved on this device and finish syncing after you sign back in with this account here; '
         + 'you can also wait for the sync bar to clear before signing out.'
-      : 'Your data stays safe in your Puter account and is here when you sign back in.',
+      : 'Your data stays safe in your local account and is here when you sign back in.',
     confirmLabel: 'Sign out',
     danger: pending > 0,
   });
@@ -605,7 +605,7 @@ function buildSettings() {
             html: icon('lock', 16, 2), onclick: () => openPinForm(false),
           }, ' Set a manager PIN')),
       has && el('p.small.muted', { style: { marginTop: '12px' } },
-        'Forgot it? Signing out and back in with your Puter account removes the PIN. The account is the real authority; this is a counter-height barrier, not a vault.'),
+        'Forgot it? Signing out and back in with your local account removes the PIN. The account is the real authority; this is a counter-height barrier, not a vault.'),
     ]);
   }
   renderPinCard();
@@ -1325,7 +1325,7 @@ function buildSettings() {
   const dataCard = el('section.card', { 'aria-label': 'Your data' },
     el('div.card-head', {}, el('h2.card-title', {}, 'Your data')),
     el('p.small.muted', { style: { marginBottom: '12px' } },
-      `Everything lives in your own Puter account. Next receipt number: #${store.settings.nextReceipt}.`),
+      `Everything lives in local storage. Next receipt number: #${store.settings.nextReceipt}.`),
     el('div.row.wrap', {},
       el('button.btn.btn-ghost', { html: icon('fileDown', 16, 2), onclick: exportData }, ' Export JSON'),
       el('button.btn.btn-ghost', { html: icon('fileUp', 16, 2), onclick: pickBackup }, ' Restore backup')

@@ -88,7 +88,7 @@ addTranslations({
     "Migration arrêtée. Les tableaux déjà migrés restent dans le journal.",
   "Rollback stopped. Boards not rolled back yet are kept in the log.":
     "Annulation arrêtée. Les tableaux dont la migration n’est pas encore annulée restent dans le journal.",
-  "The migration log could not be loaded from your Puter drive. Close and reopen this dialog to try again before migrating or rolling back.":
+  "The migration log could not be loaded from local storage. Close and reopen this dialog to try again before migrating or rolling back.":
     "Le journal de migration n’a pas pu être chargé depuis votre espace Puter. Fermez et rouvrez cette fenêtre pour réessayer avant de migrer ou d’annuler.",
   "Templates are saved to an organization library.":
     "Les modèles sont enregistrés dans la bibliothèque d’une organisation.",
@@ -387,7 +387,7 @@ function browserDownload(name, text, type) {
 //   to the saved JSON text or object (or null); optional download(name, text,
 //   type) and sleep(ms, signal).
 const LOG_UNAVAILABLE =
-  "The migration log could not be loaded from your Puter drive. Close and reopen this dialog to try again before migrating or rolling back.";
+  "The migration log could not be loaded from local storage. Close and reopen this dialog to try again before migrating or rolling back.";
 // A count in the language's digit grouping.
 const num = (count) =>
   Number(count || 0).toLocaleString(language === "fr" ? "fr-CA" : "en-CA");

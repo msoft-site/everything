@@ -190,7 +190,7 @@ export function renderHelpCenter(container) {
         ...status,
         panel('Availability', null,
           settingRow({ label: 'Help center', description: local ? 'Available after you turn on team access.' : 'Customers can browse published articles and send requests.', control: toggle({ checked: d.enabled, label: 'Help center on', disabled: local, onChange: (v) => { d.enabled = v; refresh(); } }) }),
-          settingRow({ label: 'Require sign-in to send requests', description: 'Only people signed in with a Puter account can submit. Articles stay public.', control: toggle({ checked: d.signInRequired, label: 'Require sign-in', onChange: (v) => { d.signInRequired = v; refresh(); } }) })),
+          settingRow({ label: 'Require sign-in to send requests', description: 'Only people signed in with an account can submit. Articles stay public.', control: toggle({ checked: d.signInRequired, label: 'Require sign-in', onChange: (v) => { d.signInRequired = v; refresh(); } }) })),
         panel('Appearance', null,
           settingRow({ id: titleId, label: 'Title', description: 'The heading customers see.', control: h(`input#${titleId}.input`, { value: d.title, maxlength: 100, oninput: (e) => { d.title = e.target.value; } }) }),
           settingRow({ id: introId, label: 'Welcome text', description: 'One or two sentences under the title.', control: h(`textarea#${introId}.textarea`, { rows: 3, maxlength: 300, oninput: (e) => { d.intro = e.target.value; } }, d.intro) }),
@@ -222,7 +222,7 @@ export function renderEmail(container) {
         inboxPanel(local),
         local
           ? callout('info', 'info', h('strong', 'Emails start once team access is on. '), 'Sending needs the help desk server. ', h('button.link-btn', { type: 'button', onclick: () => go('/admin/team') }, 'Go to Team'))
-          : callout('neutral', 'mail', 'Emails are sent from a Puter address on behalf of your help desk and billed to the owner’s Puter account, which needs a paid plan for sending. Every email links to the request in your help center, where customers can read the conversation and reply.'),
+          : callout('neutral', 'mail', 'Emails are sent from a Puter address on behalf of your help desk and billed to the owner’s account, which needs a paid plan for sending. Every email links to the request in your help center, where customers can read the conversation and reply.'),
         panel('Notifications', null,
           settingRow({ label: 'Send email notifications', description: 'When off, triggers that email customers are skipped. Replies still appear in the help center.', control: toggle({ checked: d.enabled, label: 'Send email notifications', onChange: (v) => { d.enabled = v; refresh(); } }) }),
           settingRow({ id: replyId, label: 'Reply-to address', description: 'Where replies to notification emails go. Leave empty to use the owner’s Puter email.', control: h(`input#${replyId}.input`, { type: 'email', value: d.replyTo, placeholder: 'support@yourcompany.com', autocomplete: 'email', oninput: (e) => { d.replyTo = e.target.value; } }) })),
@@ -317,5 +317,5 @@ function inboxPanel(local) {
     body.push(callout('neutral', 'clock', 'Mail is checked every few minutes while the owner has Help Desk open, and right away when they open it.'));
   } else body.push(status);
   if (local) body.unshift(callout('info', 'info', 'You can receive email now. Sending notifications back to customers starts once team access is on.'));
-  return panel('Receive requests by email', 'Every Puter account has its own email address. Use it as your support inbox.', ...body);
+  return panel('Receive requests by email', 'Every account has its own email address. Use it as your support inbox.', ...body);
 }

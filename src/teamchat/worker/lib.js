@@ -214,7 +214,7 @@ export function route(fn) {
  * So an answer is kept for this long, against a hash of the token that
  * earned it. The cost is that a session ended elsewhere — signed out,
  * revoked — goes on being accepted by an already-running isolate for up to
- * this long. Half a minute is short against how long a Puter session lives
+ * this long. Half a minute is short against how long a local session lives
  * and close to the poll interval the app already runs on, and it is the
  * whole of the exposure: nothing is cached across isolates, nothing is
  * written down, and a token that was never valid is never cached at all.
@@ -276,7 +276,7 @@ export async function peekIdentity(user) {
 }
 
 export async function identify(user) {
-  if (!user || !user.puter) fail(401, 'unauthorized', 'Sign in with Puter to continue');
+  if (!user || !user.puter) fail(401, 'unauthorized', 'Sign in to continue');
   const key = await identityKey(user);
   if (key) {
     const hit = identityCache.get(key);
@@ -295,7 +295,7 @@ export async function identify(user) {
     info = null;
   }
   authMs.set(user, Date.now() - started);
-  if (!info || !info.uuid) fail(401, 'unauthorized', 'Your Puter session is not valid');
+  if (!info || !info.uuid) fail(401, 'unauthorized', 'Your local session is not valid');
   const id = { uuid: String(info.uuid), username: String(info.username || '').toLowerCase() };
   if (key) {
     // Dropped whole rather than swept: the map is small, every entry lapses

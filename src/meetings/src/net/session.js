@@ -179,7 +179,7 @@ function trace(...args) {
  * Topology:
  *  - The HOST creates the room with `puter.peer.serve()`. Its invite code
  *    is the meeting code, and every guest joins that room with
- *    `puter.peer.connect(code)`. Hosting is done on a Puter account; a
+ *    `puter.peer.connect(code)`. Hosting is done on an account; a
  *    guest needs none — it joins on an anonymous token, and reaches the
  *    relays on the host's GUEST GRANT (see src/lib/account.js), which the
  *    host mints, hands out in WELCOME, renews, and re-announces in GRANT.
@@ -280,7 +280,7 @@ export class RoomSession extends Emitter {
   #hostDoubtSince = null;
   #left = false;
   /**
-   * Whether a Puter account stands behind us. Hosting is done on one; a
+   * Whether an account stands behind us. Hosting is done on one; a
    * guest may have none, and then takes part on an anonymous token with
    * the host's grant for relays. Read once, as the meeting starts.
    */
@@ -426,7 +426,7 @@ export class RoomSession extends Emitter {
       this.#acct = !isAnonymous();
       if (!this.#acct) {
         trace(
-          'guest: no Puter session — joining anonymously,',
+          'guest: no local session — joining anonymously,',
           this.#grant ? 'with the host’s grant for relays' : 'with no grant (direct connections only)'
         );
       }
@@ -942,7 +942,7 @@ export class RoomSession extends Emitter {
 
   /**
    * The survivor that should take over: the lowest participant id among
-   * those with a Puter account — only such a one can mint guest grants, so
+   * those with an account — only such a one can mint guest grants, so
    * guests without an account keep their relays — and, once no account is
    * left, the lowest id outright: the room directory takes anyone's writes,
    * so an anonymous host keeps the link alive for newcomers too.

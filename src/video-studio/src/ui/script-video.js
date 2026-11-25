@@ -1,5 +1,5 @@
 /**
- * Script to video dialog: write or paste a script (or have Puter AI write
+ * Script to video dialog: write or paste a script (or have 本地智能引擎 write
  * one), check the scenes and their picture descriptions, then generate a
  * narrated video with pictures, captions and music. From the home screen it
  * becomes a new project; in the editor it is added at the playhead as one
@@ -29,21 +29,21 @@ import {
 import '../styles/ai-create.css';
 
 /**
- * Puter AI can be used: signed in to Puter, or (development builds only) a
+ * 本地智能引擎 can be used: signed in, or (development builds only) a
  * stand-in installed as globalThis.__vsAiStub for browser checks.
  */
 export function aiReady(env) {
   return aiAvailable(env) || Boolean(import.meta.env.DEV && globalThis.__vsAiStub);
 }
 
-/** Explain that a tool needs a Puter account, with a sign-in button when possible. */
+/** Explain that a tool needs an account, with a sign-in button when possible. */
 export function needAiDialog(account, what, { signal } = {}) {
   if (signal?.aborted) return null;
   const close = h('button.btn', { type: 'button' }, 'Close');
-  const signIn = account?.onSignIn ? h('button.btn.primary', { type: 'button' }, icon('cloud', 16), 'Sign in to Puter') : null;
+  const signIn = account?.onSignIn ? h('button.btn.primary', { type: 'button' }, icon('cloud', 16), 'Sign in') : null;
   const d = openDialog({
     title: 'Sign in to use AI',
-    body: h('p.dialog-text', `${what} uses Puter AI, so it needs a Puter account. Sign in, then try again.`),
+    body: h('p.dialog-text', `${what} uses 本地智能引擎, so it needs an account. Sign in, then try again.`),
     actions: [close, signIn].filter(Boolean),
     className: 'small',
     labelledBody: true,
@@ -81,7 +81,7 @@ async function heardWords(library, asset, { signal } = {}) {
   return transcribePiece(mix, STT_RATE, { signal });
 }
 
-/** The real services: Puter AI for words, speech and pictures; media stored in the library. */
+/** The real services: 本地智能引擎 for words, speech and pictures; media stored in the library. */
 export function puterServices(library) {
   return {
     chat: (p) => puter.ai.chat(p),

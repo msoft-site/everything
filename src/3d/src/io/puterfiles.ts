@@ -1,4 +1,4 @@
-// Files on the Puter drive: double-click and "Open with" on the Puter desktop, Puter's Open and Save
+// Files on the local drive: double-click and "Open with" on the Puter desktop, Puter's Open and Save
 // dialogs, files dragged in from a Puter desktop folder window, and saving a Puter file back where
 // it came from. Without the Puter SDK (offline, online access off) nothing here does anything and
 // files come from and go to this device as before.
@@ -6,7 +6,7 @@ import { app } from '../app/app';
 import { PUTER_LOADED } from '../assistant/puter';
 import { fileEvents, formats, isReadableFile, openFile } from './files';
 
-/** An entry of the Puter drive: a launch item, a picked file or a record dropped from a desktop folder. */
+/** An entry of the local drive: a launch item, a picked file or a record dropped from a desktop folder. */
 export interface DriveItem {
   name?: string;
   path?: string;
@@ -160,7 +160,7 @@ async function openAsPuterFile(file: File, path: string) {
 }
 
 /**
- * Open a Puter drive file (File ▸ Open from Puter, a launch, a dropped project's Open). A file no
+ * Open a local drive file (File ▸ Open from Local, a launch, a dropped project's Open). A file no
  * format reads is not read; the file that is already open, or being opened, is not opened again.
  */
 export function openDriveFile(it: DriveItem, mode: 'open' | 'import' = 'open'): Promise<void> {
@@ -195,14 +195,14 @@ export async function openDriveItems(given: unknown, mode: 'open' | 'import' = '
   for (const it of driveFiles(given)) await openDriveFile(it, mode);
 }
 
-/** File ▸ Open / Import ▸ From Puter: Puter's Open dialog. Cancelling it does nothing. */
+/** File ▸ Open / Import ▸ From Local: Puter's Open dialog. Cancelling it does nothing. */
 export async function pickFromPuter(mode: 'open' | 'import' = 'open', accept: string[] = openExtensions()) {
   if (!canOpenFromPuter()) return;
   let picked: DriveItem | DriveItem[] | null | undefined;
   try {
     picked = await settleOnCancel(sdk()!.ui!.showOpenFilePicker!({ multiple: false, accept }));
   } catch (e) {
-    app.report('ERROR', `Cannot open from Puter: ${errorText(e)}`);
+    app.report('ERROR', `Cannot open from local storage: ${errorText(e)}`);
     return;
   }
   if (picked) await openDriveItems(Array.isArray(picked) ? picked.slice(0, 1) : picked, mode);
@@ -214,7 +214,7 @@ export async function pickFilesFromPuter(accept: string, multiple: boolean): Pro
   try {
     picked = await settleOnCancel(sdk()!.ui!.showOpenFilePicker!({ multiple, accept: accept.split(',').filter(Boolean) }));
   } catch (e) {
-    app.report('ERROR', `Cannot open from Puter: ${errorText(e)}`);
+    app.report('ERROR', `Cannot open from local storage: ${errorText(e)}`);
     return [];
   }
   const files: File[] = [];
@@ -260,7 +260,7 @@ const dropped = new WeakMap<File, string>();
 /** The drive path of a File read from a Puter drop, if it is one. */
 export const drivePathOf = (f: File) => dropped.get(f) ?? null;
 
-/** Open a dropped File: one that came from the Puter drive stays tied to it, so Save writes back there. */
+/** Open a dropped File: one that came from the local drive stays tied to it, so Save writes back there. */
 export function openDroppedFile(f: File): Promise<void> {
   const path = drivePathOf(f);
   if (!path) return openFile(f);

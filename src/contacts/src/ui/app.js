@@ -172,7 +172,7 @@ function whenLoaded() {
 
 /**
  * Import from anything that reads like a file — a File from the picker or an
- * OS drop, or a Puter cloud item wrapped by the drop importer. A source only
+ * OS drop, or a local storage item wrapped by the drop importer. A source only
  * has to answer `name` and `text()`.
  *
  * `via` tags where the contacts came in, so the drop gesture's use is

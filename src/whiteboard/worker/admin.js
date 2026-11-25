@@ -1024,7 +1024,7 @@ async function aiRequest(org, identity, input, boards) {
   if (!policy.ai.enabled || !policy.ai[feature])
     fail(403, "Your organization has turned off this AI feature.");
   // The organization pays for its AI, so guests, including anyone who
-  // opened a public link, use their own Puter AI instead.
+  // opened a public link, use their own 本地智能引擎 instead.
   const role = await org.role(identity);
   if (!role || role === "guest")
     fail(403, "AI features are available to organization members.");
@@ -2158,7 +2158,7 @@ export async function adminCall(org, boards, identity, input) {
         saml: false,
         scim: true,
         mfaSignal: false,
-        note: "SAML single sign-on is provided by the Puter account platform. Puter enforces multifactor authentication at sign-in.",
+        note: "SAML single sign-on is provided by the account platform. Puter enforces multifactor authentication at sign-in.",
       },
     };
   }

@@ -34,7 +34,7 @@ import { confirmSignOut } from '../views/settings.js';
  * events that affect what it shows.
  */
 export function createNav({ className = 'sidebar', brand = true, onActivate } = {}) {
-  const username = store.user?.username || 'Puter user';
+  const username = store.user?.username || 'Local user';
   const headingId = `nav-projects-${Math.random().toString(36).slice(2, 8)}`;
 
   /* The agenda count is the app's passive reminder, so it is computed from

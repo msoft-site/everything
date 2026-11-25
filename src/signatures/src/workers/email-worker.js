@@ -18,7 +18,7 @@
  *
  * An app-owned relay that forwarded whatever it was handed would be a spam
  * cannon wearing the app's sending reputation, so it never does:
- *   - no Puter session, no send. `user` is only populated for callers that
+ *   - no local session, no send. `user` is only populated for callers that
  *     come through puter.workers.exec(); everyone else gets 401.
  *   - the caller supplies a DOCUMENT, not an email. Subject and body are
  *     composed here, so every message this worker can be made to send is a
@@ -529,7 +529,7 @@ router.get('/whoami', async (ctx) => {
 
 router.post('/send', async (ctx) => {
   // A caller context exists only for requests that came through
-  // puter.workers.exec(), which forwards their Puter session. No session, no
+  // puter.workers.exec(), which forwards their local session. No session, no
   // send, and no way to bill anyone for one either.
   const caller = callerOf(ctx);
   if (!caller || !caller.puter) {

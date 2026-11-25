@@ -25,7 +25,7 @@ const MAX_KV_VALUE_BYTES = 400 * 1024;
 export function createPuterBackend(puterInstance) {
   const p = () => {
     const instance = puterInstance ?? globalThis.puter;
-    if (!instance?.kv) throw new Error('Puter.js is not available');
+    if (!instance?.kv) throw new Error('Storage engine is not available');
     return instance;
   };
 

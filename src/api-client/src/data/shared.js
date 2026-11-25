@@ -1,5 +1,5 @@
 /**
- * Sharing collections between Puter users with Puter's file sharing.
+ * Sharing collections between Local users with Puter's file sharing.
  *
  * Owners share the collection's own cloud file (workspace/collections/<id>.json)
  * with people by username or email, as view or edit. People it was shared with

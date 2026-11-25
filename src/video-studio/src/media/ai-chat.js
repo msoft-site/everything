@@ -1,5 +1,5 @@
 /**
- * One reply from Puter's AI to a conversation, as it arrives (the same
+ * One reply from local storage's AI to a conversation, as it arrives (the same
  * reading of puter.ai.chat's stream as the Spreadsheet app's assistant).
  * Yields { type: 'text', text }, { type: 'tool', id, name, input } (a
  * function the model calls) and last { type: 'cut' } when the reply was cut
@@ -40,7 +40,7 @@ export async function* aiChatStream(messages, { model, tools, maxTokens, signal 
         // A stream says nothing of why it ended; its closing token count is how a cut-off reply shows.
         else if (part.type === 'usage') {
           // Puter ends a reply the account's credits ran out during as if it reached the length limit.
-          if (part.metadata?.usage_limited) throw Object.assign(new Error('Your Puter account ran out of AI credits, so the reply stopped.'), { code: 'insufficient_funds' });
+          if (part.metadata?.usage_limited) throw Object.assign(new Error('Your local account ran out of AI credits, so the reply stopped.'), { code: 'insufficient_funds' });
           if (reachedLimit(part.usage, maxTokens)) yield { type: 'cut' };
         } else if (typeof part.text === 'string' && part.text) yield { type: 'text', text: part.text };
       }
@@ -149,8 +149,8 @@ export function friendlyAiError(error, { firstMessage = false } = {}) {
   const code = String(error?.code || '');
   if (tooLongForAi(error)) return firstMessage ? 'This message is too long for the AI. Shorten it.' : 'This chat has grown too long for the AI. Start a new chat to carry on.';
   if (/rate.?limit|too many requests|\b429\b|overloaded|try again later/i.test(`${text} ${code}`)) return 'The AI service is busy. Wait a moment, then try again.';
-  if (/insufficient.?(funds|credit|balance)|out of credit|quota|usage.?limit|allowance|billing|payment required|\b402\b/i.test(`${text} ${code}`)) return 'Your Puter AI allowance has run out for now.';
-  if (/sign.?in|not signed|unauthori[sz]ed|\b401\b|auth(entication)? (required|failed)/i.test(`${text} ${code}`)) return 'Sign in to Puter to use the assistant.';
+  if (/insufficient.?(funds|credit|balance)|out of credit|quota|usage.?limit|allowance|billing|payment required|\b402\b/i.test(`${text} ${code}`)) return 'Your 本地智能引擎 allowance has run out for now.';
+  if (/sign.?in|not signed|unauthori[sz]ed|\b401\b|auth(entication)? (required|failed)/i.test(`${text} ${code}`)) return 'Sign in to use the assistant.';
   if (/network|failed to fetch|offline|timed? ?out|took too long|deadline exceeded|context canceled|ECONN|connection/i.test(text)) return 'The AI service could not be reached. Check your connection.';
   return text ? `The AI service said: ${text.slice(0, 300)}` : 'The AI service did not answer.';
 }

@@ -71,7 +71,7 @@ export function lensCorrectionBatch(e: Editor): Promise<void> {
   dialog.innerHTML = `<form method="dialog">
     <h2>Lens Correction</h2>
     <section class="processor-step"><h3><span>1</span>Images</h3>
-      <div class="processor-buttons"><button type="button" data-act="local" title="Choose photos on this device">Add from this device…</button><button type="button" data-act="cloud" title="Choose photos on Puter">Add from Puter…</button>${e.sessions.some((s) => s.hasDocument) ? '<button type="button" data-act="open" title="Use the documents open in Photo Studio">Add open documents</button>' : ''}<button type="button" data-act="clear" title="Remove every image from the list">Clear</button></div>
+      <div class="processor-buttons"><button type="button" data-act="local" title="Choose photos on this device">Add from this device…</button><button type="button" data-act="cloud" title="Choose photos on Puter">Add from Local…</button>${e.sessions.some((s) => s.hasDocument) ? '<button type="button" data-act="open" title="Use the documents open in Photo Studio">Add open documents</button>' : ''}<button type="button" data-act="clear" title="Remove every image from the list">Clear</button></div>
       <ul class="processor-list" aria-label="Images to correct"></ul>
     </section>
     <section class="processor-step"><h3><span>2</span>Correction</h3>
@@ -89,7 +89,7 @@ export function lensCorrectionBatch(e: Editor): Promise<void> {
     <section class="processor-step"><h3><span>3</span>Save</h3>
       <div class="processor-row"><label class="dialog-field">Format<select name="format" title="File type of the corrected photos">${formats.map((f) => `<option value="${f}">${formatInfo[f].label}</option>`).join('')}</select></label>
       <label class="dialog-field">Quality<input type="number" name="quality" min="1" max="100" value="90" title="JPEG and WebP quality"></label></div>
-      <label class="dialog-field">Destination<select name="dest" title="Where the corrected photos go"><option value="zip">Download as ZIP archive</option><option value="puter">Save to a Puter folder…</option></select></label>
+      <label class="dialog-field">Destination<select name="dest" title="Where the corrected photos go"><option value="zip">Download as ZIP archive</option><option value="puter">Save to a local folder…</option></select></label>
     </section>
     <p class="processor-status" aria-live="polite"></p>
     <div class="dialog-actions"><button type="button" data-act="cancel">Cancel</button><button type="submit" class="primary" disabled>Correct</button></div>

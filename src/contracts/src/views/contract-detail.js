@@ -600,7 +600,7 @@ export function contractDetailView({ param }) {
 
     if (!docs.length) {
       section.append(el('p.quiet-note', {},
-        'Attach the signed agreement, amendments, and related files. They are stored in your Puter cloud.'));
+        'Attach the signed agreement, amendments, and related files. They are stored in local storage.'));
       return section;
     }
 

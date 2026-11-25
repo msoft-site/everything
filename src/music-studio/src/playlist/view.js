@@ -955,7 +955,7 @@ export function createPlaylistView(app, host) {
         return;
       }
       if (!isSignedIn()) {
-        app.notify('Sign in to use files from your Puter cloud');
+        app.notify('Sign in to use files from local storage');
         return;
       }
       const blob = await readFile(payload.path);

@@ -37,7 +37,7 @@ const ITEMS = [
  * <puter-user-menu> (usermenu.js), whose own Sign out it replaces.
  */
 export async function signOutFlow() {
-  const ok = await confirmDialog({ title: 'Sign out?', message: 'You can sign back in with your Puter account anytime.', confirmLabel: 'Sign out', danger: false });
+  const ok = await confirmDialog({ title: 'Sign out?', message: 'You can sign back in with your local account anytime.', confirmLabel: 'Sign out', danger: false });
   if (!ok) return;
   try {
     await store.signOut();

@@ -118,7 +118,7 @@ export function mediaTab(ctx) {
       }
       if (files.length) await importWithProgress(files);
     } catch (err) {
-      if (err) toast("Couldn't open that file from Puter.", { kind: 'error' });
+      if (err) toast("Couldn't open that file from local storage.", { kind: 'error' });
     }
   }
 
@@ -133,7 +133,7 @@ export function mediaTab(ctx) {
   const folderBtn = h('button.icon-btn', { type: 'button', 'aria-label': 'New folder', 'data-tip': 'New folder' }, icon('folderPlus', 18));
   folderBtn.addEventListener('click', () => newFolder());
   const puterBtn = typeof puter !== 'undefined' && ctx.library.backend.kind === 'puter'
-    ? h('button.icon-btn', { type: 'button', 'aria-label': 'Import from Puter', 'data-tip': 'Import from Puter' }, icon('cloud', 18))
+    ? h('button.icon-btn', { type: 'button', 'aria-label': 'Import from local storage', 'data-tip': 'Import from local storage' }, icon('cloud', 18))
     : null;
   puterBtn?.addEventListener('click', fromPuter);
 

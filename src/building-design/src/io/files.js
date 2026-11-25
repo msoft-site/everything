@@ -1,5 +1,5 @@
 /**
- * Opening, saving and recovering projects: Puter cloud files, device files
+ * Opening, saving and recovering projects: local storage files, device files
  * and IndexedDB recovery copies (so work survives reloads without an
  * account). Projects are always stored as files.
  */
@@ -171,18 +171,18 @@ export async function openDialog(app, tab = null) {
     }
     if (which === 'recent') {
       const rec = recent();
-      if (!rec.length) panel.append(h('p.dialog-text', 'Projects you open from Puter appear here.'));
+      if (!rec.length) panel.append(h('p.dialog-text', 'Projects you open appear here.'));
       for (const r of rec) list.append(fileItem(r.name, new Date(r.at).toLocaleString(), r.source === 'cloud' ? 'cloud' : 'device', () => (close?.(), openRecent(app, r))));
       panel.append(list);
       return;
     }
     panel.append(status, list);
     if (!puterAvailable() || !(await whenPuter(4000))) {
-      status.append(h('p', 'Puter could not be reached. Check your connection.'));
+      status.append(h('p', 'Storage service could not be reached. Check your connection.'));
       return;
     }
     if (!(await isSignedIn())) {
-      status.append(h('p', which === 'shared' ? 'Sign in to see projects other people shared with you.' : 'Sign in with Puter to keep projects in your cloud storage.'), h('button.btn.primary', { type: 'button', onClick: async () => (await app.signIn()) && show(which) }, icon('log-in', 16), 'Sign in'));
+      status.append(h('p', which === 'shared' ? 'Sign in to see projects other people shared with you.' : 'Projects are kept in local storage.'), h('button.btn.primary', { type: 'button', onClick: async () => (await app.signIn()) && show(which) }, icon('log-in', 16), 'Sign in'));
       return;
     }
     status.append(h('p', 'Loading...'));
@@ -310,7 +310,7 @@ export async function saveAs(app) {
     size: 'sm',
     body: h(
       'div.open-sources',
-      h('button.btn.big', { type: 'button', onClick: () => document.querySelector('dialog[open]')._close('cloud') }, icon('cloud', 22), h('span', h('strong', 'Puter cloud'), h('small', signed ? 'Keep it in your Puter storage, open it anywhere and share it.' : 'Sign in to keep it in your Puter storage and share it.'))),
+      h('button.btn.big', { type: 'button', onClick: () => document.querySelector('dialog[open]')._close('cloud') }, icon('cloud', 22), h('span', h('strong', 'local storage'), h('small', signed ? 'Keep it in your Puter storage, open it anywhere and share it.' : 'Sign in to keep it in your Puter storage and share it.'))),
       h('button.btn.big', { type: 'button', onClick: () => document.querySelector('dialog[open]')._close('device') }, icon('device', 22), h('span', h('strong', 'This device'), h('small', 'Save a .bdp file on this computer or phone.'))),
     ),
     actions: [{ label: 'Cancel', value: null }],
@@ -318,7 +318,7 @@ export async function saveAs(app) {
   if (choice === 'device') return writeDevice(app, name0, null);
   if (choice !== 'cloud') return false;
   if (!signed && !(await app.signIn())) return false;
-  const name = await promptDialog('Save to Puter', 'Project name', name0, { okLabel: 'Save', validate: (v) => (!v ? 'Enter a name.' : null) });
+  const name = await promptDialog('Save to Local', 'Project name', name0, { okLabel: 'Save', validate: (v) => (!v ? 'Enter a name.' : null) });
   if (!name) return false;
   const path = `${CLOUD_DIR}/${safeFileName(name)}${NATIVE_EXT}`;
   try {

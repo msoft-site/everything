@@ -80,7 +80,7 @@ export function openShareDialog(ctx, weekStart) {
 
     if (!puterAvailable) {
       body.replaceChildren(
-        el('div', { class: 'form-error' }, icon('circle-alert', 15), 'Sharing needs a signed-in Puter session.')
+        el('div', { class: 'form-error' }, icon('circle-alert', 15), 'Sharing needs a signed-in local session.')
       );
       return;
     }

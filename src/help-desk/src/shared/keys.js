@@ -13,9 +13,9 @@
  *   e:<id>:<n>            ticket event: comment, note or field change
  *   u:<id>                customer (end user)
  *   ue:<email>            customer id by email
- *   uu:<uuid>             customer id by Puter account
+ *   uu:<uuid>             customer id by account
  *   rt:<user>:<ticket>    tickets by requester
- *   ps:<uuid>:<ticket>    tickets a signed-in Puter account sent from the help center
+ *   ps:<uuid>:<ticket>    tickets a signed-in account sent from the help center
  *   o:<id>                organization
  *   od:<domain>           organization id by email domain
  *   k:<id>                knowledge base article (summary, listed)

@@ -40,7 +40,7 @@ function signInScreen(onSignedIn, inviting) {
   const error = h('p.field-error', { role: 'alert' });
   btn.addEventListener('click', async () => {
     btn.disabled = true;
-    btn.textContent = '正在等待 Puter...';
+    btn.textContent = '正在加载本地工作区…...';
     error.textContent = '';
     try {
       await puter.auth.signIn();
@@ -56,7 +56,7 @@ function signInScreen(onSignedIn, inviting) {
   screen(
     logo(),
     h('h1.splash-title', inviting ? '您受邀加入一个共享空间' : '知识库'),
-    h('p.splash-sub', inviting ? '使用 Puter 登录以打开该空间。' : '面向个人与团队的文档、笔记和数据库。'),
+    h('p.splash-sub', inviting ? '打开本地空间。' : '面向个人与团队的文档、笔记和数据库。'),
     inviting
       ? null
       : h(
@@ -64,7 +64,7 @@ function signInScreen(onSignedIn, inviting) {
           feature('pencil', '使用块编辑器写作：标题、列表、待办、表格、代码与图片'),
           feature('database', '通过表格、看板、列表和日历追踪一切'),
           feature('users', '分享页面并与他人实时协同编辑'),
-          feature('cloud', '以文件形式存储在您自己的 Puter 云端'),
+          feature('cloud', '以文件形式存储在您自己的 本地存储'),
         ),
     btn,
     error,
@@ -113,7 +113,7 @@ async function boot() {
   const link = inviteFromHash();
   const params = new URLSearchParams(location.search);
   if (import.meta.env.DEV && params.has('local')) {
-    // Development sandbox: everything stays in this browser, no Puter account.
+    // Development sandbox: everything stays in this browser, no account.
     // Sharing runs on a local copy of the collaboration service; add &as=<name>
     // in another tab to be someone else.
     const { localCollab, devUser } = await import('./dev/local-collab.js');
@@ -124,7 +124,7 @@ async function boot() {
     return;
   }
   if (typeof puter === 'undefined') {
-    errorScreen('无法连接到 Puter', '知识库将您的页面保存在 Puter 云端。请检查网络连接后重试。', () => location.reload());
+    errorScreen('无法连接到本地存储服务', '知识库将您的页面保存在 本地存储。请检查网络连接后重试。', () => location.reload());
     return;
   }
   const env = puter.env;

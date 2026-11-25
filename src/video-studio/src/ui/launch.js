@@ -48,7 +48,7 @@ export async function readDriveItems(puter, given) {
       failed.push(name);
     }
   }
-  if (failed.length) toast(`Couldn't read ${listOf(failed)} from Puter.`, { kind: 'error' });
+  if (failed.length) toast(`Couldn't read ${listOf(failed)} from local storage.`, { kind: 'error' });
   return files;
 }
 
@@ -69,7 +69,7 @@ export function installLaunchOpen(puter, onFiles) {
       })
       .catch((err) => {
         console.error(err);
-        toast(err?.message || "Couldn't open the files from Puter.", { kind: 'error' });
+        toast(err?.message || "Couldn't open the files from local storage.", { kind: 'error' });
       });
     return chain;
   };

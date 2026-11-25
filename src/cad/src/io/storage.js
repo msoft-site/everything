@@ -1,6 +1,6 @@
 /**
  * Where drawings live:
- *   cloud   the user's Puter drive (needs sign-in)
+ *   cloud   the user's local drive (needs sign-in)
  *   device  files on this computer (File System Access API where available,
  *           otherwise download and file input)
  *   local   IndexedDB recovery copies of open drawings, so work survives a
@@ -61,7 +61,7 @@ export function isNotFoundError(err) {
   return /not[_ ]?found|does_not_exist|no such/i.test(s);
 }
 
-/** True when a request failed because the Puter session is missing or has expired. */
+/** True when a request failed because the local session is missing or has expired. */
 export function isAuthError(err) {
   const code = `${err?.code ?? ''} ${err?.error?.code ?? ''}`;
   if (/token_auth_failed|unauthorized|auth_required|token_invalid/i.test(code)) return true;

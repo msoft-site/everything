@@ -61,7 +61,7 @@ export function placeSpeech(segments, durations, end = Infinity) {
 /**
  * Translate and speak. cues: [{ start, end, text }] in seconds. Returns
  * { lines (translated per cue), segments, speech: [{ text, blob }] }.
- * translate(lines) and speak(text) are injected (Puter AI in the app).
+ * translate(lines) and speak(text) are injected (本地智能引擎 in the app).
  */
 export async function makeDub(cues, { translate, speak, signal, onProgress } = {}) {
   const check = () => {

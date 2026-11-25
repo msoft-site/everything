@@ -1,6 +1,6 @@
 /**
  * Review ▸ Thesaurus (Shift+F7) and Review ▸ Translate: one pane beside the sheet with a tab for each, both
- * answered by Puter's AI.
+ * answered by local AI.
  *
  * The thesaurus looks up the active cell's word (or one typed in), lists its senses with their synonyms and
  * antonyms, looks up any of those with a click, and puts one into the active cell in place of the word.
@@ -86,7 +86,7 @@ const languageLabel = (name) => (Object.hasOwn(LANGUAGE_LABELS, name) ? t(LANGUA
 const MAX_CELLS = 200;
 
 /**
- * `ctx` is the editor's context plus `ai` (prompt → Promise<text>, or null without Puter's AI) and `translate`
+ * `ctx` is the editor's context plus `ai` (prompt → Promise<text>, or null without local AI) and `translate`
  * ((text, from, to) → Promise<text>).
  */
 export function createLanguagePane(ctx) {

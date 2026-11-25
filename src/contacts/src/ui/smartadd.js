@@ -1,5 +1,5 @@
 // "Smart Add" — paste an email signature, business card text, or any blurb and
-// let Puter AI extract structured fields, which then open in the editor for
+// let 本地智能引擎 extract structured fields, which then open in the editor for
 // review. This is the app's only use of AI, and it goes through puter.ai.
 import { toast } from '../toast.js'
 import { icons } from '../icons.js'
@@ -54,7 +54,7 @@ export function openSmartAdd() {
         <p class="form-error" data-error hidden></p>
       </div>
       <footer class="modal__foot">
-        <span class="modal__hint">Powered by Puter AI</span>
+        <span class="modal__hint">Powered by 本地智能引擎</span>
         <div class="modal__foot-right">
           <button type="button" class="btn btn--soft" data-action="close">Cancel</button>
           <button type="button" class="btn btn--primary" data-action="extract">${icons.sparkles}<span>Extract</span></button>
@@ -151,7 +151,7 @@ export function openSmartAdd() {
     } catch (err) {
       const msg = String(err && err.message ? err.message : err)
       errorEl.textContent = /credit/i.test(msg)
-        ? "You're out of Puter AI credits. Add the contact manually instead."
+        ? "You're out of 本地智能引擎 credits. Add the contact manually instead."
         : "Couldn't read those details. Try adding more text, or enter them manually."
       errorEl.hidden = false
     } finally {

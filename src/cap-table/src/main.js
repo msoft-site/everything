@@ -134,7 +134,7 @@ async function boot() {
       return;
     }
     showError('Couldn’t load your data',
-      'Something went wrong talking to your Puter cloud. Check your connection and try again.',
+      'Something went wrong talking to local storage. Check your connection and try again.',
       () => location.reload());
     return;
   }
@@ -202,7 +202,7 @@ async function boot() {
      change, so the way out is to stay: the rewrite is retried when the
      connection returns, on a timer meanwhile, and on demand. */
   const retryUnsaved = async (recoverPending = true) => {
-    if (await store.retryUnsaved({ recoverPending }) && !store.isStale) toast('Your cap table is back in sync with your Puter cloud.');
+    if (await store.retryUnsaved({ recoverPending }) && !store.isStale) toast('Your cap table is back in sync with your local storage.');
   };
   const unsavedBanner = el('div.offline-banner', {
     role: 'status', 'aria-live': 'polite', hidden: true,

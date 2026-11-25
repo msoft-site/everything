@@ -1,7 +1,7 @@
 /**
  * puter.js's <puter-user-menu>, as in the other Puter apps: when the loaded
  * SDK defines it, it ends the top bar on the web, with the Apps launcher and
- * the Puter account (the picture with Manage account, Usage, Open Puter,
+ * the account (the picture with Manage account, Usage, Open Puter,
  * Send feedback and Sign out). The app's own Sign out, in the rail's menu
  * and in "You", stands down while the element shows; the rail's avatar stays,
  * being this workspace's profile (status, notifications, settings).

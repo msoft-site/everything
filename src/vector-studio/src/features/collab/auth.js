@@ -1,6 +1,6 @@
 /**
  * Credentials for collaboration requests. A document's server belongs to
- * its owner, so the browser never sends its own Puter session to it.
+ * its owner, so the browser never sends its own local session to it.
  * Instead it sends a restricted Puter access token that can only read a
  * small identity file holding a public key, and signs each request (the
  * server address, that file and the body digest) with the private key.
@@ -58,7 +58,7 @@ async function loadCredential(puter, parent, refused) {
     throw new Error('Could not create a restricted collaboration credential.');
   }
   const credential = { keys, path: file.path, token, expires: Math.min(issued + LIFETIME, claims.exp * 1000) };
-  if (puter.authToken !== parent) throw new Error('Your Puter account changed. Open the shared document again.');
+  if (puter.authToken !== parent) throw new Error('Your local account changed. Open the shared document again.');
   await puter.kv.set(key, credential, { disableSharing: true });
   return credential;
 }
@@ -83,7 +83,7 @@ export function refuseCredential(puter, headers) {
 /** Headers for one request to `server` with `body` (JSON text). */
 export async function authorize(puter, server, body) {
   const parent = puter.authToken;
-  if (!parent) throw new Error('Sign in with Puter to continue.');
+  if (!parent) throw new Error('Sign in to continue.');
   let entry = credentials.get(puter);
   if (entry?.parent !== parent || entry.stale || (entry.value && entry.value.expires <= Date.now() + 60_000)) {
     const refused = entry?.stale && entry.parent === parent && entry.refused;
@@ -99,7 +99,7 @@ export async function authorize(puter, server, body) {
   }
   const credential = await entry.pending;
   const signature = await sign(credential.keys.privateKey, [server, credential.path, await hash(body)]);
-  if (puter.authToken !== parent) throw new Error('Your Puter account changed. Open the shared document again.');
+  if (puter.authToken !== parent) throw new Error('Your local account changed. Open the shared document again.');
   return {
     'puter-auth': credential.token,
     'x-vector-studio-proof': JSON.stringify({ version: 1, path: credential.path, signature }),

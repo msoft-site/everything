@@ -53,7 +53,7 @@ export function detailRows({ name, path, size, created, modified, lastSaved, pag
   // with nowhere to live yet is named for the file it is about to become.
   rows.push({ label: '名称', value: fileNameOf(path) || `${name || '未命名文档'}.docx` });
   const folder = folderOf(path);
-  rows.push({ label: '位置', value: path ? (folder ? `${folder}/（位于 Puter 云端硬盘）` : 'Puter 云端硬盘根目录') : '尚未保存' });
+  rows.push({ label: '位置', value: path ? (folder ? `${folder}/（位于 本地存储硬盘）` : '本地存储硬盘根目录') : '尚未保存' });
   if (path && size != null) rows.push({ label: '大小', value: formatBytes(size) });
   if (path && created) rows.push({ label: '创建时间', value: whenText(created, now) });
   if (path && modified) rows.push({ label: '修改时间', value: whenText(modified, now) });
