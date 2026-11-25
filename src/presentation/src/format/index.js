@@ -1302,7 +1302,7 @@ export function createFormatTools(ctx) {
           ...items.filter((i) => !i.separator),
           { separator: true },
           {
-            label: "More Rotation Options…",
+            label: "其他旋转选项…",
             icon: "o:size",
             disabled: !ctx.currentShape(),
             onSelect: () => openSizeRotation(),
@@ -1384,7 +1384,7 @@ export function createFormatTools(ctx) {
       },
       { separator: true },
       {
-        label: "Replace Fonts…",
+        label: "替换字体…",
         icon: "o:replaceFonts",
         onSelect: () => openReplaceFonts(),
       },
@@ -1394,27 +1394,27 @@ export function createFormatTools(ctx) {
     const text = !!textTarget();
     return [
       {
-        label: "Font…",
+        label: "字体…",
         icon: "o:fontDialog",
         shortcut: IS_MAC ? "⌘T" : "Ctrl+Shift+F",
         disabled: !text,
         onSelect: () => openFont(),
       },
       {
-        label: "Paragraph…",
+        label: "段落…",
         icon: "o:paragraph",
         shortcut: IS_MAC ? "⌥⌘M" : "Ctrl+Alt+M",
         disabled: !text,
         onSelect: () => openParagraph(),
       },
       {
-        label: "Bullets and Numbering…",
+        label: "项目符号和编号…",
         icon: "o:bullets",
         disabled: !text,
         onSelect: () => openBullets(),
       },
       {
-        label: "Columns…",
+        label: "分栏…",
         icon: "o:columns",
         disabled: !text,
         onSelect: () => openColumns(),
@@ -1436,12 +1436,12 @@ export function createFormatTools(ctx) {
       },
       { separator: true },
       {
-        label: "Replace Fonts…",
+        label: "替换字体…",
         icon: "o:replaceFonts",
         onSelect: () => openReplaceFonts(),
       },
       {
-        label: "Format Object…",
+        label: "设置对象格式…",
         icon: "o:formatPane",
         shortcut: `${MOD_KEY}+Shift+1`,
         onSelect: () => {
@@ -1488,7 +1488,7 @@ export function createFormatTools(ctx) {
           },
           { separator: true },
           {
-            label: "More Rotation Options…",
+            label: "其他旋转选项…",
             icon: "o:size",
             onSelect: () => openSizeRotation(),
           },

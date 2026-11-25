@@ -80,12 +80,12 @@ const PATTERN_NAMES = {
   pct75: "75%",
   pct80: "80%",
   pct90: "90%",
-  horz: "Horizontal",
-  vert: "Vertical",
-  ltHorz: "Light horizontal",
-  ltVert: "Light vertical",
-  dkHorz: "Dark horizontal",
-  dkVert: "Dark vertical",
+  horz: "横线",
+  vert: "竖线",
+  ltHorz: "浅色横线",
+  ltVert: "浅色竖线",
+  dkHorz: "深色横线",
+  dkVert: "深色竖线",
   narHorz: "浅色水平线",
   narVert: "浅色垂直线",
   dashHorz: "虚线水平线",
@@ -568,7 +568,7 @@ export function createBackgroundPane(host) {
       ),
       type === "linear" &&
         number(
-          "Angle (°)",
+          "角度 (°)",
           g.angleDeg ?? 90,
           (v) =>
             write("angle", (n) => ({ ...n, angle: ((v % 360) + 360) % 360 })),
@@ -592,7 +592,7 @@ export function createBackgroundPane(host) {
           "div",
           { class: "bg-stop-buttons" },
           button(
-            "Add stop",
+            "添加光圈",
             "Plus",
             () =>
               write(null, (n) => {
@@ -623,7 +623,7 @@ export function createBackgroundPane(host) {
         }),
       ),
       number(
-        "Stop position (%)",
+        "光圈位置 (%)",
         current.offset * 100,
         (v) =>
           write("stop-pos", (n) => {
@@ -690,7 +690,7 @@ export function createBackgroundPane(host) {
         set("pic-alpha", { transparency: v / 100 }),
       ),
       check(
-        "Tile picture as texture",
+        "将图片平铺为纹理",
         !!tile,
         (on) =>
           set(
@@ -706,20 +706,20 @@ export function createBackgroundPane(host) {
           ? el(
               "div",
               { class: "bg-grid" },
-              number("Offset X (pt)", tile.offsetX / EMU_PER_PT, (v) =>
+              number("X 偏移量 (pt)", tile.offsetX / EMU_PER_PT, (v) =>
                 set("tile", { tile: { ...tile, offsetX: v * EMU_PER_PT } }),
               ),
-              number("Offset Y (pt)", tile.offsetY / EMU_PER_PT, (v) =>
+              number("Y 偏移量 (pt)", tile.offsetY / EMU_PER_PT, (v) =>
                 set("tile", { tile: { ...tile, offsetY: v * EMU_PER_PT } }),
               ),
               number(
-                "Scale X (%)",
+                "缩放比例 X (%)",
                 tile.scaleX * 100,
                 (v) => set("tile", { tile: { ...tile, scaleX: v / 100 } }),
                 { min: 1, max: 1000 },
               ),
               number(
-                "Scale Y (%)",
+                "缩放比例 Y (%)",
                 tile.scaleY * 100,
                 (v) => set("tile", { tile: { ...tile, scaleY: v / 100 } }),
                 { min: 1, max: 1000 },
@@ -735,10 +735,10 @@ export function createBackgroundPane(host) {
               "div",
               { class: "bg-grid" },
               ...[
-                ["left", "Offset left (%)"],
-                ["right", "Offset right (%)"],
-                ["top", "Offset top (%)"],
-                ["bottom", "Offset bottom (%)"],
+                ["left", "左侧偏移量 (%)"],
+                ["right", "右侧偏移量 (%)"],
+                ["top", "顶部偏移量 (%)"],
+                ["bottom", "底部偏移量 (%)"],
               ].map(([edge, label]) =>
                 number(
                   label,
@@ -865,7 +865,7 @@ export function createBackgroundPane(host) {
         "div",
         { class: "bg-actions" },
         button(
-          "Reset Background",
+          "重置背景",
           null,
           () =>
             edit(null, (t) => {
@@ -881,7 +881,7 @@ export function createBackgroundPane(host) {
         ),
         kindOfTarget === "slide" &&
           button(
-            "Apply to All",
+            "全部应用",
             null,
             () => {
               const source = P.getSlidePartName(target);

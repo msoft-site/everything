@@ -124,14 +124,14 @@ const entranceAndExit = (cls) => {
       family: "basic",
       gallery: true,
       variants: [
-        [6, 32, "Circle"],
-        [4, 32, "Box"],
-        [8, 32, "Diamond"],
-        [13, 32, "Plus"],
+        [6, 32, "圆"],
+        [4, 32, "方形"],
+        [8, 32, "菱形"],
+        [13, 32, "十字形"],
       ],
       directions: [
-        [16, "In"],
-        [32, "Out"],
+        [16, "入"],
+        [32, "出"],
       ],
       alias: [4, 8, 13],
       subtype: 32,
@@ -168,8 +168,8 @@ const entranceAndExit = (cls) => {
       family: "subtle",
       gallery: true,
       options: [
-        [16, "Object Center"],
-        [528, "Slide Center"],
+        [16, "对象中心"],
+        [528, "幻灯片中心"],
       ],
       subtype: 16,
       mark: "zoom",
@@ -203,8 +203,8 @@ const entranceAndExit = (cls) => {
       name: "棋盘",
       family: "basic",
       options: [
-        [10, "Across"],
-        [5, "Down"],
+        [10, "跨越"],
+        [5, "向下"],
       ],
       subtype: 10,
       mark: "checker",
@@ -228,10 +228,10 @@ const entranceAndExit = (cls) => {
       name: "阶梯",
       family: "basic",
       options: [
-        [12, "Left Down"],
-        [9, "Left Up"],
-        [6, "Right Down"],
-        [3, "Right Up"],
+        [12, "左下"],
+        [9, "左上"],
+        [6, "右下"],
+        [3, "右上"],
       ],
       subtype: 6,
       mark: "wipe",
@@ -239,7 +239,7 @@ const entranceAndExit = (cls) => {
     { id: 20, name: "楔入", family: "basic", mark: "wheel" },
     {
       id: 17,
-      name: name("Stretch", "Collapse"),
+      name: name("伸展", "折叠"),
       family: "moderate",
       mark: "zoom",
     },
@@ -250,11 +250,11 @@ const entranceAndExit = (cls) => {
       family: "moderate",
       mark: "float",
     },
-    { id: 43, name: "Center Revolve", family: "moderate", mark: "turn" },
-    { id: 49, name: "Spinner", family: "exciting", mark: "turn" },
+    { id: 43, name: "中心旋转", family: "moderate", mark: "turn" },
+    { id: 49, name: "旋转飞出", family: "exciting", mark: "turn" },
     {
       id: 55,
-      name: name("Expand", "Contract"),
+      name: name("展开", "收缩"),
       family: "subtle",
       mark: "zoom",
     },
@@ -305,10 +305,10 @@ export const EFFECTS = [
       gallery: true,
       duration: 2000,
       amounts: [
-        [25, "Tiny"],
-        [50, "Smaller"],
-        [150, "Larger"],
-        [400, "Huge"],
+        [25, "微小"],
+        [50, "较小"],
+        [150, "较大"],
+        [400, "巨大"],
       ],
       amount: 150,
       mark: "grow",
@@ -433,9 +433,9 @@ export const EFFECTS = [
       gallery: true,
       options: [
         [4, "向下"],
-        [6, "Down Right"],
+        [6, "向右下"],
         [1, "向上"],
-        [3, "Up Right"],
+        [3, "向右上"],
       ],
       subtype: 4,
       mark: "turns",
@@ -447,10 +447,10 @@ export const EFFECTS = [
       gallery: true,
       options: [
         [0, "圆"],
-        [1, "Diamond"],
-        [2, "Triangle"],
-        [3, "Square"],
-        [4, "Hexagon"],
+        [1, "菱形"],
+        [2, "三角形"],
+        [3, "正方形"],
+        [4, "六边形"],
       ],
       subtype: 0,
       mark: "shapes",
@@ -502,14 +502,14 @@ export function effectName(effect) {
   const entry = entryFor(effect);
   if (!entry)
     return effect.presetClass === "path"
-      ? "Custom Path"
-      : `${categoryOf(effect.presetClass).label} effect`;
+      ? "自定义路径"
+      : `${categoryOf(effect.presetClass).label}效果`;
   const variant = entry.variants?.find(
     ([id]) => id === effect.presetId && entry.id !== 6,
   );
   if (entry.id === 42 && variant && entry.cls !== "path") return entry.name;
   if (entry.cls === "entr" && entry.id === 6 && effect.presetId !== 6)
-    return "Shape";
+    return "形状";
   return entry.name;
 }
 

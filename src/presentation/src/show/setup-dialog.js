@@ -43,37 +43,37 @@ export function openSetUpShowDialog(ctx) {
   const shows = ctx.customShows();
 
   const type = radioGroup(
-    "Show type",
+    "放映类型",
     nextId("show-type"),
     [
-      ["present", "Presented by a speaker (full screen)"],
-      ["browse", "Browsed by an individual (window)"],
-      ["kiosk", "Browsed at a kiosk (full screen)"],
+      ["present", "演讲者放映 (全屏幕)"],
+      ["browse", "个人浏览 (窗口)"],
+      ["kiosk", "展台浏览 (全屏幕)"],
     ],
     setup.showType,
   );
-  const scrollbar = checkField("Show scrollbar", setup.showScrollbar);
+  const scrollbar = checkField("显示滚动条", setup.showScrollbar);
   scrollbar.wrap.classList.add("show-setup-indent");
 
   const loop = checkField(
-    "Loop continuously until Esc",
+    "循环放映，按 Esc 键终止",
     setup.loop || setup.showType === "kiosk",
   );
   const noNarration = checkField(
-    "Show without narration",
+    "放映时不加旁白",
     !setup.showNarration,
   );
   const noAnimation = checkField(
-    "Show without animation",
+    "放映时不加动画",
     !setup.showAnimation,
   );
   const mediaControls = checkField(
-    "Show media controls",
+    "显示媒体控件",
     setup.showMediaControls,
   );
-  const pen = colorField("Pen color", setup.penColor || "#E81224");
+  const pen = colorField("绘图笔颜色", setup.penColor || "#E81224");
   const laser = colorField(
-    "Laser pointer color",
+    "激光指针颜色",
     setup.laserColor || "#FF0000",
   );
 
@@ -95,45 +95,45 @@ export function openSetUpShowDialog(ctx) {
     "aria-label": "终止幻灯片",
   });
   const customSelect = selectField(
-    "Custom show",
+    "自定义放映",
     shows.length
-      ? shows.map((s) => [String(s.id), s.name || `Custom show ${s.id + 1}`])
-      : [["", "No custom shows", true]],
+      ? shows.map((s) => [String(s.id), s.name || `自定义放映 ${s.id + 1}`])
+      : [["", "无自定义放映", true]],
     sel.kind === "custom" ? String(sel.id) : String(shows[0]?.id ?? ""),
     { "aria-label": "自定义放映" },
   );
   customSelect.wrap.querySelector("label").hidden = true;
   const slides = radioGroup(
-    "Show slides",
+    "放映幻灯片",
     nextId("show-slides"),
     [
-      ["all", "All"],
+      ["all", "全部"],
       [
         "range",
-        "From",
+        "从",
         el(
           "span",
           { class: "show-setup-range" },
           fromInput,
-          el("span", {}, "to"),
+          el("span", {}, "到"),
           toInput,
         ),
       ],
-      ...(shows.length ? [["custom", "Custom show", customSelect.wrap]] : []),
+      ...(shows.length ? [["custom", "自定义放映", customSelect.wrap]] : []),
     ],
     sel.kind === "custom" && !shows.length ? "all" : sel.kind,
   );
   const advance = radioGroup(
-    "Advance slides",
+    "推进幻灯片",
     nextId("show-advance"),
     [
-      ["manual", "Manually"],
-      ["timings", "Using timings, if present"],
+      ["manual", "手动"],
+      ["timings", "如果存在排练时间，则使用它"],
     ],
     setup.useTimings ? "timings" : "manual",
   );
   const presenter = checkField(
-    "Use Presenter View when there is a second screen",
+    "存在第二台显示器时使用演示者视图",
     !!showPrefs.usePresenterView,
   );
 
@@ -198,7 +198,7 @@ export function openSetUpShowDialog(ctx) {
         el(
           "fieldset",
           { class: "file-radios" },
-          el("legend", {}, "Multiple screens"),
+          el("legend", {}, "多显示器"),
           presenter.wrap,
         ),
       ),
@@ -216,7 +216,7 @@ export function openSetUpShowDialog(ctx) {
       actions: [
         { label: "取消", kind: "secondary", onClick: () => true },
         {
-          label: "OK",
+          label: "确定",
           kind: "primary",
           onClick: async () => {
             const which = slides.value();
@@ -225,7 +225,7 @@ export function openSetUpShowDialog(ctx) {
               const start = Math.round(Number(fromInput.value));
               const end = Math.round(Number(toInput.value));
               if (!(start >= 1 && end >= start && end <= count)) {
-                error.textContent = `Enter slide numbers from 1 to ${count}, the first no larger than the last.`;
+                error.textContent = `请输入 1 到 ${count} 之间的幻灯片编号，且起始编号不能大于终止编号。`;
                 error.hidden = false;
                 fromInput.focus();
                 return false;

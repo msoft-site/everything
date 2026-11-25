@@ -2968,43 +2968,43 @@ function updateSaveStatus() {
         (doc.saveError?.offline ? "offline" : doc.saveError && "error")
       : null;
   const [state, glyph, label] = busy
-    ? ["saving", "Cloud", "Saving…"]
+    ? ["saving", "Cloud", "正在保存…"]
     : cloudSaved
-      ? ["cloud", "Check", "Saved to Puter"]
+      ? ["cloud", "Check", "已保存到云端"]
       : problem === "changed"
-        ? ["conflict", "CircleAlert", "Changed elsewhere"]
+        ? ["conflict", "CircleAlert", "在其他位置已更改"]
         : problem === "missing"
-          ? ["conflict", "CircleAlert", "Moved or deleted"]
+          ? ["conflict", "CircleAlert", "已移动或已删除"]
           : problem === "offline"
             ? [
                 "offline",
                 "CloudOff",
-                onDevice ? "Offline · saved on this device" : "Offline",
+                onDevice ? "离线 · 已保存到此设备" : "离线",
               ]
             : problem === "error"
               ? [
                   "error",
                   "CircleAlert",
                   onDevice
-                    ? "Not saved to Puter · on this device"
-                    : "Not saved",
+                    ? "未保存到云端 · 已保存到此设备"
+                    : "未保存",
                 ]
               : onDevice
-                ? ["device", "Monitor", "Saved on this device"]
+                ? ["device", "Monitor", "已保存到此设备"]
                 : untouchedLanding()
-                  ? ["new", "CloudOff", "Not saved yet"]
-                  : ["unsaved", "CloudOff", "Unsaved changes"];
+                  ? ["new", "CloudOff", "尚未保存"]
+                  : ["unsaved", "CloudOff", "未保存的更改"];
   const hint =
     problem === "changed"
-      ? "This presentation was saved from another tab or device since you opened it. Save to choose which version to keep."
+      ? "自打开此演示文稿以来，它已在其他标签页或设备上保存。请保存以选择保留哪个版本。"
       : problem === "missing"
-        ? "This presentation is no longer where it was in your Puter. Save to choose where it goes."
+        ? "此演示文稿不再位于原来的位置。请保存以选择存储位置。"
         : problem === "offline"
-          ? "You are offline. Changes save to Puter when you reconnect."
+          ? "您处于脱机状态。重新连接时更改将保存到云端。"
           : problem === "error"
-            ? `Puter could not save: ${doc.saveError.message} Trying again shortly.`
+            ? `无法保存: ${doc.saveError.message} 稍后将重试。`
             : doc.path ||
-              "Save to Puter to access this presentation on other devices.";
+              "保存到云端以便在其他设备上访问此演示文稿。";
   if (
     status.dataset.state === state &&
     status.title === hint &&
@@ -3313,7 +3313,7 @@ function renderReadOnly() {
     if (!doc.previews.has(part)) doc.previews.set(part, { src: null });
     image.src = cachedPreview(doc.previews, doc.pres, slides[index]);
     image.alt = slideDescription(slides[index], doc.pres);
-    counter.textContent = `Slide ${index + 1} of ${slides.length}`;
+    counter.textContent = `第 ${index + 1} 张，共 ${slides.length} 张`;
     const focused = document.activeElement;
     previous.disabled = index === 0;
     next.disabled = index === slides.length - 1;
@@ -3923,15 +3923,15 @@ const backgroundPane = createBackgroundPane({
       { class: "arrange-buttons" },
       button(
         slideBackground(target).kind === "image"
-          ? "Change background image"
-          : "Background image",
+          ? "更改背景图片"
+          : "背景图片",
         "Image",
         () => pickImage(setBackgroundImage),
         "secondary",
       ),
       slideBackground(target).kind === "image" &&
         button(
-          "Remove background image",
+          "删除背景图片",
           null,
           removeBackgroundImage,
           "secondary",
@@ -8514,10 +8514,10 @@ function renderSlideArea(refreshNavigator = true) {
   updateSlideCount();
   document.querySelector("#slide-label").textContent = masterView.active
     ? masterView.label()
-    : `SLIDE ${String(index + 1).padStart(2, "0")}${P.isSlideHidden(slide()) ? " · HIDDEN" : ""}`;
+    : `幻灯片 ${String(index + 1).padStart(2, "0")}${P.isSlideHidden(slide()) ? " · 已隐藏" : ""}`;
   document.querySelector("#slide-position").textContent = masterView.active
     ? MASTER_VIEW_NAMES[masterView.mode]
-    : `Slide ${index + 1} of ${all.length}`;
+    : `第 ${index + 1} 张，共 ${all.length} 张`;
   const notes = document.querySelector("#speaker-notes");
   if (document.activeElement !== notes || notes.dataset.slide !== part)
     notes.value = P.getSlideNotes(slide()) || "";
@@ -10124,21 +10124,21 @@ const FONT_SIZES = [
   80, 88, 96,
 ];
 const LINE_SPACINGS = [
-  [1, "Single"],
-  [1.15, "1.15"],
-  [1.5, "1.5"],
-  [2, "Double"],
+  [1, "单倍行距"],
+  [1.15, "1.15 倍行距"],
+  [1.5, "1.5 倍行距"],
+  [2, "双倍行距"],
 ];
 const TEXT_ALIGNMENTS = [
-  ["left", "Align left", "AlignLeft"],
-  ["center", "Align center", "AlignCenter"],
-  ["right", "Align right", "AlignRight"],
-  ["justify", "Justify", "TextAlignJustify"],
+  ["left", "左对齐", "AlignLeft"],
+  ["center", "居中", "AlignCenter"],
+  ["right", "右对齐", "AlignRight"],
+  ["justify", "两端对齐", "TextAlignJustify"],
 ];
 const TEXT_ANCHORS = [
-  ["top", "Align top", "AlignVerticalJustifyStart"],
-  ["center", "Align middle", "AlignVerticalJustifyCenter"],
-  ["bottom", "Align bottom", "AlignVerticalJustifyEnd"],
+  ["top", "顶端对齐", "AlignVerticalJustifyStart"],
+  ["center", "垂直居中", "AlignVerticalJustifyCenter"],
+  ["bottom", "底端对齐", "AlignVerticalJustifyEnd"],
 ];
 // The next size up or down the ladder from `current`.
 function stepFontSize(current, direction) {
@@ -14541,12 +14541,12 @@ function linkFields(obj) {
 }
 /* ---------- Align, distribute, group ---------- */
 const ALIGN_ACTIONS = [
-  ["left", "Left edges", "AlignStartVertical"],
-  ["hcenter", "Horizontal centers", "AlignCenterVertical"],
-  ["right", "Right edges", "AlignEndVertical"],
-  ["top", "Top edges", "AlignStartHorizontal"],
-  ["vcenter", "Vertical centers", "AlignCenterHorizontal"],
-  ["bottom", "Bottom edges", "AlignEndHorizontal"],
+  ["left", "左对齐", "AlignStartVertical"],
+  ["hcenter", "水平居中", "AlignCenterVertical"],
+  ["right", "右对齐", "AlignEndVertical"],
+  ["top", "顶端对齐", "AlignStartHorizontal"],
+  ["vcenter", "垂直居中", "AlignCenterHorizontal"],
+  ["bottom", "底端对齐", "AlignEndHorizontal"],
 ];
 // Several objects line up on the edge or center of the space they span; a
 // single object lines up on the slide's.
@@ -16015,7 +16015,7 @@ async function present(options = {}) {
     showInserted.slideShown(all[n], n);
     placeTriggers();
     counter.textContent = reading
-      ? `Slide ${n + 1} of ${all.length}`
+      ? `第 ${n + 1} 张，共 ${all.length} 张`
       : `${n + 1} / ${all.length}`;
     syncPrevious();
     next.disabled = false;

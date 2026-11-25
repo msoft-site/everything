@@ -37,6 +37,16 @@ const JUMPS = [
   ["url", "URL…"],
 ];
 
+const SOUND_LABELS = {
+  Chime: "风铃",
+  Click: "按键音",
+  Pop: "爆鸣音",
+  Rise: "上升",
+  Fall: "下降",
+  Bell: "铃声",
+  Applause: "掌声",
+};
+
 // Simple line drawings of each button's mark for the gallery.
 const GLYPHS = {
   actionButtonBackPrevious: "M14 4 6 10l8 6z",
@@ -100,7 +110,7 @@ export function createActionFeatures(ctx) {
           actionGlyph(preset),
         ),
       );
-    return [{ header: "Action Buttons" }, { custom: row }];
+    return [{ header: "动作按钮" }, { custom: row }];
   }
 
   const menuItems = () =>
@@ -228,12 +238,14 @@ export function createActionFeatures(ctx) {
       el(
         "option",
         { value: "__stop", selected: state.sound === "__stop" },
-        "[Stop Previous Sound]",
+        "[停止前一声音]",
       ),
       ...[
         ...new Set([...SOUND_NAMES, ...(state.soundData ? [state.sound] : [])]),
-      ].map((n) => el("option", { value: n, selected: n === state.sound }, n)),
-      el("option", { value: "__file" }, "Other Sound (WAV)…"),
+      ].map((n) =>
+        el("option", { value: n, selected: n === state.sound }, SOUND_LABELS[n] || n),
+      ),
+      el("option", { value: "__file" }, "其他声音 (WAV)…"),
     );
     const radio = (value, label, checked, disabled = false) =>
       el(
@@ -252,8 +264,8 @@ export function createActionFeatures(ctx) {
         }),
         el("span", {}, label),
       );
-    const slideRow = fieldRow("Slide", slideSelect);
-    const urlRow = fieldRow("Address", urlInput);
+    const slideRow = fieldRow("幻灯片", slideSelect);
+    const urlRow = fieldRow("地址", urlInput);
     const sync = () => {
       jumpSelect.disabled = !state.jumpOn;
       slideRow.hidden = !state.jumpOn || state.jump !== "slide";
@@ -266,12 +278,12 @@ export function createActionFeatures(ctx) {
       el(
         "div",
         { role: "radiogroup", "aria-label": "动作", class: "action-choices" },
-        radio("none", "None", !state.jumpOn && !state.other),
-        radio("jump", "Hyperlink to:", state.jumpOn),
+        radio("none", "无", !state.jumpOn && !state.other),
+        radio("jump", "超链接到:", state.jumpOn),
         el("div", { class: "hf-indent" }, jumpSelect, slideRow, urlRow),
         radio(
           "program",
-          "Run program (not available in the browser)",
+          "运行程序 (浏览器中不可用)",
           false,
           true,
         ),
@@ -280,18 +292,18 @@ export function createActionFeatures(ctx) {
         ? el(
             "p",
             { class: "action-note" },
-            `This object has an action this app does not run (${state.other}). Choosing another replaces it.`,
+            `此对象具有此应用不运行的操作 (${state.other})。选择其他操作将替换它。`,
           )
         : null,
       checkbox(
-        "Play sound:",
+        "播放声音:",
         state.soundOn,
         (on) => ((state.soundOn = on), sync()),
       ),
       el("div", { class: "hf-indent" }, soundSelect),
       kind === "click"
         ? checkbox(
-            "Highlight click",
+            "单击时突出显示",
             state.highlight,
             (on) => (state.highlight = on),
           )
@@ -318,7 +330,7 @@ export function createActionFeatures(ctx) {
           const url = ctx.normalizeUrl(state.url);
           if (!url)
             throw new Error(
-              "Enter a web address starting with http:// or https://.",
+              "请输入以 http:// 或 https:// 开头的网址。",
             );
           jump = { kind: "url", url };
         } else jump = { kind: state.jump };
@@ -394,13 +406,13 @@ export function createActionFeatures(ctx) {
       el(
         "div",
         { class: "hf-tabs", role: "tablist", "aria-label": "触发条件" },
-        tab("click", "Mouse Click", true),
-        tab("hover", "Mouse Over", false),
+        tab("click", "单击鼠标", true),
+        tab("hover", "鼠标悬停", false),
       ),
       click.node,
       hover.node,
     );
-    const ok = await dialog({ title: "操作设置", body, confirm: "OK" });
+    const ok = await dialog({ title: "操作设置", body, confirm: "确定" });
     if (!ok) return;
     const settings = { click: click.value(), hover: hover.value() };
     await ctx.mutateShape(obj, (target, slide) => {

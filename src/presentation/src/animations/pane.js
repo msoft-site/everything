@@ -104,11 +104,11 @@ export function createAnimationPane({ tools, P, ctx }) {
       : null;
     const scroll = node.querySelector(".anim-list")?.scrollTop ?? 0;
     const playing = tools().previewing;
-    const playLabel = playing ? "Stop" : chosen.size ? "Play From" : "Play All";
+    const playLabel = playing ? "停止" : chosen.size ? "从当前播放" : "全部播放";
     const head = el(
       "div",
       { class: "task-pane-head" },
-      el("h2", {}, "Animation Pane"),
+      el("h2", {}, "动画窗格"),
       el(
         "button",
         {
@@ -206,7 +206,7 @@ export function createAnimationPane({ tools, P, ctx }) {
         : el(
             "p",
             { class: "helper" },
-            "This slide has no animations. Select an object and choose an effect on the Animations tab.",
+            "此幻灯片没有动画。请选择一个对象并在“动画”选项卡中选择效果。",
           ),
       ...(effects.length && ruler ? [ruler] : []),
     );

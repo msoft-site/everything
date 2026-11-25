@@ -183,7 +183,7 @@ export function createShowFeatures(ctx) {
         el(
           "p",
           {},
-          `The rehearsal took ${formatClock(totalMs)}. Keep the times you spent on each slide, so the show moves on by itself at the same pace?`,
+          `幻灯片放映总时间为 ${formatClock(totalMs)}。是否保留每张幻灯片的排练时间，以便放映时按此节奏自动播放？`,
         ),
       ),
       actions: [
@@ -201,7 +201,7 @@ export function createShowFeatures(ctx) {
       P.setSlideShowSetup(presentation, { useTimings: true });
     });
     toast(
-      `Timings kept on ${timings.length} slide${timings.length === 1 ? "" : "s"}.`,
+      `已在 ${timings.length} 张幻灯片上保留排练时间。`,
     );
   }
   async function saveRecording({ segments, cleared }) {
@@ -290,13 +290,13 @@ export function createShowFeatures(ctx) {
     });
   const customShowMenu = () => [
     ...customShows().map((s) => ({
-      label: s.name || `Custom show ${s.id + 1}`,
+      label: s.name || `自定义放映 ${s.id + 1}`,
       icon: "o:customShow",
       onSelect: run(() => ctx.present({ customShow: s.id, from: "beginning" })),
     })),
     ...(customShows().length ? [{ separator: true }] : []),
     {
-      label: "Custom Shows…",
+      label: "自定义放映…",
       icon: "o:customShow",
       onSelect: run(customShowsDialog),
     },

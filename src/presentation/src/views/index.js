@@ -20,11 +20,11 @@ import {
 export { readingBar, placeReadingDialog } from "./reading-view.js";
 
 export const VIEWS = [
-  ["normal", "Normal", "o:normalView", "1"],
-  ["sorter", "Slide Sorter", "o:slideSorter", "2"],
-  ["notesPage", "Notes Page", "o:notesPage", "3"],
-  ["outline", "Outline View", "o:outlineView", "4"],
-  ["reading", "Reading View", "o:readingView", "5"],
+  ["normal", "普通", "o:normalView", "1"],
+  ["sorter", "幻灯片浏览", "o:slideSorter", "2"],
+  ["notesPage", "备注页", "o:notesPage", "3"],
+  ["outline", "大纲视图", "o:outlineView", "4"],
+  ["reading", "阅读视图", "o:readingView", "5"],
 ];
 
 export function createViews(base) {

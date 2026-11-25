@@ -249,12 +249,12 @@ export function numberingMenuItems({ current, choose, openDialog }) {
 
 // Symbol sets for a custom bullet, by Unicode block.
 const SYMBOL_SETS = [
-  ["Bullets", "•◦‣⁃∙●○◉◎◘◙■□▪▫▬▭▮▯▰▱◆◇◈◊❖✦✧✱✲✳✴✵✶✷✸✹✺"],
-  ["Arrows", "→⇒⇨➔➘➙➚➛➜➝➞➟➠➡➢➣➤➥➦➧➨➩➪➫➬➭➮➯➱➲➳➴➵➶➷➸➹➺➻➼➽➾↠↣↦⇢⇾"],
-  ["Checks and crosses", "✓✔✕✖✗✘☐☑☒⊕⊗⊙⊛⊠⊡"],
-  ["Stars and flowers", "★☆✡✪✫✬✭✮✯✰❀❁❂❃❄❅❆❇❈❉❊❋✿✾✽✼"],
-  ["Hands and marks", "☛☞✌✍✎✏✐✑✒❍❏❐❑❒❢❣❤❥❦❧♠♣♥♦♤♧♡♢"],
-  ["Math and signs", "+−±×÷=≠≈≤≥∞∑∏√∂∆∇∈∉∩∪⊂⊃⊆⊇∧∨¬∀∃§¶†‡※"],
+  ["项目符号", "•◦‣⁃∙●○◉◎◘◙■□▪▫▬▭▮▯▰▱◆◇◈◊❖✦✧✱✲✳✴✵✶✷✸✹✺"],
+  ["箭头", "→⇒⇨➔➘➙➚➛➜➝➞➟➠➡➢➣➤➥➦➧➨➩➪➫➬➭➮➯➱➲➳➴➵➶➷➸➹➺➻➼➽➾↠↣↦⇢⇾"],
+  ["勾选与叉号", "✓✔✕✖✗✘☐☑☒⊕⊗⊙⊛⊠⊡"],
+  ["星号与花形", "★☆✡✪✫✬✭✮✯✰❀❁❂❃❄❅❆❇❈❉❊❋✿✾✽✼"],
+  ["手形与标记", "☛☞✌✍✎✏✐✑✒❍❏❐❑❒❢❣❤❥❦❧♠♣♥♦♤♧♡♢"],
+  ["数学与符号", "+−±×÷=≠≈≤≥∞∑∏√∂∆∇∈∉∩∪⊂⊃⊆⊇∧∨¬∀∃§¶†‡※"],
 ];
 
 /** Lets a person choose any symbol; resolves to the character or null. */
@@ -263,7 +263,7 @@ export async function pickSymbol({ initial = "•" } = {}) {
   const preview = el("span", { class: "fmt-symbol-preview" }, chosen);
   const code = el("input", {
     class: "input",
-    "aria-label": "Character code (hexadecimal)",
+    "aria-label": "字符代码 (十六进制)",
     value: chosen.codePointAt(0).toString(16).toUpperCase(),
     maxlength: 6,
     oninput: (e) => {
@@ -315,7 +315,7 @@ export async function pickSymbol({ initial = "•" } = {}) {
       "div",
       { class: "fmt-symbol-footer" },
       preview,
-      el("label", { class: "fmt-inline" }, "Character code", code),
+      el("label", { class: "fmt-inline" }, "字符代码", code),
     ),
   );
   const ok = await formatDialog({ title: "符号", body, wide: true });
@@ -439,7 +439,7 @@ export async function bulletsDialog({
   };
   const common = () => [
     numberField({
-      label: "Size (% of text)",
+      label: "大小 (% 文本大小)",
       value: Math.round(sizePct * 100),
       unit: "%",
       min: 25,
@@ -461,7 +461,7 @@ export async function bulletsDialog({
   const pictureNote = el(
     "p",
     { class: "helper", hidden: true },
-    "The picture you chose leads each paragraph. Choose OK to use it.",
+    "您选择的图片将作为每个段落的项目符号。选择“确定”以使用它。",
   );
   const t = tabs(
     [
@@ -493,7 +493,7 @@ export async function bulletsDialog({
                     refresh();
                   },
                 },
-                "Customize…",
+                "自定义…",
               ),
               el(
                 "button",
@@ -509,7 +509,7 @@ export async function bulletsDialog({
                     refresh();
                   },
                 },
-                "Picture…",
+                "图片…",
               ),
             ),
             pictureNote,

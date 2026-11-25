@@ -25,7 +25,7 @@ export function openCustomShowsDialog(ctx) {
   const empty = el(
     "p",
     { class: "show-custom-empty" },
-    "There are no custom shows yet. Choose New to make one.",
+    "尚无自定义放映。选择“新建”以创建一个。",
   );
   const shows = () => P.getCustomShows(ctx.pres());
   function fill(selectId = null) {
@@ -73,7 +73,7 @@ export function openCustomShowsDialog(ctx) {
     new: el(
       "button",
       { type: "button", class: "btn secondary", onclick: () => edit(null) },
-      "New…",
+      "新建…",
     ),
     edit: el(
       "button",
@@ -82,7 +82,7 @@ export function openCustomShowsDialog(ctx) {
         class: "btn secondary",
         onclick: () => edit(selected()),
       },
-      "Edit…",
+      "编辑…",
     ),
     copy: el(
       "button",
@@ -95,12 +95,12 @@ export function openCustomShowsDialog(ctx) {
           const all = shows();
           await write([
             ...all,
-            { name: uniqueName(`Copy of ${s.name}`), slides: s.slides },
+            { name: uniqueName(`${s.name} 的副本`), slides: s.slides },
           ]);
           fill(shows().at(-1)?.id ?? null);
         },
       },
-      "Copy",
+      "复制",
     ),
     remove: el(
       "button",
@@ -114,7 +114,7 @@ export function openCustomShowsDialog(ctx) {
           fill();
         },
       },
-      "Remove",
+      "删除",
     ),
     show: el(
       "button",
@@ -128,7 +128,7 @@ export function openCustomShowsDialog(ctx) {
           ctx.play(s.id);
         },
       },
-      "Show",
+      "放映",
     ),
   };
   function sync() {
@@ -154,7 +154,7 @@ export function openCustomShowsDialog(ctx) {
   const body = el(
     "div",
     { class: "dialog-body show-custom" },
-    el("label", { for: listId, class: "show-custom-label" }, "Custom shows"),
+    el("label", { for: listId, class: "show-custom-label" }, "自定义放映"),
     el(
       "div",
       { class: "show-custom-row" },
@@ -194,7 +194,7 @@ export function defineCustomShow(ctx, show, uniqueName = (n) => n) {
   const name = el("input", {
     class: "input",
     id: nameId,
-    value: show?.name || uniqueName("Custom Show"),
+    value: show?.name || uniqueName("自定义放映"),
     maxlength: 120,
   });
   const label = (s) => {
@@ -273,7 +273,7 @@ export function defineCustomShow(ctx, show, uniqueName = (n) => n) {
         render();
       },
     },
-    "Add »",
+    "添加 »",
   );
   const move = (by) => {
     const to = active + by;
@@ -282,9 +282,9 @@ export function defineCustomShow(ctx, show, uniqueName = (n) => n) {
     active = to;
     render();
   };
-  const up = lineButton("Move slide up", "ChevronUp", () => move(-1));
-  const down = lineButton("Move slide down", "ChevronDown", () => move(1));
-  const remove = lineButton("Remove slide from the custom show", "X", () => {
+  const up = lineButton("向上移动幻灯片", "ChevronUp", () => move(-1));
+  const down = lineButton("向下移动幻灯片", "ChevronDown", () => move(1));
+  const remove = lineButton("从自定义放映中删除幻灯片", "X", () => {
     chosen.splice(active, 1);
     active = Math.max(0, Math.min(active, chosen.length - 1));
     render();
@@ -315,7 +315,7 @@ export function defineCustomShow(ctx, show, uniqueName = (n) => n) {
     el(
       "div",
       { class: "file-field" },
-      el("label", { for: nameId }, "Slide show name"),
+      el("label", { for: nameId }, "幻灯片放映名称"),
       name,
     ),
     el(
@@ -324,14 +324,14 @@ export function defineCustomShow(ctx, show, uniqueName = (n) => n) {
       el(
         "div",
         { class: "show-define-col" },
-        el("h3", {}, "Slides in presentation"),
+        el("h3", {}, "演示文稿中的幻灯片"),
         deckList,
       ),
       el("div", { class: "show-define-mid" }, add),
       el(
         "div",
         { class: "show-define-col" },
-        el("h3", {}, "Slides in custom show"),
+        el("h3", {}, "自定义放映中的幻灯片"),
         showList,
       ),
       el("div", { class: "show-define-side" }, up, down, remove),
@@ -347,7 +347,7 @@ export function defineCustomShow(ctx, show, uniqueName = (n) => n) {
       actions: [
         { label: "取消", kind: "secondary", onClick: () => true },
         {
-          label: "OK",
+          label: "确定",
           kind: "primary",
           onClick: () => {
             if (!chosen.length || !name.value.trim()) return false;
