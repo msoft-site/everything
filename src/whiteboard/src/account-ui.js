@@ -2,18 +2,18 @@ import { addTranslations, t } from "./i18n.js";
 import { escape } from "./model.js";
 
 addTranslations({
-  "Sign in": "Se connecter",
-  "Sign in": "Se connecter à Puter",
+  "Sign in": "登录",
+  "Sign in": "登录",
   Account: "Compte",
-  "Account menu": "Menu du compte",
-  "Signed in": "Connecté avec Puter",
-  "Loading your account…": "Chargement de votre compte…",
+  "Account menu": "账户菜单",
+  "Signed in": "已登录",
+  "Loading your account…": "正在加载您的帐户...",
   "Sign out": "退出登录",
-  "Signed in as {name}.": "Connecté en tant que {name}.",
-  "Signed in.": "Connecté avec Puter.",
+  "Signed in as {name}.": "以 {name} 身份登录。",
+  "Signed in.": "已登录。",
   "Signed out. Your local boards are still available.":
-    "Déconnexion effectuée. Vos tableaux locaux restent disponibles.",
-  "Could not sign in. Try again.": "Connexion impossible. Réessayez.",
+    "已退出登录。您的本地白板仍可访问。",
+  "Could not sign in. Try again.": "无法登录。请重试。",
 });
 
 // Whether this person is signed in is answered at a glance, in the same
@@ -71,7 +71,7 @@ export function createAccountUI({
     const detail = user?.email && user.email !== label ? user.email : "";
     const heading = label
       ? `<strong data-user-content>${escape(label)}</strong>`
-      : `<strong>${loading ? "Loading your account…" : "Signed in"}</strong>`;
+      : `<strong>${loading ? "Loading your account…" : "正在加载您的帐户..."}</strong>`;
     const line = detail
       ? `<small data-user-content>${escape(detail)}</small>`
       : label
@@ -84,7 +84,7 @@ export function createAccountUI({
       : "";
     // In Puter's own app there is nothing to choose, so the popover is the
     // account's card rather than an empty menu.
-    return `<div class="account-menu" role="${items ? "menu" : "group"}" aria-label="Account" aria-describedby="account-identity"><div class="account-identity" id="account-identity" role="none">${avatar(" avatar-large")}<div role="none">${heading}${line}</div></div>${items ? `<div class="account-menu-items" role="none">${items}</div>` : ""}</div>`;
+    return `<div class="account-menu" role="${items ? "menu" : "菜单"}" aria-label="Account" aria-describedby="account-identity"><div class="account-identity" id="account-identity" role="none">${avatar(" avatar-large")}<div role="none">${heading}${line}</div></div>${items ? `<div class="account-menu-items" role="none">${items}</div>` : ""}</div>`;
   }
   function close(focusButton = false) {
     if (!openMenu) return;

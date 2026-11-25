@@ -104,7 +104,7 @@ export function createVersionPreview(stage) {
         w = b.w * view.z,
         h = b.h * view.z;
       if (x + w < -8 || y + h < -8 || x > width + 8 || y > height + 8) continue;
-      ctx.strokeStyle = MARKS[kind][dark ? "dark" : "light"];
+      ctx.strokeStyle = MARKS[kind][dark ? "dark" : "黑暗的"];
       ctx.setLineDash(MARKS[kind].dash);
       ctx.lineWidth = 2;
       ctx.strokeRect(x - 4, y - 4, w + 8, h + 8);
@@ -243,14 +243,14 @@ addTranslations({
   "Zoom in on the preview": "放大预览",
   "Zoom out of the preview": "缩小预览",
   "Fit the version in the preview": "自适应预览大小",
-  "Loading this version…": "Chargement de cette version…",
-  "one|{count} deleted since": "{count} deleted since",
-  "{count} deleted since": "{count} supprimés depuis",
-  "one|{count} changed since": "{count} changed since",
-  "{count} changed since": "{count} modifiés depuis",
-  "one|{count} added since": "{count} added since",
-  "{count} added since": "{count} ajoutés depuis",
-  "Same as the board now.": "Identique au tableau actuel.",
-  "Highlight changes": "Surligner les changements",
+  "Loading this version…": "正在加载此版本...",
+  "one|{count} deleted since": "{count} 已删除",
+  "{count} deleted since": "{count} 已删除",
+  "one|{count} changed since": "{count} 自此更改",
+  "{count} changed since": "{count} 自此更改",
+  "one|{count} added since": "{count} 自添加以来",
+  "{count} added since": "{count} 自添加以来",
+  "Same as the board now.": "和现在的主板一样。",
+  "Highlight changes": "突出显示变化",
   "Drag to move around this version. Ctrl/Cmd + scroll, a pinch or the + and - keys zoom.": "拖动以平移查看。Ctrl/Cmd + 滚轮或 +/- 键可进行缩放。",
 });

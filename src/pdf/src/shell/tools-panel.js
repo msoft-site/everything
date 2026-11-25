@@ -17,8 +17,8 @@ export function createToolsPanel({ catalog, can = () => true, onClose, onChange,
   let current = null; // the open tool's id, or null for the list
   let expanded = false;
   let waitingFocus = null; // the command a refresh could not give the focus back to
-  const heading = el('h2', { class: 'tools-panel-title', id: 'tools-panel-title' }, 'All tools');
-  const back = iconButton('Back to all tools', 'ArrowLeft', () => showAll(true), {
+  const heading = el('h2', { class: 'tools-panel-title', id: 'tools-panel-title' }, '所有工具');
+  const back = iconButton('返回所有工具', 'ArrowLeft', () => showAll(true), {
     class: 'icon-btn tools-back',
     hidden: true,
   });
@@ -33,7 +33,7 @@ export function createToolsPanel({ catalog, can = () => true, onClose, onChange,
       back,
       headIcon,
       heading,
-      iconButton('Close tools panel', 'X', () => onClose?.(), { class: 'icon-btn tools-close' }),
+      iconButton('关闭工具面板', 'X', () => onClose?.(), { class: 'icon-btn tools-close' }),
     ),
     body,
   );
@@ -75,7 +75,7 @@ export function createToolsPanel({ catalog, can = () => true, onClose, onChange,
               body.querySelector('.tool-row')?.focus();
             },
           },
-          'View more',
+          '查看更多',
         ),
       );
       return;
@@ -111,7 +111,7 @@ export function createToolsPanel({ catalog, can = () => true, onClose, onChange,
             body.querySelector('.tools-more')?.focus();
           },
         },
-        'View less',
+        '收起',
       ),
     );
   }

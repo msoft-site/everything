@@ -60,7 +60,7 @@ export function createBoardAccess({
       return assignableRoles(role)
         .map(
           (r) =>
-            `<option value="${r}" ${r === selected ? "selected" : ""}>${t(ROLE_LABELS[r])}</option>`,
+            `<option value="${r}" ${r === selected ? "selected" : "已选择"}>${t(ROLE_LABELS[r])}</option>`,
         )
         .join("");
     },
@@ -166,11 +166,11 @@ export function createBoardAccess({
         ]
           .map(
             ([v, l]) =>
-              `<label class="check-field"><input type="radio" name="bs-visibility" value="${v}" ${current.visibility === v ? "checked" : ""} ${v === "link" && !linksAllowed ? "disabled" : ""}><span>${t(l)}${v === "link" && !linksAllowed ? `<small>${t("Your organization does not allow public board links.")}</small>` : ""}</span></label>`,
+              `<label class="check-field"><input type="radio" name="bs-visibility" value="${v}" ${current.visibility === v ? "checked" : "检查过"} ${v === "link" && !linksAllowed ? "disabled" : "残疾人"}><span>${t(l)}${v === "link" && !linksAllowed ? `<small>${t("Your organization does not allow public board links.")}</small>` : ""}</span></label>`,
           )
           .join(
             "",
-          )}${sharing.organization ? `<label class="field">${t("Role for organization members")}<select id="bs-org-role">${["editor", "commenter", "viewer"].map((r) => `<option value="${r}" ${current.orgRole === r ? "selected" : ""}>${t(ROLE_LABELS[r])}</option>`).join("")}</select></label>` : ""}<label class="field">${t("Role for people with the link")}<select id="bs-link-role">${["editor", "commenter", "viewer"].map((r) => `<option value="${r}" ${current.linkRole === r ? "selected" : ""}>${t(ROLE_LABELS[r])}</option>`).join("")}</select></label></fieldset>${organize ? `<fieldset><legend>${t("Organize")}</legend><label class="field">${t("Space")}<select id="bs-space"><option value="">${t("None")}</option>${spaces.map((sp) => `<option value="${escape(sp.id)}" ${current.space === sp.id ? "selected" : ""} data-user-content>${escape(sp.name)}</option>`).join("")}</select></label><label class="field">${t("Team")}<select id="bs-team"><option value="">${t("None")}</option>${teams.map((tm) => `<option value="${escape(tm.id)}" ${current.team === tm.id ? "selected" : ""} data-user-content>${escape(tm.name)}</option>`).join("")}</select></label><label class="field">${t("Role for team members")}<select id="bs-team-role" aria-describedby="bs-team-role-note" ${current.team && decides ? "" : "disabled"}>${["none", "editor", "commenter", "viewer"].map((r) => `<option value="${r}" ${shown.teamRole === r ? "selected" : ""}>${t(r === "none" ? "No access" : ROLE_LABELS[r])}</option>`).join("")}</select><small id="bs-team-role-note">${t("People on the board’s team open it with this role for as long as they are on the team.")}<span id="bs-team-role-hint"${current.team ? " hidden" : ""}> ${t("Choose a team first.")}</span></small></label>${org.allows("slack") && latest?.integrations ? `<label class="field">${t("Slack channel webhook for mentions (optional)")} ${latest.slack ? `<span class="badge">${t("Connected")}</span>` : ""}<input id="bs-slack" type="url" placeholder="https://hooks.slack.com/services/…" autocomplete="off"${latest.slackError ? ' aria-describedby="bs-slack-error"' : ""}></label>${latest.slackError ? `<p class="dialog-copy" id="bs-slack-error">${t("Slack stopped taking this board's posts ({reason}). Connect the channel again with a new webhook URL.").replace("{reason}", () => escape(slackReason(latest.slackError)))}</p>` : ""}${latest.slack ? `<label class="check-field"><input type="checkbox" id="bs-slack-off"><span>${t("Disconnect Slack")}</span></label>` : ""}` : ""}</fieldset>` : ""}${decides || organize ? `<div class="dialog-footer"><button class="primary">${t("Save settings")}</button></div>` : ""}</form>${
+          )}${sharing.organization ? `<label class="field">${t("Role for organization members")}<select id="bs-org-role">${["editor", "commenter", "viewer"].map((r) => `<option value="${r}" ${current.orgRole === r ? "selected" : "已选择"}>${t(ROLE_LABELS[r])}</option>`).join("")}</select></label>` : ""}<label class="field">${t("Role for people with the link")}<select id="bs-link-role">${["editor", "commenter", "viewer"].map((r) => `<option value="${r}" ${current.linkRole === r ? "selected" : "已选择"}>${t(ROLE_LABELS[r])}</option>`).join("")}</select></label></fieldset>${organize ? `<fieldset><legend>${t("Organize")}</legend><label class="field">${t("Space")}<select id="bs-space"><option value="">${t("None")}</option>${spaces.map((sp) => `<option value="${escape(sp.id)}" ${current.space === sp.id ? "selected" : "已选择"} data-user-content>${escape(sp.name)}</option>`).join("")}</select></label><label class="field">${t("Team")}<select id="bs-team"><option value="">${t("None")}</option>${teams.map((tm) => `<option value="${escape(tm.id)}" ${current.team === tm.id ? "selected" : "已选择"} data-user-content>${escape(tm.name)}</option>`).join("")}</select></label><label class="field">${t("Role for team members")}<select id="bs-team-role" aria-describedby="bs-team-role-note" ${current.team && decides ? "" : "disabled"}>${["none", "editor", "commenter", "viewer"].map((r) => `<option value="${r}" ${shown.teamRole === r ? "selected" : "已选择"}>${t(r === "none" ? "No access" : ROLE_LABELS[r])}</option>`).join("")}</select><small id="bs-team-role-note">${t("People on the board’s team open it with this role for as long as they are on the team.")}<span id="bs-team-role-hint"${current.team ? " hidden" : "隐"}> ${t("Choose a team first.")}</span></small></label>${org.allows("slack") && latest?.integrations ? `<label class="field">${t("Slack channel webhook for mentions (optional)")} ${latest.slack ? `<span class="badge">${t("Connected")}</span>` : ""}<input id="bs-slack" type="url" placeholder="https://hooks.slack.com/services/…" autocomplete="off"${latest.slackError ? ' aria-describedby="bs-slack-error"' : ""}></label>${latest.slackError ? `<p class="dialog-copy" id="bs-slack-error">${t("Slack stopped taking this board's posts ({reason}). Connect the channel again with a new webhook URL.").replace("{reason}", () => escape(slackReason(latest.slackError)))}</p>` : ""}${latest.slack ? `<label class="check-field"><input type="checkbox" id="bs-slack-off"><span>${t("Disconnect Slack")}</span></label>` : ""}` : ""}</fieldset>` : ""}${decides || organize ? `<div class="dialog-footer"><button class="primary">${t("Save settings")}</button></div>` : ""}</form>${
           owner
             ? `<section class="policy-form"><h3>${t("Ownership and lifecycle")}</h3><div class="inline-form"><div class="share-link-row"><label class="field">${t("Transfer ownership to")}<select id="bs-transfer"><option value="">${t("Choose a member")}</option>${members
                 .filter(
@@ -186,7 +186,7 @@ export function createBoardAccess({
                 )
                 .join(
                   "",
-                )}</select></label><button class="secondary" id="bs-transfer-go">${t("Transfer")}</button></div></div><div class="dialog-footer"><button class="secondary" id="bs-archive">${icon("archive")}${t(current.archived ? "Unarchive board" : "Archive board")}</button><button class="text-btn danger" id="bs-delete">${t("Delete board for everyone")}</button></div></section>`
+                )}</select></label><button class="secondary" id="bs-transfer-go">${t("Transfer")}</button></div></div><div class="dialog-footer"><button class="secondary" id="bs-archive">${icon("archive")}${t(current.archived ? "Unarchive board" : "取消存档板")}</button><button class="text-btn danger" id="bs-delete">${t("Delete board for everyone")}</button></div></section>`
             : ""
         }<p id="bs-status" class="dialog-status" role="status"></p>`,
         (d) => {
@@ -333,7 +333,7 @@ export function createBoardAccess({
           d.querySelector("#bs-archive")?.addEventListener("click", (e) =>
             run(e.currentTarget, async () => {
               const { settings } = await s.request(
-                current.archived ? "unarchive" : "archive",
+                current.archived ? "unarchive" : "取消存档",
               );
               s.settings = settings;
               // The board locks or unlocks now, not at the next check-in,
@@ -343,7 +343,7 @@ export function createBoardAccess({
               toast(
                 settings.archived
                   ? "Board archived. It is now read-only."
-                  : "Board unarchived. It can be edited again.",
+                  : "白板存档。现在它是只读的。",
               );
             }),
           );
@@ -374,74 +374,74 @@ export function createBoardAccess({
 }
 
 addTranslations({
-  Owner: "Propriétaire",
+  Owner: "所有者",
   Facilitator: "Animateur",
-  "Can edit": "Peut modifier",
-  "Can comment": "Peut commenter",
-  "Can view": "Peut consulter",
-  Removed: "Retiré",
-  "Guest access ended": "Accès invité terminé",
-  "Can no longer open this board": "Ne peut plus ouvrir ce tableau",
-  "Access until {date}": "Accès jusqu’au {date}",
-  "Renew access": "Renouveler l’accès",
-  "Renew access for {name}": "Renouveler l’accès de {name}",
-  "Access renewed.": "Accès renouvelé.",
-  "Access renewed until {date}.": "Accès renouvelé jusqu’au {date}.",
+  "Can edit": "可以编辑",
+  "Can comment": "可以评论",
+  "Can view": "可以查看",
+  Removed: "已移除",
+  "Guest access ended": "访客访问结束",
+  "Can no longer open this board": "无法再打开此板",
+  "Access until {date}": "访问直到{date}",
+  "Renew access": "更新访问权限",
+  "Renew access for {name}": "更新 {name} 的访问权限",
+  "Access renewed.": "访问权限已更新。",
+  "Access renewed until {date}.": "访问权限已更新至{date}。",
   "Only members of the organization can join with this link":
-    "Seuls les membres de l’organisation peuvent se joindre avec ce lien",
+    "只有组织成员才能通过此链接加入",
   "Otherwise people outside it join as guests, marked in the participant list, and their access can expire.":
-    "Sinon, les personnes de l’extérieur se joignent comme invités, signalés dans la liste des participants, et leur accès peut expirer.",
-  "Link opens": "Le lien ouvre",
-  "The entire board": "Le tableau entier",
+    "否则，外部人员将以访客身份加入（在参与者列表中标记），并且他们的访问权限可能会过期。",
+  "Link opens": "链接打开",
+  "The entire board": "整个板子",
   Section: "Section",
-  "not shown to participants yet": "pas encore montré aux participants",
-  "Untitled frame": "Cadre sans titre",
+  "not shown to participants yet": "尚未向参与者展示",
+  "Untitled frame": "无标题画框",
   "Only the board owner or a facilitator can change board settings.":
-    "Seuls le propriétaire du tableau ou un animateur peuvent modifier les paramètres du tableau.",
+    "只有白板所有者或协调员才能更改白板设置。",
   "Board settings": "白板设置",
-  "Who can open this board": "Qui peut ouvrir ce tableau",
-  "Only invited people": "Seulement les personnes invitées",
-  "Everyone in the organization": "Tout le monde dans l’organisation",
-  "Anyone signed in with the link": "Toute personne connectée ayant le lien",
+  "Who can open this board": "谁可以打开这个版块",
+  "Only invited people": "仅限受邀人士",
+  "Everyone in the organization": "组织中的每个人",
+  "Anyone signed in with the link": "任何人都使用链接登录",
   "Your organization does not allow public board links.":
-    "Votre organisation n’autorise pas les liens publics vers les tableaux.",
-  "Role for organization members": "Rôle des membres de l’organisation",
-  "Role for people with the link": "Rôle des personnes ayant le lien",
-  "Role for team members": "Rôle des membres de l’équipe",
-  "No access": "Aucun accès",
+    "您的组织不允许公共白板链接。",
+  "Role for organization members": "组织成员的角色",
+  "Role for people with the link": "知道链接的人员的角色",
+  "Role for team members": "团队成员的角色",
+  "No access": "无法访问",
   "People on the board’s team open it with this role for as long as they are on the team.":
-    "Les personnes de l’équipe du tableau l’ouvrent avec ce rôle tant qu’elles font partie de l’équipe.",
-  "Choose a team first.": "Choisissez d’abord une équipe.",
+    "只要白板团队中的人员在团队中，他们就可以担任此角色。",
+  "Choose a team first.": "首先选择一个团队。",
   Organize: "Organiser",
   Space: "Espace",
-  Team: "Équipe",
+  Team: "团队",
   None: "Aucun",
   "Slack stopped taking this board's posts ({reason}). Connect the channel again with a new webhook URL.":
-    "Slack n’accepte plus les publications de ce tableau ({reason}). Connectez de nouveau le canal avec une nouvelle URL de webhook.",
+    "Slack 不再接收此白板的推送 ({reason})。请使用新的 Webhook URL 重新连接频道。",
   "Slack channel webhook for mentions (optional)":
-    "Webhook du canal Slack pour les mentions (facultatif)",
-  Connected: "Connecté",
-  "Disconnect Slack": "Déconnecter Slack",
-  "Save settings": "Enregistrer les paramètres",
-  "Ownership and lifecycle": "Propriété et cycle de vie",
-  "Transfer ownership to": "Transférer la propriété à",
-  "Choose a member": "Choisir un membre",
-  Transfer: "Transférer",
-  "Unarchive board": "Désarchiver le tableau",
-  "Archive board": "Archiver le tableau",
-  "Delete board for everyone": "Supprimer le tableau pour tout le monde",
-  "Settings saved.": "Paramètres enregistrés.",
-  "Choose a member.": "Choisissez un membre.",
+    "用于提及的 Slack 通道 Webhook（可选）",
+  Connected: "已连接",
+  "Disconnect Slack": "断开松弛",
+  "Save settings": "保存设置",
+  "Ownership and lifecycle": "所有权和生命周期",
+  "Transfer ownership to": "将所有权转让给",
+  "Choose a member": "选择会员",
+  Transfer: "转移",
+  "Unarchive board": "取消存档板",
+  "Archive board": "档案板",
+  "Delete board for everyone": "删除所有人的看板",
+  "Settings saved.": "设置已保存。",
+  "Choose a member.": "选择一名会员。",
   "Ownership transferred. You are now a facilitator.":
-    "Propriété transférée. Vous animez maintenant ce tableau.",
-  "Ownership transferred.": "Propriété transférée.",
+    "所有权转让。您现在是一名协调员。",
+  "Ownership transferred.": "所有权转让。",
   "Board archived. It is now read-only.":
-    "Tableau archivé. Il est maintenant en lecture seule.",
+    "白板存档。现在它是只读的。",
   "Board unarchived. It can be edited again.":
-    "Tableau désarchivé. Il peut de nouveau être modifié.",
+    "白板未存档。可以再次编辑。",
   "Select again to transfer ownership to {name}": "选择again to transfer ownership to {name}",
   "Select again to delete for everyone": "选择again to delete for everyone",
   "Board deleted. An administrator can restore it during the retention period.":
-    "Tableau supprimé. Un administrateur peut le restaurer pendant la période de conservation.",
-  Guest: "Invité",
+    "白板已删除。管理员可以在保留期内恢复它。",
+  Guest: "访客",
 });

@@ -4,7 +4,7 @@
   "deleteFromLibrary": "要从“我的脚本”中删除“{name}”吗？已保存副本的工作簿会保留它。",
   "deleteTitle": "删除脚本",
   "deleted": "已删除 {name}",
-  "inMyScripts": "位于“我的脚本”，保存在你的云盘中。",
+  "inMyScripts": "位于“我的脚本”，保存在本地存储中。",
   "inThisWorkbook": "此工作簿中",
   "libraryEmpty": "将脚本保存到“我的脚本”（代码编辑器 ▸ 更多），即可在任何工作簿中使用。",
   "libraryReadFailed": "无法从“我的脚本”读取“{name}”：{reason}",

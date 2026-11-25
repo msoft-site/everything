@@ -355,7 +355,7 @@ export function createMailings({ editor, pkg, error, onChange = () => {}, markDi
   const recipientItems = () => [
     { label: '键入新列表…', disabled: !ready(), onSelect: () => mm.typeNewList() },
     { label: '使用现有列表…', hint: 'CSV、TSV 或 Excel 工作簿', disabled: !ready(), onSelect: () => mm.useExistingList() },
-    ...(P.canPickFiles() ? [{ label: '从云端选择…', disabled: !ready(), onSelect: () => mm.useExistingList({ cloud: true }) }] : []),
+    ...(P.canPickFiles() ? [{ label: '从本地存储选择…', disabled: !ready(), onSelect: () => mm.useExistingList({ cloud: true }) }] : []),
     ...(state().list ? [{ separator: true }, { label: '导出列表为 CSV', onSelect: async () => { const { listToCsv } = await import('../lib/recipient-files.js'); P.downloadBlob(new Blob([listToCsv(state().list)], { type: 'text/csv' }), 'Recipients.csv'); } },
       { label: '移除收件人列表', disabled: !ready(), onSelect: () => { if (state().preview) { setState({ preview: false }); refreshPreview(); } setState({ list: null, mapping: {}, source: null, activeRecord: 1 }); } }] : []),
   ];

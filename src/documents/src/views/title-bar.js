@@ -122,7 +122,7 @@ export function createTitleBar({ w, c, a, local, title, status, account, menus, 
   /* ---- Document name: rename in place, details in a popover ---- */
   const details = el('button.ed-title-details', { type: 'button', 'aria-label': '文档详情', title: '位置与详细信息', 'aria-haspopup': 'dialog',
     onclick: () => {
-      const info = w.documentLocation?.() || { location: local ? '此设备' : '云端存储' };
+      const info = w.documentLocation?.() || { location: local ? '此设备' : '本地存储' };
       const name = el('input.input', { value: title.value, 'aria-label': '文件名', maxLength: 120 });
       const form = el('form.ed-title-popover', { onsubmit: e => { e.preventDefault(); popup.close(); if (name.value.trim() && name.value !== title.value) { title.value = name.value; title.dispatchEvent(new Event('change')); } focusEditor(); } },
         el('label.field', {}, el('span.field-label', {}, '文件名'), name),

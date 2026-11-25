@@ -16,15 +16,15 @@ export const USER_MENU_TAG = "puter-user-menu";
 
 // The element's labels, each in the app's language.
 const LABELS = {
-  "apps-label": "Apps",
-  "sign-in-label": "Sign in",
-  "sign-out-label": "Sign out",
-  "close-label": "Close",
-  "account-label": "Account",
-  "manage-account-label": "Manage account",
-  "usage-label": "Usage",
-  "open-puter-label": "Open Puter",
-  "feedback-label": "Send feedback",
+  "apps-label": "应用程序标签",
+  "sign-in-label": "登录标签",
+  "sign-out-label": "签出标签",
+  "close-label": "封闭标签",
+  "account-label": "帐户标签",
+  "manage-account-label": "管理帐户标签",
+  "usage-label": "使用标签",
+  "open-puter-label": "开放式计算机标签",
+  "feedback-label": "反馈标签",
 };
 
 // puter.js's <puter-user-menu>: when the loaded SDK defines it, it holds the

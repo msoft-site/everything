@@ -147,8 +147,8 @@ export function homeView({ openPath, newDoc, newFromTemplate, importFile }) {
       list, listStatus),
     // Inside the Puter desktop a new document is saved where the user chooses; the list shows those with the app folder's own.
     el('footer.home-foot', {}, ...(P.asksWhereToSave()
-      ? ['在此列出：应用自带的 ', el('code', {}, `${P.FOLDER}/`), ' 文件夹以及从此设备保存在云端其他位置的文档。新建文档保存时会询问存储位置。']
-      : ['作为 .docx 文件保存在您的云端 ', el('code', {}, `${P.FOLDER}/`)])));
+      ? ['在此列出：应用自带的 ', el('code', {}, `${P.FOLDER}/`), ' 文件夹以及保存在此设备本地存储的文档。']
+      : ['作为 .docx 文件保存在本地存储 ', el('code', {}, `${P.FOLDER}/`)])));
 
   /* Drag and drop anywhere on the home screen imports documents. */
   let dragDepth = 0;
@@ -206,7 +206,7 @@ export function homeView({ openPath, newDoc, newFromTemplate, importFile }) {
   function manageTemplates(templates) {
     const pending = new Set();
     const list = el('div.version-list', { role: 'list', 'aria-label': '我的模板' });
-    const modal = openModal({ title: '我的模板', content: el('div', {}, el('p.modal-text', {}, `保存在云端驱动器的 ${P.FOLDER}/Templates 中。打开文档并在“文件”菜单中选择“另存为模板”即可添加。`), list) });
+    const modal = openModal({ title: '我的模板', content: el('div', {}, el('p.modal-text', {}, `保存在本地存储的 ${P.FOLDER}/Templates 中。打开文档并在“文件”菜单中选择“另存为模板”即可添加。`), list) });
     const render = (items) => {
       list.replaceChildren(...(items.length ? items.map((t) => el('div.file-row', { role: 'listitem' },
         el('span.file-main', {}, el('span.file-icon', { html: icon('brand', 20, 1.7) }), el('span.file-text', {}, el('span.file-name', {}, t.name), el('span.file-meta', {}, relativeTime(t.modified)))),
@@ -269,7 +269,7 @@ export function homeView({ openPath, newDoc, newFromTemplate, importFile }) {
     } catch (e) {
       if (destroyed || request !== loadRequest) return;
       console.error(e);
-      error = navigator.onLine ? '无法从云端加载您的文件。' : '您处于脱机状态。连接网络以查看文件。';
+      error = navigator.onLine ? '无法从本地存储加载您的文件。' : '您处于脱机状态。连接网络以查看文件。';
     }
     loading = false;
     renderList();
@@ -383,7 +383,7 @@ export function homeView({ openPath, newDoc, newFromTemplate, importFile }) {
       title: '删除文档？',
       message: inAppFolder(file.path)
         ? `“${P.stripExtension(file.name)}”将从您的“文档”文件夹中移除并删除。此操作无法撤消。`
-        : `“${P.stripExtension(file.name)}”将从云端 ${madeLocation(file.path)} 中删除。此操作无法撤消。`,
+        : `“${P.stripExtension(file.name)}”将从本地存储 ${madeLocation(file.path)} 中删除。此操作无法撤消。`,
       confirmLabel: '删除',
     });
     if (!ok) return;
@@ -440,11 +440,11 @@ export function homeView({ openPath, newDoc, newFromTemplate, importFile }) {
     if (session.signedOut) {
       listStatus.textContent = '';
       list.append(el('div.empty', {},
-        el('div.empty-icon', { html: icon('cloud', 28) }),
-        el('h3.empty-title', {}, '登录以查看您的文档'),
-        el('p.empty-sub', {}, '文档将作为 .docx 文件保存在您的云端。登录后可在此打开它们，也可以直接开始编写。'),
+        el('div.empty-icon', { html: icon('folder', 28) }),
+        el('h3.empty-title', {}, '登录本地账户以查看您的文档'),
+        el('p.empty-sub', {}, '文档将作为 .docx 文件保存在本地存储中。在此可打开它们，也可以直接开始编写。'),
         el('div.row', { style: { justifyContent: 'center', marginTop: '6px' } },
-          el('button.btn.btn-primary', { type: 'button', html: icon('login', 16, 2.2), onclick: () => session.signIn() }, el('span', {}, '登录到云端')),
+          el('button.btn.btn-primary', { type: 'button', html: icon('login', 16, 2.2), onclick: () => session.signIn() }, el('span', {}, '登录本地账户')),
           el('button.btn.btn-outline', { type: 'button', html: icon('plus', 16, 2.2), onclick: newDoc }, el('span', {}, '新建文档')))));
       return;
     }

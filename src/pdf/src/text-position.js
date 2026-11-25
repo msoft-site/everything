@@ -31,9 +31,9 @@ export function textPositionControls({
     sync(replace);
     changed();
   };
-  const move = button('Move text', 'MousePointer2', () => {}, 'btn text-move', {
-    'aria-label': 'Move text',
-    title: 'Drag to move. Arrow keys move 1 pt; Shift moves 10 pt.',
+  const move = button('移动文本', 'MousePointer2', () => {}, 'btn text-move', {
+    'aria-label': '移动文本',
+    title: '拖动以移动。方向键移动 1 磅；按住 Shift 移动 10 磅。',
   });
   const begin = (e, { capture = true, from = pointAt(e), focus = true } = {}) => {
     if (gesture || !e.isPrimary || e.button !== 0) return;
@@ -119,8 +119,8 @@ export function textPositionControls({
       type: 'number',
       step: 'any',
       required: true,
-      'aria-label': `Text ${label} in points`,
-      title: `${label} position in PDF points, measured from the page origin at bottom left.`,
+      'aria-label': `文本 ${label}（磅）`,
+      title: `从左下角页面原点测量的 ${label} 位置（PDF 磅）。`,
     });
     input.onchange = () => {
       // Keep incomplete input available for correction, without blocking Cancel on blur.
@@ -150,7 +150,7 @@ export function textPositionControls({
     },
     validate: () => {
       for (const input of fields)
-        if (!input.reportValidity()) throw new Error('Choose a valid text position.');
+        if (!input.reportValidity()) throw new Error('请选择有效的文本位置。');
     },
   };
 }

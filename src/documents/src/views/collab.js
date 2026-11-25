@@ -216,7 +216,7 @@ export function createCollaboration({ editor, pkg, doc, local, error, onChange =
       if (readOnly()) throw new Error('此文档以只读方式打开，无法协同编辑。请先另存副本。');
       engine.finishComposition();
       if (!local) {
-        if (!await signIn()) throw new Error('登录到云端以共享此文档。');
+        if (!await signIn()) throw new Error('登录账户以共享此文档。');
         // A template or other file whose edits go to a new .docx (inside the Puter desktop, at the first Save) is
         // shared as that .docx, as a new document is: the room must not be the template's, nor the file it writes.
         if (!doc.path || doc.waitsForPlace) { progress('正在先保存文档…'); await saveFirst(); }
@@ -240,7 +240,7 @@ export function createCollaboration({ editor, pkg, doc, local, error, onChange =
     const name = documentName() || '文档';
     const who = user().name;
     const roleText = role === 'editor' ? '编辑' : role === 'commenter' ? '批注' : '查看';
-    const text = `${note ? `${note}\n\n` : ''}${who} 邀请您在“文档”中${roleText}“${name}”。\n\n打开链接: ${url}\n\n您需要登录云端。邀请链接将在七天后过期。`;
+    const text = `${note ? `${note}\n\n` : ''}${who} 邀请您在“文档”中${roleText}“${name}”。\n\n打开链接: ${url}\n\n您需要登录。邀请链接将在七天后过期。`;
     return sendMail({ to: address, subject: `${who} 与您共享了“${name}”`, text, username: who });
   }
   async function sendCopy(address, format, note) {

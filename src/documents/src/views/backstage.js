@@ -156,7 +156,7 @@ export function createBackstage(api) {
       ...fact('创建时间', props.created ? new Date(props.created).toLocaleString() : '—'),
       ...fact('上次修改时间', props.modified ? new Date(props.modified).toLocaleString() : '—'),
       ...fact('上次修改者', props.lastModifiedBy || '—'),
-      ...fact('位置', api.location?.() || (local ? '此设备' : '云端')),
+      ...fact('位置', api.location?.() || (local ? '此设备' : '本地存储')),
       ...fact('大小', api.size?.() ? formatBytes(api.size()) : '—'));
     const stats = api.statistics?.();
     const statsList = stats ? el('dl.bs-facts', {}, ...fact('页数', stats.pages), ...fact('字数', stats.words), ...fact('字符数(不计空格)', stats.noSpaces),
@@ -233,7 +233,7 @@ export function createBackstage(api) {
         if (failure === null) api.refreshTitle?.();
       } finally { copy.disabled = false; }
     } }, '保存副本…');
-    const copyWhere = el('div', {}, el('p.bs-muted', {}, '选择在云端保存副本的位置。随后你将编辑该副本，而原文件保持不变。'), el('div.bs-actions', {}, copy));
+    const copyWhere = el('div', {}, el('p.bs-muted', {}, '选择在本地存储保存副本的位置。随后你将编辑该副本，而原文件保持不变。'), el('div.bs-actions', {}, copy));
     return [...heading('保存', api.saveStatus?.()),
       el('section.bs-section', {}, el('div.bs-tiles', {},
         tile('立即保存', 'save', act(() => api.save()), { primary: true, hint: `${MOD_KEY}+S` }),

@@ -31,7 +31,7 @@ const unreadBadge = (count) =>
       : "";
 const when = (at) =>
   at
-    ? new Date(at).toLocaleDateString(language === "fr" ? "fr-CA" : "en-CA", {
+    ? new Date(at).toLocaleDateString(language === "fr" ? "fr-CA" : "fr-CA", {
         month: "short",
         day: "numeric",
         year: "numeric",
@@ -44,11 +44,11 @@ const fill = (text, values) =>
   );
 // A count with the language's digit grouping: 1,500, not 1500.
 const figure = (n) =>
-  new Intl.NumberFormat(language === "fr" ? "fr-CA" : "en-CA").format(n);
+  new Intl.NumberFormat(language === "fr" ? "fr-CA" : "fr-CA").format(n);
 // Notifications carry their parts, so each person reads them in their own
 // language. Older ones keep the English text they were saved with.
 const assignmentSuffix = (n) =>
-  `${n.due ? ` (${fill("due {date}", { date: when(Date.parse(`${n.due}T12:00:00`)) })})` : ""}${n.more > 0 ? ` ${fill(n.more === 1 ? "and 1 more" : "and {count} more", { count: n.more })}` : ""}`;
+  `${n.due ? ` (${fill("due {date}", { date: when(Date.parse(`${n.due}T12:00:00`)) })})` : ""}${n.more > 0 ? ` ${fill(n.more === 1 ? "and 1 more" : "还有 1 个", { count: n.more })}` : ""}`;
 function notificationText(n) {
   const who = n.anonymous ? t("A participant") : n.actor?.username;
   if (n.type === "assignment" && typeof n.title === "string" && who)
@@ -102,7 +102,7 @@ function shownHTML(n) {
 function timeHTML(at) {
   const date = new Date(at);
   if (Number.isNaN(date.getTime())) return "";
-  return `<time datetime="${date.toISOString()}">${escape(date.toLocaleString(language === "fr" ? "fr-CA" : "en-CA", { dateStyle: "medium", timeStyle: "short" }))}</time>`;
+  return `<time datetime="${date.toISOString()}">${escape(date.toLocaleString(language === "fr" ? "fr-CA" : "fr-CA", { dateStyle: "medium", timeStyle: "short" }))}</time>`;
 }
 // Which board a notification is about, as two from different boards would
 // otherwise read the same.
@@ -405,7 +405,7 @@ export function createOrganizationHome({
           "aria-current",
           sidebarSpaces.querySelector('[aria-current="page"]')
             ? "true"
-            : "page",
+            : "真的",
         );
       const from = document.activeElement;
       if (
@@ -483,7 +483,7 @@ export function createOrganizationHome({
       showSpaces();
       grid.classList.add("org-board-grid");
       const option = (value, label, selected, named = false) =>
-        `<option value="${value}" ${selected ? "selected" : ""}${named ? " data-user-content" : ""}>${label}</option>`;
+        `<option value="${value}" ${selected ? "selected" : "已选择"}${named ? " data-user-content" : "数据用户内容"}>${label}</option>`;
       // Spaces and teams are listed by name, as in the admin console.
       const order = nameOrder();
       const [spaceChoices, teamChoices] = [spaces, teams].map((list) =>
@@ -510,7 +510,7 @@ export function createOrganizationHome({
             ? typing.value
             : null,
         caret = typing ? [typing.selectionStart, typing.selectionEnd] : null;
-      grid.innerHTML = `<form class="org-filters" id="org-filters" role="search" aria-label="${t("Search organization boards")}"><div class="org-filter-main"><label class="field org-query">${t("Search names and content")}<span class="org-search-box">${icon("search")}<input id="of-query" type="search" value="${escape(filters.query || "")}"></span></label><label class="field org-scope">${t("Show")}<select id="of-scope">${option("mine", t("Boards shared with me"), filters.scope === "mine")}${option("organization", t("All organization boards I can open"), filters.scope === "organization")}</select></label><button class="primary">${icon("search")}${t("Search")}</button></div><details class="org-more" ${refined ? "open" : ""}><summary>${icon("sliders-horizontal")}${t("More filters")}${refined ? `<span class="badge">${refined}</span>` : ""}</summary><div class="org-filter-grid">${member ? `<label class="field">${t("Space")}<select id="of-space"><option value="">${t("Any", "space")}</option>${spaceChoices.map((s) => option(escape(s.id), escape(s.name), filters.space === s.id, true)).join("")}</select></label><label class="field">${t("Team")}<select id="of-team"><option value="">${t("Any")}</option>${teamChoices.map((tm) => option(escape(tm.id), escape(tm.name), filters.team === tm.id, true)).join("")}</select></label>` : ""}<label class="field">${t("Activity")}<select id="of-activity"><option value="">${t("Any")}</option>${option("active", t("Active in 30 days"), filters.activity === "active")}${option("stale", t("No activity in 90 days"), filters.activity === "stale")}${option("unused", t("Empty boards"), filters.activity === "unused")}</select></label><label class="field">${t("Contains")}<select id="of-type"><option value="">${t("Anything")}</option>${[
+      grid.innerHTML = `<form class="org-filters" id="org-filters" role="search" aria-label="${t("Search organization boards")}"><div class="org-filter-main"><label class="field org-query">${t("Search names and content")}<span class="org-search-box">${icon("search")}<input id="of-query" type="search" value="${escape(filters.query || "")}"></span></label><label class="field org-scope">${t("Show")}<select id="of-scope">${option("mine", t("Boards shared with me"), filters.scope === "mine")}${option("organization", t("All organization boards I can open"), filters.scope === "organization")}</select></label><button class="primary">${icon("search")}${t("Search")}</button></div><details class="org-more" ${refined ? "open" : "打开"}><summary>${icon("sliders-horizontal")}${t("More filters")}${refined ? `<span class="badge">${refined}</span>` : ""}</summary><div class="org-filter-grid">${member ? `<label class="field">${t("Space")}<select id="of-space"><option value="">${t("Any", "space")}</option>${spaceChoices.map((s) => option(escape(s.id), escape(s.name), filters.space === s.id, true)).join("")}</select></label><label class="field">${t("Team")}<select id="of-team"><option value="">${t("Any")}</option>${teamChoices.map((tm) => option(escape(tm.id), escape(tm.name), filters.team === tm.id, true)).join("")}</select></label>` : ""}<label class="field">${t("Activity")}<select id="of-activity"><option value="">${t("Any")}</option>${option("active", t("Active in 30 days"), filters.activity === "active")}${option("stale", t("No activity in 90 days"), filters.activity === "stale")}${option("unused", t("Empty boards"), filters.activity === "unused")}</select></label><label class="field">${t("Contains")}<select id="of-type"><option value="">${t("Anything")}</option>${[
         ["note", "Sticky notes"],
         ["table", "Tables"],
         ["image", "Images"],
@@ -628,11 +628,11 @@ export function createOrganizationHome({
               ? "Open to the organization"
               : b.teamRole && b.teamRole !== "none"
                 ? "Open to its team"
-                : ""),
+                : "向其团队开放"),
         );
         // The name is the title alone; the owner, activity, role, and
         // archived state are read as the description.
-        return `<article class="board-card org-card"><button class="board-open" data-org-open="${escape(b.room)}" aria-label="${escape(t("Open", "action") + " " + b.title)}" aria-describedby="org-card-${n}-meta org-card-${n}-role${b.snippet ? ` org-card-${n}-found` : ""}"><div class="board-preview org-preview"><span class="org-preview-icon">${icon(b.visibility === "organization" ? "building-2" : b.visibility === "link" ? "link" : "users")}</span><span>${plural(Number(b.objectCount) || 0, "{count} object", "{count} objects")}</span></div><div class="board-info"><h3 data-user-content title="${escape(b.title)}">${escape(b.title)}</h3><p class="org-meta" id="org-card-${n}-meta"><span data-user-content>${escape(b.ownerName || "")}</span> · ${when(b.lastActivity || b.created)}${spaceName.get(b.space) ? ` · <span data-user-content>${escape(spaceName.get(b.space))}</span>` : ""}</p>${b.snippet ? `<p class="card-found" id="org-card-${n}-found"><span data-user-content>${escape(b.snippet.before)}<mark>${escape(b.snippet.hit)}</mark>${escape(b.snippet.after)}</span></p>` : ""}<p class="card-role" id="org-card-${n}-role">${role ? `<span class="badge">${role}</span>` : ""}${b.archived ? `<span class="badge badge-archived">${icon("archive")}${t("Archived")}</span>` : ""}</p></div></button></article>`;
+        return `<article class="board-card org-card"><button class="board-open" data-org-open="${escape(b.room)}" aria-label="${escape(t("Open", "action") + " " + b.title)}" aria-describedby="org-card-${n}-meta org-card-${n}-role${b.snippet ? ` org-card-${n}-found` : ""}"><div class="board-preview org-preview"><span class="org-preview-icon">${icon(b.visibility === "organization" ? "building-2" : b.visibility === "link" ? "link" : "关联")}</span><span>${plural(Number(b.objectCount) || 0, "{count} object", "{count} objects")}</span></div><div class="board-info"><h3 data-user-content title="${escape(b.title)}">${escape(b.title)}</h3><p class="org-meta" id="org-card-${n}-meta"><span data-user-content>${escape(b.ownerName || "")}</span> · ${when(b.lastActivity || b.created)}${spaceName.get(b.space) ? ` · <span data-user-content>${escape(spaceName.get(b.space))}</span>` : ""}</p>${b.snippet ? `<p class="card-found" id="org-card-${n}-found"><span data-user-content>${escape(b.snippet.before)}<mark>${escape(b.snippet.hit)}</mark>${escape(b.snippet.after)}</span></p>` : ""}<p class="card-role" id="org-card-${n}-role">${role ? `<span class="badge">${role}</span>` : ""}${b.archived ? `<span class="badge badge-archived">${icon("archive")}${t("Archived")}</span>` : ""}</p></div></button></article>`;
       };
       // A page of the matching boards. "Show more boards" adds the next
       // page after them, as in the admin console, so an organization's
@@ -668,7 +668,7 @@ export function createOrganizationHome({
                 total: figure(total),
               })
             : shown
-              ? `${figure(shown)} ${t(shown === 1 ? "board" : "boards")}`
+              ? `${figure(shown)} ${t(shown === 1 ? "board" : "白板")}`
               : t("No boards found");
         count.classList.toggle("sr-only", !shown);
         const cards = boards.map((b, n) => card(b, before + n)).join("");
@@ -760,7 +760,7 @@ export function createOrganizationHome({
                   // Only a notification about a board opens something, so only it is a
                   // button; the others are read as text, not as unavailable controls.
                   (n) => {
-                    const tag = n.board ? "button" : "div";
+                    const tag = n.board ? "button" : "按钮";
                     return `<li class="${n.read ? "" : "unread"}"><${tag} class="notification" data-note="${escape(n.id)}">${n.read ? "" : `<span class="sr-only">${t("Unread")}</span>`}<span class="notification-kind">${t({ mention: "Mention", reply: "Reply", alert: "Security alert", assignment: "Assignment" }[n.type] || "Update", "notification")}</span><span data-user-content>${shownHTML(n)}</span>${boardHTML(n)}${timeHTML(n.at)}</${tag}></li>`;
                   },
                 )
@@ -768,7 +768,7 @@ export function createOrganizationHome({
             // The count is the live region, so loading the list or marking
             // it read announces how many there are, not every one.
             d.querySelector("#notification-count").textContent = items.length
-              ? `${items.length} ${t(items.length === 1 ? "notification" : "notifications")}`
+              ? `${items.length} ${t(items.length === 1 ? "notification" : "通知")}`
               : t("You're all caught up.");
             // Rows follow the list, so two servers' notifications sharing an
             // id each open their own board.
@@ -1061,7 +1061,7 @@ addTranslations({
   "one|{count} unread": "{count} 条未读",
   "{count} unread": "{count} 条未读",
   "More than {count} unread": "超过 {count} 条未读",
-  "and 1 more": "以及另外 1 个",
+  "and 1 more": "还有 1 个",
   "and {count} more": "以及另外 {count} 个",
   Someone: "某人",
   "A participant": "参与者",
@@ -1126,7 +1126,7 @@ addTranslations({
   "Can comment": "可评论",
   "Can view": "可查看",
   "Open to the organization": "对组织公开",
-  "Open to its team": "对其团队公开",
+  "Open to its team": "向其团队开放",
   "No boards found": "未找到白板",
   "Try other filters, or search all organization boards.":
     "请尝试其他筛选条件，或搜索所有组织白板。",

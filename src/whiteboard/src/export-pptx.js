@@ -16,12 +16,12 @@ import {
 } from "./export.js";
 
 addTranslations({
-  "Board image": "Image du tableau",
+  "Board image": "白板形象",
   "{title}, row {row} column {column}":
-    "{title}, ligne {row}, colonne {column}",
-  "Slide {slide}": "Diapositive {slide}",
+    "{title}，行 {row} 列 {column}",
+  "Slide {slide}": "幻灯片{slide}",
   "Too many slides. Export fewer frames at a time.":
-    "Trop de diapositives. Exportez moins de cadres à la fois.",
+    "幻灯片太多。一次导出较少的帧。",
 });
 
 // 16:9 widescreen slides, in EMU (914,400 per inch).
@@ -249,7 +249,7 @@ export async function exportPPTX(
   const plan = regions.flatMap(slidePlan);
   if (plan.length > 200)
     throw Error("Too many slides. Export fewer frames at a time.");
-  const language = lang === "fr" ? "fr-CA" : "en-CA";
+  const language = lang === "fr" ? "fr-CA" : "fr-CA";
   const size = slideSize(regions);
   const slides = [],
     scenes = new WeakMap(),

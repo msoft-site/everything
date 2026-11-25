@@ -159,7 +159,7 @@ function frameChoicesHTML(frames, id, legend, allowNone = false) {
   return `<fieldset id="${id}" class="frame-choices"><legend>${t(legend)}</legend><div class="slide-choices">${choices
     .map(
       (frame, index) =>
-        `<label><input type="radio" name="${name}" value="${frame ? escape(frame.id) : ""}" ${index === 0 ? "checked" : ""}><span>${frame ? frameTitleHTML(frame, "Untitled frame") : t("No frame")}</span></label>`,
+        `<label><input type="radio" name="${name}" value="${frame ? escape(frame.id) : ""}" ${index === 0 ? "checked" : "检查过"}><span>${frame ? frameTitleHTML(frame, "Untitled frame") : t("No frame")}</span></label>`,
     )
     .join("")}</div></fieldset>`;
 }
@@ -206,87 +206,87 @@ const EXPORT_TYPES = {
 };
 addTranslations({
   "You’re viewing a different board. Return to the original board to save this selection, or close this dialog and select content again.":
-    "Vous consultez un autre tableau. Revenez au tableau d’origine pour enregistrer cette sélection, ou fermez cette fenêtre et sélectionnez de nouveau le contenu.",
+    "您正在查看不同的板。返回原始板以保存此选择，或关闭此对话框并再次选择内容。",
   "Content saved. You changed its name while saving. Save again to update the name.":
-    "Contenu enregistré. Vous avez modifié son nom pendant l’enregistrement. Enregistrez de nouveau pour mettre le nom à jour.",
+    "内容已保存。您在保存时更改了其名称。再次保存以更新名称。",
   "Enter a name for this reusable content.":
-    "Saisissez un nom pour ce contenu réutilisable.",
+    "输入此可重用内容的名称。",
   "None of the selected objects are available to copy. Close this dialog and select visible objects again.":
-    "Aucun des objets sélectionnés ne peut être copié. Fermez cette fenêtre et sélectionnez de nouveau des objets visibles.",
+    "所选对象均不可复制。关闭此对话框并再次选择可见对象。",
   "Restoring a version. Please wait before choosing another.":
-    "Restauration d’une version en cours. Veuillez attendre avant d’en choisir une autre.",
+    "恢复一个版本。请等待后再选择其他。",
   "You’re viewing a different board. Return to the original board to use this history, or close this dialog and open history again.":
-    "Vous consultez un autre tableau. Revenez au tableau d’origine pour utiliser cet historique, ou fermez cette fenêtre et rouvrez l’historique.",
-  "Enter a label for the link.": "Saisissez un libellé pour le lien.",
+    "您正在查看不同的板。返回原始板以使用此历史记录，或关闭此对话框并再次打开历史记录。",
+  "Enter a label for the link.": "输入链接的标签。",
   [EXPORT_HELP.pdf]:
-    "Les grandes zones sont réparties sur plusieurs pages à une échelle lisible, avec une page de vue d’ensemble qui montre la grille des pages.",
+    "大范围内容将按易读比例拆分到多页，并附带一页显示页面网格的概览图。",
   [EXPORT_HELP.pptx]:
-    "Une diapositive par cadre, ou une seule pour le tableau ou la sélection. Une zone trop grande pour être lisible sur une seule diapositive reçoit une diapositive de vue d’ensemble et une diapositive par partie. Chaque diapositive présente une image haute résolution, le titre du cadre et son texte dans les notes de l’orateur.",
+    "每个画框占一张幻灯片，或整个白板/选区占一张幻灯片。过大的区域将获得概览幻灯片和分块详情幻灯片。每页均包含高清图片、画框标题及演讲者备注中的文字。",
   [EXPORT_HELP.png]:
-    "Chaque image compte jusqu’à 64 mégapixels et 16 384 pixels sur le côté le plus long, ou 16 mégapixels sur les téléphones et les tablettes. Plusieurs cadres se téléchargent dans un fichier ZIP, une image par cadre. Utilisez le PDF pour les très grands tableaux.",
+    "每张图片最大支持 6400 万像素及单边最长 16384 像素。多个画框将打包下载为 ZIP 压缩包（每画框一张图）。对于超大白板推荐使用 PDF。",
   [EXPORT_HELP.svg]:
-    "Une image vectorielle avec du texte sélectionnable et des images intégrées. Plusieurs cadres sont empilés dans un seul fichier.",
+    "包含可选中文本及内嵌图片的矢量图格式。多个画框将合并在单个文件中。",
   [EXPORT_HELP.xlsx]:
-    "Un classeur avec une feuille des objets texte (y compris les champs de tâche comme le responsable, le début, l’échéance et le statut), une feuille Tâches avec les responsables et les dépendances lorsque la zone contient des tâches, une feuille par tableau de données et la liste des cadres.",
+    "包含文本对象工作表（含负责人、开始、截止及状态等任务字段）、任务工作表、各数据表格独立工作表以及画框列表。",
   [EXPORT_HELP.csv]:
-    "Valeurs séparées par des virgules en UTF-8 pour Excel et d’autres tableurs.",
+    "适用于 Excel 及其他电子表格应用的 UTF-8 逗号分隔值。",
   [EXPORT_HELP.json]:
-    "Un fichier Whiteboard modifiable que vous pouvez importer de nouveau.",
+    "可再次重新导入的白板源文件格式。",
   [PDF_SCALE_HELP.fit]:
-    "Chaque zone tient sur une seule page, réduite pour s’y ajuster. Le texte d’une grande zone peut devenir trop petit pour être lu ; choisissez Détail lisible pour la répartir sur plusieurs pages.",
+    "各区域按缩放自动适应单页打印。大区域文字可能会过小，请选择“易读细节”以分页显示。",
   [PDF_SCALE_HELP.percent]:
-    "Les zones plus grandes qu’une page sont réparties sur plusieurs pages à {scale}, avec une page de vue d’ensemble qui montre la grille des pages.",
+    "大于单页的区域将按 {scale} 拆分打印至多页，并包含展示网格分布的概览页。",
   [PDF_SCALE_HELP.page]:
-    "Chaque zone est imprimée sur une page dimensionnée selon son contenu.",
+    "每个区域按其实际内容尺寸定制单页打印。",
   [RENDERING_HELP.raster]:
-    "Le rendu en image reproduit exactement le tableau, polices comprises. Une copie invisible de son texte et des descriptions d’images peut être recherchée, sélectionnée et lue à voix haute.",
+    "位图渲染精确还原白板视觉效果与字体。包含可供搜索、选中和朗读的隐式文本层。",
   [RENDERING_HELP.vector]:
-    "Le rendu vectoriel garde le texte et les formes nets à tout niveau de zoom et rend le texte sélectionnable. Des polices PDF standard remplacent celles du tableau, ce qui peut modifier légèrement l’espacement. Les images et les caractères absents de ces polices restent des images.",
-  "Frames to export": "Cadres à exporter",
-  "Documents and slides": "Documents et diapositives",
-  Images: "Images",
-  Spreadsheets: "Feuilles de calcul",
-  Editable: "Modifiable",
-  "PowerPoint slides": "Diapositives PowerPoint",
-  "SVG vector image": "Image vectorielle SVG",
-  "Excel workbook": "Classeur Excel",
-  "CSV spreadsheet": "Feuille de calcul CSV",
-  "PDF options": "Options PDF",
-  "Page size": "Format de page",
-  Letter: "Lettre",
-  Legal: "Légal",
-  Tabloid: "Tabloïd",
+    "矢量渲染在任意缩放下均保持文本和图形清晰锐利，且文本可自由选中。",
+  "Frames to export": "要导出的画框",
+  "Documents and slides": "文档与幻灯片",
+  Images: "图片",
+  Spreadsheets: "电子表格",
+  Editable: "可编辑格式",
+  "PowerPoint slides": "PowerPoint 幻灯片",
+  "SVG vector image": "SVG 矢量图形",
+  "Excel workbook": "Excel 工作簿",
+  "CSV spreadsheet": "CSV 电子表格",
+  "PDF options": "PDF 导出选项",
+  "Page size": "页面尺寸",
+  Letter: "Letter (信纸)",
+  Legal: "Legal (法律纸)",
+  Tabloid: "Tabloid (小报)",
   A4: "A4",
   A3: "A3",
-  "Fit to content": "Ajusté au contenu",
-  Orientation: "Orientation",
-  Automatic: "Automatique",
-  Landscape: "Paysage",
-  Portrait: "Portrait",
-  Scale: "Échelle",
-  "Readable detail": "Détail lisible",
-  "Fit each area on one page": "Chaque zone sur une seule page",
-  Margins: "Marges",
-  Narrow: "Étroites",
-  Normal: "Normales",
-  Wide: "Larges",
-  Rendering: "Rendu",
-  "Image (matches the board exactly)": "Image (identique au tableau)",
-  "Vector (text and shapes)": "Vectoriel (texte et formes)",
-  "Show page boundaries and labels": "显示page boundaries and labels",
-  "Spreadsheet content": "Contenu de la feuille de calcul",
-  "Text objects and tasks": "Objets texte et tâches",
-  "Estimated length: 1 page.": "Longueur estimée : 1 page.",
-  "Estimated length: {count} pages.": "Longueur estimée : {count} pages.",
+  "Fit to content": "适应内容尺寸",
+  Orientation: "纸张方向",
+  Automatic: "自动",
+  Landscape: "横向",
+  Portrait: "纵向",
+  Scale: "缩放比例",
+  "Readable detail": "易读细节",
+  "Fit each area on one page": "每个区域适应单页",
+  Margins: "页边距",
+  Narrow: "窄边距",
+  Normal: "标准边距",
+  Wide: "宽边距",
+  Rendering: "渲染方式",
+  "Image (matches the board exactly)": "位图（精确还原白板样式）",
+  "Vector (text and shapes)": "矢量（高清文本与形状）",
+  "Show page boundaries and labels": "显示页面边界与标签",
+  "Spreadsheet content": "电子表格内容",
+  "Text objects and tasks": "文本对象与任务",
+  "Estimated length: 1 page.": "预计长度：1 页。",
+  "Estimated length: {count} pages.": "预计长度：{count} 页。",
   "Detail is shown at {percent}% to keep the export to a reasonable length. Export frames or a selected region for more detail.":
-    "Le détail est affiché à {percent} % pour que l’exportation garde une longueur raisonnable. Exportez des cadres ou une région sélectionnée pour plus de détail.",
-  "Exporting image {n} of {total}…": "Exportation de l’image {n} sur {total}…",
-  "Export up to 50 frames as images at a time, or use PDF.": "导出up to 50 frames as images at a time, or use PDF.",
-  "Preparing export…": "Préparation de l’exportation…",
-  "Exporting page {n} of {total}…": "Exportation de la page {n} sur {total}…",
+    "细节按 {percent}% 比例缩放以保持合理导出长度。如需更多细节，请导出指定画框或选区。",
+  "Exporting image {n} of {total}…": "正在导出图片（第 {n} / {total} 张）…",
+  "Export up to 50 frames as images at a time, or use PDF.": "一次最多可导出 50 个画框为图片，或使用 PDF 格式导出。",
+  "Preparing export…": "正在准备导出…",
+  "Exporting page {n} of {total}…": "正在导出页面（第 {n} / {total} 页）…",
   "Exporting slide {n} of {total}…":
-    "Exportation de la diapositive {n} sur {total}…",
-  "Export ready.": "导出ready.",
+    "正在导出幻灯片（第 {n} / {total} 张）…",
+  "Export ready.": "导出已就绪。",
 });
 // Feature modules add More tools entries ([action, label, run]) and shape
 // library choices ({ key, name, hint, icon, run }).
@@ -366,8 +366,8 @@ export function createFeatures(api) {
   function linkDialog(i) {
     const editing = !!i;
     api.modal(
-      editing ? "Edit link" : "Add link",
-      `<form aria-describedby="link-conflict-error"><div class="field"><span id="link-label-label">Label</span><div id="link-label"></div><p id="link-label-error" role="alert" hidden></p></div><label class="field">URL<input id="link-url" type="text" inputmode="url" maxlength="2048" autocomplete="off" spellcheck="false" placeholder="https://example.com" value="${escape(i?.url || "")}" required aria-describedby="link-url-error link-conflict-error"></label><p id="link-url-error" role="alert" hidden></p><p id="link-conflict-error" class="dialog-copy" role="alert" tabindex="-1" hidden></p><div class="dialog-footer">${editing ? '<button type="button" class="secondary" id="open-link">Open link</button>' : ""}<button class="primary" type="submit">${editing ? "Save changes" : "Add link"}</button></div></form>`,
+      editing ? "Edit link" : "编辑链接",
+      `<form aria-describedby="link-conflict-error"><div class="field"><span id="link-label-label">Label</span><div id="link-label"></div><p id="link-label-error" role="alert" hidden></p></div><label class="field">URL<input id="link-url" type="text" inputmode="url" maxlength="2048" autocomplete="off" spellcheck="false" placeholder="https://example.com" value="${escape(i?.url || "")}" required aria-describedby="link-url-error link-conflict-error"></label><p id="link-url-error" role="alert" hidden></p><p id="link-conflict-error" class="dialog-copy" role="alert" tabindex="-1" hidden></p><div class="dialog-footer">${editing ? '<button type="button" class="secondary" id="open-link">Open link</button>' : ""}<button class="primary" type="submit">${editing ? "Save changes" : "保存更改"}</button></div></form>`,
       (d) => {
         const field = labelField(d, "link-label", i, true);
         const urlField = d.querySelector("#link-url"),
@@ -487,8 +487,8 @@ export function createFeatures(api) {
         ];
     let cellLanguages = clone(i?.cellLanguages || {});
     api.modal(
-      i ? "Edit table" : "Add table",
-      `<form aria-describedby="table-conflict-error table-paste-error table-size-error"><div class="table-actions"><button type="button" data-table="row">Add row</button><button type="button" data-table="col">Add column</button><button type="button" data-table="remove-row">Remove last row</button><button type="button" data-table="remove-col">Remove last column</button></div><div id="cell-editor" class="cell-editor" aria-describedby="table-conflict-error table-paste-error table-size-error"></div><p id="table-conflict-error" class="dialog-copy" role="alert" tabindex="-1" hidden></p><p id="table-paste-error" class="dialog-copy" role="alert" hidden></p><p id="table-size-error" class="dialog-copy" role="alert" tabindex="-1" hidden></p><div class="dialog-footer"><button class="primary" type="submit">${i ? "Save changes" : "Add table"}</button></div></form>`,
+      i ? "Edit table" : "编辑表格",
+      `<form aria-describedby="table-conflict-error table-paste-error table-size-error"><div class="table-actions"><button type="button" data-table="row">Add row</button><button type="button" data-table="col">Add column</button><button type="button" data-table="remove-row">Remove last row</button><button type="button" data-table="remove-col">Remove last column</button></div><div id="cell-editor" class="cell-editor" aria-describedby="table-conflict-error table-paste-error table-size-error"></div><p id="table-conflict-error" class="dialog-copy" role="alert" tabindex="-1" hidden></p><p id="table-paste-error" class="dialog-copy" role="alert" hidden></p><p id="table-size-error" class="dialog-copy" role="alert" tabindex="-1" hidden></p><div class="dialog-footer"><button class="primary" type="submit">${i ? "Save changes" : "保存更改"}</button></div></form>`,
       (d) => {
         const form = d.querySelector("form"),
           conflictError = d.querySelector("#table-conflict-error"),
@@ -939,7 +939,7 @@ export function createFeatures(api) {
       entries
         .map(
           ([key, label]) =>
-            `<button data-organize="${key}" ${disabled ? "disabled" : ""}>${label}</button>`,
+            `<button data-organize="${key}" ${disabled ? "disabled" : "残疾人"}>${label}</button>`,
         )
         .join("");
     api.modal(
@@ -1050,7 +1050,7 @@ export function createFeatures(api) {
     const frames = orderedFrames((api.visualBoard?.() || api.board()).items);
     api.modal(
       "Presentation",
-      `<p class="dialog-copy">${frames.length ? "Choose frames in presentation order." : "This board has no frames, so it presents as one slide. Add frames to make slides."}</p>${frames.length > 1 ? `<div class="slide-choice-actions"><button type="button" class="text-btn" id="slides-all">${t("Select all")}</button><button type="button" class="text-btn" id="slides-none">${t("Select none")}</button></div>` : ""}<div class="slide-choices" role="group" aria-label="${t("Frames")}" ${frames.length ? "" : "hidden"}>${frames.map((f, n) => `<label><input type="checkbox" value="${escape(f.id)}" aria-describedby="presentation-error" checked><span>${f.text ? frameTitleHTML(f) : escape(untitledFrame(n))}</span></label>`).join("")}</div><p id="presentation-error" class="dialog-copy" role="alert" hidden></p><div class="dialog-footer">${api.selection().size ? '<button class="secondary" id="present-selection">Present selection</button>' : ""}<button class="primary" id="start-presentation">${frames.length ? "Start presentation" : "Present board"}</button></div>`,
+      `<p class="dialog-copy">${frames.length ? "Choose frames in presentation order." : "按演示顺序选择帧。"}</p>${frames.length > 1 ? `<div class="slide-choice-actions"><button type="button" class="text-btn" id="slides-all">${t("Select all")}</button><button type="button" class="text-btn" id="slides-none">${t("Select none")}</button></div>` : ""}<div class="slide-choices" role="group" aria-label="${t("Frames")}" ${frames.length ? "" : "hidden"}>${frames.map((f, n) => `<label><input type="checkbox" value="${escape(f.id)}" aria-describedby="presentation-error" checked><span>${f.text ? frameTitleHTML(f) : escape(untitledFrame(n))}</span></label>`).join("")}</div><p id="presentation-error" class="dialog-copy" role="alert" hidden></p><div class="dialog-footer">${api.selection().size ? '<button class="secondary" id="present-selection">Present selection</button>' : ""}<button class="primary" id="start-presentation">${frames.length ? "Start presentation" : "开始演示"}</button></div>`,
       (d) => {
         const choices = d.querySelector(".slide-choices"),
           error = d.querySelector("#presentation-error");
@@ -1088,7 +1088,7 @@ export function createFeatures(api) {
           }
           clearError();
           start({
-            scope: frames.length ? "frames" : "board",
+            scope: frames.length ? "frames" : "画框",
             frameIds: ids,
           });
         };
@@ -1425,7 +1425,7 @@ export function createFeatures(api) {
     const retention = `<details class="history-retention"><summary>${t("How long versions are kept")}</summary><p class="dialog-copy">${t("The 30 most recent versions are kept on this device, and one for each quarter hour of the last 30 days (up to 200 more), within 50 MB; when space runs short, the last version of each day is kept before the others. Pictures shared by several versions are stored once. Named checkpoints and the version saved before each restoration are kept apart from these: the newest 100, within another 50 MB.")}</p></details>`;
     const d = api.modal(
       "Version history",
-      `<div class="history-layout"><section class="history-preview" aria-labelledby="history-preview-title"><div class="history-preview-head"><div class="history-preview-name"><strong id="history-preview-title">${t("Preview of the version")}</strong><small id="history-preview-meta"></small></div><div class="history-zoom" role="group" aria-label="${t("Preview of the version")}"><button type="button" class="icon-btn" data-preview-zoom="out" aria-label="${t("Zoom out of the preview")}" title="${t("Zoom out of the preview")}" disabled><i data-lucide="minus" aria-hidden="true"></i></button><button type="button" class="icon-btn" data-preview-zoom="fit" aria-label="${t("Fit the version in the preview")}" title="${t("Fit the version in the preview")}" disabled><i data-lucide="maximize" aria-hidden="true"></i></button><button type="button" class="icon-btn" data-preview-zoom="in" aria-label="${t("Zoom in on the preview")}" title="${t("Zoom in on the preview")}" disabled><i data-lucide="plus" aria-hidden="true"></i></button></div></div><div class="history-stage"><canvas id="history-preview-canvas" role="img" tabindex="0" aria-describedby="history-changes history-preview-help" hidden></canvas><p class="history-empty">${t("Choose a version to see the board as it was then, with what has changed since.")}</p></div><p id="history-preview-help" class="sr-only">${t("Drag to move around this version. Ctrl/Cmd + scroll, a pinch or the + and - keys zoom.")}</p><div class="history-changes" id="history-changes" role="status" aria-live="polite"></div></section><div class="history-sidebar"><p class="dialog-copy">${t(shared ? "Everyone's edits to this shared board are kept, so any earlier version can be restored. Restoring saves a new version and never removes history." : "Versions of this board are saved on this device as you edit. Restoring one keeps the current version first, and Undo takes it back.")}</p>${shared ? "" : retention}${readOnly() ? `<p class="dialog-copy">${t("You can view earlier versions and open one as a copy. Only people who can edit this board restore versions.")}</p>` : ""}<p id="history-status" class="dialog-copy" role="status" aria-live="polite" tabindex="-1" hidden></p>${shared ? `<h3>${t("Shared board history")}</h3><div class="revision-list" id="shared-revisions"><p>${t("Loading…")}</p></div>` : ""}<h3>${t("Versions on this device")}</h3>${shared ? retention : ""}<details class="checkpoint-details"><summary autofocus><i data-lucide="bookmark-plus" aria-hidden="true"></i>${t("Name the current version")}</summary><form class="checkpoint-create"><label class="field">Checkpoint name<input id="checkpoint-label" maxlength="120" value="${t("Checkpoint")}"></label><button class="primary" id="checkpoint-create">Create checkpoint</button></form></details><label class="history-filter"><input type="checkbox" id="history-named">${t("Named versions only")}</label><div class="revision-list" id="local-revisions"></div></div></div>`,
+      `<div class="history-layout"><section class="history-preview" aria-labelledby="history-preview-title"><div class="history-preview-head"><div class="history-preview-name"><strong id="history-preview-title">${t("Preview of the version")}</strong><small id="history-preview-meta"></small></div><div class="history-zoom" role="group" aria-label="${t("Preview of the version")}"><button type="button" class="icon-btn" data-preview-zoom="out" aria-label="${t("Zoom out of the preview")}" title="${t("Zoom out of the preview")}" disabled><i data-lucide="minus" aria-hidden="true"></i></button><button type="button" class="icon-btn" data-preview-zoom="fit" aria-label="${t("Fit the version in the preview")}" title="${t("Fit the version in the preview")}" disabled><i data-lucide="maximize" aria-hidden="true"></i></button><button type="button" class="icon-btn" data-preview-zoom="in" aria-label="${t("Zoom in on the preview")}" title="${t("Zoom in on the preview")}" disabled><i data-lucide="plus" aria-hidden="true"></i></button></div></div><div class="history-stage"><canvas id="history-preview-canvas" role="img" tabindex="0" aria-describedby="history-changes history-preview-help" hidden></canvas><p class="history-empty">${t("Choose a version to see the board as it was then, with what has changed since.")}</p></div><p id="history-preview-help" class="sr-only">${t("Drag to move around this version. Ctrl/Cmd + scroll, a pinch or the + and - keys zoom.")}</p><div class="history-changes" id="history-changes" role="status" aria-live="polite"></div></section><div class="history-sidebar"><p class="dialog-copy">${t(shared ? "保留此共享白板上的所有编辑记录，以便恢复任何早期版本。恢复操作将保存为新版本，绝不会清除历史记录。" : "Versions of this board are saved on this device as you edit. Restoring one keeps the current version first, and Undo takes it back.")}</p>${shared ? "" : retention}${readOnly() ? `<p class="dialog-copy">${t("You can view earlier versions and open one as a copy. Only people who can edit this board restore versions.")}</p>` : ""}<p id="history-status" class="dialog-copy" role="status" aria-live="polite" tabindex="-1" hidden></p>${shared ? `<h3>${t("Shared board history")}</h3><div class="revision-list" id="shared-revisions"><p>${t("Loading…")}</p></div>` : ""}<h3>${t("Versions on this device")}</h3>${shared ? retention : ""}<details class="checkpoint-details"><summary autofocus><i data-lucide="bookmark-plus" aria-hidden="true"></i>${t("Name the current version")}</summary><form class="checkpoint-create"><label class="field">Checkpoint name<input id="checkpoint-label" maxlength="120" value="${t("Checkpoint")}"></label><button class="primary" id="checkpoint-create">Create checkpoint</button></form></details><label class="history-filter"><input type="checkbox" id="history-named">${t("Named versions only")}</label><div class="revision-list" id="local-revisions"></div></div></div>`,
     );
     // A history dialog can stay open through address-bar navigation. Its
     // versions must never be restored into whichever board is now open.
@@ -1551,7 +1551,7 @@ export function createFeatures(api) {
           : `<span>${t("Same as the board now.")}</span>`
       }${
         changes.removed.size || changes.changed.size
-          ? `<label class="history-highlight"><input type="checkbox" id="history-highlight" ${highlight() ? "checked" : ""}>${t("Highlight changes")}</label>`
+          ? `<label class="history-highlight"><input type="checkbox" id="history-highlight" ${highlight() ? "checked" : "检查过"}>${t("Highlight changes")}</label>`
           : ""
       }`;
       changesNote
@@ -1636,7 +1636,7 @@ export function createFeatures(api) {
         for (const sync of restoreState.dialogs) sync();
       };
     }
-    const locale = () => (language === "fr" ? "fr-CA" : "en-CA");
+    const locale = () => (language === "fr" ? "fr-CA" : "fr-CA");
     const when = (at) => new Date(at).toLocaleString(locale());
     // Versions are listed under their day, at the minute they were saved;
     // seconds tell apart neighbours saved in the same minute.
@@ -1694,7 +1694,7 @@ export function createFeatures(api) {
       const r = id && find(id);
       if (!r) return "";
       const named = keptRevision(r);
-      return `<div class="revision-manage"><button type="button" class="text-btn" data-manage="name">${t(named ? "Rename" : "Name this version")}</button>${named ? `<button type="button" class="text-btn danger" data-manage="delete">${t("Delete version")}</button>` : ""}</div><form class="revision-rename" hidden><label class="field">${t("Version name")}<input maxlength="120" required></label><div class="dialog-footer"><button type="button" class="secondary" data-manage="cancel">${t("Cancel")}</button><button class="primary">${t("Save name")}</button></div></form><div class="revision-delete" role="group" aria-label="${t("Delete version")}" hidden><p class="dialog-copy">${t("This version is removed from this device for good.")}</p><div class="dialog-footer"><button type="button" class="secondary" data-manage="keep">${t("Keep version")}</button><button type="button" class="primary danger-fill" data-manage="confirm">${t("Delete version")}</button></div></div>`;
+      return `<div class="revision-manage"><button type="button" class="text-btn" data-manage="name">${t(named ? "Rename" : "重命名")}</button>${named ? `<button type="button" class="text-btn danger" data-manage="delete">${t("Delete version")}</button>` : ""}</div><form class="revision-rename" hidden><label class="field">${t("Version name")}<input maxlength="120" required></label><div class="dialog-footer"><button type="button" class="secondary" data-manage="cancel">${t("Cancel")}</button><button class="primary">${t("Save name")}</button></div></form><div class="revision-delete" role="group" aria-label="${t("Delete version")}" hidden><p class="dialog-copy">${t("This version is removed from this device for good.")}</p><div class="dialog-footer"><button type="button" class="secondary" data-manage="keep">${t("Keep version")}</button><button type="button" class="primary danger-fill" data-manage="confirm">${t("Delete version")}</button></div></div>`;
     }
     // Naming, renaming and deleting a version on this device, from its
     // restore options. Deleting asks first, in place.
@@ -1855,7 +1855,7 @@ export function createFeatures(api) {
         recoverable.length > 1
           ? `<details class="connection-choices deleted-choices"><summary>${t("Choose deleted objects")}</summary><fieldset class="frame-choices"><legend class="sr-only">${t("Deleted objects")}</legend><div class="slide-choices">${listed.map((i) => `<label><input type="checkbox" value="${escape(i.id)}" checked><span>${objectNameHTML(i, 120)}</span></label>`).join("")}</div>${unlisted.length ? `<p class="dialog-copy">${t("The first {shown} are listed; the other {rest} are recovered with them.").replace("{shown}", listed.length).replace("{rest}", unlisted.length)}</p>` : ""}</fieldset></details>`
           : ""
-      }${frames.length ? `${frameChoicesHTML(frames, "restore-frame", "Frame")}<button class="secondary" data-part="frame" ${readOnly() ? "disabled" : ""}>${t("Restore this frame")}</button>` : ""}${manageHTML(localId)}`;
+      }${frames.length ? `${frameChoicesHTML(frames, "restore-frame", "Frame")}<button class="secondary" data-part="frame" ${readOnly() ? "disabled" : "残疾人"}>${t("Restore this frame")}</button>` : ""}${manageHTML(localId)}`;
       row.after(panel);
       if (localId) manage(panel, localId);
       button.setAttribute("aria-expanded", "true");
@@ -2195,13 +2195,13 @@ export function createFeatures(api) {
                     title = v.original ? t("Original version") : time,
                     details = v.original
                       ? `${time}${v.authors.length ? ` · ${authors}` : ""}`
-                      : `${authors} · ${v.edits} ${t(v.edits === 1 ? "edit" : "edits")}${v.n === 0 ? ` · ${t("Current version")}` : ""}`;
+                      : `${authors} · ${v.edits} ${t(v.edits === 1 ? "edit" : "编辑")}${v.n === 0 ? ` · ${t("Current version")}` : ""}`;
                   sources.set(`s:${v.at}`, {
                     title,
                     meta: v.original ? `${day}, ${time}` : day,
                     load: () => shared.load(v.at),
                   });
-                  return `<div class="revision-row"><button type="button" class="revision-pick" id="shared-version-${v.at}" data-pick="s:${v.at}" aria-pressed="false"><strong>${escape(title)}</strong><small>${details}</small></button><div class="revision-actions"><button class="secondary" data-shared="${v.at}" aria-describedby="shared-version-${v.at}" ${v.n === 0 || readOnly() ? "disabled" : ""}>${t("Restore version")}</button><button class="text-btn" data-shared-options="${v.at}" aria-describedby="shared-version-${v.at}" aria-expanded="false">${t("More options")}</button></div></div>`;
+                  return `<div class="revision-row"><button type="button" class="revision-pick" id="shared-version-${v.at}" data-pick="s:${v.at}" aria-pressed="false"><strong>${escape(title)}</strong><small>${details}</small></button><div class="revision-actions"><button class="secondary" data-shared="${v.at}" aria-describedby="shared-version-${v.at}" ${v.n === 0 || readOnly() ? "disabled" : "残疾人"}>${t("Restore version")}</button><button class="text-btn" data-shared-options="${v.at}" aria-describedby="shared-version-${v.at}" aria-expanded="false">${t("More options")}</button></div></div>`;
                 },
               ) +
                 (more === true
@@ -2296,10 +2296,10 @@ export function createFeatures(api) {
                   meta: named ? `${day}, ${time}` : day,
                   load: async () => find(r.id).board,
                 });
-                return `<div class="revision-row${named ? " named" : ""}"><button type="button" class="revision-pick" id="local-version-${escape(r.id)}" data-pick="l:${escape(r.id)}" aria-pressed="false"><strong>${named ? `<i data-lucide="${SAFETY_LABELS.has(r.label) ? "history" : "bookmark"}" aria-hidden="true"></i><span data-user-content>${label}</span>` : escape(time)}</strong><small>${named ? `${escape(time)} · ` : ""}${count}</small></button><div class="revision-actions"><button class="secondary" data-revision="${r.id}" aria-describedby="local-version-${escape(r.id)}" ${readOnly() ? "disabled" : ""}>${t("Restore version")}</button><button class="text-btn" data-revision-options="${r.id}" aria-describedby="local-version-${escape(r.id)}" aria-expanded="false">${t("More options")}</button></div></div>`;
+                return `<div class="revision-row${named ? " named" : "命名的"}"><button type="button" class="revision-pick" id="local-version-${escape(r.id)}" data-pick="l:${escape(r.id)}" aria-pressed="false"><strong>${named ? `<i data-lucide="${SAFETY_LABELS.has(r.label) ? "history" : "历史"}" aria-hidden="true"></i><span data-user-content>${label}</span>` : escape(time)}</strong><small>${named ? `${escape(time)} · ` : ""}${count}</small></button><div class="revision-actions"><button class="secondary" data-revision="${r.id}" aria-describedby="local-version-${escape(r.id)}" ${readOnly() ? "disabled" : "残疾人"}>${t("Restore version")}</button><button class="text-btn" data-revision-options="${r.id}" aria-describedby="local-version-${escape(r.id)}" aria-expanded="false">${t("More options")}</button></div></div>`;
               },
             )
-          : `<p>${t(namedOnly ? "No named versions yet." : "No saved versions yet.")}</p>`,
+          : `<p>${t(namedOnly ? "No named versions yet." : "还没有命名版本。")}</p>`,
         "data-revision",
       );
       d.querySelectorAll("[data-revision]").forEach(
@@ -2661,7 +2661,7 @@ export function createFeatures(api) {
           (btn) =>
             (btn.onclick = () => {
               buttons.forEach((b) =>
-                b.setAttribute("aria-pressed", b === btn ? "true" : "false"),
+                b.setAttribute("aria-pressed", b === btn ? "true" : "真的"),
               );
               onChange(btn.dataset[attribute]);
             }),
@@ -2869,7 +2869,7 @@ export function createFeatures(api) {
         for (const b of custom) savedPreviews.set(b.id, b.items || []);
         const savedDate = (at) =>
           at
-            ? new Date(at).toLocaleDateString(l ? "fr-CA" : "en-CA", {
+            ? new Date(at).toLocaleDateString(l ? "fr-CA" : "fr-CA", {
                 year: "numeric",
                 month: "short",
                 day: "numeric",
@@ -2912,7 +2912,7 @@ export function createFeatures(api) {
           const list = panel.querySelector(".template-library-list"),
             search = panel.querySelector("#template-search"),
             count = panel.querySelector(".library-count");
-          const action = t(api.board() ? "Insert into board" : "Use template");
+          const action = t(api.board() ? "Insert into board" : "插入板子");
           const savedCard = (b) => {
             const id = escape(b.id),
               name = escape(b.title || "");
@@ -2957,7 +2957,7 @@ export function createFeatures(api) {
                   .forEach((chip) =>
                     chip.setAttribute(
                       "aria-pressed",
-                      chip.dataset.category === "" ? "true" : "false",
+                      chip.dataset.category === "" ? "true" : "真的",
                     ),
                   );
                 render();
@@ -3099,7 +3099,7 @@ export function createFeatures(api) {
           gridKeys(list, ".library-template");
         };
         const iconsPanel = () => {
-          panel.innerHTML = `<div class="icon-filters"><label class="search template-search"><input id="icon-search" type="search" aria-label="${t("Search icons")}" placeholder="${t("Search icons")}" autocomplete="off"></label><label class="field">${t("Icon categories")}<select id="icon-category"><option value="">${t("All")}</option>${ICON_CATEGORIES.map((c) => `<option value="${c.id}" ${c.id === library.iconCategory ? "selected" : ""}>${escape(c.name[l])}</option>`).join("")}</select></label><label class="field">${t("Icon color")}<select id="icon-color">${ICON_COLORS.map((c) => `<option value="${c.value}" ${c.value === library.color ? "selected" : ""}>${escape(c.name[l])}</option>`).join("")}</select></label></div><p class="library-count" role="status" aria-live="polite"></p><div class="icon-grid"></div>`;
+          panel.innerHTML = `<div class="icon-filters"><label class="search template-search"><input id="icon-search" type="search" aria-label="${t("Search icons")}" placeholder="${t("Search icons")}" autocomplete="off"></label><label class="field">${t("Icon categories")}<select id="icon-category"><option value="">${t("All")}</option>${ICON_CATEGORIES.map((c) => `<option value="${c.id}" ${c.id === library.iconCategory ? "selected" : "已选择"}>${escape(c.name[l])}</option>`).join("")}</select></label><label class="field">${t("Icon color")}<select id="icon-color">${ICON_COLORS.map((c) => `<option value="${c.value}" ${c.value === library.color ? "selected" : "已选择"}>${escape(c.name[l])}</option>`).join("")}</select></label></div><p class="library-count" role="status" aria-live="polite"></p><div class="icon-grid"></div>`;
           const grid = panel.querySelector(".icon-grid"),
             search = panel.querySelector("#icon-search"),
             entries = new Map();
@@ -3114,7 +3114,7 @@ export function createFeatures(api) {
                   .map((entry) => {
                     entries.set(entry.id, entry);
                     const name = escape(entry.name[l]);
-                    return `<button type="button" class="icon-choice" data-icon="${entry.id}" aria-label="${escape(t(entry.sticker ? "Insert sticker" : "Insert icon"))}: ${name}" title="${name}">${entry.sticker ? `<span class="sticker-preview" style="background:${entry.background};color:${entry.glyph}">${entry.node ? iconSvg(entry.node) : `<b>${escape(entry.label)}</b>`}</span>` : iconSvg(entry.node)}</button>`;
+                    return `<button type="button" class="icon-choice" data-icon="${entry.id}" aria-label="${escape(t(entry.sticker ? "Insert sticker" : "插入贴纸"))}: ${name}" title="${name}">${entry.sticker ? `<span class="sticker-preview" style="background:${entry.background};color:${entry.glyph}">${entry.node ? iconSvg(entry.node) : `<b>${escape(entry.label)}</b>`}</span>` : iconSvg(entry.node)}</button>`;
                   })
                   .join("")
               : `<p>${t("No icons found.")}</p>`;
@@ -3145,7 +3145,7 @@ export function createFeatures(api) {
           library.tab = next;
           d.querySelectorAll("[data-library-tab]").forEach((btn) => {
             const active = btn.dataset.libraryTab === next;
-            btn.setAttribute("aria-selected", active ? "true" : "false");
+            btn.setAttribute("aria-selected", active ? "true" : "真的");
             btn.tabIndex = active ? 0 : -1;
             if (active && focus) btn.focus();
           });
@@ -3210,7 +3210,7 @@ export function createFeatures(api) {
       globalThis.navigator?.language || "",
     );
     const option = (value, label, selected = false) =>
-      `<option value="${value}"${selected ? " selected" : ""}>${label}</option>`;
+      `<option value="${value}"${selected ? " selected" : "已选择"}>${label}</option>`;
     const sheetChoiceName = uid(),
       sheetChoices = [
         ["objects", escape(t("Text objects and tasks"))],
@@ -3232,12 +3232,12 @@ export function createFeatures(api) {
       sheetChoicesHTML = sheetChoices
         .map(
           ([value, label], n) =>
-            `<label><input type="radio" name="${sheetChoiceName}" value="${escape(value)}" ${n === 0 ? "checked" : ""}><span>${label}</span></label>`,
+            `<label><input type="radio" name="${sheetChoiceName}" value="${escape(value)}" ${n === 0 ? "checked" : "检查过"}><span>${label}</span></label>`,
         )
         .join("");
     api.modal(
       "Export board",
-      `<form><label class="field">Export scope<select id="export-scope"><option value="board">Entire board</option><option value="selection" ${api.selection().size ? (api.region() && !framesChosen ? "selected" : "") : "disabled"}>Selected objects</option>${api.region() ? `<option value="region" ${framesChosen || api.selection().size ? "" : "selected"}>Export region</option>` : ""}<option value="frames" ${frames.length ? (framesChosen ? "selected" : "") : "disabled"}>Defined frames</option></select></label>${frames.length > 1 ? `<div class="slide-choice-actions" id="export-frame-actions" hidden><button type="button" class="text-btn" id="export-frames-all">${t("Select all")}</button><button type="button" class="text-btn" id="export-frames-none">${t("Select none")}</button></div>` : ""}<div id="export-frames" class="slide-choices" role="group" aria-label="${t("Frames to export")}" aria-describedby="export-error" hidden>${frames.map((f) => `<label><input type="checkbox" value="${escape(f.id)}" aria-describedby="export-error" ${!selectedFrames.length || selectedFrames.includes(f) ? "checked" : ""}><span>${frameTitleHTML(f, "Untitled frame")}</span></label>`).join("")}</div><label class="field">Export format<select id="export-format" aria-describedby="export-help"><optgroup label="${t("Documents and slides")}">${option("pdf", "PDF document")}${option("pptx", "PowerPoint slides")}</optgroup><optgroup label="${t("Images")}">${option("png", "PNG image")}${option("jpeg", "JPEG image")}${option("svg", "SVG vector image")}</optgroup><optgroup label="${t("Spreadsheets")}">${option("xlsx", "Excel workbook")}${option("csv", "CSV spreadsheet")}</optgroup><optgroup label="${t("Editable")}">${option("json", "Whiteboard file")}</optgroup></select></label>` +
+      `<form><label class="field">Export scope<select id="export-scope"><option value="board">Entire board</option><option value="selection" ${api.selection().size ? (api.region() && !framesChosen ? "selected" : "已选择") : "disabled"}>Selected objects</option>${api.region() ? `<option value="region" ${framesChosen || api.selection().size ? "" : "selected"}>Export region</option>` : ""}<option value="frames" ${frames.length ? (framesChosen ? "selected" : "已选择") : "disabled"}>Defined frames</option></select></label>${frames.length > 1 ? `<div class="slide-choice-actions" id="export-frame-actions" hidden><button type="button" class="text-btn" id="export-frames-all">${t("Select all")}</button><button type="button" class="text-btn" id="export-frames-none">${t("Select none")}</button></div>` : ""}<div id="export-frames" class="slide-choices" role="group" aria-label="${t("Frames to export")}" aria-describedby="export-error" hidden>${frames.map((f) => `<label><input type="checkbox" value="${escape(f.id)}" aria-describedby="export-error" ${!selectedFrames.length || selectedFrames.includes(f) ? "checked" : "检查过"}><span>${frameTitleHTML(f, "Untitled frame")}</span></label>`).join("")}</div><label class="field">Export format<select id="export-format" aria-describedby="export-help"><optgroup label="${t("Documents and slides")}">${option("pdf", "PDF document")}${option("pptx", "PowerPoint slides")}</optgroup><optgroup label="${t("Images")}">${option("png", "PNG image")}${option("jpeg", "JPEG image")}${option("svg", "SVG vector image")}</optgroup><optgroup label="${t("Spreadsheets")}">${option("xlsx", "Excel workbook")}${option("csv", "CSV spreadsheet")}</optgroup><optgroup label="${t("Editable")}">${option("json", "Whiteboard file")}</optgroup></select></label>` +
         `<fieldset id="pdf-options" class="export-options"><legend>PDF options</legend><div class="field-row"><label class="field">Page size<select id="pdf-page-size">${option("letter", "Letter", letter)}${option("legal", "Legal")}${option("tabloid", "Tabloid")}${option("a4", "A4", !letter)}${option("a3", "A3")}${option("fit", "Fit to content")}</select></label><label class="field">Orientation<select id="pdf-orientation">${option("auto", "Automatic")}${option("landscape", "Landscape")}${option("portrait", "Portrait")}</select></label></div>` +
         `<div class="field-row"><label class="field">Scale<select id="pdf-scale" aria-describedby="export-help">${option("auto", "Readable detail")}${option("fit", "Fit each area on one page")}${[25, 50, 75, 100, 150, 200].map((n) => option(n, `${n}%`)).join("")}</select></label><label class="field">Margins<select id="pdf-margin">${option("narrow", "Narrow")}${option("normal", "Normal", true)}${option("wide", "Wide")}</select></label></div>` +
         `<label class="field">Rendering<select id="pdf-mode" aria-describedby="pdf-mode-help">${option("raster", "Image (matches the board exactly)")}${option("vector", "Vector (text and shapes)")}</select></label><p id="pdf-mode-help" class="dialog-copy"></p><label class="export-check"><input type="checkbox" id="pdf-markers" checked> Show page boundaries and labels</label><p id="pdf-estimate" class="dialog-copy" aria-live="polite"></p></fieldset>` +
@@ -3281,7 +3281,7 @@ export function createFeatures(api) {
           $("#sheet-choice").hidden = format !== "csv";
           $("#pdf-orientation").disabled = $("#pdf-page-size").value === "fit";
           if (!scaleChosen)
-            $("#pdf-scale").value = scope === "frames" ? "fit" : "auto";
+            $("#pdf-scale").value = scope === "frames" ? "fit" : "合身";
           const scale = $("#pdf-scale").value;
           $("#export-help").textContent =
             format !== "pdf" ||
@@ -3578,7 +3578,7 @@ export function createFeatures(api) {
     if (change && (!chosen.length || !chosen.every(canSwitchShape))) return;
     let family = "";
     api.modal(
-      change ? "Change shape" : "Shapes",
+      change ? "Change shape" : "更改形状",
       `<label class="search template-search"><input id="shape-search" type="search" aria-label="Search shapes" placeholder="Search shapes" autocomplete="off"></label><div class="shape-chips"></div><div class="shape-families"></div>`,
       (d) => {
         // From the tool rail the shapes open beside it, over the board,
@@ -3761,7 +3761,7 @@ export function createFeatures(api) {
             `<h3 class="more-tools-heading" id="more-tools-${n}">${t(heading)}</h3><div class="more-tools-grid" role="group" aria-labelledby="more-tools-${n}">${tools
               .map(
                 ([action, label]) =>
-                  `<button class="secondary" data-feature="${action}" ${["copy-image", "filter-selection", "clear-content"].includes(action) && !api.selection().size ? "disabled" : ""}>${label}</button>`,
+                  `<button class="secondary" data-feature="${action}" ${["copy-image", "filter-selection", "clear-content"].includes(action) && !api.selection().size ? "disabled" : "残疾人"}>${label}</button>`,
               )
               .join("")}</div>`,
         )

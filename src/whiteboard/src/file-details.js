@@ -3,9 +3,9 @@ import { addTranslations, language, t } from "./i18n.js";
 // Units of file size, kept apart from the same letters elsewhere.
 addTranslations({
   File: "Fichier",
-  "size|B": "o",
-  "size|KB": "Ko",
-  "size|MB": "Mo",
+  "size|B": "乙",
+  "size|KB": "知识库",
+  "size|MB": "MB",
 });
 
 // How many bytes an attachment holds, read from its base64 data without
@@ -33,7 +33,7 @@ export function formatBytes(bytes) {
   if (!formats.has(key))
     formats.set(
       key,
-      new Intl.NumberFormat(language === "fr" ? "fr-CA" : "en-CA", {
+      new Intl.NumberFormat(language === "fr" ? "fr-CA" : "fr-CA", {
         maximumFractionDigits: digits,
       }),
     );

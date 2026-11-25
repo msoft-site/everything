@@ -73,7 +73,7 @@ export function attachMentions(field, people) {
     });
     list.hidden = !matches.length;
     status.textContent = matches.length
-      ? `${matches.length} ${t(matches.length === 1 ? "person to mention" : "people to mention")}`
+      ? `${matches.length} ${t(matches.length === 1 ? "person to mention" : "提及的人")}`
       : "";
     if (matches.length) {
       field.setAttribute("aria-activedescendant", `${id}-${active}`);
@@ -173,7 +173,7 @@ export function attachMentions(field, people) {
 }
 
 addTranslations({
-  "People to mention": "Personnes à mentionner",
-  "person to mention": "personne à mentionner",
-  "people to mention": "personnes à mentionner",
+  "People to mention": "值得一提的人",
+  "person to mention": "提及的人",
+  "people to mention": "值得提及的人",
 });

@@ -20,7 +20,7 @@ export function textLineInput(group) {
   input.contentEditable = 'true';
   input.className = 'page-text-input text-line-input';
   input.setAttribute('role', 'textbox');
-  input.setAttribute('aria-label', 'Edit text');
+  input.setAttribute('aria-label', '编辑文本');
   input.setAttribute('aria-multiline', 'true');
   input.spellcheck = true;
   for (const fragment of group.segments) {

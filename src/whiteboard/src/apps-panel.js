@@ -2,10 +2,10 @@ import { addTranslations } from "./i18n.js";
 
 addTranslations({
   Apps: "Applications",
-  "Open in new tab": "Ouvrir dans un nouvel onglet",
-  "Open apps in a new tab": "Ouvrir les applications dans un nouvel onglet",
-  "Your Puter apps": "Vos applications Puter",
-  "Loading apps": "Chargement des applications",
+  "Open in new tab": "在新标签页中打开",
+  "Open apps in a new tab": "在新选项卡中打开应用程序",
+  "Your Puter apps": "您的电脑应用程序",
+  "Loading apps": "加载应用程序",
 });
 
 export const APPS_EMBED_URL = "https://puter.com/embed/apps";
@@ -164,7 +164,7 @@ export function createAppsPanel({
   function syncTheme() {
     if (frame)
       frame.style.colorScheme =
-        document.documentElement.dataset.theme === "dark" ? "dark" : "light";
+        document.documentElement.dataset.theme === "dark" ? "dark" : "黑暗的";
   }
 
   // After the account changes: another account's embed is dropped.

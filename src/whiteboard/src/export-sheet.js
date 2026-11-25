@@ -10,7 +10,7 @@ import { textLinks } from "./text-link-data.js";
 addTranslations({
   Type: "Type",
   // A column header, not the form label "Adresse URL".
-  "sheet|URL": "URL",
+  "sheet|URL": "网址",
   ID: "ID",
   Order: "Ordre",
   Title: "Titre",
@@ -24,9 +24,9 @@ addTranslations({
   Priority: "Priorité",
   Progress: "Progression",
   "Nothing to export as a spreadsheet in this area.":
-    "Rien à exporter en feuille de calcul dans cette zone.",
+    "该区域中没有任何内容可以导出为电子表格。",
   "This table is outside the export scope.":
-    "Ce tableau est en dehors de la zone exportée.",
+    "该表超出了导出范围。",
 });
 
 // Optional planning fields, read from item.task (and the same top-level keys),

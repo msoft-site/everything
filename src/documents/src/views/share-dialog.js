@@ -36,7 +36,7 @@ export function openShareDialog(api) {
   };
 
   /* ---- Invite ---- */
-  const people = el('input.input', { type: 'text', placeholder: api.local ? '本地共享不可用' : '云端用户名或电子邮件地址', 'aria-label': '邀请人员', autocomplete: 'off', disabled: api.local,
+  const people = el('input.input', { type: 'text', placeholder: api.local ? '本地共享不可用' : '用户名或电子邮件地址', 'aria-label': '邀请人员', autocomplete: 'off', disabled: api.local,
     // Enter that confirms an input method's conversion belongs to it, not to Invite.
     onkeydown: e => { if (e.key === 'Enter' && !isComposing(e)) { e.preventDefault(); invite.click(); } } });
   let inviteRole = 'editor';
@@ -44,7 +44,7 @@ export function openShareDialog(api) {
   const note = el('textarea.input.sh-note', { rows: 1, placeholder: '添加附言（可选）', 'aria-label': '发给被邀请人员的消息', disabled: api.local });
   const invite = el('button.btn.btn-primary', { type: 'button', disabled: api.local, onclick: () => busy(invite, '正在邀请…', async () => {
     const names = people.value.split(/[\s,;]+/).map(s => s.trim()).filter(Boolean);
-    if (!names.length) { say('请输入至少一个云端用户名或电子邮件地址。', true); people.focus(); return; }
+    if (!names.length) { say('请输入至少一个用户名或电子邮件地址。', true); people.focus(); return; }
     const bad = names.filter(n => !EMAIL.test(n) && !/^@?[A-Za-z0-9._-]{1,64}$/.test(n));
     if (bad.length) { say(`“${bad[0]}”既不是有效的用户名也不是电子邮件地址。`, true); return; }
     await api.ensureShared(text => say(text));
@@ -60,7 +60,7 @@ export function openShareDialog(api) {
     }
     people.value = ''; note.value = '';
     const parts = [];
-    if (invited.length) parts.push(`${invited.join(', ')} 登录云端后即可通过链接打开此文档。`);
+    if (invited.length) parts.push(`${invited.join(', ')} 登录后即可通过链接打开此文档。`);
     if (emailed.length) parts.push(`已向 ${emailed.join(', ')} 发送邀请。`);
     if (failed.length) parts.push(`未发送: ${failed.join('; ')}`);
     say(parts.join(' '), !!failed.length);
@@ -74,7 +74,7 @@ export function openShareDialog(api) {
     ownerOnly,
     el('div.sh-row', {}, people, inviteRoleSelect),
     note,
-    el('div.sh-row.sh-row-end', {}, el('span.field-hint', {}, api.local ? '此文档保存在本地设备上：使用下方链接与此浏览器的其他标签页共享。' : '人员需登录云端打开此文档。邀请链接在七天后过期。'), invite));
+    el('div.sh-row.sh-row-end', {}, el('span.field-hint', {}, api.local ? '此文档保存在本地设备上：使用下方链接与此浏览器的其他标签页共享。' : '人员需登录打开此文档。邀请链接在七天后过期。'), invite));
 
   /* ---- Link ---- */
   let linkRole = 'editor';
@@ -85,7 +85,7 @@ export function openShareDialog(api) {
       await api.ensureShared(text => say(text));
       const url = await live().inviteLink(role);
       linkField.value = url; linkField.hidden = false;
-      try { await navigator.clipboard.writeText(url); if (!quiet) say(`链接已复制。任何打开此链接的人${role === 'editor' ? '都可以编辑' : role === 'commenter' ? '都可以批注' : '都可以查看'}${api.local ? '（在此浏览器中）' : '（需登录云端）'}。`); }
+      try { await navigator.clipboard.writeText(url); if (!quiet) say(`链接已复制。任何打开此链接的人${role === 'editor' ? '都可以编辑' : role === 'commenter' ? '都可以批注' : '都可以查看'}${api.local ? '（在此浏览器中）' : '（需登录）'}。`); }
       catch { if (!quiet) say('请复制下方链接。'); linkField.select(); }
       renderAccess();
       return url;
@@ -147,7 +147,7 @@ export function openShareDialog(api) {
   const copySection = el('details.sh-section.sh-copy', {},
     el('summary.sh-heading', {}, '通过电子邮件发送副本'),
     el('div.sh-row', {}, to, format),
-    el('div.sh-row.sh-row-end', {}, el('span.field-hint', {}, api.canEmail ? '将从您的云端邮箱以附件形式发送。副本不会随文档的更改而变化。' : '此环境暂不支持直接发送邮件；请下载副本后自行添加附件。'), download, send));
+    el('div.sh-row.sh-row-end', {}, el('span.field-hint', {}, api.canEmail ? '将从您的邮箱以附件形式发送。副本不会随文档的更改而变化。' : '此环境暂不支持直接发送邮件；请下载副本后自行添加附件。'), download, send));
   send.disabled = !api.canEmail; to.disabled = !api.canEmail;
 
   /* ---- Footer ---- */

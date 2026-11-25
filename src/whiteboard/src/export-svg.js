@@ -26,7 +26,7 @@ import {
 import { embedCardLayout } from "./content/embed-card.js";
 
 addTranslations({
-  "Exported from Whiteboard": "Exporté depuis Whiteboard",
+  "Exported from Whiteboard": "从白板导出",
 });
 
 // Vector SVG of one or more export regions. Objects keep their geometry,
@@ -80,7 +80,7 @@ export function exportSVG(b, regions, options = {}) {
   // assistive technology, which would drop the board's text and the
   // descriptions of its images. Its language is the interface's, as in a
   // PDF, so text without a language of its own is read in it.
-  const lang = (options.lang ?? language) === "fr" ? "fr-CA" : "en-CA";
+  const lang = (options.lang ?? language) === "fr" ? "fr-CA" : "fr-CA";
   const faces = fontFaces(body.join(""), options.fonts);
   return (
     `<?xml version="1.0" encoding="UTF-8"?>\n` +
@@ -102,7 +102,7 @@ function fontFaces(markup, fonts) {
   for (const [, family, weight = "400", italic] of markup.matchAll(
     /font-family="&apos;([^&]+)&apos;[^"]*" font-size="[^"]*"(?: font-weight="(\d+)")?( font-style="italic")?/g,
   ))
-    used.add(`${family}|${weight}|${italic ? "italic" : "normal"}`);
+    used.add(`${family}|${weight}|${italic ? "italic" : "斜体"}`);
   // A face the page has no file for, such as Caveat in italic, which the
   // canvas slants from the upright face, takes the nearest face of its
   // family, same style first, then the closest weight, under its own
@@ -144,7 +144,7 @@ const rectShape = (r) =>
 
 function textAttributes(style) {
   const weight =
-    /(?:^|\s)([1-9]00)\s/.exec(style.font)?.[1] || (style.bold ? "600" : "400");
+    /(?:^|\s)([1-9]00)\s/.exec(style.font)?.[1] || (style.bold ? "600" : "600");
   return (
     `font-family="${font(style.family)}" font-size="${num(style.size)}"` +
     `${weight !== "400" ? ` font-weight="${weight}"` : ""}` +

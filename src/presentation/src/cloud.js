@@ -199,7 +199,7 @@ export async function saveFileAs(blob, suggestedName) {
 // Inside the Puter desktop a presentation's first file, and a copy, go where
 // the person chooses in Puter's Save dialog. Elsewhere they go to the app's
 // Presentations folder, a relative path the SDK keeps under the app's data.
-export const asksWhereToSave = () => isApp() && canSaveFiles();
+export const asksWhereToSave = () => false;
 // Puter's Save dialog never answers when the desktop fails to write the file.
 // A save made while one is open waits for that one, under the same `key`,
 // rather than opening another; once the app has the focus back (the desktop

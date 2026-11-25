@@ -90,7 +90,7 @@ async function decodeImage(blob) {
       await image.decode();
       return image;
     } catch {
-      throw new Error('This image could not be read. Choose a PNG or JPEG image.');
+      throw new Error('无法读取此图片。请选择 PNG 或 JPEG 图片。');
     } finally {
       URL.revokeObjectURL(url);
     }
@@ -187,7 +187,7 @@ export function signatureDialog({ signal } = {}) {
     const color = el('input', {
       type: 'color',
       value: '#111111',
-      'aria-label': 'Signature color',
+      'aria-label': '签名颜色',
       oninput: () => repaint(),
     });
     // Drawing
@@ -195,9 +195,9 @@ export function signatureDialog({ signal } = {}) {
       class: 'signature-pad',
       tabindex: '0',
       role: 'img',
-      'aria-label': 'Signature drawing area. Draw with a mouse, pen, or finger.',
+      'aria-label': '签名绘制区域。可使用鼠标、手写笔或手指绘制。',
     });
-    const padHint = el('p', { class: 'signature-hint muted' }, 'Draw your signature here');
+    const padHint = el('p', { class: 'signature-hint muted' }, '在此处绘制您的签名');
     let drawingFrame,
       padWidth = 0,
       padHeight = 0;
@@ -266,7 +266,7 @@ export function signatureDialog({ signal } = {}) {
     pad.addEventListener('pointercancel', endStroke);
     pad.addEventListener('lostpointercapture', endStroke);
     const clear = button(
-      'Clear',
+      '清除',
       'Trash2',
       () => {
         strokes = [];
@@ -280,8 +280,8 @@ export function signatureDialog({ signal } = {}) {
     const nameInput = el('input', {
       type: 'text',
       class: 'input',
-      placeholder: 'Type your name',
-      'aria-label': 'Signature text',
+      placeholder: '键入您的姓名',
+      'aria-label': '签名文本',
       maxlength: MAX_SIGNATURE_TEXT,
       autocomplete: 'name',
       oninput: () => repaint(),
@@ -295,18 +295,18 @@ export function signatureDialog({ signal } = {}) {
     const typePreview = el('canvas', {
       class: 'signature-preview',
       role: 'img',
-      'aria-label': 'Typed signature preview',
+      'aria-label': '键入签名预览',
     });
     // Uploading
     const file = el('input', {
       type: 'file',
       accept: 'image/png,image/jpeg',
-      'aria-label': 'Signature image file',
+      'aria-label': '签名图片文件',
     });
     const uploadPreview = el('canvas', {
       class: 'signature-preview',
       role: 'img',
-      'aria-label': 'Uploaded signature preview',
+      'aria-label': '上传签名预览',
       hidden: true,
     });
     file.addEventListener('change', async () => {
@@ -318,10 +318,10 @@ export function signatureDialog({ signal } = {}) {
       uploadPreview.hidden = true;
       if (!chosen) return;
       try {
-        if (chosen.size > MAX_IMAGE_SIZE) throw new Error('Choose an image smaller than 20 MB.');
+        if (chosen.size > MAX_IMAGE_SIZE) throw new Error('请选择小于 20 MB 的图片。');
         const bytes = new Uint8Array(await chosen.arrayBuffer());
         if (!current()) return;
-        if (!isPng(bytes) && !isJpeg(bytes)) throw new Error('Choose a PNG or JPEG image.');
+        if (!isPng(bytes) && !isJpeg(bytes)) throw new Error('请选择 PNG 或 JPEG 图片。');
         // Native decoders may reject optional JPEG markers that PDF embedding already skips.
         const image = await decodeImage(
           new Blob([normalizeJpegPadding(bytes)], { type: chosen.type }),
@@ -344,7 +344,7 @@ export function signatureDialog({ signal } = {}) {
     const savedSection = el(
       'div',
       { class: 'signature-saved-wrap' },
-      el('h3', {}, 'Saved signatures'),
+      el('h3', {}, '已保存的签名'),
       savedList,
     );
     function paintSaved() {
@@ -363,13 +363,13 @@ export function signatureDialog({ signal } = {}) {
           {
             type: 'button',
             class: 'signature-saved-item',
-            'aria-label': `Use saved signature ${i + 1}${item.type === 'type' ? `: ${item.text}` : ''}`,
+            'aria-label': `使用已保存的签名 ${i + 1}${item.type === 'type' ? `: ${item.text}` : ''}`,
             onclick: () => accept(item),
           },
           thumb,
         );
         const remove = button(
-          `Delete saved signature ${i + 1}`,
+          `删除已保存的签名 ${i + 1}`,
           'X',
           () => {
             const restoreFocus = savedList.contains(document.activeElement);
@@ -404,9 +404,9 @@ export function signatureDialog({ signal } = {}) {
       },
     });
     const tabs = [
-      ['draw', 'Draw'],
-      ['type', 'Type'],
-      ['upload', 'Upload'],
+      ['draw', '绘制'],
+      ['type', '键入'],
+      ['upload', '上传'],
     ];
     const panels = {
       draw: el(
@@ -418,7 +418,7 @@ export function signatureDialog({ signal } = {}) {
           'aria-labelledby': 'signature-tab-draw',
         },
         el('div', { class: 'signature-pad-wrap' }, pad, padHint),
-        el('div', { class: 'signature-row' }, el('label', {}, 'Color ', color), clear),
+        el('div', { class: 'signature-row' }, el('label', {}, '颜色 ', color), clear),
       ),
       type: el(
         'div',
@@ -441,7 +441,7 @@ export function signatureDialog({ signal } = {}) {
           'aria-labelledby': 'signature-tab-upload',
           hidden: true,
         },
-        el('p', { class: 'muted' }, 'A PNG with a transparent background works best.'),
+        el('p', { class: 'muted' }, '透明背景的 PNG 图片效果最佳。'),
         file,
         uploadPreview,
       ),
@@ -449,7 +449,7 @@ export function signatureDialog({ signal } = {}) {
     const tabButtons = new Map();
     const tablist = el(
       'div',
-      { class: 'signature-tabs', role: 'tablist', 'aria-label': 'Signature source' },
+      { class: 'signature-tabs', role: 'tablist', 'aria-label': '签名来源' },
       ...tabs.map(([id, label]) => {
         const b = el(
           'button',
@@ -512,7 +512,7 @@ export function signatureDialog({ signal } = {}) {
       let signature;
       if (tab === 'draw') {
         if (!strokes.some((s) => s.length)) {
-          toast('Draw your signature first.', { error: true });
+          toast('请先绘制您的签名。', { error: true });
           return;
         }
         signature = {
@@ -524,14 +524,14 @@ export function signatureDialog({ signal } = {}) {
       } else if (tab === 'type') {
         const text = nameInput.value.trim();
         if (!text) {
-          toast('Type your name for the signature.', { error: true });
+          toast('请输入签名的姓名。', { error: true });
           nameInput.focus();
           return;
         }
         signature = { type: 'type', text };
       } else {
         if (!upload) {
-          toast('Choose a PNG or JPEG image of your signature.', { error: true });
+          toast('请选择签名的 PNG 或 JPEG 图片。', { error: true });
           return;
         }
         signature = { type: 'image', bytes: upload.bytes };
@@ -602,15 +602,15 @@ export function signatureDialog({ signal } = {}) {
       el(
         'label',
         { class: 'checkbox-row signature-remember', for: 'remember-signature' },
-        el('span', {}, 'Remember drawn and typed signatures on this device'),
+        el('span', {}, '在此设备上记住手写和键入的签名'),
         remember,
       ),
     );
-    const placeButton = button('Place signature', 'Signature', place, 'btn primary');
+    const placeButton = button('放置签名', 'Signature', place, 'btn primary');
     const dialog = modal(
-      'Add signature',
+      '添加签名',
       body,
-      [button('Cancel', null, () => dialog.close()), placeButton],
+      [button('取消', null, () => dialog.close()), placeButton],
       { signal },
     );
     dialog.classList.add('signature-dialog');

@@ -146,7 +146,7 @@ export function createOnboarding({
       `${step + 1} / ${steps.length}`;
     bubble.querySelector("#tour-back").disabled = step === 0;
     bubble.querySelector("#tour-next").textContent = t(
-      step === steps.length - 1 ? "Finish" : "Next",
+      step === steps.length - 1 ? "Finish" : "结束",
     );
     const view = doc.defaultView;
     const width = Math.min(340, view.innerWidth - 32);
@@ -272,60 +272,60 @@ export function createOnboarding({
 addTranslations({
   "Add sticky notes": "添加sticky notes",
   "Press N, or choose Sticky note and click the board. Type right away; Tab goes on to the next note, and clicking outside finishes.":
-    "Appuyez sur N, ou choisissez Note adhésive et cliquez sur le tableau. Tapez tout de suite; Tab passe à la note suivante, et un clic ailleurs termine.",
-  "Select, move, and connect": "Sélectionner, déplacer et relier",
+    "按 N，或选择便签并单击该板。立即输入；按 T​​ab 键转到下一个注释，然后单击外部完成。",
+  "Select, move, and connect": "选择、移动和连接",
   "Drag objects to move them. Hover a selected shape or note and use its blue handles to connect it to another object.":
-    "Faites glisser les objets pour les déplacer. Survolez une forme ou une note sélectionnée et utilisez ses poignées bleues pour la relier à un autre objet.",
+    "拖动对象来移动它们。将鼠标悬停在选定的形状或注释上，然后使用其蓝色手柄将其连接到另一个对象。",
   "Choose Sticky note and tap the board. Type right away; tapping outside finishes.":
-    "Choisissez Note adhésive et touchez le tableau. Écrivez tout de suite; touchez ailleurs pour terminer.",
+    "选择便签并点击面板。立即输入；敲击外部饰面。",
   "Drag objects to move them. Tap a shape or note, then tap one of its blue handles to add a connected object, or drag a handle onto another object to connect them.":
-    "Faites glisser les objets pour les déplacer. Touchez une forme ou une note, puis touchez l’une de ses poignées bleues pour ajouter un objet relié, ou faites glisser une poignée sur un autre objet pour les relier.",
-  "Organize with frames": "Organiser avec des cadres",
+    "拖动对象来移动它们。点击形状或注释，然后点击其蓝色手柄之一以添加连接的对象，或将手柄拖动到另一个对象上以连接它们。",
+  "Organize with frames": "用画框组织",
   "Frames group content into sections. They power navigation, presentation, section links, and exports.":
-    "Les cadres regroupent le contenu en sections. Ils servent à la navigation, à la présentation, aux liens de section et aux exportations.",
-  "Navigate large boards": "Parcourir les grands tableaux",
+    "画框将内容分组。它们为导航、演示、部分链接和导出提供支持。",
+  "Navigate large boards": "浏览大板",
   "Frames and navigation lists every section like a table of contents. The minimap (M) and Find on board (Ctrl/Cmd F) help too.":
     "Cadres et navigation énumère chaque section comme une table des matières. La mini-carte (M) et Rechercher dans le tableau (Ctrl/Cmd F) aident aussi.",
   "Frames and navigation lists every section like a table of contents. The minimap and Find on board, in the same row, help too.":
-    "Cadres et navigation énumère chaque section comme une table des matières. La mini-carte et Rechercher dans le tableau, dans la même rangée, aident aussi.",
-  "Discuss asynchronously": "Discuter en différé",
+    "画框和导航像目录一样列出了每个部分。白板上的小地图和“查找”位于同一排，也很有帮助。",
+  "Discuss asynchronously": "异步讨论",
   "Pin comments to objects, reply in threads, and mention people with @name so they are notified.":
-    "Épinglez des commentaires aux objets, répondez dans les fils et mentionnez des personnes avec @nom pour les aviser.",
-  "Share and collaborate": "Partager et collaborer",
+    "将评论固定到对象、在线程中回复以及使用 @name 提及人员以便他们收到通知。",
+  "Share and collaborate": "分享与协作",
   "Invite people to edit, comment, or view. Everyone sees live cursors and changes as they happen.":
-    "Invitez des personnes à modifier, commenter ou consulter. Tout le monde voit les curseurs et les changements en direct.",
-  "Run workshops": "Animer des ateliers",
+    "邀请人们编辑、评论或查看。每个人都可以看到实时光标和发生的变化。",
+  "Run workshops": "举办研讨会",
   "Use the timer, bring everyone to your view from Participants, and present frames one at a time.":
-    "Utilisez le minuteur, amenez tout le monde à votre vue depuis Participants et présentez les cadres un à la fois.",
-  "Find any command": "Trouver n’importe quelle commande",
+    "使用计时器，将每个人带到您的参与者视图中，并一次呈现一帧。",
+  "Find any command": "查找任何命令",
   "Press Ctrl/Cmd K to search every tool, template, and setting. Open Help and training at any time for guides.":
     "Appuyez sur Ctrl/Cmd K pour chercher un outil, un modèle ou un paramètre. Ouvrez Aide et formation en tout temps pour consulter les guides.",
   "Tip: drag across the board to draw a frame. Objects inside it move with it.":
-    "Astuce : faites glisser sur le tableau pour dessiner un cadre. Les objets qu’il contient se déplacent avec lui.",
+    "提示：在板上拖动以绘制画框。里面的物体也随之移动。",
   "Tip: start the arrow on an object and end it on another to connect them.":
-    "Astuce : commencez la flèche sur un objet et terminez-la sur un autre pour les relier.",
+    "提示：箭头在一个对象上开始，在另一个对象上结束以连接它们。",
   "Tip: drawings can be selected, moved, and recolored like any other object.":
-    "Astuce : les dessins peuvent être sélectionnés, déplacés et recolorés comme tout autre objet.",
+    "提示：可以像任何其他对象一样选择、移动绘图和重新着色。",
   "Tip: the eraser removes whole drawings. Undo brings them back.":
-    "Astuce : la gomme efface des dessins entiers. Annuler les fait revenir.",
+    "提示：橡皮擦会删除整个绘图。撤消会使它们恢复。",
   "Tip: click an object to pin a comment to it, or empty space for a board comment.":
-    "Astuce : cliquez sur un objet pour y épingler un commentaire, ou sur un espace vide pour un commentaire du tableau.",
+    "提示：单击某个对象可将评论固定到其上，或空白区域可添加讨论区评论。",
   "Tip: text grows as you type. Select words to format them or add links.":
-    "Astuce : le texte s’agrandit à mesure que vous tapez. Sélectionnez des mots pour les mettre en forme ou ajouter des liens.",
+    "提示：文本随着您的输入而增长。选择单词以设置其格式或添加链接。",
   "Tap the command palette to search every tool, template, and setting. Help and training has guides at any time, beside the zoom controls or under More tools on small screens.":
-    "Touchez la palette de commandes pour chercher un outil, un modèle ou un paramètre. Aide et formation offre des guides en tout temps, à côté des commandes de zoom ou dans Autres outils sur les petits écrans.",
-  "Skip tour": "Passer la visite",
-  "Getting started": "Premiers pas",
-  "New here?": "Nouveau ici?",
-  "Take a one-minute tour": "Faire une visite d’une minute",
+    "点击命令面板可搜索每个工具、模板和设置。帮助和培训随时在缩放控件旁边或小屏幕上的更多工具下提供指南。",
+  "Skip tour": "跳过游览",
+  "Getting started": "入门",
+  "New here?": "新来的？",
+  "Take a one-minute tour": "进行一分钟游览",
   Dismiss: "Fermer",
-  "Open a board to take the tour.": "Ouvrez un tableau pour faire la visite.",
+  "Open a board to take the tour.": "打开看板即可游览。",
   "The tour starts once the board connects.":
-    "La visite commencera une fois le tableau connecté.",
-  "AI assistant": "Assistant IA",
-  "Help and training": "Aide et formation",
-  "Take the tour": "Faire la visite",
-  "Migrate from Miro": "Migrer depuis Miro",
+    "连接电路板后，游览就开始了。",
+  "AI assistant": "AI 助手",
+  "Help and training": "帮助与培训",
+  "Take the tour": "参观游览",
+  "Migrate from Miro": "从米罗迁移",
   Back: "Précédent",
   Next: "Suivant",
   Finish: "Terminer",

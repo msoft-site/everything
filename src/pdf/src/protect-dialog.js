@@ -2,10 +2,10 @@ import { el, button, modal, toast } from './lib/ui.js';
 import { sameEncryptionPassword } from './core/security.js';
 
 const PERMISSIONS = [
-  ['print', 'Print'],
-  ['copy', 'Copy text and images'],
-  ['annotate', 'Comment and fill in forms'],
-  ['edit', 'Edit content and pages'],
+  ['print', '打印'],
+  ['copy', '复制文本和图像'],
+  ['annotate', '批注与填写表单'],
+  ['edit', '编辑内容和页面'],
 ];
 /**
  * Choose the password readers need and, optionally, a permissions password with the actions
@@ -26,24 +26,24 @@ export function protectDialog(current, { signal } = {}) {
         autocomplete: 'new-password',
         maxlength: 127,
         value,
-        ...(unknownOpen && id !== 'protect-owner' && { placeholder: 'Unchanged' }),
+        ...(unknownOpen && id !== 'protect-owner' && { placeholder: '未更改' }),
       });
       return { input, row: el('div', { class: 'field' }, el('label', { for: id }, label), input) };
     };
-    const open = passwordField('protect-open', 'Password to open', current?.open || '');
-    const confirm = passwordField('protect-confirm', 'Confirm password', current?.open || '');
+    const open = passwordField('protect-open', '打开密码', current?.open || '');
+    const confirm = passwordField('protect-confirm', '确认密码', current?.open || '');
     if (unknownOpen) {
       const hint = el(
         'p',
         { class: 'muted field-hint', id: 'protect-open-hint' },
-        'Leave empty to keep the current password to open.',
+        '留空以保留当前的打开密码。',
       );
       open.row.append(hint);
       open.input.setAttribute('aria-describedby', hint.id);
     }
     const owner = passwordField(
       'protect-owner',
-      'Permissions password',
+      '权限密码',
       current?.permissions || '',
     );
     // A file opened with its reader password keeps restrictions whose password is not known
@@ -77,7 +77,7 @@ export function protectDialog(current, { signal } = {}) {
       'div',
       { class: 'stack protect-restrictions' },
       owner.row,
-      el('p', { class: 'muted' }, 'Without the permissions password, readers can only:'),
+      el('p', { class: 'muted' }, '没有权限密码时，读者仅允许：'),
       ...allowances.map((a) => a.row),
     );
     const syncRestrictions = () => {
@@ -96,21 +96,21 @@ export function protectDialog(current, { signal } = {}) {
       el(
         'p',
         { class: 'muted' },
-        'The PDF is encrypted with AES-256 when you download or save it. Passwords stay in this tab only.',
+        '下载或保存时，PDF 将使用 AES-256 加密。密码仅保留在此标签页中。',
       ),
       open.row,
       confirm.row,
       el(
         'label',
         { class: 'checkbox-row', for: 'protect-restrict' },
-        el('span', {}, 'Restrict printing, copying, or editing'),
+        el('span', {}, '限制打印、复制或编辑'),
         restrict,
       ),
       restrictions,
       el(
         'label',
         { class: 'checkbox-row', for: 'protect-show' },
-        el('span', {}, 'Show passwords'),
+        el('span', {}, '显示密码'),
         show,
       ),
     );
@@ -124,21 +124,21 @@ export function protectDialog(current, { signal } = {}) {
       const keepOpen = unknownOpen && !openValue && !confirm.input.value;
       if (!openValue && !restrict.checked && !keepOpen)
         return fail(
-          'Enter a password to open the PDF, or restrict what readers can do.',
+          '请输入打开 PDF 的密码，或限制读者可执行的操作。',
           open.input,
         );
       if (openValue !== confirm.input.value)
-        return fail('The passwords do not match.', confirm.input);
+        return fail('两次输入的密码不一致。', confirm.input);
       // Invisible characters such as soft hyphens are dropped from PDF passwords.
-      const invisible = 'Use visible characters. This password is empty in the PDF.';
+      const invisible = '请使用可见字符。此密码在 PDF 中为空。';
       if (openValue && sameEncryptionPassword(openValue, '')) return fail(invisible, open.input);
       if (restrict.checked && !ownerValue)
-        return fail('Enter a permissions password.', owner.input);
+        return fail('请输入权限密码。', owner.input);
       if (restrict.checked && sameEncryptionPassword(ownerValue, ''))
         return fail(invisible, owner.input);
       if (restrict.checked && sameEncryptionPassword(ownerValue, openValue))
         return fail(
-          'Use a different permissions password. These passwords are equivalent in the PDF, so the open password would lift the restrictions.',
+          '请使用不同的权限密码。在 PDF 中此权限密码与打开密码等价，会导致打开密码解除所有限制。',
           owner.input,
         );
       const allow = Object.fromEntries(
@@ -157,16 +157,16 @@ export function protectDialog(current, { signal } = {}) {
       apply();
     };
     const dialog = modal(
-      current ? 'Change password' : 'Protect with password',
+      current ? '修改密码' : '设置密码保护',
       form,
       [
-        button('Cancel', null, () => dialog.close()),
+        button('取消', null, () => dialog.close()),
         current &&
-          button('Remove password', 'LockOpen', () => {
+          button('移除密码', 'LockOpen', () => {
             result = null;
             dialog.close();
           }),
-        button(current ? 'Update' : 'Protect', 'Lock', apply, 'btn primary'),
+        button(current ? '更新' : '保护', 'Lock', apply, 'btn primary'),
       ].filter(Boolean),
       { signal },
     );

@@ -9,16 +9,16 @@ import { el } from './lib/ui.js';
  * Rectangles handed out are in PDF user space { x, y, width, height }.
  */
 const TYPE_LABELS = {
-  text: 'Text field',
-  date: 'Date field',
-  checkbox: 'Check box',
-  radio: 'Radio button',
-  dropdown: 'Dropdown',
-  listbox: 'List box',
-  button: 'Button',
-  signature: 'Signature field',
+  text: '文本字段',
+  date: '日期字段',
+  checkbox: '复选框',
+  radio: '单选按钮',
+  dropdown: '下拉列表',
+  listbox: '列表框',
+  button: '按钮',
+  signature: '签名字段',
 };
-export const fieldTypeLabel = (type) => TYPE_LABELS[type] || 'Field';
+export const fieldTypeLabel = (type) => TYPE_LABELS[type] || '字段';
 /** Where a box of `size` may start within low..high, or at least no further out than `origin`. */
 const span = (start, size, origin, low, high) =>
   Math.min(Math.max(start, Math.min(low, origin)), Math.max(high - size, origin));
@@ -191,7 +191,7 @@ export function createFormDesigner({ onMove, onOpen, onDelete, onSelect }) {
             'data-key': keyOf(field),
             'aria-label': `${fieldTypeLabel(field.type)} ${field.name}${option}`,
             'aria-pressed': String(keyOf(field) === selected),
-            title: `${field.name}${option} (${fieldTypeLabel(field.type)}). Double-click for properties.`,
+            title: `${field.name}${option}（${fieldTypeLabel(field.type)}）。双击打开属性。`,
             onpointerdown: (e) => startDrag(e, field, node, 'move'),
             onpointermove: moveDrag,
             onpointerup: endDrag,

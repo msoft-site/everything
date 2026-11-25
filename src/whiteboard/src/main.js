@@ -3505,7 +3505,7 @@ function mutate(
 }
 // The library sidebar shows an icon beside each preference, like its other rows.
 function themeControl(labelled = false) {
-  return `<label class="language-control">${labelled ? icon("languages") : ""}<span class="sr-only">Language</span><select id="language" aria-label="Language"><option value="en" lang="en" ${language === "en" ? "selected" : ""}>English</option><option value="fr" lang="fr" ${language === "fr" ? "selected" : ""}>Français</option></select></label><label class="theme-control">${icon("sun-moon")}<span class="sr-only">Appearance</span><select aria-label="Appearance" id="theme"><option value="system" ${theme === "system" ? "selected" : ""}>System</option><option value="light" ${theme === "light" ? "selected" : ""}>Light</option><option value="dark" ${theme === "dark" ? "selected" : ""}>Dark</option></select></label>`;
+  return `<label class="language-control">${labelled ? icon("languages") : ""}<span class="sr-only">Language</span><select id="language" aria-label="Language"><option value="zh-CN" lang="zh-CN" ${language === "zh-CN" ? "selected" : ""}>简体中文</option><option value="en" lang="en" ${language === "en" ? "selected" : ""}>English</option><option value="fr" lang="fr" ${language === "fr" ? "selected" : ""}>Français</option></select></label><label class="theme-control">${icon("sun-moon")}<span class="sr-only">Appearance</span><select aria-label="Appearance" id="theme"><option value="system" ${theme === "system" ? "selected" : ""}>System</option><option value="light" ${theme === "light" ? "selected" : ""}>Light</option><option value="dark" ${theme === "dark" ? "selected" : ""}>Dark</option></select></label>`;
 }
 // The strip of templates on the home page: a blank board, then templates
 // from the catalog under the names their boards get, in the interface's
@@ -12993,7 +12993,7 @@ window.addEventListener("storage", (e) => {
       e.key === null ? localStorage.getItem("whiteboard-language") : e.newValue;
     const apply = () => {
       if (
-        language === (chosen === "fr" ? "fr" : "en") ||
+        language === (chosen === "en" ? "en" : chosen === "fr" ? "fr" : "zh-CN") ||
         document.querySelector("#language") === null
       )
         return;

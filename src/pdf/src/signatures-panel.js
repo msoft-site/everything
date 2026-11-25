@@ -6,19 +6,19 @@ import { el, icon, button } from './lib/ui.js';
  * reader's Signature panel. Statuses come from verifySignatures (core/digital-signature.js).
  */
 const STATUS = {
-  valid: { glyph: 'Check', tone: 'good', label: 'Signature is valid' },
+  valid: { glyph: 'Check', tone: 'good', label: '签名有效' },
   'valid-unknown-identity': {
     glyph: 'Info',
     tone: 'unknown',
-    label: 'Signature is valid, but the signer’s identity is unknown',
+    label: '签名有效，但签名者身份未知',
   },
   modified: {
     glyph: 'Info',
     tone: 'bad',
-    label: 'The document was changed after it was signed',
+    label: '文档在签名后被修改',
   },
-  invalid: { glyph: 'X', tone: 'bad', label: 'Signature is invalid' },
-  unsupported: { glyph: 'Info', tone: 'unknown', label: 'Signature could not be checked' },
+  invalid: { glyph: 'X', tone: 'bad', label: '签名无效' },
+  unsupported: { glyph: 'Info', tone: 'unknown', label: '无法验证签名' },
 };
 
 const when = (date) =>
@@ -29,47 +29,47 @@ const when = (date) =>
 /** One sentence for the bar above the document, from all of its signatures. */
 export function signatureSummary(reports) {
   if (!reports.length) return null;
-  const count = reports.length === 1 ? 'The signature' : `All ${reports.length} signatures`;
+  const count = reports.length === 1 ? '该签名' : `全部 ${reports.length} 个签名`;
   // A certification signature (the author's) makes the whole document certified.
-  const signed = reports.some((r) => r.certification) ? 'Certified' : 'Signed';
+  const signed = reports.some((r) => r.certification) ? '已认证' : '已签名';
   if (reports.some((r) => r.status === 'invalid'))
-    return { tone: 'bad', text: 'At least one signature is invalid.' };
+    return { tone: 'bad', text: '至少有一个签名无效。' };
   if (reports.some((r) => r.status === 'modified'))
     return {
       tone: 'bad',
-      text: 'At least one signature has problems: the document changed after it was signed.',
+      text: '至少有一个签名存在问题：文档在签名后被修改。',
     };
   if (reports.some((r) => r.status === 'unsupported'))
-    return { tone: 'unknown', text: 'At least one signature could not be checked.' };
+    return { tone: 'unknown', text: '至少有一个签名无法验证。' };
   if (reports.every((r) => r.status === 'valid'))
     return {
       tone: 'good',
-      text: `${signed}, and ${count.toLowerCase()} ${reports.length === 1 ? 'is' : 'are'} valid.`,
+      text: `${signed}，且${count}有效。`,
     };
   return {
     tone: 'unknown',
-    text: `${signed}. ${count} ${reports.length === 1 ? 'is' : 'are'} valid, but the signer’s identity is not trusted on this device.`,
+    text: `${signed}。${count}有效，但签名者的身份在此设备上不受信任。`,
   };
 }
 
 export function createSignaturesPanel({ onGoTo, onValidate }) {
-  const list = el('ol', { class: 'signature-list', 'aria-label': 'Signatures' });
-  const empty = el('p', { class: 'panel-empty muted' }, 'This PDF has no certificate signatures.');
-  const validate = button('Validate all', 'RefreshCw', () => onValidate(), 'btn panel-action');
+  const list = el('ol', { class: 'signature-list', 'aria-label': '签名列表' });
+  const empty = el('p', { class: 'panel-empty muted' }, '此 PDF 没有证书签名。');
+  const validate = button('验证全部', 'RefreshCw', () => onValidate(), 'btn panel-action');
   const root = el('div', { class: 'signatures-panel' }, validate, empty, list);
 
   function details(report) {
     const rows = [
-      ['Signed by', [report.signer?.name, report.signer?.email].filter(Boolean).join(' · ')],
-      ['Organization', report.signer?.organization],
-      ['Time', when(report.signingTime)],
-      ['Reason', report.reason],
-      ['Location', report.location],
-      ['Contact', report.contactInfo],
-      ['Field', report.fieldName],
-      ['Appearance', report.invisible ? 'Invisible' : ''],
+      ['签名者', [report.signer?.name, report.signer?.email].filter(Boolean).join(' · ')],
+      ['组织', report.signer?.organization],
+      ['时间', when(report.signingTime)],
+      ['原因', report.reason],
+      ['位置', report.location],
+      ['联系方式', report.contactInfo],
+      ['字段', report.fieldName],
+      ['外观', report.invisible ? '不可见' : ''],
       [
-        'Certificate',
+        '证书',
         report.chain?.length
           ? report.chain
               .map((cert) => cert.commonName || cert.subject || '')
@@ -78,19 +78,19 @@ export function createSignaturesPanel({ onGoTo, onValidate }) {
           : '',
       ],
       [
-        'Revision',
+        '版本',
         report.revision && report.totalRevisions
-          ? `${report.revision} of ${report.totalRevisions}`
+          ? `第 ${report.revision} 版（共 ${report.totalRevisions} 版）`
           : '',
       ],
-      ['Certification', report.certification ? `Level ${report.certification.level}` : ''],
+      ['认证', report.certification ? `级别 ${report.certification.level}` : ''],
       [
-        'Certificate valid',
+        '证书有效期',
         report.chain?.[0]
-          ? `${when(new Date(report.chain[0].validFrom))} to ${when(new Date(report.chain[0].validTo))}`
+          ? `${when(new Date(report.chain[0].validFrom))} 至 ${when(new Date(report.chain[0].validTo))}`
           : '',
       ],
-      ['Revocation', report.revocation],
+      ['吊销状态', report.revocation],
     ].filter(([, value]) => value);
     const changes = [
       ...(report.modifications?.allowed || []).map((text) => el('li', {}, text)),
@@ -100,9 +100,9 @@ export function createSignaturesPanel({ onGoTo, onValidate }) {
     return el(
       'details',
       { class: 'signature-details' },
-      el('summary', {}, 'Details'),
+      el('summary', {}, '详细信息'),
       el('dl', {}, ...rows.flatMap(([term, value]) => [el('dt', {}, term), el('dd', {}, value)])),
-      changes.length > 0 && el('p', { class: 'signature-subhead' }, 'Changes after signing'),
+      changes.length > 0 && el('p', { class: 'signature-subhead' }, '签名后的更改'),
       changes.length > 0 && el('ul', { class: 'signature-changes' }, ...changes),
       problems.length > 0 &&
         el('ul', { class: 'signature-problems' }, ...problems.map((text) => el('li', {}, text))),
@@ -117,14 +117,14 @@ export function createSignaturesPanel({ onGoTo, onValidate }) {
       list.replaceChildren(
         ...reports.map((report, i) => {
           const status = STATUS[report.status] || STATUS.unsupported;
-          const signer = report.signer?.name || report.fieldName || `Signature ${i + 1}`;
+          const signer = report.signer?.name || report.fieldName || `签名 ${i + 1}`;
           // The author's certification and a document timestamp are named for what they are.
           const action =
             report.kind === 'certification'
-              ? 'Certified'
+              ? '认证'
               : report.kind === 'timestamp'
-                ? 'Timestamped'
-                : 'Signed';
+                ? '盖时间戳'
+                : '签名';
           return el(
             'li',
             { class: `signature-item tone-${status.tone}` },
@@ -142,7 +142,7 @@ export function createSignaturesPanel({ onGoTo, onValidate }) {
                 el(
                   'span',
                   { class: 'signature-title' },
-                  `Rev. ${report.revision ?? i + 1}: ${action} by ${signer}`,
+                  `版本 ${report.revision ?? i + 1}：由 ${signer} ${action}`,
                 ),
                 el('span', { class: 'signature-state' }, report.summary || status.label),
               ),
@@ -151,7 +151,7 @@ export function createSignaturesPanel({ onGoTo, onValidate }) {
             Number.isInteger(report.page) &&
               !report.invisible &&
               button(
-                `Go to signature on page ${report.page + 1}`,
+                `转到第 ${report.page + 1} 页的签名`,
                 null,
                 () => onGoTo(report),
                 'text-btn signature-go',
@@ -173,7 +173,7 @@ export function createSignatureBar({ onOpenPanel }) {
     { class: 'signature-bar', role: 'status', hidden: true },
     glyph,
     text,
-    button('Signature panel', null, () => onOpenPanel(), 'text-btn'),
+    button('签名面板', null, () => onOpenPanel(), 'text-btn'),
   );
   return {
     el: root,

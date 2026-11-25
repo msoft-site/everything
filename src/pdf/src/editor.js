@@ -374,7 +374,7 @@ export function createEditor({
         return await fn(...args);
       } catch (e) {
         if (destroyed || P.isSignInCancelled(e)) return;
-        toast(e.message || 'This action could not be completed.', { error: true });
+        toast(e.message || '操作无法完成。', { error: true });
       }
     };
   function permissionMenu(items) {
@@ -401,7 +401,7 @@ export function createEditor({
     null,
     safe(async () => {
       if (saving || busy) return;
-      const next = await promptText('Name this PDF', 'File name', name.replace(/\.pdf$/i, ''));
+      const next = await promptText('为 PDF 命名', '文件名', name.replace(/\.pdf$/i, ''));
       const nextName = next && safeName(next);
       if (!nextName || nextName === name || destroyed) return;
       // A PDF in Puter belongs to the signed-in account; settle a pending account check first.
@@ -410,12 +410,12 @@ export function createEditor({
       if (destroyed) return;
       if (path) {
         if (saving || busy || !getUser())
-          throw new Error('The file could not be renamed right now. Try again in a moment.');
+          throw new Error('当前无法重命名文件，请稍后重试。');
         // A PDF saved in Puter is renamed where it is, as the file manager would: saving it
         // under a new name used to leave the old file behind beside a second copy.
         saveGeneration++;
         saving = true;
-        activity = 'Renaming…';
+        activity = '正在重命名…';
         updateStatus();
         const renaming = path;
         try {
@@ -431,15 +431,15 @@ export function createEditor({
             if (destroyed) return;
             remote = renamed ? { ...renamed, size: remote.size } : null;
           }
-          toast(`Renamed to ${name}.`);
+          toast(`已重命名为“${name}”。`);
         } catch (error) {
           if (destroyed) return;
           if (P.isConnectionFailure(error)) throw error;
           const reason = error?.message || error?.error?.message;
           throw new Error(
             /exist/i.test(reason || '') || error?.code === 'item_with_same_name_exists'
-              ? `A file named ${nextName} is already in that folder. Choose another name.`
-              : `The file could not be renamed${reason ? `: ${reason.replace(/\.$/, '')}` : ''}.`,
+              ? `该文件夹中已存在名为“${nextName}”的文件。请选择其他名称。`
+              : `文件重命名失败${reason ? `：${reason.replace(/\.$/, '')}` : ''}。`,
           );
         } finally {
           activity = null;
@@ -748,11 +748,11 @@ export function createEditor({
             icon: 'Pencil',
             disabled: busy,
             onSelect: pageDialog(async () => {
-              const title = await promptText('Rename bookmark', 'Bookmark name', entry.title);
+              const title = await promptText('重命名书签', '书签名', entry.title);
               if (title == null || destroyed) return;
               await mutate(
                 (doc) => renameBookmark(doc, entry.path, title),
-                'Bookmark renamed.',
+                '书签已重命名。',
                 'assemble',
               );
             }),
@@ -763,7 +763,7 @@ export function createEditor({
             icon: 'Trash2',
             disabled: busy,
             onSelect: pageAction(() =>
-              mutate((doc) => removeBookmark(doc, entry.path), 'Bookmark removed.', 'assemble'),
+              mutate((doc) => removeBookmark(doc, entry.path), '书签已删除。', 'assemble'),
             ),
           },
         ],
@@ -812,7 +812,7 @@ export function createEditor({
       const pageFile = pageFiles.get(key);
       if (pageFile) {
         const bytes = await pdf.getAttachmentContent(pageFile.fileId);
-        if (!bytes) throw new Error('This attachment could not be read.');
+        if (!bytes) throw new Error('无法读取此附件。');
         return download(bytes, fileName, 'application/octet-stream');
       }
       const doc = await PDFDocument.load(session.bytes, { updateMetadata: false });
@@ -827,15 +827,15 @@ export function createEditor({
         requireAccess('annotate');
         if (
           !(await confirmAction(
-            'Remove attachment?',
-            `Remove ${fileName} and its paperclip from page ${pageFile.page + 1}? You can undo this while the PDF is open.`,
+            '删除附件？',
+            `从第 ${pageFile.page + 1} 页删除“${fileName}”及其回形针图标？在 PDF 打开期间您可以撤销此操作。`,
             'Remove',
           ))
         )
           return;
         return mutate(
           (doc) => deleteAnnotation(doc, pageFile.page, editorAnnotationId(pageFile.id)),
-          `${fileName} removed.`,
+          `“${fileName}”已删除。`,
           'annotate',
         );
       }
@@ -843,7 +843,7 @@ export function createEditor({
       if (
         !(await confirmAction(
           'Remove attachment?',
-          `Remove ${fileName} from this PDF? You can undo this while the PDF is open.`,
+          `从当前 PDF 中删除“${fileName}”？在 PDF 打开期间您可以撤销此操作。`,
           'Remove',
         ))
       )
@@ -1019,8 +1019,8 @@ export function createEditor({
     if (announce)
       toast(
         reports.length
-          ? `${reports.length} ${reports.length === 1 ? 'signature' : 'signatures'} checked.`
-          : 'This PDF has no certificate signatures.',
+          ? `已检查 ${reports.length} 个数字证书签名。`
+          : '此 PDF 没有数字证书签名。',
       );
   }
   /** Editing a signed PDF rewrites it, which invalidates its signatures; ask once first. */
@@ -1028,9 +1028,9 @@ export function createEditor({
     if (signedEditAccepted || !signatureReports.some((report) => report.byteRange)) return true;
     const count = signatureReports.length;
     const ok = await confirmAction(
-      'Edit a signed PDF?',
-      `This PDF has ${count === 1 ? 'a certificate signature' : `${count} certificate signatures`}. Editing it here saves a new copy of the file, and every signature in it will show as invalid. Sign again after editing if the document needs a valid signature.`,
-      'Edit anyway',
+      '编辑已签名的 PDF？',
+      `此 PDF 包含 ${count} 个数字证书签名。在此编辑将保存该文件的新副本，其中的所有签名将显示为无效。如果文档需要有效签名，请在编辑完成后重新签名。`,
+      '仍然编辑',
     );
     if (ok) signedEditAccepted = true;
     return ok;
@@ -2152,30 +2152,30 @@ export function createEditor({
     icon('Search', 17),
     searchInput,
     searchCount,
-    iconButton('Previous match', 'ChevronLeft', () => jumpMatch(-1)),
-    iconButton('Next match', 'ChevronRight', () => jumpMatch(1)),
-    iconButton('Close search', 'X', closeSearch),
+    iconButton('上一个匹配项', 'ChevronLeft', () => jumpMatch(-1)),
+    iconButton('下一个匹配项', 'ChevronRight', () => jumpMatch(1)),
+    iconButton('关闭搜索', 'X', closeSearch),
     toolSuggestions,
   );
   const statusPage = el('span');
-  const pagesButton = iconButton('Toggle pages panel', 'PanelRight', () => toggleSidebar(), {
+  const pagesButton = iconButton('切换页面面板', 'PanelRight', () => toggleSidebar(), {
     'aria-controls': 'page-sidebar',
     'aria-expanded': 'true',
   });
   // The menu bar sits in the title bar, where a desktop PDF editor's window keeps its menus.
   const menubar = createMenubar(
     [
-      { label: 'File', open: openFileMenu },
-      { label: 'Edit', open: openEditMenu },
-      { label: 'View', open: openViewMenu },
-      { label: 'Page', open: openPageMenu },
-      { label: 'Insert', open: openInsertMenu },
+      { label: '文件', open: openFileMenu },
+      { label: '编辑', open: openEditMenu },
+      { label: '视图', open: openViewMenu },
+      { label: '页面', open: openPageMenu },
+      { label: '插入', open: openInsertMenu },
     ],
-    { label: 'PDF menus' },
+    { label: 'PDF 菜单' },
   );
   // On a phone the menus fold into one button; its File menu ends with the others.
   const menuButton = iconButton(
-    'Menu',
+    '菜单',
     'EllipsisVertical',
     (e) => openFileMenu(e.currentTarget, true),
     { class: 'icon-btn mobile-only', 'aria-haspopup': 'menu', 'aria-expanded': 'false' },
@@ -2193,20 +2193,20 @@ export function createEditor({
   });
   const toolsPane = el(
     'aside',
-    { id: 'tools-pane', class: 'tools-pane', 'aria-label': 'Tools' },
+    { id: 'tools-pane', class: 'tools-pane', 'aria-label': '工具' },
     toolsPanel.root,
   );
   /** The tabs across the top open the most used tools, as in a desktop PDF editor. */
   const TOP_TABS = [
-    ['all', 'Tools'],
-    ['edit', 'Edit'],
-    ['comment', 'Comment'],
-    ['export', 'Export'],
-    ['fill-sign', 'Fill & Sign'],
+    ['all', '全部工具'],
+    ['edit', '编辑'],
+    ['comment', '批注'],
+    ['export', '导出'],
+    ['fill-sign', '填写与签名'],
   ];
   const topTabs = el(
     'nav',
-    { class: 'top-tabs', 'aria-label': 'Tool sets' },
+    { class: 'top-tabs', 'aria-label': '工具集' },
     ...TOP_TABS.map(([id, label]) =>
       el(
         'button',
@@ -2282,11 +2282,11 @@ export function createEditor({
     {
       type: 'button',
       class: 'find-tools',
-      'aria-label': 'Find text or tools',
-      title: withShortcut('Find text or tools', 'Mod+F'),
+      'aria-label': '查找文本或工具',
+      title: withShortcut('查找文本或工具', 'Mod+F'),
       onclick: () => openSearch(),
     },
-    el('span', {}, 'Find text or tools'),
+    el('span', {}, '查找文本或工具'),
     icon('Search', 17),
   );
   // The quick tools are one stop in the tab order, as a toolbar is: the arrow keys move
@@ -2298,7 +2298,7 @@ export function createEditor({
     {
       class: 'toolbar quick-tools',
       role: 'toolbar',
-      'aria-label': 'PDF tools',
+      'aria-label': 'PDF 工具',
       onfocusin: (e) => {
         if (!(e.target instanceof HTMLButtonElement)) return;
         toolbarStop = e.target;
@@ -2329,13 +2329,13 @@ export function createEditor({
     el(
       'div',
       { class: 'tool-group' },
-      button('Image', 'Image', safe(insertImage), 'tool-btn', {
+      button('图片', 'Image', safe(insertImage), 'tool-btn', {
         'data-permission': 'edit',
       }),
-      button('Sign', 'Signature', safe(insertSignature), 'tool-btn', {
+      button('签名', 'Signature', safe(insertSignature), 'tool-btn', {
         'data-permission': 'edit',
       }),
-      button('Fill forms', 'ListChecks', safe(formDialog), 'tool-btn', {
+      button('填写表单', 'ListChecks', safe(formDialog), 'tool-btn', {
         'data-permission': 'fill',
       }),
     ),
@@ -2375,12 +2375,12 @@ export function createEditor({
         el(
           'div',
           { class: 'topbar-row' },
-          iconButton('Back to your PDFs', 'House', goHome, { class: 'icon-btn home-btn' }),
+          iconButton('返回文档库', 'House', goHome, { class: 'icon-btn home-btn' }),
           menubar.el,
           el(
             'div',
             { class: 'document-tab' },
-            el('span', { class: 'editor-brand' }, appIcon(18, 'PDF Editor')),
+            el('span', { class: 'editor-brand' }, appIcon(18, 'PDF 编辑器')),
             el(
               'div',
               { class: 'document-info' },
@@ -2393,7 +2393,7 @@ export function createEditor({
             { class: 'header-right' },
             menuButton,
             appsButton(),
-            iconButton('Settings', 'Settings2', settings),
+            iconButton('设置', 'Settings2', settings),
             userMenuSlot(),
           ),
         ),
@@ -2488,7 +2488,7 @@ export function createEditor({
       return;
     event.preventDefault();
     if (event.type !== 'dragstart')
-      toast('Copying is not allowed by this PDF’s permissions.', { error: true });
+      toast('此 PDF 的权限不允许复制。', { error: true });
   };
   document.addEventListener('copy', restrictCopy);
   document.addEventListener('cut', restrictCopy);
@@ -3100,7 +3100,7 @@ export function createEditor({
       if (preparing) refreshDesigner().catch(() => {});
     } catch (e) {
       if (e.name !== 'RenderingCancelledException' && token === pageRenderGeneration && !destroyed)
-        toast('This page could not be rendered. Try another page or reopen the PDF.');
+        toast('无法渲染此页面。请尝试其他页面或重新打开 PDF。');
     } finally {
       rendered.width = rendered.height = 0;
       if (token === pageRenderGeneration && !destroyed) {
@@ -3507,15 +3507,15 @@ export function createEditor({
       toast(
         // A touch screen usually has no Escape key.
         touchScreen?.matches
-          ? 'Read mode. Turn it off in the View menu to show the tools again.'
-          : 'Read mode. Press Escape to show the tools again.',
+          ? '阅读模式。在“视图”菜单中将其关闭以再次显示工具。'
+          : '阅读模式。按 Esc 键再次显示工具。',
       );
     setTimeout(refitPage, 0);
   }
   function toggleFullScreen() {
     const area = editorRoot.querySelector('.document-area');
     if (document.fullscreenElement) document.exitFullscreen?.().catch(() => {});
-    else area.requestFullscreen?.().catch(() => toast('Full screen is not available here.'));
+    else area.requestFullscreen?.().catch(() => toast('当前环境不支持全屏。'));
   }
   const onFullscreen = () => {
     editorRoot.classList.toggle('full-screen', !!document.fullscreenElement);
@@ -4300,7 +4300,7 @@ export function createEditor({
         );
       });
       if (overText) {
-        toast('This text cannot yet be edited. Choose an empty area to add text.');
+        toast('此文本暂无法编辑。请选择空白区域以添加文本。');
         return;
       }
       safe(() => textDialog(p))();
@@ -4617,7 +4617,7 @@ export function createEditor({
     try {
       const target = await destinationTarget(thisPdf, link.dest);
       if (destroyed || pdf !== thisPdf || pendingNavigation !== request) return;
-      if (!target) toast('This link points nowhere in the PDF.');
+      if (!target) toast('此链接在 PDF 中未指向任何位置。');
       // A link to a place on this page scrolls there; one to the page itself has arrived.
       else if (target.page !== pageIndex || target.left != null || target.top != null)
         await showDestination(target);
@@ -4639,7 +4639,7 @@ export function createEditor({
         onSelect: safe(() => editLink(link)),
       },
       !link.blocked && {
-        label: link.url ? 'Open link' : 'Go to linked page',
+        label: link.url ? '打开链接' : '转到链接页面',
         icon: link.url ? 'ExternalLink' : 'ArrowRight',
         disabled: link.readOnly,
         onSelect: safe(() => followLink(link)),
@@ -4651,7 +4651,7 @@ export function createEditor({
         onSelect: safe(async () => {
           requireAccess('copy');
           await copyText(link.url);
-          toast('Link address copied.');
+          toast('已复制链接地址。');
         }),
       },
       !link.blocked && { separator: true },
@@ -4789,10 +4789,10 @@ export function createEditor({
         class: 'input',
         id: 'link-url',
         inputmode: 'url',
-        placeholder: 'example.com/page',
+        placeholder: '例如：example.com/page',
         value: initial?.url || '',
         autocomplete: 'off',
-        'aria-label': 'Web address to link to',
+        'aria-label': '链接的目标网址',
       });
       const pageNumber = el('input', {
         type: 'number',
@@ -4802,7 +4802,7 @@ export function createEditor({
         max: pdf.numPages,
         step: 1,
         value: initial?.page != null ? initial.page + 1 : Math.min(pdf.numPages, pageIndex + 2),
-        'aria-label': 'Page to link to',
+        'aria-label': '链接的目标页码',
       });
       const kind = (value, label, checked) =>
         el(
@@ -4812,8 +4812,8 @@ export function createEditor({
           el('span', {}, label),
         );
       const isPage = initial?.page != null;
-      const webChoice = kind('url', 'Web address', !isPage),
-        pageChoice = kind('page', 'Page in this PDF', isPage);
+      const webChoice = kind('url', '网页地址', !isPage),
+        pageChoice = kind('page', '此 PDF 中的页面', isPage);
       url.addEventListener('input', () => {
         webChoice.querySelector('input').checked = true;
       });
@@ -4822,7 +4822,7 @@ export function createEditor({
       });
       const list = el(
         'div',
-        { class: 'choice-list', role: 'radiogroup', 'aria-label': 'Link target' },
+        { class: 'choice-list', role: 'radiogroup', 'aria-label': '链接目标' },
         el('div', { class: 'choice-with-input' }, webChoice, url),
         el('div', { class: 'choice-with-input' }, pageChoice, pageNumber),
       );
@@ -4839,7 +4839,7 @@ export function createEditor({
           } else {
             const to = Number(pageNumber.value);
             if (!Number.isInteger(to) || to < 1 || to > pdf.numPages)
-              throw new Error(`Choose a page between 1 and ${pdf.numPages}.`);
+              throw new Error(`请选择 1 到 ${pdf.numPages} 之间的页码。`);
             result = { page: to - 1 };
           }
         } catch (error) {
@@ -4854,8 +4854,8 @@ export function createEditor({
         apply();
       };
       const actions = [
-        button('Cancel', null, () => dialog.close()),
-        button(initial ? 'Save link' : 'Add link', 'Link', apply, 'btn primary'),
+        button('取消', null, () => dialog.close()),
+        button(initial ? '保存链接' : '添加链接', 'Link', apply, 'btn primary'),
       ];
       if (link && !link.blocked)
         actions.unshift(
@@ -4868,7 +4868,7 @@ export function createEditor({
             }),
           ),
         );
-      const dialog = modal(initial ? 'Edit link' : 'Add link', form, actions);
+      const dialog = modal(initial ? '编辑链接' : '添加链接', form, actions);
       dialog.addEventListener('close', () => resolve(result), { once: true });
       onOpen?.(dialog);
       (isPage ? pageNumber : url).focus();
@@ -4959,10 +4959,10 @@ export function createEditor({
       el(
         'p',
         { class: 'muted' },
-        'Trim these margins from the edges of the page as you see it. The content stays in the file; Remove crop shows the full page again.',
+        '按当前视图裁切这些页边距。原始内容仍保留在文件中；“清除裁剪”可再次显示完整页面。',
       ),
       el('div', { class: 'field-grid' }, ...fields.map((f) => f.row)),
-      el('p', { class: 'muted' }, 'Pages'),
+      el('p', { class: 'muted' }, '页面范围'),
       choices.list,
     );
     const apply = safe(async () => {
@@ -4975,10 +4975,10 @@ export function createEditor({
         d,
         (doc) => cropPages(doc, indices, margins),
         count === 1
-          ? 'Page cropped.'
+          ? '页面已裁剪。'
           : count === pdf.numPages
-            ? `All ${count} pages cropped.`
-            : `${count} pages cropped.`,
+            ? `全部 ${count} 页已裁剪。`
+            : `${count} 页已裁剪。`,
       );
       if (committed && !destroyed && tool === 'crop') await setTool('select');
     });
@@ -4986,9 +4986,9 @@ export function createEditor({
       e.preventDefault();
       apply();
     };
-    const d = modal('Crop pages', form, [
+    const d = modal('裁剪页面', form, [
       button('Cancel', null, () => d.close()),
-      button('Crop', 'Crop', apply, 'btn primary'),
+      button('裁剪', 'Crop', apply, 'btn primary'),
     ]);
     fields[0].input.focus();
   }
@@ -6757,10 +6757,10 @@ export function createEditor({
       if (!canOpenDialog(version)) return;
       toast(
         xfa
-          ? 'This PDF is an XFA form, which can be filled in only in Adobe Acrobat or Adobe Reader. Use Text to write on the page.'
+          ? '此 PDF 是 XFA 表单，只能在 Adobe Acrobat 或 Adobe Reader 中填写。请使用“文本”工具在页面上书写。'
           : fields.some((field) => field.signature)
-            ? 'This PDF has no fields to fill in. Sign its signature fields with Sign with a certificate.'
-            : 'This PDF has no fillable fields. Use Text to write on the page.',
+            ? '此 PDF 没有可填写的表单字段。请使用“使用证书签名”签署其签名字段。'
+            : '此 PDF 没有可填写的表单字段。请使用“文本”工具在页面上书写。',
       );
       return;
     }
@@ -6776,7 +6776,7 @@ export function createEditor({
       el(
         'p',
         { class: 'muted' },
-        'Complete the PDF’s existing form fields. Changes apply when you save the form.',
+        '完成此 PDF 的现有表单字段。更改将在保存表单时生效。',
       ),
     );
     fields.forEach((field, i) => {
@@ -6809,7 +6809,7 @@ export function createEditor({
           type: 'text',
           class: 'input',
           list,
-          placeholder: 'Choose or type an option',
+          placeholder: '选择或输入选项',
           autocomplete: 'off',
           spellcheck: String(field.spellcheck),
           disabled: field.readOnly,
@@ -6820,7 +6820,7 @@ export function createEditor({
             ? ''
             : inputOptions.find((choice) => choice.value === selected)?.label ||
               selected ||
-              '(Empty option)';
+              '(空选项)';
         form.append(
           el(
             'datalist',
@@ -6833,7 +6833,7 @@ export function createEditor({
           'select',
           { id, class: 'input', multiple: field.multiple, disabled: field.readOnly },
           !field.multiple &&
-            el('option', { value: '', 'data-placeholder': true }, 'Choose an option'),
+            el('option', { value: '', 'data-placeholder': true }, '请选择一个选项'),
           ...field.options.map((option) =>
             el(
               'option',
@@ -6873,7 +6873,7 @@ export function createEditor({
             'label',
             { for: id, title: field.tooltip ? field.name : null },
             (field.tooltip || field.name) +
-              (field.readOnly ? ' (read only)' : field.required ? ' (required)' : ''),
+              (field.readOnly ? '（只读）' : field.required ? '（必填）' : ''),
           ),
           control,
         ),
@@ -6900,7 +6900,7 @@ export function createEditor({
         else values[key] = control.value;
       });
       try {
-        await mutateDialog(d, (doc) => fillFields(doc, values), 'Form saved.', 'fill');
+        await mutateDialog(d, (doc) => fillFields(doc, values), '表单已保存。', 'fill');
       } catch (error) {
         // A value refused for its field: the message shows, then the field takes the focus.
         const refused = d.open && controls.get(error?.field)?.control;
@@ -6917,9 +6917,9 @@ export function createEditor({
       e.preventDefault();
       apply();
     };
-    const d = modal('Fill forms', form, [
+    const d = modal('填写表单', form, [
       button('Cancel', null, () => d.close()),
-      button('Save form', 'Check', apply, 'btn primary'),
+      button('保存表单', 'Check', apply, 'btn primary'),
     ]);
   }
   /** Resolve after page operations and queued history, including their redraws, settle. */
@@ -7108,7 +7108,7 @@ export function createEditor({
         if (protection === savedProtection) protectionDirty = false;
         remote = await written(item, path, bytes.length, signal);
         if (destroyed || token !== saveGeneration) return;
-        toast(created ? `Saved to local as ${name}.` : 'PDF saved locally.');
+        toast(created ? `已保存到本地存储：“${name}”。` : 'PDF 已保存到本地存储。');
       }
     } catch (error) {
       if (!signal.aborted) throw error;
@@ -7132,7 +7132,7 @@ export function createEditor({
     const output = savedProtection ? await protectPdf(bytes, savedProtection) : bytes;
     if (output.length > MAX_FILE_SIZE)
       throw new Error(
-        'This export would exceed the 100 MB PDF limit. Reduce file size before saving or downloading.',
+        '导出文件将超过 100 MB 的 PDF 限制。请在保存或下载前减小文件大小。',
       );
     return output;
   }
@@ -7151,7 +7151,7 @@ export function createEditor({
       if (destroyed) return;
       const revision = session.revision,
         savedProtection = protection;
-      activity = protection ? 'Encrypting…' : null;
+      activity = protection ? '正在加密…' : null;
       updateStatus();
       try {
         bytes = await exportBytes();
@@ -7167,7 +7167,7 @@ export function createEditor({
         session.markSaved(revision);
         if (protection === savedProtection) protectionDirty = false;
       }
-      toast(protection ? 'Password-protected PDF downloaded.' : 'PDF downloaded.');
+      toast(protection ? '密码保护的 PDF 已下载。' : 'PDF 已下载。');
     } finally {
       downloading = false;
       if (!destroyed) {
@@ -7195,7 +7195,7 @@ export function createEditor({
     await renderPage();
     if (destroyed || protection !== next) return false;
     updateStatus();
-    toast('Editing unlocked. The PDF keeps its existing protection.');
+    toast('已解锁编辑权限。PDF 将保留现有保护设置。');
     return true;
   }
   /** Set, change, or remove the password applied when the PDF is downloaded or saved. */
@@ -7205,7 +7205,7 @@ export function createEditor({
     // Encrypting needs Web Crypto, which a page served over plain http does not have; say so
     // before a password is typed rather than at the download that would fail.
     if (!passwordsSupported())
-      throw new Error('Password protection needs a secure connection. Open this page over https.');
+      throw new Error('密码保护需要安全连接。请通过 https 打开此页面。');
     if (!access().owner && !(await unlockOwner(request))) return;
     // Authentication still unlocks editing, but a later dialog retires this follow-up.
     if (!canOpenDialog(request.version)) return;
@@ -7222,8 +7222,8 @@ export function createEditor({
     updateStatus();
     toast(
       next
-        ? 'The password is applied when you download or save.'
-        : 'The password is removed when you download or save.',
+        ? '密码将在下载或保存时生效。'
+        : '密码将在下载或保存时移除。',
     );
   }
   async function saveAs() {
@@ -7261,7 +7261,7 @@ export function createEditor({
         // The picker wrote a new file: later saves check that one, not the file opened before.
         remote = null;
         updateStatus();
-        toast(`Saved to local as ${name}.`);
+        toast(`已另存为本地文件：“${name}”。`);
         const savedPath = path;
         const info = await written(item, savedPath, size);
         if (!destroyed && token === saveGeneration && path === savedPath) remote = info;
@@ -7269,7 +7269,7 @@ export function createEditor({
       .catch((e) => {
         // A refusal says why; only a rejection without any reason reads as a cancel.
         if (!destroyed && token === saveGeneration)
-          toast(reasonOf(e) ? saveFailure(e).message : 'Save cancelled.', { error: true });
+          toast(reasonOf(e) ? saveFailure(e).message : '已取消保存。', { error: true });
       });
   }
   /* ---------- Menus ---------- */
@@ -7321,21 +7321,21 @@ export function createEditor({
     return [
       {
         id: 'export',
-        label: 'Export a PDF',
-        group: 'Create & Edit',
+        label: '导出 PDF',
+        group: '创建与编辑',
         featured: true,
-        description: 'Save the PDF, or its pages, in another format.',
+        description: '将 PDF 或其页面保存为其他格式。',
         sections: () => [
           {
-            title: 'Export to',
+            title: '导出为',
             items: [
               ...[
                 ['docx', 'Microsoft Word (.docx)…', 'export-docx'],
-                ['xlsx', 'Spreadsheet (.xlsx)…', 'export-xlsx'],
-                ['pptx', 'Presentation (.pptx)…', 'export-pptx'],
-                ['rtf', 'Rich text (.rtf)…', 'export-rtf'],
-                ['html', 'Web page (.html)…', 'export-html'],
-                ['txt', 'Plain text (.txt)…', 'export-txt'],
+                ['xlsx', '电子表格 (.xlsx)…', 'export-xlsx'],
+                ['pptx', '演示文稿 (.pptx)…', 'export-pptx'],
+                ['rtf', '富文本 (.rtf)…', 'export-rtf'],
+                ['html', '网页 (.html)…', 'export-html'],
+                ['txt', '纯文本 (.txt)…', 'export-txt'],
               ].map(([format, label, glyph]) => ({
                 label,
                 icon: glyph,
@@ -7344,21 +7344,21 @@ export function createEditor({
                 onSelect: () => pageDialog(() => officeExportDialog(format))(),
               })),
               {
-                label: 'Image (PNG or JPEG)…',
+                label: '图片 (PNG 或 JPEG)…',
                 icon: 'export-image',
                 permission: 'copy',
                 disabled: noDocument(),
                 onSelect: () => pageDialog(pageImagesDialog)(),
               },
               {
-                label: 'This page as a picture',
+                label: '将此页保存为图片',
                 glyph: 'ImageDown',
                 permission: 'copy',
                 disabled: noDocument(),
                 onSelect: () => pageAction(() => downloadPageImage(pageIndex))(),
               },
               {
-                label: 'PDF copy',
+                label: 'PDF 副本',
                 glyph: 'Download',
                 disabled: busy,
                 onSelect: () => safe(downloadPdf)(),
@@ -7369,32 +7369,32 @@ export function createEditor({
       },
       {
         id: 'edit',
-        label: 'Edit a PDF',
+        label: '编辑 PDF',
         group: 'Create & Edit',
         featured: true,
-        description: 'Change text and images, or add new content to the pages.',
+        description: '修改文本和图片，或向页面添加新内容。',
         permission: 'edit',
         sections: () => [
           {
-            title: 'Add content',
+            title: '添加内容',
             items: [
               {
-                label: 'Add text',
+                label: '添加文本',
                 icon: 'add-text',
                 pressed: toolPressed('text'),
                 permission: 'edit',
-                hint: 'Click existing text to edit it',
+                hint: '点击现有文本即可编辑',
                 onSelect: () => safe(() => setTool('text'))(),
               },
               {
-                label: 'Add image',
+                label: '添加图片',
                 icon: 'add-image',
                 permission: 'edit',
                 disabled: busy,
                 onSelect: () => safe(insertImage)(),
               },
               {
-                label: 'Add link',
+                label: '添加链接',
                 icon: 'link',
                 pressed: toolPressed('link'),
                 permission: 'annotate',
@@ -7404,17 +7404,17 @@ export function createEditor({
             ],
           },
           {
-            title: 'Edit content',
+            title: '编辑内容',
             items: [
               {
-                label: 'Edit text and images',
+                label: '编辑文本和图片',
                 icon: 'edit',
                 pressed: toolPressed('select'),
-                hint: 'Double-click text; drag images and shapes',
+                hint: '双击文本；拖动图片和形状',
                 onSelect: () => safe(() => setTool('select'))(),
               },
               {
-                label: 'Crop pages',
+                label: '裁剪页面',
                 icon: 'crop',
                 pressed: toolPressed('crop'),
                 permission: 'edit',
@@ -7424,24 +7424,24 @@ export function createEditor({
             ],
           },
           {
-            title: 'Page design',
+            title: '页面设计',
             items: [
               {
-                label: 'Header and footer…',
+                label: '页眉和页脚…',
                 icon: 'header-footer',
                 permission: 'edit',
                 disabled: noDocument(),
                 onSelect: () => pageDialog(headerFooterDialog)(),
               },
               {
-                label: 'Watermark…',
+                label: '水印…',
                 icon: 'watermark',
                 permission: 'edit',
                 disabled: noDocument(),
                 onSelect: () => pageDialog(watermarkDialog)(),
               },
               {
-                label: 'Page numbers…',
+                label: '页码…',
                 icon: 'page-numbers',
                 permission: 'edit',
                 disabled: noDocument(),
@@ -7456,15 +7456,15 @@ export function createEditor({
                   pageDialog((version) => headerFooterDialog(version, { bates: true }))(),
               },
               {
-                label: 'Remove headers and footers',
+                label: '清除页眉和页脚',
                 icon: 'remove-header-footer',
                 permission: 'edit',
-                hint: 'Including page and Bates numbers',
+                hint: '包括页码和贝茨编号',
                 disabled: noDocument(),
                 onSelect: () => safe(() => removeMarks(['Header', 'Footer']))(),
               },
               {
-                label: 'Remove watermarks',
+                label: '清除水印',
                 icon: 'remove-watermark',
                 permission: 'edit',
                 disabled: noDocument(),
@@ -7476,17 +7476,17 @@ export function createEditor({
       },
       {
         id: 'create',
-        label: 'Create a PDF',
+        label: '创建 PDF',
         group: 'Create & Edit',
         featured: true,
-        description: 'Start a new PDF, or turn pictures into PDF pages.',
+        description: '创建新 PDF，或将图片转为 PDF 页面。',
         sections: () => [
           {
-            title: 'Create',
+            title: '创建',
             items: [
-              { label: 'Blank PDF', icon: 'create', onSelect: () => onNew() },
+              { label: '空白 PDF', icon: 'create', onSelect: () => onNew() },
               {
-                label: 'From pictures or a PDF on this device…',
+                label: '来自此设备上的图片或 PDF…',
                 glyph: 'FolderOpen',
                 onSelect: () => onOpen(),
               },
@@ -7498,10 +7498,10 @@ export function createEditor({
             ],
           },
           {
-            title: 'Add to this PDF',
+            title: '添加到此 PDF',
             items: [
               {
-                label: 'Insert pictures as pages…',
+                label: '插入图片作为页面…',
                 glyph: 'Images',
                 permission: 'assemble',
                 disabled: busy,
@@ -7513,11 +7513,11 @@ export function createEditor({
       },
       {
         id: 'combine',
-        label: 'Combine files',
+        label: '合并文件',
         group: 'Create & Edit',
         featured: true,
         keywords: 'merge join pdfs pictures images',
-        description: 'Combine PDFs and pictures into one new PDF.',
+        description: '将多个 PDF 和图片合并为一个新 PDF。',
         run: () =>
           onOpenBytes
             ? pageDialog(combineDialog)()
@@ -7525,12 +7525,12 @@ export function createEditor({
       },
       {
         id: 'organize',
-        label: 'Organize pages',
+        label: '组织页面',
         group: 'Create & Edit',
         featured: true,
         keywords: 'rotate delete move reorder insert extract duplicate split pages',
         description:
-          'Select pages in the grid, then rotate, move, insert, extract, or delete them. Drag pages to reorder.',
+          '在网格中选择页面，然后旋转、移动、插入、提取或删除。拖动页面调整顺序。',
         enter: () => openOrganizer(),
         leave: () => closeOrganizer(),
         takesView: true,
@@ -7538,7 +7538,7 @@ export function createEditor({
         sections: () => {
           const chosen =
             organizer.visible && organizer.selection.length ? organizer.selection : [pageIndex];
-          const label = chosen.length === 1 ? `Page ${chosen[0] + 1}` : `${chosen.length} pages`;
+          const label = chosen.length === 1 ? `第 ${chosen[0] + 1} 页` : `${chosen.length} 个页面`;
           const after = chosen.at(-1);
           const run = (fn) => () => safe(fn)();
           return [
@@ -7546,14 +7546,14 @@ export function createEditor({
               title: label,
               items: [
                 {
-                  label: 'Rotate clockwise',
+                  label: '顺时针旋转',
                   glyph: 'RotateCw',
                   permission: 'assemble',
                   disabled: busy,
                   onSelect: run(() => organizeActions.rotate(chosen, 90)),
                 },
                 {
-                  label: 'Rotate counterclockwise',
+                  label: '逆时针旋转',
                   glyph: 'RotateCcw',
                   permission: 'assemble',
                   disabled: busy,
@@ -7563,14 +7563,14 @@ export function createEditor({
                   [-1, 'earlier', 'ArrowLeft'],
                   [1, 'later', 'ArrowRight'],
                 ].map(([delta, word, glyph]) => ({
-                  label: `Move ${chosen.length === 1 ? 'page' : 'pages'} ${word}`,
+                  label: word === 'earlier' ? '向前移动' : '向后移动',
                   glyph,
                   permission: 'assemble',
                   disabled: busy || !organizer.canMove(delta),
                   onSelect: () => organizer.move(delta),
                 })),
                 {
-                  label: chosen.length === 1 ? 'Duplicate page' : 'Duplicate pages',
+                  label: '复制页面',
                   glyph: 'Copy',
                   permission: 'assemble',
                   disabled: busy,
@@ -7580,14 +7580,14 @@ export function createEditor({
                   ),
                 },
                 {
-                  label: chosen.length === 1 ? 'Extract page' : 'Extract pages',
+                  label: '提取页面',
                   icon: 'extract',
                   permission: 'copy',
                   disabled: busy,
                   onSelect: run(() => organizeActions.extract(chosen)),
                 },
                 {
-                  label: chosen.length === 1 ? 'Delete page' : 'Delete pages',
+                  label: '删除页面',
                   glyph: 'Trash2',
                   danger: true,
                   permission: 'assemble',
@@ -7599,24 +7599,24 @@ export function createEditor({
               ],
             },
             {
-              title: `Insert after page ${after + 1}`,
+              title: `在第 ${after + 1} 页后插入`,
               items: [
                 {
-                  label: 'Blank page',
+                  label: '空白页',
                   glyph: 'FilePlus2',
                   permission: 'assemble',
                   disabled: busy,
                   onSelect: run(() => organizeActions.insertBlank(after)),
                 },
                 {
-                  label: 'From a PDF…',
+                  label: '来自 PDF 文件…',
                   icon: 'insert-pages',
                   permission: 'assemble',
                   disabled: busy,
                   onSelect: () => organizeActions.insertFile(after),
                 },
                 {
-                  label: 'Pictures…',
+                  label: '图片…',
                   glyph: 'Images',
                   permission: 'assemble',
                   disabled: busy,
@@ -7625,17 +7625,17 @@ export function createEditor({
               ],
             },
             {
-              title: 'Whole document',
+              title: '整个文档',
               items: [
                 {
-                  label: 'Split PDF…',
+                  label: '拆分 PDF…',
                   icon: 'split',
                   permission: 'copy',
                   disabled: noDocument() || pdf.numPages < 2,
                   onSelect: () => pageDialog(splitDialog)(),
                 },
                 {
-                  label: 'Rotate all pages',
+                  label: '旋转所有页面',
                   glyph: 'RotateCw',
                   permission: 'assemble',
                   disabled: busy,
@@ -7648,10 +7648,10 @@ export function createEditor({
       },
       {
         id: 'comment',
-        label: 'Add comments',
-        group: 'Review',
+        label: '添加批注',
+        group: '审阅',
         featured: true,
-        description: 'Leave notes, highlight text, and mark up pages.',
+        description: '添加便签、高亮文本并标记页面。',
         permission: 'annotate',
         enter: () => {
           showSidebarTab('comments');
@@ -7659,67 +7659,67 @@ export function createEditor({
         },
         sections: () => [
           {
-            title: 'Comment',
+            title: '批注',
             items: [
               {
-                label: 'Sticky note',
+                label: '便签',
                 icon: 'sticky-note',
                 pressed: toolPressed('note'),
                 permission: 'annotate',
                 onSelect: () => safe(() => setTool('note'))(),
               },
               {
-                label: 'Highlight text',
+                label: '高亮文本',
                 glyph: 'Highlighter',
                 pressed: toolPressed('highlight') && markupKind.value === 'highlight',
                 permission: 'annotate',
                 onSelect: () => safe(() => setMarkup('highlight'))(),
               },
               {
-                label: 'Underline text',
+                label: '下划线',
                 glyph: 'Underline',
                 pressed: toolPressed('highlight') && markupKind.value === 'underline',
                 permission: 'annotate',
                 onSelect: () => safe(() => setMarkup('underline'))(),
               },
               {
-                label: 'Strike through text',
+                label: '删除线',
                 glyph: 'Strikethrough',
                 pressed: toolPressed('highlight') && markupKind.value === 'strikeout',
                 permission: 'annotate',
                 onSelect: () => safe(() => setMarkup('strikeout'))(),
               },
               {
-                label: 'Add text comment',
+                label: '添加文本批注',
                 icon: 'add-text',
                 pressed: toolPressed('textbox'),
                 permission: 'annotate',
                 onSelect: () => safe(() => setTool('textbox'))(),
               },
               {
-                label: 'Callout',
+                label: '标注框',
                 icon: 'callout',
                 pressed: toolPressed('callout'),
                 permission: 'annotate',
                 onSelect: () => safe(() => setTool('callout'))(),
               },
               {
-                label: 'Pencil',
+                label: '画笔',
                 glyph: 'Pencil',
                 pressed: toolPressed('pencil'),
                 permission: 'annotate',
                 onSelect: () => safe(() => setTool('pencil'))(),
               },
               {
-                label: 'Shapes',
+                label: '形状',
                 glyph: 'Square',
                 pressed: toolPressed('cshape'),
                 permission: 'annotate',
-                hint: 'Rectangle, oval, line, arrow, or cloud',
+                hint: '矩形、椭圆、线条、箭头或云朵',
                 onSelect: () => safe(() => setTool('cshape'))(),
               },
               {
-                label: 'Add stamp…',
+                label: '添加印章…',
                 icon: 'stamp',
                 permission: 'edit',
                 disabled: busy,
@@ -7728,23 +7728,23 @@ export function createEditor({
             ],
           },
           {
-            title: 'Share comments',
+            title: '共享批注',
             items: [
               {
-                label: 'Export comments (XFDF)',
+                label: '导出批注 (XFDF)',
                 glyph: 'Download',
                 disabled: noDocument(),
                 onSelect: () => safe(() => exportComments('xfdf'))(),
               },
               {
-                label: 'Import comments…',
+                label: '导入批注…',
                 glyph: 'Upload',
                 permission: 'annotate',
                 disabled: noDocument(),
                 onSelect: () => importComments(),
               },
               {
-                label: 'Comment summary',
+                label: '批注摘要',
                 glyph: 'FileText',
                 disabled: noDocument(),
                 onSelect: () => safe(() => exportComments('summary'))(),
@@ -7755,16 +7755,16 @@ export function createEditor({
       },
       {
         id: 'fill-sign',
-        label: 'Fill & Sign',
-        group: 'Forms & Signatures',
+        label: '填写与签名',
+        group: '表单与签名',
         featured: true,
-        description: 'Fill in forms and add your signature.',
+        description: '填写表单并添加您的签名。',
         sections: () => [
           {
-            title: 'Fill in',
+            title: '填写',
             items: [
               {
-                label: 'Fill in form fields…',
+                label: '填写表单字段…',
                 icon: 'form',
                 permission: 'fill',
                 disabled: busy,
@@ -7778,7 +7778,7 @@ export function createEditor({
                 onSelect: () => safe(() => setTool('text'))(),
               },
               {
-                label: 'Check mark or cross',
+                label: '对勾或叉号',
                 icon: 'field-checkbox',
                 pressed: toolPressed('shape') && ['check', 'cross'].includes(shapeSelect.value),
                 permission: 'edit',
@@ -7792,21 +7792,21 @@ export function createEditor({
             ],
           },
           {
-            title: 'Sign',
+            title: '签名',
             items: [
               {
-                label: 'Add signature…',
+                label: '添加签名…',
                 icon: 'fill-sign',
                 permission: 'edit',
                 disabled: busy,
                 onSelect: () => safe(insertSignature)(),
               },
               {
-                label: 'Sign with a certificate',
+                label: '使用证书签名',
                 icon: 'certificate',
                 pressed: toolPressed('certsign'),
                 permission: 'fill',
-                hint: 'A digital ID proves who signed',
+                hint: '数字 ID 证明签署人身份',
                 disabled: noDocument(),
                 onSelect: () => pageAction(() => setTool('certsign'))(),
               },
@@ -7816,13 +7816,13 @@ export function createEditor({
       },
       {
         id: 'form',
-        label: 'Prepare a form',
+        label: '准备表单',
         group: 'Forms & Signatures',
         featured: true,
         permission: 'edit',
         keywords: 'form fields fillable acroform text field checkbox radio dropdown',
         description:
-          'Add fillable fields: choose a field type, then drag a box on the page or click to place one. Double-click a field for its properties.',
+          '添加可填写的字段：选择字段类型，然后在页面上拖动框选或点击放置。双击字段打开属性。',
         enter: () => setPreparing(true),
         leave: () => {
           setPreparing(false);
@@ -7830,19 +7830,19 @@ export function createEditor({
         },
         sections: () => {
           const types = [
-            ['text', 'Text field', 'field-text'],
-            ['checkbox', 'Check box', 'field-checkbox'],
-            ['radio', 'Radio button', 'field-radio'],
-            ['dropdown', 'Dropdown', 'field-dropdown'],
-            ['listbox', 'List box', 'field-listbox'],
-            ['date', 'Date field', 'field-date'],
-            ['button', 'Button', 'field-button'],
-            ['signature', 'Signature field', 'field-signature'],
+            ['text', '文本字段', 'field-text'],
+            ['checkbox', '复选框', 'field-checkbox'],
+            ['radio', '单选按钮', 'field-radio'],
+            ['dropdown', '下拉列表', 'field-dropdown'],
+            ['listbox', '列表框', 'field-listbox'],
+            ['date', '日期字段', 'field-date'],
+            ['button', '按钮', 'field-button'],
+            ['signature', '签名字段', 'field-signature'],
           ];
           const onPage = formFields.filter((field) => field.page === pageIndex);
           return [
             {
-              title: 'Add a field',
+              title: '添加字段',
               items: types.map(([type, label, glyph]) => ({
                 label,
                 icon: glyph,
@@ -7857,24 +7857,24 @@ export function createEditor({
               })),
             },
             {
-              title: 'Find fields',
+              title: '发现字段',
               items: [
                 {
-                  label: 'Detect form fields…',
+                  label: '自动检测表单字段…',
                   glyph: 'find',
                   permission: 'edit',
                   disabled: noDocument(),
                   onSelect: () => pageDialog(detectFieldsDialog)(),
                 },
                 {
-                  label: 'Tab order: by rows',
+                  label: 'Tab 键顺序：按行',
                   glyph: 'ListChecks',
                   permission: 'edit',
                   disabled: noDocument() || !formFields.length,
                   onSelect: () => safe(() => orderFieldTabs('row'))(),
                 },
                 {
-                  label: 'Tab order: by columns',
+                  label: 'Tab 键顺序：按列',
                   glyph: 'ListChecks',
                   permission: 'edit',
                   disabled: noDocument() || !formFields.length,
@@ -7884,8 +7884,8 @@ export function createEditor({
             },
             {
               title: onPage.length
-                ? `Fields on page ${pageIndex + 1} (${formFields.length} in all)`
-                : `No fields on page ${pageIndex + 1}`,
+                ? `第 ${pageIndex + 1} 页上的字段（共 ${formFields.length} 个）`
+                : `第 ${pageIndex + 1} 页无字段`,
               items: onPage.slice(0, 60).map((field) => ({
                 // The buttons of a radio group share its name; their export values tell them apart.
                 label:
@@ -7903,26 +7903,26 @@ export function createEditor({
       },
       {
         id: 'certificate',
-        label: 'Use a certificate',
+        label: '使用数字证书',
         group: 'Forms & Signatures',
         keywords: 'digital signature certify validate sign certificate pfx p12 id',
         description:
-          'Sign or certify with a digital ID, and check the signatures already in the PDF.',
+          '使用数字 ID 签名或验证，并检查 PDF 中的已有签名。',
         sections: () => [
           {
             title: 'Sign',
             items: [
               {
-                label: 'Digitally sign',
+                label: '数字签名',
                 icon: 'certificate',
                 pressed: toolPressed('certsign'),
                 permission: 'fill',
-                hint: 'Then drag a box for the signature',
+                hint: '拖动框选签名区域',
                 disabled: noDocument(),
                 onSelect: () => pageAction(() => setTool('certsign'))(),
               },
               {
-                label: 'Certify (invisible signature)',
+                label: '认证文档（不可见签名）',
                 icon: 'signatures',
                 permission: 'fill',
                 disabled: noDocument(),
@@ -7931,10 +7931,10 @@ export function createEditor({
             ],
           },
           {
-            title: 'Check',
+            title: '检查',
             items: [
               {
-                label: 'Validate all signatures',
+                label: '验证所有签名',
                 glyph: 'RefreshCw',
                 disabled: noDocument(),
                 onSelect: () =>
@@ -7952,25 +7952,25 @@ export function createEditor({
       },
       {
         id: 'ocr',
-        label: 'Scan & OCR',
-        group: 'Scan & OCR',
+        label: '扫描与 OCR',
+        group: '扫描与 OCR',
         featured: true,
         permission: 'edit',
         keywords: 'ocr recognize text scanned searchable',
-        description: 'Make scanned pages searchable and selectable by recognizing their text.',
+        description: '通过识别扫描页面上的文本，使其可被搜索和选中。',
         sections: () => [
           {
-            title: 'Recognize text',
+            title: '识别文本',
             items: [
               {
-                label: 'In this file…',
+                label: '在此文件中…',
                 icon: 'ocr',
                 permission: 'edit',
                 disabled: noDocument(),
                 onSelect: () => pageDialog(ocrDialog)(),
               },
               {
-                label: 'Remove recognized text',
+                label: '清除已识别的文本',
                 glyph: 'Trash2',
                 permission: 'edit',
                 disabled: noDocument(),
@@ -7979,10 +7979,10 @@ export function createEditor({
             ],
           },
           {
-            title: 'Create from a scan',
+            title: '从扫描件创建',
             items: [
               {
-                label: 'Pictures to PDF…',
+                label: '图片转 PDF…',
                 glyph: 'Images',
                 onSelect: () => onOpen(),
               },
@@ -7992,22 +7992,22 @@ export function createEditor({
       },
       {
         id: 'protect',
-        label: 'Protect a PDF',
-        group: 'Protect & Standardize',
+        label: '保护 PDF',
+        group: '保护与标准化',
         featured: true,
-        description: 'Require a password to open the PDF, or limit what others can do with it.',
+        description: '设置打开 PDF 所需的密码，或限制其他人对其执行的操作。',
         sections: () => [
           {
-            title: 'Password',
+            title: '密码',
             items: [
               {
-                label: protection ? 'Change password…' : 'Protect with password…',
+                label: protection ? '修改密码…' : '设置密码保护…',
                 icon: 'protect',
                 disabled: busy,
                 onSelect: () => safe(securityDialog)(),
               },
               protection && {
-                label: 'Remove password',
+                label: '移除密码',
                 glyph: 'LockOpen',
                 disabled: busy,
                 onSelect: () =>
@@ -8021,13 +8021,13 @@ export function createEditor({
       },
       {
         id: 'redact',
-        label: 'Redact a PDF',
+        label: '涂黑密文',
         group: 'Protect & Standardize',
         featured: true,
         permission: 'edit',
         keywords: 'redaction black out remove sensitive sanitize hidden information',
         description:
-          'Mark text, pictures, or areas, then apply to remove them from the file for good.',
+          '标记文本、图片或区域，然后应用涂黑以从文件中永久删除。',
         enter: () => refreshRedactionMarks().catch(() => {}),
         leave: () => {
           if (markupKind.value !== 'redact') return;
@@ -8038,33 +8038,33 @@ export function createEditor({
         },
         sections: () => [
           {
-            title: 'Mark for redaction',
+            title: '标记涂黑',
             items: [
               {
-                label: 'Redact text and images',
+                label: '涂黑文本和图片',
                 icon: 'redact',
                 pressed: redacting(),
-                hint: 'Select text, or choose Area and drag',
+                hint: '选择文本，或选择区域并拖动',
                 permission: 'edit',
                 disabled: noDocument(),
                 onSelect: () => safe(() => setMarkup('redact'))(),
               },
               {
-                label: 'Find text and redact…',
+                label: '查找文本并涂黑…',
                 glyph: 'find',
                 permission: 'edit',
                 disabled: noDocument(),
                 onSelect: () => pageDialog(findRedactDialog)(),
               },
               {
-                label: 'Redact pages…',
+                label: '涂黑页面…',
                 glyph: 'Files',
                 permission: 'edit',
                 disabled: noDocument(),
                 onSelect: () => pageDialog(redactPagesDialog)(),
               },
               {
-                label: 'Redaction properties…',
+                label: '涂黑属性…',
                 glyph: 'Settings2',
                 onSelect: () => redactionPropertiesDialog(),
               },
@@ -8072,11 +8072,11 @@ export function createEditor({
           },
           {
             title: redactionMarks.length
-              ? `${redactionMarks.length} ${redactionMarks.length === 1 ? 'mark' : 'marks'} to apply`
-              : 'No marks yet',
+              ? `${redactionMarks.length} 个待应用的标记`
+              : '暂无标记',
             items: redactionMarks.slice(0, 50).map((mark) => ({
               // Several marks on one page are numbered, so each has a name of its own.
-              label: `Remove mark${markNumber(mark)} on page ${mark.page + 1}${mark.overlayText ? ` (${mark.overlayText})` : ''}`,
+              label: `删除第 ${mark.page + 1} 页上的标记${markNumber(mark)}${mark.overlayText ? ` (${mark.overlayText})` : ''}`,
               glyph: 'X',
               permission: 'edit',
               disabled: busy,
@@ -8085,23 +8085,23 @@ export function createEditor({
                   mutate(
                     async (doc) =>
                       (await loadRedaction()).removeRedactionMark(doc, mark.page, mark.id),
-                    'Redaction mark removed.',
+                    '涂黑标记已删除。',
                   ),
                 )(),
             })),
           },
           {
-            title: 'Apply',
+            title: '应用',
             items: [
               {
-                label: 'Apply redactions…',
+                label: '应用涂黑…',
                 icon: 'redact',
                 permission: 'edit',
                 disabled: noDocument() || !redactionMarks.length,
                 onSelect: () => pageDialog(applyRedactionsDialog)(),
               },
               {
-                label: 'Remove hidden information…',
+                label: '删除隐藏信息…',
                 glyph: 'sanitize',
                 permission: 'edit',
                 disabled: noDocument(),
@@ -8113,37 +8113,37 @@ export function createEditor({
       },
       {
         id: 'compress',
-        label: 'Compress a PDF',
+        label: '压缩 PDF',
         group: 'Protect & Standardize',
         featured: true,
         permission: 'edit',
-        description: 'Make the file smaller by shrinking its pictures.',
+        description: '通过缩小图片使文件体积更小。',
         run: () => pageDialog(reduceSizeDialog)(),
       },
       {
         id: 'stamp',
-        label: 'Stamp',
+        label: '印章',
         group: 'Review',
         permission: 'edit',
         run: () => safe(insertStamp)(),
       },
       {
         id: 'split',
-        label: 'Split a PDF',
+        label: '拆分 PDF',
         group: 'Create & Edit',
         permission: 'copy',
         run: () => pageDialog(splitDialog)(),
       },
       {
         id: 'extract',
-        label: 'Extract pages',
+        label: '提取页面',
         group: 'Create & Edit',
         permission: 'copy',
         run: () => pageDialog(extractDialog)(),
       },
       {
         id: 'insert-pages',
-        label: 'Insert pages',
+        label: '插入页面',
         group: 'Create & Edit',
         permission: 'assemble',
         run: () => pageDialog((version) => mergeDialog(pageIndex, version))(),
@@ -8157,21 +8157,21 @@ export function createEditor({
       },
       {
         id: 'header-footer',
-        label: 'Add header and footer',
+        label: '添加页眉和页脚',
         group: 'Create & Edit',
         permission: 'edit',
         run: () => pageDialog(headerFooterDialog)(),
       },
       {
         id: 'watermark',
-        label: 'Add watermark',
+        label: '添加水印',
         group: 'Create & Edit',
         permission: 'edit',
         run: () => pageDialog(watermarkDialog)(),
       },
       {
         id: 'bates',
-        label: 'Bates numbering',
+        label: '贝茨编号',
         group: 'Create & Edit',
         keywords: 'legal production stamp number',
         permission: 'edit',
@@ -8179,31 +8179,31 @@ export function createEditor({
       },
       {
         id: 'page-numbers',
-        label: 'Add page numbers',
+        label: '添加页码',
         group: 'Create & Edit',
         permission: 'edit',
         run: () => pageDialog(pageNumbersDialog)(),
       },
       {
         id: 'flatten',
-        label: 'Flatten',
-        group: 'Print production',
+        label: '拼合',
+        group: '打印生产',
         permission: ['edit', 'annotate'],
         run: () => pageDialog(flattenDialog)(),
       },
       {
         id: 'accessibility',
-        label: 'Prepare for accessibility',
+        label: '辅助功能准备',
         group: 'Protect & Standardize',
         keywords: 'accessibility check tags alt text screen reader pdf/ua reading order',
         description:
-          'Check the PDF for accessibility problems and fix them: tags, title, language, alternate text, and more.',
+          '检查 PDF 的辅助功能问题并进行修复：标签、标题、语言、替换文本等。',
         sections: () => [
           {
             title: 'Check',
             items: [
               {
-                label: 'Accessibility check',
+                label: '辅助功能检查',
                 icon: 'accessibility',
                 disabled: noDocument(),
                 onSelect: () => safe(() => runAccessibilityCheck())(),
@@ -8211,15 +8211,15 @@ export function createEditor({
             ],
           },
           {
-            title: 'Fix',
+            title: '修复',
             items: [
-              ['tags', 'Autotag document', 'Tag headings, paragraphs, lists, and figures'],
-              ['title', 'Set the document title…'],
-              ['language', 'Set the document language…'],
-              ['alt-text', 'Add alternate text…'],
-              ['field-descriptions', 'Describe form fields…'],
-              ['tab-order', 'Set tab order'],
-              ['bookmarks', 'Add bookmarks from headings'],
+              ['tags', '自动标记文档', '标记标题、段落、列表和图像'],
+              ['title', '设置文档标题…'],
+              ['language', '设置文档语言…'],
+              ['alt-text', '添加替换文本…'],
+              ['field-descriptions', '添加表单字段说明…'],
+              ['tab-order', '设置 Tab 键顺序'],
+              ['bookmarks', '从标题添加书签'],
             ].map(([fix, label, hint]) => ({
               label,
               hint,
@@ -8233,22 +8233,22 @@ export function createEditor({
       },
       {
         id: 'standards',
-        label: 'PDF standards',
+        label: 'PDF 标准',
         group: 'Protect & Standardize',
         keywords: 'pdf/a archive preflight compliance iso 19005 standard',
-        description: 'Check a PDF against PDF/A for long-term archiving, or convert it.',
+        description: '根据 PDF/A 标准检查 PDF 以便长期存档，或进行转换。',
         sections: () => [
           {
             title: 'PDF/A',
             items: [
               {
-                label: 'Check compliance…',
+                label: '检查合规性…',
                 icon: 'standards',
                 disabled: noDocument(),
                 onSelect: () => pageDialog(() => pdfaDialog('check'))(),
               },
               {
-                label: 'Save as PDF/A…',
+                label: '另存为 PDF/A…',
                 icon: 'standards',
                 permission: 'edit',
                 disabled: noDocument(),
@@ -8260,18 +8260,18 @@ export function createEditor({
       },
       {
         id: 'measure',
-        label: 'Measure',
+        label: '测量',
         group: 'Review',
         keywords: 'distance perimeter area ruler scale length',
         permission: 'annotate',
-        description: 'Measure distances, perimeters, and areas at a drawing scale.',
+        description: '按绘图比例测量距离、周长和面积。',
         sections: () => [
           {
             title: 'Measure',
             items: [
-              ['distance', 'Distance'],
-              ['perimeter', 'Perimeter'],
-              ['area', 'Area'],
+              ['distance', '距离'],
+              ['perimeter', '周长'],
+              ['area', '面积'],
             ].map(([mode, label]) => ({
               label,
               icon: `measure-${mode}`,
@@ -8290,30 +8290,30 @@ export function createEditor({
       },
       {
         id: 'compare',
-        label: 'Compare files',
+        label: '比较文件',
         group: 'Review',
         keywords: 'difference diff versions changes',
-        description: 'Find the differences between two versions of a PDF.',
+        description: '查找两个版本 PDF 之间的差异。',
         run: () => pageDialog(compareDialog)(),
       },
       {
         id: 'batch',
-        label: 'Batch process',
-        group: 'Customize',
+        label: '批量处理',
+        group: '自定义',
         keywords: 'action wizard guided actions automate many files bulk',
-        description: 'Apply the same steps to several PDFs at once.',
+        description: '同时对多个 PDF 应用相同的处理步骤。',
         run: () => pageDialog(batchDialog)(),
       },
       {
         id: 'print',
-        label: 'Print',
+        label: '打印',
         group: 'Print production',
         permission: 'print',
         run: () => pageDialog(printDialog)(),
       },
       {
         id: 'document-properties',
-        label: 'Document properties',
+        label: '文档属性',
         group: 'Protect & Standardize',
         run: () => pageDialog(detailsDialog)(),
       },
@@ -8327,36 +8327,36 @@ export function createEditor({
     // folder. Elsewhere they use this device.
     const desktop = P.launchedByPuter() && !!onOpenCloud;
     return [
-      { label: 'New blank PDF', icon: 'FilePlus2', onSelect: onNew },
+      { label: '新建空白 PDF', icon: 'FilePlus2', onSelect: onNew },
       desktop
-        ? { label: 'Open from Local…', icon: 'Cloud', shortcut: 'Mod+O', onSelect: onOpenCloud }
-        : { label: 'Open…', icon: 'FolderOpen', shortcut: 'Mod+O', onSelect: onOpen },
+        ? { label: '从本地打开…', icon: 'FolderOpen', shortcut: 'Mod+O', onSelect: onOpenCloud }
+        : { label: '打开…', icon: 'FolderOpen', shortcut: 'Mod+O', onSelect: onOpen },
       desktop
-        ? { label: 'Open from this device…', icon: 'FolderOpen', onSelect: onOpen }
-        : onOpenCloud && { label: 'Open from Local…', icon: 'Cloud', onSelect: onOpenCloud },
+        ? { label: '从本地设备打开…', icon: 'FolderOpen', onSelect: onOpen }
+        : onOpenCloud && { label: '从本地打开…', icon: 'FolderOpen', onSelect: onOpenCloud },
       { separator: true },
       {
-        label: path ? 'Save' : 'Save to Local',
+        label: path ? '保存' : '保存到本地',
         icon: 'CloudUpload',
         shortcut: 'Mod+S',
         disabled: cloud,
         onSelect: safe(() => save()),
       },
       {
-        label: 'Save a copy locally',
+        label: '在本地保存副本',
         icon: 'Copy',
         disabled: cloud,
         onSelect: safe(() => save(true)),
       },
       {
-        label: 'Save to another folder…',
+        label: '另存为到其他文件夹…',
         icon: 'FolderInput',
         ...(desktop && { shortcut: 'Mod+Shift+S' }),
         disabled: cloud,
         onSelect: safe(saveAs),
       },
       {
-        label: 'Download',
+        label: '下载',
         icon: 'Download',
         ...(!desktop && { shortcut: 'Mod+Shift+S' }),
         disabled: busy,
@@ -8364,7 +8364,7 @@ export function createEditor({
       },
       {
         permission: 'print',
-        label: 'Print…',
+        label: '打印…',
         icon: 'Printer',
         shortcut: 'Mod+P',
         disabled: busy,
@@ -8372,27 +8372,27 @@ export function createEditor({
       },
       { separator: true },
       {
-        label: 'Rename…',
+        label: '重命名…',
         icon: 'Pencil',
         disabled: busy || saving,
         onSelect: () => nameButton.click(),
       },
       {
-        label: 'Document details…',
+        label: '文档属性…',
         icon: 'Info',
         disabled: busy,
         onSelect: pageDialog(detailsDialog),
       },
       {
         permission: 'edit',
-        label: 'Reduce file size…',
+        label: '压缩 PDF 大小…',
         icon: 'Shrink',
         disabled: busy,
         onSelect: pageDialog(reduceSizeDialog),
       },
       {
         permission: ['edit', 'annotate'],
-        label: 'Flatten…',
+        label: '拼合…',
         icon: 'Layers',
         disabled: busy,
         onSelect: pageDialog(flattenDialog),
@@ -8406,7 +8406,7 @@ export function createEditor({
       },
       {
         permission: 'copy',
-        label: 'Download pages as images…',
+        label: '将页面下载为图片…',
         icon: 'ImageDown',
         disabled: busy || !pdf,
         onSelect: pageDialog(pageImagesDialog),
@@ -8435,20 +8435,20 @@ export function createEditor({
             { separator: true },
           ]
         : []),
-      { label: 'Back to your PDFs', icon: 'ArrowLeft', onSelect: goHome },
+      { label: '返回文档库', icon: 'ArrowLeft', onSelect: goHome },
     ];
   }
   function editItems() {
     return [
       {
-        label: 'Undo',
+        label: '撤销',
         icon: 'Undo2',
         shortcut: 'Mod+Z',
         disabled: stepOff(undoButton),
         onSelect: safe(() => history('undo')),
       },
       {
-        label: 'Redo',
+        label: '重做',
         icon: 'Redo2',
         shortcut: 'Mod+Shift+Z',
         disabled: stepOff(redoButton),
@@ -8456,7 +8456,7 @@ export function createEditor({
       },
       { separator: true },
       {
-        label: 'Select all text',
+        label: '全选文本',
         icon: 'Type',
         shortcut: 'Mod+A',
         disabled: !pageReady || !textContainer.firstChild,
@@ -8465,9 +8465,9 @@ export function createEditor({
           workspace.focus({ preventScroll: true });
         },
       },
-      { label: 'Find in PDF', icon: 'Search', shortcut: 'Mod+F', onSelect: openSearch },
+      { label: '在 PDF 中查找', icon: 'Search', shortcut: 'Mod+F', onSelect: openSearch },
       {
-        label: 'Go to page…',
+        label: '前往页面…',
         icon: 'Hash',
         shortcut: 'Mod+Alt+G',
         disabled: !pdf || pdf.numPages < 2 || busy,
@@ -8476,7 +8476,7 @@ export function createEditor({
       { separator: true },
       {
         permission: 'fill',
-        label: 'Fill forms…',
+        label: '填写表单…',
         icon: 'ListChecks',
         disabled: busy,
         onSelect: safe(formDialog),
@@ -8486,33 +8486,33 @@ export function createEditor({
   function viewItems() {
     return [
       {
-        label: 'Fit width',
+        label: '适应宽度',
         shortcut: 'Mod+2',
         checked: scaleMode === 'fit',
         onSelect: safe(() => setZoom('fit')),
       },
       {
-        label: 'Fit page',
+        label: '适应页面',
         shortcut: 'Mod+0',
         checked: scaleMode === 'page',
         onSelect: safe(() => setZoom('page')),
       },
       {
-        label: 'Actual size',
+        label: '实际大小',
         shortcut: 'Mod+1',
         checked: scaleMode === '1',
         onSelect: safe(() => setZoom('1')),
       },
       { separator: true },
       {
-        label: 'Zoom in',
+        label: '放大',
         icon: 'ZoomIn',
         shortcut: 'Mod+Plus',
         disabled: stepOff(zoomInButton),
         onSelect: safe(() => setZoom(zoomStep(1))),
       },
       {
-        label: 'Zoom out',
+        label: '缩小',
         icon: 'ZoomOut',
         shortcut: 'Mod+Minus',
         disabled: stepOff(zoomOutButton),
@@ -8520,42 +8520,42 @@ export function createEditor({
       },
       { separator: true },
       {
-        label: 'Page display',
+        label: '页面显示',
         icon: 'Files',
         items: [
-          ['continuous', 'Scrolling'],
-          ['single', 'Single page'],
-          ['two-continuous', 'Two-page scrolling'],
-          ['two', 'Two-page'],
+          ['continuous', '连续滚动'],
+          ['single', '单页'],
+          ['two-continuous', '双页连续滚动'],
+          ['two', '双页'],
         ].map(([display, label]) => ({
           label,
           checked: pageDisplay() === display,
           onSelect: () => setPageDisplay(display),
         })),
       },
-      { label: 'Read out loud', icon: 'Volume2', items: readingItems() },
+      { label: '朗读文本', icon: 'Volume2', items: readingItems() },
       {
-        label: 'Read mode',
+        label: '阅读模式',
         icon: 'BookOpen',
         checked: editorRoot.classList.contains('read-mode'),
         onSelect: () => setReadMode(!editorRoot.classList.contains('read-mode')),
       },
       {
-        label: 'Full screen mode',
+        label: '全屏模式',
         icon: 'Maximize',
         shortcut: 'Mod+L',
         disabled: !document.fullscreenEnabled,
         onSelect: () => toggleFullScreen(),
       },
       {
-        label: 'Tools pane',
+        label: '工具面板',
         checked: !editorRoot.classList.contains('hide-tools'),
         shortcut: 'Shift+F4',
         onSelect: () => toggleToolsPanel(),
       },
       { separator: true },
       {
-        label: 'Pages panel',
+        label: '页面面板',
         checked: !editorRoot.classList.contains('hide-pages') && sidebarTab === 'pages',
         onSelect: safe(async () => {
           const shown = !editorRoot.classList.contains('hide-pages');
@@ -8565,7 +8565,7 @@ export function createEditor({
         }),
       },
       {
-        label: 'Outline panel',
+        label: '大纲面板',
         checked: !editorRoot.classList.contains('hide-pages') && sidebarTab === 'outline',
         disabled: !outline.hasItems,
         onSelect: safe(async () => {
@@ -8576,7 +8576,7 @@ export function createEditor({
         }),
       },
       {
-        label: 'Comments panel',
+        label: '批注面板',
         checked: !editorRoot.classList.contains('hide-pages') && sidebarTab === 'comments',
         onSelect: safe(async () => {
           const shown = !editorRoot.classList.contains('hide-pages');
@@ -8586,29 +8586,29 @@ export function createEditor({
         }),
       },
       {
-        label: 'Dark page colors',
+        label: '深色页面背景',
         icon: 'Moon',
         checked: darkPages,
         onSelect: safe(() => setDarkPages(!darkPages)),
       },
       { separator: true },
       {
-        label: 'Previous page',
+        label: '上一页',
         icon: 'ChevronLeft',
         shortcut: 'Alt+←',
         disabled: stepOff(prevButton),
         onSelect: () => navigateBy(-1),
       },
       {
-        label: 'Next page',
+        label: '下一页',
         icon: 'ChevronRight',
         shortcut: 'Alt+→',
         disabled: stepOff(nextButton),
         onSelect: () => navigateBy(1),
       },
       { separator: true },
-      { label: 'Appearance and account…', icon: 'Settings2', onSelect: settings },
-      shortcuts && { label: 'Keyboard shortcuts…', icon: 'Keyboard', onSelect: shortcuts },
+      { label: '外观与设置…', icon: 'Settings2', onSelect: settings },
+      shortcuts && { label: '键盘快捷键…', icon: 'Keyboard', onSelect: shortcuts },
     ];
   }
   /** The Page menu for the current page, or a thumbnail's menu for the page at `index`. */
@@ -8641,19 +8641,19 @@ export function createEditor({
         onSelect: pageAction(() => mutate((doc) => rotatePage(doc, index, -90), null, 'assemble')),
       },
       {
-        label: 'All pages',
+        label: '所有页面',
         icon: 'Files',
         items: [
           {
             permission: 'assemble',
-            label: 'Rotate all pages clockwise',
+            label: '所有页面顺时针旋转',
             icon: 'RotateCw',
             disabled: busy,
             onSelect: pageAction(() => mutate((doc) => rotateAllPages(doc), null, 'assemble')),
           },
           {
             permission: 'assemble',
-            label: 'Rotate all pages counterclockwise',
+            label: '所有页面逆时针旋转',
             icon: 'RotateCcw',
             disabled: busy,
             onSelect: pageAction(() => mutate((doc) => rotateAllPages(doc, -90), null, 'assemble')),
@@ -8663,14 +8663,14 @@ export function createEditor({
       { separator: true },
       {
         permission: 'assemble',
-        label: 'Move page earlier',
+        label: '向前移动页面',
         icon: 'ArrowUp',
         disabled: busy || index === 0,
         onSelect: pageAction(() => movePageTo(index, index - 1)),
       },
       {
         permission: 'assemble',
-        label: 'Move page later',
+        label: '向后移动页面',
         icon: 'ArrowDown',
         disabled: busy || index >= count - 1,
         onSelect: pageAction(() => movePageTo(index, index + 1)),
@@ -8678,7 +8678,7 @@ export function createEditor({
       { separator: true },
       {
         permission: 'assemble',
-        label: 'Add bookmark for this page…',
+        label: '为此页添加书签…',
         icon: 'Bookmark',
         disabled: busy,
         onSelect: pageDialog(async () => {
@@ -8706,7 +8706,7 @@ export function createEditor({
       { separator: true },
       {
         permission: 'edit',
-        label: 'Crop pages…',
+        label: '裁剪页面…',
         icon: 'Crop',
         disabled: busy,
         onSelect: pageAction(async () => {
@@ -8717,7 +8717,7 @@ export function createEditor({
       },
       {
         permission: 'edit',
-        label: 'Remove crop',
+        label: '清除裁剪',
         icon: 'Expand',
         disabled: busy,
         onSelect: pageAction(async () => {
@@ -8733,7 +8733,7 @@ export function createEditor({
       { separator: true },
       {
         permission: 'assemble',
-        label: 'Insert blank page after',
+        label: '在后方插入空白页',
         icon: 'FilePlus2',
         disabled: busy,
         onSelect: pageAction(() =>
@@ -8749,7 +8749,7 @@ export function createEditor({
       },
       {
         permission: 'assemble',
-        label: 'Duplicate page',
+        label: '复制页面',
         icon: 'Copy',
         disabled: busy,
         onSelect: pageAction(() =>
@@ -8772,7 +8772,7 @@ export function createEditor({
       },
       {
         permission: 'assemble',
-        label: 'Insert pages from PDF…',
+        label: '从 PDF 插入页面…',
         icon: 'FileInput',
         disabled: busy,
         onSelect: pageDialog((version) => mergeDialog(index, version)),
@@ -8780,14 +8780,14 @@ export function createEditor({
       index === pageIndex
         ? {
             permission: 'copy',
-            label: 'Extract pages…',
+            label: '提取页面…',
             icon: 'FileOutput',
             disabled: busy,
             onSelect: pageDialog(extractDialog),
           }
         : {
             permission: 'copy',
-            label: 'Extract this page',
+            label: '提取此页',
             icon: 'FileOutput',
             disabled: busy,
             onSelect: pageAction(async () => {
@@ -8803,7 +8803,7 @@ export function createEditor({
           },
       {
         permission: 'copy',
-        label: 'Download page as image',
+        label: '将此页下载为图片',
         icon: 'ImageDown',
         disabled: busy,
         onSelect: pageAction(() => downloadPageImage(index)),
@@ -8811,7 +8811,7 @@ export function createEditor({
       { separator: true },
       {
         permission: 'assemble',
-        label: 'Delete page',
+        label: '删除页面',
         icon: 'Trash2',
         danger: true,
         disabled: busy || count === 1,
@@ -8823,29 +8823,29 @@ export function createEditor({
     return [
       {
         permission: 'edit',
-        label: 'Text',
+        label: '文本',
         icon: 'Type',
         hint: 'Then click the page where the text goes',
         onSelect: safe(() => setTool('text')),
       },
-      { permission: 'edit', label: 'Image…', icon: 'Image', disabled: busy, onSelect: insertImage },
+      { permission: 'edit', label: '图片…', icon: 'Image', disabled: busy, onSelect: insertImage },
       {
         permission: 'edit',
-        label: 'Signature…',
+        label: '签名…',
         icon: 'Signature',
         disabled: busy,
         onSelect: safe(insertSignature),
       },
       {
         permission: 'edit',
-        label: 'Stamp…',
+        label: '印章…',
         icon: 'Stamp',
         disabled: busy,
         onSelect: safe(insertStamp),
       },
       {
         permission: 'annotate',
-        label: 'Link…',
+        label: '链接…',
         icon: 'Link',
         disabled: busy || !pdf,
         onSelect: pageAction(() => setTool('link')),
@@ -8874,25 +8874,25 @@ export function createEditor({
       { separator: true },
       {
         permission: 'annotate',
-        label: 'Note',
+        label: '便签',
         icon: 'StickyNote',
         onSelect: safe(() => setTool('note')),
       },
       {
         permission: 'annotate',
-        label: 'Highlight',
+        label: '高亮',
         icon: 'Highlighter',
         onSelect: safe(() => setTool('highlight')),
       },
       {
         permission: 'edit',
-        label: 'Drawing',
+        label: '手绘',
         icon: 'Pencil',
         onSelect: safe(() => setTool('ink')),
       },
       {
         permission: 'edit',
-        label: 'Shape',
+        label: '形状',
         icon: 'Square',
         onSelect: safe(() => setTool('shape')),
       },
@@ -8903,21 +8903,21 @@ export function createEditor({
       anchor,
       items: fileItems(folded),
       align: folded ? 'end' : 'start',
-      label: 'File',
+      label: '文件',
       minWidth: 250,
     });
   }
   function openEditMenu(anchor) {
-    openMenu({ anchor, items: editItems(), label: 'Edit', minWidth: 230 });
+    openMenu({ anchor, items: editItems(), label: '编辑', minWidth: 230 });
   }
   function openViewMenu(anchor) {
-    openMenu({ anchor, items: viewItems(), label: 'View', minWidth: 230 });
+    openMenu({ anchor, items: viewItems(), label: '视图', minWidth: 230 });
   }
   function openPageMenu(anchor) {
-    openMenu({ anchor, items: pageItems(), label: 'Page', minWidth: 240 });
+    openMenu({ anchor, items: pageItems(), label: '页面', minWidth: 240 });
   }
   function openInsertMenu(anchor) {
-    openMenu({ anchor, items: insertItems(), label: 'Insert', minWidth: 230 });
+    openMenu({ anchor, items: insertItems(), label: '插入', minWidth: 230 });
   }
   /** Move a page; the page being viewed stays in view, wherever it lands in the new order. */
   function movePageTo(from, to) {
@@ -9650,17 +9650,17 @@ export function createEditor({
         d.removeAttribute('aria-busy');
       }
     });
-    const combineButton = button('Combine', 'Files', combine, 'btn primary');
-    const addButton = button('Add files…', 'Plus', addFiles, 'btn');
+    const combineButton = button('合并', 'Files', combine, 'btn primary');
+    const addButton = button('添加文件…', 'Plus', addFiles, 'btn');
     const d = modal(
-      'Combine files',
+      '合并文件',
       el(
         'div',
         { class: 'stack combine-dialog' },
         el(
           'label',
           { class: 'checkbox-row', for: 'combine-current' },
-          el('span', {}, `Start with ${name}`),
+          el('span', {}, `以“${name}”开始`),
           includeCurrent,
         ),
         addButton,
@@ -9669,7 +9669,7 @@ export function createEditor({
         el(
           'p',
           { class: 'muted' },
-          'Pages are copied in this order into a new PDF. Form fields are flattened so their values stay visible.',
+          '页面将按此顺序复制到一个新的 PDF 中。表单字段将被拼合以保持其内容可见。',
         ),
       ),
       [button('Cancel', null, () => d.close()), combineButton],
@@ -9722,7 +9722,7 @@ export function createEditor({
     const rangeInput = el('input', {
       type: 'text',
       class: 'input',
-      placeholder: 'e.g. 1-3, 5',
+      placeholder: '例如：1-3, 5',
       'aria-label': 'Pages of the other PDF',
       inputmode: 'numeric',
       autocomplete: 'off',
@@ -9810,8 +9810,8 @@ export function createEditor({
       e.preventDefault();
       apply();
     };
-    const insertButton = button('Insert pages', 'Files', apply, 'btn primary');
-    const d = modal('Insert pages', form, [button('Cancel', null, () => d.close()), insertButton]);
+    const insertButton = button('插入页面', 'Files', apply, 'btn primary');
+    const d = modal('插入页面', form, [button('取消', null, () => d.close()), insertButton]);
     return new Promise((resolve) => d.addEventListener('close', () => resolve(), { once: true }));
   }
   function goToPage() {
@@ -9828,7 +9828,7 @@ export function createEditor({
     const form = el(
       'form',
       {},
-      el('label', { for: 'go-to-page' }, `Page number (1 to ${pdf.numPages})`),
+      el('label', { for: 'go-to-page' }, `页码（1 到 ${pdf.numPages}）`),
       input,
     );
     const go = () => {
@@ -9841,9 +9841,9 @@ export function createEditor({
       e.preventDefault();
       go();
     };
-    const d = modal('Go to page', form, [
+    const d = modal('前往页面', form, [
       button('Cancel', null, () => d.close()),
-      button('Go', null, go, 'btn primary'),
+      button('前往', null, go, 'btn primary'),
     ]);
     input.focus();
     input.select();
@@ -9858,7 +9858,7 @@ export function createEditor({
       type: 'text',
       class: 'input',
       placeholder: 'e.g. 1-3, 5',
-      'aria-label': 'Page range',
+      'aria-label': '页码范围',
       inputmode: 'numeric',
       autocomplete: 'off',
     });
@@ -9869,15 +9869,15 @@ export function createEditor({
         el('input', { type: 'radio', name: group, value, checked }),
         el('span', {}, label),
       );
-    const rangeChoice = choice('range', 'Pages', false);
+    const rangeChoice = choice('range', '指定页面', false);
     rangeInput.addEventListener('input', () => {
       rangeChoice.querySelector('input').checked = true;
     });
     const list = el(
       'div',
-      { class: 'choice-list', role: 'radiogroup', 'aria-label': 'Pages to include' },
-      all && choice('all', `All pages (${count})`, start === 'all'),
-      choice('current', `Current page (${pageIndex + 1})`, start === 'current'),
+      { class: 'choice-list', role: 'radiogroup', 'aria-label': '包含的页面' },
+      all && choice('all', `全部页面 (${count})`, start === 'all'),
+      choice('current', `当前页 (${pageIndex + 1})`, start === 'current'),
       el('div', { class: 'choice-with-input' }, rangeChoice, rangeInput),
     );
     return {
@@ -9946,21 +9946,21 @@ export function createEditor({
     const form = el(
       'form',
       { class: 'stack' },
-      labeled('watermark-text', 'Text', text),
+      labeled('watermark-text', '文本', text),
       el(
         'div',
         { class: 'field-grid' },
-        labeled('watermark-layout', 'Layout', layout),
-        labeled('watermark-size', 'Size', size),
-        labeled('watermark-color', 'Color', colorPick),
-        labeled('watermark-opacity', 'Opacity', opacity, opacityValue),
+        labeled('watermark-layout', '版式', layout),
+        labeled('watermark-size', '字号', size),
+        labeled('watermark-color', '颜色', colorPick),
+        labeled('watermark-opacity', '不透明度', opacity, opacityValue),
       ),
       el('p', { class: 'muted' }, 'Pages'),
       choices.list,
     );
     const apply = safe(async () => {
       if (!text.value.trim()) {
-        toast('Enter the watermark text.', { error: true });
+        toast('请输入水印文本。', { error: true });
         text.focus();
         return;
       }
@@ -9982,9 +9982,9 @@ export function createEditor({
       e.preventDefault();
       apply();
     };
-    const d = modal('Add watermark', form, [
+    const d = modal('添加水印', form, [
       button('Cancel', null, () => d.close()),
-      button('Add watermark', 'Stamp', apply, 'btn primary'),
+      button('添加水印', 'Stamp', apply, 'btn primary'),
     ]);
     text.focus();
     text.select();
@@ -10042,19 +10042,19 @@ export function createEditor({
     const batesSection = el(
       'details',
       { class: 'bates-options', ...(bates && { open: true }) },
-      el('summary', {}, 'Bates numbering'),
+      el('summary', {}, '贝茨编号'),
       el(
         'p',
         { class: 'muted' },
-        'Put {bates} in any position to number the chosen pages, such as ABC000001.',
+        '在任意位置填入 {bates} 以对选定页面进行连续编号，例如 ABC000001。',
       ),
       el(
         'div',
         { class: 'field-grid' },
-        labeled('bates-prefix', 'Prefix', batesFields.prefix),
-        labeled('bates-start', 'Start number', batesFields.start),
-        labeled('bates-digits', 'Number of digits', batesFields.digits),
-        labeled('bates-suffix', 'Suffix', batesFields.suffix),
+        labeled('bates-prefix', '前缀', batesFields.prefix),
+        labeled('bates-start', '起始编号', batesFields.start),
+        labeled('bates-digits', '位数', batesFields.digits),
+        labeled('bates-suffix', '后缀', batesFields.suffix),
       ),
     );
     if (bates) inputs.bottomRight.value = '{bates}';
@@ -10064,7 +10064,7 @@ export function createEditor({
       el(
         'p',
         { class: 'muted' },
-        'Write into any of the six places. {page}, {pages}, {date}, {title}, {file}, and {bates} are filled in for each page.',
+        '可填写六个位置中的任意位置。每个页面将自动填充 {page}、{pages}、{date}、{title}、{file} 和 {bates}。',
       ),
       // Three across, as the places sit on the page: left, center, and right.
       el(
@@ -10106,11 +10106,11 @@ export function createEditor({
       e.preventDefault();
       apply();
     };
-    const d = modal(bates ? 'Bates numbering' : 'Header and footer', form, [
+    const d = modal(bates ? '贝茨编号' : '页眉和页脚', form, [
       button('Cancel', null, () => d.close()),
       bates
-        ? button('Add Bates numbers', 'Hash', apply, 'btn primary')
-        : button('Add header and footer', 'PanelTopBottomDashed', apply, 'btn primary'),
+        ? button('添加贝茨编号', 'Hash', apply, 'btn primary')
+        : button('添加页眉和页脚', 'PanelTopBottomDashed', apply, 'btn primary'),
     ]);
     d.classList.add('header-footer-dialog');
     (bates ? batesFields.prefix : inputs.topLeft).focus();
@@ -10159,10 +10159,10 @@ export function createEditor({
       el(
         'div',
         { class: 'field-grid' },
-        labeled('numbers-position', 'Position', position),
-        labeled('numbers-format', 'Format', format),
-        labeled('numbers-start', 'Start at', start),
-        labeled('numbers-size', 'Size (pt)', size),
+        labeled('numbers-position', '位置', position),
+        labeled('numbers-format', '格式', format),
+        labeled('numbers-start', '起始页码', start),
+        labeled('numbers-size', '字号 (磅)', size),
       ),
       el('p', { class: 'muted' }, 'Pages'),
       choices.list,
@@ -10186,9 +10186,9 @@ export function createEditor({
       e.preventDefault();
       apply();
     };
-    const d = modal('Add page numbers', form, [
+    const d = modal('添加页码', form, [
       button('Cancel', null, () => d.close()),
-      button('Add page numbers', 'Hash', apply, 'btn primary'),
+      button('添加页码', 'Hash', apply, 'btn primary'),
     ]);
     position.focus();
   }
@@ -10203,7 +10203,7 @@ export function createEditor({
       el(
         'p',
         { class: 'muted' },
-        'Each page prints on its own sheet, scaled to fit. Your browser’s print dialog chooses the printer, paper, and copies.',
+        '每一页都将按适合纸张的比例打印在单独的纸张上。您的浏览器打印对话框可选择打印机、纸张和份数。',
       ),
       choices.list,
     );
@@ -10216,9 +10216,9 @@ export function createEditor({
       e.preventDefault();
       print();
     };
-    const d = modal('Print', form, [
+    const d = modal('打印', form, [
       button('Cancel', null, () => d.close()),
-      button('Print', 'Printer', print, 'btn primary'),
+      button('打印', 'Printer', print, 'btn primary'),
     ]);
   }
   /**
@@ -10247,8 +10247,8 @@ export function createEditor({
     updateStatus();
     const controller = new AbortController();
     let handing = false;
-    const progress = el('p', { class: 'muted', role: 'status' }, 'Preparing pages…');
-    const d = modal('Printing', el('div', { class: 'stack' }, progress), [
+    const progress = el('p', { class: 'muted', role: 'status' }, '正在准备页面…');
+    const d = modal('正在打印', el('div', { class: 'stack' }, progress), [
       button('Cancel', null, () => controller.abort()),
     ]);
     // Escape and the close button cancel too; the dialog also closes on its own right before
@@ -10475,9 +10475,9 @@ export function createEditor({
       e.preventDefault();
       apply();
     };
-    const d = modal('Document details', form, [
+    const d = modal('文档属性', form, [
       button('Cancel', null, () => d.close()),
-      ...(access().edit ? [button('Save details', 'Check', apply, 'btn primary')] : []),
+      ...(access().edit ? [button('保存属性', 'Check', apply, 'btn primary')] : []),
     ]);
     inputs.title.focus();
   }
@@ -10509,13 +10509,13 @@ export function createEditor({
       el(
         'p',
         { class: 'muted' },
-        'Each page becomes a picture with its annotations. One page downloads as a file; several download together as a ZIP.',
+        '每个页面都将转为带有其批注的图片。单个页面直接下载；多个页面将打包为 ZIP 下载。',
       ),
       el(
         'div',
         { class: 'field-grid image-export-fields' },
-        labeled('images-format', 'Format', format),
-        labeled('images-dpi', 'Resolution', dpi),
+        labeled('images-format', '格式', format),
+        labeled('images-dpi', '分辨率', dpi),
       ),
       el('p', { class: 'muted' }, 'Pages'),
       choices.list,
@@ -10529,7 +10529,7 @@ export function createEditor({
       e.preventDefault();
       apply();
     };
-    const d = modal('Download pages as images', form, [
+    const d = modal('将页面下载为图片', form, [
       button('Cancel', null, () => d.close()),
       button('Download', 'ImageDown', apply, 'btn primary'),
     ]);
@@ -10550,7 +10550,7 @@ export function createEditor({
     updateStatus();
     const controller = new AbortController();
     const progress = el('p', { class: 'muted', role: 'status' }, 'Preparing pages…');
-    const d = modal('Downloading pages as images', el('div', { class: 'stack' }, progress), [
+    const d = modal('正在将页面下载为图片', el('div', { class: 'stack' }, progress), [
       button('Cancel', null, () => controller.abort()),
     ]);
     // Escape and the close button cancel too; the dialog closes on its own when done.
@@ -11525,7 +11525,7 @@ export function createEditor({
     }
     if (!current()) return;
     if (!found.length) {
-      toast('No new form fields were found. Add fields with the field tools instead.');
+      toast('未发现新的表单字段。请使用表单工具手动添加字段。');
       return;
     }
     const list = el(
@@ -11552,7 +11552,7 @@ export function createEditor({
       const chosen = [...list.querySelectorAll('input:checked')].map(
         (box) => found[Number(box.dataset.index)],
       );
-      if (!chosen.length) throw new Error('Choose at least one field to create.');
+      if (!chosen.length) throw new Error('请至少选择一个要创建的字段。');
       await mutateDialog(
         d,
         async (doc) => {
@@ -11569,7 +11569,7 @@ export function createEditor({
       );
     });
     const d = modal(
-      'Fields found',
+      '发现表单字段',
       el(
         'div',
         { class: 'stack' },
@@ -11582,7 +11582,7 @@ export function createEditor({
       ),
       [
         button('Cancel', null, () => d.close()),
-        button('Create fields', null, create, 'btn primary'),
+        button('创建字段', null, create, 'btn primary'),
       ],
     );
   }
@@ -11728,7 +11728,7 @@ export function createEditor({
     const doc = await PDFDocument.load(session.bytes, { updateMetadata: false });
     const figures = listFigures(doc);
     if (!figures.length) {
-      toast('The tags list no figures. Autotag the document first if it has none.');
+      toast('标签列表中没有图像。如果文档未标记，请先自动标记文档。');
       return;
     }
     const inputs = figures.map((figure, i) => {
@@ -11736,7 +11736,7 @@ export function createEditor({
         class: 'input',
         rows: 2,
         maxlength: 1000,
-        placeholder: 'Describe the picture for someone who cannot see it',
+        placeholder: '为无法查看图片的人描述图片内容',
       });
       input.value = figure.alt || '';
       return input;
@@ -11755,7 +11755,7 @@ export function createEditor({
     });
     let saving = null;
     const d = modal(
-      'Alternate text',
+      '替换文本',
       el(
         'div',
         { class: 'stack alt-text-list' },
@@ -11773,7 +11773,7 @@ export function createEditor({
     const { setFieldDescriptions } = await import('./core/accessibility.js');
     const doc = await PDFDocument.load(session.bytes, { updateMetadata: false });
     const fields = [...new Map(listFormFields(doc).map((field) => [field.name, field])).values()];
-    if (!fields.length) return toast('This PDF has no form fields.');
+    if (!fields.length) return toast('此 PDF 没有表单字段。');
     const inputs = fields.map((field) =>
       el('input', { class: 'input', value: field.props?.tooltip || '', maxlength: 300 }),
     );
@@ -11794,7 +11794,7 @@ export function createEditor({
     });
     let saving = null;
     const d = modal(
-      'Field descriptions',
+      '字段说明',
       el(
         'div',
         { class: 'stack' },
@@ -11825,7 +11825,7 @@ export function createEditor({
       else await convertPdfA(part, conformance);
     });
     const d = modal(
-      mode === 'check' ? 'Check PDF/A compliance' : 'Save as PDF/A',
+      mode === 'check' ? '检查 PDF/A 合规性' : '另存为 PDF/A',
       el(
         'div',
         { class: 'stack' },
@@ -11836,11 +11836,11 @@ export function createEditor({
             ? 'Preflight the PDF against a PDF/A level and list what does not comply.'
             : 'Fix what can be fixed automatically (color profile, metadata, fonts of the standard 14, scripts, annotation appearances) and report what remains. Password protection is not allowed in PDF/A.',
         ),
-        labeled('pdfa-level', 'Level', levelSelect),
+        labeled('pdfa-level', '标准级别', levelSelect),
       ),
       [
         button('Cancel', null, () => d.close()),
-        button(mode === 'check' ? 'Check' : 'Convert', null, run, 'btn primary'),
+        button(mode === 'check' ? '检查' : '转换', null, run, 'btn primary'),
       ],
     );
   }
@@ -11932,7 +11932,7 @@ export function createEditor({
   function compareDialog() {
     if (!pdf) return;
     let chosen = null;
-    const fileName = el('span', { class: 'muted' }, 'No file chosen');
+    const fileName = el('span', { class: 'muted' }, '未选择文件');
     const newer = el('input', { type: 'checkbox', id: 'compare-newer' });
     const choose = () => {
       const input = el('input', { type: 'file', accept: '.pdf,application/pdf' });
@@ -11957,13 +11957,13 @@ export function createEditor({
       input.click();
     };
     const run = safe(async () => {
-      if (!chosen) throw new Error('Choose the other version of the PDF.');
+      if (!chosen) throw new Error('请选择另一个版本的 PDF。');
       d.close();
       await runCompare(chosen, { currentIsNew: newer.checked });
     });
     const compareButton = button('Compare', null, run, 'btn primary', { disabled: true });
     const d = modal(
-      'Compare files',
+      '比较文件',
       el(
         'div',
         { class: 'stack' },
@@ -11975,7 +11975,7 @@ export function createEditor({
         el(
           'div',
           { class: 'field-inline' },
-          button('Choose file…', 'FolderOpen', choose, 'btn'),
+          button('选择文件…', 'FolderOpen', choose, 'btn'),
           fileName,
         ),
         el(
@@ -11997,8 +11997,8 @@ export function createEditor({
     updateStatus();
     const controller = new AbortController();
     const bar = el('progress', { max: 1, value: 0, 'aria-label': 'Comparison progress' });
-    const progress = el('p', { class: 'muted', role: 'status' }, 'Reading both versions…');
-    const d = modal('Comparing', el('div', { class: 'stack' }, progress, bar), [
+    const progress = el('p', { class: 'muted', role: 'status' }, '正在读取两个版本…');
+    const d = modal('正在比较', el('div', { class: 'stack' }, progress, bar), [
       button('Cancel', null, () => controller.abort()),
     ]);
     let done = false;
@@ -12221,15 +12221,15 @@ export function createEditor({
         ...files,
       ];
       // Checked while the dialog is open, so the files and steps chosen are still there.
-      if (!inputs.length) throw new Error('Add at least one PDF.');
-      if (!chosen.length) throw new Error('Choose at least one step.');
+      if (!inputs.length) throw new Error('请添加至少一个 PDF。');
+      if (!chosen.length) throw new Error('请至少选择一个处理步骤。');
       if (includeCurrent.checked) requireAccess('copy');
       d.close();
       await runBatchSteps(inputs, chosen);
     });
-    const addButton = button('Add PDFs…', 'Plus', addFiles, 'btn');
+    const addButton = button('添加 PDF…', 'Plus', addFiles, 'btn');
     const d = modal(
-      'Batch process',
+      '批量处理',
       el(
         'div',
         { class: 'stack batch-dialog' },
@@ -12249,7 +12249,7 @@ export function createEditor({
         el('h3', { class: 'batch-heading' }, 'Steps, in this order'),
         ...stepRows,
       ),
-      [button('Cancel', null, () => d.close()), button('Run', null, run, 'btn primary')],
+      [button('Cancel', null, () => d.close()), button('开始处理', null, run, 'btn primary')],
     );
   }
   async function runBatchSteps(inputs, steps) {
@@ -12260,7 +12260,7 @@ export function createEditor({
     const controller = new AbortController();
     const progress = el('p', { class: 'muted', role: 'status' }, 'Starting…');
     const bar = el('progress', { max: inputs.length, value: 0, 'aria-label': 'Batch progress' });
-    const d = modal('Processing files', el('div', { class: 'stack' }, progress, bar), [
+    const d = modal('正在处理文件', el('div', { class: 'stack' }, progress, bar), [
       button('Cancel', null, () => controller.abort()),
     ]);
     let done = false;
@@ -12341,7 +12341,7 @@ export function createEditor({
       // Content a step could not read was left in the file; that must not pass by in a brief
       // message, as Remove hidden information on one PDF says too.
       const notice = modal(
-        'Check the processed PDFs',
+        '检查已处理的 PDF',
         el(
           'div',
           { class: 'stack' },
@@ -12484,9 +12484,9 @@ export function createEditor({
       e.preventDefault();
       apply();
     };
-    const d = modal('Recognize text', form, [
+    const d = modal('识别文本', form, [
       button('Cancel', null, () => d.close()),
-      button('Recognize text', null, apply, 'btn primary'),
+      button('识别文本', null, apply, 'btn primary'),
     ]);
   }
   async function recognizeText(pages, { skipText = true, dpi = 300 } = {}) {
@@ -12497,8 +12497,8 @@ export function createEditor({
     updateStatus();
     const controller = new AbortController();
     const bar = el('progress', { max: 1, value: 0, 'aria-label': 'Recognition progress' });
-    const progress = el('p', { class: 'muted', role: 'status' }, 'Starting text recognition…');
-    const d = modal('Recognizing text', el('div', { class: 'stack' }, progress, bar), [
+    const progress = el('p', { class: 'muted', role: 'status' }, '正在启动文本识别…');
+    const d = modal('正在识别文本', el('div', { class: 'stack' }, progress, bar), [
       button('Cancel', null, () => controller.abort()),
     ]);
     let done = false;
@@ -12646,7 +12646,7 @@ export function createEditor({
     };
     const d = modal(`Export to ${labels[format]}`, form, [
       button('Cancel', null, () => d.close()),
-      button('Export', 'Download', apply, 'btn primary'),
+      button('导出', 'Download', apply, 'btn primary'),
     ]);
   }
   async function runOfficeExport(format, pages, { slideBackgrounds, singleSheet, label }) {
@@ -12656,7 +12656,7 @@ export function createEditor({
     updateStatus();
     const controller = new AbortController();
     const bar = el('progress', { max: 1, value: 0, 'aria-label': 'Export progress' });
-    const progress = el('p', { class: 'muted', role: 'status' }, 'Reading the pages…');
+    const progress = el('p', { class: 'muted', role: 'status' }, '正在读取页面…');
     const d = modal(`Exporting to ${label}`, el('div', { class: 'stack' }, progress, bar), [
       button('Cancel', null, () => controller.abort()),
     ]);
@@ -12712,7 +12712,7 @@ export function createEditor({
         `${base}.${result.extension}`,
         result.mime,
       );
-      toast(`Exported to ${label}.`);
+      toast(`已导出为 ${label}。`);
     } catch (error) {
       if (!['AbortError', 'RenderingCancelledException'].includes(error?.name)) throw error;
     } finally {
@@ -12838,15 +12838,15 @@ export function createEditor({
         activity = null;
         updateStatus();
       }
-      toast(`${ranges.length} PDFs downloaded as a ZIP.`);
+      toast(`已将 ${ranges.length} 个 PDF 打包为 ZIP 下载。`);
     });
     form.onsubmit = (e) => {
       e.preventDefault();
       apply();
     };
-    const downloadButton = button('Download ZIP', 'Download', apply, 'btn primary');
+    const downloadButton = button('下载 ZIP', 'Download', apply, 'btn primary');
     preview();
-    const d = modal('Split PDF', form, [button('Cancel', null, () => d.close()), downloadButton]);
+    const d = modal('拆分 PDF', form, [button('取消', null, () => d.close()), downloadButton]);
   }
   /** Turn form fields and comments into fixed page content. */
   async function flattenDialog(version = beginDialogRequest()) {
@@ -12856,7 +12856,7 @@ export function createEditor({
     if (!doc) return;
     const counts = flattenCounts(doc);
     if (!counts.fields && !counts.annotations) {
-      toast('This PDF has no form fields or comments to flatten.');
+      toast('此 PDF 没有可拼合的表单字段或批注。');
       return;
     }
     const option = (id, label, count) => {
@@ -12879,7 +12879,7 @@ export function createEditor({
       el(
         'p',
         { class: 'muted' },
-        'Flattened fields and comments become part of the page: every reader shows them the same way, and nobody can fill, move, or delete them afterwards. Anything that cannot be flattened safely stays in the PDF. Links stay clickable. Undo brings the original back.',
+        '拼合后的字段和批注将成为页面固定内容：所有阅读器都将以相同方式显示它们，且之后无法再填写、移动或删除。不能安全拼合的内容将保留在 PDF 中。链接保持可点击。可通过撤销恢复原始内容。',
       ),
       fields.row,
       annotations.row,
@@ -12887,7 +12887,7 @@ export function createEditor({
     const apply = safe(async () => {
       const choice = { fields: fields.box.checked, annotations: annotations.box.checked };
       if (!choice.fields && !choice.annotations) {
-        toast('Choose what to flatten.', { error: true });
+        toast('请选择要拼合的内容。', { error: true });
         return;
       }
       d.close();
@@ -12923,9 +12923,9 @@ export function createEditor({
       e.preventDefault();
       apply();
     };
-    const d = modal('Flatten', form, [
+    const d = modal('拼合', form, [
       button('Cancel', null, () => d.close()),
-      button('Flatten', 'Layers', apply, 'btn primary'),
+      button('拼合', 'Layers', apply, 'btn primary'),
     ]);
   }
   /** Shrink pictures to their printed resolution and clear leftovers from earlier edits. */
@@ -12969,9 +12969,9 @@ export function createEditor({
       e.preventDefault();
       apply();
     };
-    const d = modal('Reduce file size', form, [
+    const d = modal('压缩 PDF 大小', form, [
       button('Cancel', null, () => d.close()),
-      button('Reduce size', 'Shrink', apply, 'btn primary'),
+      button('压缩', 'Shrink', apply, 'btn primary'),
     ]);
     list.querySelector('input:checked')?.focus();
   }
@@ -12981,7 +12981,7 @@ export function createEditor({
     // Rewriting the file invalidates its signatures, as any other edit does.
     if (!(await confirmSignedEdit()) || busy || destroyed) return;
     busy = true;
-    activity = 'Reducing file size…';
+    activity = '正在压缩文件大小…';
     updateStatus();
     try {
       const before = session.bytes.length;
@@ -12992,12 +12992,12 @@ export function createEditor({
       });
       if (destroyed) return;
       if (result.after >= before * 0.99) {
-        toast('This PDF is already as small as it gets here.');
+        toast('此 PDF 已经是最小状态，无法进一步压缩。');
         return;
       }
       session.adopt(result.bytes);
       await reload();
-      toast(`File size reduced from ${formatBytes(before)} to ${formatBytes(result.after)}.`);
+      toast(`文件大小已从 ${formatBytes(before)} 减小至 ${formatBytes(result.after)}。`);
     } finally {
       busy = false;
       activity = null;
@@ -13021,7 +13021,7 @@ export function createEditor({
       el(
         'p',
         { class: 'muted' },
-        'The chosen pages are saved as a new PDF on this device. Form fields in them become fixed page content.',
+        '选定页面将作为新的 PDF 保存到此设备。其中的表单字段将转为固定页面内容。',
       ),
       choices.list,
       progress,
@@ -13057,9 +13057,9 @@ export function createEditor({
       e.preventDefault();
       extract();
     };
-    const downloadButton = button('Download pages', 'Download', extract, 'btn primary');
+    const downloadButton = button('下载页面', 'Download', extract, 'btn primary');
     const d = modal(
-      'Extract pages',
+      '提取页面',
       form,
       [button('Cancel', null, () => d.close()), downloadButton],
       dialogOptions,

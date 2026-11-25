@@ -25,7 +25,7 @@ export function createOrganizationLibrary({
 }) {
   const date = (at) =>
     at
-      ? new Date(at).toLocaleDateString(language === "fr" ? "fr-CA" : "en-CA", {
+      ? new Date(at).toLocaleDateString(language === "fr" ? "fr-CA" : "fr-CA", {
           year: "numeric",
           month: "short",
           day: "numeric",
@@ -107,13 +107,13 @@ export function createOrganizationLibrary({
               : !items.length
                 ? t("Nothing has been shared to the library yet.")
                 : shown.length
-                  ? `${shown.length} ${t(shown.length === 1 ? "item" : "items")}`
+                  ? `${shown.length} ${t(shown.length === 1 ? "item" : "物品")}`
                   : t("No library items match your search.");
           list.innerHTML = shown
             .slice(start, start + pageSize)
             .map((i) => {
               const pending = i.status !== "approved";
-              return `<div class="revision-row" data-item="${escape(i.id)}"><div><strong data-user-content>${escape(i.name)}</strong><small>${category(i.category)} · ${t("Shared by")} <span data-user-content>${escape(i.createdByName || "")}</span> · <span class="nowrap">${escape(date(i.created))}</span>${pending ? ` · <span class="badge">${t("Awaiting approval")}</span>` : ""}</small>${i.description ? `<small data-user-content>${authoredTextHTML({ text: i.description, lang: i.descriptionLang, textRuns: i.descriptionRuns })}</small>` : ""}</div>${inserting ? `<button type="button" class="secondary" data-library-insert aria-label="${escape(t("Insert into board"))}: ${escape(i.name)}">${t("Insert into board")}</button>` : ""}<button type="button" class="secondary" data-library-use aria-label="${escape(t(inserting ? "New board" : "Use template"))}: ${escape(i.name)}">${t(inserting ? "New board" : "Use template")}</button>${pending && canPublish ? `<button type="button" class="secondary" data-library-approve>${t("Approve")}</button>` : ""}${i.canRemove ? `<button type="button" class="text-btn" data-library-remove>${t("Remove")}</button>` : ""}</div>`;
+              return `<div class="revision-row" data-item="${escape(i.id)}"><div><strong data-user-content>${escape(i.name)}</strong><small>${category(i.category)} · ${t("Shared by")} <span data-user-content>${escape(i.createdByName || "")}</span> · <span class="nowrap">${escape(date(i.created))}</span>${pending ? ` · <span class="badge">${t("Awaiting approval")}</span>` : ""}</small>${i.description ? `<small data-user-content>${authoredTextHTML({ text: i.description, lang: i.descriptionLang, textRuns: i.descriptionRuns })}</small>` : ""}</div>${inserting ? `<button type="button" class="secondary" data-library-insert aria-label="${escape(t("Insert into board"))}: ${escape(i.name)}">${t("Insert into board")}</button>` : ""}<button type="button" class="secondary" data-library-use aria-label="${escape(t(inserting ? "New board" : "新板"))}: ${escape(i.name)}">${t(inserting ? "New board" : "新板")}</button>${pending && canPublish ? `<button type="button" class="secondary" data-library-approve>${t("Approve")}</button>` : ""}${i.canRemove ? `<button type="button" class="text-btn" data-library-remove>${t("Remove")}</button>` : ""}</div>`;
             })
             .join("");
           for (const row of list.querySelectorAll("[data-item]"))
@@ -250,7 +250,7 @@ export function createOrganizationLibrary({
     if (!board) return toast("Open a board to share it.");
     modal(
       "Share to organization library",
-      `<form id="org-library-share"><p class="dialog-copy">${t(org.isAdmin ? "Everyone in your organization can use it right away." : "An administrator approves it before others see it.")}</p><label class="field">${t("Name")}<input id="org-library-name" required maxlength="120" value="${escape(board.title)}"></label><label class="field">${t("Category")}<input id="org-library-category" maxlength="60" placeholder="${t("General")}"></label><div class="field"><span id="org-library-description-label">${t("Description (optional)")}</span><div id="org-library-description"></div></div><p id="org-library-share-error" class="dialog-copy" role="alert" hidden></p><div class="dialog-footer"><button class="primary">${t("Share template")}</button></div></form>`,
+      `<form id="org-library-share"><p class="dialog-copy">${t(org.isAdmin ? "Everyone in your organization can use it right away." : "您组织中的每个人都可以立即使用它。")}</p><label class="field">${t("Name")}<input id="org-library-name" required maxlength="120" value="${escape(board.title)}"></label><label class="field">${t("Category")}<input id="org-library-category" maxlength="60" placeholder="${t("General")}"></label><div class="field"><span id="org-library-description-label">${t("Description (optional)")}</span><div id="org-library-description"></div></div><p id="org-library-share-error" class="dialog-copy" role="alert" hidden></p><div class="dialog-footer"><button class="primary">${t("Share template")}</button></div></form>`,
       (d) => {
         const form = d.querySelector("form");
         const description = createAuthoredField(
@@ -293,7 +293,7 @@ export function createOrganizationLibrary({
             toast(
               item.status === "approved"
                 ? "Shared to the organization library."
-                : "Shared. An administrator will review it.",
+                : "共享到组织库。",
             );
           } catch (failure) {
             // The form stays open, so its explanation stays with it.
@@ -311,36 +311,36 @@ export function createOrganizationLibrary({
 
 addTranslations({
   "Showing library items {from}–{to} of {total}.":
-    "Éléments {from}–{to} sur {total}.",
+    "显示 {total} 的库项目 {from}–{to}。",
   "Templates shared across your organization. Content a member shares appears for everyone once an administrator approves it.":
-    "Modèles partagés dans votre organisation. Le contenu partagé par un membre apparaît pour tous une fois approuvé par un administrateur.",
-  "Search the library": "Rechercher dans la bibliothèque",
+    "在整个组织内共享的模板。一旦管理员批准，成员共享的内容就会向所有人显示。",
+  "Search the library": "搜索图书馆",
   "Nothing has been shared to the library yet.":
-    "Rien n’a encore été partagé dans la bibliothèque.",
+    "尚未向图书馆共享任何内容。",
   "No library items match your search.":
-    "Aucun élément de la bibliothèque ne correspond à votre recherche.",
+    "没有与您的搜索匹配的库项目。",
   item: "élément",
   items: "éléments",
-  "Shared by": "Partagé par",
-  "Awaiting approval": "En attente d’approbation",
+  "Shared by": "分享者",
+  "Awaiting approval": "等待批准",
   Approve: "Approuver",
-  "Confirm removal": "Confirmer le retrait",
+  "Confirm removal": "确认删除",
   "Approved for everyone in the organization.":
-    "Approuvé pour toute l’organisation.",
-  "Removed from the library.": "Retiré de la bibliothèque.",
-  "Open a board to share it.": "Ouvrez un tableau pour le partager.",
+    "已获得组织中每个人的批准。",
+  "Removed from the library.": "从图书馆中删除。",
+  "Open a board to share it.": "打开一个板来分享它。",
   "Share to organization library":
-    "Partager dans la bibliothèque de l’organisation",
+    "分享到组织库",
   "Everyone in your organization can use it right away.":
-    "Toute votre organisation peut l’utiliser immédiatement.",
+    "您组织中的每个人都可以立即使用它。",
   "An administrator approves it before others see it.":
-    "Un administrateur l’approuve avant que d’autres le voient.",
+    "管理员在其他人看到之前批准它。",
   General: "Général",
-  "Migrated from Miro": "Migré depuis Miro",
-  "Description (optional)": "Description (facultative)",
-  "Share template": "Partager le modèle",
+  "Migrated from Miro": "从米罗迁移",
+  "Description (optional)": "说明（可选）",
+  "Share template": "分享模板",
   "Shared to the organization library.":
-    "Partagé dans la bibliothèque de l’organisation.",
+    "共享到组织库。",
   "Shared. An administrator will review it.":
-    "Partagé. Un administrateur l’examinera.",
+    "共享。管理员将对其进行审核。",
 });

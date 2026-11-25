@@ -5,13 +5,13 @@ import { el, icon, iconButton, button, formatBytes } from './lib/ui.js';
  * button to attach another file.
  */
 export function createAttachmentsPanel({ onAdd, onSave, onRemove, canEdit }) {
-  const list = el('ul', { class: 'attachment-list', 'aria-label': 'Attached files' });
+  const list = el('ul', { class: 'attachment-list', 'aria-label': '附件列表' });
   const empty = el(
     'p',
     { class: 'panel-empty muted' },
-    'No files are attached to this PDF. Attach a file to keep it with the document.',
+    '此 PDF 未包含任何附件。可附加文件随文档一同保存。',
   );
-  const addButton = button('Attach a file…', 'Plus', () => onAdd(), 'btn panel-action');
+  const addButton = button('附加文件…', 'Plus', () => onAdd(), 'btn panel-action');
   const root = el('div', { class: 'attachments-panel' }, addButton, empty, list);
   let generation = 0;
   return {
@@ -57,11 +57,11 @@ export function createAttachmentsPanel({ onAdd, onSave, onRemove, canEdit }) {
               ),
               info.description && el('span', { class: 'attachment-meta muted' }, info.description),
             ),
-            iconButton(`Save ${info.filename || key}`, 'Download', () =>
+            iconButton(`保存 ${info.filename || key}`, 'Download', () =>
               onSave(key, info.filename || key),
             ),
             iconButton(
-              `Remove ${info.filename || key}`,
+              `删除 ${info.filename || key}`,
               'Trash2',
               () => onRemove(key, info.filename || key),
               {
@@ -92,11 +92,11 @@ export function createAttachmentsPanel({ onAdd, onSave, onRemove, canEdit }) {
  * switches change what is shown, not the file, as in desktop PDF readers.
  */
 export function createLayersPanel({ onToggle }) {
-  const tree = el('ul', { class: 'layer-list', role: 'list', 'aria-label': 'Layers' });
+  const tree = el('ul', { class: 'layer-list', role: 'list', 'aria-label': '图层' });
   const root = el(
     'div',
     { class: 'layers-panel' },
-    el('p', { class: 'panel-note muted' }, 'Showing or hiding a layer changes the view only.'),
+    el('p', { class: 'panel-note muted' }, '显示或隐藏图层仅改变视图效果。'),
     tree,
   );
   let config = null;
@@ -112,7 +112,7 @@ export function createLayersPanel({ onToggle }) {
     return el(
       'li',
       { class: 'layer-row', style: `--depth:${depth}` },
-      el('label', {}, input, icon('Layers', 15), el('span', {}, group.name || 'Unnamed layer')),
+      el('label', {}, input, icon('Layers', 15), el('span', {}, group.name || '未命名图层')),
     );
   }
   function walk(order, depth = 0) {

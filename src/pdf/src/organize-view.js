@@ -46,7 +46,7 @@ export function createOrganizeView({
     max: SIZES.length - 1,
     step: 1,
     value: size,
-    'aria-label': 'Page tile size',
+    'aria-label': '页面缩略图大小',
     oninput: () => {
       sizePicked = true;
       size = Number(sizeInput.value);
@@ -58,7 +58,7 @@ export function createOrganizeView({
     class: 'organize-grid',
     role: 'listbox',
     'aria-multiselectable': 'true',
-    'aria-label': 'Pages',
+    'aria-label': '页面',
     tabindex: '-1',
   });
   grid.style.setProperty('--tile', `${SIZES[size]}px`);
@@ -160,12 +160,12 @@ export function createOrganizeView({
       },
     );
   const commands = {
-    insert: button('Insert', 'FilePlus2', (e) => insertMenu(e.currentTarget), 'btn organize-btn', {
+    insert: button('插入', 'FilePlus2', (e) => insertMenu(e.currentTarget), 'btn organize-btn', {
       'aria-haspopup': 'menu',
       'data-permission': 'assemble',
     }),
     left: iconButton(
-      'Rotate counterclockwise',
+      '逆时针旋转',
       'RotateCcw',
       run(() => actions.rotate(target(), -90)),
       {
@@ -173,27 +173,27 @@ export function createOrganizeView({
       },
     ),
     right: iconButton(
-      'Rotate clockwise',
+      '顺时针旋转',
       'RotateCw',
       run(() => actions.rotate(target(), 90)),
       {
         'data-permission': 'assemble',
       },
     ),
-    earlier: moveButton('Move pages earlier', 'ArrowLeft', -1, 'Alt+←'),
-    later: moveButton('Move pages later', 'ArrowRight', 1, 'Alt+→'),
-    duplicate: iconButton('Duplicate pages', 'Copy', run(duplicateChosen), {
+    earlier: moveButton('向前移动页面', 'ArrowLeft', -1, 'Alt+←'),
+    later: moveButton('向后移动页面', 'ArrowRight', 1, 'Alt+→'),
+    duplicate: iconButton('复制页面', 'Copy', run(duplicateChosen), {
       'data-permission': 'assemble',
     }),
     extract: iconButton(
-      'Extract pages',
+      '提取页面',
       'Scissors',
       run(() => actions.extract(target())),
       {
         'data-permission': 'copy',
       },
     ),
-    remove: iconButton('Delete pages', 'Trash2', run(removeChosen), {
+    remove: iconButton('删除页面', 'Trash2', run(removeChosen), {
       'data-permission': 'assemble',
     }),
   };
@@ -201,12 +201,12 @@ export function createOrganizeView({
     const at = after();
     openMenu({
       anchor: anchorButton,
-      label: 'Insert',
+      label: '插入',
       items: [
-        { header: `After page ${at + 1}` },
-        { label: 'Blank page', icon: 'FilePlus2', onSelect: run(() => actions.insertBlank(at)) },
-        { label: 'From PDF file…', icon: 'Plus', onSelect: run(() => actions.insertFile(at)) },
-        { label: 'Pictures…', icon: 'Images', onSelect: run(() => actions.insertPictures(at)) },
+        { header: `在第 ${at + 1} 页后` },
+        { label: '空白页', icon: 'FilePlus2', onSelect: run(() => actions.insertBlank(at)) },
+        { label: '来自 PDF 文件…', icon: 'Plus', onSelect: run(() => actions.insertFile(at)) },
+        { label: '图片…', icon: 'Images', onSelect: run(() => actions.insertPictures(at)) },
       ],
     });
   }
@@ -233,8 +233,8 @@ export function createOrganizeView({
   new ResizeObserver(markOverflow).observe(commandRow);
   const toolbar = el(
     'div',
-    { class: 'organize-toolbar', role: 'toolbar', 'aria-label': 'Organize pages' },
-    el('h2', { class: 'organize-title' }, 'Organize pages'),
+    { class: 'organize-toolbar', role: 'toolbar', 'aria-label': '组织页面' },
+    el('h2', { class: 'organize-title' }, '组织页面'),
     status,
     el('span', { class: 'organize-sep', 'aria-hidden': 'true' }),
     commandRow,
@@ -246,13 +246,13 @@ export function createOrganizeView({
       sizeInput,
       icon('ZoomIn', 16, { plain: true }),
     ),
-    button('Close', 'X', () => actions.close(), 'btn organize-close'),
+    button('关闭', 'X', () => actions.close(), 'btn organize-close'),
   );
   const root = el(
     'section',
     {
       class: 'organize-view',
-      'aria-label': 'Organize pages',
+      'aria-label': '组织页面',
       hidden: true,
       // The editor's shortcuts to rotate or delete a page act on the current page, which the
       // grid hides; here they act on the chosen pages, as the toolbar's buttons do.
@@ -282,8 +282,8 @@ export function createOrganizeView({
     }
     const n = selected.size;
     status.textContent = n
-      ? `${n} of ${count()} ${count() === 1 ? 'page' : 'pages'} selected`
-      : `${count()} ${count() === 1 ? 'page' : 'pages'}`;
+      ? `已选 ${n} / ${count()} 页`
+      : `共 ${count()} 页`;
     const busy = isBusy();
     // The buttons on each tile follow the same rules as the toolbar's, so a page that cannot
     // be turned or deleted does not offer to be.
@@ -416,7 +416,7 @@ export function createOrganizeView({
         role: 'option',
         tabindex: i === (anchor ?? currentIndex()) ? 0 : -1,
         'data-index': i,
-        'aria-label': `Page ${i + 1}`,
+        'aria-label': `第 ${i + 1} 页`,
         draggable: String(can('assemble')),
         onclick: (e) => {
           if (e.target.closest('button')) return;
@@ -451,7 +451,7 @@ export function createOrganizeView({
           'div',
           { class: 'organize-tile-actions' },
           iconButton(
-            `Rotate page ${i + 1} counterclockwise`,
+            `逆时针旋转第 ${i + 1} 页`,
             'RotateCcw',
             run(() => actions.rotate([i], -90)),
             {
@@ -460,7 +460,7 @@ export function createOrganizeView({
             },
           ),
           iconButton(
-            `Rotate page ${i + 1} clockwise`,
+            `顺时针旋转第 ${i + 1} 页`,
             'RotateCw',
             run(() => actions.rotate([i], 90)),
             {
@@ -469,7 +469,7 @@ export function createOrganizeView({
             },
           ),
           iconButton(
-            `Delete page ${i + 1}`,
+            `删除第 ${i + 1} 页`,
             'Trash2',
             run(() => removePages([i])),
             { 'data-permission': 'assemble', tabindex: -1, class: 'icon-btn organize-tile-delete' },

@@ -7,256 +7,256 @@ import { addTranslations } from "./i18n.js";
 addTranslations({
   // Access and sign-in
   "Could not verify this collaboration request.":
-    "Impossible de vérifier cette demande de collaboration.",
-  "Request too large": "Demande trop volumineuse",
-  "A JSON request body is required.": "Un corps de demande JSON est requis.",
-  "Invalid JSON request.": "Demande JSON non valide.",
+    "无法验证此协作请求。",
+  "Request too large": "请求太大",
+  "A JSON request body is required.": "需要 JSON 请求正文。",
+  "Invalid JSON request.": "JSON 请求无效。",
   "The board could not synchronize. Please retry.":
-    "Le tableau n’a pas pu se synchroniser. Veuillez réessayer.",
+    "主板无法同步。请重试。",
   "The shared board's storage is busy. Try again shortly.":
-    "Le stockage du tableau partagé est occupé. Réessayez dans quelques instants.",
+    "共享白板存储正忙，请稍后重试。",
   "This change adds a file that was not uploaded.":
-    "Cette modification ajoute un fichier qui n’a pas été téléversé.",
+    "此更改添加了一个未上传的文件。",
   "Too much feedback at once. Try again in an hour.":
-    "Trop de commentaires d’un coup. Réessayez dans une heure.",
+    "一次反馈太多。一小时后重试。",
   "Sign in to continue.":
-    "Connectez-vous pour continuer.",
-  "Board not found.": "Tableau introuvable.",
+    "登录以继续。",
+  "Board not found.": "未找到主板。",
   "You no longer have access to this board.":
-    "Vous n’avez plus accès à ce tableau.",
-  "Your board access was removed.": "Votre accès au tableau a été retiré.",
+    "您不再有权访问此板。",
+  "Your board access was removed.": "您的白板访问权限已被删除。",
   "Your guest access to this board has expired.":
-    "Votre accès invité à ce tableau a expiré.",
+    "您对该图板的访客访问权限已过期。",
   "Your organization account is deactivated.":
-    "Votre compte de l’organisation est désactivé.",
+    "您的组织帐户已停用。",
   "Your organization does not allow guest access.":
-    "Votre organisation n’autorise pas l’accès des invités.",
+    "您的组织不允许访客访问。",
   "Your organization only allows its own members on this board.":
-    "Votre organisation n’autorise que ses propres membres sur ce tableau.",
+    "您的组织只允许自己的成员加入该委员会。",
   "Only members of the organization can change who can open this board.":
-    "Seuls les membres de l’organisation peuvent changer qui peut ouvrir ce tableau.",
+    "只有组织的成员才能更改谁可以打开此板。",
   "This invitation has expired or was revoked.":
-    "Cette invitation a expiré ou a été révoquée.",
+    "此邀请已过期或已被撤销。",
   "This link is only for members of the organization. Ask the person who shared it for a guest invitation.":
-    "Ce lien est réservé aux membres de l’organisation. Demandez une invitation d’invité à la personne qui l’a partagé.",
+    "此链接仅适用于组织成员。向共享它的人索取访客邀请。",
   "This organization invitation has expired or was revoked.":
-    "Cette invitation à l’organisation a expiré ou a été révoquée.",
+    "该组织邀请已过期或已被撤销。",
   "This board has reached its participant limit.":
-    "Ce tableau a atteint sa limite de participants.",
+    "该委员会已达到其参与者限制。",
   "This board has reached its 1 GB limit for images and files.":
-    "Ce tableau a atteint sa limite de 1 Go pour les images et les fichiers.",
+    "该主板已达到图像和文件 1 GB 的限制。",
   "This board is archived and read-only.":
-    "Ce tableau est archivé et en lecture seule.",
+    "该板已存档且只读。",
   "This board is under a legal hold and cannot be deleted.":
-    "Ce tableau fait l’objet d’une conservation légale et ne peut pas être supprimé.",
+    "该版块已被合法保留，无法删除。",
   "This board is being permanently deleted.":
-    "Ce tableau est en cours de suppression définitive.",
+    "该版块将被永久删除。",
   "This board is already being created. Please retry sharing.":
-    "Ce tableau est déjà en cours de création. Réessayez de le partager.",
+    "该板已经被创建。请重试共享。",
   "Commenters can add comments but cannot change board content.":
-    "Les commentateurs peuvent ajouter des commentaires, mais pas modifier le contenu du tableau.",
+    "评论者可以添加评论，但不能更改论坛内容。",
   "This change continues another participant's edits.":
-    "Cette modification prolonge les modifications d’un autre participant.",
+    "此更改延续了另一位参与者的编辑内容。",
   "This change spans too many editing sessions.":
-    "Cette modification couvre trop de sessions d’édition.",
-  "Invalid collaboration update.": "Mise à jour de collaboration non valide.",
+    "此更改涉及太多编辑会话。",
+  "Invalid collaboration update.": "协作更新无效。",
   "Only organization members can file boards into spaces.":
-    "Seuls les membres de l’organisation peuvent classer des tableaux dans des espaces.",
+    "只有组织成员才能将看板归档到空间中。",
   "Choose a space or team that exists.":
-    "Choisissez un espace ou une équipe qui existe.",
+    "选择一个现有的空间或团队。",
   "Choose a team for this board first.":
-    "Choisissez d’abord une équipe pour ce tableau.",
-  "Member not found.": "Membre introuvable.",
+    "首先为该委员会选择一个团队。",
+  "Member not found.": "未找到会员。",
   "Your organization does not let guests facilitate boards.":
-    "Votre organisation ne permet pas aux invités d’animer des tableaux.",
+    "您的组织不允许来宾为白板提供便利。",
   "Your organization lets guests view and comment on boards, not edit them.":
-    "Votre organisation permet aux invités de consulter et de commenter les tableaux, mais pas de les modifier.",
+    "您的组织允许访客查看留言板并发表评论，但不能编辑留言板。",
   "Your organization lets guests only view boards.":
-    "Votre organisation permet seulement aux invités de consulter les tableaux.",
+    "您的组织仅允许访客查看图板。",
   "Choose a role an invitation can give.":
-    "Choisissez un rôle qu’une invitation peut donner.",
+    "选择邀请可以赋予的角色。",
   "Only a guest's access can be renewed.":
-    "Seul l’accès d’un invité peut être renouvelé.",
-  "Invalid role change.": "Changement de rôle non valide.",
-  "Invalid visibility.": "Visibilité non valide.",
-  "Invalid default role.": "Rôle par défaut non valide.",
+    "仅访客访问权限支持续期。",
+  "Invalid role change.": "角色变更无效。",
+  "Invalid visibility.": "可见性无效。",
+  "Invalid default role.": "默认角色无效。",
   "Only the board owner can manage access.":
-    "Seul le propriétaire du tableau peut gérer l’accès.",
+    "只有白板所有者才能管理访问权限。",
   "Only the board owner can invite facilitators.":
-    "Seul le propriétaire du tableau peut inviter des animateurs.",
+    "只有白板所有者才能邀请协调员。",
   "Only the board owner can change facilitators.":
-    "Seul le propriétaire du tableau peut changer les animateurs.",
+    "只有白板所有者才能更换协调人。",
   "Only the board owner can finish creating this board.":
-    "Seul le propriétaire du tableau peut terminer sa création.",
+    "只有版块所有者才能完成该版块的创建。",
   "Only the board owner or an administrator can do this.":
-    "Seuls le propriétaire du tableau ou un administrateur peuvent le faire.",
+    "只有白板所有者或管理员才能执行此操作。",
   "Only the board owner or an administrator can transfer ownership.":
-    "Seuls le propriétaire du tableau ou un administrateur peuvent en transférer la propriété.",
+    "只有白板所有者或管理员才能转让所有权。",
   "Only the account owner can transfer boards owned by the account owner or an administrator.":
-    "Seul le propriétaire du compte peut transférer les tableaux appartenant au propriétaire du compte ou à un administrateur.",
+    "只有帐户所有者才能转移帐户所有者或管理员拥有的讨论区。",
   "Only the board owner or an administrator can connect Slack.":
-    "Seuls le propriétaire du tableau ou un administrateur peuvent connecter Slack.",
+    "只有论坛所有者或管理员才能连接 Slack。",
   "Your organization has turned off Slack.":
-    "Votre organisation a désactivé Slack.",
+    "您的组织已关闭 Slack。",
   "Only the server owner can create boards.":
-    "Seul le propriétaire du serveur peut créer des tableaux.",
+    "只有服务器所有者才能创建图板。",
   // Saving and sharing
   "Collaboration request is too large.":
-    "La demande de collaboration est trop volumineuse.",
+    "协作请求太大。",
   "This change depends on edits that have not arrived yet.":
-    "Cette modification dépend de modifications qui ne sont pas encore arrivées.",
+    "此更改取决于尚未到达的编辑。",
   "Update checksum does not match.":
-    "La somme de contrôle de la modification ne correspond pas.",
-  "Invalid asset.": "Fichier non valide.",
-  "Invalid shared asset.": "Fichier partagé non valide.",
-  "Invalid peer key.": "Clé de pair non valide.",
-  "Invalid identifier.": "Identifiant non valide.",
+    "更新校验和不匹配。",
+  "Invalid asset.": "无效资产。",
+  "Invalid shared asset.": "共享资产无效。",
+  "Invalid peer key.": "对等密钥无效。",
+  "Invalid identifier.": "标识符无效。",
   "Session belongs to another participant.":
-    "Cette session appartient à un autre participant.",
-  "Unknown collaboration operation.": "Opération de collaboration inconnue.",
-  "This change was rejected.": "Cette modification a été refusée.",
-  "This board could not be shared.": "Ce tableau n’a pas pu être partagé.",
-  "Choose a version.": "Choisissez une version.",
+    "会话属于另一个参与者。",
+  "Unknown collaboration operation.": "未知的协作操作。",
+  "This change was rejected.": "这一改变被拒绝了。",
+  "This board could not be shared.": "该板无法共享。",
+  "Choose a version.": "选择一个版本。",
   "Choose someone in your organization.":
-    "Choisissez une personne de votre organisation.",
+    "选择您组织中的某个人。",
   // Organization membership and email
   "Only organization members can do this.":
-    "Seuls les membres de l’organisation peuvent le faire.",
+    "只有组织成员才能执行此操作。",
   "Only organization administrators can do this.":
-    "Seuls les administrateurs de l’organisation peuvent le faire.",
+    "只有组织管理员才能执行此操作。",
   "Only organization administrators can place legal holds.":
-    "Seuls les administrateurs de l’organisation peuvent imposer une conservation légale.",
+    "只有组织管理员才能合法保留。",
   "Only the account owner can set up the organization.":
-    "Seul le propriétaire du compte peut créer l’organisation.",
+    "只有帐户所有者才能设置组织。",
   "Only the account owner can appoint administrators.":
-    "Seul le propriétaire du compte peut nommer des administrateurs.",
+    "只有帐户所有者才能指定管理员。",
   "Only the account owner can change an administrator.":
-    "Seul le propriétaire du compte peut modifier un administrateur.",
+    "只有帐户所有者才能更改管理员。",
   "Only the account owner can invite administrators.":
-    "Seul le propriétaire du compte peut inviter des administrateurs.",
+    "只有帐户所有者才能邀请管理员。",
   "The account owner's role cannot change.":
-    "Le rôle du propriétaire du compte ne peut pas changer.",
-  "Invalid organization role.": "Rôle dans l’organisation non valide.",
-  "Invalid account status.": "État du compte non valide.",
+    "账户所有者的角色不可更改。",
+  "Invalid organization role.": "组织角色无效。",
+  "Invalid account status.": "帐户状态无效。",
   "This user has not signed in yet.":
-    "Cette personne ne s’est pas encore connectée.",
-  "User not found.": "Personne introuvable.",
-  "Team not found.": "Équipe introuvable.",
+    "该用户尚未登录。",
+  "User not found.": "未找到用户。",
+  "Team not found.": "未找到团队。",
   "This team is being changed. Please try again.":
-    "Cette équipe est en cours de modification. Veuillez réessayer.",
-  "Unknown organization operation.": "Opération d’organisation inconnue.",
+    "这支球队正在改变。请再试一次。",
+  "Unknown organization operation.": "未知组织运作。",
   "Join the organization to save preferences.":
-    "Joignez-vous à l’organisation pour enregistrer vos préférences.",
-  "Enter a valid email address.": "Entrez une adresse courriel valide.",
-  "That code is not correct.": "Ce code n’est pas le bon.",
+    "加入组织以保存首选项。",
+  "Enter a valid email address.": "输入有效的电子邮件地址。",
+  "That code is not correct.": "该代码不正确。",
   "This code expired. Request a new one.":
-    "Ce code a expiré. Demandez-en un nouveau.",
+    "该代码已过期。请求一份新的。",
   "Too many requests. Try again in a minute.":
-    "Trop de demandes. Réessayez dans une minute.",
+    "请求太多。请稍后重试。",
   "Too many attempts. Request a new code.":
-    "Trop de tentatives. Demandez un nouveau code.",
+    "尝试次数太多。请求新代码。",
   "Too many attempts. Try again in an hour.":
-    "Trop de tentatives. Réessayez dans une heure.",
+    "尝试次数太多。一小时后重试。",
   "Too many verification emails. Try again in an hour.":
-    "Trop de courriels de vérification. Réessayez dans une heure.",
+    "验证电子邮件太多。一小时后重试。",
   "This email address is already linked to another account.":
-    "Cette adresse courriel est déjà liée à un autre compte.",
+    "该电子邮件地址已链接到另一个帐户。",
   "Your identity provider manages your email address. Ask your administrator to change it.":
-    "Votre fournisseur d’identité gère votre adresse courriel. Demandez à votre administrateur de la modifier.",
+    "您的身份提供商管理您的电子邮件地址。请您的管理员更改它。",
   "The verification email could not be sent. Ask your administrator to check the organization's Puter plan.":
-    "Le courriel de vérification n’a pas pu être envoyé. Demandez à votre administrateur de vérifier l’abonnement Puter de l’organisation.",
+    "验证邮件发送失败。请联系管理员检查组织账户配置。",
   "Use an email address in your organization's domain, or ask an administrator for an invitation.":
-    "Utilisez une adresse courriel du domaine de votre organisation, ou demandez une invitation à un administrateur.",
+    "请使用组织域名邮箱，或联系管理员获取邀请。",
   "Verify an email address in your organization's domain, or ask an administrator for an invitation.":
-    "Vérifiez une adresse courriel du domaine de votre organisation, ou demandez une invitation à un administrateur.",
+    "请验证组织域名邮箱，或联系管理员获取邀请。",
   // Organization settings
   "Enter valid email domains, such as example.ca.":
-    "Entrez des domaines de courriel valides, comme exemple.ca.",
+    "输入有效的电子邮件域，例如 example.ca。",
   "A domain anyone can register under, such as co.uk, cannot be the organization's. Enter its own domain.":
-    "Un domaine sous lequel n’importe qui peut s’enregistrer, comme co.uk, ne peut pas être celui de l’organisation. Entrez son propre domaine.",
+    "公开注册的通用域名（如 co.uk）不可作为组织专属域名，请输入组织专属域名。",
   "Public email domains such as gmail.com cannot be the organization's: anyone can have an address there.":
-    "Les domaines de courriel publics comme gmail.com ne peuvent pas être ceux de l’organisation : n’importe qui peut y avoir une adresse.",
+    "公共邮箱域名（如 gmail.com）不可作为组织专属域名，任何人均可注册该类地址。",
   "Enter up to ten valid alert email addresses.":
-    "Entrez jusqu’à dix adresses courriel valides pour les alertes.",
+    "输入最多十个有效的警报电子邮件地址。",
   "Enter up to ten valid report email addresses.":
-    "Entrez jusqu’à dix adresses courriel valides pour les rapports.",
+    "输入最多十个有效的报告电子邮件地址。",
   "Enter at least one recipient for scheduled reports.":
-    "Entrez au moins un destinataire pour les rapports planifiés.",
-  "Enter a valid HTTPS address.": "Entrez une adresse HTTPS valide.",
-  "Enter a valid HTTPS webhook URL.": "Entrez une URL de webhook HTTPS valide.",
+    "至少输入一名预定报告的收件人。",
+  "Enter a valid HTTPS address.": "输入有效的 HTTPS 地址。",
+  "Enter a valid HTTPS webhook URL.": "输入有效的 HTTPS Webhook URL。",
   "Webhooks must use a public internet address.":
-    "Les webhooks doivent utiliser une adresse Internet publique.",
+    "Webhook 必须使用公共互联网地址。",
   "This administrator invitation was already used.":
-    "Cette invitation d’administrateur a déjà été utilisée.",
+    "该管理员邀请已被使用。",
   "Choose an active member of your organization.":
-    "Choisissez un membre actif de votre organisation.",
+    "选择您组织中的一名活跃成员。",
   "This change is too large to save.":
-    "Cette modification est trop volumineuse pour être enregistrée.",
+    "此更改太大，无法保存。",
   "The webhook secret is not available yet.":
-    "Le secret du webhook n’est pas encore disponible.",
+    "Webhook 秘密尚不可用。",
   "The SIEM endpoint must use a public internet address.":
-    "Le point de terminaison SIEM doit utiliser une adresse Internet publique.",
-  "Webhook not found.": "Webhook introuvable.",
+    "SIEM 端点必须使用公共互联网地址。",
+  "Webhook not found.": "未找到网络钩子。",
   "Enter a Slack incoming webhook URL.":
-    "Entrez l’URL d’un webhook entrant Slack.",
+    "输入 Slack 传入 Webhook URL。",
   "Enter your Jira Cloud site, such as team.atlassian.net.":
-    "Entrez votre site Jira Cloud, comme equipe.atlassian.net.",
+    "输入您的 Jira Cloud 站点，例如 team.atlassian.net。",
   "Enter a Jira project key, such as OPS.":
-    "Entrez une clé de projet Jira, comme OPS.",
+    "输入 Jira 项目密钥，例如 OPS。",
   "Enter the Microsoft Entra tenant ID.":
-    "Entrez l’ID du locataire Microsoft Entra.",
-  "Enter the application (client) ID.": "Entrez l’ID d’application (client).",
+    "输入 Microsoft Entra 租户 ID。",
+  "Enter the application (client) ID.": "输入应用程序（客户端）ID。",
   "Enter the data collection endpoint logs ingestion URL.":
-    "Entrez l’URL d’ingestion des journaux du point de terminaison de collecte de données.",
+    "输入数据收集端点日志提取 URL。",
   "Enter the data collection rule immutable ID.":
-    "Entrez l’ID immuable de la règle de collecte de données.",
+    "输入数据收集规则不可变 ID。",
   "Enter the stream name, such as Custom-WhiteboardAudit.":
-    "Entrez le nom du flux, comme Custom-WhiteboardAudit.",
+    "输入流名称，例如 Custom-WhiteboardAudit。",
   "Enter the bearer token again for the new endpoint.":
-    "Entrez de nouveau le jeton du porteur pour le nouveau point de terminaison.",
-  "Unknown integration secret.": "Secret d’intégration inconnu.",
+    "再次输入新端点的不记名令牌。",
+  "Unknown integration secret.": "未知的整合秘密。",
   "Add the SIEM HTTPS endpoint.":
-    "Ajoutez le point de terminaison HTTPS du SIEM.",
-  "Add the Sentinel client secret.": "Ajoutez le secret client de Sentinel.",
+    "添加 SIEM HTTPS 端点。",
+  "Add the Sentinel client secret.": "添加 Sentinel 客户端密钥。",
   "Complete the Sentinel connection settings.":
-    "Remplissez les paramètres de connexion à Sentinel.",
-  "The SIEM test failed.": "L’essai du SIEM a échoué.",
+    "完成 Sentinel 连接设置。",
+  "The SIEM test failed.": "SIEM 测试失败。",
   "Choose a SIEM destination to send a test event.":
-    "Choisissez une destination SIEM pour envoyer un événement d’essai.",
-  "The webhook test failed.": "L’essai du webhook a échoué.",
-  "Could not reach Slack.": "Impossible de joindre Slack.",
+    "选择一个 SIEM 目标来发送测试事件。",
+  "The webhook test failed.": "Webhook 测试失败。",
+  "Could not reach Slack.": "无法联系 Slack。",
   "Puter enforces multifactor authentication at sign-in, so there is nothing to turn on here.":
-    "Puter impose l’authentification multifacteur à la connexion; il n’y a donc rien à activer ici.",
-  "Choose at least one scope.": "Choisissez au moins une portée.",
+    "Puter 在登录时强制执行多因素身份验证，因此此处无需打开任何内容。",
+  "Choose at least one scope.": "至少选择一个范围。",
   "Choose a whole number of days for the key to expire.":
-    "Choisissez un nombre entier de jours avant l’expiration de la clé.",
-  "API key not found.": "Clé d’API introuvable.",
-  "Invalid date range.": "Plage de dates non valide.",
+    "选择密钥到期的整数天数。",
+  "API key not found.": "未找到 API 密钥。",
+  "Invalid date range.": "日期范围无效。",
   // Spaces, library, feedback and AI
   "Only organization members can manage spaces.":
-    "Seuls les membres de l’organisation peuvent gérer les espaces.",
-  "A space with this name already exists.": "Un espace porte déjà ce nom.",
+    "只有组织成员才能管理空间。",
+  "A space with this name already exists.": "具有此名称的空间已存在。",
   "Only organization members can share library content.":
-    "Seuls les membres de l’organisation peuvent partager du contenu de la bibliothèque.",
-  "Library item not found.": "Élément de bibliothèque introuvable.",
+    "只有组织成员才能共享库内容。",
+  "Library item not found.": "未找到库项目。",
   "Invalid library description language.":
-    "Langue de la description de bibliothèque invalide.",
-  "This item is awaiting approval.": "Cet élément attend une approbation.",
+    "库描述语言无效。",
+  "This item is awaiting approval.": "该项目正在等待批准。",
   "This content is too large for the library.":
-    "Ce contenu est trop volumineux pour la bibliothèque.",
+    "此内容对于图书馆而言太大。",
   "Your library items awaiting approval have reached 250 MB. Share more once an administrator has reviewed them.":
-    "Vos éléments de bibliothèque en attente d’approbation ont atteint 250 Mo. Partagez-en d’autres une fois qu’un administrateur les aura examinés.",
+    "您等待批准的库项目已达到 250 MB。管理员审核后分享更多内容。",
   "Library items awaiting approval have reached the organization's 1 GB limit. Share this once an administrator has reviewed them.":
-    "Les éléments de bibliothèque en attente d’approbation ont atteint la limite de 1 Go de l’organisation. Partagez celui-ci une fois qu’un administrateur les aura examinés.",
-  "Choose a rating from 1 to 5.": "Choisissez une note de 1 à 5.",
+    "待审批的组件库内容已达到组织的 1 GB 上限。待管理员审核后再行共享。",
+  "Choose a rating from 1 to 5.": "选择 1 到 5 之间的评级。",
   "Only people in the organization can send feedback.":
-    "Seules les personnes de l’organisation peuvent envoyer des commentaires.",
+    "只有组织中的人员才能发送反馈。",
   "Choose a PNG, JPEG, or WebP photo.":
-    "Choisissez une photo PNG, JPEG ou WebP.",
+    "选择 PNG、JPEG 或 WebP 照片。",
   "AI features are available to organization members.":
-    "Les fonctions d’IA sont offertes aux membres de l’organisation.",
-  "Nothing to send to AI.": "Rien à envoyer à l’IA.",
-  "Unknown AI task.": "Tâche d’IA inconnue.",
+    "AI 功能可供组织成员使用。",
+  "Nothing to send to AI.": "没有什么可以发送给 AI。",
+  "Unknown AI task.": "未知的人工智能任务。",
   "Choose events by audit action or prefix, such as board or user.role, or * for every event.":
-    "Choisissez les événements par action d’audit ou par préfixe, comme board ou user.role, ou * pour tous les événements.",
+    "按审核操作或前缀（例如 board 或 user.role）选择事件，或针对每个事件选择 *。",
 });

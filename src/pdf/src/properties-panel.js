@@ -4,16 +4,16 @@ import { el, icon } from './lib/ui.js';
 export function createPropertiesPanel() {
   let owner = null;
   let layoutHolds = 0;
-  const title = el('h2', {}, 'Properties');
+  const title = el('h2', {}, '属性');
   const empty = el(
     'p',
     { class: 'properties-empty' },
-    'Select text, an image, a shape, or a comment to edit its properties.',
+    '选择文本、图片、形状或批注以编辑其属性。',
   );
   const content = el('div', { class: 'properties-content' }, empty);
   const root = el(
     'aside',
-    { class: 'properties-sidebar is-empty', 'aria-label': 'Selection properties' },
+    { class: 'properties-sidebar is-empty', 'aria-label': '选区属性' },
     el('div', { class: 'properties-heading' }, icon('Settings2', 16), title),
     content,
   );
@@ -59,7 +59,7 @@ export function createPropertiesPanel() {
     clear(key) {
       if (owner !== key) return;
       owner = null;
-      title.textContent = 'Properties';
+      title.textContent = '属性';
       root.classList.add('is-empty');
       content.replaceChildren(empty);
     },

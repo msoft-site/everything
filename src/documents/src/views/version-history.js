@@ -54,7 +54,7 @@ export function createVersionHistory({ editor, pkg, doc, error, author, live = (
 
   async function load() {
     status.textContent = '';
-    if (!doc.path) { list.replaceChildren(el('p.rv-empty', {}, '文档保存到云端后将记录版本历史。')); saveNow.disabled = true; return; }
+    if (!doc.path) { list.replaceChildren(el('p.rv-empty', {}, '文档保存到本地存储后将记录版本历史。')); saveNow.disabled = true; return; }
     saveNow.disabled = !!pkg()?.readOnly;
     list.replaceChildren(el('p.rv-status', {}, '正在加载版本…'));
     const request = loading = listVersions(doc.path, { uid: doc.uid }).then(async found => Promise.all(found.map(async v => ({ ...v, ...await readVersionMeta(v) }))));

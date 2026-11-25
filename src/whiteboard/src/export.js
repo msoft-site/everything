@@ -303,21 +303,20 @@ const PDF_DEFAULTS = {
   mode: "raster",
 };
 const FRENCH = {
-  "Page {page} of {total}": "Page {page} sur {total}",
-  ", row {row} column {column}": ", ligne {row}, colonne {column}",
+  "Page {page} of {total}": "第 {page} 页，共 {total}",
+  ", row {row} column {column}": "，行 {row} 列 {column}",
   "Overview; details on the following pages":
-    "Vue d’ensemble; détails sur les pages suivantes",
-  "Page {page}": "Page {page}",
+    "概述;详细信息请参见以下页面",
+  "Page {page}": "页 {page}",
   "Too many PDF pages. Export fewer frames at a time.":
-    "Trop de pages PDF. Exportez moins de cadres à la fois.",
+    "PDF 页太多。一次导出较少的帧。",
   "Too many PDF pages. Fit each area on one page, or export fewer frames at a time.":
-    "Trop de pages PDF. Mettez chaque zone sur une seule page, ou exportez moins de cadres à la fois.",
+    "PDF 页太多。将每个区域调整到一页上，或一次导出较少的帧。",
   "This area is too large for a readable PDF at this scale. Choose a smaller scale, or export frames or a selected region.":
-    "Cette zone est trop grande pour un PDF lisible à cette échelle. Choisissez une échelle plus petite, ou exportez des cadres ou une région sélectionnée.",
+    "对于这种比例的 PDF 来说，该区域太大了。选择较小的比例，或导出帧或选定区域。",
 };
 addTranslations(FRENCH);
-const phrase = (lang, text, values = {}) =>
-  (lang === "fr" ? FRENCH[text] || text : text).replace(
+const phrase = (lang, text, values = {}) => (lang !== "en" ? (t(text) !== text ? t(text) : (FRENCH[text] || text)) : text).replace(
     /\{(\w+)\}/g,
     (_, key) => values[key],
   );
@@ -461,7 +460,7 @@ export function pdfPlan(regions, options = {}) {
     throw Error(
       o.scale === "fit"
         ? "Too many PDF pages. Export fewer frames at a time."
-        : "Too many PDF pages. Fit each area on one page, or export fewer frames at a time.",
+        : "PDF 页太多。一次导出较少的帧。",
     );
   pages.forEach((page, n) => {
     page.index = n + 1;
@@ -624,7 +623,7 @@ export async function exportPDF(
   const pdf = await PDFDocument.create();
   pdf.setTitle(b.title);
   pdf.setCreator("Whiteboard");
-  pdf.setLanguage(lang === "fr" ? "fr-CA" : "en-CA");
+  pdf.setLanguage(lang === "fr" ? "fr-CA" : "fr-CA");
   const font = await pdf.embedFont(StandardFonts.Helvetica);
   const chars = new Set(font.getCharacterSet());
   const safe = (text, max = 110) =>

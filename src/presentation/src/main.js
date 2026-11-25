@@ -495,7 +495,7 @@ setAppearance(appearance);
 function fail(error) {
   // Puter's SDK sometimes rejects with `{ msg }` objects instead of Errors.
   toast(
-    error?.message || error?.msg || "Something went wrong. Please try again.",
+    error?.message || error?.msg || "发生错误，请重试。",
   );
 }
 function run(fn) {
@@ -877,8 +877,8 @@ async function applyAccount(connected, request) {
     if (request !== accountRequest) return false;
     toast(
       recovered
-        ? `Signed in as ${account.username}. Save to keep this presentation in Puter.`
-        : `Signed in as ${account.username}. Local recovery is unavailable. Save to Local to keep your work.`,
+        ? `已登录为 ${account.username}。请保存以保留此演示文稿。`
+        : `已登录为 ${account.username}。本地恢复不可用，请保存到本地以保留工作。`,
     );
   }
   return request === accountRequest;
@@ -2356,14 +2356,14 @@ async function importFile(file) {
     }))
   )
     toast(
-      "Imported. Complex effects may look different in preview; original content is retained in the PPTX.",
+      "已导入。预览中复杂效果可能有所差异，原始内容将在 PPTX 中完整保留。",
     );
 }
 // Storage that fails is reported once, in plain words, for as long as it
 // keeps failing, whatever the browser's own words for it; the save status
 // goes on showing that the work is unsaved.
 const STORAGE_WARNING =
-  "Device storage is unavailable. Save to Local or download a copy to keep your work.";
+  "设备存储不可用。请保存到本地或下载副本以保留您的工作。";
 function warnStorage() {
   if (doc?.storageWarned) return;
   if (doc) doc.storageWarned = true;
@@ -2621,11 +2621,12 @@ async function saveCloud(
       const bytes = chosen?.bytes ?? (await P.savePresentation(target.pres));
       const file =
         chosen?.file ?? (await cloud.saveFile(bytes, target.name, target.path));
-      target.path = file.path || target.path;
-      if (!target.path)
-        throw new Error("云端未返回保存的文件位置。");
+      target.path =
+        file?.path ||
+        target.path ||
+        `${cloud.FOLDER}/${cleanName(target.name, { stripExtension: false, maxLength: Infinity })}.pptx`;
       if (firstSave)
-        target.name = cleanName(file.name || target.path.split("/").pop(), {
+        target.name = cleanName(file?.name || target.path.split("/").pop(), {
           maxLength: Infinity,
         });
       // A write that reports no time is looked up, or the next save could not
@@ -2652,12 +2653,9 @@ async function saveCloud(
           () => true,
           () => false,
         );
-        // The dialog's folder is named, so the file can be found there.
-        const where = chosen
-          ? `Saved to ${cloud.folderName(target.path) || "Home"} in your Puter.`
-          : "Saved to local storage.";
+        const where = "已保存到本地存储。";
         if (explicit)
-          toast(recovered ? where : `${where} Local recovery is unavailable.`);
+          toast(recovered ? where : `${where}（本地恢复不可用）`);
       } else if (firstSave) {
         if (chosen) rememberOpened(target);
         // The draft left behind takes the file's baseline, so a later save
@@ -2760,7 +2758,7 @@ async function followFile(target, moved) {
   if (doc === target) {
     showDocumentName(target.name);
     toast(
-      `“${target.name}” was moved or renamed. It is saved where it is now.`,
+      `“${target.name}”已被移动或重命名，已保存到当前位置。`,
     );
   }
   await drafts
@@ -2851,7 +2849,7 @@ async function reloadFromCloud(target) {
     ) {
       if (draftOwner === owner())
         await drafts.deleteDraft(id).catch(warnStorage);
-      toast(`Opened the latest version of “${name}”.`);
+      toast(`已打开“${name}”的最新版本。`);
     }
   } finally {
     target.leaveUnsaved = false;
@@ -2884,9 +2882,10 @@ async function saveCopy() {
   return copyOf(target, false);
 }
 async function copyOf(target, useDialog) {
+  const defaultCopyName = `${target.name} 副本`;
   const name = useDialog
-    ? `${target.name} copy`
-    : await promptName("Save a copy", `${target.name} copy`, null, {
+    ? defaultCopyName
+    : await promptName("另存为本地副本", defaultCopyName, null, {
         keep: true,
       });
   if (!name?.trim() || doc !== target) return;
@@ -2911,9 +2910,9 @@ async function copyOf(target, useDialog) {
       )
     : file;
   if (!saved || doc !== target) return;
-  if (!saved.path)
-    throw new Error("云端未返回保存的文件位置。");
-  const copyName = cleanName(saved.name || saved.path.split("/").pop(), {
+  const copyPath = saved.path || `${cloud.FOLDER}/${cleanName(name)}.pptx`;
+  saved.path = copyPath;
+  const copyName = cleanName(saved.name || copyPath.split("/").pop(), {
     maxLength: Infinity,
   });
   // The edits go with the copy: the original is not saved on the way out,
@@ -2933,13 +2932,13 @@ async function copyOf(target, useDialog) {
   if (unchanged && draftOwner === owner())
     await drafts.deleteDraft(id).catch(warnStorage);
   if (doc?.path === saved.path || (saved.uid && doc?.uid === saved.uid))
-    toast(`Saved a copy as ${copyName}.`);
+    toast(`已另存为本地副本：“${copyName}”。`);
   if (view === "home") await loadLibrary();
 }
 // The tab and, inside the Puter desktop, the window are titled after the
 // open presentation, and after the app in the library.
 function setTitle(name) {
-  document.title = name ? `${name} | Presentation` : "Presentation";
+  document.title = name ? `${name} | 演示文稿` : "演示文稿";
   cloud.setWindowTitle(name || "Presentation");
 }
 // The header's title button is named by the name it shows, and says on
@@ -4154,7 +4153,7 @@ const formatTools = createFormatTools({
     const obj = currentShape();
     if (!obj) return;
     painter = { format: pickUpFormat(obj), sticky: true, keyboard: true };
-    toast(`Style picked up. Select an object and choose Apply Object Style.`);
+    toast(`已拾取样式。选择一个对象并点击“应用对象样式”。`);
   },
   applyStyle: () => {
     const obj = currentShape();
@@ -14828,8 +14827,8 @@ function copySelection() {
   if (ids.length < items.length) {
     toast(
       ids.length
-        ? "An embedded object stays on its slide; the rest was copied."
-        : "An embedded object stays on its slide; it cannot be copied.",
+        ? "嵌入对象仍保留在其幻灯片上；其余内容已复制。"
+        : "嵌入对象仍保留在其幻灯片上，无法复制。",
     );
     if (!ids.length) return false;
   }
@@ -16599,9 +16598,9 @@ document.addEventListener("keydown", (e) => {
       keyboard: true,
     };
     toast(
-      "Formatting copied. Select an object and press Shift+" +
+      "格式已复制。选择一个对象并按 Shift+" +
         MOD_KEY +
-        "+V to apply it.",
+        "+V 进行应用。",
     );
     return;
   }
@@ -17085,7 +17084,7 @@ function openDriveItems(items) {
     return;
   }
   toast(
-    `“${name}” can't be opened here. Choose a PowerPoint (.pptx) file${view === "editor" ? " or a PNG or JPEG picture" : ""}.`,
+    `无法在此打开“${name}”。请选择 PowerPoint (.pptx) 文件${view === "editor" ? "或 PNG/JPEG 图片" : ""}。`,
   );
 }
 // The presentation the app was launched with is the first screen, in place

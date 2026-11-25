@@ -780,7 +780,7 @@ export function createPictures({ editor, pkg, error, onChange = () => {}, base =
   function changePictureItems() {
     const ok = editable() && isPicture(selected());
     return [{ label: '来自文件…', icon: 'folderOpen', disabled: !ok, onSelect: () => pictureInput.click() },
-      ...(base.pictureFromCloud ? [{ label: '来自云端…', disabled: !ok, onSelect: () => base.pictureFromCloud(async file => { pictureInput.files; const transfer = new DataTransfer(); transfer.items.add(file); pictureInput.files = transfer.files; pictureInput.dispatchEvent(new Event('change')); }) }] : [])];
+      ...(base.pictureFromCloud ? [{ label: '来自本地存储…', disabled: !ok, onSelect: () => base.pictureFromCloud(async file => { pictureInput.files; const transfer = new DataTransfer(); transfer.items.add(file); pictureInput.files = transfer.files; pictureInput.dispatchEvent(new Event('change')); }) }] : [])];
   }
 
   /* ---- Ribbon ---- */

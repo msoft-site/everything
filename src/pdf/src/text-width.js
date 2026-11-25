@@ -20,7 +20,7 @@ export function textWidthControls({
     min: 1,
     required: true,
     step: 'any',
-    'aria-label': 'Paragraph width in points',
+    'aria-label': '段落宽度（磅）',
   });
   const pending = () =>
     shown !== undefined &&
@@ -52,9 +52,9 @@ export function textWidthControls({
     update(Number(field.value));
   };
   field.oninput = edited;
-  const resize = button('Resize width', 'ArrowUpRight', () => {}, 'btn text-width', {
-    'aria-label': 'Resize paragraph width',
-    title: 'Drag along the text direction to resize. Arrow keys adjust 1 pt; Shift adjusts 10 pt.',
+  const resize = button('调整宽度', 'ArrowUpRight', () => {}, 'btn text-width', {
+    'aria-label': '调整段落宽度',
+    title: '沿文本方向拖动以调整大小。方向键微调 1 磅；按住 Shift 微调 10 磅。',
   });
   resize.addEventListener('pointerdown', (e) => {
     if (gesture || !e.isPrimary || e.button !== 0) return;
@@ -124,7 +124,7 @@ export function textWidthControls({
     },
   });
   return {
-    root: el('div', { class: 'text-position-controls' }, el('label', {}, 'Width', field, 'pt')),
+    root: el('div', { class: 'text-position-controls' }, el('label', {}, '宽度', field, ' 磅')),
     handle: resize,
     sync,
     refresh: () => {
@@ -134,7 +134,7 @@ export function textWidthControls({
       return pending();
     },
     validate: () => {
-      if (!field.reportValidity()) throw new Error('Choose a paragraph width within the page.');
+      if (!field.reportValidity()) throw new Error('请选择在页面范围内的段落宽度。');
     },
   };
 }

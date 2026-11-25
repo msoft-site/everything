@@ -191,7 +191,7 @@ export function createInsert({ editor, pkg, error, base = {}, docName = () => ''
     const engine = ready();
     return [
       { label: '此设备…', icon: 'folderOpen', disabled: !engine, onSelect: () => pictureInput.click() },
-      ...(P.canPickFiles() ? [{ label: '从云端选择…', icon: 'pictures', disabled: !engine, onSelect: async () => { try { const file = await P.pickImage(); if (file) await insertPictureFile(file); } catch (e) { fail(e); } } }] : []),
+      ...(P.canPickFiles() ? [{ label: '从本地存储选择…', icon: 'pictures', disabled: !engine, onSelect: async () => { try { const file = await P.pickImage(); if (file) await insertPictureFile(file); } catch (e) { fail(e); } } }] : []),
       ...(P.canMakeImages() ? [{ label: 'AI 生成图片…', icon: 'pictures', disabled: !engine, onSelect: () => openGenerateDialog({ onClose: () => queueMicrotask(() => editor()?.focus()),
         generate: async prompt => {
           let image;

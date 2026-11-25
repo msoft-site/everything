@@ -408,15 +408,56 @@
         input.click();
       });
     },
-    async showSaveFilePicker(options = {}) {
-      return {
-        async write(content) {
-          const blob = content instanceof Blob ? content : new Blob([content]);
+    async showSaveFilePicker(arg1, arg2) {
+      let blob = null;
+      let filename = 'download';
+      if (arg1 instanceof Blob) {
+        blob = arg1;
+        filename = typeof arg2 === 'string' ? arg2 : (arg2?.suggestedName || 'download');
+      } else if (arg1 && typeof arg1 === 'object') {
+        if (arg1.data instanceof Blob) blob = arg1.data;
+        else if (arg1.data) blob = new Blob([arg1.data]);
+        filename = arg1.suggestedName || (typeof arg2 === 'string' ? arg2 : 'download');
+      }
+      if (!blob && arg2 instanceof Blob) {
+        blob = arg2;
+      }
+      const cleanFilename = String(filename || 'download').split('/').pop() || 'download';
+      const path = cleanFilename.endsWith('.pptx') ? `Presentations/${cleanFilename}` : `Documents/${cleanFilename}`;
+      if (blob) {
+        try {
+          await internalFS.write(path, blob, { overwrite: true, dedupeName: false, createMissingParents: true });
+        } catch (e) {
+          console.warn('[runtime] write to internalFS failed:', e);
+        }
+        try {
           const a = document.createElement('a');
           a.href = URL.createObjectURL(blob);
-          a.download = options.suggestedName || 'download';
+          a.download = cleanFilename;
           a.click();
-          URL.revokeObjectURL(a.href);
+          setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+        } catch (e) {
+          console.warn('[runtime] download failed:', e);
+        }
+      }
+      return {
+        name: cleanFilename,
+        path: path,
+        size: blob ? blob.size : 0,
+        modified: Date.now(),
+        mtime: Date.now(),
+        async write(content) {
+          const b = content instanceof Blob ? content : new Blob([content]);
+          try {
+            await internalFS.write(path, b, { overwrite: true });
+          } catch {}
+          try {
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(b);
+            a.download = cleanFilename;
+            a.click();
+            setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+          } catch {}
         }
       };
     },

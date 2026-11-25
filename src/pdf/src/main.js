@@ -326,37 +326,34 @@ function settings() {
 }
 function shortcuts() {
   const dialog = modal(
-    'Keyboard shortcuts',
+    '键盘快捷键',
     el(
       'div',
       { class: 'shortcut-list' },
       ...[
-        ['Open a PDF', 'Ctrl / ⌘ O'],
-        ['Save', 'Ctrl / ⌘ S'],
-        [
-          'Download',
-          'Ctrl / ⌘ Shift S',
-        ],
-        ['Undo', 'Ctrl / ⌘ Z'],
-        ['Redo', 'Ctrl / ⌘ Shift Z or Ctrl Y'],
-        ['Find in PDF', 'Ctrl / ⌘ F'],
-        ['Find next / previous', 'Ctrl / ⌘ G, with Shift; F3'],
-        ['Print', 'Ctrl / ⌘ P'],
-        ['Zoom in / out', 'Ctrl / ⌘ + / −'],
-        ['Fit page', 'Ctrl / ⌘ 0'],
-        ['Actual size', 'Ctrl / ⌘ 1'],
-        ['Fit width', 'Ctrl / ⌘ 2'],
-        ['Previous / next page', 'Alt ← / →'],
-        ['First / last page', 'Home / End'],
-        ['Go to page', 'Ctrl / ⌘ Alt G'],
-        ['Rotate the page clockwise', 'Ctrl / ⌘ Shift R'],
-        ['Delete the page', 'Ctrl / ⌘ Shift D'],
-        ['Document properties', 'Ctrl / ⌘ D'],
-        ['Full screen', 'Ctrl / ⌘ L'],
-        ['Show or hide the side panel', 'F4'],
-        ['Show or hide the tools pane', 'Shift F4'],
-        ['Select tool / Hand tool', 'V / H'],
-        ['Move the pages while held', 'Space'],
+        ['打开 PDF', 'Ctrl / ⌘ O'],
+        ['保存', 'Ctrl / ⌘ S'],
+        ['下载', 'Ctrl / ⌘ Shift S'],
+        ['撤销', 'Ctrl / ⌘ Z'],
+        ['重做', 'Ctrl / ⌘ Shift Z 或 Ctrl Y'],
+        ['在 PDF 中查找', 'Ctrl / ⌘ F'],
+        ['查找下一个 / 上一个', 'Ctrl / ⌘ G，配合 Shift；F3'],
+        ['打印', 'Ctrl / ⌘ P'],
+        ['放大 / 缩小', 'Ctrl / ⌘ + / −'],
+        ['适应页面', 'Ctrl / ⌘ 0'],
+        ['实际大小', 'Ctrl / ⌘ 1'],
+        ['适应宽度', 'Ctrl / ⌘ 2'],
+        ['上一页 / 下一页', 'Alt ← / →'],
+        ['第一页 / 最后一页', 'Home / End'],
+        ['前往页面', 'Ctrl / ⌘ Alt G'],
+        ['顺时针旋转页面', 'Ctrl / ⌘ Shift R'],
+        ['删除页面', 'Ctrl / ⌘ Shift D'],
+        ['文档属性', 'Ctrl / ⌘ D'],
+        ['全屏', 'Ctrl / ⌘ L'],
+        ['显示或隐藏侧边栏', 'F4'],
+        ['显示或隐藏工具面板', 'Shift F4'],
+        ['选择工具 / 抓手工具', 'V / H'],
+        ['按住空格拖动页面', '空格键'],
       ].map(([label, key]) => el('div', {}, el('span', {}, label), el('kbd', {}, key))),
     ),
   );
@@ -372,7 +369,7 @@ function shortcuts() {
 }
 function about() {
   modal(
-    'About PDF Editor',
+    '关于 PDF 编辑器',
     el(
       'div',
       { class: 'stack' },
@@ -380,22 +377,22 @@ function about() {
       el(
         'p',
         {},
-        'A focused workspace for reading, annotating, filling forms, and organizing PDFs.',
+        '用于阅读、批注、填写表单和组织 PDF 的专属工作区。',
       ),
       el(
         'p',
         {},
-        'PDF.js renders your pages. pdf-lib writes changes. Processing happens on your device; cloud files are stored through Puter.',
+        'PDF.js 渲染页面，pdf-lib 写入更改。所有处理均在您的本地设备上进行；文件保存在本地存储中。',
       ),
       el(
         'p',
         { class: 'muted' },
-        'Use Text to click and edit supported existing text, or add text in an empty area. Compatible paragraphs reflow within their column. Marks and images become part of the page. Deleting text is not redaction: use Redact a PDF to remove content for good. Scan & OCR recognizes English text on the device. Password-protected PDFs open with their password and are encrypted again when saved; certificate-secured files are unsupported. Editing a signed PDF invalidates its signatures; sign last.',
+        '使用“文本”工具点击并编辑支持的现有文本，或在空白区域添加文本。兼容的段落会在其栏宽内重排。标注和图片将成为页面的一部分。删除文本不等同于涂黑密文：请使用“涂黑密文”永久删除敏感内容。“扫描与 OCR”在本地设备上识别文本。密码保护的 PDF 打开时需要密码，保存时会再次加密；暂不支持证书加密的文件。编辑已签名的 PDF 会使其签名失效；建议最后进行签名。',
       ),
       el(
         'a',
         { href: './THIRD_PARTY_NOTICES.txt', target: '_blank', rel: 'noopener' },
-        'Open-source licenses',
+        '开源许可证',
       ),
     ),
   ).classList.add('app-dialog');
@@ -413,16 +410,16 @@ async function canLeave(signal) {
     // back to find the Save button and then leave again.
     const choice = await new Promise((resolve) => {
       const dialog = modal(
-        'Leave this PDF?',
+        '离开此 PDF？',
         el(
           'p',
           {},
-          `${leavingEditor.name} has unsaved changes. Save them to Puter before leaving, or leave and discard them.`,
+          `“${leavingEditor.name}”有未保存的更改。请在离开前保存到本地存储，或离开并放弃更改。`,
         ),
         [
-          button('Cancel', null, () => dialog.close()),
+          button('取消', null, () => dialog.close()),
           button(
-            'Leave without saving',
+            '不保存并离开',
             null,
             () => {
               resolve('leave');
@@ -431,7 +428,7 @@ async function canLeave(signal) {
             'btn danger',
           ),
           button(
-            'Save and leave',
+            '保存并离开',
             null,
             () => {
               resolve('save');
@@ -450,7 +447,7 @@ async function canLeave(signal) {
     try {
       await leavingEditor.save();
     } catch (error) {
-      if (isCurrent()) toast(error.message || 'The PDF could not be saved.', { error: true });
+      if (isCurrent()) toast(error.message || '无法保存 PDF。', { error: true });
       return false;
     }
     // A save that was cancelled or overtaken by new edits leaves the PDF open.
@@ -459,16 +456,16 @@ async function canLeave(signal) {
   // Without an account the PDF has nowhere to go yet: offer the sign-in that saving needs.
   const choice = await new Promise((resolve) => {
     const dialog = modal(
-      'Save before leaving?',
+      '在离开前保存？',
       el(
         'p',
         {},
-        'This PDF is not saved anywhere yet. Sign in to save it to your own cloud, or leave and discard the changes. To download it instead, keep editing and choose Download.',
+        '此 PDF 尚未保存。请将其保存到本地设备，或离开并放弃更改。如需下载副本，请继续编辑并选择“下载”。',
       ),
       [
-        button('Keep editing', null, () => dialog.close()),
+        button('继续编辑', null, () => dialog.close()),
         button(
-          'Leave without saving',
+          '不保存并离开',
           null,
           () => {
             resolve('leave');
@@ -477,10 +474,10 @@ async function canLeave(signal) {
           'btn danger',
         ),
         button(
-          'Sign in and save',
+          '保存并离开',
           null,
           () => {
-            resolve('sign-in');
+            resolve('save');
             dialog.close();
           },
           'btn primary',
@@ -522,7 +519,7 @@ const pickPictures = () => pickFiles(PICTURE_TYPES);
 function oneOfSeveral(opened, name, count) {
   if (opened && count > 1)
     toast(
-      `Opened ${name}. One PDF opens at a time; to put several files into one PDF, use Combine files in Tools.`,
+      `已打开“${name}”。一次只能打开一个 PDF；如需合并多个文件，请使用“工具”中的“合并文件”。`,
     );
 }
 /** A PDF opens as it is; pictures become the pages of a new PDF, one each, in the given order. */
@@ -530,8 +527,8 @@ async function openFiles(files) {
   const pdf = files.find(isPdfFile);
   if (pdf) return oneOfSeveral(await openDevice(pdf), pdf.name, files.length);
   const pictures = files.filter(isPictureFile);
-  if (!pictures.length) throw new Error('Choose a PDF, or PNG and JPEG pictures.');
-  const name = pictures[0].name.replace(/\.[^.]+$/, '') || 'Pictures';
+  if (!pictures.length) throw new Error('请选择 PDF 文件，或 PNG、JPEG 图片。');
+  const name = pictures[0].name.replace(/\.[^.]+$/, '') || '图片集';
   // The new PDF exists nowhere else yet, as a combined one does, so it starts out unsaved.
   await openDocument(
     async (signal) => {
@@ -556,13 +553,13 @@ async function newBlankPdf() {
   return blankPdf(PAPER_SIZES[defaultPaper()]);
 }
 async function openDevice(file) {
-  if (file.size > MAX_FILE_SIZE) throw new Error('Choose a PDF smaller than 100 MB.');
+  if (file.size > MAX_FILE_SIZE) throw new Error('请选择小于 100 MB 的 PDF 文件。');
   return openDocument(async () => new Uint8Array(await file.arrayBuffer()), file.name);
 }
 async function openCloudItem(item) {
   if (Array.isArray(item)) item = item[0];
   if (item?.path) {
-    if (item.size > MAX_FILE_SIZE) throw new Error('Choose a PDF smaller than 100 MB.');
+    if (item.size > MAX_FILE_SIZE) throw new Error('请选择小于 100 MB 的 PDF 文件。');
     const source = { remote: null };
     return openDocument(
       (signal) =>
@@ -590,7 +587,7 @@ const isPictureName = (name) => /\.(png|jpe?g)$/i.test(name || '');
 async function openDesktopItems(items) {
   const files = (items || []).filter((item) => item?.path && !P.isDirItem(item));
   if (!files.length) {
-    if (items?.length) throw new Error('Folders cannot be opened. Open a PDF from the folder.');
+    if (items?.length) throw new Error('无法打开文件夹。请从文件夹中打开具体的 PDF 文件。');
     return;
   }
   const name = (item) => item.name || item.path.split('/').pop();
@@ -598,7 +595,7 @@ async function openDesktopItems(items) {
   if (pdf) return oneOfSeveral(await openCloudItem(pdf), name(pdf), files.length);
   const pictures = files.filter((item) => isPictureName(name(item)));
   if (!pictures.length)
-    throw new Error(`${name(files[0])} is not a PDF. Open a PDF, or PNG and JPEG pictures.`);
+    throw new Error(`“${name(files[0])}”不是 PDF 文件。请选择 PDF，或 PNG、JPEG 图片。`);
   const signal = accountController.signal;
   const blobs = await waitFor(
     () =>
@@ -770,7 +767,7 @@ function showHome({ accountRefresh = false } = {}) {
   editor?.destroy();
   editor = null;
   document.title = 'PDF Editor';
-  P.setWindowTitle('PDF Editor');
+  P.setWindowTitle('PDF 编辑器');
   if (location.hash !== LIBRARY_HASH) history.replaceState(null, '', LIBRARY_HASH);
   const generation = ++homeGeneration;
   const list = el('div', { class: 'file-list' });
@@ -782,8 +779,8 @@ function showHome({ accountRefresh = false } = {}) {
   const search = el('input', {
     type: 'search',
     class: 'input search-input',
-    placeholder: 'Search PDFs',
-    'aria-label': 'Search PDFs',
+    placeholder: '搜索 PDF',
+    'aria-label': '搜索 PDF',
     oninput: (e) => {
       // Spaces around the words (a pasted name, a stray space) do not hide every file.
       filter = e.target.value.trim().toLowerCase();
@@ -794,15 +791,15 @@ function showHome({ accountRefresh = false } = {}) {
     'select',
     {
       class: 'sort-select',
-      'aria-label': 'Sort PDFs',
+      'aria-label': '排序方式',
       onchange: (e) => {
         sort = e.target.value;
         renderFiles();
       },
     },
-    el('option', { value: 'modified' }, 'Last modified'),
-    el('option', { value: 'name' }, 'Name'),
-    el('option', { value: 'size' }, 'Size'),
+    el('option', { value: 'modified' }, '最后修改时间'),
+    el('option', { value: 'name' }, '名称'),
+    el('option', { value: 'size' }, '大小'),
   );
   const renderFiles = () => {
     // Replacing the rows drops a focused one; the search field then takes the focus.
@@ -813,7 +810,7 @@ function showHome({ accountRefresh = false } = {}) {
   const drawFiles = () => {
     list.replaceChildren();
     if (libraryState === 'loading') {
-      list.append(el('div', { class: 'empty-library' }, 'Loading your PDFs…'));
+      list.append(el('div', { class: 'empty-library' }, '正在加载 PDF…'));
       return;
     }
     if (libraryState === 'error') {
@@ -821,8 +818,8 @@ function showHome({ accountRefresh = false } = {}) {
         el(
           'div',
           { class: 'empty-library' },
-          el('p', {}, 'Your library could not be loaded.'),
-          button('Try again', 'RefreshCw', load),
+          el('p', {}, '无法加载您的文档库。'),
+          button('重试', 'RefreshCw', load),
         ),
       );
       return;
@@ -844,21 +841,21 @@ function showHome({ accountRefresh = false } = {}) {
             'h3',
             {},
             filter
-              ? 'No matching PDFs'
+              ? '未找到匹配的 PDF'
               : user
-                ? 'Your library starts here'
-                : 'Your PDFs, in your own cloud',
+                ? '您的文档库从这里开始'
+                : '本地 PDF 文档',
           ),
           el(
             'p',
             {},
             filter
-              ? 'Try another file name.'
+              ? '尝试使用其他文件名。'
               : user
-                ? 'Open a PDF and save it to find it here.'
-                : 'Save and access your files locally on this device.',
+                ? '打开 PDF 并保存后即可在此处找到。'
+                : '在本地设备上保存和访问您的文件。',
           ),
-          !user && !filter && button('Account', 'Cloud', run(ensureSignedIn)),
+          !user && !filter && button('本地存储', 'FolderOpen', run(ensureSignedIn)),
         ),
       );
       return;
@@ -867,9 +864,9 @@ function showHome({ accountRefresh = false } = {}) {
       el(
         'div',
         { class: 'file-table-head', 'aria-hidden': 'true' },
-        el('span', {}, 'Name'),
-        el('span', {}, 'Modified'),
-        el('span', {}, 'Size'),
+        el('span', {}, '名称'),
+        el('span', {}, '修改时间'),
+        el('span', {}, '大小'),
         el('span'),
       ),
     );
@@ -881,7 +878,7 @@ function showHome({ accountRefresh = false } = {}) {
             day: 'numeric',
             year: 'numeric',
           })
-        : 'Unknown';
+        : '未知';
       list.append(
         el(
           'div',
@@ -894,7 +891,7 @@ function showHome({ accountRefresh = false } = {}) {
           ),
           el('span', { class: 'file-date muted' }, date),
           el('span', { class: 'file-size muted' }, formatBytes(file.size || 0)),
-          iconButton(`Options for ${file.name}`, 'MoreHorizontal', (e) => {
+          iconButton(`“${file.name}”的选项`, 'MoreHorizontal', (e) => {
             // Safari does not focus clicked buttons; give the dialog a real return target.
             e.currentTarget.focus({ preventScroll: true });
             fileOptions(file);
@@ -938,7 +935,7 @@ function showHome({ accountRefresh = false } = {}) {
         'div',
         { class: 'stack' },
         button(
-          'Open PDF',
+          '打开 PDF',
           'FolderOpen',
           action(async () => {
             d.close();
@@ -946,7 +943,7 @@ function showHome({ accountRefresh = false } = {}) {
           }),
         ),
         button(
-          'Download',
+          '下载',
           'Download',
           action(async () => {
             const bytes = await P.readFile(file.path, { signal });
@@ -956,13 +953,13 @@ function showHome({ accountRefresh = false } = {}) {
           }),
         ),
         button(
-          'Rename',
+          '重命名',
           'Pencil',
           action(async () => {
             d.close();
             const name = await promptText(
-              'Rename PDF',
-              'File name',
+              '重命名 PDF',
+              '文件名',
               file.name.replace(/\.pdf$/i, ''),
               { signal },
             );
@@ -975,7 +972,7 @@ function showHome({ accountRefresh = false } = {}) {
           }),
         ),
         button(
-          'Duplicate',
+          '创建副本',
           'Copy',
           action(async () => {
             // A cloud read can finish after sign-out and another account's sign-in.
@@ -989,21 +986,21 @@ function showHome({ accountRefresh = false } = {}) {
               if (signal.aborted) return;
               throw error;
             }
-            await P.saveFile(file.name.replace(/\.pdf$/i, ' copy'), bytes);
+            await P.saveFile(file.name.replace(/\.pdf$/i, ' 副本'), bytes);
             d.close();
             if (!signal.aborted) refreshAfterAction();
           }),
         ),
         button(
-          'Delete',
+          '删除',
           'Trash2',
           action(async () => {
             d.close();
             if (
               await confirmAction(
-                'Delete PDF?',
-                `Delete ${file.name} from local storage? This cannot be undone.`,
-                'Delete PDF',
+                '删除 PDF？',
+                `从本地存储中删除“${file.name}”？此操作无法撤销。`,
+                '删除 PDF',
                 { signal },
               )
             ) {
@@ -1063,11 +1060,11 @@ function showHome({ accountRefresh = false } = {}) {
           { class: 'header-right' },
           el(
             'span',
-            { class: 'account-label', title: user?.username || 'Local workspace' },
-            user?.username || 'Local workspace',
+            { class: 'account-label', title: user?.username || '本地工作区' },
+            user?.username || '本地工作区',
           ),
           appsButton(),
-          iconButton('Settings', 'Settings2', settings),
+          iconButton('设置', 'Settings2', settings),
           userMenuSlot(),
         ),
       ),
@@ -1081,25 +1078,25 @@ function showHome({ accountRefresh = false } = {}) {
             'button',
             { class: 'open-card', onclick: pickDevice, type: 'button' },
             el('span', { class: 'open-card-icon' }, icon('Upload', 27)),
-            el('strong', {}, 'Open a PDF'),
-            el('span', {}, 'Choose a PDF or pictures, or drop them anywhere'),
-            el('span', { class: 'card-cta' }, 'Browse files', icon('ArrowUpRight', 16)),
+            el('strong', {}, '打开 PDF'),
+            el('span', {}, '选择 PDF 或图片，或将其拖放到任意位置'),
+            el('span', { class: 'card-cta' }, '浏览文件', icon('ArrowUpRight', 16)),
           ),
           el(
             'div',
             { class: 'quick-actions' },
             button(
-              'New blank PDF',
+              '新建空白 PDF',
               'FilePlus2',
-              run(() => openDocument(newBlankPdf, 'Untitled.pdf')),
+              run(() => openDocument(newBlankPdf, '未命名.pdf')),
               'quick-action',
             ),
-            button('Pictures to PDF', 'Images', pickPictures, 'quick-action'),
-            button('Open from Local', 'Cloud', pickCloud, 'quick-action'),
+            button('图片转 PDF', 'Images', pickPictures, 'quick-action'),
+            button('从本地打开', 'FolderOpen', pickCloud, 'quick-action'),
             button(
-              'Try a sample PDF',
+              '试用示例 PDF',
               'BookOpen',
-              run(() => openDocument(samplePdf, 'Getting started.pdf')),
+              run(() => openDocument(samplePdf, '新手入门.pdf')),
               'quick-action',
             ),
           ),
@@ -1110,7 +1107,7 @@ function showHome({ accountRefresh = false } = {}) {
           el(
             'div',
             { class: 'library-head' },
-            el('h2', { id: 'library-title' }, 'Your PDFs'),
+            el('h2', { id: 'library-title' }, '您的 PDF'),
             el(
               'div',
               { class: 'library-tools' },
@@ -1123,19 +1120,19 @@ function showHome({ accountRefresh = false } = {}) {
         el(
           'div',
           { class: 'local-note' },
-          icon('Cloud', 16),
+          icon('FolderCheck', 16),
           el(
             'span',
             {},
-            'PDFs are processed on your device and saved locally.',
+            'PDF 将在您的设备上本地处理并保存。',
           ),
         ),
       ),
       el(
         'footer',
         { class: 'home-footer' },
-        el('span', {}, 'PDF Editor'),
-        button('Keyboard shortcuts', 'Keyboard', shortcuts, 'text-btn'),
+        el('span', {}, 'PDF 编辑器'),
+        button('键盘快捷键', 'Keyboard', shortcuts, 'text-btn'),
       ),
     ),
   );
@@ -1227,10 +1224,10 @@ async function start() {
     return;
   }
   try {
-    await openDocument(newBlankPdf, 'Untitled.pdf');
+    await openDocument(newBlankPdf, '未命名.pdf');
   } catch (e) {
     if (!editor && !loading) showHome();
-    toast(e.message || 'Something went wrong. Please try again.', { error: true });
+    toast(e.message || '发生错误，请重试。', { error: true });
   }
 }
 start();
@@ -1257,7 +1254,7 @@ const initPuter = async () => {
   }
   if (P.isApp()) {
     // The desktop already has a session. File and close events must not wait for its profile.
-    setAccount({ username: 'Local user' });
+    setAccount({ username: '本地用户' });
     // A second press of the close button while its question is open must not stack another
     // on top; the first answer decides. Only the question counts: a save it started that
     // never settles must not leave the button dead.
@@ -1267,7 +1264,7 @@ const initPuter = async () => {
         if (await canLeave()) P.exitApp();
       }),
     );
-    if (!editor) P.setWindowTitle('PDF Editor');
+    if (!editor) P.setWindowTitle('PDF 编辑器');
   }
   // A tab Puter opened gets its token from the dashboard tab moments after loading; read the
   // account once it is in rather than reporting the person signed out first.
@@ -1284,7 +1281,7 @@ const initPuter = async () => {
     const account = await P.currentUser();
     if (version !== accountGeneration) return;
     if (token !== P.sessionToken()) return refreshSDKAccount();
-    setAccount(account || { username: 'Local user' }, { profileOnly: P.isApp() });
+    setAccount(account || { username: '本地用户' }, { profileOnly: P.isApp() });
   } else {
     accountToken = token;
     sessionState = 'out';

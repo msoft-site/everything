@@ -46,12 +46,12 @@ export async function promptUnlock(
     const form = el(
       'form',
       { class: 'stack' },
-      el('p', { class: 'muted' }, `${name} is password protected. Enter its password to open it.`),
-      el('div', { class: 'field' }, el('label', { for: 'unlock-password' }, 'Password'), input),
+      el('p', { class: 'muted' }, `${name} 受密码保护。请输入密码以打开。`),
+      el('div', { class: 'field' }, el('label', { for: 'unlock-password' }, '密码'), input),
       el(
         'label',
         { class: 'checkbox-row', for: 'unlock-show' },
-        el('span', {}, 'Show password'),
+        el('span', {}, '显示密码'),
         show,
       ),
     );
@@ -60,7 +60,7 @@ export async function promptUnlock(
       const password = input.value;
       if (!password) {
         // Open sits outside the form, so the field's own "required" never spoke up.
-        toast('Enter the password to open the PDF.', { error: true });
+        toast('请输入密码以打开 PDF。', { error: true });
         input.focus();
         return;
       }
@@ -75,7 +75,7 @@ export async function promptUnlock(
         // A rejected submission must not select or report an error on a newer draft.
         if (!dialog.open || signal?.aborted || !isCurrent() || input.value !== password) return;
         toast(
-          error instanceof PasswordError ? 'That password is not right. Try again.' : error.message,
+          error instanceof PasswordError ? '密码不正确，请重试。' : error.message,
           { error: true },
         );
         input.focus();
@@ -89,11 +89,11 @@ export async function promptUnlock(
       e.preventDefault();
       open();
     };
-    const openButton = button('Open', 'LockOpen', open, 'btn primary');
+    const openButton = button('打开', 'LockOpen', open, 'btn primary');
     const dialog = modal(
-      'Password required',
+      '需要密码',
       form,
-      [button('Cancel', null, () => dialog.close()), openButton],
+      [button('取消', null, () => dialog.close()), openButton],
       { signal },
     );
     onOpen?.(dialog);
@@ -122,35 +122,35 @@ export function promptOwner(protection, { signal, isCurrent = () => true, onOpen
       el(
         'p',
         { class: 'muted' },
-        'This PDF has document restrictions. Enter its permissions password to unlock all editing or change its protection.',
+        '此 PDF 具有文档限制。输入其权限密码以解除所有编辑限制或更改保护设置。',
       ),
       el(
         'dl',
-        { class: 'detail-facts', 'aria-label': 'Document permissions' },
+        { class: 'detail-facts', 'aria-label': '文档权限' },
         ...[
-          ['Printing', 'print'],
-          ['Copying content', 'copy'],
-          ['Editing content', 'edit'],
-          ['Comments and links', 'annotate'],
-          ['Filling forms', 'fill'],
-          ['Pages and bookmarks', 'assemble'],
+          ['打印', 'print'],
+          ['复制内容', 'copy'],
+          ['编辑内容', 'edit'],
+          ['批注和链接', 'annotate'],
+          ['填写表单', 'fill'],
+          ['页面和书签', 'assemble'],
         ].flatMap(([label, key]) => [
           el('dt', {}, label),
           el(
             'dd',
             {},
             !access[key]
-              ? 'Not allowed'
+              ? '不允许'
               : key === 'print' && !access.printHighQuality
-                ? 'Low resolution only'
-                : 'Allowed',
+                ? '仅限低分辨率'
+                : '允许',
           ),
         ]),
       ),
       el(
         'div',
         { class: 'field' },
-        el('label', { for: 'owner-password' }, 'Permissions password'),
+        el('label', { for: 'owner-password' }, '权限密码'),
         input,
       ),
     );
@@ -158,7 +158,7 @@ export function promptOwner(protection, { signal, isCurrent = () => true, onOpen
       if (pending) return;
       const password = input.value;
       if (!password) {
-        toast('Enter the permissions password.', { error: true });
+        toast('请输入权限密码。', { error: true });
         input.focus();
         return;
       }
@@ -173,7 +173,7 @@ export function promptOwner(protection, { signal, isCurrent = () => true, onOpen
         if (!dialog.open || signal?.aborted || !isCurrent() || input.value !== password) return;
         toast(
           error instanceof PasswordError
-            ? 'Enter the permissions password. The password used only to open the PDF cannot lift restrictions.'
+            ? '请输入权限密码。仅用于打开 PDF 的密码无法解除限制。'
             : error.message,
           { error: true },
         );
@@ -188,11 +188,11 @@ export function promptOwner(protection, { signal, isCurrent = () => true, onOpen
       event.preventDefault();
       unlock();
     };
-    const unlockButton = button('Unlock', 'LockOpen', unlock, 'btn primary');
+    const unlockButton = button('解除限制', 'LockOpen', unlock, 'btn primary');
     const dialog = modal(
-      'Permissions password required',
+      '需要权限密码',
       form,
-      [button('Cancel', null, () => dialog.close()), unlockButton],
+      [button('取消', null, () => dialog.close()), unlockButton],
       { signal },
     );
     onOpen?.(dialog);

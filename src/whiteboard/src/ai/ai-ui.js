@@ -126,7 +126,7 @@ function summaryContent(items, ids, reportShortening = false) {
     const excerpt = promptText(text, 2000);
     shortened ||= excerpt.length < text.length;
     const frame = frames.get(i.parentId),
-      line = `${lines.length ? "\n" : ""}- (${i.type}${frame ? `, ${frame}` : ""}) ${excerpt}`,
+      line = `${lines.length ? "\n" : "\n"}- (${i.type}${frame ? `, ${frame}` : ""}) ${excerpt}`,
       room = 50_000 - length;
     if (line.length >= room) {
       lines.push(promptText(line, room));
@@ -161,7 +161,7 @@ function discussionContent(b, ids, concealed, outcomes) {
         .filter((m) => !m.deleted && m.text?.trim())
         .map(
           (m, n) =>
-            `${n ? "  - reply: " : "- "}${promptText(m.text.trim(), 1000)}${n === 0 && thread.resolved ? " (resolved)" : ""}`,
+            `${n ? "  - reply: " : "- 回复："}${promptText(m.text.trim(), 1000)}${n === 0 && thread.resolved ? " (resolved)" : "（已解决）"}`,
         ),
     ),
     20_000,
@@ -171,7 +171,7 @@ function discussionContent(b, ids, concealed, outcomes) {
     : capped(
         outcomes().map(
           (r) =>
-            `- ${r.kind === "vote" ? "Dot vote" : "Poll"} "${r.title}" (${r.participants} participants): ${r.results.map((x) => `${x.label || "hidden object"} ${x.count}`).join("; ")}`,
+            `- ${r.kind === "vote" ? "Dot vote" : "圆点投票"} "${r.title}" (${r.participants} participants): ${r.results.map((x) => `${x.label || "hidden object"} ${x.count}`).join("; ")}`,
         ),
         5_000,
       );
@@ -267,7 +267,7 @@ async function downscale(file, max = 2000, crop) {
   }
 }
 const languageName = (value = language) =>
-  value === "fr" ? "Canadian French" : "English";
+  value === "fr" ? "Canadian French" : "加拿大法语";
 
 export function createAI({
   org,
@@ -458,7 +458,7 @@ export function createAI({
         selectedCount = selected.size;
       return modal(
         "AI assistant",
-        `<p class="dialog-copy">${t(org.info?.role && org.info.role !== "guest" ? "Requests go through your organization, which controls these features and records their use in the audit log." : "Requests use 本地智能引擎 with your local account. Board content you choose is sent to the AI model.")}</p>${blocked ? `<p class="dialog-copy" role="alert">${t(blocked)}</p>` : ""}<div class="ai-actions"><button class="secondary" data-ai="summarize" ${blocked ? "disabled" : ""}>${icon("text-quote")}<span><strong>${t("Summarize")}</strong><small>${t(selectedCount ? "The selected objects" : "The whole board")}</small></span></button><button class="secondary" data-ai="themes" ${blocked || selectedCount < 2 ? "disabled" : ""}>${icon("group")}<span><strong>${t("Group into themes")}</strong><small>${t("Select two or more sticky notes")}</small></span></button><button class="secondary" data-ai="handwriting" ${blocked ? "disabled" : ""}>${icon("scan-text")}<span><strong>${t("Photo to sticky notes")}</strong><small>${t("Turn handwritten notes into digital ones")}</small></span></button><button class="secondary" data-ai="generate" ${blocked ? "disabled" : ""}>${icon("sparkles")}<span><strong>${t("Generate ideas")}</strong><small>${t("Sticky notes from a prompt")}</small></span></button></div>${org.info?.role ? "" : `<label class="check-field"><input type="checkbox" id="ai-enabled" ${personalAIEnabled() ? "checked" : ""}><span>${t("Allow AI features on this device")}</span></label>`}<div id="ai-work"></div><p id="ai-status" role="status" aria-live="polite"></p>`,
+        `<p class="dialog-copy">${t(org.info?.role && org.info.role !== "guest" ? "Requests go through your organization, which controls these features and records their use in the audit log." : "请求通过您的组织，该组织控制这些功能并将其使用情况记录在审核日志中。")}</p>${blocked ? `<p class="dialog-copy" role="alert">${t(blocked)}</p>` : ""}<div class="ai-actions"><button class="secondary" data-ai="summarize" ${blocked ? "disabled" : "残疾人"}>${icon("text-quote")}<span><strong>${t("Summarize")}</strong><small>${t(selectedCount ? "The selected objects" : "选定的对象")}</small></span></button><button class="secondary" data-ai="themes" ${blocked || selectedCount < 2 ? "disabled" : "残疾人"}>${icon("group")}<span><strong>${t("Group into themes")}</strong><small>${t("Select two or more sticky notes")}</small></span></button><button class="secondary" data-ai="handwriting" ${blocked ? "disabled" : "残疾人"}>${icon("scan-text")}<span><strong>${t("Photo to sticky notes")}</strong><small>${t("Turn handwritten notes into digital ones")}</small></span></button><button class="secondary" data-ai="generate" ${blocked ? "disabled" : "残疾人"}>${icon("sparkles")}<span><strong>${t("Generate ideas")}</strong><small>${t("Sticky notes from a prompt")}</small></span></button></div>${org.info?.role ? "" : `<label class="check-field"><input type="checkbox" id="ai-enabled" ${personalAIEnabled() ? "checked" : "检查过"}><span>${t("Allow AI features on this device")}</span></label>`}<div id="ai-work"></div><p id="ai-status" role="status" aria-live="polite"></p>`,
         (d) => {
           watchDialog(d);
           // Keep the scope promised by the action, even if remote changes
@@ -510,7 +510,7 @@ export function createAI({
         try {
           const text = await ask(
             "summarize",
-            `You are helping a team review a collaborative whiteboard titled "${b.title}". Write in ${languageName(authoringLanguage)}. Summarize the content below in plain text with these parts: a two or three sentence overview, then "Themes:" with short bullet points, then "Decisions:" and "Action items:" when the content contains any. Use simple hyphen bullets and no markdown formatting.${said.comments || said.results ? " Comments and the results of votes and polls, when given, show what people said and decided; use them for the decisions and priorities." : ""}\n\nContent:\n${content}${said.comments ? `\n\nComments:\n${said.comments}` : ""}${said.results ? `\n\nVotes and polls:\n${said.results}` : ""}`,
+            `You are helping a team review a collaborative whiteboard titled "${b.title}". Write in ${languageName(authoringLanguage)}. Summarize the content below in plain text with these parts: a two or three sentence overview, then "Themes:" with short bullet points, then "Decisions:" and "Action items:" when the content contains any. Use simple hyphen bullets and no markdown formatting.${said.comments || said.results ? " Comments and the results of votes and polls, when given, show what people said and decided; use them for the decisions and priorities." : "评论以及投票和民意调查的结果显示了人们的言论和决定；将它们用于决策和优先事项。"}\n\nContent:\n${content}${said.comments ? `\n\nComments:\n${said.comments}` : ""}${said.results ? `\n\nVotes and polls:\n${said.results}` : ""}`,
           );
           const work = replaceWork(
             d,
@@ -608,7 +608,7 @@ export function createAI({
         try {
           const reply = await ask(
             "cluster",
-            `Group these sticky notes from a workshop into 2 to 8 themes. Write theme names in ${languageName(authoringLanguage)}, at most five words each. Every note number must appear in exactly one theme. Reply with JSON only, in this shape: {"themes":[{"name":"Theme name","notes":[1,2]}]}\n\nNotes:\n${notes.map((n, index) => `${index + 1}. ${promptText(n.text.replace(/\s+/g, " "), room)}`).join("\n")}`,
+            `Group these sticky notes from a workshop into 2 to 8 themes. Write theme names in ${languageName(authoringLanguage)}, at most five words each. Every note number must appear in exactly one theme. Reply with JSON only, in this shape: {"themes":[{"name":"姓名","notes":[1,2]}]}\n\nNotes:\n${notes.map((n, index) => `${index + 1}. ${promptText(n.text.replace(/\s+/g, " "), room)}`).join("\n")}`,
           );
           const parsed = parseJSON(reply);
           if (!Array.isArray(parsed?.themes))
@@ -719,7 +719,7 @@ export function createAI({
             if (closed.has(d) || !d.isConnected || !onBoard(d)) return;
             const reply = await ask(
               "handwriting",
-              `This photo shows handwritten sticky notes, for example from a workshop wall. Transcribe every note exactly as written, keeping the author's wording and language. Do not add, merge, or summarize notes. Estimate each note's paper color as one of yellow, green, blue, purple, pink, orange, white. Reply with JSON only: {"notes":[{"text":"...","color":"yellow"}]}`,
+              `This photo shows handwritten sticky notes, for example from a workshop wall. Transcribe every note exactly as written, keeping the author's wording and language. Do not add, merge, or summarize notes. Estimate each note's paper color as one of yellow, green, blue, purple, pink, orange, white. Reply with JSON only: {"notes":[{"text":"文本","color":"颜色"}]}`,
               image,
             );
             const notes = replyNotes(parseJSON(reply)).slice(0, 400);
@@ -765,7 +765,7 @@ export function createAI({
             );
             const reply = await ask(
               "generate",
-              `Generate ${count} distinct, concise sticky note ideas (at most 20 words each) in ${languageName(authoringLanguage)} for this request from a team: ${requestedPrompt}\nReply with JSON only: {"notes":[{"text":"..."}]}`,
+              `Generate ${count} distinct, concise sticky note ideas (at most 20 words each) in ${languageName(authoringLanguage)} for this request from a team: ${requestedPrompt}\nReply with JSON only: {"notes":[{"text":"文本"}]}`,
             );
             if (closed.has(d) || !form.isConnected || !onBoard(d)) return;
             if (
@@ -872,80 +872,80 @@ export function createAI({
 
 addTranslations({
   "You’re viewing a different board. Return to the original board to use this draft, or close this dialog and open AI again.":
-    "Vous consultez un autre tableau. Revenez au tableau d’origine pour utiliser ce brouillon, ou fermez cette fenêtre et rouvrez l’assistant IA.",
+    "您正在查看不同的板。返回原来的板子以使用此草稿，或关闭此对话框并再次打开AI。",
   "Your request changed while AI was working. It has been kept. Generate again to use it.":
-    "Votre demande a changé pendant le travail de l’IA. Elle a été conservée. Relancez la génération pour l’utiliser.",
-  "AI assistant": "Assistant IA",
+    "当人工智能工作时，你的请求发生了变化。它已被保留。再次生成即可使用。",
+  "AI assistant": "AI 助手",
   "Requests go through your organization, which controls these features and records their use in the audit log.":
-    "Les demandes passent par votre organisation, qui contrôle ces fonctions et en consigne l’utilisation dans le journal d’audit.",
+    "请求通过您的组织，该组织控制这些功能并将其使用情况记录在审核日志中。",
   "Requests use 本地智能引擎 with your local account. Board content you choose is sent to the AI model.":
-    "Les demandes utilisent l’IA de Puter avec votre compte Puter. Le contenu du tableau que vous choisissez est envoyé au modèle d’IA.",
+    "请求使用本地智能引擎和您的本地帐户。您选择的棋盘内容将发送到 AI 模型。",
   "Your organization has turned off AI features.":
-    "Votre organisation a désactivé les fonctions d’IA.",
+    "您的组织已关闭 AI 功能。",
   "Your organization has turned off this AI feature.":
-    "Votre organisation a désactivé cette fonction d’IA.",
+    "您的组织已关闭此 AI 功能。",
   "This board’s organization has turned off AI features.":
-    "L’organisation de ce tableau a désactivé les fonctions d’IA.",
+    "该委员会的组织已关闭人工智能功能。",
   "This board’s organization has turned off this AI feature.":
-    "L’organisation de ce tableau a désactivé cette fonction d’IA.",
+    "该委员会的组织已关闭此人工智能功能。",
   "AI features are turned off on this device.":
-    "Les fonctions d’IA sont désactivées sur cet appareil.",
-  "本地智能引擎 is not available.": "L’IA de Puter n’est pas disponible.",
+    "此设备上的 AI 功能已关闭。",
+  "本地智能引擎 is not available.": "本地智能引擎不可用。",
   Summarize: "Résumer",
-  "The selected objects": "Les objets sélectionnés",
-  "The whole board": "Le tableau entier",
-  "Group into themes": "Regrouper par thème",
+  "The selected objects": "选定的对象",
+  "The whole board": "整板",
+  "Group into themes": "分组为主题",
   "Select two or more sticky notes": "选择two or more sticky notes",
-  "Photo to sticky notes": "Photo en notes adhésives",
-  "Turn handwritten notes into digital ones": "Numériser des notes manuscrites",
-  "Generate ideas": "Générer des idées",
-  "Sticky notes from a prompt": "Notes adhésives à partir d’une consigne",
+  "Photo to sticky notes": "照片到便签",
+  "Turn handwritten notes into digital ones": "将手写笔记变成数字笔记",
+  "Generate ideas": "产生想法",
+  "Sticky notes from a prompt": "提示中的便笺",
   "Allow AI features on this device":
-    "Autoriser les fonctions d’IA sur cet appareil",
-  "There is no text to summarize.": "Il n’y a aucun texte à résumer.",
-  "Summarizing…": "Résumé en cours…",
-  "ai|Summary": "Summary",
+    "允许此设备上的 AI 功能",
+  "There is no text to summarize.": "没有文字可以概括。",
+  "Summarizing…": "总结...",
+  "ai|Summary": "概括",
   Copy: "Copier",
-  "Add to board": "Ajouter au tableau",
+  "Add to board": "添加到白板",
   "Summary ready. Review it before adding it to the board.":
-    "Résumé prêt. Relisez-le avant de l’ajouter au tableau.",
+    "总结准备好了。在将其添加到看板之前先对其进行检查。",
   "Some source text was shortened or left out to fit the summary limit. Check the original content before using this summary.":
-    "Une partie du texte source a été raccourcie ou omise pour respecter la limite du résumé. Vérifiez le contenu original avant d’utiliser ce résumé.",
-  "Copied.": "Copié.",
-  "Summary added.": "Résumé ajouté.",
+    "一些源文本被缩短或省略以适应摘要限制。使用此摘要之前请检查原始内容。",
+  "Copied.": "已复制。",
+  "Summary added.": "已添加摘要。",
   "Select two or more sticky notes with text.": "选择two or more sticky notes with text.",
   "Select up to 300 sticky notes at a time.": "选择up to 300 sticky notes at a time.",
-  "Finding themes…": "Recherche de thèmes…",
+  "Finding themes…": "寻找主题...",
   Theme: "Thème",
   Other: "Autre",
-  "Suggested themes": "Thèmes proposés",
-  "Theme name": "Nom du thème",
+  "Suggested themes": "建议的主题",
+  "Theme name": "主题名称",
   notes: "notes",
-  "Arrange into frames": "Disposer dans des cadres",
+  "Arrange into frames": "排列成画框",
   "Review the themes, rename them if needed, then arrange.":
-    "Examinez les thèmes, renommez-les au besoin, puis disposez-les.",
+    "检查主题，根据需要重命名它们，然后进行安排。",
   "Notes arranged into themes. Undo restores them.":
-    "Notes regroupées par thème. Annulez pour les rétablir.",
-  "Reading the photo…": "Lecture de la photo…",
+    "笔记按主题排列。撤消可以恢复它们。",
+  "Reading the photo…": "读照片……",
   "No ideas came back. Try rewording the request.":
-    "Aucune idée n’a été proposée. Essayez de reformuler la demande.",
+    "没有任何想法回来。尝试重新措辞该请求。",
   "No sticky notes were found in this photo.":
-    "Aucune note adhésive n’a été trouvée sur cette photo.",
+    "这张照片中没有发现便签。",
   "Check the transcription. Edit or remove notes before adding them.":
-    "Vérifiez la transcription. Modifiez ou retirez des notes avant de les ajouter.",
-  "What should the ideas be about?": "Sur quoi les idées doivent-elles porter?",
-  "How many sticky notes": "Nombre de notes adhésives",
+    "检查转录。在添加注释之前编辑或删除注释。",
+  "What should the ideas be about?": "这些想法应该是关于什么的？",
+  "How many sticky notes": "便签纸有多少张",
   Generate: "Générer",
-  "Generating ideas…": "Génération d’idées…",
+  "Generating ideas…": "产生想法...",
   "Review the ideas before adding them.":
-    "Examinez les idées avant de les ajouter.",
-  "One sticky note per line": "Une note adhésive par ligne",
+    "在添加想法之前先回顾一下它们。",
+  "One sticky note per line": "每行一张便签",
   "Add sticky notes": "添加sticky notes",
-  "{count} sticky note added.": "{count} note adhésive ajoutée.",
-  "{count} sticky notes added.": "{count} notes adhésives ajoutées.",
-  "Enter at least one line to add.": "Saisissez au moins une ligne à ajouter.",
-  "The AI reply could not be read.": "La réponse de l’IA n’a pas pu être lue.",
-  "This image could not be read.": "Cette image n’a pas pu être lue.",
+  "{count} sticky note added.": "{count} 添加了便签。",
+  "{count} sticky notes added.": "添加了 {count} 便签。",
+  "Enter at least one line to add.": "至少输入一行进行添加。",
+  "The AI reply could not be read.": "AI回复无法读取。",
+  "This image could not be read.": "无法读取此图像。",
   "This would exceed the board limit of 5,000 objects.":
-    "Cela dépasserait la limite de 5 000 objets par tableau.",
+    "这将超过 5,000 个对象的板限制。",
 });

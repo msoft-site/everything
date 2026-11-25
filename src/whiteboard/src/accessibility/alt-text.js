@@ -44,7 +44,7 @@ export function createAltText({
       // name or announced on every keystroke.
       modal(
         "Alternative text",
-        `<form id="alt-form"><p class="dialog-copy">${t(drawing ? "Describe what the drawing shows and why it matters on this board. Leave it empty for purely decorative drawings." : "Describe what the image shows and why it matters on this board. Leave it empty for purely decorative images.")}</p><label class="field">${t("Alternative text")}<textarea id="alt-text"${languageAttribute(image.lang)} rows="4" maxlength="1000" aria-describedby="alt-count">${escape(image.alt || "")}</textarea><small id="alt-count" aria-hidden="true"></small></label>${ai && !blocked ? `<button type="button" class="secondary" id="alt-suggest">${t("Suggest a description with AI")}</button>` : ""}<p id="alt-status" role="status"></p><div class="dialog-footer"><button class="primary">${t("Save alternative text")}</button></div></form>`,
+        `<form id="alt-form"><p class="dialog-copy">${t(drawing ? "Describe what the drawing shows and why it matters on this board. Leave it empty for purely decorative drawings." : "描述该图显示的内容以及它在该板上的重要性。对于纯粹的装饰图，将其留空。")}</p><label class="field">${t("Alternative text")}<textarea id="alt-text"${languageAttribute(image.lang)} rows="4" maxlength="1000" aria-describedby="alt-count">${escape(image.alt || "")}</textarea><small id="alt-count" aria-hidden="true"></small></label>${ai && !blocked ? `<button type="button" class="secondary" id="alt-suggest">${t("Suggest a description with AI")}</button>` : ""}<p id="alt-status" role="status"></p><div class="dialog-footer"><button class="primary">${t("Save alternative text")}</button></div></form>`,
         (d) => {
           const field = d.querySelector("#alt-text"),
             opened = image.alt || "";
@@ -101,7 +101,7 @@ export function createAltText({
                   return;
                 const text = await ai.ask(
                   "describe",
-                  `Write alternative text for this image from a collaborative whiteboard, in ${field.lang || (language === "fr" ? "Canadian French" : "English")}. Describe the essential content in one or two plain sentences (at most 300 characters). Transcribe short visible text. Do not start with "Image of". Reply with the text only.`,
+                  `Write alternative text for this image from a collaborative whiteboard, in ${field.lang || (language === "fr" ? "Canadian French" : "加拿大法语")}. Describe the essential content in one or two plain sentences (at most 300 characters). Transcribe short visible text. Do not start with "Image of". Reply with the text only.`,
                   source,
                 );
                 if (closed || !d.isConnected || contentChanged(current()))
@@ -138,7 +138,7 @@ export function createAltText({
               return toast(
                 drawing
                   ? "This drawing is no longer on the board."
-                  : "This image is no longer on the board.",
+                  : "这张图已经不在板上了。",
               );
             }
             if (!canEdit(new Set([target.id]))) return;
@@ -152,7 +152,7 @@ export function createAltText({
               else delete target.alt;
             });
             d.close();
-            toast(value ? "Alternative text saved." : "Marked as decorative.");
+            toast(value ? "Alternative text saved." : "已保存替代文本。");
           };
         },
       );
@@ -161,42 +161,42 @@ export function createAltText({
 }
 
 addTranslations({
-  "Alternative text": "Texte de remplacement",
+  "Alternative text": "替代文本",
   "Describe what the image shows and why it matters on this board. Leave it empty for purely decorative images.":
-    "Décrivez ce que montre l’image et pourquoi elle est utile sur ce tableau. Laissez vide pour une image purement décorative.",
+    "描述该图像显示的内容以及为什么它在此板上很重要。对于纯粹的装饰图像，将其留空。",
   "Describe what the drawing shows and why it matters on this board. Leave it empty for purely decorative drawings.":
-    "Décrivez ce que montre le dessin et pourquoi il est utile sur ce tableau. Laissez vide pour un dessin purement décoratif.",
+    "描述该图显示的内容以及它在该板上的重要性。对于纯粹的装饰图，将其留空。",
   "This drawing is no longer on the board.":
-    "Ce dessin n’est plus sur le tableau.",
-  "Select one image or drawing first.": "选择one image or drawing first.",
-  "Suggest a description with AI": "Proposer une description avec l’IA",
-  "Save alternative text": "Enregistrer le texte de remplacement",
-  "Describing the image…": "Description de l’image…",
+    "这张图已经不在板上了。",
+  "Select one image or drawing first.": "请先选择一张图片或手绘。",
+  "Suggest a description with AI": "使用 AI 建议描述",
+  "Save alternative text": "保存替代文本",
+  "Describing the image…": "描述图像...",
   "Review the suggestion before saving.":
-    "Relisez la suggestion avant d’enregistrer.",
+    "保存前查看建议。",
   "Your description changed while AI was working. It has been kept. Request another suggestion to replace it.":
-    "Votre description a changé pendant le travail de l’IA. Elle a été conservée. Demandez une autre suggestion pour la remplacer.",
-  "Alternative text saved.": "Texte de remplacement enregistré.",
+    "当人工智能工作时，你的描述发生了变化。它已被保留。请求另一个建议来替换它。",
+  "Alternative text saved.": "已保存替代文本。",
   "This image is no longer on the board.":
-    "Cette image n’est plus sur le tableau.",
+    "该图像不再出现在板上。",
   "This object is no longer shown to you.":
-    "Cet objet ne vous est plus affiché.",
-  "Marked as decorative.": "Marquée comme décorative.",
-  "Invalid alternative text.": "Texte de remplacement non valide.",
-  Accessibility: "Accessibilité",
-  "Show to participants": "Afficher aux participants",
-  "Hide from participants": "Masquer aux participants",
-  Workshop: "Atelier",
+    "该对象不再向您显示。",
+  "Marked as decorative.": "标记为装饰性。",
+  "Invalid alternative text.": "替代文本无效。",
+  Accessibility: "无障碍访问",
+  "Show to participants": "向参与者展示",
+  "Hide from participants": "对参与者隐藏",
+  Workshop: "工作坊",
   "Only facilitators can hide objects.":
-    "Seuls les animateurs peuvent masquer des objets.",
+    "只有协助者才能隐藏对象。",
   "Up to 500 objects can be hidden.":
-    "Jusqu’à 500 objets peuvent être masqués.",
+    "最多可以隐藏 500 个对象。",
   "Hidden from participants. You still see these objects.":
-    "Masqués aux participants. Vous voyez toujours ces objets.",
-  "Shown to participants.": "Affichés aux participants.",
+    "对参与者隐藏。你仍然可以看到这些物体。",
+  "Shown to participants.": "向参与者展示。",
   "Objects in a hidden frame stay hidden until the frame is shown.":
-    "Les objets d’un cadre masqué restent masqués jusqu’à ce que le cadre soit affiché.",
+    "隐藏画框中的对象将保持隐藏状态，直到该画框显示为止。",
   "Read by screen readers. Leave empty for decorative images. The command palette's Alternative text can suggest one with AI.":
-    "Lu par les lecteurs d’écran. Laissez vide pour une image décorative. La commande Texte de remplacement de la palette peut en proposer un avec l’IA.",
+    "由屏幕阅读器朗读。对于纯装饰性图片请留空。命令面板中的“替代文本”功能可使用 AI 自动生成描述建议。",
   "Select one image first.": "选择one image first.",
 });

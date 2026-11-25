@@ -73,7 +73,7 @@ export function stampDialog({ signal, size = { width: 260, height: 117 } } = {})
       ctx.clearRect(0, 0, width, height);
       const value = text.value.trim();
       previewStatus.hidden = false;
-      previewStatus.textContent = value ? 'Loading preview…' : 'Enter text to preview the stamp.';
+      previewStatus.textContent = value ? '正在加载预览…' : '输入文本以预览印章。';
       if (!value) return;
       try {
         const [{ default: fontkit }, bytes] = await font();
@@ -127,21 +127,21 @@ export function stampDialog({ signal, size = { width: 260, height: 117 } } = {})
       el(
         'p',
         { class: 'muted' },
-        'The stamp lands in the middle of the page, selected, ready to drag, resize, or recolor.',
+        '印章将添加到页面中央并处于选中状态，可拖动、缩放或更改颜色。',
       ),
-      el('div', { class: 'stamp-presets', role: 'group', 'aria-label': 'Preset stamps' }, ...chips),
+      el('div', { class: 'stamp-presets', role: 'group', 'aria-label': '预设印章' }, ...chips),
       el(
         'div',
         { class: 'field-grid' },
-        el('div', { class: 'field' }, el('label', { for: 'stamp-text' }, 'Text'), text),
-        el('div', { class: 'field' }, el('label', { for: 'stamp-color' }, 'Color'), colorPick),
+        el('div', { class: 'field' }, el('label', { for: 'stamp-text' }, '文本'), text),
+        el('div', { class: 'field' }, el('label', { for: 'stamp-color' }, '颜色'), colorPick),
       ),
       el('div', { class: 'stamp-preview-wrap' }, preview, previewStatus),
     );
     const place = async () => {
       if (pending || !dialog.open || signal?.aborted) return;
       if (!text.value.trim()) {
-        toast('Enter the stamp text.', { error: true });
+        toast('请输入印章文本。', { error: true });
         text.focus();
         return;
       }
@@ -179,11 +179,11 @@ export function stampDialog({ signal, size = { width: 260, height: 117 } } = {})
       e.preventDefault();
       place();
     };
-    const placeButton = button('Place stamp', 'Stamp', place, 'btn primary');
+    const placeButton = button('放置印章', 'Stamp', place, 'btn primary');
     const dialog = modal(
-      'Add stamp',
+      '添加印章',
       form,
-      [button('Cancel', null, () => dialog.close()), placeButton],
+      [button('取消', null, () => dialog.close()), placeButton],
       { signal },
     );
     const resize = new ResizeObserver(paintPreview);

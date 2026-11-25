@@ -1,3 +1,4 @@
+import { t as translate } from "../i18n.js";
 import { item, uid, COLORS } from "../model.js";
 // Template layouts are written once in board coordinates and built in the
 // requested language. Every object is an ordinary editable board object.
@@ -58,7 +59,7 @@ export function createKit(lang = "en") {
     fr,
     items,
     // Picks the string for the board language.
-    t: (en, french) => (fr ? frenchSpacing(french) : en),
+    t: (en, french) => { const tr = translate(en); if (tr && tr !== en) return tr; return fr ? frenchSpacing(french) : en; },
     // Frames receive increasing presentation order in creation order.
     frame: (x, y, w, h, text, extra = {}) =>
       push(item("frame", x, y, { w, h, text, order: order++, ...extra })),
