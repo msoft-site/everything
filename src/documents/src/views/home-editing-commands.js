@@ -78,18 +78,18 @@ export function createEditingCommands({ editor, pkg, host, refresh, zoomControl,
         return { x: Math.round((fragment.x - page.left) * 9525), y: Math.max(0, Math.round((line.y - top) * 9525)) };
       };
       const choose = value => { const engine = ready(); if (!engine) return; engine.finishComposition(); engine.execute(() => setImageWrap(engine.model, value, value !== 'inline' && mode === 'inline' ? place() : undefined)); engine.focus(); };
-      const option = (label, value, icon) => ({ label, icon, radio: true, checked: mode === value, disabled: !image || !wrapUnavailable(image, value), hint: image && wrapUnavailable(image, value) || undefined, onSelect: () => choose(value) });
-      const floating = !image?.anchor && mode !== 'other';
+      const option = (label, value, icon) => ({ label, icon, radio: true, checked: mode === value, disabled: !image || !!wrapUnavailable(image, value), hint: image && wrapUnavailable(image, value) || undefined, onSelect: () => choose(value) });
+      const floating = !!image?.anchor && mode !== 'other';
       return [option('嵌入型', 'inline', 'wrapInline'), option('四周型环绕', 'square', 'wrapSquare'), option('上下型环绕', 'topAndBottom', 'wrapTopBottom'),
         option('衬于文字下方', 'behind', 'behindText'), option('浮于文字上方', 'front', 'inFront'), { separator: true },
         { label: '置于顶层', icon: 'bringForward', disabled: !floating, onSelect: () => { const engine = ready(); if (engine) { engine.execute(() => engine.model.arrangeImage('front')); engine.focus(); } } },
         { label: '置于底层', icon: 'sendBackward', disabled: !floating, onSelect: () => { const engine = ready(); if (engine) { engine.execute(() => engine.model.arrangeImage('back')); engine.focus(); } } }];
     },
-    canWrap: () => !ready()?.model.selectedImage,
+    canWrap: () => !!ready()?.model.selectedImage,
     /** Picture Format → Rotate and Size, for pictures (drawings keep their own geometry). */
-    pictureSelected: () => { const image = ready()?.model.selectedImage; return !image && !image.retainedDrawing && image.kind !== 'chart'; },
+    pictureSelected: () => { const image = ready()?.model.selectedImage; return !!image && !image.retainedDrawing && image.kind !== 'chart'; },
     rotateItems() {
-      const engine = ready(), image = engine?.model.selectedImage, ok = !image && !image.retainedDrawing && image.kind !== 'chart';
+      const engine = ready(), image = engine?.model.selectedImage, ok = !!image && !image.retainedDrawing && image.kind !== 'chart';
       const turn = degrees => { const engine = ready(); if (!engine) return; engine.finishComposition(); const current = engine.model.selectedImage.rotation || 0;
         engine.execute(() => engine.model.setImageProperties({ rotation: ((current + degrees * 60000) % 21600000 + 21600000) % 21600000 })); engine.focus(); };
       const flip = key => { const engine = ready(); if (!engine) return; engine.finishComposition(); engine.execute(() => engine.model.setImageProperties({ [key]: !engine.model.selectedImage[key] })); engine.focus(); };
