@@ -174,7 +174,7 @@ export const TOOLS = [
       position: int(
         "The number the new slide takes, 1-based; the slides from there move down. Defaults to just after the current slide.",
       ),
-      title: str("The slide's title. Use \\n for a line break."),
+      title: str("幻灯片的标题。使用 \n 换行。"),
       body: str(
         "Body text for title, content, and section layouts. Each \\n starts a new paragraph.",
       ),
@@ -1796,7 +1796,7 @@ export function describeCall(name, args = {}, env) {
   const count = (ids) => (Array.isArray(ids) ? ids.length : 0);
   switch (name) {
     case "get_presentation":
-      return { label: "Look over the presentation" };
+      return { label: "检查演示文稿" };
     case "read_slide":
       return { label: `Read slide ${n(args.slide)}` };
     case "find_text":

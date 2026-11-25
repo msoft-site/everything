@@ -386,16 +386,16 @@ export function createSlidesFrom(host) {
         "label",
         { class: "check-field" },
         keep,
-        el("span", {}, "Keep source formatting"),
+        el("span", {}, "保留源格式"),
       ),
     );
     const choice = await dialog({
-      title: "Reuse Slides",
+      title: "重用幻灯片",
       body,
       actions: [
-        { label: "Cancel", value: null },
-        { label: "Insert All", value: "all" },
-        { label: "Insert", value: "selected", kind: "primary" },
+        { label: "取消", value: null },
+        { label: "全部插入", value: "all" },
+        { label: "插入", value: "selected", kind: "primary" },
       ],
     });
     if (!choice) return;

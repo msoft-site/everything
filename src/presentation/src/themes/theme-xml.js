@@ -136,14 +136,14 @@ const glossFills =
 export const EFFECT_SCHEMES = [
   {
     id: "flat",
-    name: "Flat",
+    name: "平面",
     fills: flatFills,
     lines: line(6350) + line(12700) + line(19050),
     effects: effectStyle() + effectStyle() + effectStyle(),
   },
   {
     id: "soft",
-    name: "Soft Shadow",
+    name: "柔和阴影",
     fills: flatFills,
     lines: line(9525) + line(12700) + line(19050),
     effects:
@@ -151,7 +151,7 @@ export const EFFECT_SCHEMES = [
   },
   {
     id: "lifted",
-    name: "Lifted",
+    name: "微凸",
     fills: flatFills,
     lines: line(9525) + line(19050) + line(28575),
     effects:
@@ -161,7 +161,7 @@ export const EFFECT_SCHEMES = [
   },
   {
     id: "glow",
-    name: "Glow",
+    name: "光晕",
     fills: glossFills,
     lines: line(9525) + line(19050) + line(25400),
     effects:
@@ -175,7 +175,7 @@ export const EFFECT_SCHEMES = [
   },
   {
     id: "outline",
-    name: "Strong Outline",
+    name: "粗轮廓",
     fills: flatFills,
     lines:
       line(19050, "phClr/shade=50000") +
@@ -185,7 +185,7 @@ export const EFFECT_SCHEMES = [
   },
   {
     id: "polished",
-    name: "Polished",
+    name: "光泽",
     fills: glossFills,
     lines: line(9525) + line(12700) + line(19050),
     effects:
@@ -271,7 +271,7 @@ export function backgroundStyles(set = "calm") {
     for (const color of ["bg1", "bg2", "tx2", "tx1"])
       out.push({
         id: `${style + 1}:${color}`,
-        name: `Style ${out.length + 1}`,
+        name: `样式 ${out.length + 1}`,
         style,
         color,
         fill: make(color)[style],

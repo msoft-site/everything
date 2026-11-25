@@ -84,7 +84,7 @@ export function createObjectFeatures(ctx) {
     if (!isObject(obj)) return;
     const object = P.getShapeEmbeddedObject(obj);
     const choice = await dialog({
-      title: "Embedded Object",
+      title: "嵌入对象",
       body: el(
         "div",
         { class: "dialog-body" },
@@ -97,9 +97,9 @@ export function createObjectFeatures(ctx) {
         ),
       ),
       actions: [
-        { label: "Close", value: null },
+        { label: "关闭", value: null },
         ...(object?.file
-          ? [{ label: "Download", value: "open", kind: "primary" }]
+          ? [{ label: "下载", value: "open", kind: "primary" }]
           : []),
       ],
     });

@@ -58,7 +58,7 @@ export function createLayoutCommands(host) {
       {
         custom: () =>
           layoutGallery(host.pres(), {
-            label: "Layouts for a new slide",
+            label: "新幻灯片的版式",
             onChoose: (part) => addSlide(target, part),
           }),
       },

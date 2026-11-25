@@ -91,7 +91,7 @@ export function createFormatTools(ctx) {
     openCropToShape: (anchor) =>
       openMenu({
         anchor,
-        label: "Crop to Shape",
+        label: "剪裁为形状",
         items: cropToShapeItems(),
         minWidth: 320,
       }),
@@ -331,11 +331,11 @@ export function createFormatTools(ctx) {
     const styles = wordArtStyles(theme());
     return [
       {
-        label: "Shadow",
+        label: "阴影",
         icon: "o:shadow",
         items: [
           {
-            label: "No Shadow",
+            label: "无阴影",
             checked: !fx.shadow,
             onSelect: () => apply({ shadow: null }),
           },
@@ -366,7 +366,7 @@ export function createFormatTools(ctx) {
               }),
           },
           {
-            label: "Soft Below",
+            label: "下方柔光",
             onSelect: () =>
               apply({
                 shadow: {
@@ -379,7 +379,7 @@ export function createFormatTools(ctx) {
               }),
           },
           {
-            label: "Inside",
+            label: "内部",
             onSelect: () =>
               apply({
                 shadow: {
@@ -395,16 +395,16 @@ export function createFormatTools(ctx) {
         ],
       },
       {
-        label: "Reflection",
+        label: "倒影",
         icon: "o:reflection",
         items: [
           {
-            label: "No Reflection",
+            label: "无倒影",
             checked: !fx.reflection,
             onSelect: () => apply({ reflection: null }),
           },
           {
-            label: "Tight Reflection",
+            label: "紧密倒影",
             onSelect: () =>
               apply({
                 reflection: {
@@ -416,7 +416,7 @@ export function createFormatTools(ctx) {
               }),
           },
           {
-            label: "Half Reflection",
+            label: "半倒影",
             onSelect: () =>
               apply({
                 reflection: {
@@ -428,7 +428,7 @@ export function createFormatTools(ctx) {
               }),
           },
           {
-            label: "Full Reflection",
+            label: "全倒影",
             onSelect: () =>
               apply({
                 reflection: {
@@ -442,11 +442,11 @@ export function createFormatTools(ctx) {
         ],
       },
       {
-        label: "Glow",
+        label: "发光",
         icon: "o:glow",
         items: [
           {
-            label: "No Glow",
+            label: "无发光",
             checked: !fx.glow,
             onSelect: () => apply({ glow: null }),
           },
@@ -479,7 +479,7 @@ export function createFormatTools(ctx) {
               ),
             onSelect: () => applyWordArt(s.format),
           })),
-          { label: "WordArt styles", columns: 6 },
+          { label: "艺术字样式", columns: 6 },
         ),
       },
       { separator: true },
@@ -521,7 +521,7 @@ export function createFormatTools(ctx) {
     const canEditPoints = !!obj && P.getShapeKind(obj) === "shape";
     return [
       {
-        label: "Change Shape",
+        label: "更改形状",
         icon: "o:editShape",
         minWidth: 330,
         items: changeShapeItems({
@@ -530,13 +530,13 @@ export function createFormatTools(ctx) {
         }),
       },
       {
-        label: "Edit Points",
+        label: "编辑顶点",
         icon: "o:editPoints",
         disabled: !canEditPoints,
         onSelect: () => beginEditPoints(),
       },
       {
-        label: "Convert to Freeform",
+        label: "转换为自由多边形",
         icon: "o:editPoints",
         disabled: !canEditPoints || geometry?.kind !== "preset",
         onSelect: () => convertToFreeform(),
@@ -665,7 +665,7 @@ export function createFormatTools(ctx) {
     const cells = [];
     for (const sharp of SHARPEN_PRESETS)
       cells.push({
-        label: `${sharp < 0 ? "Soften" : sharp > 0 ? "Sharpen" : "Sharpen/Soften"}: ${sharp}%`,
+        label: `${sharp < 0 ? "柔化" : sharp > 0 ? "清晰" : "清晰/柔化"}: ${sharp}%`,
         render: () =>
           previewTile({
             filter:
@@ -698,12 +698,12 @@ export function createFormatTools(ctx) {
     return [
       { header: "Sharpen/Soften" },
       {
-        custom: galleryGrid(cells, { label: "Sharpen and soften", columns: 5 }),
+        custom: galleryGrid(cells, { label: "清晰和柔化", columns: 5 }),
       },
       { header: "Brightness/Contrast" },
       {
         custom: galleryGrid(grid, {
-          label: "Brightness and contrast",
+          label: "亮度和对比度",
           columns: 5,
         }),
       },
@@ -737,7 +737,7 @@ export function createFormatTools(ctx) {
                 P.setShapePictureAdjustments(s, { saturation: n / 100 }),
               ),
           })),
-          { label: "Saturation", columns: 9 },
+          { label: "饱和度", columns: 9 },
         ),
       },
       { header: "Color Tone" },
@@ -754,7 +754,7 @@ export function createFormatTools(ctx) {
                 P.setShapePictureAdjustments(s, { temperature: k }),
               ),
           })),
-          { label: "Color tone", columns: 9 },
+          { label: "色调", columns: 9 },
         ),
       },
       { header: "Recolor" },
@@ -784,7 +784,7 @@ export function createFormatTools(ctx) {
                 P.setShapePictureRecolor(s, recolor),
               ),
           })),
-          { label: "Recolor", columns: 7 },
+          { label: "重新着色", columns: 7 },
         ),
       },
       { separator: true },
@@ -823,7 +823,7 @@ export function createFormatTools(ctx) {
                 }),
               ),
           })),
-          { label: "Artistic effects", columns: 5 },
+          { label: "艺术效果", columns: 5 },
         ),
       },
       { separator: true },
@@ -864,13 +864,13 @@ export function createFormatTools(ctx) {
       ...base,
       { separator: true },
       {
-        label: "Crop to Shape",
+        label: "剪裁为形状",
         icon: "o:cropShape",
         items: cropToShapeItems(),
         minWidth: 330,
       },
       {
-        label: "Aspect Ratio",
+        label: "纵横比",
         icon: "o:aspectRatio",
         disabled: !natural,
         items: ASPECT_RATIOS.map(([label, w, h]) => ({
@@ -889,7 +889,7 @@ export function createFormatTools(ctx) {
         })),
       },
       {
-        label: "Fill",
+        label: "填充",
         icon: "o:crop",
         disabled: !natural,
         onSelect: () =>
@@ -902,7 +902,7 @@ export function createFormatTools(ctx) {
           }),
       },
       {
-        label: "Fit",
+        label: "适应",
         icon: "o:fitWindow",
         disabled: !natural,
         onSelect: () =>
@@ -1288,13 +1288,13 @@ export function createFormatTools(ctx) {
           );
         return [
           {
-            label: "Rotate Right 90°",
+            label: "向右旋转 90°",
             icon: "o:rotateRight",
             disabled: !ctx.currentShape(),
             onSelect: () => rotate(90),
           },
           {
-            label: "Rotate Left 90°",
+            label: "向左旋转 90°",
             icon: "o:rotateLeft",
             disabled: !ctx.currentShape(),
             onSelect: () => rotate(-90),
@@ -1312,7 +1312,7 @@ export function createFormatTools(ctx) {
       groupMenu: () => [
         ...base.groupMenu(),
         {
-          label: "Regroup",
+          label: "重新组合",
           icon: "o:regroup",
           shortcut: `${MOD_KEY}+Alt+J`,
           disabled: !canRegroup(),
@@ -1323,12 +1323,12 @@ export function createFormatTools(ctx) {
         ...base.alignMenu(),
         { separator: true },
         {
-          label: "Align to Slide",
+          label: "对齐幻灯片",
           checked: alignToSlide,
           onSelect: () => (alignToSlide = true),
         },
         {
-          label: "Align Selected Objects",
+          label: "对齐所选对象",
           checked: !alignToSlide,
           onSelect: () => (alignToSlide = false),
         },
@@ -1343,7 +1343,7 @@ export function createFormatTools(ctx) {
           onSelect: () => openPasteSpecial(),
         },
         {
-          label: "Paste and Match Formatting",
+          label: "粘贴并匹配格式",
           icon: "o:paste",
           shortcut: IS_MAC ? "⌥⇧⌘V" : null,
           onSelect: () => pasteAndMatch(),
@@ -1364,19 +1364,19 @@ export function createFormatTools(ctx) {
         onSelect: () => openPasteSpecial(),
       },
       {
-        label: "Paste and Match Formatting",
+        label: "粘贴并匹配格式",
         icon: "o:paste",
         shortcut: IS_MAC ? "⌥⇧⌘V" : null,
         onSelect: () => pasteAndMatch(),
       },
       {
-        label: "Clear",
+        label: "清除",
         icon: "o:clearFormat",
         disabled: !ctx.currentShape(),
         onSelect: () => ctx.deleteSelection(),
       },
       {
-        label: repeatable ? `Repeat ${repeatable.label}` : "Repeat",
+        label: repeatable ? `重复 ${repeatable.label}` : "重复",
         icon: "o:redo",
         shortcut: `${MOD_KEY}+Y`,
         disabled: !repeatable,
@@ -1421,14 +1421,14 @@ export function createFormatTools(ctx) {
       },
       { separator: true },
       {
-        label: "Pick Up Object Style",
+        label: "拾取对象样式",
         icon: "o:formatPainter",
         shortcut: `${MOD_KEY}+Shift+C`,
         disabled: !ctx.currentShape(),
         onSelect: () => ctx.pickUpStyle(),
       },
       {
-        label: "Apply Object Style",
+        label: "应用对象样式",
         icon: "o:formatPainter",
         shortcut: `${MOD_KEY}+Shift+V`,
         disabled: !ctx.canApplyStyle(),
@@ -1455,34 +1455,34 @@ export function createFormatTools(ctx) {
     const obj = ctx.currentShape();
     return [
       {
-        label: "Regroup",
+        label: "重新组合",
         icon: "o:regroup",
         shortcut: `${MOD_KEY}+Alt+J`,
         disabled: !canRegroup(),
         onSelect: regroup,
       },
       {
-        label: "Rotate or Flip",
+        label: "旋转或翻转",
         icon: "o:rotate",
         disabled: !obj,
         items: [
           {
-            label: "Rotate Left 90°",
+            label: "向左旋转 90°",
             icon: "o:rotateLeft",
             onSelect: () => rotate(-90),
           },
           {
-            label: "Rotate Right 90°",
+            label: "向右旋转 90°",
             icon: "o:rotateRight",
             onSelect: () => rotate(90),
           },
           {
-            label: "Flip Horizontal",
+            label: "水平翻转",
             icon: "o:flipH",
             onSelect: () => ctx.flipObject(obj, "horizontal"),
           },
           {
-            label: "Flip Vertical",
+            label: "垂直翻转",
             icon: "o:flipV",
             onSelect: () => ctx.flipObject(obj, "vertical"),
           },
@@ -1495,29 +1495,29 @@ export function createFormatTools(ctx) {
         ],
       },
       {
-        label: "Align Mode",
+        label: "对齐模式",
         icon: "o:align",
         items: [
           {
-            label: "Align to Slide",
+            label: "对齐幻灯片",
             checked: alignToSlide,
             onSelect: () => (alignToSlide = true),
           },
           {
-            label: "Align Selected Objects",
+            label: "对齐所选对象",
             checked: !alignToSlide,
             onSelect: () => (alignToSlide = false),
           },
         ],
       },
       {
-        label: "Merge Shapes",
+        label: "合并形状",
         icon: "o:mergeShapes",
         disabled: !canMerge(),
         items: mergeShapesMenu(),
       },
       {
-        label: "Edit Points",
+        label: "编辑顶点",
         icon: "o:editPoints",
         disabled: !obj || P.getShapeKind(obj) !== "shape",
         onSelect: () => beginEditPoints(),

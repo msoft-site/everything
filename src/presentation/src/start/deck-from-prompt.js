@@ -108,7 +108,7 @@ export function parseOutline(answer) {
       "The AI's outline was empty. Try describing it differently.",
     );
   return {
-    title: title || slides[0]?.title || "Untitled presentation",
+    title: title || slides[0]?.title || "未命名演示文稿",
     subtitle: str(data?.subtitle, 300),
     notes: str(data?.notes, 4000),
     slides,
@@ -212,7 +212,7 @@ export async function generateDeck(
   const pres = await buildDeck(outline, { theme });
   return {
     pres,
-    name: cleanName(outline.title) || "Untitled presentation",
+    name: cleanName(outline.title) || "未命名演示文稿",
     outline,
   };
 }

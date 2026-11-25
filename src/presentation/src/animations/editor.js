@@ -128,7 +128,7 @@ export function createAnimationTools(ctx) {
     if (entry?.custom) return startCustomPath({ add });
     const shapes = ctx.selectedShapes();
     if (!shapes.length) {
-      toast("Select an object to animate first.");
+      toast("请先选择要添加动画的对象。");
       return;
     }
     const list = effects();
@@ -140,7 +140,7 @@ export function createAnimationTools(ctx) {
       const drop = new Set(targets.map((t) => t.index));
       return write(
         list.filter((_, i) => !drop.has(i)),
-        { label: "Animation removed" },
+        { label: "动画已删除" },
       );
     }
     if (!add && targets.length) {
@@ -182,10 +182,10 @@ export function createAnimationTools(ctx) {
       }
     }
     if (entry.text && pick.some((i) => !hasText(next[i].shapeId))) {
-      toast(`${entry.name} needs an object with text.`);
+      toast(`${entry.name} 需要带有文本的对象。`);
       return;
     }
-    return write(next, { pick, label: `${entry.name} applied` }).then(
+    return write(next, { pick, label: `已应用 ${entry.name}` }).then(
       (done) => {
         if (done && autoPreview) playPreview({ only: pick });
       },
@@ -221,7 +221,7 @@ export function createAnimationTools(ctx) {
     const overlay = el("div", {
       class: "anim-preview",
       role: "img",
-      "aria-label": "Animation preview",
+      "aria-label": "动画预览",
     });
     canvas.append(overlay);
     canvas.classList.add("anim-previewing");
@@ -290,7 +290,7 @@ export function createAnimationTools(ctx) {
         });
     }
     if (!items.length)
-      items.push({ label: "No options for this effect", disabled: true });
+      items.push({ label: "此效果无可用选项", disabled: true });
     return items;
   }
 
@@ -331,7 +331,7 @@ export function createAnimationTools(ctx) {
     }
     write(next, {
       pick: copies.map((_, i) => list.length + i),
-      label: "Animation copied",
+      label: "已复制动画",
     });
     return true;
   }
@@ -354,7 +354,7 @@ export function createAnimationTools(ctx) {
     const next = order.map((i) => list[i]);
     write(next, {
       pick: targets.map((i) => order.indexOf(i)),
-      label: direction < 0 ? "Moved earlier" : "Moved later",
+      label: direction < 0 ? "向前移动" : "向后移动",
     });
   }
   function reorder(from, to) {
@@ -363,7 +363,7 @@ export function createAnimationTools(ctx) {
     const next = [...list];
     const [item] = next.splice(from, 1);
     next.splice(Math.max(0, Math.min(to, next.length)), 0, item);
-    write(next, { pick: [next.indexOf(item)], label: "Animation moved" });
+    write(next, { pick: [next.indexOf(item)], label: "已移动动画" });
   }
   function remove(indexes = current().map((t) => t.index)) {
     const drop = new Set(indexes);
@@ -371,7 +371,7 @@ export function createAnimationTools(ctx) {
     chosen = [];
     write(
       effects().filter((_, i) => !drop.has(i)),
-      { label: drop.size > 1 ? "Animations removed" : "Animation removed" },
+      { label: drop.size > 1 ? "已删除动画" : "已删除动画" },
     );
   }
   function triggerMenu() {
@@ -384,20 +384,20 @@ export function createAnimationTools(ctx) {
     const triggerOf = targets[0]?.effect.trigger;
     return [
       {
-        label: "On Click of",
+        label: "单击时",
         items: shapes.length
           ? shapes.map((x) => ({
               label: ctx.shapeLabel(x),
               checked: triggerOf === String(P.getShapeId(x)),
               onSelect: () =>
                 update(() => ({ trigger: String(P.getShapeId(x)) }), {
-                  label: "Trigger set",
+                  label: "已设置触发器",
                 }),
             }))
-          : [{ label: "No other objects on this slide", disabled: true }],
+          : [{ label: "此幻灯片上无其他对象", disabled: true }],
       },
       {
-        label: "As Part of the Click Sequence",
+        label: "作为单击序列的一部分",
         checked: !triggerOf,
         disabled: !triggerOf,
         onSelect: () =>
@@ -406,7 +406,7 @@ export function createAnimationTools(ctx) {
               const { trigger, ...rest } = e;
               return { ...rest, trigger: undefined };
             },
-            { label: "Trigger removed" },
+            { label: "已移除触发器" },
           ),
       },
     ];
@@ -490,7 +490,7 @@ export function createAnimationTools(ctx) {
         next = [...list, effect];
         pick = [next.length - 1];
       }
-      write(next, { pick, label: "Custom path drawn" }).then(
+      write(next, { pick, label: "已绘制自定义路径" }).then(
         (done) => done && autoPreview && playPreview({ only: pick }),
       );
     };
@@ -669,14 +669,14 @@ export function createAnimationTools(ctx) {
         effects().map((e, i) =>
           i === index ? { ...e, path: movePathEnd(source, dx, dy) } : e,
         ),
-        { pick: [index], label: "Path changed" },
+        { pick: [index], label: "路径已更改" },
       );
     const handle = el("button", {
       type: "button",
       class: "anim-path-end",
       style,
       "aria-label": `End of the motion path of ${name}. Drag or use the arrow keys to move it.`,
-      title: "Drag to move the end of the path",
+      title: "拖动以移动路径终点",
       onpointerdown: (e) => {
         if (e.button !== 0) return;
         e.preventDefault();
@@ -734,7 +734,7 @@ export function createAnimationTools(ctx) {
   const galleryChoices = () => [
     {
       id: "none",
-      label: "None",
+      label: "无",
       render: () => noneIcon(32),
       category: "none",
     },
@@ -759,7 +759,7 @@ export function createAnimationTools(ctx) {
   }
   const moreFooter = () => [
     ...CATEGORIES.map((cat) => ({
-      label: `More ${cat.id === "path" ? "Motion Paths" : `${cat.label} Effects`}…`,
+      label: `其他${cat.id === "path" ? "动作路径" : `${cat.label}效果`}…`,
       onSelect: () => openMore(cat.id),
     })),
   ];
@@ -812,7 +812,7 @@ export function createAnimationTools(ctx) {
     items.push({ separator: true });
     for (const cat of CATEGORIES)
       items.push({
-        label: `More ${cat.id === "path" ? "Motion Paths" : `${cat.label} Effects`}…`,
+        label: `其他${cat.id === "path" ? "动作路径" : `${cat.label}效果`}…`,
         onSelect: () => openMore(cat.id, { add: true }),
       });
     return items;
@@ -823,52 +823,52 @@ export function createAnimationTools(ctx) {
   function tab() {
     return {
       id: "animations",
-      label: "Animations",
+      label: "动画",
       after: "transitions",
       groups: [
         {
           id: "anim-preview",
-          label: "Preview",
+          label: "预览",
           icon: "previewAnimation",
           items: [
             {
               type: "large",
               id: "preview-animations",
-              label: "Preview",
+              label: "预览",
               icon: "previewAnimation",
-              title: "Preview Animations",
-              description: "Play the animations of this slide on the canvas.",
+              title: "预览动画",
+              description: "在画布上播放此幻灯片的动画。",
               split: true,
               enabled: () => effects().length > 0,
               run: () => (preview ? stopPreview() : playPreview()),
               menu: () => [
                 {
-                  label: "Preview",
+                  label: "预览",
                   disabled: !effects().length,
                   onSelect: () => playPreview(),
                 },
                 {
-                  label: "AutoPreview",
+                  label: "自动预览",
                   checked: autoPreview,
                   onSelect: () => {
                     autoPreview = !autoPreview;
                   },
                 },
               ],
-              menuLabel: "Preview options",
+              menuLabel: "预览选项",
             },
           ],
         },
         {
           id: "anim-gallery",
-          label: "Animation",
+          label: "动画",
           icon: "entrance",
           collapsible: false,
           items: [
             {
               type: "gallery",
               id: "animation-gallery",
-              label: "Animations",
+              label: "动画",
               columns: 8,
               panelColumns: 8,
               itemClass: "anim-choice",
@@ -891,11 +891,11 @@ export function createAnimationTools(ctx) {
             {
               type: "large",
               id: "animation-effect-options",
-              label: "Effect\nOptions",
+              label: "效果\n选项",
               icon: "effectOptions",
-              title: "Effect Options",
+              title: "效果选项",
               description:
-                "Change the direction, shape, amount or sequence of the effect.",
+                "更改效果的方向、形状、数量或顺序。",
               enabled: () => optionsFor().length > 0,
               menu: () => effectOptionsMenu(),
             },
@@ -903,17 +903,17 @@ export function createAnimationTools(ctx) {
         },
         {
           id: "anim-advanced",
-          label: "Advanced Animation",
+          label: "高级动画",
           icon: "addAnimation",
           items: [
             {
               type: "large",
               id: "add-animation",
-              label: "Add\nAnimation",
+              label: "添加\n动画",
               icon: "addAnimation",
-              title: "Add Animation",
+              title: "添加动画",
               description:
-                "Add another effect to the selected objects, after the ones they have.",
+                "为所选对象添加其他效果。",
               enabled: () => ctx.selectedShapes().length > 0,
               menu: (anchor) => addAnimationMenu(anchor),
             },
@@ -923,33 +923,33 @@ export function createAnimationTools(ctx) {
                 {
                   type: "toggle",
                   id: "animation-pane",
-                  label: "Animation Pane",
+                  label: "动画窗格",
                   icon: "animationPane",
-                  title: "Animation Pane",
+                  title: "动画窗格",
                   description:
-                    "Show the list of this slide's effects with their timing.",
+                    "显示此幻灯片的效果及其时间列表。",
                   pressed: () => pane.open,
                   run: () => togglePane(),
                 },
                 {
                   type: "small",
                   id: "animation-trigger",
-                  label: "Trigger",
+                  label: "触发",
                   icon: "trigger",
-                  title: "Trigger",
+                  title: "触发",
                   description:
-                    "Play the effect when another object is clicked during the show.",
+                    "放映期间单击其他对象时播放该效果。",
                   enabled: one,
                   menu: () => triggerMenu(),
                 },
                 {
                   type: "toggle",
                   id: "animation-painter",
-                  label: "Animation Painter",
+                  label: "动画刷",
                   icon: "animationPainter",
                   title: `Animation Painter (${ctx.modKey}+Alt+Shift+C)`,
                   description:
-                    "Copy the selected object's animation to the next object you click. Double-click to copy it to several.",
+                    "将所选对象的动画复制到单击的下一个对象。双击可复制到多个对象。",
                   enabled: () => one() || !!painter,
                   pressed: () => !!painter,
                   run: () => startPainter(false),
@@ -960,7 +960,7 @@ export function createAnimationTools(ctx) {
         },
         {
           id: "anim-timing",
-          label: "Timing",
+          label: "计时",
           icon: "duration",
           items: [
             {
@@ -969,11 +969,11 @@ export function createAnimationTools(ctx) {
                 {
                   type: "row",
                   items: [
-                    { type: "label", label: "Start" },
+                    { type: "label", label: "开始" },
                     {
                       type: "combo",
                       id: "animation-start",
-                      label: "Start",
+                      label: "开始",
                       width: 118,
                       enabled: one,
                       value: startOf,
@@ -993,7 +993,7 @@ export function createAnimationTools(ctx) {
                 {
                   type: "spin",
                   id: "animation-duration",
-                  label: "Duration",
+                  label: "持续时间",
                   icon: "duration",
                   width: 66,
                   min: 0,
@@ -1013,7 +1013,7 @@ export function createAnimationTools(ctx) {
                 {
                   type: "spin",
                   id: "animation-delay",
-                  label: "Delay",
+                  label: "延迟",
                   icon: "delay",
                   width: 66,
                   min: 0,
@@ -1035,22 +1035,22 @@ export function createAnimationTools(ctx) {
             {
               type: "stack",
               items: [
-                { type: "label", label: "Reorder Animation" },
+                { type: "label", label: "对动画重新排序" },
                 {
                   type: "small",
                   id: "animation-earlier",
-                  label: "Move Earlier",
+                  label: "向前移动",
                   icon: "moveEarlier",
-                  title: "Move Earlier",
+                  title: "向前移动",
                   enabled: () => current().some((t) => t.index > 0),
                   run: () => move(-1),
                 },
                 {
                   type: "small",
                   id: "animation-later",
-                  label: "Move Later",
+                  label: "向后移动",
                   icon: "moveLater",
-                  title: "Move Later",
+                  title: "向后移动",
                   enabled: () => {
                     const n = effects().length;
                     return current().some((t) => t.index < n - 1);

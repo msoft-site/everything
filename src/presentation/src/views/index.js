@@ -89,7 +89,7 @@ export function createViews(base) {
       })),
       { separator: true },
       {
-        label: "Show Outline",
+        label: "显示大纲",
         checked: current === "outline",
         shortcut: IS_MAC ? "⌃⇧Tab" : "Ctrl+Shift+Tab",
         onSelect: () =>

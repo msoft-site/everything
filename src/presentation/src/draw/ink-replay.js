@@ -139,21 +139,21 @@ export function playInkReplay({
     max: String(Math.ceil(total)),
     step: "1",
     value: "0",
-    "aria-label": "Replay position",
+    "aria-label": "重播位置",
   });
   const close = el(
     "button",
     {
       type: "button",
       class: "ink-replay-btn",
-      "aria-label": "Close Ink Replay",
+      "aria-label": "关闭墨迹重播",
       title: "Close (Esc)",
     },
     icon("X", 16),
   );
   const bar = el(
     "div",
-    { class: "ink-replay-bar", role: "toolbar", "aria-label": "Ink Replay" },
+    { class: "ink-replay-bar", role: "toolbar", "aria-label": "墨迹重播" },
     playButton,
     slider,
     close,
@@ -164,7 +164,7 @@ export function playInkReplay({
       class: "ink-replay",
       "data-strokes": String(timeline.length),
       role: "region",
-      "aria-label": "Ink Replay",
+      "aria-label": "墨迹重播",
     },
     el("img", { class: "ink-replay-slide", src: background, alt: "" }),
     svg,

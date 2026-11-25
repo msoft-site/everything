@@ -154,7 +154,7 @@ export function formatBytes(n) {
 
 // A progress line for long exports: a bar and a message read out politely.
 export function progressLine() {
-  const bar = el("progress", { max: 1, value: 0, "aria-label": "Progress" });
+  const bar = el("progress", { max: 1, value: 0, "aria-label": "进度" });
   const text = el("span", { class: "file-progress-text", role: "status" });
   const wrap = el("div", { class: "file-progress", hidden: true }, bar, text);
   return {

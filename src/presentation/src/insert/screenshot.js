@@ -52,7 +52,7 @@ async function clipRegion(source) {
     {
       class: "clip-stage",
       tabindex: 0,
-      "aria-label": "Captured screen. Drag to choose a region.",
+      "aria-label": "已捕获屏幕。拖动以选择区域。",
     },
     image,
     marquee,
@@ -97,12 +97,12 @@ async function clipRegion(source) {
   });
   stage.addEventListener("pointerup", () => (start = null));
   const choice = await dialog({
-    title: "Screen Clipping",
+    title: "屏幕截图",
     body: el("div", { class: "dialog-body clip-dialog" }, stage, hint),
     actions: [
-      { label: "Cancel", value: null },
-      { label: "Insert Whole Capture", value: "whole" },
-      { label: "Insert Region", value: "region", kind: "primary" },
+      { label: "取消", value: null },
+      { label: "插入整屏截图", value: "whole" },
+      { label: "插入选定区域", value: "region", kind: "primary" },
     ],
   });
   if (!choice) return null;

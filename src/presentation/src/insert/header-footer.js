@@ -33,7 +33,7 @@ export function createHeaderFooter(ctx) {
       "select",
       {
         class: "input",
-        "aria-label": "Date format",
+        "aria-label": "日期格式",
         onchange: (e) => ((format = e.target.value), emit()),
       },
       ...DATE_FORMATS.map((f) =>
@@ -43,7 +43,7 @@ export function createHeaderFooter(ctx) {
     const text = el("input", {
       class: "input",
       value: fixed,
-      "aria-label": "Fixed date",
+      "aria-label": "固定日期",
       oninput: (e) => ((fixed = e.target.value), emit()),
     });
     let enabled = true;
@@ -75,10 +75,10 @@ export function createHeaderFooter(ctx) {
     let node = null;
     node = el(
       "div",
-      { class: "hf-date", role: "radiogroup", "aria-label": "Date and time" },
-      radio("auto", "Update automatically"),
+      { class: "hf-date", role: "radiogroup", "aria-label": "日期和时间" },
+      radio("auto", "自动更新"),
       select,
-      radio("fixed", "Fixed"),
+      radio("fixed", "固定"),
       text,
     );
     sync();
@@ -146,19 +146,19 @@ export function createHeaderFooter(ctx) {
     const footerInput = el("input", {
       class: "input",
       value: s.footer,
-      "aria-label": "Footer text",
+      "aria-label": "页脚文本",
       oninput: (e) => (s.footer = e.target.value),
     });
     const notesHeader = el("input", {
       class: "input",
       value: n.header,
-      "aria-label": "Header text",
+      "aria-label": "页眉文本",
       oninput: (e) => (n.header = e.target.value),
     });
     const notesFooter = el("input", {
       class: "input",
       value: n.footer,
-      "aria-label": "Notes footer text",
+      "aria-label": "备注页脚文本",
       oninput: (e) => (n.footer = e.target.value),
     });
     const slidePanel = el(
@@ -278,7 +278,7 @@ export function createHeaderFooter(ctx) {
       );
     const tabs = el(
       "div",
-      { class: "hf-tabs", role: "tablist", "aria-label": "Header and footer" },
+      { class: "hf-tabs", role: "tablist", "aria-label": "页眉和页脚" },
       tabButton("slide", "Slide"),
       tabButton("notes", "Notes and Handouts"),
     );
@@ -291,12 +291,12 @@ export function createHeaderFooter(ctx) {
       notesPanel,
     );
     const choice = await dialog({
-      title: "Header and Footer",
+      title: "页眉和页脚",
       body,
       actions: [
-        { label: "Cancel", value: null },
-        { label: "Apply", value: "apply" },
-        { label: "Apply to All", value: "all", kind: "primary" },
+        { label: "取消", value: null },
+        { label: "应用", value: "apply" },
+        { label: "全部应用", value: "all", kind: "primary" },
       ],
     });
     if (!choice) return;

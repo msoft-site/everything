@@ -43,7 +43,7 @@ export function createPhotoAlbum(ctx) {
     const list = el("ul", {
       class: "album-list",
       role: "listbox",
-      "aria-label": "Pictures in album",
+      "aria-label": "相册中的图片",
     });
     const preview = el(
       "div",
@@ -55,7 +55,7 @@ export function createPhotoAlbum(ctx) {
       class: "input",
       value: "Photo Album",
       maxlength: 120,
-      "aria-label": "Album title",
+      "aria-label": "相册标题",
     });
     const move = (step) => {
       const to = selected + step;
@@ -181,7 +181,7 @@ export function createPhotoAlbum(ctx) {
       "select",
       {
         class: "input",
-        "aria-label": "Picture layout",
+        "aria-label": "图片版式",
         onchange: (e) => ((layout = e.target.value), render()),
       },
       ...ALBUM_LAYOUTS.map(([id, label]) =>
@@ -192,7 +192,7 @@ export function createPhotoAlbum(ctx) {
       "select",
       {
         class: "input",
-        "aria-label": "Frame shape",
+        "aria-label": "相框形状",
         onchange: (e) => (frame = e.target.value),
       },
       ...ALBUM_FRAMES.map(([id, label]) => el("option", { value: id }, label)),
@@ -205,14 +205,14 @@ export function createPhotoAlbum(ctx) {
         { class: "album-columns" },
         el(
           "section",
-          { class: "album-pictures", "aria-label": "Pictures" },
+          { class: "album-pictures", "aria-label": "图片" },
           el("div", { class: "album-toolbar" }, add, up, down, removeButton),
           list,
           status,
         ),
         el(
           "section",
-          { class: "album-side", "aria-label": "Preview and options" },
+          { class: "album-side", "aria-label": "预览与选项" },
           preview,
           fieldRow("Album title", albumTitle),
           checkbox(
@@ -236,7 +236,7 @@ export function createPhotoAlbum(ctx) {
       ),
     );
     render();
-    const ok = await dialog({ title: "Photo Album", body, confirm: "Create" });
+    const ok = await dialog({ title: "相册", body, confirm: "创建" });
     const urls = items.map((i) => i.url);
     if (!ok || !items.length) {
       urls.forEach((u) => URL.revokeObjectURL(u));

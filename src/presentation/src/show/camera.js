@@ -131,7 +131,7 @@ export function placeCameras({ P, slide, layer, size, source, bounds }) {
     video.muted = true;
     video.playsInline = true;
     video.autoplay = true;
-    video.setAttribute("aria-label", "Presenter camera");
+    video.setAttribute("aria-label", "演示者摄像头");
     box.append(video);
     layer.append(box);
     nodes.push(box);

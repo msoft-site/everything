@@ -14,25 +14,25 @@ import "./icons.js";
 import "./layouts.css";
 
 const KINDS = {
-  slide: { view: "slideMaster", label: "Slide Master", tab: "slide-master" },
-  notes: { view: "notesMaster", label: "Notes Master", tab: "notes-master" },
+  slide: { view: "slideMaster", label: "幻灯片母版", tab: "slide-master" },
+  notes: { view: "notesMaster", label: "备注母版", tab: "notes-master" },
   handout: {
     view: "handoutMaster",
-    label: "Handout Master",
+    label: "讲义母版",
     tab: "handout-master",
   },
 };
 
 const PLACEHOLDER_KINDS = [
-  ["content", "Content", "o:insertPlaceholder"],
+  ["content", "内容", "o:insertPlaceholder"],
   ["contentVertical", "Content (Vertical)", "o:insertPlaceholder"],
-  ["text", "Text", "o:textBox"],
+  ["text", "文本", "o:textBox"],
   ["textVertical", "Text (Vertical)", "o:textDirection"],
-  ["picture", "Picture", "o:picture"],
-  ["chart", "Chart", "o:chartColumn"],
-  ["table", "Table", "o:table"],
+  ["picture", "图片", "o:picture"],
+  ["chart", "图表", "o:chartColumn"],
+  ["table", "表格", "o:table"],
   ["smartArt", "SmartArt", "o:smartArt"],
-  ["media", "Media", "o:video"],
+  ["media", "媒体", "o:video"],
 ];
 
 export function createMasterView(host) {
@@ -148,7 +148,7 @@ export function createMasterView(host) {
     const after = info.kind === "layout" ? info.entry.partName : null;
     host.mutate(() => {
       target = P.addSlideLayout(pres(), info.master.partName, {
-        name: uniqueName("Custom Layout"),
+        name: uniqueName("自定义版式"),
         after,
       });
       host.clearSelection();
@@ -242,7 +242,7 @@ export function createMasterView(host) {
         { class: "dialog-body" },
         el("label", {}, `${noun} name`, input),
       ),
-      confirm: "Rename",
+      confirm: "重命名",
     });
     input.select();
     const ok = await answer;
@@ -355,7 +355,7 @@ export function createMasterView(host) {
   // ---- The pane ----------------------------------------------------------
 
   function describeLayout(layout) {
-    const name = layout.name || "Custom Layout";
+    const name = layout.name || "自定义版式";
     if (!layout.slideCount) return `${name} layout: not used by any slide`;
     const numbers = [];
     P.getSlides(pres()).forEach((s, i) => {
@@ -409,26 +409,26 @@ export function createMasterView(host) {
     openMenu({
       anchor,
       ...(at ? { x: at.x, y: at.y, contextual: true } : {}),
-      label: layout ? "Layout options" : "Master options",
+      label: layout ? "版式选项" : "母版选项",
       items: [
         {
-          label: "Insert Slide Master",
+          label: "插入幻灯片母版",
           icon: "o:insertSlideMaster",
           onSelect: insertSlideMaster,
         },
         {
-          label: "Insert Layout",
+          label: "插入版式",
           icon: "o:insertLayout",
           onSelect: insertLayout,
         },
         { separator: true },
         {
-          label: layout ? "Duplicate Layout" : "Duplicate Slide Master",
+          label: layout ? "复制版式" : "复制幻灯片母版",
           icon: "o:duplicateLayout",
           onSelect: () => duplicateTarget(part),
         },
         {
-          label: layout ? "Delete Layout" : "Delete Master",
+          label: layout ? "删除版式" : "删除母版",
           icon: "o:deleteLayout",
           disabled: !canDelete(part),
           onSelect: () => deleteTarget(part),
@@ -439,7 +439,7 @@ export function createMasterView(host) {
           onSelect: () => renameTarget(part),
         },
         {
-          label: "Preserve",
+          label: "保留",
           checked: info.entry.preserve,
           onSelect: () => togglePreserve(part),
         },
@@ -462,7 +462,7 @@ export function createMasterView(host) {
             number: i + 1,
             label: master.name,
             description: `${master.name} slide master${master.slideCount ? `: used by ${master.slideCount} slide${master.slideCount > 1 ? "s" : ""}` : ""}`,
-            badge: master.preserve ? "Preserved" : null,
+            badge: master.preserve ? "已保留" : null,
           }),
         );
         for (const layout of master.layouts)
@@ -563,7 +563,7 @@ export function createMasterView(host) {
 
   const closeGroup = {
     id: "master-close",
-    label: "Close",
+    label: "关闭",
     icon: "closeMasterView",
     items: [
       {
@@ -571,7 +571,7 @@ export function createMasterView(host) {
         id: "close-master-view",
         label: "Close Master\nView",
         icon: "closeMasterView",
-        title: "Close Master View",
+        title: "关闭母版视图",
         description: "Go back to editing slides.",
         run: close,
       },
@@ -581,13 +581,13 @@ export function createMasterView(host) {
   function slideMasterTab() {
     return {
       id: KINDS.slide.tab,
-      label: "Slide Master",
+      label: "幻灯片母版",
       contextual: true,
       visible: () => mode === "slide",
       groups: [
         {
           id: "edit-master",
-          label: "Edit Master",
+          label: "编辑母版",
           icon: "insertSlideMaster",
           items: [
             {
@@ -595,7 +595,7 @@ export function createMasterView(host) {
               id: "insert-slide-master",
               label: "Insert Slide\nMaster",
               icon: "insertSlideMaster",
-              title: "Insert Slide Master",
+              title: "插入幻灯片母版",
               description:
                 "Add a new slide master, with its own theme and set of layouts.",
               run: insertSlideMaster,
@@ -605,7 +605,7 @@ export function createMasterView(host) {
               id: "insert-layout",
               label: "Insert\nLayout",
               icon: "insertLayout",
-              title: "Insert Layout",
+              title: "插入版式",
               description:
                 "Add a custom layout to this master. Add placeholders to make it your own.",
               run: insertLayout,
@@ -616,9 +616,9 @@ export function createMasterView(host) {
                 {
                   type: "small",
                   id: "delete-layout",
-                  label: "Delete",
+                  label: "删除",
                   icon: "deleteLayout",
-                  title: "Delete",
+                  title: "删除",
                   description:
                     "Delete this layout or master. Layouts that slides use stay.",
                   enabled: () => canDelete(),
@@ -627,28 +627,28 @@ export function createMasterView(host) {
                 {
                   type: "small",
                   id: "rename-layout",
-                  label: "Rename",
+                  label: "重命名",
                   icon: "renameLayout",
-                  title: "Rename",
+                  title: "重命名",
                   enabled: () => !!entryOf(),
                   run: () => renameTarget(),
                 },
                 {
                   type: "small",
                   id: "duplicate-layout",
-                  label: "Duplicate",
+                  label: "复制",
                   icon: "duplicateLayout",
-                  title: "Duplicate",
+                  title: "复制",
                   enabled: () => !!entryOf(),
                   run: () => duplicateTarget(),
                 },
                 {
                   type: "toggle",
                   id: "preserve-layout",
-                  label: "Preserve",
+                  label: "保留",
                   showLabel: true,
                   icon: "preserveLayout",
-                  title: "Preserve",
+                  title: "保留",
                   description:
                     "Keep this layout or master in the file even when no slide uses it.",
                   enabled: () => !!entryOf(),
@@ -661,7 +661,7 @@ export function createMasterView(host) {
         },
         {
           id: "master-layout",
-          label: "Master Layout",
+          label: "母版版式",
           icon: "masterLayout",
           items: [
             {
@@ -669,17 +669,17 @@ export function createMasterView(host) {
               id: "master-layout-elements",
               label: "Master\nLayout",
               icon: "masterLayout",
-              title: "Master Layout",
+              title: "母版版式",
               description:
                 "Choose which placeholders the slide master has: title, text, date, slide number and footer.",
               enabled: () => isMaster(),
               menu: () =>
                 [
-                  ["title", "Title"],
-                  ["body", "Text"],
-                  ["date", "Date"],
-                  ["slideNumber", "Slide Number"],
-                  ["footer", "Footer"],
+                  ["title", "标题"],
+                  ["body", "文本"],
+                  ["date", "日期"],
+                  ["slideNumber", "幻灯片编号"],
+                  ["footer", "页脚"],
                 ].map(([slot, label]) => ({
                   label,
                   checked: hasSlot(slot),
@@ -692,7 +692,7 @@ export function createMasterView(host) {
               id: "insert-placeholder",
               label: "Insert\nPlaceholder",
               icon: "insertPlaceholder",
-              title: "Insert Placeholder",
+              title: "插入占位符",
               description:
                 "Add a placeholder to the layout for content, text, a picture, a chart, a table and more.",
               split: true,
@@ -712,7 +712,7 @@ export function createMasterView(host) {
                 {
                   type: "check",
                   id: "layout-title",
-                  label: "Title",
+                  label: "标题",
                   enabled: () => isLayout(),
                   checked: () => hasSlot("title"),
                   commit: (on) => setSlot(["title"], on),
@@ -720,7 +720,7 @@ export function createMasterView(host) {
                 {
                   type: "check",
                   id: "layout-footers",
-                  label: "Footers",
+                  label: "页脚",
                   enabled: () => isLayout(),
                   checked: () => footersOn(),
                   commit: (on) => setSlot(FOOTER_SLOTS, on),
@@ -731,13 +731,13 @@ export function createMasterView(host) {
         },
         {
           id: "master-background",
-          label: "Background",
+          label: "背景",
           icon: "hideBackgroundGraphics",
           items: [
             {
               type: "check",
               id: "hide-background-graphics",
-              label: "Hide Background Graphics",
+              label: "隐藏背景图形",
               enabled: () => isLayout(),
               checked: () => hidesBackgroundGraphics(),
               commit: (on) => setHideBackgroundGraphics(on),
@@ -755,18 +755,18 @@ export function createMasterView(host) {
     const notes = kind === "notes";
     const slots = notes
       ? [
-          ["header", "Header"],
-          ["slideImage", "Slide Image"],
-          ["footer", "Footer"],
-          ["date", "Date"],
-          ["body", "Body"],
-          ["slideNumber", "Page Number"],
+          ["header", "页眉"],
+          ["slideImage", "幻灯片图像"],
+          ["footer", "页脚"],
+          ["date", "日期"],
+          ["body", "正文"],
+          ["slideNumber", "页码"],
         ]
       : [
-          ["header", "Header"],
-          ["footer", "Footer"],
-          ["date", "Date"],
-          ["slideNumber", "Page Number"],
+          ["header", "页眉"],
+          ["footer", "页脚"],
+          ["date", "日期"],
+          ["slideNumber", "页码"],
         ];
     const check = ([slot, label]) => ({
       type: "check",
@@ -784,7 +784,7 @@ export function createMasterView(host) {
       groups: [
         {
           id: `${kind}-page-setup`,
-          label: "Page Setup",
+          label: "页面设置",
           icon: "pageOrientation",
           items: [
             {
@@ -792,16 +792,16 @@ export function createMasterView(host) {
               id: `${kind}-orientation`,
               label: notes ? "Notes Page\nOrientation" : "Handout\nOrientation",
               icon: "pageOrientation",
-              title: notes ? "Notes Page Orientation" : "Handout Orientation",
+              title: notes ? "备注页方向" : "讲义方向",
               description: "Turn the page portrait or landscape.",
               menu: () => [
                 {
-                  label: "Portrait",
+                  label: "纵向",
                   checked: orientation() === "portrait",
                   onSelect: () => setOrientation("portrait"),
                 },
                 {
-                  label: "Landscape",
+                  label: "横向",
                   checked: orientation() === "landscape",
                   onSelect: () => setOrientation("landscape"),
                 },
@@ -813,7 +813,7 @@ export function createMasterView(host) {
               id: "handout-slides-per-page",
               label: "Slides Per\nPage",
               icon: "handoutMaster",
-              title: "Slides Per Page",
+              title: "每页幻灯片数",
               description:
                 "Show where slides go on a handout page with this many slides.",
               menu: () =>
@@ -831,7 +831,7 @@ export function createMasterView(host) {
         },
         {
           id: `${kind}-placeholders`,
-          label: "Placeholders",
+          label: "占位符",
           icon: "masterLayout",
           items: [
             { type: "stack", items: slots.slice(0, half).map(check) },
@@ -856,10 +856,10 @@ export function createMasterView(host) {
     if (!mode) return "";
     if (mode !== "slide") return KINDS[mode].label.toUpperCase();
     const info = entryOf();
-    if (!info) return "SLIDE MASTER";
+    if (!info) return "幻灯片母版";
     return info.kind === "master"
       ? `SLIDE MASTER · ${info.entry.name}`
-      : `LAYOUT · ${info.entry.name || "Custom Layout"}`;
+      : `LAYOUT · ${info.entry.name || "自定义版式"}`;
   }
 
   return {

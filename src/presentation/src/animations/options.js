@@ -2,14 +2,14 @@
 // color, path direction and, for text, the sequence it builds in.
 
 export const COLORS = [
-  ["E81224", "Red"],
-  ["F7630C", "Orange"],
-  ["FFB900", "Gold"],
-  ["16C60C", "Green"],
-  ["0078D4", "Blue"],
-  ["886CE4", "Purple"],
-  ["808080", "Gray"],
-  ["000000", "Black"],
+  ["E81224", "红色"],
+  ["F7630C", "橙色"],
+  ["FFB900", "金色"],
+  ["16C60C", "绿色"],
+  ["0078D4", "蓝色"],
+  ["886CE4", "紫色"],
+  ["808080", "灰色"],
+  ["000000", "黑色"],
 ];
 
 /** Reverses a motion path ("M 0 0 L … E"): the object travels it from its
@@ -81,10 +81,10 @@ export function movePathEnd(d, dx, dy) {
 }
 
 const groupLabel = (entry) => {
-  if (entry.cls === "path" && entry.id === 35) return "Shape";
-  if (entry.id === 21 && entry.cls !== "emph") return "Spokes";
-  if (entry.id === 53 && entry.cls !== "emph") return "Vanishing Point";
-  return "Direction";
+  if (entry.cls === "path" && entry.id === 35) return "形状";
+  if (entry.id === 21 && entry.cls !== "emph") return "轮辐";
+  if (entry.id === 53 && entry.cls !== "emph") return "消失点";
+  return "方向";
 };
 
 export function optionGroups(
@@ -95,7 +95,7 @@ export function optionGroups(
   const groups = [];
   if (entry?.variants) {
     groups.push({
-      label: entry.directions ? "Shape" : "Direction",
+      label: entry.directions ? "形状" : "方向",
       options: entry.variants.map(([presetId, subtype, label]) => ({
         label,
         active: effect.presetId === presetId,
@@ -108,7 +108,7 @@ export function optionGroups(
   }
   if (entry?.directions)
     groups.push({
-      label: "Direction",
+      label: "方向",
       options: entry.directions.map(([subtype, label]) => ({
         label,
         active: effect.presetSubtype === subtype,
@@ -129,10 +129,10 @@ export function optionGroups(
   if (entry?.spin) {
     const amount = effect.amount ?? 360;
     groups.push({
-      label: "Direction",
+      label: "方向",
       options: [
-        ["Clockwise", 1],
-        ["Counterclockwise", -1],
+        ["顺时针", 1],
+        ["逆时针", -1],
       ].map(([label, sign]) => ({
         label,
         active: Math.sign(amount || 1) === sign,
@@ -142,7 +142,7 @@ export function optionGroups(
   }
   if (entry?.amounts)
     groups.push({
-      label: "Amount",
+      label: "数量",
       options: entry.amounts.map(([value, label]) => ({
         label,
         active: Math.abs(effect.amount ?? entry.amount) === value,
@@ -153,7 +153,7 @@ export function optionGroups(
     });
   if (entry?.color)
     groups.push({
-      label: "Color",
+      label: "颜色",
       options: COLORS.map(([value, label]) => ({
         label,
         swatch: value,
@@ -163,10 +163,10 @@ export function optionGroups(
     });
   if (effect.presetClass === "path")
     groups.push({
-      label: "Path",
+      label: "路径",
       options: [
         {
-          label: "Reverse Path Direction",
+          label: "锁定/反转路径方向",
           active: false,
           apply: (e) => ({
             path: reversePath(e.path),
@@ -177,22 +177,22 @@ export function optionGroups(
     });
   if (hasText && paragraphs > 1 && !entry?.text)
     groups.push({
-      label: "Sequence",
+      label: "序列",
       options: [
         {
-          label: "As One Object",
+          label: "作为一个对象",
           active: !effect.text,
           apply: () => ({ text: undefined }),
         },
         {
-          label: "All at Once",
+          label: "同时",
           active: effect.text?.by === "allAtOnce",
           apply: (e) => ({
             text: { ...(e.text || { level: 1 }), by: "allAtOnce" },
           }),
         },
         {
-          label: "By Paragraph",
+          label: "按段落",
           active: effect.text?.by === "paragraph",
           apply: (e) => ({
             text: { ...(e.text || { level: 1 }), by: "paragraph" },

@@ -43,14 +43,14 @@ const OUTLINE_SKIP = new Set([
 ]);
 
 export const EXPORT_FORMATS = [
-  ["pdf", "PDF document", ".pdf"],
-  ["png", "PNG pictures", ".png"],
-  ["jpeg", "JPEG pictures", ".jpg"],
-  ["video", "Video (MP4 or WebM)", ".mp4"],
-  ["gif", "Animated GIF", ".gif"],
-  ["outline", "Outline (RTF or text)", ".rtf"],
-  ["template", "Template (.potx)", ".potx"],
-  ["pptx", "PowerPoint (.pptx)", ".pptx"],
+  ["pdf", "PDF 文档", ".pdf"],
+  ["png", "PNG 图像", ".png"],
+  ["jpeg", "JPEG 图像", ".jpg"],
+  ["video", "视频 (MP4 或 WebM)", ".mp4"],
+  ["gif", "动态 GIF", ".gif"],
+  ["outline", "大纲 (RTF 或文本)", ".rtf"],
+  ["template", "PowerPoint 模板 (.potx)", ".potx"],
+  ["pptx", "PowerPoint 演示文稿 (.pptx)", ".pptx"],
 ];
 
 // A file name typed with the extension an export adds ("Q3 review.pdf")
@@ -297,7 +297,7 @@ export function createFileTools(ctx) {
     );
     const custom = textField("Slide numbers", "", {
       placeholder: "e.g. 1-3, 5",
-      "aria-label": "Slide numbers to export",
+      "aria-label": "要导出的幻灯片编号",
     });
     custom.wrap.classList.add("export-custom-range");
     const hidden = checkField("Include hidden slides");
@@ -548,12 +548,12 @@ export function createFileTools(ctx) {
     let busy = false;
     let controller = null;
     const modal = openModal({
-      title: "Export",
+      title: "导出",
       className: "export-dialog",
       body,
       actions: [
         {
-          label: "Cancel",
+          label: "取消",
           onClick: () => {
             if (busy) {
               controller?.abort();
@@ -562,7 +562,7 @@ export function createFileTools(ctx) {
             return true;
           },
         },
-        { label: "Export", kind: "primary", onClick: () => start() },
+        { label: "导出", kind: "primary", onClick: () => start() },
       ],
       onClose: () => controller?.abort(),
     });
@@ -613,8 +613,8 @@ export function createFileTools(ctx) {
       controller = new AbortController();
       const signal = controller.signal;
       exportButton.disabled = true;
-      cancelButton.querySelector("span").textContent = "Stop";
-      cancelButton.setAttribute("aria-label", "Stop");
+      cancelButton.querySelector("span").textContent = "停止";
+      cancelButton.setAttribute("aria-label", "停止");
       progress.show("Preparing…");
       const report = (message) => (f) =>
         progress.set(f, `${message} ${Math.round(f * 100)}%`);
@@ -627,8 +627,8 @@ export function createFileTools(ctx) {
       } finally {
         busy = false;
         if (modal.dialog.isConnected) {
-          cancelButton.querySelector("span").textContent = "Cancel";
-          cancelButton.setAttribute("aria-label", "Cancel");
+          cancelButton.querySelector("span").textContent = "取消";
+          cancelButton.setAttribute("aria-label", "取消");
           progress.hide();
           sync();
         }

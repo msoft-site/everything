@@ -48,7 +48,7 @@ export function createRecordingStudio(ctx, session) {
     muted: true,
     playsinline: true,
     autoplay: true,
-    "aria-label": "Your camera",
+    "aria-label": "您的摄像头",
   });
   preview.muted = true;
   const cameraBox = el(
@@ -84,14 +84,14 @@ export function createRecordingStudio(ctx, session) {
   const clearButton = lineButton("Clear recordings", "Trash2", (e) =>
     openMenu({
       anchor: e.currentTarget,
-      label: "Clear recordings",
+      label: "清除录制",
       items: [
         {
-          label: "Clear Recording on Current Slide",
+          label: "清除当前幻灯片上的录制",
           onSelect: () => clear(false),
         },
         {
-          label: "Clear Recordings on All Slides",
+          label: "清除所有幻灯片上的录制",
           onSelect: () => clear(true),
         },
       ],
@@ -130,7 +130,7 @@ export function createRecordingStudio(ctx, session) {
     {
       class: "show-studio-bar",
       role: "toolbar",
-      "aria-label": "Recording",
+      "aria-label": "正在录制",
       onclick: (e) => e.stopPropagation(),
     },
     recordButton,
@@ -150,7 +150,7 @@ export function createRecordingStudio(ctx, session) {
   notes.style.fontSize = `${showPrefs.notesFontSize}px`;
   const side = el(
     "aside",
-    { class: "show-studio-notes", "aria-label": "Notes" },
+    { class: "show-studio-notes", "aria-label": "备注" },
     el("h2", {}, "Notes"),
     notes,
   );
@@ -162,7 +162,7 @@ export function createRecordingStudio(ctx, session) {
   function syncButtons() {
     const live = state !== "idle";
     recordButton.classList.toggle("live", live);
-    recordButton.querySelector(".label").textContent = live ? "Stop" : "Record";
+    recordButton.querySelector(".label").textContent = live ? "停止" : "录制";
     recordButton.setAttribute(
       "aria-label",
       live ? "Stop recording" : "Start recording",
@@ -263,7 +263,7 @@ export function createRecordingStudio(ctx, session) {
     };
     openMenu({
       anchor,
-      label: "Camera and microphone",
+      label: "摄像头和麦克风",
       minWidth: 240,
       items: [
         { header: "Camera" },
@@ -275,7 +275,7 @@ export function createRecordingStudio(ctx, session) {
                 : i === 0,
               onSelect: pick("cameraId", d.deviceId),
             }))
-          : [{ label: "No camera found", disabled: true }]),
+          : [{ label: "未找到摄像头", disabled: true }]),
         { separator: true },
         { header: "Microphone" },
         ...(mics.length
@@ -286,7 +286,7 @@ export function createRecordingStudio(ctx, session) {
                 : i === 0,
               onSelect: pick("micId", d.deviceId),
             }))
-          : [{ label: "No microphone found", disabled: true }]),
+          : [{ label: "未找到麦克风", disabled: true }]),
       ],
     });
   }
@@ -478,7 +478,7 @@ export function createRecordingStudio(ctx, session) {
       }
       current = i;
       const text = P.getSlideNotes(all[i]) || "";
-      notes.textContent = text || "No notes for this slide.";
+      notes.textContent = text || "此幻灯片没有备注。";
       notes.classList.toggle("empty", !text);
       syncButtons();
     },

@@ -23,44 +23,44 @@ export function readingBar({
     {
       type: "button",
       class: "reading-menu btn icon-btn",
-      "aria-label": "Reading View menu",
+      "aria-label": "阅读视图菜单",
       "aria-haspopup": "menu",
-      title: "Menu",
+      title: "菜单",
       onclick: (e) =>
         openMenu({
           anchor: e.currentTarget,
-          label: "Reading View",
+          label: "阅读视图",
           align: "center",
           items: [
             // As the bar's buttons: through the slide's builds first.
             {
-              label: "Next",
+              label: "下一张",
               icon: "ChevronRight",
               disabled: next.disabled,
               onSelect: () => next.click(),
             },
             {
-              label: "Previous",
+              label: "上一张",
               icon: "ChevronLeft",
               disabled: previous.disabled,
               onSelect: () => previous.click(),
             },
             {
-              label: "Go to Slide",
+              label: "转到幻灯片",
               icon: "o:seeAllSlides",
               items: Array.from({ length: count }, (_, i) => ({
-                label: `${i + 1}. ${titleOf(i) || "Untitled"}`,
+                label: `${i + 1}. ${titleOf(i) || "无标题"}`,
                 checked: i === current(),
                 onSelect: () => show(i),
               })),
             },
             { separator: true },
             {
-              label: "Edit Slides",
+              label: "编辑幻灯片",
               icon: "o:normalView",
               onSelect: () => switchTo("normal"),
             },
-            { label: "End Reading View", icon: "X", onSelect: close },
+            { label: "结束阅读视图", icon: "X", onSelect: close },
           ],
         }),
     },
@@ -84,17 +84,17 @@ export function readingBar({
     {
       class: "presenter-controls reading-bar",
       role: "toolbar",
-      "aria-label": "Reading View",
+      "aria-label": "阅读视图",
     },
     el("div", { class: "reading-left" }, counter),
     el("div", { class: "reading-center" }, previous, menuButton, next),
     el(
       "div",
       { class: "reading-right" },
-      viewButton("normal", "Normal", "normalViewSmall"),
-      viewButton("sorter", "Slide Sorter", "slideSorter"),
-      viewButton("reading", "Reading View", "readingViewSmall"),
-      viewButton("show", "Slide Show", "slideShowSmall"),
+      viewButton("normal", "普通", "normalViewSmall"),
+      viewButton("sorter", "幻灯片浏览", "slideSorter"),
+      viewButton("reading", "阅读视图", "readingViewSmall"),
+      viewButton("show", "幻灯片放映", "slideShowSmall"),
     ),
   );
 }
@@ -104,6 +104,6 @@ export function placeReadingDialog(dialog) {
   const header = document.querySelector(".editor-header");
   const top = header ? Math.round(header.getBoundingClientRect().bottom) : 0;
   dialog.classList.add("reading-view");
-  dialog.setAttribute("aria-label", "Reading View");
+  dialog.setAttribute("aria-label", "阅读视图");
   dialog.style.setProperty("--reading-top", `${top}px`);
 }

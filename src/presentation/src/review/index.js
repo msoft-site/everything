@@ -63,7 +63,7 @@ export function createReview(base) {
       const editor = base.editor();
       const chosen = editor?.selectedText?.();
       if (chosen?.trim())
-        return [{ kind: "editor", text: chosen, label: "Selection" }];
+        return [{ kind: "editor", text: chosen, label: "所选内容" }];
       if (!base.pres()) return [];
       const ids = new Set(base.selectionIds());
       return visibleSlideShapes(base.slide())
@@ -130,17 +130,17 @@ export function createReview(base) {
     const one = () => api.selection().length === 1;
     return {
       id: "review",
-      label: "Review",
+      label: "审阅",
       groups: [
         {
           id: "proofing",
-          label: "Proofing",
+          label: "校对",
           icon: "spelling",
           items: [
             {
               type: "large",
               id: "spelling",
-              label: "Spelling",
+              label: "拼写检查",
               icon: "spelling",
               title: "Spelling (F7)",
               description:
@@ -151,7 +151,7 @@ export function createReview(base) {
             {
               type: "large",
               id: "thesaurus",
-              label: "Thesaurus",
+              label: "同义词库",
               icon: "thesaurus",
               title: "Thesaurus (Shift+F7)",
               description: "Find other words for the selected word.",
@@ -162,7 +162,7 @@ export function createReview(base) {
         },
         {
           id: "accessibility",
-          label: "Accessibility",
+          label: "辅助功能",
           icon: "accessibility",
           items: [
             {
@@ -170,7 +170,7 @@ export function createReview(base) {
               id: "check-accessibility",
               label: "Check\nAccessibility",
               icon: "accessibility",
-              title: "Check Accessibility",
+              title: "检查辅助功能",
               description:
                 "Find content that people with disabilities might find hard to read.",
               split: true,
@@ -178,7 +178,7 @@ export function createReview(base) {
               run: () => accessibility.open(),
               menu: () => [
                 {
-                  label: "Check Accessibility",
+                  label: "检查辅助功能",
                   icon: "o:accessibility",
                   onSelect: () => accessibility.open(),
                 },
@@ -189,7 +189,7 @@ export function createReview(base) {
                   onSelect: () => base.altText(),
                 },
                 {
-                  label: "Reading Order Pane",
+                  label: "阅读顺序窗格",
                   icon: "o:readingOrder",
                   onSelect: () => accessibility.openReadingOrder(),
                 },
@@ -201,7 +201,7 @@ export function createReview(base) {
               id: "alt-text",
               label: "Alt\nText",
               icon: "altText",
-              title: "Alt Text",
+              title: "可选文字",
               description:
                 "Describe the selected picture or object for people who use screen readers.",
               enabled: () => one(),
@@ -211,15 +211,15 @@ export function createReview(base) {
         },
         {
           id: "language",
-          label: "Language",
+          label: "语言",
           icon: "language",
           items: [
             {
               type: "large",
               id: "translate",
-              label: "Translate",
+              label: "翻译",
               icon: "translate",
-              title: "Translate",
+              title: "翻译",
               description:
                 "Translate the selected text or the slide into another language.",
               pressed: () => host.isOpen("translate"),
@@ -228,9 +228,9 @@ export function createReview(base) {
             {
               type: "large",
               id: "language",
-              label: "Language",
+              label: "语言",
               icon: "language",
-              title: "Language",
+              title: "语言",
               description: "Choose the proofing language of the selected text.",
               menu: () => [
                 ...base.languageItems(),
@@ -246,7 +246,7 @@ export function createReview(base) {
         },
         {
           id: "review-comments",
-          label: "Comments",
+          label: "批注",
           icon: "newComment",
           items: [
             {
@@ -261,27 +261,27 @@ export function createReview(base) {
             {
               type: "large",
               id: "delete-comment",
-              label: "Delete",
+              label: "删除",
               icon: "deleteComment",
-              title: "Delete Comment",
+              title: "删除批注",
               enabled: () => comments.canDelete(),
               menu: () => comments.deleteMenu(),
             },
             {
               type: "large",
               id: "previous-comment",
-              label: "Previous",
+              label: "上一条",
               icon: "previousComment",
-              title: "Previous Comment",
+              title: "上一条批注",
               enabled: () => comments.hasComments(),
               run: () => comments.step(-1),
             },
             {
               type: "large",
               id: "next-comment",
-              label: "Next",
+              label: "下一条",
               icon: "nextComment",
-              title: "Next Comment",
+              title: "下一条批注",
               enabled: () => comments.hasComments(),
               run: () => comments.step(1),
             },
@@ -290,7 +290,7 @@ export function createReview(base) {
               id: "show-comments",
               label: "Show\nComments",
               icon: "showComments",
-              title: "Show Comments",
+              title: "显示批注",
               description:
                 "Open the Comments pane, and show or hide comment markers on the slides.",
               split: true,
@@ -303,15 +303,15 @@ export function createReview(base) {
         },
         {
           id: "compare",
-          label: "Compare",
+          label: "比较",
           icon: "compare",
           items: [
             {
               type: "large",
               id: "compare",
-              label: "Compare",
+              label: "比较",
               icon: "compare",
-              title: "Compare",
+              title: "比较",
               description:
                 "Compare this presentation with another version and choose which changes to keep.",
               run: () => compare.start(),
@@ -322,7 +322,7 @@ export function createReview(base) {
                 {
                   type: "small",
                   id: "accept-all-changes",
-                  label: "Accept All",
+                  label: "全部接受",
                   icon: "acceptChange",
                   visible: () => compare.active(),
                   run: () => compare.acceptAll(),
@@ -330,7 +330,7 @@ export function createReview(base) {
                 {
                   type: "toggle",
                   id: "revisions-pane",
-                  label: "Revisions",
+                  label: "修订",
                   icon: "showComments",
                   visible: () => compare.active(),
                   pressed: () => host.isOpen("revisions"),
@@ -339,7 +339,7 @@ export function createReview(base) {
                 {
                   type: "small",
                   id: "end-review",
-                  label: "End Review",
+                  label: "结束审阅",
                   icon: "rejectChange",
                   visible: () => compare.active(),
                   run: () => compare.end(),
@@ -350,7 +350,7 @@ export function createReview(base) {
         },
         {
           id: "protect",
-          label: "Protect",
+          label: "保护",
           icon: "readOnly",
           items: [
             {
@@ -390,7 +390,7 @@ export function createReview(base) {
         icon: "o:translate",
         onSelect: () => translate.open(),
       },
-      { label: "Language", icon: "o:language", items: base.languageItems() },
+      { label: "语言", icon: "o:language", items: base.languageItems() },
       {
         label: "AutoCorrect Options…",
         icon: "o:autoCorrect",
@@ -398,19 +398,19 @@ export function createReview(base) {
       },
       { separator: true },
       {
-        label: "Check Accessibility",
+        label: "检查辅助功能",
         icon: "o:accessibility",
         onSelect: () => accessibility.open(),
       },
       {
-        label: "Reading Order Pane",
+        label: "阅读顺序窗格",
         icon: "o:readingOrder",
         onSelect: () => accessibility.openReadingOrder(),
       },
       { separator: true },
       { label: "Compare…", icon: "o:compare", onSelect: () => compare.start() },
       {
-        label: "Comments",
+        label: "批注",
         icon: "o:showComments",
         checked: comments.isOpen(),
         onSelect: () => comments.toggle(),
@@ -422,7 +422,7 @@ export function createReview(base) {
     return [
       { label: "Compare…", icon: "o:compare", onSelect: () => compare.start() },
       {
-        label: "Mark as Final",
+        label: "标记为最终版本",
         icon: "Lock",
         checked: final.marked(),
         onSelect: () => final.toggle(),

@@ -101,7 +101,7 @@ export function createNotesPage(ctx) {
     scroller = el("div", {
       class: "notes-pages",
       role: "region",
-      "aria-label": "Notes Page",
+      "aria-label": "备注页",
       onkeydown: keydown,
       onwheel: (e) => {
         if (!(e.ctrlKey || e.metaKey)) return;
@@ -178,7 +178,7 @@ export function createNotesPage(ctx) {
     });
     const text = el("textarea", {
       class: "notes-page-text",
-      placeholder: "Click to add notes",
+      placeholder: "单击以添加备注",
       spellcheck: "true",
       oninput: () => schedule(part, text),
       onblur: () => flush(part),

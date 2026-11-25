@@ -15,7 +15,7 @@ export function createSubtitles({ host, language, position, onState }) {
   box.className = "show-captions";
   box.setAttribute("role", "log");
   box.setAttribute("aria-live", "polite");
-  box.setAttribute("aria-label", "Subtitles");
+  box.setAttribute("aria-label", "字幕");
   box.hidden = true;
   const final = doc.createElement("span");
   const interim = doc.createElement("span");

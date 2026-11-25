@@ -108,7 +108,7 @@ export function createThesaurus(env, host) {
       await navigator.clipboard.writeText(state.chosen);
       toast(`Copied “${state.chosen}”.`);
     } catch {
-      toast("The word could not be copied.");
+      toast("无法复制该词。");
     }
   }
 
@@ -118,8 +118,8 @@ export function createThesaurus(env, host) {
       class: "input",
       type: "search",
       value: state.query,
-      "aria-label": "Word to look up",
-      placeholder: "Look up a word",
+      "aria-label": "要查找的单词",
+      placeholder: "查找单词",
       "data-focus-key": "thesaurus-query",
       "data-autofocus": "",
     });
@@ -139,7 +139,7 @@ export function createThesaurus(env, host) {
         {
           type: "submit",
           class: "btn secondary small",
-          "aria-label": "Look up",
+          "aria-label": "查找",
         },
         icon("Search", 16),
       ),
@@ -210,8 +210,8 @@ export function createThesaurus(env, host) {
           "section",
           { class: "thesaurus-meaning" },
           m.sense && el("h3", { class: "thesaurus-sense" }, m.sense),
-          words(m.synonyms, m.sense ? `Synonyms: ${m.sense}` : "Synonyms"),
-          words(m.antonyms, m.sense ? `Antonyms: ${m.sense}` : "Antonyms"),
+          words(m.synonyms, m.sense ? `Synonyms: ${m.sense}` : "同义词"),
+          words(m.antonyms, m.sense ? `Antonyms: ${m.sense}` : "反义词"),
         ),
       );
     if (state.result?.meanings.length) {
@@ -230,7 +230,7 @@ export function createThesaurus(env, host) {
           el(
             "span",
             { class: "thesaurus-chosen", "aria-live": "polite" },
-            state.chosen ? `Chosen: ${state.chosen}` : "Choose a word",
+            state.chosen ? `Chosen: ${state.chosen}` : "选择单词",
           ),
           el(
             "button",
@@ -258,7 +258,7 @@ export function createThesaurus(env, host) {
     return wrap;
   }
 
-  host.register("thesaurus", { title: "Thesaurus", render });
+  host.register("thesaurus", { title: "同义词库", render });
   return {
     open(word = env.selectedWord()) {
       host.open("thesaurus");

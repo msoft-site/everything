@@ -307,18 +307,18 @@ export async function autoCorrectDialog() {
   const list = el("div", {
     class: "autocorrect-list",
     role: "list",
-    "aria-label": "Replacements",
+    "aria-label": "替换列表",
   });
   const from = el("input", {
     class: "input",
-    "aria-label": "Replace",
-    placeholder: "Replace",
+    "aria-label": "替换",
+    placeholder: "替换",
     maxlength: 40,
   });
   const to = el("input", {
     class: "input",
-    "aria-label": "With",
-    placeholder: "With",
+    "aria-label": "替换为",
+    placeholder: "替换为",
     maxlength: 120,
   });
   const draw = () =>
@@ -360,19 +360,19 @@ export async function autoCorrectDialog() {
     el(
       "p",
       { class: "helper" },
-      "Corrections made as you type on a slide. Undo takes back a correction right after it is made.",
+      "在幻灯片上键入时进行的更正。进行更正后可立即通过撤消操作还原。",
     ),
     el(
       "fieldset",
       { class: "autocorrect-options" },
-      el("legend", {}, "As you type"),
-      box("capitalize", "Capitalize the first letter of sentences"),
-      box("quotes", "Replace straight quotes with smart quotes"),
+      el("legend", {}, "键入时"),
+      box("capitalize", "句首字母大写"),
+      box("quotes", "将直引号替换为弯引号"),
       box("fractions", "Replace fractions (1/2) with fraction characters (½)"),
       box("ordinals", "Superscript ordinals (1st)"),
       box("dashes", "Replace hyphens (--) with dashes (—)"),
-      box("lists", "Start bulleted and numbered lists automatically"),
-      box("replace", "Replace text as you type"),
+      box("lists", "自动启动项目符号和编号列表"),
+      box("replace", "键入时替换文本"),
     ),
     el(
       "div",
@@ -399,7 +399,7 @@ export async function autoCorrectDialog() {
       "Restore the default list",
     ),
   );
-  const ok = await dialog({ title: "AutoCorrect", body, confirm: "OK" });
+  const ok = await dialog({ title: "自动更正", body, confirm: "OK" });
   if (!ok) return false;
   options.replacements = rows;
   saveAutoCorrect(options);

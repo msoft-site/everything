@@ -14,12 +14,12 @@ const ACCENTS = [
   "accent5",
   "accent6",
 ];
-const accentName = (a) => `Accent ${a.slice(-1)}`;
+const accentName = (a) => `辅色 ${a.slice(-1)}`;
 
 /** Theme-matrix rows: [row label, (accent) => refs]. */
 export const MATRIX_ROWS = [
   [
-    "Subtle",
+    "细微",
     (a) => ({
       fill: { idx: 1, color: `scheme:${a}/lumMod=20000/lumOff=80000` },
       line: { idx: 1, color: `scheme:${a}` },
@@ -28,7 +28,7 @@ export const MATRIX_ROWS = [
     }),
   ],
   [
-    "Moderate",
+    "中等",
     (a) => ({
       fill: { idx: 2, color: `scheme:${a}` },
       line: { idx: 1, color: `scheme:${a}/lumMod=75000` },
@@ -37,7 +37,7 @@ export const MATRIX_ROWS = [
     }),
   ],
   [
-    "Intense",
+    "强烈",
     (a) => ({
       fill: { idx: 3, color: `scheme:${a}` },
       line: { idx: 0, color: `scheme:${a}` },
@@ -55,9 +55,9 @@ export function matrixStyleChoices(theme) {
       const refs = make(accent);
       const base = cssColor(`scheme:${accent}`, theme) || "#4472C4";
       const fill =
-        row === "Subtle"
+        row === "细微"
           ? cssColor(refs.fill.color, theme)
-          : row === "Moderate"
+          : row === "中等"
             ? `linear-gradient(${shade(base, 0.55)}, ${shade(base, 0.25)})`
             : `linear-gradient(${base}, ${shade(base, -0.25)})`;
       out.push({
@@ -278,7 +278,7 @@ export function wordArtCss(format) {
  */
 export const PICTURE_STYLES = [
   {
-    label: "Simple Frame, White",
+    label: "简单框架，白色",
     draw: { border: "#FFFFFF", borderWidth: 3, shadow: true },
     apply: (P, pres, s) => {
       P.setShapeStroke(s, { color: "#FFFFFF", widthEmu: 8 * PT });
@@ -298,7 +298,7 @@ export const PICTURE_STYLES = [
     },
   },
   {
-    label: "Thick Frame, Black",
+    label: "粗框架，黑色",
     draw: { border: "#111111", borderWidth: 4 },
     apply: (P, pres, s) => {
       P.setShapeStroke(s, { color: "#000000", widthEmu: 12 * PT });
@@ -311,7 +311,7 @@ export const PICTURE_STYLES = [
     },
   },
   {
-    label: "Rounded Corners, Soft Shadow",
+    label: "圆角矩形，柔化阴影",
     draw: { radius: 8, shadow: true },
     apply: (P, pres, s) => {
       P.setShapePresetGeometry(s, "roundRect");
@@ -332,7 +332,7 @@ export const PICTURE_STYLES = [
     },
   },
   {
-    label: "Soft Edge Rectangle",
+    label: "柔化边缘矩形",
     draw: { soft: true },
     apply: (P, pres, s) => {
       P.setShapeNoStroke(s);
@@ -345,7 +345,7 @@ export const PICTURE_STYLES = [
     },
   },
   {
-    label: "Oval, Soft Edge",
+    label: "椭圆，柔化边缘",
     draw: { oval: true, soft: true },
     apply: (P, pres, s) => {
       P.setShapePresetGeometry(s, "ellipse");
@@ -359,7 +359,7 @@ export const PICTURE_STYLES = [
     },
   },
   {
-    label: "Reflected Rounded Rectangle",
+    label: "圆角矩形倒影",
     draw: { radius: 8, reflection: true },
     apply: (P, pres, s) => {
       P.setShapePresetGeometry(s, "roundRect");
@@ -378,7 +378,7 @@ export const PICTURE_STYLES = [
     },
   },
   {
-    label: "Drop Shadow Rectangle",
+    label: "投影矩形",
     draw: { shadow: true, shadowOffset: 4 },
     apply: (P, pres, s) => {
       P.setShapeNoStroke(s);
@@ -398,7 +398,7 @@ export const PICTURE_STYLES = [
     },
   },
   {
-    label: "Center Shadow Rectangle",
+    label: "居中阴影矩形",
     draw: { glowShadow: true },
     apply: (P, pres, s) => {
       P.setShapeNoStroke(s);
@@ -419,7 +419,7 @@ export const PICTURE_STYLES = [
     },
   },
   {
-    label: "Glow Frame, Accent 1",
+    label: "发光框架，辅色 1",
     draw: { glow: "accent1" },
     apply: (P, pres, s) => {
       P.setShapeStroke(s, { color: "scheme:accent1", widthEmu: 2 * PT });
@@ -432,7 +432,7 @@ export const PICTURE_STYLES = [
     },
   },
   {
-    label: "Beveled Matte, White",
+    label: "斜面无光泽，白色",
     draw: { border: "#F2F2F2", borderWidth: 3, bevel: true },
     apply: (P, pres, s) => {
       P.setShapeStroke(s, { color: "#F2F2F2", widthEmu: 10 * PT });
@@ -456,7 +456,7 @@ export const PICTURE_STYLES = [
     },
   },
   {
-    label: "Metal Frame",
+    label: "金属框架",
     draw: {
       border: "linear-gradient(135deg,#f5f5f5,#8a8a8a,#e0e0e0)",
       borderWidth: 4,
@@ -480,7 +480,7 @@ export const PICTURE_STYLES = [
     },
   },
   {
-    label: "Perspective, Tilted Left",
+    label: "透视，左侧倾斜",
     draw: { tilt: true, shadow: true },
     apply: (P, pres, s) => {
       P.setShapeNoStroke(s);

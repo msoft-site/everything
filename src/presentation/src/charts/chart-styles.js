@@ -35,38 +35,38 @@ const byPoint = (spec) =>
 export const COLOR_PALETTES = [
   {
     id: "auto",
-    group: "Colorful",
-    label: "Theme order",
+    group: "彩色",
+    label: "主题顺序",
     order: [0, 1, 2, 3, 4, 5],
   },
   {
     id: "colorful-2",
-    group: "Colorful",
-    label: "Alternate accents",
+    group: "彩色",
+    label: "交替辅色",
     order: [1, 3, 5, 0, 2, 4],
   },
   {
     id: "colorful-3",
-    group: "Colorful",
-    label: "Cool first",
+    group: "彩色",
+    label: "冷色优先",
     order: [2, 4, 0, 5, 1, 3],
   },
   {
     id: "colorful-4",
-    group: "Colorful",
-    label: "Reversed accents",
+    group: "彩色",
+    label: "反向辅色",
     order: [5, 4, 3, 2, 1, 0],
   },
   ...[0, 1, 2, 3, 4, 5].map((a) => ({
     id: `mono-${a + 1}`,
-    group: "Monochromatic",
-    label: `Shades of accent ${a + 1}`,
+    group: "单色",
+    label: `辅色 ${a + 1} 的渐变色`,
     mono: a,
   })),
   {
     id: "mono-gray",
-    group: "Monochromatic",
-    label: "Shades of gray",
+    group: "单色",
+    label: "灰色渐变",
     gray: true,
   },
 ];
@@ -189,7 +189,7 @@ const labels = (spec, extra = {}) => ({
 export const CHART_STYLES = [
   {
     id: "style-1",
-    label: "Plain",
+    label: "普通",
     description: "Light gridlines on a clear background.",
     apply: (spec) => ({
       ...baseStyle(spec),
@@ -198,7 +198,7 @@ export const CHART_STYLES = [
   },
   {
     id: "style-2",
-    label: "Labeled values",
+    label: "带标签值",
     description: "Values written on the data, without gridlines.",
     apply: (spec) => ({
       ...baseStyle(spec),
@@ -209,7 +209,7 @@ export const CHART_STYLES = [
   },
   {
     id: "style-3",
-    label: "Shaded plot",
+    label: "着色绘图区",
     description: "A tinted plot area with white gridlines.",
     apply: (spec, ctx) => ({
       ...baseStyle(spec),
@@ -220,7 +220,7 @@ export const CHART_STYLES = [
   },
   {
     id: "style-4",
-    label: "Bold blocks",
+    label: "加粗块",
     description: "Wide bars and thick lines with no gridlines.",
     apply: (spec) =>
       withSeries(
@@ -237,7 +237,7 @@ export const CHART_STYLES = [
   },
   {
     id: "style-5",
-    label: "Separated",
+    label: "分离",
     description: "White outlines part the bars and slices.",
     apply: (spec) =>
       withSeries(
@@ -254,7 +254,7 @@ export const CHART_STYLES = [
   },
   {
     id: "style-6",
-    label: "Dark",
+    label: "深色",
     description: "Light text and marks on a dark background.",
     apply: (spec, ctx) => ({
       ...baseStyle(spec),
@@ -266,7 +266,7 @@ export const CHART_STYLES = [
   },
   {
     id: "style-7",
-    label: "Fine grid",
+    label: "精细网格",
     description: "Major and minor gridlines for reading values closely.",
     apply: (spec) => ({
       ...baseStyle(spec),
@@ -278,7 +278,7 @@ export const CHART_STYLES = [
   },
   {
     id: "style-8",
-    label: "Framed",
+    label: "带边框",
     description: "A rounded outline around the whole chart.",
     apply: (spec, ctx) => ({
       ...baseStyle(spec),
@@ -290,7 +290,7 @@ export const CHART_STYLES = [
   },
   {
     id: "style-9",
-    label: "Accent wash",
+    label: "强调淡色",
     description: "A soft wash of the first accent behind the data.",
     apply: (spec, ctx) => ({
       ...baseStyle(spec),
@@ -301,7 +301,7 @@ export const CHART_STYLES = [
   },
   {
     id: "style-10",
-    label: "Labels, no grid",
+    label: "仅标签，无网格",
     description: "Labeled data on a clean background with lighter axes.",
     apply: (spec) => ({
       ...baseStyle(spec),
@@ -313,7 +313,7 @@ export const CHART_STYLES = [
   },
   {
     id: "style-11",
-    label: "Outlined",
+    label: "轮廓",
     description: "Pale fills with outlines in the series colour.",
     apply: (spec, ctx) =>
       withSeries(
@@ -332,7 +332,7 @@ export const CHART_STYLES = [
   },
   {
     id: "style-12",
-    label: "Dark labeled",
+    label: "深色带标签",
     description: "A dark background with values written on the data.",
     apply: (spec, ctx) => ({
       ...baseStyle(spec),
@@ -608,42 +608,42 @@ export function elementState(spec, element) {
 export function labelPositions(spec) {
   if (pies(spec))
     return spec.kind === "doughnut"
-      ? [["show", "Show"]]
+      ? [["show", "显示"]]
       : [
-          ["ctr", "Center"],
-          ["inEnd", "Inside End"],
-          ["outEnd", "Outside End"],
-          ["bestFit", "Best Fit"],
+          ["ctr", "居中"],
+          ["inEnd", "数据标签内"],
+          ["outEnd", "居外顶端"],
+          ["bestFit", "最佳大小"],
         ];
   if (isBarLike(spec.kind))
     return spec.grouping && spec.grouping !== "clustered"
       ? [
-          ["ctr", "Center"],
-          ["inEnd", "Inside End"],
-          ["inBase", "Inside Base"],
+          ["ctr", "居中"],
+          ["inEnd", "数据标签内"],
+          ["inBase", "数据标签外"],
         ]
       : [
-          ["ctr", "Center"],
-          ["inEnd", "Inside End"],
-          ["inBase", "Inside Base"],
-          ["outEnd", "Outside End"],
+          ["ctr", "居中"],
+          ["inEnd", "数据标签内"],
+          ["inBase", "数据标签外"],
+          ["outEnd", "居外顶端"],
         ];
-  if (spec.kind === "area" || spec.kind === "radar") return [["show", "Show"]];
+  if (spec.kind === "area" || spec.kind === "radar") return [["show", "显示"]];
   return [
-    ["ctr", "Center"],
-    ["l", "Left"],
-    ["r", "Right"],
-    ["t", "Above"],
-    ["b", "Below"],
+    ["ctr", "居中"],
+    ["l", "靠左"],
+    ["r", "靠右"],
+    ["t", "靠上"],
+    ["b", "靠下"],
   ];
 }
 
 /* ---------- Trendlines and error bars ---------- */
 export const TRENDLINES = [
-  ["linear", "Linear", { type: "linear" }],
-  ["exp", "Exponential", { type: "exp" }],
-  ["forecast", "Linear Forecast", { type: "linear", forward: 2 }],
-  ["movingAvg", "Moving Average", { type: "movingAvg", period: 2 }],
+  ["linear", "线性", { type: "linear" }],
+  ["exp", "指数", { type: "exp" }],
+  ["forecast", "线性预测", { type: "linear", forward: 2 }],
+  ["movingAvg", "移动平均", { type: "movingAvg", period: 2 }],
 ];
 export const supportsTrendline = (spec) => !pies(spec) && spec.kind !== "radar";
 export function setTrendline(spec, which, seriesIndex = null) {
@@ -662,7 +662,7 @@ export function setTrendline(spec, which, seriesIndex = null) {
   });
 }
 export const ERROR_BARS = [
-  ["stdErr", "Standard Error", { type: "both", valueType: "stdErr" }],
+  ["stdErr", "标准误差", { type: "both", valueType: "stdErr" }],
   [
     "percentage",
     "Percentage",

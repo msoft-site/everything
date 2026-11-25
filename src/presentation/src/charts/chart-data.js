@@ -6,25 +6,25 @@
 // Generic sample data for a new chart. Every chart starts from these and the
 // data sheet opens on them, so the numbers only need to read as a chart.
 const SAMPLE_CATEGORIES = [
-  "Category 1",
-  "Category 2",
-  "Category 3",
-  "Category 4",
+  "类别 1",
+  "类别 2",
+  "类别 3",
+  "类别 4",
 ];
 const SAMPLE_SERIES = [
-  { name: "Series 1", values: [4.1, 2.6, 3.4, 4.6] },
-  { name: "Series 2", values: [2.2, 4.3, 1.9, 2.9] },
-  { name: "Series 3", values: [1.8, 2.1, 3.2, 4.8] },
+  { name: "系列 1", values: [4.1, 2.6, 3.4, 4.6] },
+  { name: "系列 2", values: [2.2, 4.3, 1.9, 2.9] },
+  { name: "系列 3", values: [1.8, 2.1, 3.2, 4.8] },
 ];
 const SAMPLE_PIE = {
-  categories: ["North", "East", "South", "West"],
-  series: [{ name: "Share", values: [42, 23, 20, 15] }],
+  categories: ["北部", "东部", "南部", "西部"],
+  series: [{ name: "份额", values: [42, 23, 20, 15] }],
 };
 const SAMPLE_XY = {
   categories: [],
   series: [
     {
-      name: "Y Values",
+      name: "Y 值",
       xValues: [0.7, 1.8, 2.6, 3.4, 4.1],
       values: [2.7, 3.2, 1.2, 3.9, 2.5],
     },
@@ -34,7 +34,7 @@ const SAMPLE_BUBBLE = {
   categories: [],
   series: [
     {
-      name: "Y Values",
+      name: "Y 值",
       xValues: [0.7, 1.8, 2.6],
       values: [2.7, 3.2, 0.8],
       bubbleSizes: [10, 4, 8],
@@ -46,14 +46,14 @@ const SAMPLE_BUBBLE = {
 // it. `apply(spec)` turns any chart definition into this type, keeping the
 // data and formatting that still apply.
 export const CHART_FAMILIES = [
-  { id: "column", label: "Column", icon: "chartColumn" },
-  { id: "line", label: "Line", icon: "chartLine" },
-  { id: "pie", label: "Pie", icon: "chartPie" },
-  { id: "bar", label: "Bar", icon: "chartBar" },
-  { id: "area", label: "Area", icon: "chartArea" },
-  { id: "scatter", label: "X Y (Scatter)", icon: "chartScatter" },
-  { id: "radar", label: "Radar", icon: "chartRadar" },
-  { id: "combo", label: "Combo", icon: "chartCombo" },
+  { id: "column", label: "柱形图", icon: "chartColumn" },
+  { id: "line", label: "折线图", icon: "chartLine" },
+  { id: "pie", label: "饼图", icon: "chartPie" },
+  { id: "bar", label: "条形图", icon: "chartBar" },
+  { id: "area", label: "面积图", icon: "chartArea" },
+  { id: "scatter", label: "散点图", icon: "chartScatter" },
+  { id: "radar", label: "雷达图", icon: "chartRadar" },
+  { id: "combo", label: "组合图", icon: "chartCombo" },
 ];
 
 const grouped = (kind, grouping) => (raw) => {
@@ -92,13 +92,13 @@ export const CHART_TYPES = [
   {
     id: "column-clustered",
     family: "column",
-    label: "Clustered Column",
+    label: "簇状柱形图",
     apply: grouped("column", "clustered"),
   },
   {
     id: "column-stacked",
     family: "column",
-    label: "Stacked Column",
+    label: "堆积柱形图",
     apply: grouped("column", "stacked"),
   },
   {
@@ -110,13 +110,13 @@ export const CHART_TYPES = [
   {
     id: "line",
     family: "line",
-    label: "Line",
+    label: "折线图",
     apply: compose(grouped("line", "standard"), markers(false)),
   },
   {
     id: "line-stacked",
     family: "line",
-    label: "Stacked Line",
+    label: "堆积折线图",
     apply: compose(grouped("line", "stacked"), markers(false)),
   },
   {
@@ -128,13 +128,13 @@ export const CHART_TYPES = [
   {
     id: "line-markers",
     family: "line",
-    label: "Line with Markers",
+    label: "带数据标记的折线图",
     apply: compose(grouped("line", "standard"), markers(true)),
   },
   {
     id: "line-stacked-markers",
     family: "line",
-    label: "Stacked Line with Markers",
+    label: "带数据标记的堆积折线图",
     apply: compose(grouped("line", "stacked"), markers(true)),
   },
   {
@@ -146,13 +146,13 @@ export const CHART_TYPES = [
   {
     id: "pie",
     family: "pie",
-    label: "Pie",
+    label: "饼图",
     apply: (spec) => single({ ...spec, kind: "pie" }),
   },
   {
     id: "pie-exploded",
     family: "pie",
-    label: "Exploded Pie",
+    label: "分离型饼图",
     apply: (spec) => {
       const pie = single({ ...spec, kind: "pie" });
       return {
@@ -167,7 +167,7 @@ export const CHART_TYPES = [
   {
     id: "doughnut",
     family: "pie",
-    label: "Doughnut",
+    label: "圆环图",
     apply: (spec) => ({
       ...single({ ...spec, kind: "doughnut" }, true),
       holeSizePct: spec.holeSizePct ?? 50,
@@ -176,13 +176,13 @@ export const CHART_TYPES = [
   {
     id: "bar-clustered",
     family: "bar",
-    label: "Clustered Bar",
+    label: "簇状条形图",
     apply: grouped("bar", "clustered"),
   },
   {
     id: "bar-stacked",
     family: "bar",
-    label: "Stacked Bar",
+    label: "堆积条形图",
     apply: grouped("bar", "stacked"),
   },
   {
@@ -194,13 +194,13 @@ export const CHART_TYPES = [
   {
     id: "area",
     family: "area",
-    label: "Area",
+    label: "面积图",
     apply: grouped("area", "standard"),
   },
   {
     id: "area-stacked",
     family: "area",
-    label: "Stacked Area",
+    label: "堆积面积图",
     apply: grouped("area", "stacked"),
   },
   {
@@ -212,19 +212,19 @@ export const CHART_TYPES = [
   {
     id: "scatter",
     family: "scatter",
-    label: "Scatter",
+    label: "散点图",
     apply: scatter("lineMarker", { line: false, markers: true }),
   },
   {
     id: "scatter-smooth-markers",
     family: "scatter",
-    label: "Scatter with Smooth Lines and Markers",
+    label: "带平滑线和数据标记的散点图",
     apply: scatter("smoothMarker", { line: true, markers: true, smooth: true }),
   },
   {
     id: "scatter-smooth",
     family: "scatter",
-    label: "Scatter with Smooth Lines",
+    label: "带平滑线的散点图",
     apply: scatter("smoothMarker", {
       line: true,
       markers: false,
@@ -234,19 +234,19 @@ export const CHART_TYPES = [
   {
     id: "scatter-lines-markers",
     family: "scatter",
-    label: "Scatter with Straight Lines and Markers",
+    label: "带直线和数据标记的散点图",
     apply: scatter("lineMarker", { line: true, markers: true }),
   },
   {
     id: "scatter-lines",
     family: "scatter",
-    label: "Scatter with Straight Lines",
+    label: "带直线的散点图",
     apply: scatter("lineMarker", { line: true, markers: false }),
   },
   {
     id: "bubble",
     family: "scatter",
-    label: "Bubble",
+    label: "气泡图",
     apply: (spec) => {
       const xy = toXY(spec, true);
       return {
@@ -261,31 +261,31 @@ export const CHART_TYPES = [
   {
     id: "radar",
     family: "radar",
-    label: "Radar",
+    label: "雷达图",
     apply: radar("marker", false),
   },
   {
     id: "radar-markers",
     family: "radar",
-    label: "Radar with Markers",
+    label: "带数据标记的雷达图",
     apply: radar("marker", true),
   },
   {
     id: "radar-filled",
     family: "radar",
-    label: "Filled Radar",
+    label: "填充雷达图",
     apply: radar("filled", false),
   },
   {
     id: "combo-column-line",
     family: "combo",
-    label: "Clustered Column - Line",
+    label: "簇状柱形图 - 折线图",
     apply: combo((i, n) => (i === n - 1 ? { chartKind: "line" } : {})),
   },
   {
     id: "combo-column-line-secondary",
     family: "combo",
-    label: "Clustered Column - Line on Secondary Axis",
+    label: "簇状柱形图 - 次坐标轴上的折线图",
     apply: combo((i, n) =>
       i === n - 1 ? { chartKind: "line", secondaryAxis: true } : {},
     ),
@@ -293,7 +293,7 @@ export const CHART_TYPES = [
   {
     id: "combo-area-column",
     family: "combo",
-    label: "Stacked Area - Clustered Column",
+    label: "堆积面积图 - 簇状柱形图",
     apply: combo(
       (i, n) => (i < Math.ceil(n / 2) ? { chartKind: "area" } : {}),
       "column",
@@ -302,7 +302,7 @@ export const CHART_TYPES = [
   {
     id: "combo-custom",
     family: "combo",
-    label: "Custom Combination",
+    label: "自定义组合",
     custom: true,
     apply: (spec) => combo(() => ({}))(spec),
   },
@@ -557,7 +557,7 @@ export function sampleSpec(typeId) {
       ...(s.xValues ? { xValues: [...s.xValues] } : {}),
       ...(s.bubbleSizes ? { bubbleSizes: [...s.bubbleSizes] } : {}),
     })),
-    title: "Chart Title",
+    title: "图表标题",
     legend: { position: type.family === "pie" ? "r" : "b" },
   };
   return cleanSpec(withBarDefaults(null, type.apply(spec)));

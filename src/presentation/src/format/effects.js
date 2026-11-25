@@ -445,7 +445,7 @@ export function effectsMenuItems(ctx, { only = null } = {}) {
   ];
   const bevel = [
     {
-      label: "No Bevel",
+      label: "无棱台",
       checked: !current.threeD?.bevelTop,
       onSelect: () => ctx.apply3D({ bevelTop: null }),
     },
@@ -466,7 +466,7 @@ export function effectsMenuItems(ctx, { only = null } = {}) {
   ];
   const rotation = [
     {
-      label: "No Rotation",
+      label: "无旋转",
       checked:
         !current.threeD?.present ||
         (current.threeD.camera === "orthographicFront" &&

@@ -79,7 +79,7 @@ export function createSlideSorter(ctx) {
     grid = el("div", {
       class: "sorter-grid",
       role: "region",
-      "aria-label": "Slide Sorter",
+      "aria-label": "幻灯片浏览",
       onkeydown: keydown,
       oncontextmenu: (e) => {
         if (e.target.closest(".sorter-card, .sorter-section-head")) return;
@@ -141,7 +141,7 @@ export function createSlideSorter(ctx) {
         class: "sorter-cards",
         role: "listbox",
         "aria-multiselectable": "true",
-        "aria-label": group.name ? `${group.name} slides` : "Slides",
+        "aria-label": group.name ? `${group.name} 幻灯片` : "幻灯片",
       });
       for (const part of group.slides) {
         const i = parts.indexOf(part);
@@ -207,7 +207,7 @@ export function createSlideSorter(ctx) {
       return section;
     });
     grid.replaceChildren(...nodes);
-    if (!parts.length) grid.append(el("p", { class: "muted" }, "No slides"));
+    if (!parts.length) grid.append(el("p", { class: "muted" }, "无幻灯片"));
     // One card takes the Tab key: the current slide's.
     for (const [part, card] of cards)
       card.tabIndex = part === current && card.isConnected ? 0 : -1;
@@ -265,9 +265,9 @@ export function createSlideSorter(ctx) {
       markers.transition && [
         "transition",
         "o:previewTransition",
-        "Has a transition",
+        "包含切换效果",
       ],
-      markers.animation && ["animation", "o:addAnimation", "Has animations"],
+      markers.animation && ["animation", "o:addAnimation", "包含动画"],
     ].filter(Boolean);
     const have = [...box.children].map((n) => n.dataset.marker).join();
     if (have !== want.map((w) => w[0]).join())
@@ -495,17 +495,17 @@ export function createSlideSorter(ctx) {
   async function rename(i) {
     const sec = groupSlides(order(), sections())[i];
     if (!sec) return;
-    const name = await promptName("Rename Section", sec.name, null, {
-      confirm: "Rename",
+    const name = await promptName("重命名节", sec.name, null, {
+      confirm: "重命名",
     });
     if (!name) return;
     const plan = renameSectionAt(order(), sections(), i, name);
     if (plan) await apply(plan);
   }
   async function addSection(part) {
-    const name = await promptName("Add Section", "Untitled Section", null, {
+    const name = await promptName("添加节", "未命名节", null, {
       keep: true,
-      confirm: "Add",
+      confirm: "添加",
     });
     if (!name) return;
     await apply(addSectionAt(order(), sections(), part, name));
@@ -529,7 +529,7 @@ export function createSlideSorter(ctx) {
         onSelect: () => rename(i).catch(ctx.fail),
       },
       {
-        label: "Remove Section",
+        label: "删除节",
         icon: "Trash2",
         onSelect: () => removeSection(i, false),
       },
@@ -540,13 +540,13 @@ export function createSlideSorter(ctx) {
         onSelect: () => removeSection(i, true),
       },
       {
-        label: "Remove All Sections",
+        label: "删除所有节",
         icon: "Trash2",
         onSelect: () => apply({ order: order(), sections: [] }),
       },
       { separator: true },
       {
-        label: "Move Section Up",
+        label: "向上移动节",
         icon: "ArrowUp",
         disabled: i === 0,
         onSelect: () => {
@@ -555,7 +555,7 @@ export function createSlideSorter(ctx) {
         },
       },
       {
-        label: "Move Section Down",
+        label: "向下移动节",
         icon: "ArrowDown",
         disabled: i >= secs.length - 1,
         onSelect: () => {
@@ -565,12 +565,12 @@ export function createSlideSorter(ctx) {
       },
       { separator: true },
       {
-        label: "Collapse All",
+        label: "全部折叠",
         icon: "ChevronUp",
         onSelect: () => setAllCollapsed(true),
       },
       {
-        label: "Expand All",
+        label: "全部展开",
         icon: "ChevronDown",
         onSelect: () => setAllCollapsed(false),
       },
@@ -581,10 +581,10 @@ export function createSlideSorter(ctx) {
             x: e.clientX,
             y: e.clientY,
             contextual: true,
-            label: "Section",
+            label: "节",
             items,
           }
-        : { anchor: e.currentTarget, label: "Section", items },
+        : { anchor: e.currentTarget, label: "节", items },
     );
   }
   function cardMenu(e, part) {
@@ -598,16 +598,16 @@ export function createSlideSorter(ctx) {
       x: e.clientX,
       y: e.clientY,
       contextual: true,
-      label: "Slide",
+      label: "幻灯片",
       items: [
         {
-          label: "Open in Normal View",
+          label: "在普通视图中打开",
           icon: "o:normalView",
           onSelect: () => open(part),
         },
         { separator: true },
         {
-          label: "New Slide",
+          label: "新建幻灯片",
           icon: "o:newSlide",
           onSelect: () => ctx.addSlideAfter(slideOf(part)),
         },
@@ -617,7 +617,7 @@ export function createSlideSorter(ctx) {
           onSelect: () => ctx.duplicateSlides(group),
         },
         {
-          label: `${allHidden ? "Show" : "Hide"} ${noun}`,
+          label: `${allHidden ? "显示" : "隐藏"} ${group.length > 1 ? `${group.length} 张幻灯片` : "幻灯片"}`,
           icon: allHidden ? "Eye" : "EyeOff",
           onSelect: () => ctx.setSlidesHidden(group, !allHidden),
         },
@@ -629,7 +629,7 @@ export function createSlideSorter(ctx) {
         },
         { separator: true },
         {
-          label: "Add Section",
+          label: "添加节",
           icon: "o:section",
           onSelect: () => addSection(part).catch(ctx.fail),
         },
@@ -639,7 +639,7 @@ export function createSlideSorter(ctx) {
           onSelect: () => rename(si).catch(ctx.fail),
         },
         inSection && {
-          label: "Remove Section",
+          label: "删除节",
           icon: "Trash2",
           onSelect: () => removeSection(si, false),
         },
@@ -652,15 +652,15 @@ export function createSlideSorter(ctx) {
       x: e.clientX,
       y: e.clientY,
       contextual: true,
-      label: "Slides",
+      label: "幻灯片",
       items: [
         {
-          label: "New Slide",
+          label: "新建幻灯片",
           icon: "o:newSlide",
           onSelect: () => ctx.addSlideAfter(last),
         },
         {
-          label: "Add Section",
+          label: "添加节",
           icon: "o:section",
           onSelect: () =>
             addSection(P.getSlidePartName(ctx.currentSlide())).catch(ctx.fail),

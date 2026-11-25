@@ -79,7 +79,7 @@ function weave(ctx, a, b, step = 8) {
 export const TEXTURES = [
   {
     id: "paper",
-    name: "Paper",
+    name: "新闻纸",
     draw: (ctx, rnd) => {
       ctx.fillStyle = "#f6f1e7";
       ctx.fillRect(0, 0, SIZE, SIZE);
@@ -95,7 +95,7 @@ export const TEXTURES = [
   },
   {
     id: "parchment",
-    name: "Parchment",
+    name: "羊皮纸",
     draw: (ctx, rnd) => {
       ctx.fillStyle = "#ead8b0";
       ctx.fillRect(0, 0, SIZE, SIZE);
@@ -105,7 +105,7 @@ export const TEXTURES = [
   },
   {
     id: "linen",
-    name: "Linen",
+    name: "亚麻布",
     draw: (ctx, rnd) => {
       ctx.fillStyle = "#e9e4d8";
       ctx.fillRect(0, 0, SIZE, SIZE);
@@ -115,7 +115,7 @@ export const TEXTURES = [
   },
   {
     id: "canvas",
-    name: "Woven Canvas",
+    name: "画布",
     draw: (ctx, rnd) => {
       weave(ctx, "#d9cfb9", "#cfc3aa", 4);
       speckle(ctx, rnd, 300, ["rgba(90,70,40,0.08)"], [0.3, 0.9]);
@@ -123,7 +123,7 @@ export const TEXTURES = [
   },
   {
     id: "denim",
-    name: "Denim",
+    name: "牛仔布",
     draw: (ctx, rnd) => {
       ctx.fillStyle = "#3d5a80";
       ctx.fillRect(0, 0, SIZE, SIZE);
@@ -133,7 +133,7 @@ export const TEXTURES = [
   },
   {
     id: "sand",
-    name: "Sand",
+    name: "沙子",
     draw: (ctx, rnd) => {
       ctx.fillStyle = "#e3cfa4";
       ctx.fillRect(0, 0, SIZE, SIZE);
@@ -152,7 +152,7 @@ export const TEXTURES = [
   },
   {
     id: "cork",
-    name: "Cork",
+    name: "软木塞",
     draw: (ctx, rnd) => {
       ctx.fillStyle = "#b9875a";
       ctx.fillRect(0, 0, SIZE, SIZE);
@@ -167,7 +167,7 @@ export const TEXTURES = [
   },
   {
     id: "wood",
-    name: "Wood Grain",
+    name: "木纹",
     draw: (ctx, rnd) => {
       ctx.fillStyle = "#c79a6b";
       ctx.fillRect(0, 0, SIZE, SIZE);
@@ -187,7 +187,7 @@ export const TEXTURES = [
   },
   {
     id: "slate",
-    name: "Slate",
+    name: "板岩",
     draw: (ctx, rnd) => {
       ctx.fillStyle = "#4a5058";
       ctx.fillRect(0, 0, SIZE, SIZE);
@@ -209,7 +209,7 @@ export const TEXTURES = [
   },
   {
     id: "marble",
-    name: "Marble",
+    name: "白色大理石",
     draw: (ctx, rnd) => {
       ctx.fillStyle = "#f1f0ee";
       ctx.fillRect(0, 0, SIZE, SIZE);
@@ -236,7 +236,7 @@ export const TEXTURES = [
   },
   {
     id: "mesh",
-    name: "Mesh",
+    name: "鱼化石",
     draw: (ctx) => {
       ctx.fillStyle = "#dfe6ec";
       ctx.fillRect(0, 0, SIZE, SIZE);
@@ -254,7 +254,7 @@ export const TEXTURES = [
   },
   {
     id: "terrazzo",
-    name: "Terrazzo",
+    name: "水磨石",
     draw: (ctx, rnd) => {
       ctx.fillStyle = "#efe9e1";
       ctx.fillRect(0, 0, SIZE, SIZE);

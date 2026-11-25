@@ -1,3 +1,23 @@
+const CAT_LABELS = {
+  list: "列表",
+  process: "流程",
+  cycle: "循环",
+  hierarchy: "层次结构",
+  relationship: "关系",
+  matrix: "矩阵",
+  pyramid: "棱锥图",
+  picture: "图片",
+};
+const SCHEME_GROUP_MAP = {
+  Colorful: "彩色",
+  "Accent 1": "辅色 1",
+  "Accent 2": "辅色 2",
+  "Accent 3": "辅色 3",
+  "Accent 4": "辅色 4",
+  "Accent 5": "辅色 5",
+  "Accent 6": "辅色 6",
+  "Primary Theme Color": "主要主题颜色",
+};
 // SmartArt in the editor: inserting a graphic, the Text Pane, the SmartArt
 // Design tab, Convert to SmartArt for bulleted text, and the graphic's
 // section of the Format pane. The engine (lib/pptx smartart) writes the
@@ -136,8 +156,8 @@ export function createSmartArtTools(h) {
     h.commitText();
     const layout = await chooseSmartArtLayout({
       P,
-      title: "Choose a SmartArt Graphic",
-      confirm: "Insert",
+      title: "选择 SmartArt 图形",
+      confirm: "插入",
       palette: palette(),
     });
     if (!layout) return;
@@ -198,7 +218,7 @@ export function createSmartArtTools(h) {
     };
     const model = modelOf(obj);
     const opened = openTextPane({
-      title: "Text Pane",
+      title: "文本窗格",
       about: model?.layout
         ? `${layoutInfo(model.layout)?.name}: ${layoutInfo(model.layout)?.description}`
         : "",
@@ -251,16 +271,16 @@ export function createSmartArtTools(h) {
   function addShapeMenu() {
     return [
       {
-        label: "Add Shape After",
+        label: "在后添加形状",
         icon: "o:addShape",
         onSelect: () => outline(addAfter),
       },
-      { label: "Add Shape Before", onSelect: () => outline(addBefore) },
-      { label: "Add Shape Above", onSelect: () => outline(addAbove) },
-      { label: "Add Shape Below", onSelect: () => outline(addBelow) },
+      { label: "在前面添加形状", onSelect: () => outline(addBefore) },
+      { label: "在上方添加形状", onSelect: () => outline(addAbove) },
+      { label: "在下方添加形状", onSelect: () => outline(addBelow) },
       { separator: true },
       {
-        label: "Delete Current Shape",
+        label: "删除当前形状",
         icon: "o:deleteRows",
         disabled: !can((items) => items.length > 1),
         onSelect: () => outline(removeItem),
@@ -321,7 +341,7 @@ export function createSmartArtTools(h) {
   }
   function layoutSections(choices) {
     return P.SMARTART_CATEGORIES.map((c) => ({
-      label: c.label,
+      label: CAT_LABELS[c.id] || c.label,
       items: choices.filter((x) => x.category === c.id),
     })).filter((s) => s.items.length);
   }
@@ -337,7 +357,7 @@ export function createSmartArtTools(h) {
     for (const scheme of P.SMARTART_COLOR_SCHEMES) {
       if (scheme.group !== group) {
         group = scheme.group;
-        out.push({ header: group });
+        out.push({ header: SCHEME_GROUP_MAP[group] || group });
         grid = el("div", {
           class: "chart-menu-grid",
           role: "group",
@@ -478,8 +498,8 @@ export function createSmartArtTools(h) {
     if (!layout) {
       layout = await chooseSmartArtLayout({
         P,
-        title: "Convert to SmartArt",
-        confirm: "Convert",
+        title: "转换为 SmartArt",
+        confirm: "转换",
         palette: palette(),
         items: itemsFromParagraphs(paragraphsOf(obj)),
       });
@@ -526,7 +546,7 @@ export function createSmartArtTools(h) {
     const grid = el("div", {
       class: "chart-menu-grid",
       role: "group",
-      "aria-label": "Layouts",
+      "aria-label": "版式",
       style: "grid-template-columns:repeat(4, auto)",
     });
     for (const l of picks.slice(0, CONVERT_PICKS * 2))
@@ -586,12 +606,12 @@ export function createSmartArtTools(h) {
         ),
       );
     return [
-      el("h3", {}, "SmartArt graphic"),
+      el("h3", {}, "SmartArt 图形"),
       select(
         "Layout",
         model.layout,
         [
-          ...(model.layout ? [] : [["", "Imported layout"]]),
+          ...(model.layout ? [] : [["", "导入的布局"]]),
           ...P.SMARTART_LAYOUTS.map((l) => [l.id, `${l.name}`]),
         ],
         (m, v) => (v ? { ...m, layout: v } : null),
@@ -629,12 +649,12 @@ export function createSmartArtTools(h) {
               layout: m.layout || P.guessSmartArtLayout(obj),
             })),
         }),
-        el("span", {}, "Right to left"),
+        el("span", {}, "从右到左"),
       ),
       el(
         "div",
         { class: "arrange-buttons" },
-        button("Text Pane", "o:textPane", () => openPane(obj), "secondary"),
+        button("文本窗格", "o:textPane", () => openPane(obj), "secondary"),
         button(
           "Convert to Shapes",
           "o:convertToShapes",
@@ -644,7 +664,7 @@ export function createSmartArtTools(h) {
       ),
     ];
   }
-  const formatTitle = (obj) => (isSmartArt(obj) ? "Format SmartArt" : null);
+  const formatTitle = (obj) => (isSmartArt(obj) ? "设置 SmartArt 格式" : null);
 
   /* ---------- Tabs ---------- */
   function tabs() {
@@ -663,13 +683,13 @@ export function createSmartArtTools(h) {
     return [
       {
         id: "smartart-design",
-        label: "SmartArt Design",
+        label: "SmartArt 设计",
         contextual: true,
         visible,
         groups: [
           {
             id: "smartart-create",
-            label: "Create Graphic",
+            label: "创建图形",
             icon: "addShape",
             items: [
               {
@@ -677,7 +697,7 @@ export function createSmartArtTools(h) {
                 id: "smartart-add-shape",
                 label: "Add\nShape",
                 icon: "addShape",
-                title: "Add Shape",
+                title: "添加形状",
                 description:
                   "Add a shape after the current one, or choose where.",
                 split: true,
@@ -688,7 +708,7 @@ export function createSmartArtTools(h) {
               {
                 type: "stack",
                 items: [
-                  small("smartart-add-bullet", "Add Bullet", "bullets", () =>
+                  small("smartart-add-bullet", "添加项目符号", "bullets", () =>
                     outline(addBelow),
                   ),
                   small(
@@ -765,14 +785,14 @@ export function createSmartArtTools(h) {
           },
           {
             id: "smartart-layouts",
-            label: "Layouts",
+            label: "版式",
             icon: "smartArtLayout",
             collapsible: false,
             items: [
               {
                 type: "gallery",
                 id: "smartart-layout-gallery",
-                label: "Layouts",
+                label: "版式",
                 columns: 4,
                 panelColumns: 6,
                 itemClass: "smartart-gallery-thumb",
@@ -788,7 +808,7 @@ export function createSmartArtTools(h) {
           },
           {
             id: "smartart-styles",
-            label: "SmartArt Styles",
+            label: "SmartArt 样式",
             icon: "quickStyles",
             collapsible: false,
             items: [
@@ -797,7 +817,7 @@ export function createSmartArtTools(h) {
                 id: "smartart-colors",
                 label: "Change\nColors",
                 icon: "chartColors",
-                title: "Change Colors",
+                title: "更改颜色",
                 description: "Choose a color scheme for the graphic.",
                 enabled,
                 menu: () => colorsMenu(),
@@ -806,7 +826,7 @@ export function createSmartArtTools(h) {
               {
                 type: "gallery",
                 id: "smartart-style-gallery",
-                label: "SmartArt Styles",
+                label: "SmartArt 样式",
                 columns: 4,
                 panelColumns: 4,
                 itemClass: "smartart-gallery-thumb",
@@ -826,7 +846,7 @@ export function createSmartArtTools(h) {
           },
           {
             id: "smartart-reset",
-            label: "Reset",
+            label: "重置图形",
             icon: "resetGraphic",
             items: [
               {
@@ -834,7 +854,7 @@ export function createSmartArtTools(h) {
                 id: "smartart-reset-graphic",
                 label: "Reset\nGraphic",
                 icon: "resetGraphic",
-                title: "Reset Graphic",
+                title: "重置图形",
                 description:
                   "Discard the colors and style changes made to the graphic.",
                 enabled,
@@ -843,20 +863,20 @@ export function createSmartArtTools(h) {
               {
                 type: "large",
                 id: "smartart-convert",
-                label: "Convert",
+                label: "转换",
                 icon: "convertToShapes",
-                title: "Convert",
+                title: "转换",
                 description:
                   "Turn the graphic into bulleted text or into ordinary shapes.",
                 enabled,
                 menu: () => [
                   {
-                    label: "Convert to Text",
+                    label: "转换为文本",
                     icon: "o:convertToText",
                     onSelect: () => convertToText(),
                   },
                   {
-                    label: "Convert to Shapes",
+                    label: "转换为形状",
                     icon: "o:convertToShapes",
                     onSelect: () => convertToShapes(),
                   },

@@ -58,9 +58,9 @@ import { createRuler } from "./draw/ruler.js";
 export { INK_NAME };
 const PT = 12700;
 const ERASER_SIZES = {
-  small: { label: "Small", px: 5 },
-  medium: { label: "Medium", px: 12 },
-  large: { label: "Large", px: 24 },
+  small: { label: "细", px: 5 },
+  medium: { label: "中等", px: 12 },
+  large: { label: "粗", px: 24 },
 };
 const PREFS = "presentation.drawPrefs.v1";
 function loadPrefs() {
@@ -455,7 +455,7 @@ export function createDrawTools({
         const ids = lassoed(currentSlide(), loop);
         setTool(null);
         if (!ids.length) {
-          toast("Nothing lies wholly inside the lasso.");
+          toast("套索内没有完整的墨迹或对象。");
           return;
         }
         selectShapes(ids);
@@ -495,13 +495,13 @@ export function createDrawTools({
   }
   function report(e) {
     console.error(e);
-    toast(e?.message || "Something went wrong.");
+    toast(e?.message || "出现错误，请重试。");
   }
   async function inkToWords(mode) {
     if (busy) return;
     const shapes = inkTargets();
     if (!shapes.length) {
-      toast("There is no ink on this slide to convert.");
+      toast("此幻灯片上没有可转换的墨迹。");
       return;
     }
     const ai = chat();
@@ -519,14 +519,14 @@ export function createDrawTools({
     busy = true;
     canvas()?.classList.add("ink-reading");
     changed();
-    toast(mode === "math" ? "Reading your math…" : "Reading your handwriting…");
+    toast(mode === "math" ? "正在识别数学公式…" : "正在识别手写文字…");
     try {
       const value = await readInk(picture.dataUrl, mode, {
         chat: ai,
         model: aiModel,
       });
       if (!value) {
-        toast("No writing could be read in that ink.");
+        toast("未能从该墨迹中识别出文字。");
         return;
       }
       await placeWords(target, shapes, value, mode, picture.bounds);
@@ -599,7 +599,7 @@ export function createDrawTools({
   async function convertToShapes() {
     const shapes = inkTargets();
     if (!shapes.length) {
-      toast("There is no ink on this slide to convert.");
+      toast("此幻灯片上没有可转换的墨迹。");
       return;
     }
     const size = slideSize();
@@ -619,7 +619,7 @@ export function createDrawTools({
       })
       .filter(Boolean);
     if (!found.length) {
-      toast("None of that ink looks like a shape.");
+      toast("所选墨迹未能识别为标准形状。");
       return;
     }
     const made = [];
@@ -647,7 +647,7 @@ export function createDrawTools({
     const slide = currentSlide();
     const ink = inkShapes(P, slide);
     if (!ink.length) {
-      toast("There is no ink on this slide to replay.");
+      toast("此幻灯片上没有可重放的墨迹。");
       return;
     }
     if (tool) setTool(null);
@@ -700,7 +700,7 @@ export function createDrawTools({
       ...(spec.textures.length > 1
         ? [
             { separator: true },
-            { header: "Texture" },
+            { header: "纹理" },
             ...spec.textures.map((t) => ({
               label: TEXTURE_LABELS[t],
               checked: p.texture === t,
@@ -710,17 +710,17 @@ export function createDrawTools({
         : []),
       { separator: true },
       {
-        label: "Move Left",
+        label: "向左移动",
         disabled: i <= 0,
         onSelect: () => movePen(pens, p.id, -1) && persistPens(),
       },
       {
-        label: "Move Right",
+        label: "向右移动",
         disabled: i >= pens.length - 1,
         onSelect: () => movePen(pens, p.id, 1) && persistPens(),
       },
       {
-        label: "Remove Pen",
+        label: "移除画笔",
         danger: true,
         disabled: pens.length <= 1,
         onSelect: () => {
@@ -732,7 +732,7 @@ export function createDrawTools({
       // The palette is the tallest part, so it comes last: on a phone the
       // commands above stay in reach without scrolling.
       { separator: true },
-      { header: "Color" },
+      { header: "颜色" },
       ...colorMenuItems({
         theme: theme(),
         current: p.color,
@@ -808,7 +808,7 @@ export function createDrawTools({
     const strip = el("div", {
       class: "ink-pens",
       role: "group",
-      "aria-label": "Pens",
+      "aria-label": "笔",
     });
     strip._stamp = "";
     return strip;
@@ -839,7 +839,7 @@ export function createDrawTools({
       })),
       { separator: true },
       {
-        label: "Reset Pens",
+        label: "重置画笔",
         onSelect: () => {
           if (pens.some((p) => p.id === tool)) setTool(null);
           pens = resetPens();
@@ -860,17 +860,17 @@ export function createDrawTools({
     };
     return [
       {
-        label: "Stroke Eraser",
+        label: "笔划橡皮擦",
         checked: prefs.eraser === "stroke",
         onSelect: pick(() => (prefs.eraser = "stroke")),
       },
       {
-        label: "Point Eraser",
+        label: "像素橡皮擦",
         checked: prefs.eraser === "point",
         onSelect: pick(() => (prefs.eraser = "point")),
       },
       { separator: true },
-      { header: "Point Eraser Size" },
+      { header: "像素橡皮擦大小" },
       ...Object.entries(ERASER_SIZES).map(([key, s]) => ({
         label: s.label,
         checked: prefs.eraserSize === key,
@@ -891,49 +891,49 @@ export function createDrawTools({
     };
     return {
       id: "draw",
-      label: "Draw",
+      label: "绘图",
       after: "insert",
       groups: [
         {
           id: "drawing-tools",
-          label: "Tools",
+          label: "工具",
           icon: "penTool",
           collapsible: false,
           items: [
             {
               type: "large",
               id: "draw-select",
-              label: "Select",
+              label: "选择",
               icon: "select",
-              title: "Select Objects",
-              description: "Stop drawing and select objects on the slide.",
+              title: "选择对象",
+              description: "停止绘图并选择幻灯片上的对象。",
               pressed: () => !tool,
               run: () => tool && setTool(tool),
             },
             {
               type: "large",
               id: "draw-eraser",
-              label: "Eraser",
+              label: "橡皮擦",
               icon: "eraserTool",
               dynamicIcon: () =>
                 prefs.eraser === "point" ? "pointEraser" : "eraserTool",
-              title: "Eraser",
+              title: "橡皮擦",
               description:
-                "Erase ink by drawing over it. Choose the stroke eraser to remove whole strokes, or the point eraser to rub out only what it passes over.",
+                "在墨迹上涂抹以擦除。选择笔划橡皮擦擦除整个笔划，或选择像素橡皮擦仅擦除经过的墨迹。",
               pressed: () => tool === "eraser",
               run: () => setTool("eraser"),
               split: true,
-              menuLabel: "Eraser options",
+              menuLabel: "橡皮擦选项",
               menu: eraserMenu,
             },
             {
               type: "large",
               id: "draw-lasso",
-              label: "Lasso\nSelect",
+              label: "套索\n选择",
               icon: "lassoSelect",
-              title: "Lasso Select",
+              title: "套索选择",
               description:
-                "Draw a loop around ink and objects to select everything wholly inside it.",
+                "在墨迹和对象周围画圈，以选择其内部包含的全部对象。",
               pressed: () => tool === "lasso",
               run: () => setTool("lasso"),
             },
@@ -941,7 +941,7 @@ export function createDrawTools({
         },
         {
           id: "drawing-pens",
-          label: "Pens",
+          label: "画笔",
           icon: "penTool",
           collapsible: false,
           items: [
@@ -949,39 +949,39 @@ export function createDrawTools({
             {
               type: "large",
               id: "draw-add-pen",
-              label: "Add\nPen",
+              label: "添加\n画笔",
               icon: "addPen",
-              title: "Add Pen",
+              title: "添加画笔",
               description:
-                "Add a pen, pencil or highlighter to your pens. Your pens are kept on this device.",
+                "向画笔列表中添加圆珠笔、铅笔或荧光笔。您的画笔设置保存在当前设备中。",
               menu: addPenMenu,
             },
           ],
         },
         {
           id: "drawing-convert",
-          label: "Convert",
+          label: "转换",
           icon: "inkToShape",
           items: [
             {
               type: "large",
               id: "draw-ink-to-text",
-              label: "Ink to\nText",
+              label: "墨迹转\n文本",
               icon: "inkToText",
-              title: "Ink to Text",
+              title: "墨迹转文本",
               description:
-                "Turn handwriting into a text box. Works on the selected ink, or all the ink on the slide. Uses the AI to read it.",
+                "将手写墨迹转换为文本框。适用于所选墨迹或当前幻灯片上的所有墨迹。通过 AI 智能识别。",
               enabled: () => !busy && hasInk(),
               run: () => inkToWords("text").catch(report),
             },
             {
               type: "large",
               id: "draw-ink-to-shape",
-              label: "Ink to\nShape",
+              label: "墨迹转\n形状",
               icon: "inkToShape",
-              title: "Ink to Shape",
+              title: "墨迹转形状",
               description:
-                "While on, lines, arrows, rectangles, triangles, ellipses, diamonds, pentagons, hexagons and stars you draw become real shapes.",
+                "开启后，您绘制的线条、箭头、矩形、三角形、椭圆、菱形、五边形、六边形和星形将自动转换为标准几何形状。",
               pressed: () => prefs.inkToShape,
               run: () => {
                 prefs.inkToShape = !prefs.inkToShape;
@@ -991,10 +991,10 @@ export function createDrawTools({
                 else changed();
               },
               split: true,
-              menuLabel: "Ink to Shape options",
+              menuLabel: "墨迹转形状选项",
               menu: () => [
                 {
-                  label: "Convert Ink to Shapes",
+                  label: "将墨迹转换为形状",
                   icon: "o:convertInk",
                   disabled: !hasInk(),
                   onSelect: () => convertToShapes().catch(report),
@@ -1004,11 +1004,11 @@ export function createDrawTools({
             {
               type: "large",
               id: "draw-ink-to-math",
-              label: "Ink to\nMath",
+              label: "墨迹转\n公式",
               icon: "inkToMath",
-              title: "Ink to Math",
+              title: "墨迹转数学公式",
               description:
-                "Turn a handwritten formula into an equation. Works on the selected ink, or all the ink on the slide. Uses the AI to read it.",
+                "将手写数学公式转换为标准公式。适用于所选墨迹或当前幻灯片上的所有墨迹。通过 AI 智能识别。",
               enabled: () => !busy && hasInk(),
               run: () => inkToWords("math").catch(report),
             },
@@ -1016,17 +1016,17 @@ export function createDrawTools({
         },
         {
           id: "drawing-replay",
-          label: "Replay",
+          label: "重放",
           icon: "inkReplay",
           items: [
             {
               type: "large",
               id: "draw-ink-replay",
-              label: "Ink\nReplay",
+              label: "墨迹\n重放",
               icon: "inkReplay",
-              title: "Ink Replay",
+              title: "墨迹重放",
               description:
-                "Play back the ink on this slide in the order and at the pace it was drawn.",
+                "按照绘制的先后顺序和节奏重放当前幻灯片上的墨迹。",
               enabled: () => hasInk(),
               pressed: () => !!replay,
               run: () => (replay ? replay.close() : startReplay()),
@@ -1035,17 +1035,17 @@ export function createDrawTools({
         },
         {
           id: "drawing-stencils",
-          label: "Stencils",
+          label: "模具",
           icon: "ruler",
           items: [
             {
               type: "large",
               id: "draw-ruler",
-              label: "Ruler",
+              label: "标尺",
               icon: "ruler",
-              title: "Ruler",
+              title: "标尺",
               description:
-                "Show a ruler on the slide. Drag it to move, turn it by its knob or the mouse wheel, and pens follow its edges.",
+                "在幻灯片上显示标尺。拖动可移动，旋转旋钮或滚轮可调整角度，画笔会自动吸附其边缘。",
               pressed: () => ruler.visible,
               run: () => {
                 ruler.setVisible(!ruler.visible);
@@ -1055,11 +1055,11 @@ export function createDrawTools({
             {
               type: "large",
               id: "draw-touch",
-              label: "Draw with\nTouch",
+              label: "使用\n触控绘图",
               icon: "drawWithTouch",
-              title: "Draw with Touch",
+              title: "使用触控绘图",
               description:
-                "When on, a finger draws with the chosen pen. When off, only a pen or mouse draws and a finger scrolls.",
+                "开启后，手指可使用所选画笔进行绘制。关闭后，仅支持触控笔或鼠标绘图，手指用于平移滚动。",
               pressed: () => prefs.drawWithTouch,
               run: () => {
                 prefs.drawWithTouch = !prefs.drawWithTouch;

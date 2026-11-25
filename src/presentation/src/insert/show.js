@@ -386,7 +386,7 @@ export function createShowExtras(ctx, show) {
       const button = el("button", {
         type: "button",
         class: "presenter-action-button",
-        "aria-label": P.getShapeDescription?.(shape) || "Action",
+        "aria-label": P.getShapeDescription?.(shape) || "动作",
         onclick: (e) => {
           e.stopPropagation();
           if (!actions.click) return;

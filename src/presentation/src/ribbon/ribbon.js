@@ -50,20 +50,20 @@ export function createRibbon({
   const panels = new Map();
   const root = el("section", {
     class: "ribbon",
-    "aria-label": "Ribbon",
+    "aria-label": "功能区",
   });
   const tablist = el("div", {
     class: "ribbon-tabs",
     role: "tablist",
-    "aria-label": "Ribbon tabs",
+    "aria-label": "功能区选项卡",
   });
   const collapse = el(
     "button",
     {
       type: "button",
       class: "ribbon-collapse",
-      "aria-label": "Collapse the ribbon",
-      title: "Collapse the ribbon",
+      "aria-label": "折叠功能区",
+      title: "折叠功能区",
       "aria-expanded": "true",
       onclick: () => setCollapsed(!collapsed),
     },
@@ -208,7 +208,7 @@ export function createRibbon({
     collapse.setAttribute("aria-expanded", String(!on));
     collapse.setAttribute(
       "aria-label",
-      on ? "Expand the ribbon" : "Collapse the ribbon",
+      on ? "展开功能区" : "折叠功能区",
     );
     collapse.title = collapse.getAttribute("aria-label");
     collapse.replaceChildren(icon(on ? "ChevronDown" : "ChevronUp", 16));

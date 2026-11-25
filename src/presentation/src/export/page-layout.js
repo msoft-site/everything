@@ -13,9 +13,9 @@
 //   { kind: "rect", x, y, w, h, width, color }
 
 export const PAPER_SIZES = {
-  slide: { label: "Slide size", width: null, height: null },
-  letter: { label: "US Letter", width: 612, height: 792 },
-  legal: { label: "US Legal", width: 612, height: 1008 },
+  slide: { label: "幻灯片大小", width: null, height: null },
+  letter: { label: "美式信纸 (Letter)", width: 612, height: 792 },
+  legal: { label: "美式公文纸 (Legal)", width: 612, height: 1008 },
   a4: { label: "A4", width: 595.28, height: 841.89 },
   a3: { label: "A3", width: 841.89, height: 1190.55 },
 };

@@ -30,7 +30,7 @@ const result = (groups) => ({
     groups.length === 1 && groups[0].name === null
       ? []
       : groups.map((g) => ({
-          name: g.name ?? "Default Section",
+          name: g.name ?? "默认节",
           slides: g.slides,
         })),
 });
@@ -67,7 +67,7 @@ export function addSectionAt(order, sections, part, name) {
     return result(
       at > 0
         ? [
-            { name: "Default Section", slides: order.slice(0, at) },
+            { name: "默认节", slides: order.slice(0, at) },
             { name, slides: order.slice(at) },
           ]
         : [{ name, slides: [...order] }],

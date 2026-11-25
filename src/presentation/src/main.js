@@ -531,7 +531,7 @@ function accountMenu(e) {
   closeAppsPanel();
   openMenu({
     anchor: e.currentTarget,
-    label: "Account",
+    label: "账户",
     align: "end",
     minWidth: 230,
     items: accountItems(),
@@ -542,7 +542,7 @@ function accountMenu(e) {
 function settingsMenu(e) {
   openMenu({
     anchor: e.currentTarget,
-    label: "Settings",
+    label: "设置",
     align: "end",
     minWidth: 230,
     items: accountItems({ ownAccount: false }),
@@ -550,31 +550,31 @@ function settingsMenu(e) {
 }
 function accountItems({ ownAccount = true } = {}) {
   const settings = [
-    { label: "Appearance", icon: "Monitor", onSelect: appearanceDialog },
+    { label: "外观", icon: "Monitor", onSelect: appearanceDialog },
     {
-      label: "Keyboard shortcuts",
+      label: "键盘快捷键",
       icon: "Keyboard",
       onSelect: shortcutsDialog,
     },
   ];
   if (!ownAccount) return settings;
   return [
-    { header: account ? account.username : "Not signed in" },
+    { header: account ? account.username : "未登录" },
     ...settings,
     ...(!account
       ? [
           { separator: true },
           {
-            label: "Sign in with Puter",
+            label: "使用 Puter 登录",
             icon: "User",
-            hint: "Save presentations to your own cloud",
+            hint: "将演示文稿保存到您自己的云端",
             onSelect: () => login(),
           },
         ]
       : cloud.canSignOut()
         ? [
             { separator: true },
-            { label: "Sign out", icon: "LogOut", onSelect: run(logout) },
+            { label: "退出登录", icon: "LogOut", onSelect: run(logout) },
           ]
         : []),
   ];
@@ -679,7 +679,7 @@ function saveButton() {
     "secondary save-button",
     account
       ? {}
-      : { title: "Sign in to Puter to keep this presentation in your cloud" },
+      : { title: "登录 Puter 以将此演示文稿保存在您的云端" },
   );
 }
 // The header's account and save buttons follow the account; a focused button
@@ -703,7 +703,7 @@ async function appearanceDialog() {
     "select",
     {
       class: "input",
-      "aria-label": "Color mode",
+      "aria-label": "颜色模式",
       autofocus: true,
       onchange: (e) => setAppearance(e.target.value),
     },
@@ -716,123 +716,123 @@ async function appearanceDialog() {
     "select",
     {
       class: "input",
-      "aria-label": "New presentations start with",
+      "aria-label": "新建演示文稿起始于",
       onchange: (e) => setStartWith(e.target.value),
     },
-    el("option", { value: "title" }, "A title slide"),
-    el("option", { value: "blank" }, "A blank slide"),
+    el("option", { value: "title" }, "标题幻灯片"),
+    el("option", { value: "blank" }, "空白幻灯片"),
   );
   start.value = startWith;
   await dialog({
-    title: "Appearance",
+    title: "外观",
     body: el(
       "div",
       { class: "dialog-body" },
-      el("label", {}, "Color mode", select),
+      el("label", {}, "颜色模式", select),
       el(
         "p",
         { class: "muted" },
-        "System follows your device. Your slide colors stay the same.",
+        "系统跟随设备设置。幻灯片颜色保持不变。",
       ),
-      el("label", {}, "New presentations start with", start),
+      el("label", {}, "新建演示文稿起始于", start),
     ),
     cancel: null,
   });
 }
 async function shortcutsDialog() {
   await dialog({
-    title: "Keyboard shortcuts",
+    title: "键盘快捷键",
     body: el(
       "div",
       { class: "dialog-body shortcuts" },
       ...[
-        ["Ctrl / ⌘ + S", "Save to Puter"],
-        ["Ctrl / ⌘ + Shift + S", "Save a copy to Puter"],
-        ["Ctrl / ⌘ + O", "Open from Puter"],
-        ["Ctrl / ⌘ + P", "Print"],
-        ["Ctrl / ⌘ + F or H", "Find, or find and replace"],
-        ["Ctrl / ⌘ + G or Shift + G", "Find next or previous"],
-        ["Ctrl / ⌘ + = or -", "Zoom in or out"],
-        ["Ctrl / ⌘ + 0", "Fit the slide to the window"],
-        ["Ctrl / ⌘ + Z", "Undo"],
-        ["Ctrl / ⌘ + Shift + Z or Ctrl / ⌘ + Y", "Redo"],
-        ["Ctrl / ⌘ + B / I / U", "Bold, italic, or underline"],
-        ["Ctrl / ⌘ + Shift + > or <", "Larger or smaller text"],
-        ["Ctrl / ⌘ + D", "Duplicate selected object"],
-        ["Ctrl / ⌘ + Shift + D", "Duplicate slide"],
-        ["Ctrl / ⌘ + Alt + R", "Show or hide the ribbon"],
-        ["Ctrl / ⌘ + C / X / V", "Copy, cut, or paste objects"],
-        ["Ctrl / ⌘ + A", "Select every object on the slide"],
-        ["Ctrl / ⌘ + K", "Add or edit a link on the selected object"],
-        ["Ctrl / ⌘ + J", "Open or close the AI assistant"],
-        ["Ctrl / ⌘ + Shift + M", "New comment"],
-        ["F7", "Check spelling"],
-        ["Shift + F7", "Thesaurus"],
+        ["Ctrl / ⌘ + S", "保存到 Puter"],
+        ["Ctrl / ⌘ + Shift + S", "在 Puter 中保存副本"],
+        ["Ctrl / ⌘ + O", "从 Puter 打开"],
+        ["Ctrl / ⌘ + P", "打印"],
+        ["Ctrl / ⌘ + F 或 H", "查找或查找和替换"],
+        ["Ctrl / ⌘ + G 或 Shift + G", "查找下一个或上一个"],
+        ["Ctrl / ⌘ + = 或 -", "放大或缩小"],
+        ["Ctrl / ⌘ + 0", "使幻灯片适应窗口"],
+        ["Ctrl / ⌘ + Z", "撤消"],
+        ["Ctrl / ⌘ + Shift + Z 或 Ctrl / ⌘ + Y", "恢复"],
+        ["Ctrl / ⌘ + B / I / U", "加粗、倾斜或下划线"],
+        ["Ctrl / ⌘ + Shift + > 或 <", "增大或缩小字号"],
+        ["Ctrl / ⌘ + D", "复制所选对象"],
+        ["Ctrl / ⌘ + Shift + D", "复制幻灯片"],
+        ["Ctrl / ⌘ + Alt + R", "显示或隐藏功能区"],
+        ["Ctrl / ⌘ + C / X / V", "复制、剪切或粘贴对象"],
+        ["Ctrl / ⌘ + A", "选定幻灯片上的所有对象"],
+        ["Ctrl / ⌘ + K", "在所选对象上添加或编辑链接"],
+        ["Ctrl / ⌘ + J", "打开或关闭 AI 助手"],
+        ["Ctrl / ⌘ + Shift + M", "新建批注"],
+        ["F7", "检查拼写"],
+        ["Shift + F7", "同义词库"],
         [
           "Ctrl / ⌘ + 1 / 2 / 3 / 4 / 5",
-          "Normal, Slide Sorter, Notes Page, Outline View, Reading View",
+          "普通、幻灯片浏览、备注页、大纲视图、阅读视图",
         ],
-        ["Ctrl + Shift + Tab", "Show or hide the outline"],
-        ["Ctrl / ⌘ + '", "Show or hide the gridlines"],
+        ["Ctrl + Shift + Tab", "显示或隐藏大纲"],
+        ["Ctrl / ⌘ + '", "显示或隐藏网格线"],
         [
           "Tab / Shift + Tab in the outline",
-          "Move a line down or up a level; a title becomes a paragraph",
+          "将行降级或升级；标题变为段落",
         ],
-        ["Alt + arrow keys in the slide sorter", "Move the selected slides"],
-        ["F5", "Present from the first slide"],
-        ["Shift + F5", "Present from the current slide"],
+        ["幻灯片浏览中 Alt + 方向键", "移动所选幻灯片"],
+        ["F5", "从第一张幻灯片放映"],
+        ["Shift + F5", "从当前幻灯片放映"],
         [
           "Ctrl / ⌘ + Shift + Enter, Ctrl / ⌘ + Enter",
-          "Present from the first slide, or from the current one",
+          "从第一张幻灯片或从当前幻灯片放映",
         ],
-        ["Alt + F5, or Alt + Enter", "Presenter View"],
-        ["? during a slide show", "List the slide show's shortcuts"],
-        ["Ctrl + M, or ⌘ + Shift + N on a Mac", "New slide"],
-        ["Enter in the thumbnails pane", "New slide after the selected one"],
-        ["Ctrl / ⌘ + L / E / R / J", "Align left, center, right, or justify"],
-        ["Ctrl + Space", "Clear character formatting"],
+        ["Alt + F5 或 Alt + Enter", "演示者视图"],
+        ["放映时按 ?", "列出幻灯片放映快捷键"],
+        ["Ctrl + M (Mac 上为 ⌘ + Shift + N)", "新建幻灯片"],
+        ["缩略图窗格中按 Enter", "在所选幻灯片后新建幻灯片"],
+        ["Ctrl / ⌘ + L / E / R / J", "左对齐、居中、右对齐或两端对齐"],
+        ["Ctrl + 空格", "清除字符格式"],
         [
           "Ctrl / ⌘ + Shift + C, then Ctrl / ⌘ + Shift + V",
-          "Copy formatting, then paste it onto the selection",
+          "复制格式，然后将其粘贴到所选内容",
         ],
-        ["Shift + click", "Add an object to the selection"],
+        ["Shift + 单击", "将对象添加到选定内容"],
         [
           "Shift + click / Ctrl / ⌘ + click on a thumbnail",
-          "Select a range of slides, or one more",
+          "选择连续幻灯片，或加选一张",
         ],
         [
           "Arrow keys / Home / End in the navigator",
-          "Move between slides; Shift extends the selection",
+          "在幻灯片之间移动；按住 Shift 扩展选定范围",
         ],
-        ["Ctrl / ⌘ + A in the navigator", "Select every slide"],
-        ["Delete in the navigator", "Delete the selected slides"],
-        ["Ctrl / ⌘ + Alt + G", "Group the selected objects"],
-        ["Ctrl / ⌘ + Alt + Shift + G", "Ungroup the selected group"],
-        ["Ctrl / ⌘ + ] or [", "Bring forward or send backward"],
-        ["Ctrl / ⌘ + Shift + ] or [", "Bring to front or send to back"],
-        ["Enter", "Edit text of the selected object"],
-        ["Ctrl / ⌘ + Enter", "Finish editing text"],
+        ["导航器中按 Ctrl / ⌘ + A", "全选所有幻灯片"],
+        ["导航器中按 Delete", "删除所选幻灯片"],
+        ["Ctrl / ⌘ + Alt + G", "组合所选对象"],
+        ["Ctrl / ⌘ + Alt + Shift + G", "取消组合所选对象"],
+        ["Ctrl / ⌘ + ] 或 [", "上移一层或下移一层"],
+        ["Ctrl / ⌘ + Shift + ] 或 [", "置于顶层或置于底层"],
+        ["Enter", "编辑所选对象的文本"],
+        ["Ctrl / ⌘ + Enter", "完成编辑文本"],
         [
           "Tab / Shift + Tab while editing text",
-          "Nest or un-nest the paragraph",
+          "增加或减少段落缩进",
         ],
-        ["Tab / Shift + Tab in a table cell", "Next or previous cell"],
-        ["Arrow keys", "Move selected object"],
-        ["Shift + Arrow keys", "Move by a larger step"],
-        ["Delete / Backspace", "Delete selected object"],
-        ["Escape", "Finish editing text, deselect, or exit presentation"],
-        ["P / ← in presentation", "Previous slide"],
-        ["N / → in presentation", "Next slide"],
-        ["Home / End in presentation", "First or last slide"],
+        ["表格单元格中 Tab / Shift + Tab", "下一个或上一个单元格"],
+        ["方向键", "移动所选对象"],
+        ["Shift + 方向键", "大步长移动"],
+        ["Delete / Backspace", "删除所选对象"],
+        ["Escape", "完成编辑文本、取消选择或退出放映"],
+        ["放映时 P / ←", "上一张幻灯片"],
+        ["放映时 N / →", "下一张幻灯片"],
+        ["放映时 Home / End", "第一张或最后一张幻灯片"],
         [
           "Tab, then Enter / Space in presentation",
-          "Activate a control, including speaker notes",
+          "激活控件，包括演讲者备注",
         ],
-        ["B / W in presentation", "Black or white screen"],
-        ["S in presentation", "Pause or resume automatic advance"],
-        ["I in presentation", "Pen on or off"],
-        ["E in presentation", "Erase the ink on the slide"],
-        ["Number, then Enter, in presentation", "Go to that slide"],
+        ["放映时 B / W", "黑屏或白屏"],
+        ["放映时 S", "暂停或恢复自动推进"],
+        ["放映时 I", "开启或关闭画笔"],
+        ["放映时 E", "擦除幻灯片上的墨迹"],
+        ["放映时输入数字并按 Enter", "跳转到该幻灯片"],
       ].map(([keys, action]) =>
         el("div", {}, el("span", {}, action), el("kbd", {}, keys)),
       ),
@@ -897,7 +897,7 @@ async function logout() {
   const before = document.activeElement;
   const progress = el(
     "dialog",
-    { class: "dialog", "aria-label": "Signing out" },
+    { class: "dialog", "aria-label": "正在退出登录" },
     el("p", { class: "dialog-body", role: "status" }, "Signing out…"),
   );
   progress.addEventListener("cancel", (e) => e.preventDefault());
@@ -1000,7 +1000,7 @@ function renderHome() {
         el(
           "div",
           { class: "header-right" },
-          button("Open from Puter", "FolderOpen", run(openPicker), "secondary"),
+          button("从 Puter 打开", "FolderOpen", run(openPicker), "secondary"),
           appsButton(),
           accountButton(),
           sdkUserMenu(),
@@ -1009,25 +1009,25 @@ function renderHome() {
       homeRail([
         {
           id: "home",
-          label: "Home",
+          label: "主页",
           icon: "House",
           run: () => homeSection(".home-main", "#main"),
         },
         {
           id: "new",
-          label: "New",
+          label: "新建",
           icon: "FilePlus",
           run: () => homeSection(".home-prompt", ".home-prompt-input"),
         },
         {
           id: "recent",
-          label: "Recent",
+          label: "最近",
           icon: "Clock",
           run: () => homeSection(".library", ".search-box input"),
         },
         {
           id: "open",
-          label: "Open",
+          label: "打开",
           icon: "FolderOpen",
           action: true,
           run: run(openPicker),
@@ -1042,16 +1042,16 @@ function renderHome() {
           el(
             "div",
             {},
-            el("p", { class: "eyebrow" }, "YOUR WORKSPACE"),
-            el("h1", {}, "Good ideas deserve a stage."),
+            el("p", { class: "eyebrow" }, "您的工作区"),
+            el("h1", {}, "精彩的想法值得登上舞台。"),
             el(
               "p",
               { class: "muted" },
-              "Start with a blank canvas, or a little inspiration.",
+              "从空白画布开始，或寻找灵感。",
             ),
           ),
           button(
-            "New presentation",
+            "新建演示文稿",
             "Plus",
             run(() => newDeck("blank")),
             "primary",
@@ -1066,24 +1066,24 @@ function renderHome() {
         }),
         el(
           "section",
-          { class: "templates", "aria-label": "Start a presentation" },
+          { class: "templates", "aria-label": "开始演示文稿" },
           templateCard(
             "blank",
-            "Blank presentation",
-            "A fresh canvas",
+            "空白演示文稿",
+            "崭新画布",
             "studio",
           ),
           templateCard(
             "story",
-            "The big idea",
-            "A clear, considered story",
+            "核心观点",
+            "清晰深思的故事",
             "studio",
           ),
-          templateCard("pitch", "The pitch", "Make your next move", "cobalt"),
+          templateCard("pitch", "商业提案", "规划下一步行动", "cobalt"),
           templateCard(
             "story",
-            "A new perspective",
-            "A warmer point of view",
+            "全新视角",
+            "更加温暖的观点",
             "clay",
           ),
         ),
@@ -1099,25 +1099,25 @@ function renderHome() {
             el(
               "div",
               {},
-              el("strong", {}, "Your ideas, wherever you go."),
+              el("strong", {}, "随时随地记录您的想法。"),
               el(
                 "p",
                 {},
-                "Sign in to save real PowerPoint files in your Puter cloud.",
+                "登录以在您的 Puter 云端保存真实的 PowerPoint 文件。",
               ),
             ),
-            button("Connect Puter", "ArrowRight", () => login(), "secondary"),
+            button("连接 Puter", "ArrowRight", () => login(), "secondary"),
           ),
         el(
           "section",
-          { class: "library", "aria-label": "Your presentations" },
+          { class: "library", "aria-label": "您的演示文稿" },
           el(
             "div",
             { class: "library-head" },
             el(
               "div",
               { class: "library-heading" },
-              el("h2", {}, "Your presentations"),
+              el("h2", {}, "您的演示文稿"),
               libraryFilter(libraryView, (id) => {
                 libraryView = id;
                 for (const b of document.querySelectorAll(
@@ -1139,8 +1139,8 @@ function renderHome() {
                 icon("Search", 17),
                 el("input", {
                   type: "search",
-                  placeholder: "Search presentations",
-                  "aria-label": "Search presentations",
+                  placeholder: "搜索演示文稿",
+                  "aria-label": "搜索演示文稿",
                   value: query,
                   oninput: (e) => {
                     query = e.target.value;
@@ -1151,7 +1151,7 @@ function renderHome() {
               el(
                 "select",
                 {
-                  "aria-label": "Sort presentations",
+                  "aria-label": "演示文稿排序",
                   class: "sort-select",
                   onchange: (e) => {
                     sort = e.target.value;
@@ -1163,15 +1163,15 @@ function renderHome() {
                 el(
                   "option",
                   { value: "modified", selected: sort === "modified" },
-                  "Last opened",
+                  "上次打开",
                 ),
                 el(
                   "option",
                   { value: "name", selected: sort === "name" },
-                  "Name",
+                  "名称",
                 ),
               ),
-              button("Import PPTX", "Upload", () => pickLocal(), "secondary"),
+              button("导入 PPTX", "Upload", () => pickLocal(), "secondary"),
             ),
           ),
           el("div", { id: "file-list" }),
@@ -1180,7 +1180,7 @@ function renderHome() {
       el(
         "footer",
         { class: "home-footer" },
-        el("span", {}, "Made for the way you think."),
+        el("span", {}, "专为您的思考方式打造。"),
         el("span", {}, "PPTX files · Powered by Puter"),
       ),
     ),
@@ -1216,7 +1216,7 @@ function themePreview(key) {
 async function newThemeDeck(key) {
   await openDocument(() => ({
     pres: themeDeck(key),
-    name: "Untitled presentation",
+    name: "未命名演示文稿",
     color: key,
   }));
 }
@@ -1290,7 +1290,7 @@ function renderFileList() {
       rows[Math.min(rowIndex, rows.length - 1)];
     const target =
       row?.querySelectorAll("button")[buttonIndex] ||
-      document.querySelector('.home-title [aria-label="New presentation"]');
+      document.querySelector('.home-title [aria-label="新建演示文稿"], .home-title button');
     target?.focus();
   }
   list.replaceChildren();
@@ -1311,7 +1311,7 @@ function renderFileList() {
         "div",
         { class: "error-row" },
         el("span", {}, loadError),
-        button("Retry", null, () => home(), "secondary"),
+        button("重试", null, () => home(), "secondary"),
       ),
     );
   const searchText = query.normalize("NFC").toLowerCase();
@@ -1446,15 +1446,15 @@ function renderFileList() {
               f.pinned &&
                 el(
                   "span",
-                  { class: "file-pin", title: "Pinned" },
+                  { class: "file-pin", title: "已固定" },
                   lucide("Pin", 12),
-                  el("span", { class: "visually-hidden" }, " (pinned)"),
+                  el("span", { class: "visually-hidden" }, " (已固定)"),
                 ),
             ),
             el(
               "small",
               {},
-              f.kind === "draft" ? "Recovery draft" : "PowerPoint presentation",
+              f.kind === "draft" ? "恢复草稿" : "PowerPoint 演示文稿",
             ),
           ),
         ),
@@ -1466,9 +1466,9 @@ function renderFileList() {
           },
           icon(f.kind === "draft" ? "Monitor" : "Cloud", 15),
           f.kind === "draft"
-            ? "This device"
+            ? "此设备"
             : f.kind === "recent"
-              ? `Puter · ${cloud.folderName(f.path) || "Home"}`
+              ? `Puter · ${cloud.folderName(f.path) || "主目录"}`
               : "Puter",
         ),
         el(
@@ -1477,7 +1477,7 @@ function renderFileList() {
           relativeDate(f.modified),
         ),
         iconButton(
-          `Options for ${label}`,
+          `${label} 的选项`,
           "MoreHorizontal",
           (e) => libraryFileMenu(e, f),
           MENU_BUTTON,
@@ -1518,16 +1518,16 @@ function refreshFileDates() {
 document.addEventListener("visibilitychange", refreshFileDates);
 function relativeDate(value) {
   const date = new Date(value);
-  if (!value || !Number.isFinite(date.getTime())) return "Date unavailable";
+  if (!value || !Number.isFinite(date.getTime())) return "日期不可用";
   const now = new Date();
   const minutes = (now.getTime() - date.getTime()) / 60000;
   // A cloud timestamp can run seconds ahead of this device's clock.
-  if (minutes > -60 && minutes < 1) return "Just now";
-  if (minutes >= 1 && minutes < 60) return `${Math.floor(minutes)} min ago`;
-  if (date.toDateString() === now.toDateString()) return "Today";
+  if (minutes > -60 && minutes < 1) return "刚刚";
+  if (minutes >= 1 && minutes < 60) return `${Math.floor(minutes)} 分钟前`;
+  if (date.toDateString() === now.toDateString()) return "今天";
   const yesterday = new Date(now);
   yesterday.setDate(now.getDate() - 1);
-  if (date.toDateString() === yesterday.toDateString()) return "Yesterday";
+  if (date.toDateString() === yesterday.toDateString()) return "昨天";
   return date.toLocaleDateString(undefined, {
     month: "short",
     day: "numeric",
@@ -1545,14 +1545,14 @@ function libraryFileMenu(e, f) {
     if (view !== "home") return null;
     return (
       currentRow()?.querySelector(".icon-btn") ||
-      document.querySelector('.home-title [aria-label="New presentation"]')
+      document.querySelector('.home-title [aria-label="新建演示文稿"], .home-title button')
     );
   };
   const records = libraryRecords();
   const pinned = records.isPinned(f);
   menu(anchor, [
     {
-      label: "Open",
+      label: "打开",
       icon: "FolderOpen",
       action: run(() => {
         records.noteOpened(f);
@@ -1560,7 +1560,7 @@ function libraryFileMenu(e, f) {
       }),
     },
     {
-      label: pinned ? "Unpin" : "Pin to Top",
+      label: pinned ? "取消固定" : "置顶固定",
       icon: pinned ? "o:unpinItem" : "o:pinItem",
       action: () => {
         records.togglePin(f);
@@ -1570,18 +1570,18 @@ function libraryFileMenu(e, f) {
     ...(f.kind === "recent"
       ? [
           {
-            label: "Download PPTX",
+            label: "下载 PPTX",
             icon: "Download",
             action: run(async () => {
               await cloud.download(await cloud.readFile(f.path), fileTitle(f));
-              toast("PowerPoint file downloaded.");
+              toast("PowerPoint 文件已下载。");
             }),
           },
           { separator: true },
           {
             // The file is not the app's to delete: it lives elsewhere on the
             // drive, and only leaves this list.
-            label: "Remove from list",
+            label: "从列表中删除",
             icon: "X",
             action: () => {
               recent.forgetRecent(owner(), f.path);
@@ -1595,13 +1595,13 @@ function libraryFileMenu(e, f) {
     ...(f.kind === "cloud"
       ? [
           {
-            label: "Rename",
+            label: "重命名",
             icon: "Pencil",
             action: run(async () => {
               const requestOwner = owner();
               const accountVersion = accountRequest;
               const name = await promptName(
-                "Rename presentation",
+                "重命名演示文稿",
                 fileTitle(f),
                 returnFocus,
               );
@@ -1648,18 +1648,18 @@ function libraryFileMenu(e, f) {
             }),
           },
           {
-            label: "Download PPTX",
+            label: "下载 PPTX",
             icon: "Download",
             action: run(async () => {
               await cloud.download(await cloud.readFile(f.path), fileTitle(f));
-              toast("PowerPoint file downloaded.");
+              toast("PowerPoint 文件已下载。");
             }),
           },
         ]
       : []),
     ...(f.kind === "recent" ? [] : [{ separator: true }]),
     f.kind !== "recent" && {
-      label: f.kind === "draft" ? "Delete draft" : "Delete presentation",
+      label: f.kind === "draft" ? "删除草稿" : "删除演示文稿",
       icon: "Trash2",
       danger: true,
       action: run(async () => {
@@ -1673,17 +1673,17 @@ function libraryFileMenu(e, f) {
           documentRequest++;
         if (
           await dialog({
-            title: `Delete “${fileTitle(f)}”?`,
+            title: `删除“${fileTitle(f)}”？`,
             // A draft lives on this device only; the cloud file it may be
             // linked to stays in Puter.
             body: el(
               "p",
               { class: "dialog-body" },
               f.kind === "draft"
-                ? "This removes the recovery draft from this device. Work that was not saved to Puter or downloaded is lost."
-                : "This removes the file from your Puter cloud permanently. This action cannot be undone.",
+                ? "这将从此设备中删除恢复草稿。未保存到 Puter 或未下载的工作将会丢失。"
+                : "这将从您的 Puter 云端永久删除该文件。此操作无法撤消。",
             ),
-            confirm: "Delete",
+            confirm: "删除",
             danger: true,
             returnFocus,
           })
@@ -1796,13 +1796,13 @@ async function leaveEditor() {
     }
     if (revision !== savedRevision && revision !== draftRevision) {
       const leave = await dialog({
-        title: "Leave without saving?",
+        title: "不保存直接离开？",
         body: el(
           "p",
           { class: "dialog-body" },
-          "Your latest changes could not be saved on this device. Download a copy or save to Puter before leaving to keep them.",
+          "您的最新更改无法在此设备上保存。离开前请下载副本或保存到 Puter 以保留它们。",
         ),
-        confirm: "Leave anyway",
+        confirm: "仍然离开",
         danger: true,
       });
       return leave && doc === target;
@@ -1823,7 +1823,7 @@ function saveFailedPrompt(target) {
       ? ` (${String(error.message).replace(/\.$/, "")})`
       : "";
   return {
-    title: "Your latest changes aren't saved to Puter",
+    title: "您的最新更改尚未保存到 Puter",
     body: el(
       "p",
       { class: "dialog-body" },
@@ -1834,13 +1834,13 @@ function saveFailedPrompt(target) {
       }`,
     ),
     actions: [
-      { label: "Keep editing", value: "stay" },
+      { label: "继续编辑", value: "stay" },
       {
-        label: kept ? "Leave" : "Leave without saving",
+        label: kept ? "离开" : "不保存直接离开",
         value: "leave",
         kind: kept ? "secondary" : "danger",
       },
-      { label: "Try again", value: "retry", kind: "primary" },
+      { label: "重试", value: "retry", kind: "primary" },
     ],
   };
 }
@@ -1861,10 +1861,10 @@ async function newDeck(
       name:
         name ||
         (template === "blank"
-          ? "Untitled presentation"
+          ? "未命名演示文稿"
           : template === "pitch"
-            ? "The pitch"
-            : "The big idea"),
+            ? "商业计划书"
+            : "核心构想"),
       color,
     }),
     options,
@@ -2000,11 +2000,11 @@ function releaseDraftLocks() {
 async function recover(draft) {
   if (signingOut) return;
   if (deletingDrafts.has(draft.id)) {
-    toast("This draft is being deleted.");
+    toast("正在删除此草稿。");
     return;
   }
   if (!(await lockDraft(draft.id))) {
-    toast("This draft is open in another tab.");
+    toast("此草稿已在另一个标签页中打开。");
     return;
   }
   const pending = { id: draft.id, request: ++documentRequest };
@@ -2018,7 +2018,7 @@ async function recover(draft) {
           pending.request = documentRequest;
           const stored = await drafts.getDraft(draft.id);
           if (!stored || stored.owner !== owner())
-            throw new Error("This recovery draft is no longer available.");
+            throw new Error("此恢复草稿已不再可用。");
           return {
             pres: await restoreDeck(stored.bytes, { prepareFonts: false }),
             name: stored.name,
@@ -2035,7 +2035,7 @@ async function recover(draft) {
         });
       })
     )
-      toast("Draft recovered from this device.");
+      toast("已从此设备恢复草稿。");
   } finally {
     if (pendingRecovery === pending) pendingRecovery = null;
     releaseDraftLocks();
@@ -2052,16 +2052,16 @@ async function openCloud(file, { offerDraft = true } = {}) {
     if (draft) {
       const name = cleanName(draft.name, { maxLength: Infinity });
       const choice = await dialog({
-        title: "Recover unsaved changes?",
+        title: "恢复未保存的更改？",
         body: el(
           "p",
           { class: "dialog-body" },
           `“${name}” has changes on this device that were not saved to Puter.`,
         ),
         actions: [
-          { label: "Cancel", value: null },
-          { label: "Open the Puter version", value: "file" },
-          { label: "Recover changes", value: "draft", kind: "primary" },
+          { label: "取消", value: null },
+          { label: "打开 Puter 版本", value: "file" },
+          { label: "恢复更改", value: "draft", kind: "primary" },
         ],
       });
       if (request !== documentRequest) return false;
@@ -2279,7 +2279,7 @@ async function embedLocalFont(file, target, request) {
     if (!current() || readOnlyDocument()) return;
     const rights = el("input", { type: "checkbox", required: true });
     const pending = dialog({
-      title: "Embed font",
+      title: "嵌入字体",
       body: el(
         "form",
         { class: "dialog-body" },
@@ -2793,11 +2793,11 @@ function conflictPrompt(target, { leaving = false } = {}) {
   const keptNote = kept
     ? " Your changes are kept on this device."
     : " This device could not keep a copy of your changes.";
-  const stay = leaving ? [{ label: "Keep editing", value: "stay" }] : [];
+  const stay = leaving ? [{ label: "继续编辑", value: "stay" }] : [];
   const leave = leaving
     ? [
         {
-          label: kept ? "Leave" : "Leave without saving",
+          label: kept ? "离开" : "不保存直接离开",
           value: "leave",
           kind: kept ? "secondary" : "danger",
         },
@@ -2805,7 +2805,7 @@ function conflictPrompt(target, { leaving = false } = {}) {
     : [];
   if (target.conflict === "missing")
     return {
-      title: "This presentation was moved or deleted",
+      title: "演示文稿已被移动或删除",
       body: el(
         "p",
         { class: "dialog-body" },
@@ -2814,12 +2814,12 @@ function conflictPrompt(target, { leaving = false } = {}) {
       actions: [
         ...stay,
         ...leave,
-        { label: "Put it back", value: "restore" },
-        { label: "Save as a new file", value: "new", kind: "primary" },
+        { label: "放回原处", value: "restore" },
+        { label: "另存为新文件", value: "new", kind: "primary" },
       ],
     };
   return {
-    title: "This presentation changed elsewhere",
+    title: "演示文稿在其他地方已被更改",
     body: el(
       "p",
       { class: "dialog-body" },
@@ -2831,10 +2831,10 @@ function conflictPrompt(target, { leaving = false } = {}) {
       ...(leaving
         ? []
         : [
-            { label: "Open their version", value: "reload" },
-            { label: "Save mine as a copy", value: "copy" },
+            { label: "打开线上版本", value: "reload" },
+            { label: "将我的版本保存为副本", value: "copy" },
           ]),
-      { label: "Replace with mine", value: "overwrite", kind: "danger" },
+      { label: "替换为我的版本", value: "overwrite", kind: "danger" },
     ],
   };
 }
@@ -3021,20 +3021,20 @@ async function downloadDeck() {
   if (!target) return;
   const name = target.name;
   await cloud.download(await P.savePresentation(target.pres), name);
-  toast("PowerPoint file downloaded.");
+  toast("PowerPoint 文件已下载。");
 }
 /* ---------- Slide size ---------- */
 const SLIDE_SIZES = [
-  ["16:9", "Widescreen (16:9)", 12192000, 6858000, "screen16x9"],
-  ["16:10", "Widescreen (16:10)", 12192000, 7620000, "screen16x10"],
-  ["4:3", "Standard (4:3)", 9144000, 6858000, "screen4x3"],
+  ["16:9", "宽屏 (16:9)", 12192000, 6858000, "screen16x9"],
+  ["16:10", "宽屏 (16:10)", 12192000, 7620000, "screen16x10"],
+  ["4:3", "标准 (4:3)", 9144000, 6858000, "screen4x3"],
 ];
 function aspectLabel(size = currentSize()) {
   const ratio = size.cx / size.cy;
   const known = SLIDE_SIZES.find(
     ([, , w, h]) => Math.abs(ratio - w / h) < 0.02,
   );
-  return known ? known[0] : "Custom";
+  return known ? known[0] : "自定义";
 }
 function updateAspectLabel() {
   const label = document.querySelector(".zoom-control > span");
@@ -3047,32 +3047,32 @@ async function slideSizeDialog(preset = null) {
   const current = aspectLabel();
   const choice = el(
     "select",
-    { class: "input", "aria-label": "Slide size", autofocus: true },
+    { class: "input", "aria-label": "幻灯片大小", autofocus: true },
     ...SLIDE_SIZES.map(([key, label]) => el("option", { value: key }, label)),
   );
   if (current === "Custom")
-    choice.prepend(el("option", { value: "Custom" }, "Custom (current)"));
+    choice.prepend(el("option", { value: "Custom" }, "自定义 (当前)"));
   choice.value = typeof preset === "string" ? preset : current;
   const scale = el("input", { type: "checkbox", checked: true });
   const ok = await dialog({
-    title: "Slide size",
+    title: "幻灯片大小",
     body: el(
       "form",
       { class: "dialog-body" },
-      el("label", {}, "Size", choice),
+      el("label", {}, "大小", choice),
       el(
         "label",
         { class: "check-field" },
         scale,
-        el("span", {}, "Scale the slides' content to the new size"),
+        el("span", {}, "将幻灯片内容缩放到新大小"),
       ),
       el(
         "p",
         { class: "muted" },
-        "Widescreen slides are 13.33 by 7.5 inches; standard slides are 10 by 7.5.",
+        "宽屏幻灯片尺寸为 13.33 × 7.5 英寸；标准幻灯片尺寸为 10 × 7.5 英寸。",
       ),
     ),
-    confirm: "Apply",
+    confirm: "应用",
   });
   if (!ok || doc !== target) return;
   const size = SLIDE_SIZES.find(([key]) => key === choice.value);
@@ -3179,7 +3179,7 @@ async function rasterizeSlide(pres, s, previews) {
   const blob = await new Promise((resolve) =>
     canvas.toBlob(resolve, "image/png"),
   );
-  if (!blob) throw new Error("The slide could not be drawn as an image.");
+  if (!blob) throw new Error("无法将幻灯片绘制为图像。");
   return blob;
 }
 async function exportImages(all) {
@@ -3190,7 +3190,7 @@ async function exportImages(all) {
     ? P.getSlides(doc.pres).filter((s) => !P.isSlideHidden(s))
     : [slide()];
   if (!slides.length) {
-    toast("There are no visible slides to export.");
+    toast("没有可导出的可见幻灯片。");
     return;
   }
   const name = cleanName(target.name, { maxLength: Infinity });
@@ -3198,11 +3198,11 @@ async function exportImages(all) {
     const blob = await rasterizeSlide(target.pres, slides[0], target.previews);
     if (doc !== target) return;
     await cloud.downloadBlob(blob, `${name} - Slide ${index + 1}.png`);
-    toast("Slide downloaded as a PNG image.");
+    toast("幻灯片已下载为 PNG 图像。");
     return;
   }
   // Drawing every slide takes a moment on a long deck; say so up front.
-  toast(`Preparing ${slides.length} slides as PNG images…`);
+  toast(`正在准备 ${slides.length} 张幻灯片为 PNG 图像…`);
   const files = {};
   const digits = String(slides.length).length;
   for (const [i, s] of slides.entries()) {
@@ -3216,11 +3216,11 @@ async function exportImages(all) {
     new Blob([zip], { type: "application/zip" }),
     `${name} - slides.zip`,
   );
-  toast(`${slides.length} slides downloaded as PNG images.`);
+  toast(`已下载 ${slides.length} 张幻灯片为 PNG 图像。`);
 }
 async function renameDoc() {
   const target = doc;
-  const name = await promptName("Rename presentation", target.name);
+  const name = await promptName("重命名演示文稿", target.name);
   if (!nameChanged(name, target.name)) return;
   await mutationTail;
   return saveQueue.run(async () => {
@@ -3422,12 +3422,12 @@ function renderEditor() {
             {
               class: "slide-sidebar",
               id: "slide-navigator",
-              "aria-label": "Slide navigator",
+              "aria-label": "幻灯片导航",
             },
             el(
               "div",
               { class: "panel-heading sr-only" },
-              el("span", {}, "Slides"),
+              el("span", {}, "幻灯片"),
               el("span", { id: "slide-count", class: "muted" }),
             ),
             el("div", {
@@ -3442,10 +3442,10 @@ function renderEditor() {
                   x: e.clientX,
                   y: e.clientY,
                   contextual: true,
-                  label: "Slides",
+                  label: "幻灯片",
                   items: [
                     {
-                      label: "New Slide",
+                      label: "新建幻灯片",
                       icon: "o:newSlide",
                       shortcut: IS_MAC ? "⌘+Shift+N" : "Ctrl+M",
                       onSelect: () => addSlideAfter(slide()),
@@ -3458,7 +3458,7 @@ function renderEditor() {
               class: "pane-resize",
               role: "separator",
               "aria-orientation": "vertical",
-              "aria-label": "Resize slide thumbnails",
+              "aria-label": "调整幻灯片缩略图大小",
               "data-pane": "thumbnails",
               tabindex: 0,
               onpointerdown: (e) => resizePane(e, "thumbnails"),
@@ -3504,7 +3504,7 @@ function renderEditor() {
                 class: "pane-resize horizontal",
                 role: "separator",
                 "aria-orientation": "horizontal",
-                "aria-label": "Resize notes",
+                "aria-label": "调整备注大小",
                 "data-pane": "notes",
                 tabindex: 0,
                 onpointerdown: (e) => resizePane(e, "notes"),
@@ -3513,11 +3513,11 @@ function renderEditor() {
               el(
                 "label",
                 { for: "speaker-notes", class: "sr-only" },
-                "Speaker notes",
+                "演讲者备注",
               ),
               el("textarea", {
                 id: "speaker-notes",
-                placeholder: "Click to add notes",
+                placeholder: "单击此处添加备注",
                 onchange: (e) => {
                   const target = slide(),
                     value = e.target.value;
@@ -3533,7 +3533,7 @@ function renderEditor() {
           el("aside", {
             class: "inspector",
             id: "inspector",
-            "aria-label": "Format panel",
+            "aria-label": "格式面板",
             tabindex: -1,
           }),
         ),
@@ -3564,19 +3564,19 @@ function renderEditor() {
 function editorTopbar() {
   const menubar = createMenubar(
     [
-      ["File", fileMenu],
-      ["Edit", editMenu],
-      ["View", viewMenu],
-      ["Insert", insertMenu],
-      ["Format", formatMenu],
-      ["Arrange", arrangeMenuBar],
-      ["Slide", slidesMenu],
-      ["Tools", menuFor("Tools", () => review.toolsMenu())],
-      ["Slide Show", slideShowMenuBar],
-      ["Help", helpMenu],
+      ["文件", fileMenu],
+      ["编辑", editMenu],
+      ["视图", viewMenu],
+      ["插入", insertMenu],
+      ["格式", formatMenu],
+      ["排列", arrangeMenuBar],
+      ["幻灯片", slidesMenu],
+      ["工具", menuFor("工具", () => review.toolsMenu())],
+      ["幻灯片放映", slideShowMenuBar],
+      ["帮助", helpMenu],
     ].map(([label, open]) => ({ label, open })),
     {
-      label: "Presentation menus",
+      label: "演示文稿菜单",
       // Text being edited takes the keyboard back, where it was.
       returnFocus: () =>
         (richEditor?.input?.isConnected
@@ -3607,7 +3607,7 @@ function editorTopbar() {
       "div",
       { class: "topbar-row" },
       iconButton(
-        "Back to presentations",
+        "返回演示文稿列表",
         "ArrowLeft",
         run(async () => {
           if (await leaveEditor()) await home();
@@ -3619,24 +3619,24 @@ function editorTopbar() {
         {
           class: "qat desktop-only",
           role: "toolbar",
-          "aria-label": "Quick Access Toolbar",
+          "aria-label": "快速访问工具栏",
         },
         quick(
-          "Save to Puter",
+          "保存到 Puter",
           "save",
           run(() => saveCloud()),
           {
-            title: `Save (${MOD_KEY}+S)`,
+            title: `保存 (${MOD_KEY}+S)`,
             class: "qat-btn qat-save",
           },
         ),
-        quick("Undo", "undo", () => undo(), {
+        quick("撤消", "undo", () => undo(), {
           id: "undo",
-          title: `Undo (${MOD_KEY}+Z)`,
+          title: `撤消 (${MOD_KEY}+Z)`,
         }),
-        quick("Redo", "redo", () => redo(), {
+        quick("恢复", "redo", () => redo(), {
           id: "redo",
-          title: `Redo (${MOD_KEY}+Shift+Z)`,
+          title: `恢复 (${MOD_KEY}+Shift+Z)`,
         }),
       ),
       menubar.el,
@@ -3665,11 +3665,11 @@ function editorTopbar() {
         commandSearch(),
         saveButton(),
         assistantToggle(),
-        button("Present", "Play", run(present), "primary present-button", {
-          "data-tip-title": "Present (F5)",
+        button("放映", "Play", run(present), "primary present-button", {
+          "data-tip-title": "放映 (F5)",
         }),
         iconButton(
-          "File options",
+          "文件选项",
           "MoreHorizontal",
           (e) => fileMenu(e.currentTarget),
           { class: "btn icon-btn mobile-only", ...MENU_BUTTON },
@@ -3687,8 +3687,8 @@ function commandSearch() {
   const input = el("input", {
     type: "search",
     class: "command-search-input",
-    placeholder: "Search",
-    "aria-label": "Search for commands",
+    placeholder: "搜索",
+    "aria-label": "搜索命令",
     autocomplete: "off",
     spellcheck: "false",
     onkeydown: (e) => {
@@ -3739,12 +3739,12 @@ function commandSearch() {
     }
     if (!items.length)
       items.push({
-        label: `No commands match “${input.value.trim()}”`,
+        label: `未找到与“${input.value.trim()}”匹配的命令`,
         disabled: true,
       });
     openMenu({
       anchor: wrap,
-      label: "Commands",
+      label: "命令",
       items,
       align: "end",
       minWidth: Math.max(280, wrap.offsetWidth),
@@ -4579,7 +4579,7 @@ function statusBar() {
     min: "0",
     max: "100",
     step: "1",
-    "aria-label": "Zoom",
+    "aria-label": "显示比例",
     oninput: (e) => {
       // The slider runs from 10% to 400%, with 100% at its middle.
       const v = Number(e.target.value);
@@ -4600,11 +4600,11 @@ function statusBar() {
           type: "button",
           class: "status-item status-button desktop-only",
           id: "status-language",
-          "data-tip-title": "Proofing language",
+          "data-tip-title": "校对语言",
           onclick: (e) =>
             openMenu({
               anchor: e.currentTarget,
-              label: "Language",
+              label: "语言",
               items: languageItems(),
               align: "start",
             }),
@@ -4620,7 +4620,7 @@ function statusBar() {
           onclick: () => checkAccessibility(),
         },
         icon("o:accessibility", 15),
-        el("span", {}, "Accessibility: Investigate"),
+        el("span", {}, "辅助功能: 检查"),
       ),
     ),
     el(
@@ -4636,7 +4636,7 @@ function statusBar() {
           onclick: () => show("notes", !showing("notes")),
         },
         icon("o:notesPane", 15),
-        el("span", {}, "Notes"),
+        el("span", {}, "备注"),
       ),
       // Shown once the editor has a comments pane to open.
       el(
@@ -4650,27 +4650,27 @@ function statusBar() {
           onclick: () => statusComments()?.toggle(),
         },
         icon("o:showComments", 15),
-        el("span", {}, "Comments"),
+        el("span", {}, "批注"),
       ),
       el(
         "div",
         {
           class: "status-views desktop-only",
           role: "group",
-          "aria-label": "Views",
+          "aria-label": "视图",
         },
-        viewButton("normal", "Normal", "normalViewSmall", () =>
+        viewButton("normal", "普通", "normalViewSmall", () =>
           setView("normal"),
         ),
-        viewButton("sorter", "Slide Sorter", "slideSorter", () =>
+        viewButton("sorter", "幻灯片浏览", "slideSorter", () =>
           setView("sorter"),
         ),
-        viewButton("reading", "Reading View", "readingViewSmall", () =>
+        viewButton("reading", "阅读视图", "readingViewSmall", () =>
           setView("reading"),
         ),
         viewButton(
           "show",
-          "Slide Show",
+          "幻灯片放映",
           "slideShowSmall",
           run(() => present({ from: "current" })),
         ),
@@ -4679,17 +4679,17 @@ function statusBar() {
         "div",
         { class: "zoom-control" },
         el("span", { class: "sr-only" }, aspectLabel()),
-        iconButton("Zoom out", "Minus", () => stepZoom(-1), {
-          title: `Zoom out (${MOD_KEY}+-)`,
+        iconButton("缩小", "Minus", () => stepZoom(-1), {
+          title: `缩小 (${MOD_KEY}+-)`,
           class: "btn icon-btn zoom-step",
         }),
         slider,
-        iconButton("Zoom in", "Plus", () => stepZoom(1), {
-          title: `Zoom in (${MOD_KEY}+=)`,
+        iconButton("放大", "Plus", () => stepZoom(1), {
+          title: `放大 (${MOD_KEY}+=)`,
           class: "btn icon-btn zoom-step",
         }),
-        button("Fit", null, (e) => zoomMenu(e), "zoom-level", {
-          "aria-label": "Zoom level",
+        button("适应窗口", null, (e) => zoomMenu(e), "zoom-level", {
+          "aria-label": "缩放比例",
           ...MENU_BUTTON,
         }),
         el(
@@ -4697,8 +4697,8 @@ function statusBar() {
           {
             type: "button",
             class: "status-view fit",
-            "aria-label": "Fit slide to current window",
-            "data-tip-title": `Fit slide to current window (${MOD_KEY}+0)`,
+            "aria-label": "使幻灯片适应当前窗口",
+            "data-tip-title": `使幻灯片适应当前窗口 (${MOD_KEY}+0)`,
             onclick: () => setZoom("fit"),
           },
           icon("o:fitWindow", 16),
@@ -4726,9 +4726,9 @@ function updateZoomUi() {
       "aria-pressed",
       String(viewZoom() ? viewZoom().isFit() : zoom === "fit"),
     );
-  const zoomIn = document.querySelector('.zoom-control [aria-label="Zoom in"]');
+  const zoomIn = document.querySelector('.zoom-control [aria-label="放大"], .zoom-control [aria-label="Zoom in"]');
   const zoomOut = document.querySelector(
-    '.zoom-control [aria-label="Zoom out"]',
+    '.zoom-control [aria-label="缩小"], .zoom-control [aria-label="Zoom out"]',
   );
   disableControl(zoomIn, !nextZoomStep(1), workspace);
   disableControl(zoomOut, !nextZoomStep(-1), workspace);
@@ -4764,17 +4764,17 @@ function updateStatusBar() {
 // The proofing language of the deck's text: what the browser's spell checker
 // is told, and what new text is marked with.
 const LANGUAGES = [
-  ["en-US", "English (United States)"],
-  ["en-GB", "English (United Kingdom)"],
-  ["fr-FR", "French (France)"],
-  ["de-DE", "German (Germany)"],
-  ["es-ES", "Spanish (Spain)"],
-  ["it-IT", "Italian (Italy)"],
-  ["pt-BR", "Portuguese (Brazil)"],
-  ["nl-NL", "Dutch (Netherlands)"],
-  ["ja-JP", "Japanese"],
-  ["zh-CN", "Chinese (Simplified)"],
-  ["ko-KR", "Korean"],
+  ["en-US", "英语 (美国)"],
+  ["en-GB", "英语 (英国)"],
+  ["fr-FR", "法语 (法国)"],
+  ["de-DE", "德语 (德国)"],
+  ["es-ES", "西班牙语 (西班牙)"],
+  ["it-IT", "意大利语 (意大利)"],
+  ["pt-BR", "葡萄牙语 (巴西)"],
+  ["nl-NL", "荷兰语 (荷兰)"],
+  ["ja-JP", "日语"],
+  ["zh-CN", "中文 (简体)"],
+  ["ko-KR", "韩语"],
 ];
 function deckLanguage() {
   try {
@@ -4794,8 +4794,8 @@ function languageItems() {
   return [
     {
       header: textual.length
-        ? "Mark selected text as"
-        : "Select text to set its language",
+        ? "将所选文字标记为"
+        : "选择文字以设置其语言",
     },
     ...LANGUAGES.map(([code, name]) => ({
       label: name,
@@ -4825,29 +4825,29 @@ async function altText() {
   const input = el("textarea", {
     class: "input",
     rows: 4,
-    "aria-label": "Alt text",
+    "aria-label": "替代文字",
     value: P.getShapeDescription?.(obj) || "",
   });
   const decorative = el("input", { type: "checkbox" });
   const ok = await dialog({
-    title: "Alt Text",
+    title: "替代文字",
     body: el(
       "div",
       { class: "dialog-body" },
       el(
         "p",
         { class: "helper" },
-        "How would you describe this object and its context to someone who is blind or has low vision?",
+        "您将如何向有视力障碍的人描述此对象及其上下文？",
       ),
       input,
       el(
         "label",
         { class: "check-field" },
         decorative,
-        el("span", {}, "Mark as decorative"),
+        el("span", {}, "标记为装饰性"),
       ),
     ),
-    confirm: "Done",
+    confirm: "完成",
   });
   if (!ok) return;
   const value = decorative.checked ? "" : input.value.trim();
@@ -4969,13 +4969,13 @@ function addSlideAfter(target, layoutPart = null) {
 }
 // The Arrange and Slide Show menus of the menu bar.
 function arrangeMenuBar(anchor) {
-  return menuFor("Arrange", arrangeMenuItems)(anchor);
+  return menuFor("排列", arrangeMenuItems)(anchor);
 }
 function arrangeMenuItems() {
   const obj = currentShape();
   return [
     {
-      label: "Order",
+      label: "顺序",
       icon: "o:bringForward",
       disabled: !obj,
       items: orderItems(obj),
@@ -4984,7 +4984,7 @@ function arrangeMenuItems() {
     ...formatTools.arrangeMenuItems(),
     { separator: true },
     {
-      label: "Selection Pane",
+      label: "选择窗格",
       icon: "o:selectionPane",
       shortcut: `${M}+Alt+U`,
       onSelect: toggleSelectionPane,
@@ -4992,31 +4992,31 @@ function arrangeMenuItems() {
   ];
 }
 function slideShowMenuBar(anchor) {
-  return menuFor("Slide Show", slideShowMenuItems)(anchor);
+  return menuFor("幻灯片放映", slideShowMenuItems)(anchor);
 }
 const slideShowMenuItems = () => [
   {
-    label: "Play from Start",
+    label: "从头开始放映",
     icon: "o:playFromStart",
     shortcut: "F5",
     onSelect: run(() => present({ from: "beginning" })),
   },
   {
-    label: "Play from Current Slide",
+    label: "从当前幻灯片放映",
     icon: "o:playFromCurrent",
     shortcut: "Shift+F5",
     onSelect: run(() => present({ from: "current" })),
   },
   { separator: true },
   {
-    label: "Transition",
+    label: "切换",
     icon: "o:previewTransition",
     items: transitionItems(slide()),
   },
   ...showFeatures.menuItems(),
   { separator: true },
   {
-    label: P.isSlideHidden(slide()) ? "Show Slide" : "Hide Slide",
+    label: P.isSlideHidden(slide()) ? "显示幻灯片" : "隐藏幻灯片",
     icon: "o:hideSlide",
     onSelect: () =>
       setSlidesHidden(actionSlides(slide()), !P.isSlideHidden(slide())),
@@ -5040,7 +5040,7 @@ function toggleSelectionPane() {
   }
   selectionPane = el("aside", {
     class: "task-pane selection-pane",
-    "aria-label": "Selection",
+    "aria-label": "选择",
     tabindex: -1,
   });
   document.querySelector(".editor-body")?.append(selectionPane);
@@ -5289,7 +5289,7 @@ function colorMenu(kind) {
     extra.push(
       { separator: true },
       {
-        label: "Weight",
+        label: "粗细",
         icon: "o:lineSpacing",
         disabled: !obj,
         items: [0.25, 0.5, 0.75, 1, 1.5, 2.25, 3, 4.5, 6].map((w) => ({
@@ -5299,7 +5299,7 @@ function colorMenu(kind) {
         })),
       },
       {
-        label: "Dashes",
+        label: "虚线",
         icon: "o:borders",
         disabled: !obj,
         items: DASHES.map(([value, label]) => ({
@@ -5311,15 +5311,15 @@ function colorMenu(kind) {
     );
     if (obj && isLine(obj))
       extra.push({
-        label: "Arrows",
+        label: "箭头",
         icon: "MoveRight",
         items: [
-          ["none", "none", "Line"],
-          ["none", "triangle", "Arrow at end"],
-          ["triangle", "none", "Arrow at start"],
-          ["triangle", "triangle", "Arrows at both ends"],
-          ["none", "stealth", "Pointed arrow at end"],
-          ["oval", "oval", "Circles at both ends"],
+          ["none", "none", "直线"],
+          ["none", "triangle", "尾端带箭头"],
+          ["triangle", "none", "始端带箭头"],
+          ["triangle", "triangle", "双向箭头"],
+          ["none", "stealth", "尾端尖头箭头"],
+          ["oval", "oval", "双向圆点"],
         ].map(([head, tail, label]) => ({
           label,
           onSelect: () =>
@@ -5334,7 +5334,7 @@ function colorMenu(kind) {
     extra.push(
       { separator: true },
       {
-        label: `Format ${kind === "fill" ? "Fill" : "Outline"}…`,
+        label: `设置${kind === "fill" ? "填充" : "轮廓"}格式…`,
         icon: "o:formatPane",
         onSelect: () => show("formatPane", true),
       },
@@ -5346,7 +5346,7 @@ function colorMenu(kind) {
     automatic:
       kind === "text"
         ? {
-            label: "Automatic",
+            label: "自动",
             icon: "o:textColor",
             onSelect: () => applyColor("text", "scheme:tx1"),
           }
@@ -5399,7 +5399,7 @@ function effectsMenu() {
     onSelect: () => setShadowAll(preset),
   });
   return [
-    { header: "Shadow" },
+    { header: "阴影" },
     shadow("No Shadow", null),
     shadow("Offset: Bottom Right", { ...SHADOW, angleDeg: 45 }),
     shadow("Offset: Bottom", { ...SHADOW, angleDeg: 90 }),
@@ -5581,7 +5581,7 @@ function quickStylesMenu() {
   const grid = el("div", {
     class: "quick-styles",
     role: "group",
-    "aria-label": "Quick Styles",
+    "aria-label": "快速样式",
   });
   for (const choice of shapeStyleChoices())
     grid.append(
@@ -5610,10 +5610,10 @@ function tableMenu() {
   const grid = el("div", {
     class: "table-picker",
     role: "grid",
-    "aria-label": "Insert table",
+    "aria-label": "插入表格",
     "data-arrow-keys": "",
   });
-  const label = el("div", { class: "table-picker-label" }, "Insert Table");
+  const label = el("div", { class: "table-picker-label" }, "插入表格");
   const cells = [];
   for (let r = 0; r < 8; r++)
     for (let c = 0; c < 10; c++) {
@@ -5663,12 +5663,12 @@ function tableMenu() {
         "on",
         Number(cell.dataset.r) <= r && Number(cell.dataset.c) <= c,
       );
-    label.textContent = `${c + 1}x${r + 1} Table`;
+    label.textContent = `${c + 1}×${r + 1} 表格`;
   }
   return [
     { custom: el("div", { class: "table-picker-wrap" }, label, grid) },
     { separator: true },
-    { label: "Insert Table…", icon: "o:table", onSelect: run(tableDialog) },
+    { label: "插入表格…", icon: "o:table", onSelect: run(tableDialog) },
   ];
 }
 function tableInsert(where) {
@@ -5683,7 +5683,7 @@ function tableInsert(where) {
 function tableDeleteMenu() {
   return [
     {
-      label: "Delete Columns",
+      label: "删除列",
       icon: "o:deleteColumns",
       onSelect: () =>
         tableAction((obj, row, col) => {
@@ -5692,7 +5692,7 @@ function tableDeleteMenu() {
         }),
     },
     {
-      label: "Delete Rows",
+      label: "删除行",
       icon: "o:deleteRows",
       onSelect: () =>
         tableAction((obj, row) => {
@@ -5700,7 +5700,7 @@ function tableDeleteMenu() {
           P.removeTableRow(obj, row);
         }),
     },
-    { label: "Delete Table", icon: "o:deleteTable", onSelect: deleteObject },
+    { label: "删除表格", icon: "o:deleteTable", onSelect: deleteObject },
   ];
 }
 function distributeTable(axis) {
@@ -5755,22 +5755,22 @@ function sectionMenu() {
   const sections = sectionList();
   const here = sectionIndexOf(sections);
   return [
-    { label: "Add Section", icon: "o:section", onSelect: run(addSection) },
+    { label: "添加节", icon: "o:section", onSelect: run(addSection) },
     {
-      label: "Rename Section",
+      label: "重命名节",
       icon: "Pencil",
       disabled: here < 0,
       onSelect: run(() => renameSection(here)),
     },
     {
-      label: "Remove Section",
+      label: "删除节",
       icon: "Trash2",
       disabled: here < 0,
       onSelect: () => removeSection(here),
     },
     { separator: true },
     {
-      label: "Remove All Sections",
+      label: "删除所有节",
       icon: "Trash2",
       disabled: !sections.length,
       onSelect: () => writeSections([]),
@@ -5811,8 +5811,8 @@ function writeSections(list) {
   });
 }
 async function addSection() {
-  const name = await promptName("Rename Section", "Untitled Section", null, {
-    confirm: "Rename",
+  const name = await promptName("重命名节", "未命名节", null, {
+    confirm: "重命名",
   });
   if (!name) return;
   const plan = addSectionAt(
@@ -5825,10 +5825,10 @@ async function addSection() {
 }
 async function renameSection(i) {
   const name = await promptName(
-    "Rename Section",
+    "重命名节",
     groupSlides(slideOrder(), sectionList())[i]?.name ?? "",
     null,
-    { confirm: "Rename" },
+    { confirm: "重命名" },
   );
   if (!name) return;
   const plan = renameSectionAt(slideOrder(), sectionList(), i, name);
@@ -5851,7 +5851,7 @@ async function insertSymbol() {
   const grid = el("div", {
     class: "symbol-grid",
     role: "group",
-    "aria-label": "Symbols",
+    "aria-label": "符号",
     onkeydown: (e) => {
       const cells = [...grid.children];
       const at = cells.indexOf(document.activeElement);
@@ -5893,9 +5893,9 @@ async function insertSymbol() {
       ),
     );
   await dialog({
-    title: "Symbol",
+    title: "符号",
     body: el("div", { class: "dialog-body" }, grid),
-    cancel: "Cancel",
+    cancel: "取消",
     confirm: null,
   });
   if (chosen) insertTextAtCursor(obj, chosen);
@@ -6001,7 +6001,7 @@ function wordArtMenu() {
   const grid = el("div", {
     class: "wordart-grid",
     role: "group",
-    "aria-label": "WordArt styles",
+    "aria-label": "艺术字样式",
   });
   WORDART.forEach(([label, format, shadow]) => {
     const hex = themeHex(format.color) || "#000";
@@ -6342,13 +6342,13 @@ function ribbonApi() {
     paste: () => pasteFromMenu(),
     pasteMenu: () => [
       {
-        label: "Paste",
+        label: "粘贴",
         icon: "o:paste",
         shortcut: `${MOD_KEY}+V`,
         onSelect: () => pasteFromMenu().catch(fail),
       },
       {
-        label: "Paste as Text Only",
+        label: "只保留文本",
         icon: "o:textBox",
         onSelect: run(async () => {
           const value = await navigator.clipboard?.readText?.();
@@ -6357,7 +6357,7 @@ function ribbonApi() {
       },
       { separator: true },
       {
-        label: "Duplicate",
+        label: "重复",
         icon: "o:duplicate",
         shortcut: `${MOD_KEY}+D`,
         disabled: !currentShape(),
@@ -6374,7 +6374,7 @@ function ribbonApi() {
       ...layoutItems(slide()),
       { separator: true },
       {
-        label: "Duplicate Selected Slides",
+        label: "复制所选幻灯片",
         icon: "o:duplicate",
         onSelect: () => duplicateSlides(actionSlides(slide())),
       },
@@ -6382,7 +6382,7 @@ function ribbonApi() {
       ...(assistant
         ? [
             {
-              label: "New Slide from Prompt…",
+              label: "根据提示新建幻灯片…",
               icon: "o:newSlidePrompt",
               onSelect: () => newSlideFromPrompt().catch(fail),
             },
@@ -6485,13 +6485,13 @@ function ribbonApi() {
       const current = obj ? listStyle(obj) : "none";
       return [
         {
-          label: "None",
+          label: "无",
           checked: current === "none",
           onSelect: () =>
             current !== "none" && toggleList(textTarget(), current),
         },
         {
-          label: "Filled Round Bullets",
+          label: "实心圆项目符号",
           checked: current === "bullet",
           onSelect: () =>
             current !== "bullet" && toggleList(textTarget(), "bullet"),
@@ -6503,7 +6503,7 @@ function ribbonApi() {
       const current = obj ? listStyle(obj) : "none";
       return [
         {
-          label: "None",
+          label: "无",
           checked: current === "none",
           onSelect: () =>
             current !== "none" && toggleList(textTarget(), current),
@@ -6538,7 +6538,7 @@ function ribbonApi() {
         })),
         { separator: true },
         {
-          label: "Line Spacing Options…",
+          label: "行距选项…",
           icon: "o:formatPane",
           onSelect: () => show("formatPane", true),
         },
@@ -6550,7 +6550,7 @@ function ribbonApi() {
     },
     columnsMenu: () =>
       [1, 2, 3].map((n) => ({
-        label: ["One Column", "Two Columns", "Three Columns"][n - 1],
+        label: ["一栏", "两栏", "三栏"][n - 1],
         checked: (P.getShapeTextColumns?.(textTarget())?.count || 1) === n,
         onSelect: () =>
           mutateShape(textTarget(), (obj) =>
@@ -6559,10 +6559,10 @@ function ribbonApi() {
       })),
     textDirectionMenu: () =>
       [
-        ["horz", "Horizontal"],
-        ["vert", "Rotate all text 90°"],
-        ["vert270", "Rotate all text 270°"],
-        ["wordArtVert", "Stacked"],
+        ["horz", "横排"],
+        ["vert", "竖排 (旋转90°)"],
+        ["vert270", "旋转270°"],
+        ["wordArtVert", "堆叠"],
       ].map(([value, label]) => ({
         label,
         checked: (P.getShapeTextDirection?.(textTarget()) || "horz") === value,
@@ -6592,7 +6592,7 @@ function ribbonApi() {
       const current = obj ? textAnchor(obj) : null;
       return TEXT_ANCHORS.map(([value, label]) => ({
         label:
-          { top: "Top", center: "Middle", bottom: "Bottom" }[value] || label,
+          { top: "顶端对齐", center: "垂直居中", bottom: "底端对齐" }[value] || label,
         icon: `o:${{ top: "valignTop", center: "valignMiddle", bottom: "valignBottom" }[value]}`,
         checked: current === value,
         onSelect: () => setAnchor(textTarget(), value),
@@ -6602,12 +6602,12 @@ function ribbonApi() {
     insertPicture: () => insertImage(),
     pictureMenu: () => [
       {
-        label: "Picture from File…",
+        label: "来自文件的图片…",
         icon: "o:pictures",
         onSelect: () => insertImage(),
       },
       {
-        label: "Picture from Clipboard",
+        label: "剪贴板中的图片",
         icon: "o:paste",
         onSelect: () => pasteFromMenu().catch(fail),
       },
@@ -6618,19 +6618,19 @@ function ribbonApi() {
     arrangeMenu: () => {
       const obj = currentShape();
       return [
-        { header: "Order Objects" },
+        { header: "对象顺序" },
         ...orderItems(obj),
-        { header: "Group Objects" },
+        { header: "组合对象" },
         ...arrangeItems().filter(
           (i) => i.label === "Group" || i.label === "Ungroup",
         ),
-        { header: "Position Objects" },
+        { header: "定位对象" },
         ...arrangeItems().filter(
           (i) => !["Group", "Ungroup"].includes(i.label) && !i.separator,
         ),
         { separator: true },
         {
-          label: "Selection Pane…",
+          label: "选择窗格…",
           icon: "o:selectionPane",
           onSelect: toggleSelectionPane,
         },
@@ -6653,13 +6653,13 @@ function ribbonApi() {
     replace: () => openFind({ replace: true }),
     selectMenu: () => [
       {
-        label: "Select All",
+        label: "全选",
         icon: "o:selectAll",
         shortcut: `${MOD_KEY}+A`,
         onSelect: selectAll,
       },
       {
-        label: "Selection Pane…",
+        label: "选择窗格…",
         icon: "o:selectionPane",
         onSelect: toggleSelectionPane,
       },
@@ -6676,22 +6676,22 @@ function ribbonApi() {
     canLink: () => canLink(currentShape()),
     insertLink: () => linkDialog().catch(fail),
     actionMenu: () => [
-      { label: "Hyperlink to…", icon: "o:link", onSelect: run(linkDialog) },
+      { label: "超链接到…", icon: "o:link", onSelect: run(linkDialog) },
       { separator: true },
       ...[
-        ["nextSlide", "Next Slide"],
-        ["prevSlide", "Previous Slide"],
-        ["firstSlide", "First Slide"],
-        ["lastSlide", "Last Slide"],
+        ["nextSlide", "下一张幻灯片"],
+        ["prevSlide", "上一张幻灯片"],
+        ["firstSlide", "第一张幻灯片"],
+        ["lastSlide", "最后一张幻灯片"],
       ].map(([kind, label]) => ({
-        label: `Go to ${label}`,
+        label: `跳转到${label}`,
         disabled: !canLink(currentShape()),
         onSelect: () =>
           mutateShape(currentShape(), (obj) => setLink(obj, { kind })),
       })),
       { separator: true },
       {
-        label: "Remove Action",
+        label: "删除操作",
         icon: "o:unlink",
         disabled: !linkOf(currentShape() || {}),
         onSelect: removeLink,
@@ -6712,7 +6712,7 @@ function ribbonApi() {
     themeGalleryFooter: () => [
       ...themeTools.themeGalleryFooter(),
       { separator: true },
-      { label: "Theme Options…", icon: "o:themes", onSelect: run(themeDialog) },
+      { label: "主题选项…", icon: "o:themes", onSelect: run(themeDialog) },
     ],
     variantChoices: () => (doc ? themeTools.variantChoices() : []),
     currentVariant: () => themeTools.currentVariant(),
@@ -6734,7 +6734,7 @@ function ribbonApi() {
       })),
       { separator: true },
       {
-        label: "Custom Slide Size…",
+        label: "自定义幻灯片大小…",
         icon: "o:slideSize",
         onSelect: run(slideSizeDialog),
       },
@@ -6808,12 +6808,12 @@ function ribbonApi() {
       return [
         ...ALIGN_ACTIONS.map(([edge, , ic]) => ({
           label: {
-            left: "Align Left",
-            hcenter: "Align Center",
-            right: "Align Right",
-            top: "Align Top",
-            vcenter: "Align Middle",
-            bottom: "Align Bottom",
+            left: "左对齐",
+            hcenter: "水平居中",
+            right: "右对齐",
+            top: "顶端对齐",
+            vcenter: "垂直居中",
+            bottom: "底端对齐",
           }[edge],
           icon: `o:${{ left: "alignObjLeft", hcenter: "alignObjCenter", right: "alignObjRight", top: "alignObjTop", vcenter: "alignObjMiddle", bottom: "alignObjBottom" }[edge]}`,
           disabled: !count,
@@ -6821,13 +6821,13 @@ function ribbonApi() {
         })),
         { separator: true },
         {
-          label: "Distribute Horizontally",
+          label: "横向分布",
           icon: "o:distributeH",
           disabled: count < 3,
           onSelect: () => distributeSelection("x"),
         },
         {
-          label: "Distribute Vertically",
+          label: "纵向分布",
           icon: "o:distributeV",
           disabled: count < 3,
           onSelect: () => distributeSelection("y"),
@@ -6855,32 +6855,32 @@ function ribbonApi() {
         !!obj && ["shape", "picture"].includes(P.getShapeKind(obj));
       return [
         {
-          label: "Rotate Right 90°",
+          label: "向右旋转 90°",
           icon: "o:rotate",
           disabled: !obj,
           onSelect: () => turn(90),
         },
         {
-          label: "Rotate Left 90°",
+          label: "向左旋转 90°",
           icon: "o:rotate",
           disabled: !obj,
           onSelect: () => turn(-90),
         },
         {
-          label: "Flip Vertical",
+          label: "垂直翻转",
           icon: "o:flipV",
           disabled: !flippable,
           onSelect: () => flipObject(obj, "vertical"),
         },
         {
-          label: "Flip Horizontal",
+          label: "水平翻转",
           icon: "o:flipH",
           disabled: !flippable,
           onSelect: () => flipObject(obj, "horizontal"),
         },
         { separator: true },
         {
-          label: "More Rotation Options…",
+          label: "其他旋转选项…",
           icon: "o:formatPane",
           onSelect: () => show("formatPane", true),
         },
@@ -6905,10 +6905,10 @@ function ribbonApi() {
     shapeStyleChoices,
     applyShapeStyle,
     textEffectsMenu: () => [
-      { header: "Shadow" },
-      { label: "No Shadow", onSelect: () => setShadowAll(null) },
+      { header: "阴影" },
+      { label: "无阴影", onSelect: () => setShadowAll(null) },
       {
-        label: "Offset: Bottom Right",
+        label: "偏移: 右下",
         onSelect: () => setShadowAll({ ...SHADOW, angleDeg: 45 }),
       },
     ],
@@ -6916,7 +6916,7 @@ function ribbonApi() {
     correctionsMenu: () => {
       const obj = currentShape();
       return [-40, -20, 0, 20, 40].map((pct) => ({
-        label: `Brightness: ${pct > 0 ? "+" : ""}${pct}%`,
+        label: `亮度: ${pct > 0 ? "+" : ""}${pct}%`,
         onSelect: () =>
           mutateShape(obj, (obj) => P.setShapeImageBrightness(obj, pct / 100)),
       }));
@@ -6924,7 +6924,7 @@ function ribbonApi() {
     transparencyMenu: () => {
       const obj = currentShape();
       return [0, 15, 30, 50, 65, 80, 95].map((pct) => ({
-        label: `Transparency: ${pct}%`,
+        label: `透明度: ${pct}%`,
         onSelect: () =>
           mutateShape(obj, (obj) => P.setShapeImageOpacity(obj, 1 - pct / 100)),
       }));
@@ -6945,12 +6945,12 @@ function ribbonApi() {
     },
     cropMenu: () => [
       {
-        label: "Crop…",
+        label: "裁剪…",
         icon: "o:crop",
         onSelect: () => show("formatPane", true),
       },
       {
-        label: "Fit",
+        label: "适应",
         icon: "o:fitWindow",
         onSelect: () =>
           mutateShape(currentShape(), (obj) =>
@@ -7211,7 +7211,7 @@ function zoomItems() {
   const setting = viewZoom() ? viewZoom().setting() : zoom;
   return [
     {
-      label: "Fit to screen",
+      label: "适应屏幕",
       icon: "Maximize",
       shortcut: `${MOD_KEY}+0`,
       checked: setting === "fit",
@@ -7225,7 +7225,7 @@ function zoomItems() {
     })),
     { separator: true },
     {
-      label: "Zoom…",
+      label: "缩放…",
       icon: "o:zoom",
       onSelect: () => views.openZoomDialog().catch(fail),
     },
@@ -7234,7 +7234,7 @@ function zoomItems() {
 function zoomMenu(e) {
   openMenu({
     anchor: e.currentTarget,
-    label: "Zoom",
+    label: "缩放",
     align: "end",
     minWidth: 180,
     items: zoomItems(),
@@ -7277,10 +7277,10 @@ window.addEventListener("resize", updatePanelToggles);
  * step each, and keep the user on the slide and selection they had.
  */
 function assistantToggle() {
-  return button("Ask AI", "Sparkles", () => toggleAssistant(), "ai-toggle", {
+  return button("AI 助手", "Sparkles", () => toggleAssistant(), "ai-toggle", {
     "aria-controls": "ai-panel",
     "aria-expanded": "false",
-    title: `AI assistant (${MOD_KEY}+J)`,
+    title: `AI 助手 (${MOD_KEY}+J)`,
   });
 }
 function syncAssistantToggle() {
@@ -7307,18 +7307,18 @@ async function newSlideFromPrompt() {
     maxlength: 2000,
     autofocus: true,
     placeholder:
-      "For example: our three goals for next year, with a line on each",
-    "aria-label": "Describe the slide",
+      "例如：我们明年的三个目标，每个目标配一句话",
+    "aria-label": "描述幻灯片",
   });
   const after = index + 1;
   const ok = await dialog({
-    title: "New Slide from Prompt",
+    title: "根据提示新建幻灯片",
     body: el(
       "form",
       { class: "dialog-body" },
-      el("label", {}, "What should the new slide say?", input),
+      el("label", {}, "新幻灯片应包含什么内容？", input),
     ),
-    confirm: "Draft Slide",
+    confirm: "起草幻灯片",
   });
   const text = input.value.trim();
   if (!ok || !text || !assistant) return;
@@ -7474,7 +7474,7 @@ function recentMenuItems() {
     .sort((a, b) => (b.at || 0) - (a.at || 0))
     .slice(0, 8);
   if (!list.length)
-    return [{ label: "No recent presentations", disabled: true }];
+    return [{ label: "无最近打开的演示文稿", disabled: true }];
   return list.map((f) => ({
     label: cleanName(f.name || cloud.displayName(f.path), {
       maxLength: Infinity,
@@ -7490,53 +7490,53 @@ function fileMenu(anchor) {
   const mobile = anchor.classList.contains("mobile-only");
   openMenu({
     anchor,
-    label: "File",
+    label: "文件",
     align: "auto",
     minWidth: 250,
     items: [
       {
-        label: "New presentation",
+        label: "新建演示文稿",
         icon: "FilePlus",
         onSelect: run(() => newDeck("blank")),
       },
       {
-        label: "Open from Puter",
+        label: "从 Puter 打开",
         icon: "FolderOpen",
         shortcut: `${M}+O`,
         onSelect: run(openPicker),
       },
       {
-        label: "Open recent",
+        label: "打开最近文件",
         icon: "Clock",
         items: recentMenuItems(),
       },
-      { label: "Import PPTX", icon: "Upload", onSelect: pickLocal },
+      { label: "导入 PPTX", icon: "Upload", onSelect: pickLocal },
       { separator: true },
       {
-        label: "Save to Puter",
+        label: "保存到 Puter",
         icon: "Save",
         shortcut: `${M}+S`,
         onSelect: run(() => saveCloud()),
       },
       {
-        label: "Save a copy to Puter",
+        label: "在 Puter 中保存副本",
         icon: "CopyPlus",
         shortcut: `${M}+Shift+S`,
         onSelect: run(saveCopy),
       },
       {
-        label: "Save as template",
+        label: "另存为模板",
         icon: "LayoutTemplate",
         onSelect: run(() => fileTools.saveAsTemplate()),
       },
       {
-        label: "Export…",
+        label: "导出…",
         icon: "o:exportFile",
         onSelect: run(() => fileTools.openExportDialog()),
       },
-      { label: "Rename", icon: "Pencil", onSelect: run(renameDoc) },
+      { label: "重命名", icon: "Pencil", onSelect: run(renameDoc) },
       {
-        label: "Close",
+        label: "关闭",
         icon: "X",
         onSelect: run(async () => {
           if (await leaveEditor()) await home();
@@ -7544,18 +7544,18 @@ function fileMenu(anchor) {
       },
       { separator: true },
       {
-        label: "Compress pictures…",
+        label: "压缩图片…",
         icon: "o:compressPictures",
         disabled: readOnlyDocument(),
         onSelect: run(() => fileTools.openCompressDialog()),
       },
       {
-        label: "File size…",
+        label: "文件大小…",
         icon: "o:fileSize",
         onSelect: run(() => fileTools.openFileSizeDialog()),
       },
       {
-        label: "Embed font",
+        label: "嵌入字体",
         icon: "Type",
         disabled: readOnlyDocument(),
         onSelect: pickFont,
@@ -7563,38 +7563,38 @@ function fileMenu(anchor) {
       ...review.fileMenuItems(),
       { separator: true },
       {
-        label: "Page setup (slide size)…",
+        label: "页面设置 (幻灯片大小)…",
         icon: "Maximize",
         onSelect: run(slideSizeDialog),
       },
       {
-        label: "Print…",
+        label: "打印…",
         icon: "Printer",
         shortcut: `${M}+P`,
         onSelect: run(() => fileTools.openPrintDialog()),
       },
       {
-        label: "Properties",
+        label: "属性",
         icon: "Info",
         onSelect: run(() => fileTools.openPropertiesDialog()),
       },
       { separator: true },
       {
-        label: "Download PowerPoint (.pptx)",
+        label: "下载 PowerPoint (.pptx)",
         icon: "Download",
         onSelect: run(downloadDeck),
       },
       {
-        label: "Download as images",
+        label: "下载为图像",
         icon: "Image",
         items: [
           {
-            label: "This slide as PNG",
+            label: "当前幻灯片为 PNG",
             icon: "Image",
             onSelect: run(() => exportImages(false)),
           },
           {
-            label: "All slides as PNG (ZIP)",
+            label: "所有幻灯片为 PNG (ZIP)",
             icon: "Download",
             onSelect: run(() => exportImages(true)),
           },
@@ -7603,17 +7603,17 @@ function fileMenu(anchor) {
       ...(mobile
         ? [
             { separator: true },
-            { label: "Edit", icon: "Pencil", items: editItems() },
-            { label: "View", icon: "Eye", items: viewItems() },
-            { label: "Insert", icon: "Plus", items: insertItems() },
-            { label: "Format", icon: "Type", items: formatItems() },
-            { label: "Slide", icon: "LayoutTemplate", items: slideItems() },
+            { label: "编辑", icon: "Pencil", items: editItems() },
+            { label: "视图", icon: "Eye", items: viewItems() },
+            { label: "插入", icon: "Plus", items: insertItems() },
+            { label: "格式", icon: "Type", items: formatItems() },
+            { label: "幻灯片", icon: "LayoutTemplate", items: slideItems() },
             {
-              label: "Review",
+              label: "审阅",
               icon: "o:showComments",
               items: [
                 {
-                  label: "New Comment",
+                  label: "新建批注",
                   icon: "o:newComment",
                   onSelect: () => review.newComment(),
                 },
@@ -7622,7 +7622,7 @@ function fileMenu(anchor) {
               ],
             },
             {
-              label: "Account and settings",
+              label: "账户与设置",
               icon: "User",
               items: accountItems(),
             },
@@ -7630,12 +7630,12 @@ function fileMenu(anchor) {
         : []),
       { separator: true },
       {
-        label: "Keyboard shortcuts",
+        label: "键盘快捷键",
         icon: "Keyboard",
         onSelect: shortcutsDialog,
       },
       {
-        label: "Back to presentations",
+        label: "返回演示文稿列表",
         icon: "ArrowLeft",
         onSelect: run(async () => {
           if (await leaveEditor()) await home();
@@ -7648,14 +7648,14 @@ function editItems() {
   const obj = currentShape();
   return [
     {
-      label: "Undo",
+      label: "撤消",
       icon: "Undo2",
       shortcut: `${M}+Z`,
       disabled: !history.past.length,
       onSelect: () => undo(),
     },
     {
-      label: "Redo",
+      label: "恢复",
       icon: "Redo2",
       shortcut: `${M}+Shift+Z`,
       disabled: !history.future.length,
@@ -7665,57 +7665,57 @@ function editItems() {
     ...clipboardItems(),
     { separator: true },
     {
-      label: "Select all",
+      label: "全选",
       icon: "SquareDashedMousePointer",
       shortcut: `${M}+A`,
       onSelect: selectAll,
     },
     {
-      label: "Find and replace",
+      label: "查找和替换",
       icon: "Search",
       shortcut: `${M}+F`,
       onSelect: () => openFind(),
     },
     {
-      label: "Find next",
+      label: "查找下一个",
       icon: "ChevronDown",
       shortcut: `${M}+G`,
       onSelect: () => findAgain(1),
     },
     {
-      label: "Find previous",
+      label: "查找上一个",
       icon: "ChevronUp",
       shortcut: `${M}+Shift+G`,
       onSelect: () => findAgain(-1),
     },
     {
-      label: "Replace…",
+      label: "替换…",
       icon: "o:replace",
       shortcut: `${M}+H`,
       onSelect: () => openFind({ replace: true }),
     },
     {
-      label: "Select data…",
+      label: "选择数据…",
       icon: "o:selectData",
       disabled: !obj || !chartTools.isChart(obj) || readOnlyDocument(),
       onSelect: () => chartTools.selectData(obj),
     },
     {
-      label: "Duplicate",
+      label: "复制",
       icon: "CopyPlus",
       shortcut: `${M}+D`,
       disabled: !obj,
       onSelect: duplicateObject,
     },
     {
-      label: "Delete",
+      label: "删除",
       icon: "Trash2",
       shortcut: "Delete",
       disabled: !obj,
       onSelect: deleteObject,
     },
     {
-      label: "Delete slide",
+      label: "删除幻灯片",
       icon: "o:deleteSlide",
       disabled:
         !doc ||
@@ -7738,26 +7738,26 @@ function viewItems() {
     ...views.menuItems(),
     { separator: true },
     {
-      label: "Slide navigator",
+      label: "幻灯片导航",
       icon: "PanelLeft",
       checked: navigatorVisible(),
       onSelect: toggleNavigator,
     },
     {
-      label: "Format panel",
+      label: "格式面板",
       icon: "PanelRight",
       checked: inspectorVisible(),
       onSelect: toggleInspector,
     },
     {
-      label: "AI assistant",
+      label: "AI 助手",
       icon: "Sparkles",
       shortcut: `${M}+J`,
       checked: !!assistant?.isOpen,
       onSelect: () => toggleAssistant(),
     },
     {
-      label: "Ribbon",
+      label: "功能区",
       icon: "PanelTop",
       shortcut: `${M}+${IS_MAC ? "⌥" : "Alt"}+R`,
       checked: !!ribbon && !ribbon.collapsed,
@@ -7765,40 +7765,40 @@ function viewItems() {
     },
     { separator: true },
     {
-      label: "Zoom in",
+      label: "放大",
       icon: "ZoomIn",
       shortcut: `${M}+=`,
       disabled: !nextZoomStep(1),
       onSelect: () => stepZoom(1),
     },
     {
-      label: "Zoom out",
+      label: "缩小",
       icon: "ZoomOut",
       shortcut: `${M}+-`,
       disabled: !nextZoomStep(-1),
       onSelect: () => stepZoom(-1),
     },
-    { label: "Zoom", icon: "Maximize", items: zoomItems() },
+    { label: "缩放", icon: "Maximize", items: zoomItems() },
     { separator: true },
     {
-      label: "Ruler",
+      label: "标尺",
       icon: "o:ruler",
       checked: !!chrome.ruler,
       onSelect: () => show("ruler", !chrome.ruler),
     },
     {
-      label: "Grid and Guides",
+      label: "网格和参考线",
       icon: "o:gridlines",
       items: views.grid.menuItems(),
     },
     { separator: true },
     {
-      label: "Master",
+      label: "母版",
       icon: "o:slideMaster",
       items: [
-        ["slide", "Slide Master", "o:slideMaster", "1"],
-        ["handout", "Handout Master", "o:handoutMaster", "2"],
-        ["notes", "Notes Master", "o:notesMaster", "3"],
+        ["slide", "幻灯片母版", "o:slideMaster", "1"],
+        ["handout", "讲义母版", "o:handoutMaster", "2"],
+        ["notes", "备注母版", "o:notesMaster", "3"],
       ].map(([kind, label, icon, key]) => ({
         label,
         icon,
@@ -7808,31 +7808,31 @@ function viewItems() {
       })),
     },
     {
-      label: "Close Master View",
+      label: "关闭母版视图",
       icon: "o:closeMasterView",
       disabled: !masterView.active,
       onSelect: () => setView("normal"),
     },
     { separator: true },
     {
-      label: "Header and Footer…",
+      label: "页眉和页脚…",
       icon: "o:headerFooter",
       onSelect: () => ribbonCommands().headerFooter?.(),
     },
     { separator: true },
-    { label: "Present", icon: "Play", onSelect: run(present) },
+    { label: "放映", icon: "Play", onSelect: run(present) },
     { separator: true },
-    { label: "Appearance", icon: "Monitor", onSelect: appearanceDialog },
+    { label: "外观", icon: "Monitor", onSelect: appearanceDialog },
   ];
 }
 const viewMenu = menuFor("View", viewItems);
 function insertItems() {
   return [
-    { label: "Text box", icon: "Type", onSelect: () => addObject("text") },
-    { label: "Image", icon: "Image", onSelect: () => insertImage() },
-    { label: "Shape", icon: "Square", items: shapeItems() },
-    { label: "Table", icon: "Table", onSelect: run(tableDialog) },
-    { label: "Chart…", icon: "o:chart", onSelect: () => chartTools.insert() },
+    { label: "文本框", icon: "Type", onSelect: () => addObject("text") },
+    { label: "图片", icon: "Image", onSelect: () => insertImage() },
+    { label: "形状", icon: "Square", items: shapeItems() },
+    { label: "表格", icon: "Table", onSelect: run(tableDialog) },
+    { label: "图表…", icon: "o:chart", onSelect: () => chartTools.insert() },
     P.addSlideSmartArt && {
       label: "SmartArt…",
       icon: "o:smartArt",
@@ -7840,49 +7840,49 @@ function insertItems() {
     },
     { separator: true },
     {
-      label: "Link",
+      label: "链接",
       icon: "Link",
       shortcut: `${M}+K`,
       disabled: !canLink(currentShape()),
       onSelect: run(linkDialog),
     },
     { separator: true },
-    { label: "New slide", icon: "Plus", items: layoutItems(slide()) },
+    { label: "新建幻灯片", icon: "Plus", items: layoutItems(slide()) },
     {
-      label: "Duplicate slide",
+      label: "复制幻灯片",
       icon: "o:duplicate",
       shortcut: `${M}+Shift+D`,
       disabled: !doc || masterView.active || readOnlyDocument(),
       onSelect: () => duplicateSlides(actionSlides(slide())),
     },
     {
-      label: "Slides from",
+      label: "重用幻灯片",
       icon: "o:reuseSlides",
       items: slidesFrom.menuItems(),
     },
-    { label: "Section", icon: "o:section", items: sectionMenu() },
+    { label: "节", icon: "o:section", items: sectionMenu() },
     {
-      label: "Comment",
+      label: "批注",
       icon: "o:newComment",
       shortcut: `${M}+Shift+M`,
       onSelect: () => review.newComment(),
     },
     { separator: true },
-    { label: "WordArt", icon: "o:wordArt", items: wordArtMenu() },
+    { label: "艺术字", icon: "o:wordArt", items: wordArtMenu() },
     {
-      label: "Date and time",
+      label: "日期和时间",
       icon: "o:dateTime",
       disabled: !ribbonCommands().canInsertField(),
       items: dateTimeMenu(),
     },
     {
-      label: "Slide number",
+      label: "幻灯片编号",
       icon: "o:slideNumber",
       disabled: !ribbonCommands().canInsertField(),
       onSelect: insertSlideNumber,
     },
     {
-      label: "Symbol…",
+      label: "符号…",
       icon: "o:symbol",
       disabled: !ribbonCommands().canInsertField(),
       onSelect: () => insertSymbol().catch(fail),
@@ -7915,22 +7915,22 @@ function formatItems() {
   return [
     ...formatTools.formatMenuItems(),
     { separator: true },
-    toggle("bold", "Bold", "Bold", `${M}+B`),
-    toggle("italic", "Italic", "Italic", `${M}+I`),
-    toggle("underline", "Underline", "Underline", `${M}+U`),
-    toggle("strike", "Strikethrough", "Strikethrough"),
+    toggle("bold", "加粗", "Bold", `${M}+B`),
+    toggle("italic", "倾斜", "Italic", `${M}+I`),
+    toggle("underline", "下划线", "Underline", `${M}+U`),
+    toggle("strike", "删除线", "Strikethrough"),
     {
-      label: "Text size",
+      label: "字号",
       icon: "ALargeSmall",
       disabled: !textCapable,
       items: [
         {
-          label: "Larger",
+          label: "增大字号",
           shortcut: `${M}+Shift+>`,
           onSelect: () => stepTextSize(obj, 1),
         },
         {
-          label: "Smaller",
+          label: "减小字号",
           shortcut: `${M}+Shift+<`,
           onSelect: () => stepTextSize(obj, -1),
         },
@@ -7938,7 +7938,7 @@ function formatItems() {
     },
     { separator: true },
     {
-      label: "Align",
+      label: "对齐方式",
       icon: "AlignLeft",
       disabled: !textCapable,
       items: TEXT_ALIGNMENTS.map(([a, label, icon]) => ({
@@ -7949,7 +7949,7 @@ function formatItems() {
       })),
     },
     {
-      label: "Vertical align",
+      label: "垂直对齐方式",
       icon: "AlignVerticalJustifyCenter",
       disabled: !textCapable,
       items: TEXT_ANCHORS.map(([a, label, icon]) => ({
@@ -7960,31 +7960,31 @@ function formatItems() {
       })),
     },
     {
-      label: "Lists",
+      label: "列表",
       icon: "List",
       disabled: !textCapable || isTable(obj),
       items: [
         {
-          label: "Bulleted list",
+          label: "项目符号列表",
           icon: "List",
           checked: list === "bullet",
           onSelect: () => toggleList(obj, "bullet"),
         },
         {
-          label: "Numbered list",
+          label: "编号列表",
           icon: "ListOrdered",
           checked: list === "number",
           onSelect: () => toggleList(obj, "number"),
         },
         { separator: true },
         {
-          label: "Increase indent",
+          label: "增加缩进量",
           icon: "IndentIncrease",
           shortcut: richEditor ? "Tab" : null,
           onSelect: () => changeIndent(obj, 1),
         },
         {
-          label: "Decrease indent",
+          label: "减少缩进量",
           icon: "IndentDecrease",
           shortcut: richEditor ? "Shift+Tab" : null,
           onSelect: () => changeIndent(obj, -1),
@@ -7992,7 +7992,7 @@ function formatItems() {
       ],
     },
     {
-      label: "Line spacing",
+      label: "行距",
       icon: "AlignVerticalSpaceAround",
       disabled: !textCapable || isTable(obj),
       items: LINE_SPACINGS.map(([value, label]) => ({
@@ -8003,21 +8003,21 @@ function formatItems() {
     },
     { separator: true },
     {
-      label: "Drop shadow",
+      label: "阴影",
       icon: "Blend",
       checked: shadowed.length > 0 && shadowed.every(hasShadow),
       disabled: !shadowed.length,
       onSelect: () => toggleShadow(),
     },
-    { label: "Order", icon: "Layers", disabled: !obj, items: orderItems(obj) },
+    { label: "顺序", icon: "Layers", disabled: !obj, items: orderItems(obj) },
     {
-      label: "Arrange",
+      label: "排列",
       icon: "AlignStartVertical",
       disabled: !obj,
       items: arrangeItems(),
     },
     {
-      label: "Animation Painter",
+      label: "动画刷",
       icon: "o:animationPainter",
       shortcut: `${MOD_KEY}+Alt+Shift+C`,
       checked: animationTools.painting,
@@ -8025,17 +8025,17 @@ function formatItems() {
       onSelect: () => animationTools.startPainter(false),
     },
     { separator: true },
-    { label: "Theme", icon: "Palette", onSelect: run(themeDialog) },
+    { label: "主题", icon: "Palette", onSelect: run(themeDialog) },
   ];
 }
 const formatMenu = menuFor("Format", formatItems);
 function orderItems(obj) {
   if (!obj) return [];
   return [
-    ["Bring to front", "BringToFront", P.bringShapeToFront, `${M}+Shift+]`],
-    ["Bring forward", "ArrowUp", P.bringShapeForward, `${M}+]`],
-    ["Send backward", "ArrowDown", P.sendShapeBackward, `${M}+[`],
-    ["Send to back", "SendToBack", P.sendShapeToBack, `${M}+Shift+[`],
+    ["置于顶层", "BringToFront", P.bringShapeToFront, `${M}+Shift+]`],
+    ["上移一层", "ArrowUp", P.bringShapeForward, `${M}+]`],
+    ["下移一层", "ArrowDown", P.sendShapeBackward, `${M}+[`],
+    ["置于底层", "SendToBack", P.sendShapeToBack, `${M}+Shift+[`],
   ].map(([label, icon, move, shortcut]) => ({
     label,
     icon,
@@ -8045,12 +8045,12 @@ function orderItems(obj) {
 }
 function slideItems() {
   return [
-    { label: "New slide", icon: "Plus", items: layoutItems(slide()) },
+    { label: "新建幻灯片", icon: "Plus", items: layoutItems(slide()) },
     ...slideActions(slide()),
     { separator: true },
-    { label: "Transition", icon: "Film", items: transitionItems(slide()) },
+    { label: "切换", icon: "Film", items: transitionItems(slide()) },
     {
-      label: "Speaker notes",
+      label: "演讲者备注",
       icon: "FileText",
       onSelect: () => document.querySelector("#speaker-notes")?.focus(),
     },
@@ -8060,17 +8060,17 @@ const slidesMenu = menuFor("Slide", slideItems);
 function helpItems() {
   return [
     {
-      label: "Keyboard shortcuts",
+      label: "键盘快捷键",
       icon: "Keyboard",
       onSelect: shortcutsDialog,
     },
-    { label: "About Presentation", icon: "Info", onSelect: aboutDialog },
+    { label: "关于 Presentation", icon: "Info", onSelect: aboutDialog },
   ];
 }
 const helpMenu = menuFor("Help", helpItems);
 async function aboutDialog() {
   await dialog({
-    title: "About Presentation",
+    title: "关于 Presentation",
     body: el(
       "div",
       { class: "dialog-body" },
@@ -8078,14 +8078,14 @@ async function aboutDialog() {
       el(
         "p",
         {},
-        "A clean, responsive presentation editor. Every presentation is a real PowerPoint file (.pptx) that opens in PowerPoint, Keynote, and Google Slides.",
+        "一款简洁、响应式的演示文稿编辑器。每个演示文稿都是标准的 PowerPoint 文件 (.pptx)，可在 PowerPoint、Keynote 和 Google 幻灯片中打开。",
       ),
       el(
         "p",
         { class: "muted" },
         cloud.asksWhereToSave()
-          ? "Saved presentations live in your own Puter cloud, in the folder you choose when you first save them. Recovery drafts stay on this device."
-          : "Saved presentations live in your own Puter cloud under Presentations/. Recovery drafts stay on this device.",
+          ? "保存的演示文稿存放在您自己的 Puter 云端中您首次保存时选择的文件夹中。恢复草稿保留在此设备上。"
+          : "保存的演示文稿存放在您自己的 Puter 云端中的 Presentations/ 目录下。恢复草稿保留在此设备上。",
       ),
     ),
     cancel: null,
@@ -8100,14 +8100,14 @@ function shapeItems() {
   return [
     ...SHAPES.map(item),
     { separator: true },
-    { label: "Arrows", icon: "ArrowRight", items: ARROW_SHAPES.map(item) },
+    { label: "箭头", icon: "ArrowRight", items: ARROW_SHAPES.map(item) },
     { separator: true },
-    { label: "Line", icon: "Minus", onSelect: () => addObject("line") },
-    { label: "Arrow", icon: "MoveRight", onSelect: () => addObject("arrow") },
+    { label: "直线", icon: "Minus", onSelect: () => addObject("line") },
+    { label: "箭头", icon: "MoveRight", onSelect: () => addObject("arrow") },
   ];
 }
 function shapeMenu(e) {
-  menu(e.currentTarget, shapeItems(), { label: "Shape" });
+  menu(e.currentTarget, shapeItems(), { label: "形状" });
 }
 function updateHistoryButtons() {
   const u = document.querySelector("#undo"),
@@ -8203,7 +8203,7 @@ function layoutItems(target) {
   return layoutCommands.newSlideItems(target);
 }
 function layoutMenu(e) {
-  menu(e.currentTarget, layoutItems(slide()), { label: "New slide" });
+  menu(e.currentTarget, layoutItems(slide()), { label: "新建幻灯片" });
 }
 async function chooseSlide(target, { extras = null } = {}) {
   const active = doc;
@@ -8851,7 +8851,7 @@ function slideActions(target, { hideUnavailable = false } = {}) {
   const i = all.findIndex((s) => P.getSlidePartName(s) === part);
   if (i < 0) return [];
   const group = actionSlides(target);
-  const noun = group.length > 1 ? `${group.length} slides` : "slide";
+  const noun = group.length > 1 ? `${group.length} 张幻灯片` : "幻灯片";
   const positions = group.map((s) =>
     all.findIndex((x) => P.getSlidePartName(x) === P.getSlidePartName(s)),
   );
@@ -8866,40 +8866,40 @@ function slideActions(target, { hideUnavailable = false } = {}) {
     condition ? (hideUnavailable ? null : { disabled: true }) : {};
   return [
     {
-      label: `Duplicate ${noun}`,
+      label: `复制${noun}`,
       icon: "Copy",
       onSelect: () => duplicateSlides(group),
     },
     {
-      label: "Layout",
+      label: "版式",
       icon: "o:layout",
       items: layoutCommands.layoutItems(group),
     },
     {
-      label: `Reset ${noun}`,
+      label: `重置${noun}`,
       icon: "o:resetSlide",
       onSelect: () => layoutCommands.resetSlides(group),
     },
     {
-      label: `${allHidden ? "Show" : "Hide"} ${noun}`,
+      label: `${allHidden ? "显示" : "隐藏"}${noun}`,
       icon: allHidden ? "Eye" : "EyeOff",
       onSelect: () => setSlidesHidden(group, !allHidden),
     },
     unavailable(first === 0) && {
-      label: "Move up",
+      label: "上移",
       icon: "ArrowUp",
       ...unavailable(first === 0),
       onSelect: () => moveSlides(group, -1, focus),
     },
     unavailable(last === all.length - 1) && {
-      label: "Move down",
+      label: "下移",
       icon: "ArrowDown",
       ...unavailable(last === all.length - 1),
       onSelect: () => moveSlides(group, 1, focus),
     },
     { separator: true },
     {
-      label: `Delete ${noun}`,
+      label: `删除${noun}`,
       icon: "Trash2",
       danger: true,
       onSelect: () => deleteSlides(group),
@@ -8989,7 +8989,7 @@ function deleteSlides(targets) {
     const chosen = resolveSlides(parts);
     if (!chosen.length) return SKIP_MUTATION;
     if (chosen.length >= P.getSlides(doc.pres).length) {
-      toast("Keep at least one slide in your presentation.");
+      toast("演示文稿中请至少保留一张幻灯片。");
       return SKIP_MUTATION;
     }
     const activePart = P.getSlidePartName(slide());
@@ -10615,11 +10615,11 @@ async function editDiagramText(target) {
     if (!result) return;
     buildDiagramDrawing(obj, result);
   } catch {
-    toast("This diagram’s layout isn’t supported for text editing yet.");
+    toast("此图表的布局暂不支持文本编辑。");
     return;
   }
   if (!entries.length) {
-    toast("This diagram has no text items to edit.");
+    toast("此图表没有可编辑的文本项。");
     return;
   }
   const fields = entries.map((entry, index) => ({
@@ -10628,7 +10628,7 @@ async function editDiagramText(target) {
       class: "input",
       rows: Math.max(2, Math.min(6, entry.text.split("\n").length)),
       value: entry.text,
-      "aria-label": `Item ${index + 1} text`,
+      "aria-label": `第 ${index + 1} 项文本`,
       autofocus: index === 0,
     }),
   }));
@@ -10665,7 +10665,7 @@ async function editDiagramText(target) {
   const body = el(
     "form",
     { class: "dialog-body" },
-    el("p", {}, "Replace the text of individual items in this diagram."),
+    el("p", {}, "替换此图表中各个项目的文本。"),
     el(
       "div",
       { class: "diagram-text-fields" },
@@ -10677,7 +10677,7 @@ async function editDiagramText(target) {
               marginInlineStart: `${Math.max(0, Math.min(8, entry.depth - 1)) * 12}px`,
             },
           },
-          `Item ${index + 1}`,
+          `项目 ${index + 1}`,
           input,
         ),
       ),
@@ -10690,9 +10690,9 @@ async function editDiagramText(target) {
     }
   });
   const ok = await dialog({
-    title: "Edit diagram text",
+    title: "编辑图示文本",
     body,
-    confirm: "Apply",
+    confirm: "应用",
     returnFocus: () =>
       (doc === owner &&
         P.getSlidePartName(slide()) === part &&
@@ -10842,7 +10842,7 @@ function editText(target, event = null, { inserted = null } = {}) {
     class: "inline-editor",
     role: "textbox",
     "aria-multiline": "true",
-    "aria-label": "Edit text",
+    "aria-label": "编辑文本",
     contenteditable: "true",
     spellcheck: "true",
   });
@@ -12229,14 +12229,14 @@ function inspectorModel(obj) {
   const parts = table ? {} : formatTools.paneParts(obj, paneExtras(obj, kind));
   const sizeSub = {
     id: "size",
-    label: "Size & Properties",
+    label: "大小与属性",
     icon: "o:paneSize",
     build: () => [
       table
-        ? section("Size", sizeFields(obj), { key: "size", open: true })
+        ? section("大小", sizeFields(obj), { key: "size", open: true })
         : parts.size(),
       table
-        ? section("Position", positionFields(obj), {
+        ? section("位置", positionFields(obj), {
             key: "position",
             open: true,
           })
@@ -12244,7 +12244,7 @@ function inspectorModel(obj) {
       parts.textBox?.(),
       parts.altText?.(),
       canLink(obj) && sectionsFromHeadings(linkFields(obj), "link"),
-      section("Arrange", arrangeFields(obj, kind), {
+      section("排列", arrangeFields(obj, kind), {
         key: "arrange",
         open: true,
       }),
@@ -12255,29 +12255,29 @@ function inspectorModel(obj) {
       ? [
           {
             id: "text",
-            label: "Text Options",
+            label: "文本选项",
             subs: [
               {
                 id: "text",
-                label: "Text",
+                label: "文本",
                 icon: "o:paneText",
                 build: () => textSections(obj),
               },
               parts.textFill && {
                 id: "textFill",
-                label: "Text Fill & Outline",
+                label: "文本填充与轮廓",
                 icon: "o:paneTextFill",
                 build: parts.textFill,
               },
               parts.textEffects && {
                 id: "textEffects",
-                label: "Text Effects",
+                label: "文本效果",
                 icon: "o:paneTextEffects",
                 build: parts.textEffects,
               },
               parts.textBox && {
                 id: "textBox",
-                label: "Text Box",
+                label: "文本框",
                 icon: "o:paneTextBox",
                 build: () => [parts.textBox()],
               },
@@ -12292,11 +12292,11 @@ function inspectorModel(obj) {
       tops: [
         {
           id: "table",
-          label: "Table Options",
+          label: "表格选项",
           subs: [
             {
               id: "table",
-              label: "Table",
+              label: "表格",
               icon: "o:paneTable",
               build: () => sectionsFromHeadings(tableFields(obj), "table"),
             },
@@ -12305,11 +12305,11 @@ function inspectorModel(obj) {
         },
         {
           id: "text",
-          label: "Text Options",
+          label: "文本选项",
           subs: [
             {
               id: "text",
-              label: "Text",
+              label: "文本",
               icon: "o:paneText",
               build: () => textSections(obj),
             },
@@ -12334,11 +12334,11 @@ function inspectorModel(obj) {
       tops: [
         {
           id: family,
-          label: chart ? "Chart Options" : "SmartArt Options",
+          label: chart ? "图表选项" : "SmartArt 选项",
           subs: [
             {
               id: family,
-              label: chart ? "Chart" : "SmartArt",
+              label: chart ? "图表" : "SmartArt 图形",
               icon: chart ? "o:paneChart" : "o:paneDiagram",
               build: () => sectionsFromHeadings(nodes, family),
             },
@@ -12363,24 +12363,24 @@ function inspectorModel(obj) {
     tops: [
       {
         id: "shape",
-        label: "Shape Options",
+        label: "形状选项",
         subs: [
           (parts.fill || parts.line) && {
             id: "fill",
-            label: "Fill & Line",
+            label: "填充与线条",
             icon: "o:paneFillLine",
             build: () => [parts.fill?.(), parts.line?.()],
           },
           parts.effects && {
             id: "effects",
-            label: "Effects",
+            label: "效果",
             icon: "o:paneEffects",
             build: parts.effects,
           },
           sizeSub,
           parts.picture && {
             id: "picture",
-            label: "Picture",
+            label: "图片",
             icon: "o:panePicture",
             build: parts.picture,
           },
@@ -12401,7 +12401,7 @@ function paneExtras(obj, kind) {
       // Imported shapes often reference theme colors; show the color they
       // resolve to rather than "No fill".
       colorInput(
-        "Fill color",
+        "填充颜色",
         P.getShapeFillColorResolvedEffective(doc.pres, obj),
         (c) =>
           mutateShape(
@@ -12413,11 +12413,11 @@ function paneExtras(obj, kind) {
             },
             { coalesce: coalesceKey("fill", P.getShapeSlide(obj), obj) },
           ),
-        { empty: "No fill", fallback: THEMES[theme].accent },
+        { empty: "无填充", fallback: THEMES[theme].accent },
       );
     extras.removeFill = () =>
       iconButton(
-        "Remove fill",
+        "删除填充",
         "Ban",
         () =>
           mutateShape(obj, (obj) =>
@@ -12425,7 +12425,7 @@ function paneExtras(obj, kind) {
               ? SKIP_MUTATION
               : P.setShapeNoFill(obj),
           ),
-        { class: "btn secondary icon-btn", title: "Remove fill" },
+        { class: "btn secondary icon-btn", title: "删除填充" },
       );
     extras.shadowToggle = () =>
       el(
@@ -12483,7 +12483,7 @@ function textSections(obj) {
             "Content",
             contentTextField(obj, {
               class: "input content-field",
-              "aria-label": "Object text",
+              "aria-label": "对象文本",
               value: displayShapeText(doc.pres, obj) || "",
               onchange: (e) => {
                 const value = e.target.value;
@@ -12500,7 +12500,7 @@ function textSections(obj) {
     "select",
     {
       class: "input",
-      "aria-label": "Font family",
+      "aria-label": "字体",
       onchange: (e) => {
         const font = e.target.value;
         applyTextFormat(obj, { font });
@@ -12610,7 +12610,7 @@ function textSections(obj) {
       "select",
       {
         class: "input",
-        "aria-label": "Line spacing",
+        "aria-label": "行距",
         onchange: (e) => setLineSpacing(obj, Number(e.target.value)),
       },
       ...LINE_SPACINGS.map(([value, label]) => el("option", { value }, label)),
@@ -12738,8 +12738,8 @@ function arrangeFields(obj, kind) {
     el(
       "div",
       { class: "arrange-buttons" },
-      button("Duplicate", "Copy", duplicateObject, "secondary"),
-      button("Delete", "Trash2", deleteObject, "secondary"),
+      button("复制", "Copy", duplicateObject, "secondary"),
+      button("删除", "Trash2", deleteObject, "secondary"),
     ),
     (kind === "shape" || kind === "picture") &&
       el(
@@ -12902,7 +12902,7 @@ function pictureFields(obj) {
         el("textarea", {
           class: "input",
           value: P.getShapeDescription(obj) || "",
-          "aria-label": "Image alternative text",
+          "aria-label": "图片可选文字",
           onchange: (e) => {
             const value = e.target.value;
             mutateShape(obj, (obj) => P.setShapeDescription(obj, value));
@@ -12925,22 +12925,22 @@ function backgroundModel() {
     tops: [
       {
         id: "background",
-        label: "Background",
+        label: "背景",
         subs: [
           {
             id: "fill",
-            label: "Fill",
+            label: "填充",
             icon: "o:paneBackground",
             build: () => {
               const pane = backgroundPane.render();
               pane.querySelector(":scope > h3")?.remove();
               return [
-                section("Fill", [pane], { key: "background", open: true }),
-                section("Transition", transitionFields(), {
+                section("填充", [pane], { key: "background", open: true }),
+                section("切换", transitionFields(), {
                   key: "transition",
                   open: true,
                 }),
-                section("Slide objects", slideObjectFields(), {
+                section("幻灯片对象", slideObjectFields(), {
                   key: "objects",
                   open: true,
                 }),
@@ -12958,7 +12958,7 @@ function transitionFields() {
     "select",
     {
       class: "input",
-      "aria-label": "Transition",
+      "aria-label": "切换",
       onchange: (e) => setTransition(slide(), e.target.value),
     },
     ...transitionTools.groups.map((group) =>
@@ -12972,12 +12972,12 @@ function transitionFields() {
     ),
   );
   if (current === "other")
-    select.prepend(el("option", { value: "other" }, "Imported"));
+    select.prepend(el("option", { value: "other" }, "已导入"));
   select.value = current;
   return [
     field("Transition", select),
     button(
-      "Apply to all slides",
+      "全部应用",
       null,
       () => setTransition(slide(), slideTransition(slide()), { all: true }),
       "text-button",
@@ -12999,7 +12999,7 @@ function slideObjectFields() {
     el(
       "p",
       { class: "helper" },
-      "Select an object on the slide to edit its text, style, or position.",
+      "在幻灯片上选择一个对象以编辑其文本、样式或位置。",
     ),
     el(
       "div",
@@ -13025,7 +13025,7 @@ function slideObjectFields() {
       el(
         "p",
         { class: "helper" },
-        "An open canvas. Add text, a shape, or an image to get started.",
+        "空白画布。添加文本、形状或图片即可开始。",
       ),
   ].filter(Boolean);
 }
@@ -13038,39 +13038,39 @@ function multiModel() {
       el(
         "div",
         { class: "fmt-frame-lead" },
-        el("h3", {}, `${count} objects selected`),
+        el("h3", {}, `已选定 ${count} 个对象`),
         el(
           "p",
           { class: "helper" },
-          "Drag to move them together. Shift-click adds or removes an object.",
+          "拖动可一起移动。按住 Shift 单击可添加或移除对象。",
         ),
       ),
     ],
     tops: [
       {
         id: "arrange",
-        label: "Arrange",
+        label: "排列",
         subs: [
           {
             id: "arrange",
-            label: "Align & Arrange",
+            label: "对齐与排列",
             icon: "o:paneArrange",
             build: () => [
               section(
-                "Align",
+                "对齐",
                 [
                   alignRow(),
                   el(
                     "div",
                     { class: "format-buttons" },
                     iconButton(
-                      "Distribute horizontally",
+                      "横向分布",
                       "AlignHorizontalDistributeCenter",
                       () => distributeSelection("x"),
                       { disabled: count < 3 },
                     ),
                     iconButton(
-                      "Distribute vertically",
+                      "纵向分布",
                       "AlignVerticalDistributeCenter",
                       () => distributeSelection("y"),
                       { disabled: count < 3 },
@@ -13079,8 +13079,8 @@ function multiModel() {
                       "span",
                       { class: "helper" },
                       count < 3
-                        ? "Select three or more to distribute"
-                        : "Distribute evenly",
+                        ? "选择三个或更多对象以分布"
+                        : "均匀分布",
                     ),
                   ),
                 ],
@@ -13093,13 +13093,13 @@ function multiModel() {
                     "div",
                     { class: "arrange-buttons" },
                     button(
-                      "To front",
+                      "置于顶层",
                       "BringToFront",
                       () => arrangeObject(currentShape(), P.bringShapeToFront),
                       "secondary",
                     ),
                     button(
-                      "To back",
+                      "置于底层",
                       "SendToBack",
                       () => arrangeObject(currentShape(), P.sendShapeToBack),
                       "secondary",
@@ -13108,13 +13108,13 @@ function multiModel() {
                   el(
                     "div",
                     { class: "arrange-buttons" },
-                    button("Group", "Group", groupSelection, "secondary"),
+                    button("组合", "Group", groupSelection, "secondary"),
                   ),
                   el(
                     "div",
                     { class: "arrange-buttons" },
-                    button("Duplicate", "Copy", duplicateObject, "secondary"),
-                    button("Delete", "Trash2", deleteObject, "secondary"),
+                    button("复制", "Copy", duplicateObject, "secondary"),
+                    button("删除", "Trash2", deleteObject, "secondary"),
                   ),
                 ],
                 { key: "multiArrange", open: true },
@@ -13326,7 +13326,7 @@ function strokeFields(obj, kind) {
               mutateShape(obj, (obj) =>
                 strokeInfo(obj).color ? P.setShapeNoStroke(obj) : SKIP_MUTATION,
               ),
-            { class: "btn secondary icon-btn", title: "Remove border" },
+            { class: "btn secondary icon-btn", title: "删除边框" },
           ),
   };
 }
@@ -13490,8 +13490,8 @@ function findBar() {
   const query = el("input", {
     class: "input find-input",
     type: "search",
-    placeholder: "Find",
-    "aria-label": "Find",
+    placeholder: "查找",
+    "aria-label": "查找",
     autocomplete: "off",
     spellcheck: "false",
     oninput: () => search(),
@@ -13505,8 +13505,8 @@ function findBar() {
   const replacement = el("input", {
     class: "input find-input",
     type: "text",
-    placeholder: "Replace with",
-    "aria-label": "Replace with",
+    placeholder: "替换为",
+    "aria-label": "替换为",
     autocomplete: "off",
     spellcheck: "false",
     onkeydown: (e) => {
@@ -13522,7 +13522,7 @@ function findBar() {
     "aria-live": "polite",
   });
   const caseButton = iconButton(
-    "Match case",
+    "区分大小写",
     "CaseSensitive",
     () => {
       find.caseSensitive = !find.caseSensitive;
@@ -13536,7 +13536,7 @@ function findBar() {
     {
       class: "findbar",
       role: "search",
-      "aria-label": "Find and replace",
+      "aria-label": "查找和替换",
       hidden: true,
       onkeydown: (e) => {
         if (e.key === "Escape") {
@@ -13550,8 +13550,8 @@ function findBar() {
       { class: "find-row" },
       query,
       count,
-      iconButton("Previous match", "ChevronUp", () => moveMatch(-1)),
-      iconButton("Next match", "ChevronDown", () => moveMatch(1)),
+      iconButton("上一个匹配项", "ChevronUp", () => moveMatch(-1)),
+      iconButton("下一个匹配项", "ChevronDown", () => moveMatch(1)),
       caseButton,
     ),
     el(
@@ -13559,19 +13559,19 @@ function findBar() {
       { class: "find-row" },
       replacement,
       button(
-        "Replace",
+        "替换",
         null,
         () => replaceMatch(false),
         "secondary find-action",
       ),
       button(
-        "Replace all",
+        "全部替换",
         null,
         () => replaceMatch(true),
         "secondary find-action",
       ),
     ),
-    iconButton("Close find and replace", "X", closeFind),
+    iconButton("关闭查找和替换", "X", closeFind),
   );
 }
 function openFind({ replace = false } = {}) {
@@ -13579,7 +13579,7 @@ function openFind({ replace = false } = {}) {
   if (!bar) return;
   bar.hidden = false;
   const obj = currentShape();
-  const input = bar.querySelector('input[aria-label="Find"]');
+  const input = bar.querySelector('input[aria-label="查找"]');
   if (!input.value && obj && !isTable(obj)) {
     const text = (P.getShapeText(obj) || "").split("\n")[0].trim();
     if (text && text.length <= 60) input.value = text;
@@ -13587,7 +13587,7 @@ function openFind({ replace = false } = {}) {
   search();
   bar
     .querySelector(
-      replace ? 'input[aria-label="Replace with"]' : 'input[aria-label="Find"]',
+      replace ? 'input[aria-label="替换为"]' : 'input[aria-label="查找"]',
     )
     .focus();
   if (!replace) input.select();
@@ -13666,7 +13666,7 @@ function collectMatches() {
 function search({ keep = false } = {}) {
   const bar = document.querySelector(".findbar");
   if (!bar || !doc) return;
-  find.query = bar.querySelector('input[aria-label="Find"]').value;
+  find.query = bar.querySelector('input[aria-label="查找"]').value;
   const before = find.matches[find.at];
   find.matches = collectMatches();
   find.at = find.matches.length ? 0 : -1;
@@ -13825,7 +13825,7 @@ function replaceMatch(all) {
   const bar = document.querySelector(".findbar");
   if (!bar || !find.matches.length) return;
   const replacement = bar.querySelector(
-    'input[aria-label="Replace with"]',
+    'input[aria-label="替换为"], input[aria-label="Replace with"]',
   ).value;
   const targets = (all ? find.matches : [find.matches[find.at]]).filter(
     Boolean,
@@ -13889,7 +13889,7 @@ function replaceMatch(all) {
       await moveMatch(within);
     // Buttons that ran out of matches let go of the focus; the bar keeps it.
     if (!open.contains(document.activeElement))
-      open.querySelector('input[aria-label="Find"]')?.focus();
+      open.querySelector('input[aria-label="查找"], input[aria-label="Find"]')?.focus();
   });
 }
 /* ---------- Transitions ----------
@@ -14200,7 +14200,7 @@ function tableFields(obj) {
         mutateShape(obj, (obj) => P.setTableCellFill(cellOf(obj), c), {
           coalesce: coalesceKey("cell-fill", P.getShapeSlide(obj), obj),
         }),
-      { empty: "No fill", fallback: THEMES[theme].accent },
+      { empty: "无填充", fallback: THEMES[theme].accent },
     ),
     button(
       "Remove cell fill",
@@ -14301,7 +14301,7 @@ async function tableDialog(place = null) {
     min: 1,
     max: 30,
     value: 3,
-    "aria-label": "Rows",
+    "aria-label": "行数",
     autofocus: true,
   });
   const cols = el("input", {
@@ -14310,21 +14310,21 @@ async function tableDialog(place = null) {
     min: 1,
     max: 12,
     value: 3,
-    "aria-label": "Columns",
+    "aria-label": "列数",
   });
   const ok = await dialog({
-    title: "Insert table",
+    title: "插入表格",
     body: el(
       "form",
       { class: "dialog-body" },
       el(
         "div",
         { class: "field-grid" },
-        el("label", {}, "Rows", rows),
-        el("label", {}, "Columns", cols),
+        el("label", {}, "行数", rows),
+        el("label", {}, "列数", cols),
       ),
     ),
-    confirm: "Insert",
+    confirm: "插入",
   });
   if (!ok || doc !== target) return;
   // An empty field takes the default; a number past the range its end.
@@ -14385,20 +14385,20 @@ function setLink(obj, action) {
   P.setShapeClickAction(obj, action);
 }
 const SLIDE_LINKS = [
-  ["nextSlide", "Next slide"],
-  ["prevSlide", "Previous slide"],
-  ["firstSlide", "First slide"],
-  ["lastSlide", "Last slide"],
+  ["nextSlide", "下一张幻灯片"],
+  ["prevSlide", "上一张幻灯片"],
+  ["firstSlide", "第一张幻灯片"],
+  ["lastSlide", "最后一张幻灯片"],
 ];
 function describeLink(action) {
-  if (!action) return "No link";
+  if (!action) return "无链接";
   if (action.kind === "url") return action.url;
   if (action.kind === "slide") {
     const slides = P.getSlides(doc.pres);
     const i = slides.findIndex(
       (s) => P.getSlidePartName(s) === P.getSlidePartName(action.slide),
     );
-    return i < 0 ? "A removed slide" : `Slide ${i + 1}`;
+    return i < 0 ? "已移除的幻灯片" : `幻灯片 ${i + 1}`;
   }
   return SLIDE_LINKS.find(([kind]) => kind === action.kind)?.[1] || "Link";
 }
@@ -14431,14 +14431,14 @@ async function linkDialog() {
   const slides = P.getSlides(doc.pres);
   const kind = el(
     "select",
-    { class: "input", "aria-label": "Link to" },
-    el("option", { value: "url" }, "Web address"),
+    { class: "input", "aria-label": "链接到" },
+    el("option", { value: "url" }, "网址"),
     ...SLIDE_LINKS.map(([value, label]) => el("option", { value }, label)),
     ...slides.map((s, i) =>
       el(
         "option",
         { value: `slide:${P.getSlidePartName(s)}` },
-        `Slide ${i + 1}${slideLabel(s) ? `: ${truncateLabel(slideLabel(s), 40)}` : ""}`,
+        `幻灯片 ${i + 1}${slideLabel(s) ? `: ${truncateLabel(slideLabel(s), 40)}` : ""}`,
       ),
     ),
   );
@@ -14450,7 +14450,7 @@ async function linkDialog() {
     inputmode: "url",
     autocomplete: "url",
     spellcheck: "false",
-    "aria-label": "Web address",
+    "aria-label": "网址",
     placeholder: "https://example.com",
     value: current?.kind === "url" ? current.url : "",
     autofocus: true,
@@ -14459,33 +14459,33 @@ async function linkDialog() {
     current?.kind === "slide"
       ? `slide:${P.getSlidePartName(current.slide)}`
       : current?.kind || "url";
-  const address = el("label", {}, "Web address", url);
+  const address = el("label", {}, "网址", url);
   const syncKind = () => {
     address.hidden = kind.value !== "url";
   };
   kind.addEventListener("change", syncKind);
   syncKind();
   const ok = await dialog({
-    title: current ? "Edit link" : "Add link",
+    title: current ? "编辑链接" : "添加链接",
     body: el(
       "form",
       { class: "dialog-body" },
-      el("label", {}, "Link to", kind),
+      el("label", {}, "链接到", kind),
       address,
       el(
         "p",
         { class: "muted" },
-        "Links open while presenting. A web address opens in a new tab.",
+        "放映时可打开链接。网址将在新标签页中打开。",
       ),
     ),
-    confirm: "Done",
+    confirm: "完成",
   });
   if (!ok || doc !== target) return;
   let action = null;
   if (kind.value === "url") {
     action = normalizeUrl(url.value);
     if (url.value.trim() && !action) {
-      toast("Enter a web address such as https://example.com.");
+      toast("请输入网址，例如 https://example.com。");
       return;
     }
     action = action && { kind: "url", url: action };
@@ -14515,7 +14515,7 @@ function removeLink() {
 function linkFields(obj) {
   const link = linkOf(obj);
   return [
-    el("h3", {}, "Link"),
+    el("h3", {}, "链接"),
     el(
       "p",
       { class: `helper link-target ${link ? "" : "empty"}` },
@@ -14525,7 +14525,7 @@ function linkFields(obj) {
       "div",
       { class: "arrange-buttons" },
       button(
-        link ? "Edit link" : "Add link",
+        link ? "编辑链接" : "添加链接",
         "Link",
         run(linkDialog),
         "secondary",
@@ -14639,7 +14639,7 @@ function groupSelection() {
     const list = ids.map((id) => P.findShapeById(target, id)).filter(Boolean);
     if (list.length < 2) return SKIP_MUTATION;
     if (list.some((s) => parents.has(P.getShapeId(s)))) {
-      toast("Ungroup the grouped objects first, then group them together.");
+      toast("请先取消组合各对象，然后再进行组合。");
       return SKIP_MUTATION;
     }
     // A placeholder that takes its position from the layout has none of its
@@ -14705,7 +14705,7 @@ function arrangeItems() {
   const canUngroup = !!obj && count === 1 && P.getShapeKind(obj) === "group";
   return [
     {
-      label: count > 1 ? "Align" : "Align to slide",
+      label: count > 1 ? "对齐" : "对齐到幻灯片",
       icon: "AlignStartVertical",
       disabled: !obj,
       items: ALIGN_ACTIONS.map(([edge, label, icon]) => ({
@@ -14715,17 +14715,17 @@ function arrangeItems() {
       })),
     },
     {
-      label: "Distribute",
+      label: "分布",
       icon: "AlignHorizontalDistributeCenter",
       disabled: count < 3,
       items: [
         {
-          label: "Horizontally",
+          label: "横向",
           icon: "AlignHorizontalDistributeCenter",
           onSelect: () => distributeSelection("x"),
         },
         {
-          label: "Vertically",
+          label: "纵向",
           icon: "AlignVerticalDistributeCenter",
           onSelect: () => distributeSelection("y"),
         },
@@ -14733,27 +14733,27 @@ function arrangeItems() {
     },
     { separator: true },
     {
-      label: "Flip horizontal",
+      label: "水平翻转",
       icon: "FlipHorizontal2",
       disabled: !obj || !["shape", "picture"].includes(P.getShapeKind(obj)),
       onSelect: () => flipObject(obj, "horizontal"),
     },
     {
-      label: "Flip vertical",
+      label: "垂直翻转",
       icon: "FlipVertical2",
       disabled: !obj || !["shape", "picture"].includes(P.getShapeKind(obj)),
       onSelect: () => flipObject(obj, "vertical"),
     },
     { separator: true },
     {
-      label: "Group",
+      label: "组合",
       icon: "Group",
       shortcut: `${M}+Alt+G`,
       disabled: !canGroup,
       onSelect: groupSelection,
     },
     {
-      label: "Ungroup",
+      label: "取消组合",
       icon: "Ungroup",
       shortcut: `${M}+Alt+Shift+G`,
       disabled: !canUngroup,
@@ -15155,21 +15155,21 @@ function clipboardItems() {
   const obj = currentShape();
   return [
     {
-      label: "Cut",
+      label: "剪切",
       icon: "Scissors",
       shortcut: `${M}+X`,
       disabled: !obj,
       onSelect: () => copyObjects({ cut: true }),
     },
     {
-      label: "Copy",
+      label: "复制",
       icon: "Copy",
       shortcut: `${M}+C`,
       disabled: !obj,
       onSelect: () => copyObjects(),
     },
     {
-      label: "Paste",
+      label: "粘贴",
       icon: "ClipboardPaste",
       shortcut: `${M}+V`,
       onSelect: () => pasteFromMenu().catch(fail),
@@ -15196,19 +15196,19 @@ function objectContextMenu(e, s) {
     anchor: e.currentTarget,
     x: e.clientX,
     y: e.clientY,
-    label: "Object options",
+    label: "对象选项",
     contextual: true,
     items: [
       ...(chartTools.isChart(obj)
         ? [
             {
-              label: "Edit Data",
+              label: "编辑数据",
               icon: "o:editData",
               shortcut: "Enter",
               onSelect: () => chartTools.editData(obj),
             },
             {
-              label: "Change Chart Type…",
+              label: "更改图表类型…",
               icon: "o:changeChartType",
               onSelect: () => chartTools.changeType(obj),
             },
@@ -15220,11 +15220,11 @@ function objectContextMenu(e, s) {
             {
               label: P.isDiagramShape(obj)
                 ? P.getShapeSmartArt?.(obj)?.layout
-                  ? "Show Text Pane"
-                  : "Edit diagram text"
+                  ? "显示文本窗格"
+                  : "编辑图示文本"
                 : isTable(obj)
-                  ? "Edit cell"
-                  : "Edit text",
+                  ? "编辑单元格"
+                  : "编辑文本",
               icon: "Pencil",
               shortcut: "Enter",
               onSelect: () => editText(obj, isTable(obj) ? e : null),
@@ -15235,14 +15235,14 @@ function objectContextMenu(e, s) {
       ...insertFeatures.contextItems(obj),
       ...clipboardItems(),
       {
-        label: "Duplicate",
+        label: "复制",
         icon: "CopyPlus",
         shortcut: `${M}+D`,
         onSelect: duplicateObject,
       },
       { separator: true },
       {
-        label: "Ask AI about this",
+        label: "向 AI 询问此内容",
         icon: "Sparkles",
         onSelect: () =>
           openAssistant(
@@ -15255,18 +15255,18 @@ function objectContextMenu(e, s) {
       ...(canLink(obj)
         ? [
             {
-              label: linkOf(obj) ? "Edit link" : "Add link",
+              label: linkOf(obj) ? "编辑链接" : "添加链接",
               icon: "Link",
               shortcut: `${M}+K`,
               onSelect: run(linkDialog),
             },
             ...(linkOf(obj)
-              ? [{ label: "Remove link", icon: "Link", onSelect: removeLink }]
+              ? [{ label: "删除链接", icon: "Link", onSelect: removeLink }]
               : []),
             { separator: true },
           ]
         : []),
-      { label: "Order", icon: "Layers", items: orderItems(obj) },
+      { label: "顺序", icon: "Layers", items: orderItems(obj) },
       ...arrange.slice(0, 2),
       // Group or Ungroup, found by name: the list's order changes as items
       // are added to it.
@@ -15274,14 +15274,14 @@ function objectContextMenu(e, s) {
         (item) =>
           item.label ===
           (multiSelected()
-            ? "Group"
+            ? "组合"
             : P.getShapeKind(obj) === "group"
-              ? "Ungroup"
+              ? "取消组合"
               : ""),
       ),
       { separator: true },
       {
-        label: "Delete",
+        label: "删除",
         icon: "Trash2",
         shortcut: "Delete",
         danger: true,
@@ -15301,37 +15301,37 @@ function canvasContextMenu(e) {
     anchor: document.querySelector("#main"),
     x: e.clientX,
     y: e.clientY,
-    label: "Slide options",
+    label: "幻灯片选项",
     contextual: true,
     items: [
       { ...clipboardItems()[2], icon: "o:paste" },
       { separator: true },
       {
-        label: "Text Box",
+        label: "文本框",
         icon: "o:textBox",
         onSelect: () => addObject("text"),
       },
-      { label: "Picture…", icon: "o:picture", onSelect: () => insertImage() },
+      { label: "图片…", icon: "o:picture", onSelect: () => insertImage() },
       { separator: true },
       !masterView.active && {
-        label: "New Slide",
+        label: "新建幻灯片",
         icon: "o:newSlide",
         items: layoutItems(slide()),
       },
       ...slideActions(slide(), { hideUnavailable: true }),
       { separator: true },
       {
-        label: "Ruler",
+        label: "标尺",
         checked: !!chrome.ruler,
         onSelect: () => show("ruler", !chrome.ruler),
       },
       {
-        label: "Grid and Guides",
+        label: "网格和参考线",
         icon: "o:gridlines",
         items: views.grid.menuItems(),
       },
       {
-        label: "Format Background…",
+        label: "设置背景格式…",
         icon: "o:formatBackground",
         onSelect: () => show("formatPane", true),
       },
@@ -15373,7 +15373,7 @@ async function themeDialog() {
     }),
   );
   const ok = await dialog({
-    title: "Presentation theme",
+    title: "演示文稿主题",
     body: el(
       "div",
       { class: "dialog-body" },
@@ -15536,7 +15536,7 @@ async function present(options = {}) {
   const before = document.activeElement;
   const d = el("dialog", {
     class: "presenter",
-    "aria-label": "Presentation mode",
+    "aria-label": "放映模式",
   });
   const stage = el("div", { class: "presenter-stage", tabindex: -1 });
   const status = el("p", { class: "presenter-status", role: "status" });
@@ -15551,7 +15551,7 @@ async function present(options = {}) {
   const endMessage = el(
     "p",
     { class: "presenter-end", hidden: true, tabindex: -1, role: "status" },
-    "End of presentation. Click to exit.",
+    "放映结束。单击退出。",
   );
   const frame = el(
     "div",
@@ -15582,12 +15582,12 @@ async function present(options = {}) {
     setColor: (value) => session?.setInkColor(value),
     clearSlide: () => session?.clearInk(),
   };
-  const inkButton = iconButton("Pen", "Pencil", () => toggleInk(), {
+  const inkButton = iconButton("笔", "Pencil", () => toggleInk(), {
     "aria-pressed": "false",
-    title: "Pen (I). E erases the ink on this slide.",
+    title: "笔 (I)。按 E 擦除此幻灯片上的墨迹。",
   });
   const inkMenuButton = iconButton(
-    "Pen color and ink",
+    "笔颜色与墨迹",
     "ChevronDown",
     (e) =>
       menu(
@@ -15603,12 +15603,12 @@ async function present(options = {}) {
           })),
           { separator: true },
           {
-            label: "Erase Ink on Slide",
+            label: "擦除幻灯片上的墨迹",
             shortcut: "E",
             onSelect: () => showInk.clearSlide(),
           },
         ],
-        { label: "Pen" },
+        { label: "笔" },
       ),
     { ...MENU_BUTTON, class: "btn icon-btn presenter-ink-menu" },
   );
@@ -15618,12 +15618,12 @@ async function present(options = {}) {
     inkButton.setAttribute("aria-pressed", String(on));
   }
   const laserButton = iconButton(
-    "Laser pointer",
+    "激光指针",
     "Pointer",
     () => toggleLaser(),
     {
       "aria-pressed": "false",
-      title: "Laser pointer (L). Hold Control and drag to point temporarily.",
+      title: "激光指针 (L)。按住 Control 并拖动可临时指示。",
     },
   );
   function toggleLaser() {
@@ -15743,7 +15743,7 @@ async function present(options = {}) {
         (s) => P.getSlidePartName(s) === P.getSlidePartName(link.slide),
       );
       if (i >= 0) show(i);
-      else toast("That slide is hidden or was removed.");
+      else toast("该幻灯片已被隐藏或移除。");
     } else if (link.kind === "nextSlide") show(n + 1, { step: "click" });
     else if (link.kind === "prevSlide") showPrevious();
     else if (link.kind === "firstSlide") show(0);
@@ -15753,10 +15753,10 @@ async function present(options = {}) {
     class: "presenter-counter",
     "aria-live": "polite",
   });
-  const previous = iconButton("Previous slide", "ChevronLeft", () =>
+  const previous = iconButton("上一张幻灯片", "ChevronLeft", () =>
       showPrevious(),
     ),
-    next = iconButton("Next slide", "ChevronRight", () => advance());
+    next = iconButton("下一张幻灯片", "ChevronRight", () => advance());
   // Speaker notes and the slide to come sit beside the slide when asked for.
   const notesText = el("p", { class: "presenter-notes-text" });
   const upcoming = el("img", {
@@ -15767,7 +15767,7 @@ async function present(options = {}) {
   const upcomingLabel = el("p", { class: "presenter-next-label" });
   const notes = el(
     "aside",
-    { class: "presenter-notes", "aria-label": "Speaker notes", hidden: true },
+    { class: "presenter-notes", "aria-label": "演讲者备注", hidden: true },
     el("h2", {}, "Notes"),
     notesText,
     el("h2", {}, "Next"),
@@ -15775,10 +15775,10 @@ async function present(options = {}) {
     upcomingLabel,
   );
   const notesButton = iconButton(
-    "Speaker notes",
+    "演讲者备注",
     "FileText",
     () => toggleNotes(),
-    { "aria-pressed": "false", title: "Speaker notes" },
+    { "aria-pressed": "false", title: "演讲者备注" },
   );
   function toggleNotes(on = notes.hidden) {
     notes.hidden = !on;
@@ -15793,8 +15793,8 @@ async function present(options = {}) {
     () => (started.at = Date.now()),
     "presenter-timer",
     {
-      "aria-label": "Time elapsed, press to start over",
-      title: "Time elapsed. Press to start over.",
+      "aria-label": "已用时间，按此重新计时",
+      title: "已用时间。按此重新计时。",
     },
   );
   const tick = () => {
@@ -15843,13 +15843,13 @@ async function present(options = {}) {
     else advance(true);
   });
   const pauseButton = iconButton(
-    "Pause automatic advance",
+    "暂停自动推进",
     "Pause",
     () => {
       restoreBlank();
       setPaused(!advanceClock.paused);
     },
-    { "aria-pressed": "false", title: "Pause automatic advance (S)" },
+    { "aria-pressed": "false", title: "暂停自动推进 (S)" },
   );
   pauseButton.hidden =
     !showTiming.useTimings ||
@@ -15869,7 +15869,7 @@ async function present(options = {}) {
   }
   function syncPause() {
     const paused = advanceClock.paused;
-    const label = `${paused ? "Resume" : "Pause"} automatic advance`;
+    const label = `${paused ? "恢复" : "暂停"}自动推进`;
     pauseButton.setAttribute("aria-pressed", String(paused));
     pauseButton.setAttribute("aria-label", label);
     pauseButton.title = `${label} (S)`;
@@ -15934,7 +15934,7 @@ async function present(options = {}) {
         previous.disabled = false;
         upcoming.removeAttribute("src");
         upcoming.hidden = true;
-        upcomingLabel.textContent = "End of presentation.";
+        upcomingLabel.textContent = "演示文稿放映结束。";
         endMessage.focus();
         session?.ended();
         return;
@@ -16020,18 +16020,18 @@ async function present(options = {}) {
     syncPrevious();
     next.disabled = false;
     const text = P.getSlideNotes(all[n]) || "";
-    notesText.textContent = text || "No notes for this slide.";
+    notesText.textContent = text || "此幻灯片没有备注。";
     notesText.classList.toggle("empty", !text);
     const comingIndex = n + 1 < all.length ? n + 1 : showTiming.loop ? 0 : -1;
     const coming = all[comingIndex];
     if (coming) {
       upcoming.src = cachedPreview(previews, pres, coming);
       upcoming.hidden = false;
-      upcomingLabel.textContent = `Slide ${comingIndex + 1}: ${slideTitle(coming, pres) || slideDescription(coming, pres).split("\n")[0] || "Blank"}`;
+      upcomingLabel.textContent = `幻灯片 ${comingIndex + 1}: ${slideTitle(coming, pres) || slideDescription(coming, pres).split("\n")[0] || "空白"}`;
     } else {
       upcoming.removeAttribute("src");
       upcoming.hidden = true;
-      upcomingLabel.textContent = "This is the last slide.";
+      upcomingLabel.textContent = "这是最后一张幻灯片。";
     }
     if (
       (previous.disabled && focused === previous) ||
@@ -17158,22 +17158,22 @@ async function readyToClose() {
     if (doc !== target) return false;
     const kept = revision === draftRevision;
     const choice = await dialog({
-      title: `Save “${target.name}” to Puter before closing?`,
+      title: `关闭前是否将“${target.name}”保存到 Puter？`,
       body: el(
         "p",
         { class: "dialog-body" },
         kept
-          ? "If you don't save, your changes stay on this device and are listed under Your presentations."
-          : "If you don't save, your changes are lost.",
+          ? "如果不保存，您的更改将保留在此设备上，并列在“您的演示文稿”下。"
+          : "如果不保存，您的更改将会丢失。",
       ),
       actions: [
-        { label: "Cancel", value: "stay" },
+        { label: "取消", value: "stay" },
         {
-          label: "Don't save",
+          label: "不保存",
           value: "discard",
           kind: kept ? "secondary" : "danger",
         },
-        { label: "Save", value: "save", kind: "primary" },
+        { label: "保存", value: "save", kind: "primary" },
       ],
     });
     if (doc !== target) return false;

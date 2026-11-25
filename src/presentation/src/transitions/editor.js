@@ -142,16 +142,16 @@ export function createTransitionTools({
     return {
       kind: "start",
       id: builtIn?.id || "other",
-      name: (sound.name || "Sound").replace(/\.[a-z0-9]+$/i, ""),
+      name: (sound.name || "声音").replace(/\.[a-z0-9]+$/i, ""),
       loop: !!sound.loop,
     };
   }
   const soundLabel = () => {
     const s = soundState();
     return s.kind === "none"
-      ? "No Sound"
+      ? "无声音"
       : s.kind === "stop"
-        ? "Stop Previous Sound"
+        ? "停止前一声音"
         : s.name;
   };
   function setSound(sound, bytes = null, name = null) {
@@ -183,7 +183,7 @@ export function createTransitionTools({
     const file = await chooseFile(AUDIO_TYPES);
     if (!file) return;
     if (file.size > 20 * 1024 * 1024)
-      throw new Error("Please choose a sound smaller than 20 MB.");
+      throw new Error("请选择小于 20 MB 的声音文件。");
     const bytes = new Uint8Array(await file.arrayBuffer());
     setSound("start", bytes, file.name);
   }
@@ -191,12 +191,12 @@ export function createTransitionTools({
     const state = soundState();
     return [
       {
-        label: "No Sound",
+        label: "无声音",
         checked: state.kind === "none",
         onSelect: () => setSound(null),
       },
       {
-        label: "Stop Previous Sound",
+        label: "停止前一声音",
         checked: state.kind === "stop",
         onSelect: () => setSound("stop"),
       },
@@ -212,13 +212,13 @@ export function createTransitionTools({
         : []),
       { separator: true },
       {
-        label: "Other Sound…",
+        label: "其他声音…",
         icon: "Upload",
         onSelect: () => otherSound().catch(report),
       },
       { separator: true },
       {
-        label: "Loop Until Next Sound",
+        label: "循环播放，直到下个声音开始",
         checked: state.kind === "start" && state.loop,
         disabled: state.kind !== "start",
         onSelect: () => setLoop(!(state.kind === "start" && state.loop)),
@@ -375,7 +375,7 @@ export function createTransitionTools({
       })),
       { separator: true },
       {
-        label: "Apply to all slides",
+        label: "应用到全部幻灯片",
         icon: "Copy",
         disabled: now === "other",
         onSelect: () => applyToAll(target),

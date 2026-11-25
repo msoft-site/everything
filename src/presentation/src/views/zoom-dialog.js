@@ -19,7 +19,7 @@ export async function zoomDialog({ current, fit, set, min = 10, max = 400 }) {
     max: String(max),
     step: "1",
     value: String(Math.round(current * 100)),
-    "aria-label": "Percent",
+    "aria-label": "百分比",
   });
   const radio = (value, label, checked) =>
     el(
@@ -59,7 +59,7 @@ export async function zoomDialog({ current, fit, set, min = 10, max = 400 }) {
     for (const input of presets.querySelectorAll("input"))
       input.checked = false;
   });
-  const ok = await dialog({ title: "Zoom", body, confirm: "OK" });
+  const ok = await dialog({ title: "显示比例", body, confirm: "确定" });
   if (!ok) return false;
   const chosen = presets.querySelector("input:checked")?.value;
   if (chosen === "fit") set("fit");

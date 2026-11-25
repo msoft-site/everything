@@ -309,7 +309,7 @@ export function colorButton({
       type: "button",
       class: "btn secondary fmt-color",
       "aria-haspopup": "menu",
-      "aria-label": `${label}: ${shown ? shown.toUpperCase() : none ? none.label : "Automatic"}`,
+      "aria-label": `${label}: ${shown ? shown.toUpperCase() : none ? none.label : "自动"}`,
       disabled,
       onclick: () =>
         openMenu({
@@ -584,8 +584,8 @@ export function formatDialog({
           {
             type: "button",
             class: "btn icon-btn",
-            "aria-label": "Close",
-            title: "Close",
+            "aria-label": "关闭",
+            title: "关闭",
             onclick: () => finish(false),
           },
           icon("X", 18),

@@ -37,7 +37,7 @@ export function createRuler({ canvas, slideSize }) {
   const label = el("span", { class: "ink-ruler-angle", "aria-hidden": "true" });
   const knob = el("span", {
     class: "ink-ruler-knob",
-    title: "Drag to turn the ruler",
+    title: "拖动以旋转标尺",
     "aria-hidden": "true",
   });
   // Ruler proportions, as fractions of the slide's width.

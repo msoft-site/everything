@@ -13,28 +13,28 @@ import {
 
 /** Character bullets: [id, label, char, font or null to follow the text]. */
 export const BULLET_STYLES = [
-  ["round", "Filled Round Bullets", "•", "Arial"],
-  ["hollow", "Hollow Round Bullets", "◦", "Arial"],
-  ["square", "Filled Square Bullets", "▪", "Arial"],
-  ["hollowSquare", "Hollow Square Bullets", "□", null],
-  ["diamond", "Filled Diamond Bullets", "◆", null],
-  ["arrow", "Arrow Bullets", "➤", null],
-  ["check", "Check Mark Bullets", "✓", null],
-  ["star", "Star Bullets", "★", null],
-  ["dash", "Dash Bullets", "–", "Arial"],
+  ["round", "实心圆符号", "•", "Arial"],
+  ["hollow", "空心圆符号", "◦", "Arial"],
+  ["square", "实心方块符号", "▪", "Arial"],
+  ["hollowSquare", "空心方块符号", "□", null],
+  ["diamond", "实心菱形符号", "◆", null],
+  ["arrow", "箭头符号", "➤", null],
+  ["check", "对勾符号", "✓", null],
+  ["star", "星形符号", "★", null],
+  ["dash", "破折号符号", "–", "Arial"],
 ];
 
 /** Autonumber schemes on offer: [scheme, label, sample(n)]. */
 export const NUMBER_STYLES = [
-  ["arabicPeriod", "Numbers: 1. 2. 3.", (n) => `${n}.`],
-  ["arabicParenR", "Numbers with parenthesis: 1) 2) 3)", (n) => `${n})`],
-  ["arabicParenBoth", "Numbers in parentheses: (1) (2) (3)", (n) => `(${n})`],
+  ["arabicPeriod", "数字: 1. 2. 3.", (n) => `${n}.`],
+  ["arabicParenR", "带右括号的数字: 1) 2) 3)", (n) => `${n})`],
+  ["arabicParenBoth", "括号中的数字: (1) (2) (3)", (n) => `(${n})`],
   [
     "romanUcPeriod",
     "Uppercase Roman numerals: I. II. III.",
     (n) => `${roman(n)}.`,
   ],
-  ["alphaUcPeriod", "Uppercase letters: A. B. C.", (n) => `${alpha(n)}.`],
+  ["alphaUcPeriod", "大写英文字母: A. B. C.", (n) => `${alpha(n)}.`],
   [
     "alphaLcParenR",
     "Lowercase letters with parenthesis: a) b) c)",
@@ -50,7 +50,7 @@ export const NUMBER_STYLES = [
     "Lowercase Roman numerals: i. ii. iii.",
     (n) => `${roman(n).toLowerCase()}.`,
   ],
-  ["circleNumDbPlain", "Circled numbers: ① ② ③", (n) => circled(n)],
+  ["circleNumDbPlain", "带圈数字: ① ② ③", (n) => circled(n)],
   [
     "circleNumWdBlackPlain",
     "Filled circled numbers: ❶ ❷ ❸",
@@ -192,7 +192,7 @@ const noneCell = () =>
 export function bulletMenuItems({ current, choose, openDialog }) {
   const items = [
     {
-      label: "None",
+      label: "（无）",
       checked: current.kind === "none",
       render: noneCell,
       onSelect: () => choose({ kind: "none" }),
@@ -205,10 +205,10 @@ export function bulletMenuItems({ current, choose, openDialog }) {
     })),
   ];
   return [
-    { custom: galleryGrid(items, { label: "Bullet styles", columns: 5 }) },
+    { custom: galleryGrid(items, { label: "项目符号样式", columns: 5 }) },
     { separator: true },
     {
-      label: "Bullets and Numbering…",
+      label: "项目符号和编号…",
       icon: "o:bullets",
       onSelect: () => openDialog("bullets"),
     },
@@ -219,7 +219,7 @@ export function bulletMenuItems({ current, choose, openDialog }) {
 export function numberingMenuItems({ current, choose, openDialog }) {
   const items = [
     {
-      label: "None",
+      label: "（无）",
       checked: current.kind === "none",
       render: noneCell,
       onSelect: () => choose({ kind: "none" }),
@@ -237,10 +237,10 @@ export function numberingMenuItems({ current, choose, openDialog }) {
     })),
   ];
   return [
-    { custom: galleryGrid(items, { label: "Numbering styles", columns: 4 }) },
+    { custom: galleryGrid(items, { label: "编号样式", columns: 4 }) },
     { separator: true },
     {
-      label: "Bullets and Numbering…",
+      label: "项目符号和编号…",
       icon: "o:numbering",
       onSelect: () => openDialog("numbering"),
     },
@@ -318,7 +318,7 @@ export async function pickSymbol({ initial = "•" } = {}) {
       el("label", { class: "fmt-inline" }, "Character code", code),
     ),
   );
-  const ok = await formatDialog({ title: "Symbol", body, wide: true });
+  const ok = await formatDialog({ title: "符号", body, wide: true });
   return ok ? chosen : null;
 }
 
@@ -364,7 +364,7 @@ export async function bulletsDialog({
     const grid = el("div", {
       class: "fmt-gallery fmt-dialog-gallery",
       role: "radiogroup",
-      "aria-label": kind === "bullets" ? "Bullet styles" : "Numbering styles",
+      "aria-label": kind === "bullets" ? "项目符号样式" : "编号样式",
       style: "--fmt-columns:5",
     });
     const same = (a, b) =>
@@ -448,10 +448,10 @@ export async function bulletsDialog({
       onCommit: (n) => (sizePct = n / 100),
     }),
     colorButton({
-      label: "Color",
+      label: "颜色",
       value: color,
       theme,
-      automatic: { label: "Follow Text Color", value: null },
+      automatic: { label: "跟随文字颜色", value: null },
       onPick: (v) => {
         color = v;
         refresh();
@@ -467,7 +467,7 @@ export async function bulletsDialog({
     [
       {
         id: "bullets",
-        label: "Bulleted",
+        label: "项目符号",
         render: () => {
           holders.bullets = el("div", {}, renderGrid("bullets"));
           return el(
@@ -518,7 +518,7 @@ export async function bulletsDialog({
       },
       {
         id: "numbering",
-        label: "Numbered",
+        label: "编号",
         render: () => {
           holders.numbering = el("div", {}, renderGrid("numbering"));
           return el(
@@ -530,7 +530,7 @@ export async function bulletsDialog({
               { class: "fmt-row" },
               ...common(),
               numberField({
-                label: "Start at",
+                label: "开始于",
                 value: startAt,
                 min: 1,
                 max: 32767,
@@ -547,12 +547,12 @@ export async function bulletsDialog({
       },
     ],
     {
-      label: "List type",
+      label: "列表类型",
       initial: initialTab === "numbering" ? 1 : 0,
     },
   );
   const ok = await formatDialog({
-    title: "Bullets and Numbering",
+    title: "项目符号和编号",
     body: t.node,
     wide: true,
   });

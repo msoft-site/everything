@@ -32,7 +32,7 @@ export const SHOW_SHORTCUTS = [
   ["Previous slide or animation", "P, Left, Up, Page Up, Backspace"],
   ["Go to slide number", "Number, then Enter"],
   ["First or last slide", "Home, End"],
-  ["See all slides", "G or -"],
+  ["查看所有幻灯片", "G or -"],
   ["Zoom in, zoom out", "+ and -"],
   ["Black screen, or back", "B or ."],
   ["White screen, or back", "W or ,"],
@@ -285,14 +285,14 @@ export function createShowSession(ctx, show) {
       "section",
       {
         class: "show-grid",
-        "aria-label": "All slides",
+        "aria-label": "所有幻灯片",
         onclick: (e) => e.stopPropagation(),
       },
       el(
         "div",
         { class: "show-grid-head" },
         el("h2", {}, "All slides"),
-        iconButton("Close all slides", "X", () => closeGrid()),
+        iconButton("关闭所有幻灯片", "X", () => closeGrid()),
       ),
       list,
     );
@@ -339,15 +339,15 @@ export function createShowSession(ctx, show) {
       {
         class: "show-help",
         role: "dialog",
-        "aria-label": "Slide show shortcuts",
+        "aria-label": "幻灯片放映快捷键",
         tabindex: -1,
         onclick: (e) => e.stopPropagation(),
       },
       el(
         "div",
         { class: "show-grid-head" },
-        el("h2", {}, "Slide show shortcuts"),
-        iconButton("Close shortcuts", "X", () => closeHelp()),
+        el("h2", {}, "幻灯片放映快捷键"),
+        iconButton("关闭快捷键", "X", () => closeHelp()),
       ),
       el(
         "table",
@@ -387,38 +387,38 @@ export function createShowSession(ctx, show) {
   function pointerItems() {
     return [
       {
-        label: "Laser Pointer",
+        label: "激光指针",
         shortcut: `${CTRL}+L`,
         checked: show.laserEnabled(),
         onSelect: toggleLaser,
       },
       {
-        label: "Pen",
+        label: "笔",
         shortcut: `${CTRL}+P`,
         checked: ink.tool === "pen",
         onSelect: () => setTool("pen"),
       },
       {
-        label: "Highlighter",
+        label: "荧光笔",
         shortcut: `${CTRL}+I`,
         checked: ink.tool === "highlighter",
         onSelect: () => setTool("highlighter"),
       },
       {
-        label: "Eraser",
+        label: "橡皮擦",
         shortcut: `${CTRL}+E`,
         checked: ink.tool === "eraser",
         onSelect: () => setTool("eraser"),
       },
       {
-        label: "Erase All Ink on Slide",
+        label: "擦除幻灯片上的所有墨迹",
         shortcut: "E",
         disabled: !ink.has(),
         onSelect: () => ink.clear(),
       },
       { separator: true },
       {
-        label: "Ink Color",
+        label: "墨迹颜色",
         items: INK_COLORS.map(([color, name]) => ({
           label: name,
           checked: ink.colors.pen === color,
@@ -429,11 +429,11 @@ export function createShowSession(ctx, show) {
         })),
       },
       {
-        label: "Arrow Options",
+        label: "箭头选项",
         items: [
-          ["auto", "Automatic", `${CTRL}+U`],
-          ["visible", "Visible", `${CTRL}+A`],
-          ["hidden", "Hidden", `${CTRL}+H`],
+          ["auto", "自动", `${CTRL}+U`],
+          ["visible", "可见", `${CTRL}+A`],
+          ["hidden", "隐藏", `${CTRL}+H`],
         ].map(([mode, label, shortcut]) => ({
           label,
           shortcut,
@@ -442,7 +442,7 @@ export function createShowSession(ctx, show) {
         })),
       },
       {
-        label: "Show Ink",
+        label: "显示墨迹",
         shortcut: `${CTRL}+M`,
         checked: ink.visible,
         onSelect: () => ink.setVisible(!ink.visible),
@@ -453,20 +453,20 @@ export function createShowSession(ctx, show) {
     const shows = ctx.customShows?.() || [];
     const previous = lastViewed();
     return [
-      { label: "Next", shortcut: "N", onSelect: () => show.next() },
-      { label: "Previous", shortcut: "P", onSelect: () => show.previous() },
+      { label: "下一张", shortcut: "N", onSelect: () => show.next() },
+      { label: "上一张", shortcut: "P", onSelect: () => show.previous() },
       {
-        label: "Last Viewed",
+        label: "最近查看的幻灯片",
         disabled: previous === null,
         onSelect: () => previous !== null && show.go(previous),
       },
-      { label: "See All Slides", shortcut: "G", onSelect: openGrid },
+      { label: "查看所有幻灯片", shortcut: "G", onSelect: openGrid },
       zoom.scale > 1
-        ? { label: "Zoom Out", shortcut: "-", onSelect: () => zoomBy(-1) }
-        : { label: "Zoom In", shortcut: "+", onSelect: () => zoomBy(1) },
+        ? { label: "缩小", shortcut: "-", onSelect: () => zoomBy(-1) }
+        : { label: "放大", shortcut: "+", onSelect: () => zoomBy(1) },
       shows.length && !options.record && !options.rehearse
         ? {
-            label: "Custom Show",
+            label: "自定义放映",
             items: shows.map((s) => ({
               label: s.name || `Custom show ${s.id + 1}`,
               onSelect: () => ctx.playCustomShow(s.id, show),
@@ -475,33 +475,33 @@ export function createShowSession(ctx, show) {
         : null,
       { separator: true },
       {
-        label: "Screen",
+        label: "屏幕",
         items: [
-          { label: "Black Screen", shortcut: "B", onSelect: () => press("b") },
-          { label: "White Screen", shortcut: "W", onSelect: () => press("w") },
+          { label: "黑屏", shortcut: "B", onSelect: () => press("b") },
+          { label: "白屏", shortcut: "W", onSelect: () => press("w") },
         ],
       },
-      { label: "Pointer Options", items: pointerItems() },
+      { label: "指针选项", items: pointerItems() },
       {
-        label: "Subtitles",
+        label: "字幕",
         shortcut: `${CTRL}+J`,
         checked: subtitles.running,
         onSelect: toggleSubtitles,
       },
       {
-        label: consoleView ? "Hide Presenter View" : "Show Presenter View",
+        label: consoleView ? "隐藏演示者视图" : "显示演示者视图",
         onSelect: () => (consoleView ? closeConsole() : openConsole()),
       },
       show.autoAdvance
         ? {
-            label: show.paused() ? "Resume" : "Pause",
+            label: show.paused() ? "继续" : "暂停",
             shortcut: "S",
             onSelect: () => show.setPaused(!show.paused()),
           }
         : null,
       { separator: true },
-      { label: "Help", shortcut: "?", onSelect: openHelp },
-      { label: "End Show", shortcut: "Esc", onSelect: () => show.close() },
+      { label: "帮助", shortcut: "?", onSelect: openHelp },
+      { label: "结束放映", shortcut: "Esc", onSelect: () => show.close() },
     ].filter(Boolean);
   }
   function openShowMenu(anchor, x = null, y = null) {
@@ -510,7 +510,7 @@ export function createShowSession(ctx, show) {
       x,
       y,
       contextual: x !== null,
-      label: "Slide show",
+      label: "幻灯片放映",
       items: menuItems(),
       minWidth: 230,
     });
@@ -524,19 +524,19 @@ export function createShowSession(ctx, show) {
 
   // ---- Buttons on the control bar ----------------------------------------
   const toolsButton = iconButton(
-    "Pointer and ink tools",
+    "指针和墨迹工具",
     "o:penTool",
     (e) =>
       openMenu({
         anchor: e.currentTarget,
-        label: "Pointer and ink tools",
+        label: "指针和墨迹工具",
         items: pointerItems(),
         minWidth: 230,
       }),
-    { "aria-pressed": "false", title: "Pointer and ink tools" },
+    { "aria-pressed": "false", title: "指针和墨迹工具" },
   );
   const gridButton = lineButton(
-    "See all slides",
+    "查看所有幻灯片",
     "LayoutGrid",
     () => openGrid(),
     {
@@ -550,10 +550,10 @@ export function createShowSession(ctx, show) {
     { "aria-pressed": "false", title: `Subtitles (${CTRL}+J)` },
   );
   const moreButton = lineButton(
-    "More slide show options",
+    "更多幻灯片放映选项",
     "Ellipsis",
     (e) => openShowMenu(e.currentTarget),
-    { title: "More options" },
+    { title: "更多选项" },
   );
   function syncToolButtons() {
     show.inkChanged?.();
@@ -592,23 +592,23 @@ export function createShowSession(ctx, show) {
     const time = el("span", {
       class: "show-console-time",
       role: "timer",
-      "aria-label": "Time elapsed",
+      "aria-label": "已用时间",
     });
-    const pauseTimer = lineButton("Pause the timer", "Pause", () => {
+    const pauseTimer = lineButton("暂停计时器", "Pause", () => {
       if (started.pausedAt) {
         started.at += Date.now() - started.pausedAt;
         started.pausedAt = 0;
       } else started.pausedAt = Date.now();
       syncTimer();
     });
-    const resetTimer = lineButton("Restart the timer", "RotateCcw", () => {
+    const resetTimer = lineButton("重新启动计时器", "RotateCcw", () => {
       started.at = Date.now();
       if (started.pausedAt) started.pausedAt = started.at;
       syncTimer();
     });
     const clock = el("span", {
       class: "show-console-clock",
-      "aria-label": "Time of day",
+      "aria-label": "当前时间",
     });
     const counter = el("span", {
       class: "show-console-counter",
@@ -626,9 +626,9 @@ export function createShowSession(ctx, show) {
       const paused = !!started.pausedAt;
       pauseTimer.setAttribute(
         "aria-label",
-        paused ? "Resume the timer" : "Pause the timer",
+        paused ? "继续计时器" : "暂停计时器",
       );
-      pauseTimer.title = paused ? "Resume the timer" : "Pause the timer";
+      pauseTimer.title = paused ? "继续计时器" : "暂停计时器";
       pauseTimer.replaceChildren(lineIcon(paused ? "Play" : "Pause"));
       clock.textContent = new Date().toLocaleTimeString([], {
         hour: "numeric",
@@ -642,7 +642,7 @@ export function createShowSession(ctx, show) {
       {
         class: "show-console-top",
         role: "toolbar",
-        "aria-label": "Presenter timer",
+        "aria-label": "演示者计时器",
       },
       time,
       pauseTimer,
@@ -673,19 +673,19 @@ export function createShowSession(ctx, show) {
       "aside",
       {
         class: "show-console-side",
-        "aria-label": "Presenter notes and next slide",
+        "aria-label": "演讲者备注与下一张幻灯片",
       },
-      el("h2", {}, "Next"),
+      el("h2", {}, "下一张"),
       nextImage,
       nextLabel,
       el(
         "div",
         { class: "show-console-notes-head" },
-        el("h2", {}, "Notes"),
-        lineButton("Make the notes text smaller", "AArrowDown", () =>
+        el("h2", {}, "备注"),
+        lineButton("缩小备注文字", "AArrowDown", () =>
           setFont(showPrefs.notesFontSize - 2),
         ),
-        lineButton("Make the notes text larger", "AArrowUp", () =>
+        lineButton("放大备注文字", "AArrowUp", () =>
           setFont(showPrefs.notesFontSize + 2),
         ),
       ),
@@ -698,13 +698,13 @@ export function createShowSession(ctx, show) {
         ...extra,
       });
     const tools = {
-      pen: toolButton("Pen", "o:penTool", () => setTool("pen"), {
+      pen: toolButton("笔", "o:penTool", () => setTool("pen"), {
         "aria-pressed": "false",
       }),
-      laser: toolButton("Laser pointer", "o:laser", () => toggleLaser(), {
+      laser: toolButton("激光指针", "o:laser", () => toggleLaser(), {
         "aria-pressed": "false",
       }),
-      eraser: toolButton("Eraser", "o:eraserTool", () => setTool("eraser"), {
+      eraser: toolButton("橡皮擦", "o:eraserTool", () => setTool("eraser"), {
         "aria-pressed": "false",
       }),
     };
@@ -713,23 +713,23 @@ export function createShowSession(ctx, show) {
       {
         class: "show-console-tools",
         role: "toolbar",
-        "aria-label": "Presenter tools",
+        "aria-label": "演示者工具",
       },
       tools.pen,
       tools.laser,
       tools.eraser,
-      toolButton("Highlighter", "Highlighter", () => setTool("highlighter")),
-      toolButton("See all slides", "LayoutGrid", () => openGrid()),
+      toolButton("荧光笔", "Highlighter", () => setTool("highlighter")),
+      toolButton("查看所有幻灯片", "LayoutGrid", () => openGrid()),
       toolButton(
-        "Zoom into the slide",
+        "放大幻灯片",
         "ZoomIn",
         () => zoomBy(1) || resetZoom(),
       ),
-      toolButton("Black or unblack the screen", "Moon", () => press("b")),
-      toolButton("Subtitles", "Captions", () => toggleSubtitles(), {
+      toolButton("黑屏/取消黑屏", "Moon", () => press("b")),
+      toolButton("字幕", "Captions", () => toggleSubtitles(), {
         "aria-pressed": "false",
       }),
-      toolButton("More options", "Ellipsis", (e) =>
+      toolButton("更多选项", "Ellipsis", (e) =>
         openShowMenu(e.currentTarget),
       ),
       el(
@@ -739,7 +739,7 @@ export function createShowSession(ctx, show) {
           class: "btn show-console-end",
           onclick: () => show.close(),
         },
-        "End Show",
+        "结束放映",
       ),
     );
     tools.subtitles = bar.children[7];
@@ -754,7 +754,7 @@ export function createShowSession(ctx, show) {
       const n = show.current();
       const ended = show.isEnded();
       counter.textContent = ended
-        ? "End of show"
+        ? "放映结束"
         : `Slide ${n + 1} of ${all.length}`;
       const coming = ended
         ? null
@@ -771,14 +771,14 @@ export function createShowSession(ctx, show) {
       } else {
         nextImage.removeAttribute("src");
         nextImage.hidden = true;
-        nextLabel.textContent = "End of slide show";
+        nextLabel.textContent = "幻灯片放映结束";
       }
       // The last slide's builds come before the end, too.
       const steps = ended ? 0 : (show.animationSteps?.() ?? 0);
       if (step < steps)
         nextLabel.textContent = `Next click: animation ${step + 1} of ${steps} on this slide, then ${coming ? nextLabel.textContent : "the end of the slide show"}`;
       const notes = ended ? "" : P.getSlideNotes(all[n]) || "";
-      notesText.textContent = notes || "No notes for this slide.";
+      notesText.textContent = notes || "此幻灯片没有备注。";
       notesText.classList.toggle("empty", !notes);
       mirror?.update();
     }
@@ -803,7 +803,7 @@ export function createShowSession(ctx, show) {
       {
         type: "button",
         class: "btn show-console-swap",
-        title: "Show the slides in a second window for the audience",
+        title: "在第二个窗口中向观众放映幻灯片",
         onclick: () => {
           if (audience) detachAudience();
           else {
@@ -823,7 +823,7 @@ export function createShowSession(ctx, show) {
             : "Audience window";
         },
       },
-      el("span", {}, options.audience ? "One window" : "Audience window"),
+      el("span", {}, options.audience ? "单一窗口" : "观众窗口"),
     );
     return b;
   }
@@ -832,7 +832,7 @@ export function createShowSession(ctx, show) {
   function attachAudience(win) {
     try {
       audience = prepareAudienceWindow(win, {
-        title: ctx.title?.() || "Slide Show",
+        title: ctx.title?.() || "幻灯片放映",
       });
     } catch {
       audience = null;
@@ -989,7 +989,7 @@ export function createShowSession(ctx, show) {
           image.src = show.currentPicture?.() ?? show.picture(all[n]);
           stale = false;
         }
-        image.alt = show.isEnded() ? "End of slide show" : `Slide ${n + 1}`;
+        image.alt = show.isEnded() ? "幻灯片放映结束" : `Slide ${n + 1}`;
       },
       dispose() {
         observer.disconnect();
@@ -1011,14 +1011,14 @@ export function createShowSession(ctx, show) {
       const play = el("button", {
         type: "button",
         class: "show-media-play",
-        "aria-label": "Play",
+        "aria-label": "播放",
       });
       const seek = el("input", {
         type: "range",
         min: 0,
         max: 1000,
         value: 0,
-        "aria-label": "Seek",
+        "aria-label": "定位",
       });
       const time = el("span", { class: "show-media-time" }, "0:00");
       const bar = el("div", { class: "show-media-bar" }, play, seek, time);
@@ -1026,7 +1026,7 @@ export function createShowSession(ctx, show) {
         `${Math.floor((s || 0) / 60)}:${String(Math.floor((s || 0) % 60)).padStart(2, "0")}`;
       const sync = () => {
         play.replaceChildren(lineIcon(video.paused ? "Play" : "Pause", 14));
-        play.setAttribute("aria-label", video.paused ? "Play" : "Pause");
+        play.setAttribute("aria-label", video.paused ? "播放" : "暂停");
         if (Number.isFinite(video.duration) && video.duration > 0)
           seek.value = String(
             Math.round((video.currentTime / video.duration) * 1000),

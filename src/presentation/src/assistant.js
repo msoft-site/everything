@@ -26,9 +26,9 @@ import { TOOLS, TOOL_NAMES, changesDeck } from "./assistant-tools.js";
 export const AI_MODEL = "claude-opus-5-5";
 /** When the assistant asks before changing the deck. */
 export const APPROVAL_MODES = [
-  { id: "always", label: "Ask before every change" },
-  { id: "destructive", label: "Ask before deleting slides or objects" },
-  { id: "never", label: "Make changes without asking" },
+  { id: "always", label: "在每次更改前询问" },
+  { id: "destructive", label: "在删除幻灯片或对象前询问" },
+  { id: "never", label: "直接进行更改无需询问" },
 ];
 export const DEFAULT_APPROVAL = "destructive";
 /** How many model replies one message may take, tool calls and all. */
@@ -493,14 +493,14 @@ export function suggestions(pres, slideIndex = 0, selectionCount = 0) {
     return [
       "Draft a 6-slide pitch deck for a new product",
       "Outline a 10-minute talk on a topic I give you",
-      "Turn my notes into slides",
+      "将我的备注制成幻灯片",
     ];
   const out = [];
   if (selectionCount)
-    out.push("Rewrite the selected text to be clearer and shorter");
+    out.push("重写所选文本使其更清晰简练");
   else out.push(`Tighten the wording on slide ${slideIndex + 1}`);
-  out.push("Summarize this presentation");
-  out.push("Write speaker notes for every slide");
-  out.push("Check the deck for typos and inconsistent formatting");
+  out.push("总结此演示文稿");
+  out.push("为每张幻灯片编写演讲者备注");
+  out.push("检查演示文稿中的错别字和格式不一致之处");
   return out;
 }

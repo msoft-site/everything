@@ -439,7 +439,7 @@ export async function promptName(
     autofocus: true,
     value,
     maxlength: 180,
-    "aria-label": "Presentation name",
+    "aria-label": "演示文稿名称",
   });
   const response = dialog({
     title,

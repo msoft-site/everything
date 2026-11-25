@@ -240,21 +240,21 @@ export function createGridGuides(ctx) {
       x: e.clientX,
       y: e.clientY,
       contextual: true,
-      label: "Guide",
+      label: "参考线",
       items: [
         {
-          label: "Add Vertical Guide",
+          label: "添加垂直参考线",
           icon: "o:gridlines",
           onSelect: () => addGuide("vert"),
         },
         {
-          label: "Add Horizontal Guide",
+          label: "添加水平参考线",
           icon: "o:gridlines",
           onSelect: () => addGuide("horz"),
         },
         { separator: true },
         {
-          label: "Delete Guide",
+          label: "删除参考线",
           icon: "Trash2",
           onSelect: () => {
             const list = guides().map((g) => ({ ...g }));
@@ -298,7 +298,7 @@ export function createGridGuides(ctx) {
     });
     const select = el(
       "select",
-      { class: "input", "aria-label": "Spacing" },
+      { class: "input", "aria-label": "间距" },
       ...SPACINGS.filter(([, label]) => label.endsWith(cm ? "cm" : "in")).map(
         ([value, label]) =>
           el(
@@ -310,7 +310,7 @@ export function createGridGuides(ctx) {
             label,
           ),
       ),
-      el("option", { value: "custom" }, "Custom"),
+      el("option", { value: "custom" }, "自定义"),
     );
     const unit = cm ? 360000 : EMU_PER_INCH;
     const custom = el("input", {
@@ -350,30 +350,30 @@ export function createGridGuides(ctx) {
       el(
         "fieldset",
         {},
-        el("legend", {}, "Snap"),
-        check(snap, "Snap objects to the grid"),
+        el("legend", {}, "对齐"),
+        check(snap, "对象与网格对齐"),
       ),
       el(
         "fieldset",
         {},
-        el("legend", {}, "Grid"),
+        el("legend", {}, "网格"),
         el(
           "div",
           { class: "grid-spacing" },
-          el("label", {}, "Spacing", select),
+          el("label", {}, "间距", select),
           el("label", {}, cm ? "cm" : "inches", custom),
         ),
-        check(showGrid, "Show the grid on the slide"),
+        check(showGrid, "在幻灯片上显示网格"),
       ),
       el(
         "fieldset",
         {},
-        el("legend", {}, "Guides"),
-        check(showGuides, "Show drawing guides"),
-        check(smart, "Show smart guides while shapes line up"),
+        el("legend", {}, "参考线"),
+        check(showGuides, "显示绘图参考线"),
+        check(smart, "形状对齐时显示智能参考线"),
       ),
     );
-    const ok = await dialog({ title: "Grid and Guides", body, confirm: "OK" });
+    const ok = await dialog({ title: "网格和参考线", body, confirm: "OK" });
     if (!ok) return false;
     const chosen =
       select.value === "custom"
@@ -416,34 +416,34 @@ export function createGridGuides(ctx) {
     const mod = IS_MAC ? "⌘" : "Ctrl";
     return [
       {
-        label: "Smart Guides",
+        label: "智能参考线",
         checked: smartGuides(),
         onSelect: () => setSmartGuides(!smartGuides()),
       },
       {
-        label: "Guides",
+        label: "参考线",
         checked: !!chrome.guides,
         onSelect: () => ctx.show("guides", !chrome.guides),
       },
       {
-        label: "Gridlines",
+        label: "网格线",
         checked: !!chrome.gridlines,
         shortcut: `${mod}+'`,
         onSelect: () => ctx.show("gridlines", !chrome.gridlines),
       },
       { separator: true },
       {
-        label: "Snap to Grid",
+        label: "对齐到网格",
         checked: snapping(),
         onSelect: () => setSnapToGrid(!snapping()),
       },
       { separator: true },
       {
-        label: "Add Vertical Guide",
+        label: "添加垂直参考线",
         onSelect: () => addGuide("vert"),
       },
       {
-        label: "Add Horizontal Guide",
+        label: "添加水平参考线",
         onSelect: () => addGuide("horz"),
       },
       { separator: true },

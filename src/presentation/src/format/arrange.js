@@ -25,7 +25,7 @@ export async function sizeRotationDialog({ bounds, rotation, locked }) {
       "div",
       { class: "fmt-row" },
       (heightInput = numberField({
-        label: "Height",
+        label: "高度",
         value: h,
         unit: "in",
         min: 0.01,
@@ -42,7 +42,7 @@ export async function sizeRotationDialog({ bounds, rotation, locked }) {
         },
       })),
       (widthInput = numberField({
-        label: "Width",
+        label: "宽度",
         value: w,
         unit: "in",
         min: 0.01,
@@ -60,7 +60,7 @@ export async function sizeRotationDialog({ bounds, rotation, locked }) {
       })),
     ),
     numberField({
-      label: "Rotation",
+      label: "旋转",
       value: rot,
       unit: "°",
       min: -360,
@@ -69,12 +69,12 @@ export async function sizeRotationDialog({ bounds, rotation, locked }) {
       onCommit: (n) => (rot = n),
     }),
     checkField({
-      label: "Lock aspect ratio",
+      label: "锁定纵横比",
       checked: lock,
       onChange: (on) => (lock = on),
     }),
   );
-  const ok = await formatDialog({ title: "Size and Rotation", body });
+  const ok = await formatDialog({ title: "大小和旋转", body });
   if (!ok) return null;
   const cx = bounds.x + bounds.w / 2,
     cy = bounds.y + bounds.h / 2;
@@ -102,14 +102,14 @@ export async function replaceFontsDialog({ used, fonts }) {
     class: "input",
     list: listId,
     value: to,
-    "aria-label": "With",
+    "aria-label": "与",
     oninput: (e) => (to = e.target.value),
   });
   const body = el(
     "div",
     { class: "fmt-stack" },
     selectField({
-      label: "Replace",
+      label: "替换",
       value: from,
       options: used.map((f) => [f, f]),
       onChange: (v) => (from = v),
@@ -127,7 +127,7 @@ export async function replaceFontsDialog({ used, fonts }) {
     ),
   );
   const ok = await formatDialog({
-    title: "Replace Fonts",
+    title: "替换字体",
     body,
     okLabel: "Replace",
   });
@@ -148,7 +148,7 @@ export async function pasteSpecialDialog({ available }) {
   const group = el("div", {
     class: "fmt-radio-list",
     role: "radiogroup",
-    "aria-label": "Paste as",
+    "aria-label": "粘贴为",
   });
   for (const [id, label] of PASTE_FORMATS) {
     const enabled = available.includes(id);
@@ -169,7 +169,7 @@ export async function pasteSpecialDialog({ available }) {
     );
   }
   const ok = await formatDialog({
-    title: "Paste Special",
+    title: "选择性粘贴",
     body: el(
       "div",
       { class: "fmt-stack" },
@@ -304,7 +304,7 @@ export function selectionPaneContent(ctx) {
   // a visibility switch: two controls a row, so not a listbox of options.
   const list = el("ul", {
     class: "selection-list",
-    "aria-label": "Objects on this slide",
+    "aria-label": "此幻灯片上的对象",
   });
   const top = items.filter((item) => !item.depth);
   const neighbor = (item, step) => top[top.indexOf(item) + step];
@@ -360,7 +360,7 @@ export function selectionPaneContent(ctx) {
         {
           type: "button",
           class: "selection-eye",
-          "aria-label": `${item.hidden ? "Show" : "Hide"} ${item.label}`,
+          "aria-label": `${item.hidden ? "显示" : "隐藏"} ${item.label}`,
           "aria-pressed": String(!item.hidden),
           onclick: () => ctx.setHidden(item.id, !item.hidden),
         },

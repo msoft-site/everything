@@ -67,23 +67,30 @@ const STATEFUL = new Set(["click", "whoosh"]);
 
 /** Built-in sounds, in menu order: id, label, length in seconds. */
 export const BUILT_IN_SOUNDS = [
-  { id: "chime", label: "Chime", length: 1.4 },
-  { id: "click", label: "Click", length: 0.08 },
-  { id: "whoosh", label: "Whoosh", length: 0.8 },
-  { id: "pop", label: "Pop", length: 0.25 },
-  { id: "rise", label: "Rise", length: 0.7 },
-  { id: "shimmer", label: "Shimmer", length: 0.9 },
-  { id: "drum", label: "Drum", length: 0.6 },
+  { id: "chime", label: "风铃", en: "Chime", length: 1.4 },
+  { id: "click", label: "咔哒声", en: "Click", length: 0.08 },
+  { id: "whoosh", label: "呼啸", en: "Whoosh", length: 0.8 },
+  { id: "pop", label: "爆破", en: "Pop", length: 0.25 },
+  { id: "rise", label: "升音", en: "Rise", length: 0.7 },
+  { id: "shimmer", label: "闪烁", en: "Shimmer", length: 0.9 },
+  { id: "drum", label: "鼓声", en: "Drum", length: 0.6 },
 ];
 
 /** The file name a built-in sound is stored under. */
 export const soundFileName = (sound) => `${sound.label}.wav`;
 /** The built-in sound stored under `name`, if any. */
-export const builtInSoundNamed = (name) =>
-  BUILT_IN_SOUNDS.find(
-    (sound) =>
-      soundFileName(sound).toLowerCase() === String(name).toLowerCase(),
-  ) || null;
+export const builtInSoundNamed = (name) => {
+  const clean = String(name).toLowerCase();
+  return (
+    BUILT_IN_SOUNDS.find(
+      (sound) =>
+        `${sound.label}.wav`.toLowerCase() === clean ||
+        `${sound.en || ""}.wav`.toLowerCase() === clean ||
+        sound.label.toLowerCase() === clean ||
+        (sound.en && sound.en.toLowerCase() === clean),
+    ) || null
+  );
+};
 
 /** Synthesizes a built-in sound as 16-bit mono WAV bytes. */
 export function synthesizeSound(id) {

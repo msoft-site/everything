@@ -12,28 +12,28 @@ import {
 } from "./util.js";
 
 export const ACTION_BUTTONS = [
-  ["actionButtonBackPrevious", "Back or Previous", { kind: "prevSlide" }],
-  ["actionButtonForwardNext", "Forward or Next", { kind: "nextSlide" }],
-  ["actionButtonBeginning", "Beginning", { kind: "firstSlide" }],
-  ["actionButtonEnd", "End", { kind: "lastSlide" }],
-  ["actionButtonHome", "Home", { kind: "firstSlide" }],
-  ["actionButtonInformation", "Information", { kind: "none" }],
-  ["actionButtonReturn", "Return", { kind: "lastViewed" }],
-  ["actionButtonMovie", "Video", { kind: "none" }],
-  ["actionButtonDocument", "Document", { kind: "none" }],
-  ["actionButtonSound", "Sound", { kind: "none" }, "Chime"],
-  ["actionButtonHelp", "Help", { kind: "none" }],
-  ["actionButtonBlank", "Custom", { kind: "none" }],
+  ["actionButtonBackPrevious", "后退或前一项", { kind: "prevSlide" }],
+  ["actionButtonForwardNext", "前进或下一项", { kind: "nextSlide" }],
+  ["actionButtonBeginning", "开始", { kind: "firstSlide" }],
+  ["actionButtonEnd", "结束", { kind: "lastSlide" }],
+  ["actionButtonHome", "主页", { kind: "firstSlide" }],
+  ["actionButtonInformation", "信息", { kind: "none" }],
+  ["actionButtonReturn", "返回", { kind: "lastViewed" }],
+  ["actionButtonMovie", "视频", { kind: "none" }],
+  ["actionButtonDocument", "文档", { kind: "none" }],
+  ["actionButtonSound", "声音", { kind: "none" }, "Chime"],
+  ["actionButtonHelp", "帮助", { kind: "none" }],
+  ["actionButtonBlank", "自定义", { kind: "none" }],
 ];
 
 const JUMPS = [
-  ["nextSlide", "Next Slide"],
-  ["prevSlide", "Previous Slide"],
-  ["firstSlide", "First Slide"],
-  ["lastSlide", "Last Slide"],
-  ["lastViewed", "Last Slide Viewed"],
-  ["endShow", "End Show"],
-  ["slide", "Slide…"],
+  ["nextSlide", "下一张幻灯片"],
+  ["prevSlide", "上一张幻灯片"],
+  ["firstSlide", "第一张幻灯片"],
+  ["lastSlide", "最后一张幻灯片"],
+  ["lastViewed", "最近查看的幻灯片"],
+  ["endShow", "结束放映"],
+  ["slide", "幻灯片…"],
   ["url", "URL…"],
 ];
 
@@ -78,7 +78,7 @@ export function createActionFeatures(ctx) {
     const row = el("div", {
       class: "shape-gallery-row",
       role: "group",
-      "aria-label": "Action Buttons",
+      "aria-label": "动作按钮",
     });
     for (const [preset, label] of ACTION_BUTTONS)
       row.append(
@@ -168,7 +168,7 @@ export function createActionFeatures(ctx) {
       "select",
       {
         class: "input",
-        "aria-label": "Hyperlink to",
+        "aria-label": "超链接到",
         onchange: (e) => ((state.jump = e.target.value), sync()),
       },
       ...JUMPS.map(([v, label]) =>
@@ -179,7 +179,7 @@ export function createActionFeatures(ctx) {
       "select",
       {
         class: "input",
-        "aria-label": "Slide",
+        "aria-label": "幻灯片",
         onchange: (e) => (state.slidePart = e.target.value),
       },
       ...slides.map((s, i) =>
@@ -189,7 +189,7 @@ export function createActionFeatures(ctx) {
             value: P.getSlidePartName(s),
             selected: P.getSlidePartName(s) === state.slidePart,
           },
-          `${i + 1}. ${ctx.slideTitle(s) || "Untitled"}`,
+          `${i + 1}. ${ctx.slideTitle(s) || "无标题"}`,
         ),
       ),
     );
@@ -199,14 +199,14 @@ export function createActionFeatures(ctx) {
       class: "input",
       type: "url",
       value: state.url,
-      "aria-label": "Web address",
+      "aria-label": "网址",
       oninput: (e) => (state.url = e.target.value),
     });
     const soundSelect = el(
       "select",
       {
         class: "input",
-        "aria-label": "Sound",
+        "aria-label": "声音",
         onchange: async (e) => {
           if (e.target.value === "__file") {
             const [file] = await pickFiles("audio/wav,.wav");
@@ -265,7 +265,7 @@ export function createActionFeatures(ctx) {
       { class: "action-panel", role: "tabpanel", id: `action-panel-${kind}` },
       el(
         "div",
-        { role: "radiogroup", "aria-label": "Action", class: "action-choices" },
+        { role: "radiogroup", "aria-label": "动作", class: "action-choices" },
         radio("none", "None", !state.jumpOn && !state.other),
         radio("jump", "Hyperlink to:", state.jumpOn),
         el("div", { class: "hf-indent" }, jumpSelect, slideRow, urlRow),
@@ -393,14 +393,14 @@ export function createActionFeatures(ctx) {
       { class: "dialog-body action-dialog" },
       el(
         "div",
-        { class: "hf-tabs", role: "tablist", "aria-label": "When" },
+        { class: "hf-tabs", role: "tablist", "aria-label": "触发条件" },
         tab("click", "Mouse Click", true),
         tab("hover", "Mouse Over", false),
       ),
       click.node,
       hover.node,
     );
-    const ok = await dialog({ title: "Action Settings", body, confirm: "OK" });
+    const ok = await dialog({ title: "操作设置", body, confirm: "OK" });
     if (!ok) return;
     const settings = { click: click.value(), hover: hover.value() };
     await ctx.mutateShape(obj, (target, slide) => {

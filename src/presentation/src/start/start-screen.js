@@ -20,7 +20,7 @@ export { libraryMeta, libraryKey } from "./library-meta.js";
 export function homeRail(sections, current = "home") {
   return el(
     "nav",
-    { class: "home-rail", "aria-label": "Library sections" },
+    { class: "home-rail", "aria-label": "库区域" },
     ...sections.map((s) =>
       el(
         "button",
@@ -59,23 +59,23 @@ export function promptBox({ themes, theme, create, available }) {
     rows: 2,
     maxlength: 4000,
     placeholder:
-      "Describe your presentation: what it is about, who it is for, and anything it must cover",
-    "aria-label": "Describe your presentation",
+      "描述您的演示文稿：主题、受众以及必须涵盖的内容",
+    "aria-label": "描述您的演示文稿",
   });
   const slides = el(
     "select",
-    { class: "home-prompt-select", "aria-label": "Number of slides" },
+    { class: "home-prompt-select", "aria-label": "幻灯片数量" },
     ...SLIDE_COUNTS.map((n) =>
       el(
         "option",
         { value: String(n), selected: n === DEFAULT_SLIDE_COUNT },
-        `${n} slides`,
+        `${n} 张幻灯片`,
       ),
     ),
   );
   const palette = el(
     "select",
-    { class: "home-prompt-select", "aria-label": "Theme" },
+    { class: "home-prompt-select", "aria-label": "主题" },
     ...themes.map((t) =>
       el("option", { value: t.key, selected: t.key === theme }, t.name),
     ),
@@ -87,12 +87,12 @@ export function promptBox({ themes, theme, create, available }) {
   });
   let controller = null;
   const go = button(
-    "Create",
+    "创建",
     "Sparkles",
     () => run(),
     "primary home-prompt-go",
   );
-  const stop = button("Stop", null, () => controller?.abort(), "secondary", {
+  const stop = button("停止", null, () => controller?.abort(), "secondary", {
     hidden: true,
   });
   function busy(on) {
@@ -105,33 +105,33 @@ export function promptBox({ themes, theme, create, available }) {
   async function run() {
     const description = field.value.trim();
     if (!description) {
-      status.textContent = "Describe the presentation you want first.";
+      status.textContent = "请先描述您需要的演示文稿。";
       field.focus();
       return;
     }
     if (!available()) {
       status.textContent =
-        "The AI service is not available. Check your connection and reload.";
+        "AI 服务不可用。请检查您的连接并重新加载。";
       return;
     }
     controller = new AbortController();
     busy(true);
     const count = Number(slides.value);
-    status.textContent = "Writing your outline…";
+    status.textContent = "正在编写大纲…";
     try {
       await create(description, {
         slides: count,
         theme: palette.value,
         signal: controller.signal,
         onProgress: ({ slides: done }) => {
-          status.textContent = `Writing slide ${Math.min(done + 1, count + 1)} of ${count + 1}…`;
+          status.textContent = `正在编写第 ${Math.min(done + 1, count + 1)} 张幻灯片（共 ${count + 1} 张）…`;
         },
       });
       if (box.isConnected) status.textContent = "";
     } catch (e) {
       status.textContent = e?.stopped
-        ? "Stopped."
-        : e?.message || "The presentation could not be written. Try again.";
+        ? "已停止。"
+        : e?.message || "无法编写演示文稿，请重试。";
     } finally {
       controller = null;
       if (box.isConnected) busy(false);
@@ -147,7 +147,7 @@ export function promptBox({ themes, theme, create, available }) {
     "form",
     {
       class: "home-prompt",
-      "aria-label": "Write a presentation with AI",
+      "aria-label": "使用 AI 编写演示文稿",
       onsubmit: (e) => {
         e.preventDefault();
         run();
@@ -157,7 +157,7 @@ export function promptBox({ themes, theme, create, available }) {
       "label",
       { class: "home-prompt-label" },
       lucide("Sparkles", 16),
-      "Describe your presentation",
+      "描述您的演示文稿",
     ),
     field,
     el(
@@ -183,8 +183,8 @@ export function promptBox({ themes, theme, create, available }) {
 export function themeStrip(themes, pick) {
   return el(
     "section",
-    { class: "home-themes", "aria-label": "Start in a theme" },
-    el("h2", { class: "home-themes-title" }, "Themes"),
+    { class: "home-themes", "aria-label": "从主题开始" },
+    el("h2", { class: "home-themes-title" }, "主题"),
     el(
       "div",
       { class: "home-themes-row" },
@@ -195,7 +195,7 @@ export function themeStrip(themes, pick) {
             type: "button",
             class: "home-theme",
             "data-theme-key": t.key,
-            "aria-label": `New presentation in the ${t.name} theme`,
+            "aria-label": `基于 ${t.name} 主题的新建演示文稿`,
             onclick: () => pick(t.key),
           },
           el(
@@ -233,9 +233,9 @@ export function libraryFilter(current, choose) {
     );
   return el(
     "div",
-    { class: "library-filter", role: "group", "aria-label": "Show" },
-    make("recent", "Recent"),
-    make("pinned", "Pinned"),
+    { class: "library-filter", role: "group", "aria-label": "显示" },
+    make("recent", "最近"),
+    make("pinned", "已固定"),
   );
 }
 

@@ -84,7 +84,7 @@ export function openSetUpShowDialog(ctx) {
     min: 1,
     max: count,
     value: sel.kind === "range" ? sel.start : 1,
-    "aria-label": "From slide",
+    "aria-label": "起始幻灯片",
   });
   const toInput = el("input", {
     type: "number",
@@ -92,7 +92,7 @@ export function openSetUpShowDialog(ctx) {
     min: 1,
     max: count,
     value: sel.kind === "range" ? Math.min(sel.end, count) : count,
-    "aria-label": "To slide",
+    "aria-label": "终止幻灯片",
   });
   const customSelect = selectField(
     "Custom show",
@@ -100,7 +100,7 @@ export function openSetUpShowDialog(ctx) {
       ? shows.map((s) => [String(s.id), s.name || `Custom show ${s.id + 1}`])
       : [["", "No custom shows", true]],
     sel.kind === "custom" ? String(sel.id) : String(shows[0]?.id ?? ""),
-    { "aria-label": "Custom show" },
+    { "aria-label": "自定义放映" },
   );
   customSelect.wrap.querySelector("label").hidden = true;
   const slides = radioGroup(
@@ -181,7 +181,7 @@ export function openSetUpShowDialog(ctx) {
         el(
           "fieldset",
           { class: "file-radios" },
-          el("legend", {}, "Show options"),
+          el("legend", {}, "放映选项"),
           loop.wrap,
           noNarration.wrap,
           noAnimation.wrap,
@@ -209,12 +209,12 @@ export function openSetUpShowDialog(ctx) {
   return new Promise((resolve) => {
     let saved = false;
     const modal = openModal({
-      title: "Set Up Slide Show",
+      title: "设置幻灯片放映",
       className: "show-setup-dialog",
       body,
       onClose: () => resolve(saved),
       actions: [
-        { label: "Cancel", kind: "secondary", onClick: () => true },
+        { label: "取消", kind: "secondary", onClick: () => true },
         {
           label: "OK",
           kind: "primary",

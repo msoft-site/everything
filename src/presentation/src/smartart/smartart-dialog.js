@@ -1,3 +1,14 @@
+const CAT_MAP = {
+  all: "全部",
+  list: "列表",
+  process: "流程",
+  cycle: "循环",
+  hierarchy: "层次结构",
+  relationship: "关系",
+  matrix: "矩阵",
+  pyramid: "棱锥图",
+  picture: "图片",
+};
 // Choose a SmartArt graphic: categories down the side, the layouts of the
 // chosen category as pictures, and a larger picture with a description of
 // the layout picked.
@@ -9,15 +20,15 @@ export const svgUrl = (markup) =>
 // Resolves to the layout id chosen, or null.
 export async function chooseSmartArtLayout({
   P,
-  title = "Choose a SmartArt Graphic",
-  confirm = "Insert",
+  title = "选择 SmartArt 图形",
+  confirm = "插入",
   current = null,
   palette = null,
   items = null,
 }) {
   const layouts = P.SMARTART_LAYOUTS;
   const categories = [
-    { id: "all", label: "All" },
+    { id: "all", label: "全部" },
     ...P.SMARTART_CATEGORIES.filter((c) =>
       layouts.some((l) => l.category === c.id),
     ),
@@ -50,12 +61,12 @@ export async function chooseSmartArtLayout({
     class: "chart-families smartart-categories",
     role: "tablist",
     "aria-orientation": "vertical",
-    "aria-label": "SmartArt categories",
+    "aria-label": "SmartArt 类别",
   });
   const grid = el("div", {
     class: "smartart-layout-grid",
     role: "listbox",
-    "aria-label": "Layouts",
+    "aria-label": "布局",
   });
   const big = el("img", { class: "smartart-big-preview", alt: "" });
   const name = el("h3", { class: "smartart-layout-name" });
@@ -89,7 +100,7 @@ export async function chooseSmartArtLayout({
             "data-category": c.id,
             onclick: () => pickCategory(c.id),
           },
-          el("span", {}, c.label),
+          el("span", {}, CAT_MAP[c.id] || c.label),
         ),
       ),
     );

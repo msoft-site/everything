@@ -94,25 +94,25 @@ export function createIconFeatures(ctx) {
     const search = el("input", {
       class: "input icon-search",
       type: "search",
-      placeholder: "Search icons",
-      "aria-label": "Search icons",
+      placeholder: "搜索图标",
+      "aria-label": "搜索图标",
       autocomplete: "off",
     });
     const grid = el("div", {
       class: "icon-grid",
       role: "listbox",
       "aria-multiselectable": single ? "false" : "true",
-      "aria-label": "Icons",
+      "aria-label": "图标",
     });
     const count = el("span", { class: "icon-count", role: "status" });
     const chips = el("div", {
       class: "icon-categories",
       role: "tablist",
-      "aria-label": "Icon categories",
+      "aria-label": "图标类别",
     });
     const names = Object.keys(icons);
     const categories = [
-      ["All", names],
+      ["全部", names],
       ...ICON_CATEGORIES.map(([label, list]) => [
         label,
         list.split(/\s+/).filter((n) => n in icons),
@@ -147,7 +147,7 @@ export function createIconFeatures(ctx) {
       );
       if (!shown.length)
         grid.append(
-          el("p", { class: "icon-empty" }, "No icons match your search."),
+          el("p", { class: "icon-empty" }, "未找到与您的搜索匹配的图标。"),
         );
       // Tab reaches the icons once, at the first; the arrow keys move on.
       const first = grid.querySelector(".icon-cell");
@@ -162,10 +162,10 @@ export function createIconFeatures(ctx) {
       count.textContent = `${chosen.size} selected.${more}`;
       insertButton.disabled = !chosen.size;
       insertButton.textContent = single
-        ? "Insert"
+        ? "插入"
         : chosen.size > 1
           ? `Insert (${chosen.size})`
-          : "Insert";
+          : "插入";
     }
     for (const [label] of categories)
       chips.append(
@@ -236,7 +236,7 @@ export function createIconFeatures(ctx) {
     const insertButton = el(
       "button",
       { type: "button", class: "btn primary", disabled: true },
-      "Insert",
+      "插入",
     );
     const body = el(
       "div",
@@ -259,14 +259,14 @@ export function createIconFeatures(ctx) {
               onclick: () =>
                 body.closest("dialog")?.dispatchEvent(new Event("cancel")),
             },
-            "Cancel",
+            "取消",
           ),
           insertButton,
         ),
       ),
     );
     const result = dialog({
-      title: single ? "Change Graphic" : "Insert Icons",
+      title: single ? "更改图形" : "插入图标",
       body,
       confirm: null,
       cancel: null,
@@ -403,16 +403,16 @@ export function createIconFeatures(ctx) {
       ctx.pruneMedia(slide);
       ctx.selectIds(ids);
     });
-    toast("Converted to an editable shape.");
+    toast("已转换为可编辑形状。");
   }
 
   const STYLES = [
-    ["Dark line", { stroke: "#1F2937", fill: "none", strokeWidth: 2 }],
-    ["Accent line", { stroke: "accent", fill: "none", strokeWidth: 2 }],
-    ["Bold line", { stroke: "#111827", fill: "none", strokeWidth: 3 }],
-    ["Light line", { stroke: "#6B7280", fill: "none", strokeWidth: 1.25 }],
-    ["Accent fill", { stroke: "#FFFFFF", fill: "accent", strokeWidth: 1.5 }],
-    ["Tinted", { stroke: "accent", fill: "tint", strokeWidth: 2 }],
+    ["深色线条", { stroke: "#1F2937", fill: "none", strokeWidth: 2 }],
+    ["强调线条", { stroke: "accent", fill: "none", strokeWidth: 2 }],
+    ["粗线条", { stroke: "#111827", fill: "none", strokeWidth: 3 }],
+    ["浅色线条", { stroke: "#6B7280", fill: "none", strokeWidth: 1.25 }],
+    ["强调填充", { stroke: "#FFFFFF", fill: "accent", strokeWidth: 1.5 }],
+    ["着色", { stroke: "accent", fill: "tint", strokeWidth: 2 }],
   ];
   const resolveStyle = (style) => {
     const accent = ctx.accentColor();
@@ -428,7 +428,7 @@ export function createIconFeatures(ctx) {
   const theme = () => ctx.themeColors();
   const tab = () => ({
     id: "graphics-format",
-    label: "Graphics Format",
+    label: "图形格式",
     contextual: true,
     visible: () =>
       ctx.selectedShapes().length > 0 &&
@@ -436,7 +436,7 @@ export function createIconFeatures(ctx) {
     groups: [
       {
         id: "graphics-change",
-        label: "Change",
+        label: "更改",
         icon: "icons",
         items: [
           {
@@ -444,9 +444,9 @@ export function createIconFeatures(ctx) {
             id: "graphics-change-graphic",
             label: "Change\nGraphic",
             icon: "icons",
-            title: "Change Graphic",
+            title: "更改图形",
             description:
-              "Replace this icon with another, keeping its size and colours.",
+              "将此图标替换为另一个图标，同时保留其大小和颜色。",
             run: () => changeGraphic().catch(ctx.fail),
           },
           {
@@ -454,16 +454,16 @@ export function createIconFeatures(ctx) {
             id: "graphics-convert",
             label: "Convert\nto Shape",
             icon: "editShape",
-            title: "Convert to Shape",
+            title: "转换为形状",
             description:
-              "Turn the icon into a shape whose points and colours can be edited.",
+              "将图标转换为可编辑其顶点和颜色的形状。",
             run: () => convertToShape().catch(ctx.fail),
           },
         ],
       },
       {
         id: "graphics-styles",
-        label: "Graphics Styles",
+        label: "图形样式",
         icon: "quickStyles",
         items: [
           {
@@ -471,7 +471,7 @@ export function createIconFeatures(ctx) {
             id: "graphics-style-menu",
             label: "Graphics\nStyles",
             icon: "quickStyles",
-            title: "Graphics Styles",
+            title: "图形样式",
             menu: () =>
               STYLES.map(([label, style]) => ({
                 label,
@@ -484,15 +484,15 @@ export function createIconFeatures(ctx) {
               {
                 type: "small",
                 id: "graphics-fill",
-                label: "Graphics Fill",
+                label: "图形填充",
                 icon: "shapeFill",
-                title: "Graphics Fill",
-                description: "Fill the icon's enclosed areas.",
+                title: "图形填充",
+                description: "填充图标的闭合区域。",
                 menu: () =>
                   colorMenuItems({
                     theme: theme(),
                     none: {
-                      label: "No Fill",
+                      label: "无填充",
                       icon: "Ban",
                       onSelect: () => restyle({ fill: "none" }).catch(ctx.fail),
                     },
@@ -503,10 +503,10 @@ export function createIconFeatures(ctx) {
               {
                 type: "small",
                 id: "graphics-outline",
-                label: "Graphics Outline",
+                label: "图形轮廓",
                 icon: "shapeOutline",
-                title: "Graphics Outline",
-                description: "Colour and weight of the icon's lines.",
+                title: "图形轮廓",
+                description: "图标线条的颜色和粗细。",
                 menu: () => [
                   ...colorMenuItems({
                     theme: theme(),
@@ -515,7 +515,7 @@ export function createIconFeatures(ctx) {
                   }),
                   { separator: true },
                   {
-                    label: "Weight",
+                    label: "粗细",
                     items: [1, 1.5, 2, 2.5, 3].map((w) => ({
                       label: `${w} (of 24)`,
                       onSelect: () =>
@@ -530,7 +530,7 @@ export function createIconFeatures(ctx) {
       },
       {
         id: "graphics-accessibility",
-        label: "Accessibility",
+        label: "辅助功能",
         icon: "altText",
         items: [
           {
@@ -538,7 +538,7 @@ export function createIconFeatures(ctx) {
             id: "graphics-alt-text",
             label: "Alt\nText",
             icon: "altText",
-            title: "Alt Text",
+            title: "替代文字",
             run: () => ctx.altText(),
           },
         ],

@@ -16,24 +16,24 @@ import {
 } from "./controls.js";
 
 export const UNDERLINE_STYLES = [
-  ["none", "(none)"],
-  ["words", "Words only"],
-  ["sng", "Single"],
-  ["dbl", "Double"],
-  ["heavy", "Heavy"],
-  ["dotted", "Dotted"],
-  ["dottedHeavy", "Dotted heavy"],
-  ["dash", "Dashed"],
-  ["dashHeavy", "Dashed heavy"],
-  ["dashLong", "Long dashes"],
-  ["dashLongHeavy", "Long dashes heavy"],
-  ["dotDash", "Dot dash"],
-  ["dotDashHeavy", "Dot dash heavy"],
-  ["dotDotDash", "Dot dot dash"],
-  ["dotDotDashHeavy", "Dot dot dash heavy"],
-  ["wavy", "Wavy"],
-  ["wavyHeavy", "Wavy heavy"],
-  ["wavyDbl", "Wavy double"],
+  ["none", "（无）"],
+  ["words", "仅字"],
+  ["sng", "单线"],
+  ["dbl", "双线"],
+  ["heavy", "粗线"],
+  ["dotted", "点线"],
+  ["dottedHeavy", "粗点线"],
+  ["dash", "虚线"],
+  ["dashHeavy", "粗虚线"],
+  ["dashLong", "长虚线"],
+  ["dashLongHeavy", "粗长虚线"],
+  ["dotDash", "点划线"],
+  ["dotDashHeavy", "粗点划线"],
+  ["dotDotDash", "双点划线"],
+  ["dotDotDashHeavy", "粗双点划线"],
+  ["wavy", "波浪线"],
+  ["wavyHeavy", "粗波浪线"],
+  ["wavyDbl", "双波浪线"],
 ];
 
 const underlineToken = (u) =>
@@ -114,7 +114,7 @@ export async function fontDialog({ format, sample, fonts, theme, tab = 0 }) {
   );
   const preview = el(
     "div",
-    { class: "fmt-font-preview", "aria-label": "Preview", role: "img" },
+    { class: "fmt-font-preview", "aria-label": "预览", role: "img" },
     previewText,
   );
   function updatePreview() {
@@ -156,12 +156,12 @@ export async function fontDialog({ format, sample, fonts, theme, tab = 0 }) {
     const effects = el(
       "fieldset",
       { class: "fmt-fieldset" },
-      el("legend", {}, "Effects"),
+      el("legend", {}, "效果"),
       el(
         "div",
         { class: "fmt-check-grid" },
         (strikeBox = checkField({
-          label: "Strikethrough",
+          label: "删除线",
           checked: strike === "sngStrike",
           onChange: (on) => {
             if (on) doubleBox.querySelector("input").checked = false;
@@ -169,7 +169,7 @@ export async function fontDialog({ format, sample, fonts, theme, tab = 0 }) {
           },
         })),
         (smallBox = checkField({
-          label: "Small caps",
+          label: "小型大写字母",
           checked: f.cap === "small",
           onChange: (on) => {
             if (on) allBox.querySelector("input").checked = false;
@@ -177,7 +177,7 @@ export async function fontDialog({ format, sample, fonts, theme, tab = 0 }) {
           },
         })),
         (doubleBox = checkField({
-          label: "Double strikethrough",
+          label: "双删除线",
           checked: strike === "dblStrike",
           onChange: (on) => {
             if (on) strikeBox.querySelector("input").checked = false;
@@ -185,7 +185,7 @@ export async function fontDialog({ format, sample, fonts, theme, tab = 0 }) {
           },
         })),
         (allBox = checkField({
-          label: "All caps",
+          label: "全部大写",
           checked: f.cap === "all",
           onChange: (on) => {
             if (on) smallBox.querySelector("input").checked = false;
@@ -193,7 +193,7 @@ export async function fontDialog({ format, sample, fonts, theme, tab = 0 }) {
           },
         })),
         (superBox = checkField({
-          label: "Superscript",
+          label: "上标",
           checked: (f.baseline || 0) > 0,
           onChange: (on) => {
             if (on) subBox.querySelector("input").checked = false;
@@ -203,12 +203,12 @@ export async function fontDialog({ format, sample, fonts, theme, tab = 0 }) {
           },
         })),
         checkField({
-          label: "Equalize character height",
+          label: "均衡字符高度",
           checked: !!f.normalizeHeight,
           onChange: (on) => set("normalizeHeight", on),
         }),
         (subBox = checkField({
-          label: "Subscript",
+          label: "下标",
           checked: (f.baseline || 0) < 0,
           onChange: (on) => {
             if (on) superBox.querySelector("input").checked = false;
@@ -220,7 +220,7 @@ export async function fontDialog({ format, sample, fonts, theme, tab = 0 }) {
       ),
     );
     const offset = numberField({
-      label: "Offset",
+      label: "偏移",
       value: Math.round((f.baseline || 0) * 100),
       unit: "%",
       min: -100,
@@ -243,18 +243,18 @@ export async function fontDialog({ format, sample, fonts, theme, tab = 0 }) {
         el(
           "div",
           { class: "fmt-field fmt-grow" },
-          el("label", { for: fontId }, "Font"),
+          el("label", { for: fontId }, "字体"),
           fontInput,
           fontList,
         ),
         selectField({
-          label: "Font style",
+          label: "字形",
           value: styleValue,
           options: [
-            ["regular", "Regular"],
-            ["italic", "Italic"],
-            ["bold", "Bold"],
-            ["bold-italic", "Bold Italic"],
+            ["regular", "常规"],
+            ["italic", "倾斜"],
+            ["bold", "加粗"],
+            ["bold-italic", "加粗倾斜"],
           ],
           onChange: (v) => {
             set("bold", v.startsWith("bold"));
@@ -262,7 +262,7 @@ export async function fontDialog({ format, sample, fonts, theme, tab = 0 }) {
           },
         }),
         numberField({
-          label: "Size",
+          label: "字号",
           value: f.size ?? "",
           unit: "pt",
           min: 1,
@@ -276,23 +276,23 @@ export async function fontDialog({ format, sample, fonts, theme, tab = 0 }) {
         "div",
         { class: "fmt-row" },
         colorButton({
-          label: "Font color",
+          label: "字体颜色",
           value: f.color,
           theme,
-          automatic: { label: "Automatic", value: "scheme:tx1" },
+          automatic: { label: "自动", value: "scheme:tx1" },
           onPick: (v) => set("color", v),
         }),
         selectField({
-          label: "Underline style",
+          label: "下划线线型",
           value: underlineToken(f.underline),
           options: UNDERLINE_STYLES,
           onChange: (v) => set("underline", v === "none" ? false : v),
         }),
         colorButton({
-          label: "Underline color",
+          label: "下划线颜色",
           value: f.underlineColor ?? null,
           theme,
-          automatic: { label: "Same as Text", value: null },
+          automatic: { label: "与文字相同", value: null },
           onPick: (v) => set("underlineColor", v),
         }),
       ),
@@ -330,7 +330,7 @@ export async function fontDialog({ format, sample, fonts, theme, tab = 0 }) {
     let kernOn = kern !== undefined && kern > 0;
     let kernAt = kernOn ? kern / 100 : 12;
     const kernSize = numberField({
-      label: "Points and above",
+      label: "磅及以上",
       value: kernAt,
       unit: "pt",
       min: 1,
@@ -349,12 +349,12 @@ export async function fontDialog({ format, sample, fonts, theme, tab = 0 }) {
         "div",
         { class: "fmt-row" },
         selectField({
-          label: "Spacing",
+          label: "间距",
           value: mode,
           options: [
-            ["normal", "Normal"],
-            ["expanded", "Expanded"],
-            ["condensed", "Condensed"],
+            ["normal", "标准"],
+            ["expanded", "加宽"],
+            ["condensed", "紧缩"],
           ],
           onChange: (v) => {
             mode = v;
@@ -371,7 +371,7 @@ export async function fontDialog({ format, sample, fonts, theme, tab = 0 }) {
         "div",
         { class: "fmt-row" },
         checkField({
-          label: "Kerning for fonts",
+          label: "字体微调",
           checked: kernOn,
           onChange: (on) => {
             kernOn = on;
@@ -385,14 +385,14 @@ export async function fontDialog({ format, sample, fonts, theme, tab = 0 }) {
   };
   const t = tabs(
     [
-      { id: "font", label: "Font", render: fontTab },
-      { id: "spacing", label: "Character Spacing", render: spacingTab },
+      { id: "font", label: "字体", render: fontTab },
+      { id: "spacing", label: "字符间距", render: spacingTab },
     ],
-    { label: "Font settings", initial: tab },
+    { label: "字体设置", initial: tab },
   );
   updatePreview();
   const ok = await formatDialog({
-    title: "Font",
+    title: "字体",
     body: el("div", { class: "fmt-stack" }, t.node, preview),
     wide: true,
   });
@@ -509,16 +509,16 @@ export async function paragraphDialog({ paragraph }) {
     el(
       "fieldset",
       { class: "fmt-fieldset" },
-      el("legend", {}, "General"),
+      el("legend", {}, "常规"),
       selectField({
-        label: "Alignment",
+        label: "对齐方式",
         value: p.align || "left",
         options: [
-          ["left", "Left"],
-          ["center", "Centered"],
-          ["right", "Right"],
-          ["justify", "Justified"],
-          ["distribute", "Distributed"],
+          ["left", "左对齐"],
+          ["center", "居中"],
+          ["right", "右对齐"],
+          ["justify", "两端对齐"],
+          ["distribute", "分散对齐"],
         ],
         onChange: (v) => set("align", v),
       }),
@@ -526,12 +526,12 @@ export async function paragraphDialog({ paragraph }) {
     el(
       "fieldset",
       { class: "fmt-fieldset" },
-      el("legend", {}, "Indentation"),
+      el("legend", {}, "缩进"),
       el(
         "div",
         { class: "fmt-row" },
         numberField({
-          label: "Before text",
+          label: "文本前",
           value: beforeText,
           unit: "in",
           min: 0,
@@ -540,12 +540,12 @@ export async function paragraphDialog({ paragraph }) {
           onCommit: (n) => set("marL", Math.round(n * IN)),
         }),
         selectField({
-          label: "Special",
+          label: "特殊格式",
           value: specialMode,
           options: [
-            ["none", "(none)"],
-            ["first", "First line"],
-            ["hanging", "Hanging"],
+            ["none", "（无）"],
+            ["first", "首行缩进"],
+            ["hanging", "悬挂缩进"],
           ],
           onChange: (v) => {
             specialMode = v;
@@ -562,12 +562,12 @@ export async function paragraphDialog({ paragraph }) {
     el(
       "fieldset",
       { class: "fmt-fieldset" },
-      el("legend", {}, "Spacing"),
+      el("legend", {}, "间距"),
       el(
         "div",
         { class: "fmt-row" },
         numberField({
-          label: "Before",
+          label: "段前",
           value: p.spaceBefore || 0,
           unit: "pt",
           min: 0,
@@ -576,7 +576,7 @@ export async function paragraphDialog({ paragraph }) {
           onCommit: (n) => set("spaceBefore", n),
         }),
         numberField({
-          label: "After",
+          label: "段后",
           value: p.spaceAfter || 0,
           unit: "pt",
           min: 0,
@@ -589,14 +589,14 @@ export async function paragraphDialog({ paragraph }) {
         "div",
         { class: "fmt-row" },
         selectField({
-          label: "Line spacing",
+          label: "行距",
           value: lineRule,
           options: [
-            ["single", "Single"],
-            ["onehalf", "1.5 lines"],
-            ["double", "Double"],
-            ["exactly", "Exactly"],
-            ["multiple", "Multiple"],
+            ["single", "单倍行距"],
+            ["onehalf", "1.5 倍行距"],
+            ["double", "2 倍行距"],
+            ["exactly", "固定值"],
+            ["multiple", "多倍行距"],
           ],
           onChange: (v) => {
             lineRule = v;
@@ -624,7 +624,7 @@ export async function paragraphDialog({ paragraph }) {
     ),
     el("div", { class: "fmt-row fmt-end" }, tabsButton),
   );
-  const ok = await formatDialog({ title: "Paragraph", body, wide: true });
+  const ok = await formatDialog({ title: "段落", body, wide: true });
   return ok && Object.keys(changes).length ? changes : null;
 }
 
@@ -636,7 +636,7 @@ export async function tabsDialog({ tabs: initial, defaultTab }) {
   let align = "l";
   // A plain list: each stop is read out with its Clear button, which a
   // listbox's options could not hold.
-  const list = el("ul", { class: "fmt-tab-list", "aria-label": "Tab stops" });
+  const list = el("ul", { class: "fmt-tab-list", "aria-label": "制表位" });
   const label = (a) =>
     ({ l: "Left", ctr: "Center", r: "Right", dec: "Decimal" })[a];
   const render = () => {
@@ -654,7 +654,7 @@ export async function tabsDialog({ tabs: initial, defaultTab }) {
               type: "button",
               class: "btn icon-btn small",
               "aria-label": `Clear the tab stop at ${(stop.pos / IN).toFixed(2)} inches`,
-              title: "Clear",
+              title: "清除",
               onclick: () => {
                 stops.splice(i, 1);
                 render();
@@ -666,7 +666,7 @@ export async function tabsDialog({ tabs: initial, defaultTab }) {
       ),
     );
     if (!stops.length)
-      list.append(el("li", { class: "helper" }, "No tab stops yet."));
+      list.append(el("li", { class: "helper" }, "尚无制表位。"));
   };
   render();
   const body = el(
@@ -676,7 +676,7 @@ export async function tabsDialog({ tabs: initial, defaultTab }) {
       "div",
       { class: "fmt-stack" },
       numberField({
-        label: "Tab stop position",
+        label: "制表位位置",
         value: position,
         unit: "in",
         min: 0,
@@ -687,15 +687,15 @@ export async function tabsDialog({ tabs: initial, defaultTab }) {
       el(
         "div",
         { class: "fmt-field" },
-        el("span", { class: "fmt-label" }, "Alignment"),
+        el("span", { class: "fmt-label" }, "对齐方式"),
         segmented({
-          label: "Alignment",
+          label: "对齐方式",
           value: align,
           options: [
-            ["l", "Left"],
-            ["ctr", "Center"],
-            ["r", "Right"],
-            ["dec", "Decimal"],
+            ["l", "左对齐"],
+            ["ctr", "居中"],
+            ["r", "右对齐"],
+            ["dec", "小数点对齐"],
           ],
           onChange: (v) => (align = v),
         }),
@@ -716,7 +716,7 @@ export async function tabsDialog({ tabs: initial, defaultTab }) {
             render();
           },
         },
-        "Set",
+        "设置",
       ),
       el(
         "button",
@@ -728,17 +728,17 @@ export async function tabsDialog({ tabs: initial, defaultTab }) {
             render();
           },
         },
-        "Clear All",
+        "全部清除",
       ),
     ),
     list,
     el(
       "p",
       { class: "helper" },
-      "While you type in a paragraph with tab stops, Tab moves to the next one.",
+      "在带有制表位的段落中键入时，按 Tab 键可移动到下一个制表位。",
     ),
     numberField({
-      label: "Default tab stops",
+      label: "默认制表位",
       value: spacing,
       unit: "in",
       min: 0.1,
@@ -747,7 +747,7 @@ export async function tabsDialog({ tabs: initial, defaultTab }) {
       onCommit: (n) => (spacing = n),
     }),
   );
-  const ok = await formatDialog({ title: "Tabs", body });
+  const ok = await formatDialog({ title: "制表位", body });
   return ok ? { tabs: stops, defaultTab: Math.round(spacing * IN) } : null;
 }
 
@@ -759,7 +759,7 @@ export async function columnsDialog({ count = 1, gapEmu = 0 }) {
     "div",
     { class: "fmt-row" },
     numberField({
-      label: "Number",
+      label: "栏数",
       value: n,
       min: 1,
       max: 16,
@@ -768,7 +768,7 @@ export async function columnsDialog({ count = 1, gapEmu = 0 }) {
       onCommit: (v) => (n = Math.round(v)),
     }),
     numberField({
-      label: "Spacing",
+      label: "间距",
       value: gap,
       unit: "in",
       min: 0,
@@ -777,7 +777,7 @@ export async function columnsDialog({ count = 1, gapEmu = 0 }) {
       onCommit: (v) => (gap = v),
     }),
   );
-  const ok = await formatDialog({ title: "Columns", body });
+  const ok = await formatDialog({ title: "分栏", body });
   return ok ? { count: n, gapEmu: Math.round(gap * IN) } : null;
 }
 

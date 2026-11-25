@@ -142,8 +142,8 @@ export function formatFrame(model) {
   const search = el("input", {
     type: "search",
     class: "input fmt-search",
-    placeholder: "Search options",
-    "aria-label": "Search format options",
+    placeholder: "搜索选项",
+    "aria-label": "搜索格式选项",
     autocomplete: "off",
     spellcheck: "false",
     value: query,
@@ -151,7 +151,7 @@ export function formatFrame(model) {
   const topBar = el("div", {
     class: "fmt-top-tabs",
     role: "tablist",
-    "aria-label": "Format options",
+    "aria-label": "格式选项",
   });
   const subBar = el("div", { class: "fmt-sub-tabs", role: "tablist" });
   const caption = el("div", {
@@ -167,7 +167,7 @@ export function formatFrame(model) {
   const resultsNode = el("div", {
     class: "fmt-search-results",
     role: "region",
-    "aria-label": "Search results",
+    "aria-label": "搜索结果",
   });
   const statusNode = el("p", {
     class: "fmt-search-status",

@@ -158,10 +158,10 @@ export const STRUCTURES = [
 
 // Well-known formulas offered from the Equation button.
 export const BUILT_IN_EQUATIONS = [
-  ["Area of a circle", "A=\\pi r^2"],
-  ["Quadratic formula", "x=\\frac{-b\\pm\\sqrt{b^2-4ac}}{2a}"],
-  ["Pythagorean theorem", "a^2+b^2=c^2"],
-  ["Binomial theorem", "(x+a)^n=\\sum_{k=0}^{n}\\binom{n}{k}x^k a^{n-k}"],
+  ["圆的面积", "A=\\pi r^2"],
+  ["一元二次方程求根公式", "x=\\frac{-b\\pm\\sqrt{b^2-4ac}}{2a}"],
+  ["勾股定理", "a^2+b^2=c^2"],
+  ["二项式定理", "(x+a)^n=\\sum_{k=0}^{n}\\binom{n}{k}x^k a^{n-k}"],
   ["Euler's identity", "e^{i\\pi}+1=0"],
   [
     "Taylor expansion",
@@ -175,7 +175,7 @@ export const BUILT_IN_EQUATIONS = [
     "Gaussian integral",
     "\\int_{-\\infty}^{\\infty} e^{-x^2}\\,dx=\\sqrt{\\pi}",
   ],
-  ["Trig identity", "\\sin^2\\theta+\\cos^2\\theta=1"],
+  ["三角恒等式", "\\sin^2\\theta+\\cos^2\\theta=1"],
 ];
 
 const PX = 64; // pixels per em in the stored drawing
@@ -201,7 +201,7 @@ export function createEquationFeatures(ctx) {
   }
 
   /** The equation dialog; resolves to the source, or null. */
-  async function editDialog(initial = "", { title = "Equation" } = {}) {
+  async function editDialog(initial = "", { title = "公式" } = {}) {
     const input = el("textarea", {
       class: "input equation-input",
       rows: 3,
@@ -214,7 +214,7 @@ export function createEquationFeatures(ctx) {
     const preview = el("div", {
       class: "equation-preview",
       role: "img",
-      "aria-label": "Preview",
+      "aria-label": "预览",
     });
     const help = el(
       "p",
@@ -271,7 +271,7 @@ export function createEquationFeatures(ctx) {
     const tabs = el("div", {
       class: "equation-tabs",
       role: "tablist",
-      "aria-label": "Palettes",
+      "aria-label": "调色板",
     });
     const panel = el("div", { class: "equation-palette", role: "tabpanel" });
     const groups = [
@@ -352,7 +352,7 @@ export function createEquationFeatures(ctx) {
     const response = dialog({
       title,
       body,
-      confirm: initial ? "Update" : "Insert",
+      confirm: initial ? "更新" : "插入",
     });
     input.focus();
     input.setSelectionRange(input.value.length, input.value.length);
@@ -426,7 +426,7 @@ export function createEquationFeatures(ctx) {
     if (!isEquation(obj)) return false;
     const data = P.getShapeObjectData(obj);
     const source = await editDialog(data.source || "", {
-      title: "Edit Equation",
+      title: "编辑公式",
     });
     if (!source || source === data.source) return true;
     await redraw(obj, { ...data, source });
@@ -460,13 +460,13 @@ export function createEquationFeatures(ctx) {
 
   const tab = () => ({
     id: "equation",
-    label: "Equation",
+    label: "公式",
     contextual: true,
     visible: () => !!current() && ctx.selectedShapes().length === 1,
     groups: [
       {
         id: "equation-edit",
-        label: "Equation",
+        label: "公式",
         icon: "equation",
         items: [
           {
@@ -474,15 +474,15 @@ export function createEquationFeatures(ctx) {
             id: "equation-edit-button",
             label: "Edit\nEquation",
             icon: "equation",
-            title: "Edit Equation",
+            title: "编辑公式",
             run: () => editEquation().catch(ctx.fail),
           },
           {
             type: "large",
             id: "equation-color",
-            label: "Color",
+            label: "颜色",
             icon: "textColor",
-            title: "Equation Color",
+            title: "公式颜色",
             menu: () =>
               ctx.colorItems((hex) => {
                 const obj = current();
@@ -500,7 +500,7 @@ export function createEquationFeatures(ctx) {
 
   const menu = () => [
     {
-      label: "Insert New Equation",
+      label: "插入新公式",
       icon: "o:equation",
       onSelect: () => insertEquation().catch(ctx.fail),
     },

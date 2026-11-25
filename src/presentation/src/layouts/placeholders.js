@@ -14,37 +14,37 @@ import "./layouts.css";
 export const PLACEHOLDER_INSERTS = [
   {
     id: "table",
-    label: "Insert Table",
+    label: "插入表格",
     icon: "o:table",
     kinds: ["content", "table"],
   },
   {
     id: "chart",
-    label: "Insert Chart",
+    label: "插入图表",
     icon: "o:chartColumn",
     kinds: ["content", "chart"],
   },
   {
     id: "smartArt",
-    label: "Insert a SmartArt Graphic",
+    label: "插入 SmartArt 图形",
     icon: "o:smartArt",
     kinds: ["content", "smartArt"],
   },
   {
     id: "picture",
-    label: "Insert Picture",
+    label: "插入图片",
     icon: "o:picture",
     kinds: ["content", "picture"],
   },
   {
     id: "icons",
-    label: "Insert Icons",
+    label: "插入图标",
     icon: "o:icons",
     kinds: ["content"],
   },
   {
     id: "video",
-    label: "Insert Video",
+    label: "插入视频",
     icon: "o:video",
     kinds: ["content", "media"],
   },
@@ -85,7 +85,7 @@ export function decoratePlaceholders({
     const box = el("div", {
       class: "placeholder-inserts",
       role: "group",
-      "aria-label": "Insert into this placeholder",
+      "aria-label": "插入到此占位符",
       "data-shape-id": hit.dataset.shapeId,
     });
     for (const entry of offered)

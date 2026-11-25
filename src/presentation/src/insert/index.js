@@ -160,15 +160,15 @@ export function createInsertFeatures(host) {
   /** Items for the menu bar's Insert menu. */
   const menuItems = () => [
     { label: "Icons…", icon: "o:icons", onSelect: run(icons.insertIcons) },
-    { label: "Screenshot", icon: "o:screenshot", items: screenshot.menu() },
+    { label: "屏幕截图", icon: "o:screenshot", items: screenshot.menu() },
     {
       label: "Photo Album…",
       icon: "o:photoAlbum",
       onSelect: run(album.photoAlbum),
     },
     { separator: true },
-    { label: "Video", icon: "o:video", items: media.videoMenu() },
-    { label: "Audio", icon: "o:audio", items: media.audioMenu() },
+    { label: "视频", icon: "o:video", items: media.videoMenu() },
+    { label: "音频", icon: "o:audio", items: media.audioMenu() },
     { separator: true },
     {
       label: "Equation…",
@@ -181,9 +181,9 @@ export function createInsertFeatures(host) {
       onSelect: run(headerFooter.headerFooter),
     },
     { separator: true },
-    { label: "Zoom", icon: "o:zoomSlide", items: zoom.menu() },
+    { label: "缩放定位", icon: "o:zoomSlide", items: zoom.menu() },
     {
-      label: "Action Buttons",
+      label: "动作按钮",
       icon: "o:actionButtons",
       items: actions.menuItems(),
     },
@@ -201,7 +201,7 @@ export function createInsertFeatures(host) {
     const items = [];
     if (equation.isEquation(obj))
       items.push({
-        label: "Edit Equation",
+        label: "编辑公式",
         icon: "o:equation",
         onSelect: run(() => equation.editEquation(obj)),
       });
@@ -216,7 +216,7 @@ export function createInsertFeatures(host) {
       );
     if (object.isObject(obj))
       items.push({
-        label: "Open Object",
+        label: "打开对象",
         icon: "o:object",
         onSelect: () => object.openObject(obj),
       });

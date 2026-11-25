@@ -333,7 +333,7 @@ export function createSpelling(env, host) {
     const list = el("div", {
       class: "spell-suggestions",
       role: "listbox",
-      "aria-label": "Suggestions",
+      "aria-label": "建议",
       tabindex: state.suggestions.length ? null : 0,
       onkeydown: (e) => {
         const n = state.suggestions.length;
@@ -389,7 +389,7 @@ export function createSpelling(env, host) {
         label,
       );
     wrap.append(
-      el("p", { class: "review-label" }, "Not in dictionary"),
+      el("p", { class: "review-label" }, "不在词典中"),
       el("p", { class: "spell-word", "aria-live": "polite" }, i.word),
       el(
         "p",
@@ -404,20 +404,20 @@ export function createSpelling(env, host) {
       el(
         "div",
         { class: "spell-actions" },
-        btn("Ignore", actions.ignore),
-        btn("Ignore All", actions.ignoreAll),
-        btn("Add to Dictionary", actions.add),
+        btn("忽略", actions.ignore),
+        btn("全部忽略", actions.ignoreAll),
+        btn("添加到词典", actions.add),
       ),
-      el("p", { class: "review-label" }, "Suggestions"),
+      el("p", { class: "review-label" }, "建议"),
       list,
       el(
         "div",
         { class: "spell-actions" },
-        btn("Change", actions.change, {
+        btn("更改", actions.change, {
           class: "btn primary small",
           disabled: !state.suggestions.length || null,
         }),
-        btn("Change All", actions.changeAll, {
+        btn("全部更改", actions.changeAll, {
           disabled: !state.suggestions.length || null,
         }),
       ),
@@ -431,7 +431,7 @@ export function createSpelling(env, host) {
     return wrap;
   }
 
-  host.register("spelling", { title: "Spelling", render });
+  host.register("spelling", { title: "拼写检查", render });
   return {
     open: () => {
       host.open("spelling");

@@ -84,7 +84,7 @@ export const cleanName = (
     .trim()
     .slice(0, maxLength)
     .replace(/[\uD800-\uDBFF]$/, "")
-    .trimEnd() || "Untitled presentation";
+    .trimEnd() || "未命名演示文稿";
 const box = (x, y, w, h) => ({
   x: P.inches(x),
   y: P.inches(y),
@@ -115,28 +115,28 @@ export function text(
 // The shapes on offer, with the names people see and the icons that stand
 // for them.
 export const SHAPES = [
-  ["rect", "Rectangle", "Square"],
-  ["roundRect", "Rounded rectangle", "SquareRoundCorner"],
-  ["ellipse", "Circle", "Circle"],
-  ["triangle", "Triangle", "Triangle"],
-  ["rtTriangle", "Right triangle", "Triangle"],
-  ["diamond", "Diamond", "Diamond"],
-  ["pentagon", "Pentagon", "Pentagon"],
-  ["hexagon", "Hexagon", "Hexagon"],
-  ["octagon", "Octagon", "Octagon"],
-  ["star5", "Star", "Star"],
-  ["heart", "Heart", "Heart"],
-  ["cloud", "Cloud", "Cloud"],
-  ["plus", "Plus", "Plus"],
-  ["wedgeRectCallout", "Speech bubble", "MessageSquare"],
+  ["rect", "矩形", "Square"],
+  ["roundRect", "圆角矩形", "SquareRoundCorner"],
+  ["ellipse", "圆形", "Circle"],
+  ["triangle", "等腰三角形", "Triangle"],
+  ["rtTriangle", "直角三角形", "Triangle"],
+  ["diamond", "菱形", "Diamond"],
+  ["pentagon", "五边形", "Pentagon"],
+  ["hexagon", "六边形", "Hexagon"],
+  ["octagon", "八边形", "Octagon"],
+  ["star5", "五角星", "Star"],
+  ["heart", "心形", "Heart"],
+  ["cloud", "云形", "Cloud"],
+  ["plus", "十字形", "Plus"],
+  ["wedgeRectCallout", "矩形标注", "MessageSquare"],
 ];
 export const ARROW_SHAPES = [
-  ["rightArrow", "Right arrow", "ArrowRight"],
-  ["leftArrow", "Left arrow", "ArrowLeft"],
-  ["upArrow", "Up arrow", "ArrowUp"],
-  ["downArrow", "Down arrow", "ArrowDown"],
-  ["leftRightArrow", "Left-right arrow", "ArrowLeftRight"],
-  ["chevron", "Chevron", "ChevronRight"],
+  ["rightArrow", "向右箭头", "ArrowRight"],
+  ["leftArrow", "向左箭头", "ArrowLeft"],
+  ["upArrow", "向上箭头", "ArrowUp"],
+  ["downArrow", "向下箭头", "ArrowDown"],
+  ["leftRightArrow", "左右双向箭头", "ArrowLeftRight"],
+  ["chevron", "燕尾形", "ChevronRight"],
 ];
 const PRESET_LABELS = Object.fromEntries(
   [...SHAPES, ...ARROW_SHAPES].map(([preset, label]) => [preset, label]),
@@ -258,7 +258,7 @@ function dressDesignedSlide(pres, slide, layout, theme, content, t, designed) {
   };
   text(
     slide,
-    content.kicker || "YOUR NEXT CHAPTER",
+    content.kicker || "下一篇章",
     0.8,
     0.55,
     11.7,
@@ -309,7 +309,7 @@ function dressDesignedSlide(pres, slide, layout, theme, content, t, designed) {
     );
     text(
       slide,
-      content.body || "Every great story starts with a question.",
+      content.body || "每个精彩的故事都始于一个问题。",
       0.85,
       5.25,
       11.4,
@@ -320,7 +320,7 @@ function dressDesignedSlide(pres, slide, layout, theme, content, t, designed) {
   } else if (layout === "columns") {
     heading(
       slide,
-      content.title || "See the bigger picture.",
+      content.title || "纵观全局。",
       0.8,
       1.3,
       11.7,
@@ -346,7 +346,7 @@ function dressDesignedSlide(pres, slide, layout, theme, content, t, designed) {
   } else {
     heading(
       slide,
-      content.title || "Start with what matters.",
+      content.title || "从最重要的事开始。",
       0.8,
       1.35,
       11.7,
@@ -370,7 +370,7 @@ function dressDesignedSlide(pres, slide, layout, theme, content, t, designed) {
   const footerColor = layout === "section" ? sectionTextColor(theme) : t.muted;
   text(
     slide,
-    content.footer || "PRESENTATION",
+    content.footer || "演示文稿",
     0.85,
     6.75,
     8,
@@ -441,29 +441,29 @@ export function createDeck(template = "blank", theme = "studio") {
       "title",
       pitch
         ? {
-            kicker: "THE PITCH",
+            kicker: "商业提案",
             title: "Small idea.\nBig possibility.",
             body: "Introduce your vision and the change\nyou want to bring into the world.",
           }
         : {},
     );
     designed("content", {
-      kicker: pitch ? "01 / THE OPPORTUNITY" : "01 / THE CONTEXT",
-      title: pitch ? "A problem worth solving." : "Where we are today.",
+      kicker: pitch ? "01 / 机遇" : "01 / 背景",
+      title: pitch ? "一个值得解决的问题。" : "我们的现状。",
       body: pitch
         ? "Describe the problem in one clear sentence.\n\nWho experiences it?\nWhy does it matter now?"
         : "Share the context behind your idea.\n\nWhat have you learned?\nWhat could be different?",
     });
-    designed("columns", { kicker: "02 / THE APPROACH" });
+    designed("columns", { kicker: "02 / 实施方法" });
     designed("content", {
-      kicker: "03 / THE PLAN",
-      title: "From idea to impact.",
+      kicker: "03 / 行动计划",
+      title: "从想法到影响力。",
       body: "Set a direction people can follow.\n\n1. Start with the essentials\n2. Make the first step tangible\n3. Learn, refine, and keep moving",
     });
     designed("section", {
-      kicker: "LET’S MAKE IT HAPPEN",
+      kicker: "携手共创",
       title: "The next chapter\nstarts here.",
-      body: "Thank you. Let’s talk about what comes next.",
+      body: "感谢大家。让我们探讨下一步计划。",
     });
   }
   return pres;
@@ -474,14 +474,14 @@ export const imageDescription = (obj) =>
 // readable name. Decks saved earlier still carry generated "rect 5" names.
 export function shapeLabel(obj, pres) {
   if (P.getShapeKind(obj) === "picture")
-    return ["Image", imageDescription(obj)].filter(Boolean).join(": ");
+    return ["图片", imageDescription(obj)].filter(Boolean).join(": ");
   const text = pres ? displayShapeText(pres, obj) : P.getShapeText(obj);
   if (text) return text;
   const name = P.getShapeName(obj) || "";
   const generated = /^([A-Za-z0-9]+) (\d+)$/.exec(name);
   return generated && PRESET_LABELS[generated[1]]
     ? `${PRESET_LABELS[generated[1]]} ${generated[2]}`
-    : name || "Shape";
+    : name || "形状";
 }
 export function shapeIcon(obj) {
   const kind = P.getShapeKind(obj);
@@ -2051,16 +2051,16 @@ export async function restoreDeck(bytes, { prepareFonts = true } = {}) {
   } catch (error) {
     if (error?.code === 13)
       throw new Error(
-        "This PPTX file is damaged. Choose another copy of the presentation.",
+        "此 PPTX 文件已损坏。请选择该演示文稿的另一副本。",
         { cause: error },
       );
     throw new Error(
-      "This file could not be opened as a PowerPoint presentation. Choose a .pptx file saved by PowerPoint or a compatible app.",
+      "无法将此文件作为 PowerPoint 演示文稿打开。请选择由 PowerPoint 或兼容应用保存的 .pptx 文件。",
       { cause: error },
     );
   }
   if (P.getSlides(pres).length > 300)
-    throw new Error("This editor supports up to 300 slides per presentation.");
+    throw new Error("此编辑器支持每个演示文稿最多 300 张幻灯片。");
   renumberDuplicateIds(pres);
   if (prepareFonts) await prepareDeckFonts(pres);
   return pres;
@@ -2162,49 +2162,49 @@ export function validateZip(input) {
     const ole = [0xd0, 0xcf, 0x11, 0xe0, 0xa1, 0xb1, 0x1a, 0xe1];
     if (bytes.length >= 8 && ole.every((b, i) => bytes[i] === b))
       throw new Error(
-        "This presentation is password-protected or in the old .ppt format. Open it in PowerPoint, remove the password or save it as .pptx, and try again.",
+        "此演示文稿受密码保护或为旧版 .ppt 格式。请在 PowerPoint 中打开，移除密码或另存为 .pptx，然后重试。",
       );
-    throw new Error("This is not a valid PPTX file.");
+    throw new Error("这不是有效的 PPTX 文件。");
   }
   if (
     (end >= 20 && view.getUint32(end - 20, true) === 0x07064b50) ||
     view.getUint32(end + 12, true) === 0xffffffff ||
     view.getUint32(end + 16, true) === 0xffffffff
   )
-    throw new Error("ZIP64 presentations are not supported.");
+    throw new Error("不支持 ZIP64 格式的演示文稿。");
   const count = view.getUint16(end + 10, true);
   if (
     view.getUint16(end + 4, true) !== 0 ||
     view.getUint16(end + 6, true) !== 0 ||
     view.getUint16(end + 8, true) !== count
   )
-    throw new Error("The PPTX archive is damaged or spans multiple disks.");
+    throw new Error("PPTX 存档已损坏或跨多个磁盘。");
   let cursor = view.getUint32(end + 16, true),
     total = 0;
   const directoryEnd = cursor + view.getUint32(end + 12, true);
-  if (directoryEnd > end) throw new Error("The PPTX archive is damaged.");
+  if (directoryEnd > end) throw new Error("PPTX 存档已损坏。");
   if (count === 65535 || count > 12000)
-    throw new Error("This presentation contains too many archive entries.");
+    throw new Error("此演示文稿包含过多的存档条目。");
   for (let i = 0; i < count; i++) {
     if (
       cursor + 46 > directoryEnd ||
       view.getUint32(cursor, true) !== 0x02014b50
     )
-      throw new Error("The PPTX archive is damaged.");
+      throw new Error("PPTX 存档已损坏。");
     // The decompressor copies STORE entries using their compressed size.
     if (
       view.getUint16(cursor + 10, true) === 0 &&
       view.getUint32(cursor + 20, true) !== view.getUint32(cursor + 24, true)
     )
-      throw new Error("The PPTX archive has inconsistent stored entry sizes.");
+      throw new Error("PPTX 存档中存储的条目大小不一致。");
     total += view.getUint32(cursor + 24, true);
     if (total > 200 * 1024 * 1024)
-      throw new Error("This presentation expands beyond the 200 MB limit.");
+      throw new Error("此演示文稿解压后超过 200 MB 限制。");
     cursor +=
       46 +
       view.getUint16(cursor + 28, true) +
       view.getUint16(cursor + 30, true) +
       view.getUint16(cursor + 32, true);
   }
-  if (cursor !== directoryEnd) throw new Error("The PPTX archive is damaged.");
+  if (cursor !== directoryEnd) throw new Error("PPTX 存档已损坏。");
 }

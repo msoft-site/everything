@@ -35,7 +35,7 @@ export function createAnimationPane({ tools, P, ctx }) {
     if (node?.isConnected) return;
     node = el("aside", {
       class: "task-pane animation-pane",
-      "aria-label": "Animation Pane",
+      "aria-label": "动画窗格",
       tabindex: -1,
     });
     ctx.editorBody()?.append(node);
@@ -114,8 +114,8 @@ export function createAnimationPane({ tools, P, ctx }) {
         {
           type: "button",
           class: "icon-btn",
-          "aria-label": "Close Animation Pane",
-          title: "Close",
+          "aria-label": "关闭动画窗格",
+          title: "关闭",
           onclick: () => tools().togglePane(false),
         },
         icon("X", 16),
@@ -148,8 +148,8 @@ export function createAnimationPane({ tools, P, ctx }) {
           {
             type: "button",
             class: "icon-btn",
-            "aria-label": "Move Earlier",
-            title: "Move Earlier",
+            "aria-label": "向前移动",
+            title: "向前移动",
             disabled: ![...chosen].some((i) => i > 0) || null,
             onclick: () => tools().move(-1),
           },
@@ -160,8 +160,8 @@ export function createAnimationPane({ tools, P, ctx }) {
           {
             type: "button",
             class: "icon-btn",
-            "aria-label": "Move Later",
-            title: "Move Later",
+            "aria-label": "向后移动",
+            title: "向后移动",
             disabled: ![...chosen].some((i) => i < effects.length - 1) || null,
             onclick: () => tools().move(1),
           },
@@ -172,7 +172,7 @@ export function createAnimationPane({ tools, P, ctx }) {
     const list = el("div", {
       class: "anim-list",
       role: "listbox",
-      "aria-label": "Effects on this slide",
+      "aria-label": "此幻灯片上的效果",
       "aria-multiselectable": "true",
     });
     const sequences = rowsOf(effects);
@@ -256,7 +256,7 @@ export function createAnimationPane({ tools, P, ctx }) {
             items: itemMenu(index),
             x: e.clientX,
             y: e.clientY,
-            label: "Effect options",
+            label: "效果选项",
           });
         },
         onkeydown: (e) => keydown(e, index, effects),
@@ -318,7 +318,7 @@ export function createAnimationPane({ tools, P, ctx }) {
             openMenu({
               anchor: e.currentTarget,
               items: itemMenu(index),
-              label: "Effect options",
+              label: "效果选项",
               align: "end",
             });
           },
@@ -389,10 +389,10 @@ export function createAnimationPane({ tools, P, ctx }) {
           onclick: (e) =>
             openMenu({
               anchor: e.currentTarget,
-              label: "Timeline",
+              label: "时间线",
               items: [
                 {
-                  label: "Zoom In",
+                  label: "放大",
                   disabled: zoom >= 8,
                   onSelect: () => {
                     zoom = Math.min(8, zoom * 2);
@@ -400,7 +400,7 @@ export function createAnimationPane({ tools, P, ctx }) {
                   },
                 },
                 {
-                  label: "Zoom Out",
+                  label: "缩小",
                   disabled: zoom <= 0.25,
                   onSelect: () => {
                     zoom = Math.max(0.25, zoom / 2);
@@ -429,10 +429,10 @@ export function createAnimationPane({ tools, P, ctx }) {
       })),
       { separator: true },
       {
-        label: "Effect Options…",
+        label: "效果选项…",
         onSelect: () => tools().openEffectDialog("effect"),
       },
-      { label: "Timing…", onSelect: () => tools().openEffectDialog("timing") },
+      { label: "计时…", onSelect: () => tools().openEffectDialog("timing") },
       ...(tools().hasText(effect.shapeId)
         ? [
             {
@@ -442,7 +442,7 @@ export function createAnimationPane({ tools, P, ctx }) {
           ]
         : []),
       {
-        label: timeline ? "Hide Advanced Timeline" : "Show Advanced Timeline",
+        label: timeline ? "隐藏高级日程表" : "显示高级日程表",
         onSelect: () => {
           timeline = !timeline;
           render();
@@ -450,11 +450,11 @@ export function createAnimationPane({ tools, P, ctx }) {
       },
       { separator: true },
       {
-        label: "Play From Here",
+        label: "从此处播放",
         onSelect: () =>
           tools().playPreview({ from: groupOf(tools().effects(), index) }),
       },
-      { label: "Remove", danger: true, onSelect: () => tools().remove() },
+      { label: "删除", danger: true, onSelect: () => tools().remove() },
     ];
   }
 
@@ -522,7 +522,7 @@ export function createAnimationPane({ tools, P, ctx }) {
         items: itemMenu(index),
         x: r.left + 24,
         y: r.bottom,
-        label: "Effect options",
+        label: "效果选项",
       });
     } else if (e.key === "Escape") {
       e.stopPropagation();

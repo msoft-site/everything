@@ -86,71 +86,71 @@ const PATTERN_NAMES = {
   ltVert: "Light vertical",
   dkHorz: "Dark horizontal",
   dkVert: "Dark vertical",
-  narHorz: "Narrow horizontal",
-  narVert: "Narrow vertical",
-  dashHorz: "Dashed horizontal",
-  dashVert: "Dashed vertical",
-  cross: "Cross",
-  dnDiag: "Downward diagonal",
-  upDiag: "Upward diagonal",
-  ltDnDiag: "Light downward diagonal",
-  ltUpDiag: "Light upward diagonal",
-  dkDnDiag: "Dark downward diagonal",
-  dkUpDiag: "Dark upward diagonal",
-  wdDnDiag: "Wide downward diagonal",
-  wdUpDiag: "Wide upward diagonal",
-  dashDnDiag: "Dashed downward diagonal",
-  dashUpDiag: "Dashed upward diagonal",
-  diagCross: "Diagonal cross",
-  smCheck: "Small checkerboard",
-  lgCheck: "Large checkerboard",
-  smGrid: "Small grid",
-  lgGrid: "Large grid",
-  dotGrid: "Dotted grid",
-  smConfetti: "Small confetti",
-  lgConfetti: "Large confetti",
-  horzBrick: "Horizontal brick",
-  diagBrick: "Diagonal brick",
-  solidDmnd: "Solid diamond",
-  openDmnd: "Outlined diamond",
-  dotDmnd: "Dotted diamond",
-  plaid: "Plaid",
-  sphere: "Sphere",
-  weave: "Weave",
-  divot: "Divot",
-  shingle: "Shingle",
-  wave: "Wave",
-  trellis: "Trellis",
-  zigZag: "Zig zag",
+  narHorz: "浅色水平线",
+  narVert: "浅色垂直线",
+  dashHorz: "虚线水平线",
+  dashVert: "虚线垂直线",
+  cross: "十字线",
+  dnDiag: "下斜线",
+  upDiag: "上斜线",
+  ltDnDiag: "浅色下斜线",
+  ltUpDiag: "浅色上斜线",
+  dkDnDiag: "深色下斜线",
+  dkUpDiag: "深色上斜线",
+  wdDnDiag: "粗下斜线",
+  wdUpDiag: "粗上斜线",
+  dashDnDiag: "虚线下斜线",
+  dashUpDiag: "虚线上斜线",
+  diagCross: "网格斜线",
+  smCheck: "小棋盘",
+  lgCheck: "大棋盘",
+  smGrid: "小网格",
+  lgGrid: "大网格",
+  dotGrid: "点网格",
+  smConfetti: "小彩条",
+  lgConfetti: "大彩条",
+  horzBrick: "水平砖形",
+  diagBrick: "对角砖形",
+  solidDmnd: "实心菱形",
+  openDmnd: "空心菱形",
+  dotDmnd: "点菱形",
+  plaid: "花呢格",
+  sphere: "球体",
+  weave: "织物",
+  divot: "草皮",
+  shingle: "屋顶板",
+  wave: "波浪",
+  trellis: "棚架",
+  zigZag: "锯齿形",
 };
 const KINDS = [
-  ["solid", "Solid fill"],
-  ["gradient", "Gradient fill"],
-  ["image", "Picture or texture fill"],
-  ["pattern", "Pattern fill"],
+  ["solid", "纯色填充"],
+  ["gradient", "渐变填充"],
+  ["image", "图片或纹理填充"],
+  ["pattern", "图案填充"],
 ];
 const GRADIENT_TYPES = [
-  ["linear", "Linear"],
-  ["circle", "Radial"],
-  ["rect", "Rectangular"],
-  ["shape", "Path"],
+  ["linear", "线性"],
+  ["circle", "射线"],
+  ["rect", "矩形"],
+  ["shape", "路径"],
 ];
 const ALIGNMENTS = [
-  ["tl", "Top left"],
-  ["t", "Top"],
-  ["tr", "Top right"],
-  ["l", "Left"],
-  ["ctr", "Center"],
-  ["r", "Right"],
-  ["bl", "Bottom left"],
-  ["b", "Bottom"],
-  ["br", "Bottom right"],
+  ["tl", "左上"],
+  ["t", "上"],
+  ["tr", "右上"],
+  ["l", "左"],
+  ["ctr", "居中"],
+  ["r", "右"],
+  ["bl", "左下"],
+  ["b", "下"],
+  ["br", "右下"],
 ];
 const MIRRORS = [
-  ["none", "None"],
-  ["x", "Horizontal"],
-  ["y", "Vertical"],
-  ["xy", "Both"],
+  ["none", "无"],
+  ["x", "水平"],
+  ["y", "垂直"],
+  ["xy", "全部"],
 ];
 const EMU_PER_PT = 12700;
 
@@ -387,7 +387,7 @@ export function createBackgroundPane(host) {
     return el(
       "div",
       { class: "bg-section" },
-      slider("Transparency", (1 - opacity) * 100, (v) =>
+      slider("透明度", (1 - opacity) * 100, (v) =>
         edit("solid-alpha", (t) =>
           P.setSlideBackground(t, colorWithAlpha(now.resolved.color, v / 100)),
         ),
@@ -401,7 +401,7 @@ export function createBackgroundPane(host) {
     const accents = [1, 2, 3, 4, 5, 6].map((n) => `accent${n}`);
     const presets = [
       [
-        "Light wash",
+        "浅色渐变",
         [
           ["scheme:bg1", 0],
           ["scheme:bg2", 1],
@@ -409,7 +409,7 @@ export function createBackgroundPane(host) {
         { angleDeg: 90 },
       ],
       [
-        "Deep wash",
+        "深色渐变",
         [
           ["scheme:tx2", 0],
           ["scheme:tx1", 1],
@@ -425,7 +425,7 @@ export function createBackgroundPane(host) {
         { angleDeg: 90 },
       ]),
       [
-        "Glow",
+        "光晕",
         [
           ["scheme:bg1", 0],
           ["scheme:accent1/lumMod=40000/lumOff=60000", 1],
@@ -436,7 +436,7 @@ export function createBackgroundPane(host) {
         },
       ],
       [
-        "Dusk",
+        "黄昏",
         [
           ["scheme:accent1", 0],
           ["scheme:accent2", 1],
@@ -454,7 +454,7 @@ export function createBackgroundPane(host) {
     };
     return el(
       "div",
-      { class: "bg-presets", role: "group", "aria-label": "Preset gradients" },
+      { class: "bg-presets", role: "group", "aria-label": "预设渐变" },
       ...presets.map(([name, stops, opts]) =>
         el("button", {
           type: "button",
@@ -563,7 +563,7 @@ export function createBackgroundPane(host) {
       "div",
       { class: "bg-section" },
       gradientPresets(now),
-      select("Type", GRADIENT_TYPES, type, (v) =>
+      select("类型", GRADIENT_TYPES, type, (v) =>
         write(null, (n) => ({ ...n, type: v })),
       ),
       type === "linear" &&
@@ -577,13 +577,13 @@ export function createBackgroundPane(host) {
       el(
         "div",
         { class: "field" },
-        el("span", { class: "bg-label" }, "Gradient stops"),
+        el("span", { class: "bg-label" }, "渐变光圈"),
         el(
           "div",
           {
             class: "bg-stops",
             role: "radiogroup",
-            "aria-label": "Gradient stops",
+            "aria-label": "渐变光圈",
           },
           bar,
           ...handles,
@@ -607,15 +607,15 @@ export function createBackgroundPane(host) {
                 return n;
               }),
             "secondary small",
-            { "aria-label": "Add gradient stop" },
+            { "aria-label": "添加渐变光圈" },
           ),
-          button("Remove stop", "Minus", removeStop, "secondary small", {
-            "aria-label": "Remove gradient stop",
+          button("删除光圈", "Minus", removeStop, "secondary small", {
+            "aria-label": "删除渐变光圈",
             disabled: stops.length <= 2 || null,
           }),
         ),
       ),
-      host.colorInput("Stop color", current.color, (c) =>
+      host.colorInput("光圈颜色", current.color, (c) =>
         write("stop-color", (n) => {
           n.stops[state.stop].color = c;
           n.select = state.stop;
@@ -633,7 +633,7 @@ export function createBackgroundPane(host) {
           }),
         { min: 0, max: 100 },
       ),
-      slider("Stop transparency", (1 - current.opacity) * 100, (v) =>
+      slider("光圈透明度", (1 - current.opacity) * 100, (v) =>
         write("stop-alpha", (n) => {
           n.stops[state.stop].opacity = 1 - v / 100;
           n.select = state.stop;
@@ -671,10 +671,10 @@ export function createBackgroundPane(host) {
     return el(
       "div",
       { class: "bg-section" },
-      el("span", { class: "bg-label" }, "Texture"),
+      el("span", { class: "bg-label" }, "纹理"),
       el(
         "div",
-        { class: "bg-textures", role: "group", "aria-label": "Textures" },
+        { class: "bg-textures", role: "group", "aria-label": "纹理" },
         ...TEXTURES.map((tx) =>
           el("button", {
             type: "button",
@@ -686,7 +686,7 @@ export function createBackgroundPane(host) {
           }),
         ),
       ),
-      slider("Picture transparency", pic.transparency * 100, (v) =>
+      slider("图片透明度", pic.transparency * 100, (v) =>
         set("pic-alpha", { transparency: v / 100 }),
       ),
       check(
@@ -724,10 +724,10 @@ export function createBackgroundPane(host) {
                 (v) => set("tile", { tile: { ...tile, scaleY: v / 100 } }),
                 { min: 1, max: 1000 },
               ),
-              select("Alignment", ALIGNMENTS, tile.align, (v) =>
+              select("对齐方式", ALIGNMENTS, tile.align, (v) =>
                 set(null, { tile: { ...tile, align: v } }),
               ),
-              select("Mirror type", MIRRORS, tile.flip, (v) =>
+              select("镜像类型", MIRRORS, tile.flip, (v) =>
                 set(null, { tile: { ...tile, flip: v } }),
               ),
             )
@@ -784,7 +784,7 @@ export function createBackgroundPane(host) {
       { class: "bg-section" },
       el(
         "div",
-        { class: "bg-patterns", role: "radiogroup", "aria-label": "Pattern" },
+        { class: "bg-patterns", role: "radiogroup", "aria-label": "图案" },
         ...PATTERNS.map((preset) =>
           el("button", {
             type: "button",
@@ -798,10 +798,10 @@ export function createBackgroundPane(host) {
           }),
         ),
       ),
-      host.colorInput("Pattern foreground", fg, (c) =>
+      host.colorInput("图案前景", fg, (c) =>
         write("pattern-fg", { foreground: c.toUpperCase() }),
       ),
-      host.colorInput("Pattern background", bg, (c) =>
+      host.colorInput("图案背景", bg, (c) =>
         write("pattern-bg", { background: c.toUpperCase() }),
       ),
     );
@@ -825,7 +825,7 @@ export function createBackgroundPane(host) {
     const name = `bg-fill-${++uid}`;
     const kinds = el(
       "div",
-      { class: "bg-kinds", role: "radiogroup", "aria-label": "Fill" },
+      { class: "bg-kinds", role: "radiogroup", "aria-label": "填充" },
       ...KINDS.map(([kind, label]) =>
         el(
           "label",
@@ -851,14 +851,14 @@ export function createBackgroundPane(host) {
             : solidSection(now);
     return el(
       "section",
-      { class: "bg-pane", id: "format-background", "aria-label": "Fill" },
-      el("h3", {}, "Fill"),
+      { class: "bg-pane", id: "format-background", "aria-label": "填充" },
+      el("h3", {}, "填充"),
       kinds,
       host.colorField(target),
       host.imageButtons(target),
       section,
       kindOfTarget !== "master" &&
-        check("Hide background graphics", hidesArt, (on) =>
+        check("隐藏背景图形", hidesArt, (on) =>
           edit(null, (t) => P.setTemplateShowsMasterShapes(t, !on)),
         ),
       el(

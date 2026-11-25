@@ -136,7 +136,7 @@ export function createTranslate(env, host) {
       "select",
       {
         class: "input",
-        "aria-label": "Translate to",
+        "aria-label": "翻译为",
         "data-focus-key": "translate-to",
         onchange: (e) => {
           to = e.target.value;
@@ -173,25 +173,25 @@ export function createTranslate(env, host) {
       el(
         "label",
         { class: "review-field" },
-        el("span", { class: "review-label" }, "From"),
+        el("span", { class: "review-label" }, "源语言"),
         el(
           "span",
           {},
-          state.detected ? `${state.detected} (detected)` : "Detect language",
+          state.detected ? `${state.detected} (detected)` : "检测语言",
         ),
       ),
       el(
         "label",
         { class: "review-field" },
-        el("span", { class: "review-label" }, "To"),
+        el("span", { class: "review-label" }, "目标语言"),
         select,
       ),
       el(
         "fieldset",
         { class: "review-choices" },
-        el("legend", { class: "review-label" }, "Translate"),
-        scope("selection", "Selected text"),
-        scope("slide", "All text on this slide"),
+        el("legend", { class: "review-label" }, "翻译"),
+        scope("selection", "所选文本"),
+        scope("slide", "此幻灯片上的所有文本"),
       ),
       el(
         "button",
@@ -203,7 +203,7 @@ export function createTranslate(env, host) {
           onclick: translate,
         },
         icon("o:translate", 16),
-        el("span", {}, state.loading ? "Translating…" : "Translate"),
+        el("span", {}, state.loading ? "正在翻译…" : "翻译"),
       ),
     );
     if (state.error)
@@ -246,7 +246,7 @@ export function createTranslate(env, host) {
     return wrap;
   }
 
-  host.register("translate", { title: "Translator", render });
+  host.register("translate", { title: "翻译工具", render });
   return {
     open() {
       state.scope = env.selectionTexts().some((i) => i.text.trim())

@@ -82,82 +82,82 @@ export const PATTERNS = [
 
 // Every dash the file format names.
 const DASHES = [
-  ["solid", "Solid"],
-  ["sysDot", "Round dot"],
-  ["sysDash", "Square dot"],
-  ["dash", "Dash"],
-  ["dashDot", "Dash dot"],
-  ["lgDash", "Long dash"],
-  ["lgDashDot", "Long dash dot"],
-  ["lgDashDotDot", "Long dash dot dot"],
-  ["dot", "Dot"],
-  ["sysDashDot", "Short dash dot"],
-  ["sysDashDotDot", "Short dash dot dot"],
+  ["solid", "纯色"],
+  ["sysDot", "圆点"],
+  ["sysDash", "方点"],
+  ["dash", "划线"],
+  ["dashDot", "划线-点"],
+  ["lgDash", "长划线"],
+  ["lgDashDot", "长划线-点"],
+  ["lgDashDotDot", "长划线-点-点"],
+  ["dot", "点"],
+  ["sysDashDot", "短划线-点"],
+  ["sysDashDotDot", "短划线-点-点"],
 ];
 const COMPOUNDS = [
-  ["sng", "Single"],
-  ["dbl", "Double"],
-  ["thickThin", "Thick thin"],
-  ["thinThick", "Thin thick"],
-  ["tri", "Triple"],
+  ["sng", "单线"],
+  ["dbl", "双线"],
+  ["thickThin", "粗细"],
+  ["thinThick", "细粗"],
+  ["tri", "三线"],
 ];
 const ARROW_TYPES = [
-  ["none", "None"],
-  ["triangle", "Triangle"],
-  ["arrow", "Open arrow"],
-  ["stealth", "Stealth"],
-  ["diamond", "Diamond"],
-  ["oval", "Oval"],
+  ["none", "无"],
+  ["triangle", "三角箭头"],
+  ["arrow", "开放箭头"],
+  ["stealth", "隐形箭头"],
+  ["diamond", "菱形箭头"],
+  ["oval", "椭圆箭头"],
 ];
 const ARROW_SIZES = [
-  ["sm", "Small"],
-  ["med", "Medium"],
-  ["lg", "Large"],
+  ["sm", "小"],
+  ["med", "中"],
+  ["lg", "大"],
 ];
 const MATERIALS = [
-  ["matte", "Matte"],
-  ["warmMatte", "Warm matte"],
-  ["plastic", "Plastic"],
-  ["metal", "Metal"],
-  ["dkEdge", "Dark edge"],
-  ["softEdge", "Soft edge"],
-  ["flat", "Flat"],
-  ["softmetal", "Soft metal"],
-  ["clear", "Clear"],
-  ["powder", "Powder"],
-  ["translucentPowder", "Translucent powder"],
+  ["matte", "无光泽"],
+  ["warmMatte", "温光泽"],
+  ["plastic", "塑料效果"],
+  ["metal", "金属效果"],
+  ["dkEdge", "暗色边缘"],
+  ["softEdge", "柔边"],
+  ["flat", "平面"],
+  ["softmetal", "软金属"],
+  ["clear", "透明"],
+  ["powder", "粉末"],
+  ["translucentPowder", "半透明粉末"],
 ];
 const LIGHTS = [
-  ["threePt", "Three point"],
-  ["balanced", "Balanced"],
-  ["soft", "Soft"],
-  ["harsh", "Harsh"],
-  ["flood", "Flood"],
-  ["contrasting", "Contrasting"],
-  ["morning", "Morning"],
-  ["sunrise", "Sunrise"],
-  ["sunset", "Sunset"],
-  ["chilly", "Chilly"],
-  ["freezing", "Freezing"],
-  ["flat", "Flat"],
-  ["twoPt", "Two point"],
-  ["glow", "Glow"],
-  ["brightRoom", "Bright room"],
+  ["threePt", "三点"],
+  ["balanced", "平衡"],
+  ["soft", "柔和"],
+  ["harsh", "明亮"],
+  ["flood", "泛光"],
+  ["contrasting", "对比"],
+  ["morning", "早晨"],
+  ["sunrise", "日出"],
+  ["sunset", "日落"],
+  ["chilly", "寒冷"],
+  ["freezing", "冰冻"],
+  ["flat", "平面"],
+  ["twoPt", "两点"],
+  ["glow", "发光"],
+  ["brightRoom", "明亮房间"],
 ];
 export const ARTISTIC = [
-  ["none", "None"],
-  ["artisticBlur", "Blur"],
-  ["artisticPencilGrayscale", "Pencil grayscale"],
-  ["artisticPencilSketch", "Pencil sketch"],
-  ["artisticLineDrawing", "Line drawing"],
-  ["artisticPhotocopy", "Photocopy"],
-  ["artisticGlowEdges", "Glowing edges"],
-  ["artisticFilmGrain", "Film grain"],
-  ["artisticCutout", "Cutout"],
-  ["artisticPaintStrokes", "Paint strokes"],
-  ["artisticMarker", "Marker"],
-  ["artisticWatercolorSponge", "Watercolor sponge"],
-  ["artisticPastelsSmooth", "Pastels smooth"],
+  ["none", "无"],
+  ["artisticBlur", "虚化"],
+  ["artisticPencilGrayscale", "铅笔灰度"],
+  ["artisticPencilSketch", "铅笔素描"],
+  ["artisticLineDrawing", "线条图"],
+  ["artisticPhotocopy", "影印"],
+  ["artisticGlowEdges", "发光边缘"],
+  ["artisticFilmGrain", "胶片颗粒"],
+  ["artisticCutout", "剪纸"],
+  ["artisticPaintStrokes", "绘画笔触"],
+  ["artisticMarker", "马克笔"],
+  ["artisticWatercolorSponge", "水彩海绵"],
+  ["artisticPastelsSmooth", "柔和粉笔"],
 ];
 
 const pct = (n) => Math.round((n ?? 0) * 100);
@@ -175,7 +175,7 @@ export function shade(hex, amount) {
 /** Gradient presets in a theme color: [label, (hex) => GradientFillOptions]. */
 export const GRADIENT_PRESETS = [
   [
-    "Light to color",
+    "浅到深",
     (c) => ({
       stops: [
         { offset: 0, color: shade(c, 0.75) },
@@ -185,7 +185,7 @@ export const GRADIENT_PRESETS = [
     }),
   ],
   [
-    "Color to dark",
+    "深到浅",
     (c) => ({
       stops: [
         { offset: 0, color: c },
@@ -195,7 +195,7 @@ export const GRADIENT_PRESETS = [
     }),
   ],
   [
-    "Soft band",
+    "柔和带",
     (c) => ({
       stops: [
         { offset: 0, color: shade(c, 0.5) },
@@ -206,7 +206,7 @@ export const GRADIENT_PRESETS = [
     }),
   ],
   [
-    "Diagonal",
+    "对角线",
     (c) => ({
       stops: [
         { offset: 0, color: shade(c, 0.4) },
@@ -216,7 +216,7 @@ export const GRADIENT_PRESETS = [
     }),
   ],
   [
-    "Radial glow",
+    "径向发光",
     (c) => ({
       stops: [
         { offset: 0, color: shade(c, 0.7) },
@@ -227,7 +227,7 @@ export const GRADIENT_PRESETS = [
     }),
   ],
   [
-    "Rectangular",
+    "矩形",
     (c) => ({
       stops: [
         { offset: 0, color: shade(c, 0.6) },
@@ -238,7 +238,7 @@ export const GRADIENT_PRESETS = [
     }),
   ],
   [
-    "Fade out",
+    "淡出",
     (c) => ({
       stops: [
         { offset: 0, color: c },
@@ -250,21 +250,21 @@ export const GRADIENT_PRESETS = [
 ];
 
 const LINEAR_DIRECTIONS = [
-  ["Linear down", 90],
-  ["Linear diagonal down right", 45],
-  ["Linear right", 0],
-  ["Linear diagonal up right", 315],
-  ["Linear up", 270],
-  ["Linear diagonal up left", 225],
-  ["Linear left", 180],
-  ["Linear diagonal down left", 135],
+  ["线性向下", 90],
+  ["线性对角向右下", 45],
+  ["线性向右", 0],
+  ["线性对角向右上", 315],
+  ["线性向上", 270],
+  ["线性对角向左上", 225],
+  ["线性向左", 180],
+  ["线性对角向左下", 135],
 ];
 const FOCUS_DIRECTIONS = [
-  ["From center", { left: 0.5, top: 0.5, right: 0.5, bottom: 0.5 }],
-  ["From top left corner", { left: 0, top: 0, right: 1, bottom: 1 }],
-  ["From top right corner", { left: 1, top: 0, right: 0, bottom: 1 }],
-  ["From bottom left corner", { left: 0, top: 1, right: 1, bottom: 0 }],
-  ["From bottom right corner", { left: 1, top: 1, right: 0, bottom: 0 }],
+  ["从中心", { left: 0.5, top: 0.5, right: 0.5, bottom: 0.5 }],
+  ["从左上角", { left: 0, top: 0, right: 1, bottom: 1 }],
+  ["从右上角", { left: 1, top: 0, right: 0, bottom: 1 }],
+  ["从左下角", { left: 0, top: 1, right: 1, bottom: 0 }],
+  ["从右下角", { left: 1, top: 1, right: 0, bottom: 0 }],
 ];
 
 /** A pattern drawn small, for the pattern picker. */
@@ -357,15 +357,15 @@ function fillSection(ctx, obj, edit, theme, extra = {}) {
   const body = [];
   body.push(
     segmentedField(
-      "Fill type",
+      "填充类型",
       kind,
       [
-        ["none", "No fill"],
-        ["solid", "Solid"],
-        ["gradient", "Gradient"],
-        ["picture", "Picture or texture"],
-        ["pattern", "Pattern"],
-        ["background", "Slide background"],
+        ["none", "无填充"],
+        ["solid", "纯色"],
+        ["gradient", "渐变"],
+        ["picture", "图片或纹理"],
+        ["pattern", "图案"],
+        ["background", "幻灯片背景"],
       ],
       (v) => {
         if (v === kind) return;
@@ -400,7 +400,7 @@ function fillSection(ctx, obj, edit, theme, extra = {}) {
       colorCombo(
         extra.fillColor(),
         colorButton({
-          label: "Fill theme colors",
+          label: "填充主题颜色",
           hideLabel: true,
           value: P.getShapeFillColorResolvedEffective(pres, obj),
           theme,
@@ -422,7 +422,7 @@ function fillSection(ctx, obj, edit, theme, extra = {}) {
     body.push(
       !extra.fillColor &&
         colorButton({
-          label: "Fill color",
+          label: "填充颜色",
           hideLabel: false,
           value: color,
           theme,
@@ -430,7 +430,7 @@ function fillSection(ctx, obj, edit, theme, extra = {}) {
             edit((s) => P.setShapeFill(s, withAlpha(v, opacity, theme))),
         }),
       sliderField({
-        label: "Fill transparency",
+        label: "填充透明度",
         value: pct(1 - opacity),
         unit: "%",
         onCommit: (n) =>
@@ -445,7 +445,7 @@ function fillSection(ctx, obj, edit, theme, extra = {}) {
     body.push(...gradientEditor(ctx, obj, edit, theme, accent));
   if (kind === "pattern") body.push(...patternEditor(ctx, obj, edit, theme));
   if (kind === "picture") body.push(...pictureFillEditor(ctx, obj, edit));
-  return section("Fill", body.filter(Boolean), { key: "fill", open: true });
+  return section("填充", body.filter(Boolean), { key: "fill", open: true });
 }
 
 // A color field with the theme palette's button and, for some, a button that
@@ -515,7 +515,7 @@ function gradientEditor(ctx, obj, edit, theme, accent) {
   const bar = el("div", {
     class: "fmt-gradient-bar",
     role: "group",
-    "aria-label": "Gradient stops",
+    "aria-label": "渐变光圈",
     style: `background:linear-gradient(90deg, ${stops
       .slice()
       .sort((a, b) => a.offset - b.offset)
@@ -549,7 +549,7 @@ function gradientEditor(ctx, obj, edit, theme, accent) {
   const stop = stops[selected];
   const out = [
     selectField({
-      label: "Preset gradients",
+      label: "预设渐变",
       value: "",
       options: [
         ["", "Choose a preset…"],
@@ -560,13 +560,13 @@ function gradientEditor(ctx, obj, edit, theme, accent) {
         write(GRADIENT_PRESETS[Number(v)][1](stop?.color || accent)),
     }),
     selectField({
-      label: "Gradient type",
+      label: "渐变类型",
       value: type,
       options: [
-        ["linear", "Linear"],
-        ["radial", "Radial"],
-        ["rectangular", "Rectangular"],
-        ["path", "Path"],
+        ["linear", "线性"],
+        ["radial", "射线"],
+        ["rectangular", "矩形"],
+        ["path", "路径"],
       ],
       onChange: (v) => {
         const base = { stops: current().stops };
@@ -588,7 +588,7 @@ function gradientEditor(ctx, obj, edit, theme, accent) {
           "div",
           { class: "fmt-row" },
           selectField({
-            label: "Direction",
+            label: "方向",
             value: String(
               LINEAR_DIRECTIONS.find(
                 ([, a]) => Math.abs(a - (g.angleDeg ?? 90)) < 0.5,
@@ -602,7 +602,7 @@ function gradientEditor(ctx, obj, edit, theme, accent) {
               v !== "" && write({ ...current(), angleDeg: Number(v) }),
           }),
           numberField({
-            label: "Gradient angle",
+            label: "渐变角度",
             value: g.angleDeg ?? 90,
             unit: "°",
             min: 0,
@@ -614,7 +614,7 @@ function gradientEditor(ctx, obj, edit, theme, accent) {
         )
       : type !== "path"
         ? selectField({
-            label: "Direction",
+            label: "方向",
             value: String(
               FOCUS_DIRECTIONS.findIndex(
                 ([, f]) => JSON.stringify(f) === JSON.stringify(g.focus),
@@ -634,7 +634,7 @@ function gradientEditor(ctx, obj, edit, theme, accent) {
         {
           type: "button",
           class: "btn secondary small",
-          "aria-label": "Add gradient stop",
+          "aria-label": "添加渐变光圈",
           disabled: stops.length >= 10,
           onclick: () => {
             const sorted = stops.slice().sort((a, b) => a.offset - b.offset);
@@ -649,14 +649,14 @@ function gradientEditor(ctx, obj, edit, theme, accent) {
             write(current());
           },
         },
-        "Add stop",
+        "添加光圈",
       ),
       el(
         "button",
         {
           type: "button",
           class: "btn secondary small",
-          "aria-label": "Remove gradient stop",
+          "aria-label": "删除渐变光圈",
           disabled: stops.length <= 2,
           onclick: () => {
             stops.splice(selected, 1);
@@ -664,14 +664,14 @@ function gradientEditor(ctx, obj, edit, theme, accent) {
             write(current());
           },
         },
-        "Remove stop",
+        "删除光圈",
       ),
     ),
   ];
   if (stop)
     out.push(
       colorButton({
-        label: "Stop color",
+        label: "光圈颜色",
         value: stop.color,
         theme,
         onPick: (v) => {
@@ -680,7 +680,7 @@ function gradientEditor(ctx, obj, edit, theme, accent) {
         },
       }),
       sliderField({
-        label: "Stop position",
+        label: "光圈位置",
         value: pct(stop.offset),
         unit: "%",
         onCommit: (n) => {
@@ -689,7 +689,7 @@ function gradientEditor(ctx, obj, edit, theme, accent) {
         },
       }),
       sliderField({
-        label: "Stop transparency",
+        label: "光圈透明度",
         value: pct(1 - stop.opacity),
         unit: "%",
         onCommit: (n) => {
@@ -698,7 +698,7 @@ function gradientEditor(ctx, obj, edit, theme, accent) {
         },
       }),
       sliderField({
-        label: "Stop brightness",
+        label: "光圈亮度",
         value: 0,
         min: -100,
         max: 100,
@@ -730,7 +730,7 @@ function patternEditor(ctx, obj, edit, theme) {
   const grid = el("div", {
     class: "fmt-pattern-grid",
     role: "radiogroup",
-    "aria-label": "Pattern",
+    "aria-label": "图案",
   });
   const cells = PATTERNS.map((p) =>
     el(
@@ -765,13 +765,13 @@ function patternEditor(ctx, obj, edit, theme) {
       "div",
       { class: "fmt-row" },
       colorButton({
-        label: "Foreground",
+        label: "前景",
         value: fg,
         theme,
         onPick: (v) => write({ foreground: hexOf(v, theme) }),
       }),
       colorButton({
-        label: "Background",
+        label: "背景",
         value: bg,
         theme,
         onPick: (v) => write({ background: hexOf(v, theme) }),
@@ -806,7 +806,7 @@ function pictureFillEditor(ctx, obj, edit) {
         "Insert picture…",
       ),
       selectField({
-        label: "Texture",
+        label: "纹理",
         value: "",
         options: [
           ["", "Choose a texture…"],
@@ -829,7 +829,7 @@ function pictureFillEditor(ctx, obj, edit) {
       }),
     ),
     checkField({
-      label: "Tile picture as texture",
+      label: "将图片平铺为纹理",
       checked: mode.mode === "tile",
       onChange: (on) =>
         edit((s) =>
@@ -858,7 +858,7 @@ function pictureFillEditor(ctx, obj, edit) {
         "div",
         { class: "fmt-row" },
         numberField({
-          label: "Offset X",
+          label: "偏移量 X",
           value: mode.offsetX / PT,
           unit: "pt",
           min: -1000,
@@ -866,7 +866,7 @@ function pictureFillEditor(ctx, obj, edit) {
           onCommit: (n) => write({ offsetX: Math.round(n * PT) }),
         }),
         numberField({
-          label: "Offset Y",
+          label: "偏移量 Y",
           value: mode.offsetY / PT,
           unit: "pt",
           min: -1000,
@@ -878,7 +878,7 @@ function pictureFillEditor(ctx, obj, edit) {
         "div",
         { class: "fmt-row" },
         numberField({
-          label: "Scale X",
+          label: "缩放比例 X",
           value: pct(mode.scaleX),
           unit: "%",
           min: 1,
@@ -886,7 +886,7 @@ function pictureFillEditor(ctx, obj, edit) {
           onCommit: (n) => write({ scaleX: n / 100 }),
         }),
         numberField({
-          label: "Scale Y",
+          label: "缩放比例 Y",
           value: pct(mode.scaleY),
           unit: "%",
           min: 1,
@@ -898,26 +898,26 @@ function pictureFillEditor(ctx, obj, edit) {
         "div",
         { class: "fmt-row" },
         selectField({
-          label: "Alignment",
+          label: "对齐方式",
           value: mode.align,
           options: [
-            ["tl", "Top left"],
-            ["t", "Top"],
-            ["tr", "Top right"],
-            ["l", "Left"],
-            ["ctr", "Center"],
-            ["r", "Right"],
-            ["bl", "Bottom left"],
-            ["b", "Bottom"],
-            ["br", "Bottom right"],
+            ["tl", "左上"],
+            ["t", "居上"],
+            ["tr", "右上"],
+            ["l", "居左"],
+            ["ctr", "居中"],
+            ["r", "居右"],
+            ["bl", "左下"],
+            ["b", "居下"],
+            ["br", "右下"],
           ],
           onChange: (v) => write({ align: v }),
         }),
         selectField({
-          label: "Mirror type",
+          label: "镜像类型",
           value: mode.mirror,
           options: [
-            ["none", "None"],
+            ["none", "无"],
             ["x", "Horizontal"],
             ["y", "Vertical"],
             ["xy", "Both"],
@@ -977,12 +977,12 @@ function lineSection(ctx, obj, edit, theme, { isLine, extra = {} }) {
   };
   const body = [
     segmentedField(
-      "Line type",
+      "线条类型",
       kind,
       [
-        ["none", "No line"],
-        ["solid", "Solid"],
-        ["gradient", "Gradient"],
+        ["none", "无线条"],
+        ["solid", "纯色"],
+        ["gradient", "渐变"],
       ],
       (v) =>
         edit((s) => {
@@ -1009,7 +1009,7 @@ function lineSection(ctx, obj, edit, theme, { isLine, extra = {} }) {
       colorCombo(
         extra.lineColor(),
         colorButton({
-          label: "Line theme colors",
+          label: "线条主题颜色",
           hideLabel: true,
           value: kind === "solid" ? color : null,
           theme,
@@ -1030,7 +1030,7 @@ function lineSection(ctx, obj, edit, theme, { isLine, extra = {} }) {
       body.push(
         !extra.lineColor &&
           colorButton({
-            label: "Line color",
+            label: "线条颜色",
             value: color,
             theme,
             onPick: (v) =>
@@ -1042,7 +1042,7 @@ function lineSection(ctx, obj, edit, theme, { isLine, extra = {} }) {
               ),
           }),
         sliderField({
-          label: "Line transparency",
+          label: "线条透明度",
           value: pct(1 - opacity),
           unit: "%",
           onCommit: (n) =>
@@ -1063,7 +1063,7 @@ function lineSection(ctx, obj, edit, theme, { isLine, extra = {} }) {
           "div",
           { class: "fmt-row" },
           colorButton({
-            label: "Line start color",
+            label: "线条起始颜色",
             value: hexOf(g.stops[0].color, theme),
             theme,
             onPick: (v) =>
@@ -1078,7 +1078,7 @@ function lineSection(ctx, obj, edit, theme, { isLine, extra = {} }) {
               ),
           }),
           colorButton({
-            label: "Line end color",
+            label: "线条结束颜色",
             value: hexOf(g.stops.at(-1).color, theme),
             theme,
             onPick: (v) =>
@@ -1094,7 +1094,7 @@ function lineSection(ctx, obj, edit, theme, { isLine, extra = {} }) {
           }),
         ),
         numberField({
-          label: "Line gradient angle",
+          label: "线条渐变角度",
           value: g.angleDeg ?? 0,
           unit: "°",
           min: 0,
@@ -1112,7 +1112,7 @@ function lineSection(ctx, obj, edit, theme, { isLine, extra = {} }) {
         "div",
         { class: "fmt-row" },
         numberField({
-          label: "Line width",
+          label: "线条宽度",
           value: widthPt,
           unit: "pt",
           min: 0,
@@ -1132,7 +1132,7 @@ function lineSection(ctx, obj, edit, theme, { isLine, extra = {} }) {
             }, "line-width"),
         }),
         selectField({
-          label: "Compound type",
+          label: "复合类型",
           value: fmt.compound ?? "sng",
           options: COMPOUNDS,
           onChange: (v) =>
@@ -1143,7 +1143,7 @@ function lineSection(ctx, obj, edit, theme, { isLine, extra = {} }) {
         "div",
         { class: "fmt-row" },
         selectField({
-          label: "Dash type",
+          label: "短划线类型",
           // A dash drawn from the file's own lengths shows as Custom until
           // another is chosen.
           value:
@@ -1154,29 +1154,29 @@ function lineSection(ctx, obj, edit, theme, { isLine, extra = {} }) {
                 : "solid",
           options:
             fmt.dash?.kind === "custom"
-              ? [...DASHES, ["custom", "Custom"]]
+              ? [...DASHES, ["custom", "自定义"]]
               : DASHES,
           onChange: (v) =>
             v !== "custom" &&
             edit((s) => (ensure(s), P.setShapeStrokeDash(s, v))),
         }),
         selectField({
-          label: "Cap type",
+          label: "线端类型",
           value: fmt.cap ?? "flat",
           options: [
-            ["flat", "Flat"],
-            ["rnd", "Round"],
-            ["sq", "Square"],
+            ["flat", "平面"],
+            ["rnd", "圆"],
+            ["sq", "方"],
           ],
           onChange: (v) => edit((s) => (ensure(s), P.setShapeStrokeCap(s, v))),
         }),
         selectField({
-          label: "Join type",
+          label: "联接类型",
           value: fmt.join?.kind ?? fmt.join ?? "round",
           options: [
-            ["round", "Round"],
-            ["bevel", "Bevel"],
-            ["miter", "Miter"],
+            ["round", "圆"],
+            ["bevel", "斜面"],
+            ["miter", "斜接"],
           ],
           onChange: (v) => edit((s) => (ensure(s), P.setShapeStrokeJoin(s, v))),
         }),
@@ -1225,7 +1225,7 @@ function lineSection(ctx, obj, edit, theme, { isLine, extra = {} }) {
     if (isLine || P.getShapeKind(obj) === "shape")
       body.push(arrows("head", "Begin"), arrows("tail", "End"));
   }
-  return section("Line", body.filter(Boolean), { key: "line", open: true });
+  return section("线条", body.filter(Boolean), { key: "line", open: true });
 }
 
 // ---------------------------------------------------------------------------
@@ -1246,7 +1246,7 @@ function effectSections(ctx, obj, edit, theme, extra = {}) {
   const shadowBody = [
     extra.shadowToggle?.(),
     selectField({
-      label: "Shadow presets",
+      label: "阴影预设",
       value: s
         ? String(
             SHADOW_PRESETS.findIndex(
@@ -1258,8 +1258,8 @@ function effectSections(ctx, obj, edit, theme, extra = {}) {
           )
         : "none",
       options: [
-        ["none", "No shadow"],
-        ["-1", "Custom"],
+        ["none", "无阴影"],
+        ["-1", "自定义"],
         ...SHADOW_PRESETS.map(([, label], i) => [String(i), label]),
       ],
       onChange: (v) =>
@@ -1274,26 +1274,26 @@ function effectSections(ctx, obj, edit, theme, extra = {}) {
         "Shadow placement",
         s.type,
         [
-          ["outer", "Outside"],
-          ["inner", "Inside"],
+          ["outer", "外阴影"],
+          ["inner", "内阴影"],
         ],
         (v) => ws({ type: v }),
       ),
       colorButton({
-        label: "Shadow color",
+        label: "阴影颜色",
         value: s.color,
         theme,
         onPick: (v) => ws({ color: hexOf(v, theme) }),
       }),
       sliderField({
-        label: "Shadow transparency",
+        label: "阴影透明度",
         value: pct(1 - s.opacity),
         unit: "%",
         onCommit: (n) => ws({ opacity: 1 - n / 100 }, "shadow-alpha"),
       }),
       s.type === "outer"
         ? sliderField({
-            label: "Shadow size",
+            label: "阴影大小",
             value: pct(s.scale ?? 1),
             min: 1,
             max: 200,
@@ -1302,21 +1302,21 @@ function effectSections(ctx, obj, edit, theme, extra = {}) {
           })
         : null,
       sliderField({
-        label: "Shadow blur",
+        label: "阴影模糊",
         value: s.blurEmu / PT,
         max: 100,
         unit: "pt",
         onCommit: (n) => ws({ blurEmu: Math.round(n * PT) }, "shadow-blur"),
       }),
       sliderField({
-        label: "Shadow angle",
+        label: "阴影角度",
         value: Math.round(s.angleDeg),
         max: 359,
         unit: "°",
         onCommit: (n) => ws({ angleDeg: n }, "shadow-angle"),
       }),
       sliderField({
-        label: "Shadow distance",
+        label: "阴影距离",
         value: s.distEmu / PT,
         max: 200,
         unit: "pt",
@@ -1324,13 +1324,13 @@ function effectSections(ctx, obj, edit, theme, extra = {}) {
       }),
     );
   }
-  out.push(section("Shadow", shadowBody.filter(Boolean), { key: "shadow" }));
+  out.push(section("阴影", shadowBody.filter(Boolean), { key: "shadow" }));
 
   // Reflection
   const r = spec.reflection;
   const reflectionBody = [
     selectField({
-      label: "Reflection presets",
+      label: "倒影预设",
       value: r
         ? String(
             REFLECTION_PRESETS.findIndex(
@@ -1341,8 +1341,8 @@ function effectSections(ctx, obj, edit, theme, extra = {}) {
           )
         : "none",
       options: [
-        ["none", "No reflection"],
-        ["-1", "Custom"],
+        ["none", "无倒影"],
+        ["-1", "自定义"],
         ...REFLECTION_PRESETS.map(([label], i) => [String(i), label]),
       ],
       onChange: (v) =>
@@ -1356,27 +1356,27 @@ function effectSections(ctx, obj, edit, theme, extra = {}) {
     const wr = (patch, key) => write({ reflection: { ...r, ...patch } }, key);
     reflectionBody.push(
       sliderField({
-        label: "Reflection transparency",
+        label: "倒影透明度",
         value: pct(1 - r.startOpacity),
         unit: "%",
         onCommit: (n) => wr({ startOpacity: 1 - n / 100 }, "refl-alpha"),
       }),
       sliderField({
-        label: "Reflection size",
+        label: "倒影大小",
         value: pct(r.endPos),
         min: 1,
         unit: "%",
         onCommit: (n) => wr({ endPos: n / 100 }, "refl-size"),
       }),
       sliderField({
-        label: "Reflection distance",
+        label: "倒影距离",
         value: r.distEmu / PT,
         max: 100,
         unit: "pt",
         onCommit: (n) => wr({ distEmu: Math.round(n * PT) }, "refl-dist"),
       }),
       sliderField({
-        label: "Reflection blur",
+        label: "倒影模糊",
         value: r.blurEmu / PT,
         max: 100,
         step: 0.5,
@@ -1385,17 +1385,17 @@ function effectSections(ctx, obj, edit, theme, extra = {}) {
       }),
     );
   }
-  out.push(section("Reflection", reflectionBody, { key: "reflection" }));
+  out.push(section("倒影", reflectionBody, { key: "reflection" }));
 
   // Glow
   const g = spec.glow;
   const glowBody = [
     selectField({
-      label: "Glow presets",
+      label: "发光预设",
       value: g ? "custom" : "none",
       options: [
-        ["none", "No glow"],
-        ["custom", "Custom"],
+        ["none", "无发光"],
+        ["custom", "自定义"],
         ...[5, 8, 11, 18].flatMap((size) =>
           GLOW_ACCENTS.map((a) => [
             `${size}|${a}`,
@@ -1421,36 +1421,36 @@ function effectSections(ctx, obj, edit, theme, extra = {}) {
     const wg = (patch, key) => write({ glow: { ...g, ...patch } }, key);
     glowBody.push(
       colorButton({
-        label: "Glow color",
+        label: "发光颜色",
         value: g.color,
         theme,
         onPick: (v) => wg({ color: hexOf(v, theme) }),
       }),
       sliderField({
-        label: "Glow size",
+        label: "发光大小",
         value: g.radiusEmu / PT,
         max: 150,
         unit: "pt",
         onCommit: (n) => wg({ radiusEmu: Math.round(n * PT) }, "glow-size"),
       }),
       sliderField({
-        label: "Glow transparency",
+        label: "发光透明度",
         value: pct(1 - g.opacity),
         unit: "%",
         onCommit: (n) => wg({ opacity: 1 - n / 100 }, "glow-alpha"),
       }),
     );
   }
-  out.push(section("Glow", glowBody, { key: "glow" }));
+  out.push(section("发光", glowBody, { key: "glow" }));
 
   // Soft edges
   const se = spec.softEdge;
   out.push(
     section(
-      "Soft Edges",
+      "柔化边缘",
       [
         selectField({
-          label: "Soft edge presets",
+          label: "柔化边缘预设",
           value: se
             ? String(
                 SOFT_EDGE_SIZES.find(
@@ -1459,8 +1459,8 @@ function effectSections(ctx, obj, edit, theme, extra = {}) {
               )
             : "none",
           options: [
-            ["none", "No soft edges"],
-            ["custom", "Custom"],
+            ["none", "无柔化边缘"],
+            ["custom", "自定义"],
             ...SOFT_EDGE_SIZES.map((n) => [String(n), `${n} pt`]),
           ],
           onChange: (v) =>
@@ -1471,7 +1471,7 @@ function effectSections(ctx, obj, edit, theme, extra = {}) {
         }),
         se &&
           sliderField({
-            label: "Soft edge size",
+            label: "柔化边缘大小",
             value: se.radiusEmu / PT,
             max: 100,
             unit: "pt",
@@ -1493,7 +1493,7 @@ function effectSections(ctx, obj, edit, theme, extra = {}) {
       selectField({
         label: `${label} bevel`,
         value: b?.preset ?? "none",
-        options: [["none", "None"], ...BEVELS],
+        options: [["none", "无"], ...BEVELS],
         onChange: (v) =>
           write3D({
             [which]:
@@ -1541,14 +1541,14 @@ function effectSections(ctx, obj, edit, theme, extra = {}) {
           "div",
           { class: "fmt-row" },
           colorButton({
-            label: "Depth color",
+            label: "深度颜色",
             value: three.depthColor ?? null,
             theme,
-            automatic: { label: "Automatic", value: null },
+            automatic: { label: "自动", value: null },
             onPick: (v) => write3D({ depthColor: v && hexOf(v, theme) }),
           }),
           numberField({
-            label: "Depth size",
+            label: "深度大小",
             value: three.depthEmu / PT,
             unit: "pt",
             min: 0,
@@ -1560,14 +1560,14 @@ function effectSections(ctx, obj, edit, theme, extra = {}) {
           "div",
           { class: "fmt-row" },
           colorButton({
-            label: "Contour color",
+            label: "轮廓颜色",
             value: three.contourColor ?? null,
             theme,
-            automatic: { label: "Automatic", value: null },
+            automatic: { label: "自动", value: null },
             onPick: (v) => write3D({ contourColor: v && hexOf(v, theme) }),
           }),
           numberField({
-            label: "Contour size",
+            label: "轮廓大小",
             value: three.contourEmu / PT,
             unit: "pt",
             min: 0,
@@ -1579,20 +1579,20 @@ function effectSections(ctx, obj, edit, theme, extra = {}) {
           "div",
           { class: "fmt-row" },
           selectField({
-            label: "Material",
+            label: "材料",
             value: three.material,
             options: MATERIALS,
             onChange: (v) => write3D({ material: v }),
           }),
           selectField({
-            label: "Lighting",
+            label: "照明",
             value: three.lightRig,
             options: LIGHTS,
             onChange: (v) => write3D({ lightRig: v }),
           }),
         ),
         numberField({
-          label: "Lighting angle",
+          label: "照明角度",
           value: three.lightAngle ?? 0,
           unit: "°",
           min: 0,
@@ -1608,7 +1608,7 @@ function effectSections(ctx, obj, edit, theme, extra = {}) {
               class: "btn secondary",
               onclick: () => edit((s) => P.setShape3D(s, null)),
             },
-            "Reset 3-D",
+            "重置三维",
           ),
       ].filter(Boolean),
       { key: "format3d" },
@@ -1621,7 +1621,7 @@ function effectSections(ctx, obj, edit, theme, extra = {}) {
       "3-D Rotation",
       [
         selectField({
-          label: "Rotation presets",
+          label: "旋转预设",
           value: three.camera,
           options: [
             ["orthographicFront", "No rotation"],
@@ -1636,7 +1636,7 @@ function effectSections(ctx, obj, edit, theme, extra = {}) {
           "div",
           { class: "fmt-row" },
           numberField({
-            label: "X rotation",
+            label: "X 轴旋转",
             value: three.rotX,
             unit: "°",
             min: 0,
@@ -1645,7 +1645,7 @@ function effectSections(ctx, obj, edit, theme, extra = {}) {
             onCommit: (n) => write3D({ rotX: n }),
           }),
           numberField({
-            label: "Y rotation",
+            label: "Y 轴旋转",
             value: three.rotY,
             unit: "°",
             min: 0,
@@ -1654,7 +1654,7 @@ function effectSections(ctx, obj, edit, theme, extra = {}) {
             onCommit: (n) => write3D({ rotY: n }),
           }),
           numberField({
-            label: "Z rotation",
+            label: "Z 轴旋转",
             value: three.rotZ,
             unit: "°",
             min: 0,
@@ -1664,7 +1664,7 @@ function effectSections(ctx, obj, edit, theme, extra = {}) {
           }),
         ),
         numberField({
-          label: "Perspective",
+          label: "透视",
           value: three.fov ?? 45,
           unit: "°",
           min: 0,
@@ -1730,7 +1730,7 @@ function sizeSection(ctx, obj, edit, extra = {}) {
         "div",
         { class: "fmt-row" },
         numberField({
-          label: "Scale height",
+          label: "缩放高度",
           value: scaleH,
           unit: "%",
           min: 1,
@@ -1740,7 +1740,7 @@ function sizeSection(ctx, obj, edit, extra = {}) {
           onCommit: (n) => setScale("h", n),
         }),
         numberField({
-          label: "Scale width",
+          label: "缩放宽度",
           value: scaleW,
           unit: "%",
           min: 1,
@@ -1751,13 +1751,13 @@ function sizeSection(ctx, obj, edit, extra = {}) {
         }),
       ),
       checkField({
-        label: "Lock aspect ratio",
+        label: "锁定纵横比",
         checked: locked,
         onChange: (on) => edit((s) => P.setShapeAspectLock(s, on)),
       }),
     );
   }
-  return section("Size", out.filter(Boolean), { key: "size", open: true });
+  return section("大小", out.filter(Boolean), { key: "size", open: true });
 }
 
 // Where the object sits: from the slide's top left corner to the object's
@@ -1771,7 +1771,7 @@ function positionSection(ctx, obj, edit, extra = {}) {
     const oy = fromCenter ? b.h / 2 : 0;
     out.push(
       selectField({
-        label: "Position from",
+        label: "位置基准",
         value: fromCenter ? "center" : "corner",
         options: [
           ["corner", "Top left corner"],
@@ -1791,7 +1791,7 @@ function positionSection(ctx, obj, edit, extra = {}) {
           "div",
           { class: "fmt-row" },
           numberField({
-            label: "Horizontal position",
+            label: "水平位置",
             value: (b.x + ox) / IN,
             unit: "in",
             min: -100,
@@ -1806,7 +1806,7 @@ function positionSection(ctx, obj, edit, extra = {}) {
               ),
           }),
           numberField({
-            label: "Vertical position",
+            label: "垂直位置",
             value: (b.y + oy) / IN,
             unit: "in",
             min: -100,
@@ -1823,7 +1823,7 @@ function positionSection(ctx, obj, edit, extra = {}) {
         ),
       );
   }
-  return section("Position", out, { key: "position", open: true });
+  return section("位置", out, { key: "position", open: true });
 }
 
 function textBoxSection(ctx, obj, edit) {
@@ -1859,13 +1859,13 @@ function textBoxSection(ctx, obj, edit) {
         }),
     });
   return section(
-    "Text Box",
+    "文本框",
     [
       el(
         "div",
         { class: "fmt-row" },
         selectField({
-          label: "Vertical alignment",
+          label: "垂直对齐方式",
           value: body.anchor || "top",
           options: [
             ["top", "Top"],
@@ -1875,13 +1875,13 @@ function textBoxSection(ctx, obj, edit) {
           onChange: (v) => edit((s) => P.setShapeTextAnchor(s, v)),
         }),
         selectField({
-          label: "Text direction",
+          label: "文本方向",
           value: dir,
           options: [
-            ["horz", "Horizontal"],
+            ["horz", "水平"],
             ["vert", "Rotate all text 90°"],
             ["vert270", "Rotate all text 270°"],
-            ["wordArtVert", "Stacked"],
+            ["wordArtVert", "堆叠"],
           ],
           onChange: (v) => edit((s) => P.setShapeTextDirection(s, v)),
         }),
@@ -1889,14 +1889,14 @@ function textBoxSection(ctx, obj, edit) {
       el(
         "div",
         { class: "fmt-field" },
-        el("span", { class: "fmt-label" }, "Autofit"),
+        el("span", { class: "fmt-label" }, "自动调整"),
         segmented({
-          label: "Autofit",
+          label: "自动调整",
           value: autofit,
           options: [
-            ["none", "Do not autofit"],
-            ["normal", "Shrink text on overflow"],
-            ["shape", "Resize shape to fit text"],
+            ["none", "不自动调整"],
+            ["normal", "溢出时缩减文本"],
+            ["shape", "调整形状以适应文本"],
           ],
           onChange: (v) => edit((s) => P.setShapeTextAutoFit(s, v)),
         }),
@@ -1904,17 +1904,17 @@ function textBoxSection(ctx, obj, edit) {
       el(
         "div",
         { class: "fmt-row" },
-        margin("left", "Left margin", 91440),
-        margin("right", "Right margin", 91440),
+        margin("left", "左边距", 91440),
+        margin("right", "右边距", 91440),
       ),
       el(
         "div",
         { class: "fmt-row" },
-        margin("top", "Top margin", 45720),
-        margin("bottom", "Bottom margin", 45720),
+        margin("top", "上边距", 45720),
+        margin("bottom", "下边距", 45720),
       ),
       checkField({
-        label: "Wrap text in shape",
+        label: "形状中的文本自动换行",
         checked: wrap,
         onChange: (on) =>
           edit((s) => P.setShapeTextWrap(s, on ? "square" : "none")),
@@ -1936,15 +1936,15 @@ function textBoxSection(ctx, obj, edit) {
 function altTextSection(ctx, obj, edit, extra = {}) {
   const { P } = ctx;
   return section(
-    "Alt Text",
+    "替代文本",
     extra.altText?.() || [
       el(
         "label",
         { class: "fmt-field" },
-        el("span", { class: "fmt-label" }, "Title"),
+        el("span", { class: "fmt-label" }, "标题"),
         el("input", {
           class: "input",
-          "aria-label": "Alt text title",
+          "aria-label": "替代文字标题",
           value: P.getShapeAltTitle?.(obj) || "",
           onchange: (e) => {
             const v = e.target.value;
@@ -1955,11 +1955,11 @@ function altTextSection(ctx, obj, edit, extra = {}) {
       el(
         "label",
         { class: "fmt-field" },
-        el("span", { class: "fmt-label" }, "Description"),
+        el("span", { class: "fmt-label" }, "描述"),
         el("textarea", {
           class: "input",
           rows: 3,
-          "aria-label": "Alt text description",
+          "aria-label": "替代文字说明",
           value: P.getShapeDescription(obj) || "",
           onchange: (e) => {
             const v = e.target.value;
@@ -1985,10 +1985,10 @@ export const TEMPERATURE_PRESETS = [
 export function recolorPresets(theme) {
   const accent = (n) => hexOf(`scheme:accent${n}`, theme);
   return [
-    ["No recolor", { kind: "none" }],
-    ["Grayscale", { kind: "grayscale" }],
-    ["Sepia", { kind: "duotone", dark: "#3B2A17", light: "#F2E3C6" }],
-    ["Washout", { kind: "washout" }],
+    ["不重新着色", { kind: "none" }],
+    ["灰度", { kind: "grayscale" }],
+    ["深褐色", { kind: "duotone", dark: "#3B2A17", light: "#F2E3C6" }],
+    ["冲蚀", { kind: "washout" }],
     ["Black and white: 25%", { kind: "blackWhite", threshold: 0.25 }],
     ["Black and white: 50%", { kind: "blackWhite", threshold: 0.5 }],
     ["Black and white: 75%", { kind: "blackWhite", threshold: 0.75 }],
@@ -2014,16 +2014,16 @@ function pictureSections(ctx, obj, edit, { isPicture, extra = {} }) {
   const out = [];
   if (isPicture && extra.imageFields)
     out.push(
-      section("Picture", extra.imageFields(), { key: "image", open: true }),
+      section("图片", extra.imageFields(), { key: "image", open: true }),
     );
   const brightness = isPicture ? (P.getShapeImageBrightness(obj) ?? 0) : 0;
   const contrast = isPicture ? (P.getShapeImageContrast(obj) ?? 0) : 0;
   out.push(
     section(
-      "Picture Corrections",
+      "图片校正",
       [
         sliderField({
-          label: "Sharpness",
+          label: "清晰度",
           value: pct(adj.sharpness ?? 0),
           min: -100,
           max: 100,
@@ -2034,7 +2034,7 @@ function pictureSections(ctx, obj, edit, { isPicture, extra = {} }) {
         isPicture &&
           !extra.brightness &&
           sliderField({
-            label: "Picture brightness",
+            label: "图片亮度",
             value: pct(brightness),
             min: -100,
             max: 100,
@@ -2047,7 +2047,7 @@ function pictureSections(ctx, obj, edit, { isPicture, extra = {} }) {
           }),
         isPicture &&
           sliderField({
-            label: "Picture contrast",
+            label: "图片对比度",
             value: pct(contrast),
             min: -100,
             max: 100,
@@ -2072,7 +2072,7 @@ function pictureSections(ctx, obj, edit, { isPicture, extra = {} }) {
                 }
               }),
           },
-          "Reset corrections",
+          "重置校正",
         ),
       ].filter(Boolean),
       { key: "corrections", open: true },
@@ -2082,17 +2082,17 @@ function pictureSections(ctx, obj, edit, { isPicture, extra = {} }) {
   const presets = recolorPresets(theme);
   out.push(
     section(
-      "Picture Color",
+      "图片颜色",
       [
         sliderField({
-          label: "Saturation",
+          label: "饱和度",
           value: pct(adj.saturation ?? 1),
           max: 400,
           unit: "%",
           onCommit: (n) => writeAdj({ saturation: n / 100 }, "saturation"),
         }),
         sliderField({
-          label: "Temperature",
+          label: "色温",
           value: adj.temperature ?? 6500,
           min: 1500,
           max: 11500,
@@ -2101,14 +2101,14 @@ function pictureSections(ctx, obj, edit, { isPicture, extra = {} }) {
           onCommit: (n) => writeAdj({ temperature: n }, "temperature"),
         }),
         selectField({
-          label: "Recolor",
+          label: "重新着色",
           value: String(
             presets.findIndex(
               ([, p]) => JSON.stringify(p) === JSON.stringify(recolor),
             ),
           ),
           options: [
-            ["-1", "Custom"],
+            ["-1", "自定义"],
             ...presets.map(([label], i) => [String(i), label]),
           ],
           onChange: (v) =>
@@ -2121,10 +2121,10 @@ function pictureSections(ctx, obj, edit, { isPicture, extra = {} }) {
   );
   out.push(
     section(
-      "Artistic Effects",
+      "艺术效果",
       [
         selectField({
-          label: "Artistic effect",
+          label: "艺术效果",
           value: adj.artistic?.effect ?? "none",
           options: ARTISTIC,
           onChange: (v) =>
@@ -2137,7 +2137,7 @@ function pictureSections(ctx, obj, edit, { isPicture, extra = {} }) {
         }),
         adj.artistic &&
           sliderField({
-            label: "Effect amount",
+            label: "效果量",
             value: pct(adj.artistic.amount),
             unit: "%",
             onCommit: (n) =>
@@ -2206,7 +2206,7 @@ function cropSection(ctx, obj, edit, extra = {}) {
   const natural = bytes ? imageSize(bytes) : null;
   const geometry = P.getShapeGeometryEffective(ctx.pres(), obj);
   return section(
-    "Crop",
+    "剪裁",
     [
       el(
         "div",
@@ -2223,10 +2223,10 @@ function cropSection(ctx, obj, edit, extra = {}) {
         ),
       ),
       selectField({
-        label: "Aspect ratio",
+        label: "纵横比",
         value: "",
         options: [
-          ["", natural ? "Choose a ratio…" : "Picture size unknown"],
+          ["", natural ? "Choose a ratio…" : "图片大小未知"],
           ...ASPECT_RATIOS.map(([label]) => [label, label]),
         ],
         disabled: !natural,
@@ -2294,12 +2294,12 @@ function textOptionSections(ctx, obj, theme) {
       : "solid";
   const fillBody = [
     segmentedField(
-      "Text fill",
+      "文本填充",
       fillKind,
       [
-        ["none", "No fill"],
-        ["solid", "Solid"],
-        ["gradient", "Gradient"],
+        ["none", "无填充"],
+        ["solid", "纯色"],
+        ["gradient", "渐变"],
       ],
       (v) => {
         const base = cssColor(f.color, theme) || hexOf("scheme:tx1", theme);
@@ -2323,13 +2323,13 @@ function textOptionSections(ctx, obj, theme) {
   if (fillKind === "solid")
     fillBody.push(
       colorButton({
-        label: "Text fill color",
+        label: "文本填充颜色",
         value: f.color,
         theme,
         onPick: (v) => apply({ color: v }),
       }),
       sliderField({
-        label: "Text transparency",
+        label: "文本透明度",
         value: pct(1 - (f.colorOpacity ?? 1)),
         unit: "%",
         onCommit: (n) =>
@@ -2343,7 +2343,7 @@ function textOptionSections(ctx, obj, theme) {
         "div",
         { class: "fmt-row" },
         colorButton({
-          label: "Text gradient start",
+          label: "文本渐变起始",
           value: g.stops[0].color,
           theme,
           onPick: (v) =>
@@ -2358,7 +2358,7 @@ function textOptionSections(ctx, obj, theme) {
             }),
         }),
         colorButton({
-          label: "Text gradient end",
+          label: "文本渐变结束",
           value: g.stops.at(-1).color,
           theme,
           onPick: (v) =>
@@ -2374,7 +2374,7 @@ function textOptionSections(ctx, obj, theme) {
         }),
       ),
       numberField({
-        label: "Text gradient angle",
+        label: "文本渐变角度",
         value: g.angleDeg,
         unit: "°",
         min: 0,
@@ -2387,11 +2387,11 @@ function textOptionSections(ctx, obj, theme) {
   const outline = f.outline;
   const outlineBody = [
     segmentedField(
-      "Text outline",
+      "文本轮廓",
       outline ? "solid" : "none",
       [
-        ["none", "No line"],
-        ["solid", "Solid"],
+        ["none", "无线条"],
+        ["solid", "纯色"],
       ],
       (v) =>
         apply({
@@ -2408,7 +2408,7 @@ function textOptionSections(ctx, obj, theme) {
   if (outline)
     outlineBody.push(
       colorButton({
-        label: "Text outline color",
+        label: "文本轮廓颜色",
         value: outline.color,
         theme,
         onPick: (v) =>
@@ -2418,7 +2418,7 @@ function textOptionSections(ctx, obj, theme) {
         "div",
         { class: "fmt-row" },
         numberField({
-          label: "Text outline width",
+          label: "文本轮廓宽度",
           value: outline.widthEmu / PT,
           unit: "pt",
           min: 0,
@@ -2428,7 +2428,7 @@ function textOptionSections(ctx, obj, theme) {
             apply({ outline: { ...outline, widthEmu: Math.round(n * PT) } }),
         }),
         selectField({
-          label: "Text outline dash",
+          label: "文本轮廓虚线",
           value: outline.dash || "solid",
           options: DASHES,
           onChange: (v) =>
@@ -2441,13 +2441,13 @@ function textOptionSections(ctx, obj, theme) {
   const fx = f.effects || {};
   const effectsBody = [
     selectField({
-      label: "Text shadow",
+      label: "文本阴影",
       value: fx.shadow ? "on" : "none",
       options: [
-        ["none", "No shadow"],
-        ["on", "Offset: Bottom Right"],
-        ["soft", "Soft below"],
-        ["inner", "Inside"],
+        ["none", "无阴影"],
+        ["on", "偏移: 右下"],
+        ["soft", "下方柔和"],
+        ["inner", "内阴影"],
       ],
       onChange: (v) =>
         apply({
@@ -2484,10 +2484,10 @@ function textOptionSections(ctx, obj, theme) {
         }),
     }),
     selectField({
-      label: "Text glow",
+      label: "文本发光",
       value: fx.glow ? String(Math.round(fx.glow.radiusEmu / PT)) : "none",
       options: [
-        ["none", "No glow"],
+        ["none", "无发光"],
         ...[5, 8, 11, 18].map((n) => [String(n), `${n} pt`]),
       ],
       onChange: (v) =>
@@ -2507,7 +2507,7 @@ function textOptionSections(ctx, obj, theme) {
     }),
     fx.glow &&
       colorButton({
-        label: "Text glow color",
+        label: "文本发光颜色",
         value: fx.glow.color,
         theme,
         onPick: (v) =>
@@ -2516,12 +2516,12 @@ function textOptionSections(ctx, obj, theme) {
           }),
       }),
     selectField({
-      label: "Text reflection",
+      label: "文本倒影",
       value: fx.reflection ? "on" : "none",
       options: [
-        ["none", "No reflection"],
-        ["on", "Tight reflection"],
-        ["half", "Half reflection"],
+        ["none", "无倒影"],
+        ["on", "紧密倒影"],
+        ["half", "半倒影"],
       ],
       onChange: (v) =>
         apply({
@@ -2541,8 +2541,8 @@ function textOptionSections(ctx, obj, theme) {
     }),
   ].filter(Boolean);
   return [
-    section("Text Fill", fillBody, { key: "textFill" }),
-    section("Text Outline", outlineBody, { key: "textOutline" }),
-    section("Text Effects", effectsBody, { key: "textEffects" }),
+    section("文本填充", fillBody, { key: "textFill" }),
+    section("文本轮廓", outlineBody, { key: "textOutline" }),
+    section("文本效果", effectsBody, { key: "textEffects" }),
   ];
 }

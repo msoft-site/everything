@@ -36,11 +36,11 @@ export function createRehearsal(ctx, session) {
   const slideTime = el("span", {
     class: "show-rehearse-slide",
     role: "timer",
-    "aria-label": "Time on this slide",
+    "aria-label": "当前幻灯片时间",
   });
   const totalTime = el("span", {
     class: "show-rehearse-total",
-    "aria-label": "Total time",
+    "aria-label": "总时间",
   });
   const pause = lineButton(
     "Pause the rehearsal",
@@ -67,7 +67,7 @@ export function createRehearsal(ctx, session) {
     {
       class: "show-rehearse",
       role: "toolbar",
-      "aria-label": "Rehearsal timer",
+      "aria-label": "排练计时器",
       onclick: (e) => e.stopPropagation(),
     },
     el("span", { class: "show-rehearse-title" }, "Rehearsing"),

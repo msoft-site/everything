@@ -10,28 +10,28 @@ const KEY = "presentation.drawPens.v1";
 export const MAX_PENS = 12;
 export const PEN_TYPES = {
   pen: {
-    label: "Pen",
+    label: "圆珠笔",
     widths: [0.25, 0.5, 1, 2, 3.5],
     textures: ["solid", "dotted"],
     defaults: { color: "#000000", width: 1, texture: "solid" },
   },
   pencil: {
-    label: "Pencil",
+    label: "铅笔",
     widths: [0.5, 1, 2, 3.5, 5],
     textures: ["graphite", "solid"],
     defaults: { color: "#595959", width: 1, texture: "graphite" },
   },
   highlighter: {
-    label: "Highlighter",
+    label: "荧光笔",
     widths: [2, 4, 6, 8, 10],
     textures: ["solid"],
     defaults: { color: "#FFFF00", width: 6, texture: "solid" },
   },
 };
 export const TEXTURE_LABELS = {
-  solid: "Solid",
-  graphite: "Graphite",
-  dotted: "Dotted",
+  solid: "纯色",
+  graphite: "石墨",
+  dotted: "点线",
 };
 // Defaults the Draw tab starts with. Their ids stay fixed so a saved set
 // and the tab's commands keep pointing at the same pens.

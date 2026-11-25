@@ -52,8 +52,8 @@ export function prepareAudienceWindow(win, { title = "Slide Show" } = {}) {
   const full = doc.createElement("button");
   full.type = "button";
   full.className = "show-audience-full";
-  full.textContent = "Full screen";
-  full.setAttribute("aria-label", "Show the slides full screen");
+  full.textContent = "全屏";
+  full.setAttribute("aria-label", "全屏显示幻灯片");
   full.addEventListener("click", (e) => {
     e.stopPropagation();
     if (doc.fullscreenElement) doc.exitFullscreen().catch(() => {});

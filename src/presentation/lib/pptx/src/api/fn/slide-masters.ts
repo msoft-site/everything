@@ -258,15 +258,15 @@ const PROMPTS: Record<
   Category | "subTitle" | "tbl" | "chart" | "dgm" | "media",
   string
 > = {
-  title: "Click to add title",
-  subTitle: "Click to add subtitle",
-  body: "Click to add text",
-  pic: "Click to add a picture",
-  object: "Click to add content",
-  tbl: "Click to add a table",
-  chart: "Click to add a chart",
-  dgm: "Click to add a diagram",
-  media: "Click to add media",
+  title: "单击此处添加标题",
+  subTitle: "单击此处添加副标题",
+  body: "单击此处添加文本",
+  pic: "单击此处添加图片",
+  object: "单击此处添加内容",
+  tbl: "单击此处添加表格",
+  chart: "单击此处添加图表",
+  dgm: "单击此处添加图示",
+  media: "单击此处添加媒体",
   footer: "",
 };
 

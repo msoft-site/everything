@@ -21,16 +21,16 @@ const svgNode = (markup) => {
   return t.content.firstChild;
 };
 const COMBO_KINDS = [
-  ["column", "Clustered Column"],
-  ["line", "Line"],
-  ["area", "Area"],
+  ["column", "簇状柱形图"],
+  ["line", "折线图"],
+  ["area", "面积图"],
 ];
 
 // Resolves to the chart definition chosen, or null. With `spec`, the
 // chart's own data is shown in each type; without, sample data.
 export async function chooseChartType({
-  title = "Insert Chart",
-  confirm = "Insert",
+  title = "插入图表",
+  confirm = "插入",
   spec = null,
   current = "column-clustered",
   theme = null,
@@ -66,7 +66,7 @@ export async function chooseChartType({
     class: "chart-families",
     role: "tablist",
     "aria-orientation": "vertical",
-    "aria-label": "Chart families",
+    "aria-label": "图表家族",
   });
   const subtypes = el("div", { class: "chart-subtypes", role: "radiogroup" });
   const name = el("h3", { class: "chart-type-name", id: "chart-type-name" });
@@ -193,7 +193,7 @@ export async function chooseChartType({
       el("h4", {}, "Choose the chart type and axis for each series"),
       el(
         "div",
-        { class: "chart-combo-rows", role: "group", "aria-label": "Series" },
+        { class: "chart-combo-rows", role: "group", "aria-label": "系列" },
         ...names.map((n, i) =>
           el(
             "div",

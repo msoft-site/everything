@@ -23,15 +23,15 @@ Object.assign(COMMAND_ICONS, {
 });
 
 const ROLE_NAMES = {
-  node: "Shape",
-  hub: "Shape",
-  child: "Text shape",
-  text: "Text",
-  trans: "Connector",
-  bg: "Background",
-  line: "Line",
-  pic: "Picture",
-  venn: "Shape",
+  node: "形状",
+  hub: "形状",
+  child: "文本形状",
+  text: "文本",
+  trans: "连接符",
+  bg: "背景",
+  line: "线条",
+  pic: "图片",
+  venn: "形状",
 };
 const SCALE_STEP = 1.1;
 
@@ -169,7 +169,7 @@ export function createSmartArtFormat({
       : (model?.items[shape.item]?.text || "").replace(/\s+/g, " ").trim();
   const describe = (model, shape) => {
     const text = itemText(model, shape);
-    const role = ROLE_NAMES[shape.role] || "Shape";
+    const role = ROLE_NAMES[shape.role] || "形状";
     return text ? `${role}: ${text}` : role;
   };
   const choose = (obj, key) => {
@@ -295,7 +295,7 @@ export function createSmartArtFormat({
     const current = picked();
     return [
       {
-        label: "Whole Graphic",
+        label: "整个图形",
         checked: !current,
         onSelect: () => choose(obj, null),
       },
@@ -317,7 +317,7 @@ export function createSmartArtFormat({
         setFormat((f) => ({ ...f, fill: value, picture: undefined }));
       },
       none: {
-        label: "No Fill",
+        label: "无填充",
         icon: "Ban",
         onSelect: () =>
           setFormat((f) => ({ ...f, fill: "none", picture: undefined })),
@@ -344,14 +344,14 @@ export function createSmartArtFormat({
         setFormat((f) => ({ ...f, line: value }));
       },
       none: {
-        label: "No Outline",
+        label: "无轮廓",
         icon: "Ban",
         onSelect: () => setFormat((f) => ({ ...f, line: "none" })),
       },
       extra: [
         { separator: true },
         {
-          label: "Weight",
+          label: "粗细",
           icon: "o:lineSpacing",
           items: [0.25, 0.5, 0.75, 1, 1.5, 2.25, 3, 4.5, 6].map((w) => ({
             label: `${w} pt`,
@@ -393,7 +393,7 @@ export function createSmartArtFormat({
           ...f,
           effects: clean({ ...f.effects, ...patch }),
         })),
-      ["Shadow", "Reflection", "Glow", "Soft Edges"],
+      ["阴影", "倒影", "发光", "柔化边缘"],
     );
   }
   const textStyleOf = (target) =>
@@ -425,7 +425,7 @@ export function createSmartArtFormat({
         }));
       },
       none: {
-        label: "No Outline",
+        label: "无轮廓",
         icon: "Ban",
         onSelect: () =>
           setTextStyle((t) => ({
@@ -445,7 +445,7 @@ export function createSmartArtFormat({
           ...t,
           effects: clean({ ...t.effects, ...patch }),
         })),
-      ["Shadow", "Reflection", "Glow"],
+      ["阴影", "倒影", "发光"],
     );
   }
   function wordArtChoices() {
@@ -483,13 +483,13 @@ export function createSmartArtFormat({
     const hint = "Click a shape in the graphic, or use Select Shape, first.";
     return {
       id: "smartart-format",
-      label: "SmartArt Format",
+      label: "SmartArt 格式",
       contextual: true,
       visible,
       groups: [
         {
           id: "smartart-shapes",
-          label: "Shapes",
+          label: "形状",
           icon: "editShape",
           items: [
             {
@@ -497,7 +497,7 @@ export function createSmartArtFormat({
               id: "smartart-change-shape",
               label: "Change\nShape",
               icon: "editShape",
-              title: "Change Shape",
+              title: "更改形状",
               description: `Draw the chosen shape of the graphic as another shape. ${hint}`,
               enabled: () => on() && picked().shape.geom !== "custom",
               menu: () => {
@@ -515,9 +515,9 @@ export function createSmartArtFormat({
                 {
                   type: "small",
                   id: "smartart-larger",
-                  label: "Larger",
+                  label: "放大",
                   icon: "shapeLarger",
-                  title: "Larger",
+                  title: "放大",
                   description: "Make the shape a step larger.",
                   enabled: on,
                   run: () => scaleBy(SCALE_STEP),
@@ -525,9 +525,9 @@ export function createSmartArtFormat({
                 {
                   type: "small",
                   id: "smartart-smaller",
-                  label: "Smaller",
+                  label: "缩小",
                   icon: "shapeSmaller",
-                  title: "Smaller",
+                  title: "缩小",
                   description: "Make the shape a step smaller.",
                   enabled: on,
                   run: () => scaleBy(1 / SCALE_STEP),
@@ -535,9 +535,9 @@ export function createSmartArtFormat({
                 {
                   type: "small",
                   id: "smartart-select-shape",
-                  label: "Select Shape",
+                  label: "选择形状",
                   icon: "select",
-                  title: "Select Shape",
+                  title: "选择形状",
                   description: "Choose one shape of the graphic to format.",
                   enabled: () => visible() && !h.readOnly(),
                   menu: () => selectShapeMenu(),
@@ -549,7 +549,7 @@ export function createSmartArtFormat({
               id: "smartart-reset-shape",
               label: "Reset\nShape",
               icon: "resetGraphic",
-              title: "Reset Shape",
+              title: "重置形状",
               description:
                 "Remove this shape's own formatting and its text style.",
               enabled: on,
@@ -568,7 +568,7 @@ export function createSmartArtFormat({
         },
         {
           id: "smartart-shape-styles",
-          label: "Shape Styles",
+          label: "形状样式",
           icon: "quickStyles",
           items: [
             {
@@ -577,7 +577,7 @@ export function createSmartArtFormat({
                 {
                   type: "color",
                   id: "smartart-shape-fill",
-                  label: "Shape Fill",
+                  label: "形状填充",
                   icon: "shapeFill",
                   enabled: on,
                   color: () => last.fill?.hex,
@@ -589,12 +589,12 @@ export function createSmartArtFormat({
                       picture: undefined,
                     })),
                   menu: () => fillMenu(),
-                  menuLabel: "Fill colors",
+                  menuLabel: "填充颜色",
                 },
                 {
                   type: "color",
                   id: "smartart-shape-outline",
-                  label: "Shape Outline",
+                  label: "形状轮廓",
                   icon: "shapeOutline",
                   enabled: on,
                   color: () => last.line?.hex,
@@ -602,12 +602,12 @@ export function createSmartArtFormat({
                     last.line &&
                     setFormat((f) => ({ ...f, line: last.line.value })),
                   menu: () => outlineMenu(),
-                  menuLabel: "Outline colors",
+                  menuLabel: "轮廓颜色",
                 },
                 {
                   type: "small",
                   id: "smartart-shape-effects",
-                  label: "Shape Effects",
+                  label: "形状效果",
                   icon: "shapeEffects",
                   enabled: on,
                   menu: () => effectsMenu(),
@@ -618,13 +618,13 @@ export function createSmartArtFormat({
         },
         {
           id: "smartart-wordart",
-          label: "WordArt Styles",
+          label: "艺术字样式",
           icon: "wordArt",
           items: [
             {
               type: "gallery",
               id: "smartart-wordart-gallery",
-              label: "WordArt Styles",
+              label: "艺术字样式",
               columns: 4,
               panelColumns: 6,
               itemClass: "style-thumb",
@@ -639,7 +639,7 @@ export function createSmartArtFormat({
                 {
                   type: "color",
                   id: "smartart-text-fill",
-                  label: "Text Fill",
+                  label: "文本填充",
                   icon: "textFill",
                   enabled: onItem,
                   color: () => last.text?.hex,
@@ -647,12 +647,12 @@ export function createSmartArtFormat({
                     last.text &&
                     setTextStyle((t) => ({ ...t, fill: last.text.value })),
                   menu: () => textFillMenu(),
-                  menuLabel: "Text fill colors",
+                  menuLabel: "文本填充颜色",
                 },
                 {
                   type: "color",
                   id: "smartart-text-outline",
-                  label: "Text Outline",
+                  label: "文本轮廓",
                   icon: "textOutline",
                   enabled: onItem,
                   color: () => last.textOutline?.hex,
@@ -664,12 +664,12 @@ export function createSmartArtFormat({
                       outlineWidth: t.outlineWidth ?? Math.round(0.75 * PT),
                     })),
                   menu: () => textOutlineMenu(),
-                  menuLabel: "Text outline colors",
+                  menuLabel: "文本轮廓颜色",
                 },
                 {
                   type: "small",
                   id: "smartart-text-effects",
-                  label: "Text Effects",
+                  label: "文本效果",
                   icon: "textEffects",
                   enabled: onItem,
                   menu: () => textEffectsMenu(),

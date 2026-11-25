@@ -106,8 +106,8 @@ export function createChartTools(h) {
     const theme = h.theme();
     const size = h.slideSize();
     const choice = await chooseChartType({
-      title: "Insert Chart",
-      confirm: "Insert",
+      title: "插入图表",
+      confirm: "插入",
       theme,
       accents: themeContext(theme).accents,
       aspect: 3 / 2,
@@ -156,7 +156,7 @@ export function createChartTools(h) {
       return isChart(shape) ? shape : null;
     };
     const opened = openChartSheet({
-      title: `Chart Data — ${P.getShapeName?.(obj) || "Chart"}`,
+      title: `图表数据 — ${P.getShapeName?.(obj) || "图表"}`,
       target,
       read: specOf,
       write: (spec) => update(target(), () => spec, "chart-data"),
@@ -178,8 +178,8 @@ export function createChartTools(h) {
     if (!spec) return;
     const theme = h.theme();
     const choice = await chooseChartType({
-      title: "Change Chart Type",
-      confirm: "OK",
+      title: "更改图表类型",
+      confirm: "确定",
       spec,
       current: detectChartType(spec) || "column-clustered",
       theme,
@@ -203,12 +203,12 @@ export function createChartTools(h) {
     const list = el("ul", {
       class: "chart-series-list",
       role: "listbox",
-      "aria-label": "Series",
+      "aria-label": "系列",
     });
     const cats = el("textarea", {
       class: "input chart-category-input",
       rows: 5,
-      "aria-label": "Category labels, one per line",
+      "aria-label": "类别标签，每行一个",
     });
     let chosen = 0;
     // Choosing a series marks it in place: a click in its name box must
@@ -307,8 +307,8 @@ export function createChartTools(h) {
       },
       "secondary",
     );
-    const up = button("Move up", "ChevronUp", () => move(-1), "secondary");
-    const down = button("Move down", "ChevronDown", () => move(1), "secondary");
+    const up = button("上移", "ChevronUp", () => move(-1), "secondary");
+    const down = button("下移", "ChevronDown", () => move(1), "secondary");
     const swap = button(
       "Switch Row/Column",
       "o:switchRowColumn",
@@ -322,11 +322,11 @@ export function createChartTools(h) {
     );
     const blanks = el(
       "select",
-      { class: "input", "aria-label": "Show empty cells as" },
+      { class: "input", "aria-label": "空单元格显示为" },
       ...[
-        ["gap", "Gaps"],
-        ["zero", "Zero"],
-        ["span", "Connect points with line"],
+        ["gap", "空距"],
+        ["zero", "零"],
+        ["span", "用直线连接数据点"],
       ].map(([v, l]) =>
         el(
           "option",
@@ -350,7 +350,7 @@ export function createChartTools(h) {
         el(
           "div",
           {},
-          el("h3", {}, "Series"),
+          el("h3", {}, "系列"),
           list,
           el("div", { class: "chart-select-actions" }, add, remove, up, down),
         ),
@@ -360,15 +360,15 @@ export function createChartTools(h) {
           el(
             "h3",
             {},
-            xy ? "X values come from the data sheet" : "Category labels",
+            xy ? "X 值来自数据表" : "水平(分类)轴标签",
           ),
           cats,
         ),
       ),
-      el("label", {}, "Show empty cells as", blanks),
+      el("label", {}, "空单元格显示为", blanks),
     );
     draw();
-    const ok = await dialog({ title: "Select Data", body, confirm: "OK" });
+    const ok = await dialog({ title: "选择数据", body, confirm: "确定" });
     if (!ok) return;
     readCategories();
     spec = cleanSpec({
@@ -406,52 +406,52 @@ export function createChartTools(h) {
     if (axes)
       items.push(
         {
-          label: "Axes",
+          label: "坐标轴",
           icon: "o:chartColumn",
           items: [
             toggle(
               "categoryAxis",
-              vertical ? "Primary Horizontal" : "Primary Vertical",
+              vertical ? "主要横坐标轴" : "主要纵坐标轴",
             ),
             toggle(
               "valueAxis",
-              vertical ? "Primary Vertical" : "Primary Horizontal",
+              vertical ? "主要纵坐标轴" : "主要横坐标轴",
             ),
             { separator: true },
             more("valueAxis", "More Axis Options…"),
           ],
         },
         {
-          label: "Axis Titles",
+          label: "坐标轴标题",
           icon: "o:textBox",
           items: [
             toggle(
               "categoryAxisTitle",
-              vertical ? "Primary Horizontal" : "Primary Vertical",
+              vertical ? "主要横坐标轴" : "主要纵坐标轴",
             ),
             toggle(
               "valueAxisTitle",
-              vertical ? "Primary Vertical" : "Primary Horizontal",
+              vertical ? "主要纵坐标轴" : "主要横坐标轴",
             ),
           ],
         },
       );
     items.push({
-      label: "Chart Title",
+      label: "图表标题",
       icon: "o:textBox",
       items: [
-        radio("title", "none", "None"),
-        radio("title", "above", "Above Chart"),
-        radio("title", "overlay", "Centered Overlay"),
+        radio("title", "none", "无"),
+        radio("title", "above", "图表上方"),
+        radio("title", "overlay", "居中覆盖"),
         { separator: true },
         more("title", "More Title Options…"),
       ],
     });
     items.push({
-      label: "Data Labels",
+      label: "数据标签",
       icon: "o:chartBar",
       items: [
-        radio("dataLabels", "none", "None"),
+        radio("dataLabels", "none", "无"),
         ...labelPositions(spec).map(([v, l]) => radio("dataLabels", v, l)),
         { separator: true },
         more(
@@ -462,22 +462,22 @@ export function createChartTools(h) {
     });
     if (supportsDataTable(spec))
       items.push({
-        label: "Data Table",
+        label: "数据表",
         icon: "o:table",
         items: [
-          radio("dataTable", "none", "None"),
-          radio("dataTable", "keys", "With Legend Keys"),
-          radio("dataTable", "plain", "No Legend Keys"),
+          radio("dataTable", "none", "无"),
+          radio("dataTable", "keys", "显示图例键标"),
+          radio("dataTable", "plain", "无图例键标"),
         ],
       });
     if (supportsErrorBars(spec)) {
       const state = errorBarState(spec);
       items.push({
-        label: "Error Bars",
+        label: "误差线",
         icon: "o:chartLine",
         items: [
           {
-            label: "None",
+            label: "无",
             checked: state === "none",
             onSelect: () => updateSelected((s) => setErrorBars(s, "none")),
           },
@@ -496,42 +496,42 @@ export function createChartTools(h) {
     }
     if (axes)
       items.push({
-        label: "Gridlines",
+        label: "网格线",
         icon: "o:gridlines",
         items: vertical
           ? [
-              toggle("valueMajorGrid", "Primary Major Horizontal"),
-              toggle("categoryMajorGrid", "Primary Major Vertical"),
-              toggle("valueMinorGrid", "Primary Minor Horizontal"),
-              toggle("categoryMinorGrid", "Primary Minor Vertical"),
+              toggle("valueMajorGrid", "主主要水平网格线"),
+              toggle("categoryMajorGrid", "主主要垂直网格线"),
+              toggle("valueMinorGrid", "主次要水平网格线"),
+              toggle("categoryMinorGrid", "主次要垂直网格线"),
             ]
           : [
-              toggle("categoryMajorGrid", "Primary Major Horizontal"),
-              toggle("valueMajorGrid", "Primary Major Vertical"),
-              toggle("categoryMinorGrid", "Primary Minor Horizontal"),
-              toggle("valueMinorGrid", "Primary Minor Vertical"),
+              toggle("categoryMajorGrid", "主主要水平网格线"),
+              toggle("valueMajorGrid", "主主要垂直网格线"),
+              toggle("categoryMinorGrid", "主次要水平网格线"),
+              toggle("valueMinorGrid", "主次要垂直网格线"),
             ],
       });
     items.push({
-      label: "Legend",
+      label: "图例",
       icon: "o:bullets",
       items: [
-        radio("legend", "none", "None"),
-        radio("legend", "r", "Right"),
-        radio("legend", "t", "Top"),
-        radio("legend", "l", "Left"),
-        radio("legend", "b", "Bottom"),
+        radio("legend", "none", "无"),
+        radio("legend", "r", "靠右"),
+        radio("legend", "t", "靠上"),
+        radio("legend", "l", "靠左"),
+        radio("legend", "b", "靠下"),
         { separator: true },
         more("legend", "More Legend Options…"),
       ],
     });
     if (lineKinds || spec.kind === "area")
       items.push({
-        label: "Lines",
+        label: "线条",
         icon: "o:chartLine",
         items: [
           {
-            label: "None",
+            label: "无",
             checked: !spec.dropLines && !spec.hiLowLines,
             onSelect: () =>
               updateSelected((s) =>
@@ -542,13 +542,13 @@ export function createChartTools(h) {
                 ),
               ),
           },
-          toggle("dropLines", "Drop Lines"),
-          ...(lineKinds ? [toggle("hiLowLines", "High-Low Lines")] : []),
+          toggle("dropLines", "垂直线"),
+          ...(lineKinds ? [toggle("hiLowLines", "高低点连线")] : []),
         ],
       });
     if (lineKinds)
       items.push({
-        label: "Up/Down Bars",
+        label: "涨/跌柱线",
         icon: "o:chartColumn",
         items: [
           radio("upDownBars", false, "None"),
@@ -562,7 +562,7 @@ export function createChartTools(h) {
           : {
               items: [
                 {
-                  label: "All Series",
+                  label: "所有系列",
                   onSelect: () => updateSelected((s) => setTrendline(s, id)),
                 },
                 ...spec.series.map((x, i) => ({
@@ -572,11 +572,11 @@ export function createChartTools(h) {
               ],
             };
       items.push({
-        label: "Trendline",
+        label: "趋势线",
         icon: "o:chartLine",
         items: [
           {
-            label: "None",
+            label: "无",
             checked: !spec.series.some((s) => s.trendline),
             onSelect: () => updateSelected((s) => setTrendline(s, "none")),
           },
@@ -652,7 +652,7 @@ export function createChartTools(h) {
   // Previews are drawn at a small, fixed sample so they stay quick.
   const previewBase = (spec) => ({
     ...spec,
-    title: spec.title !== undefined ? spec.title || "Chart Title" : undefined,
+    title: spec.title !== undefined ? spec.title || "图表标题" : undefined,
   });
   function quickLayoutMenu() {
     const spec = specOf(selectedChart());
@@ -759,7 +759,7 @@ export function createChartTools(h) {
       el(
         "div",
         { class: "arrange-buttons" },
-        button("Edit Data", "o:editData", () => editData(obj), "secondary"),
+        button("编辑数据", "o:editData", () => editData(obj), "secondary"),
         button(
           "Change Chart Type",
           "o:changeChartType",
@@ -775,7 +775,7 @@ export function createChartTools(h) {
     const spec = specOf(obj);
     return spec
       ? `Format ${elementLabel(spec, currentElement(obj))}`
-      : "Format Chart";
+      : "设置图表格式";
   }
 
   /* ---------- Tabs ---------- */
@@ -784,13 +784,13 @@ export function createChartTools(h) {
     const visible = () => !!selectedChart();
     const design = {
       id: "chart-design",
-      label: "Chart Design",
+      label: "图表设计",
       contextual: true,
       visible,
       groups: [
         {
           id: "chart-layouts",
-          label: "Chart Layouts",
+          label: "图表布局",
           icon: "chartElement",
           items: [
             {
@@ -798,7 +798,7 @@ export function createChartTools(h) {
               id: "chart-add-element",
               label: "Add Chart\nElement",
               icon: "chartElement",
-              title: "Add Chart Element",
+              title: "添加图表元素",
               description:
                 "Add or remove titles, labels, gridlines, a legend and more.",
               enabled,
@@ -810,7 +810,7 @@ export function createChartTools(h) {
               id: "chart-quick-layout",
               label: "Quick\nLayout",
               icon: "quickLayout",
-              title: "Quick Layout",
+              title: "快速布局",
               description: "Change the overall layout of the chart's elements.",
               enabled,
               menu: () => quickLayoutMenu(),
@@ -819,7 +819,7 @@ export function createChartTools(h) {
         },
         {
           id: "chart-styles",
-          label: "Chart Styles",
+          label: "图表样式",
           icon: "chartStyles",
           collapsible: false,
           items: [
@@ -828,7 +828,7 @@ export function createChartTools(h) {
               id: "chart-change-colors",
               label: "Change\nColors",
               icon: "chartColors",
-              title: "Change Colors",
+              title: "更改颜色",
               description: "Choose a set of colors for the chart's data.",
               enabled,
               menu: () => colorsMenu(),
@@ -837,7 +837,7 @@ export function createChartTools(h) {
             {
               type: "gallery",
               id: "chart-style-gallery",
-              label: "Chart Styles",
+              label: "图表样式",
               columns: 4,
               panelColumns: 4,
               itemClass: "chart-style-thumb",
@@ -851,7 +851,7 @@ export function createChartTools(h) {
         },
         {
           id: "chart-data",
-          label: "Data",
+          label: "数据",
           icon: "editData",
           items: [
             {
@@ -859,7 +859,7 @@ export function createChartTools(h) {
               id: "chart-switch",
               label: "Switch Row/\nColumn",
               icon: "switchRowColumn",
-              title: "Switch Row/Column",
+              title: "切换行/列",
               description: "Swap what is plotted as series and as categories.",
               enabled: () =>
                 enabled() && canSwitchRowColumn(specOf(selectedChart())?.kind),
@@ -870,7 +870,7 @@ export function createChartTools(h) {
               id: "chart-select-data",
               label: "Select\nData",
               icon: "selectData",
-              title: "Select Data",
+              title: "选择数据",
               description:
                 "Rename, add, remove and reorder the chart's series and categories.",
               enabled,
@@ -881,7 +881,7 @@ export function createChartTools(h) {
               id: "chart-edit-data",
               label: "Edit\nData",
               icon: "editData",
-              title: "Edit Data",
+              title: "编辑数据",
               description: "Open the data sheet to change the chart's numbers.",
               enabled,
               run: () => editData(),
@@ -890,7 +890,7 @@ export function createChartTools(h) {
         },
         {
           id: "chart-type",
-          label: "Type",
+          label: "类型",
           icon: "changeChartType",
           items: [
             {
@@ -898,7 +898,7 @@ export function createChartTools(h) {
               id: "chart-change-type",
               label: "Change\nChart Type",
               icon: "changeChartType",
-              title: "Change Chart Type",
+              title: "更改图表类型",
               description: "Show the data as a different kind of chart.",
               enabled,
               run: () => changeType(),
@@ -909,13 +909,13 @@ export function createChartTools(h) {
     };
     const format = {
       id: "chart-format",
-      label: "Format",
+      label: "格式",
       contextual: true,
       visible,
       groups: [
         {
           id: "chart-current-selection",
-          label: "Current Selection",
+          label: "当前所选内容",
           icon: "select",
           items: [
             {
@@ -924,7 +924,7 @@ export function createChartTools(h) {
                 {
                   type: "combo",
                   id: "chart-element-select",
-                  label: "Chart Elements",
+                  label: "图表元素",
                   width: 190,
                   enabled,
                   value: () => {
@@ -947,7 +947,7 @@ export function createChartTools(h) {
                 {
                   type: "small",
                   id: "chart-format-selection",
-                  label: "Format Selection",
+                  label: "设置所选内容格式",
                   icon: "formatPane",
                   enabled,
                   run: () => formatElement(currentElement(selectedChart())),
@@ -955,7 +955,7 @@ export function createChartTools(h) {
                 {
                   type: "small",
                   id: "chart-reset-style",
-                  label: "Reset to Match Style",
+                  label: "重置以匹配样式",
                   icon: "resetPicture",
                   enabled,
                   run: () => resetElement(),
@@ -966,7 +966,7 @@ export function createChartTools(h) {
         },
         {
           id: "chart-shape-styles",
-          label: "Shape Styles",
+          label: "形状样式",
           icon: "shapeFill",
           items: [
             {
@@ -975,24 +975,24 @@ export function createChartTools(h) {
                 {
                   type: "color",
                   id: "chart-element-fill",
-                  label: "Shape Fill",
+                  label: "形状填充",
                   icon: "shapeFill",
                   enabled,
                   color: () => elementPaint("fill"),
                   run: () => applyLastPaint("fill"),
                   menu: () => paintMenu("fill"),
-                  menuLabel: "Fill colors",
+                  menuLabel: "填充颜色",
                 },
                 {
                   type: "color",
                   id: "chart-element-outline",
-                  label: "Shape Outline",
+                  label: "形状轮廓",
                   icon: "shapeOutline",
                   enabled,
                   color: () => elementPaint("outline"),
                   run: () => applyLastPaint("outline"),
                   menu: () => paintMenu("outline"),
-                  menuLabel: "Outline colors",
+                  menuLabel: "轮廓颜色",
                 },
               ],
             },
@@ -1086,12 +1086,12 @@ export function createChartTools(h) {
         apply(hex.toUpperCase());
       },
       automatic: {
-        label: "Automatic",
+        label: "自动",
         icon: "o:resetPicture",
         onSelect: () => apply(undefined),
       },
       none: {
-        label: which === "fill" ? "No Fill" : "No Outline",
+        label: which === "fill" ? "无填充" : "无轮廓",
         icon: "Ban",
         onSelect: () => apply(null),
       },

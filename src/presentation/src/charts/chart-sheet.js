@@ -47,7 +47,7 @@ export function openChartSheet({ title, target, read, write, seriesColor }) {
   const table = el("table", {
     class: "chart-sheet-grid",
     role: "grid",
-    "aria-label": "Chart data",
+    "aria-label": "图表数据",
   });
   const status = el("p", { class: "chart-sheet-status", role: "status" });
   const tool = (label, name, run, extra = {}) =>
@@ -69,7 +69,7 @@ export function openChartSheet({ title, target, read, write, seriesColor }) {
     el("h2", { class: "chart-sheet-title", id: "chart-sheet-title" }, title),
     el(
       "div",
-      { class: "chart-sheet-tools", role: "toolbar", "aria-label": "Data" },
+      { class: "chart-sheet-tools", role: "toolbar", "aria-label": "数据" },
       tool("Insert row above", "o:insertAbove", () =>
         edit(insertRow(grid, Math.max(1, focus.row)), {
           row: Math.max(1, focus.row),
@@ -270,7 +270,7 @@ export function openChartSheet({ title, target, read, write, seriesColor }) {
     status.textContent = "";
     Promise.resolve(write(next)).then((ok) => {
       if (ok === false)
-        status.textContent = "That change could not be applied.";
+        status.textContent = "无法应用该更改。";
     });
     if (redraw) {
       grid = specToGrid(spec);

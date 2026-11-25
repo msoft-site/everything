@@ -30,7 +30,7 @@ export function openTextPane({ title, about, read, write, onCurrent }) {
   const list = el("ul", {
     class: "smartart-outline",
     role: "list",
-    "aria-label": "Graphic text",
+    "aria-label": "图形文本",
   });
   const panel = el(
     "section",
@@ -54,8 +54,8 @@ export function openTextPane({ title, about, read, write, onCurrent }) {
         {
           type: "button",
           class: "btn icon-btn",
-          "aria-label": "Close Text Pane",
-          title: "Close Text Pane",
+          "aria-label": "关闭文字窗格",
+          title: "关闭文字窗格",
           onclick: () => close(),
         },
         icon("X", 16),

@@ -252,7 +252,7 @@ function parseTable(lines, start, options) {
         class: "md-table-wrap",
         tabindex: 0,
         role: "region",
-        "aria-label": "Table",
+        "aria-label": "表格",
       },
       table,
     ),
@@ -297,7 +297,7 @@ export function inline(text, options = {}) {
       out.push(
         el(
           "span",
-          { class: "md-image", title: "Pictures in replies are not loaded" },
+          { class: "md-image", title: "回复中的图片未加载" },
           m[3] ? `[${m[3]}]` : "[picture]",
         ),
       );

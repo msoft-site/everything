@@ -41,7 +41,7 @@ export function createZoomFeatures(ctx) {
             section: sec.name,
           }))
       : P.getSlides(pres).map((slide, i) => ({
-          label: `${i + 1}. ${ctx.slideTitle(slide) || "Untitled"}`,
+          label: `${i + 1}. ${ctx.slideTitle(slide) || "无标题"}`,
           slide,
         }));
     if (!entries.length)
@@ -59,7 +59,7 @@ export function createZoomFeatures(ctx) {
       {
         class: "zoom-pick-grid",
         role: "group",
-        "aria-label": sections ? "Sections" : "Slides",
+        "aria-label": sections ? "节" : "幻灯片",
       },
       ...entries.map((entry, i) =>
         el(
@@ -81,7 +81,7 @@ export function createZoomFeatures(ctx) {
     );
     const count = el("p", { class: "zoom-pick-count", role: "status" });
     const sync = () => {
-      count.textContent = `${chosen.size} selected`;
+      count.textContent = `已选择 ${chosen.size} 项`;
       insertButton.disabled = !chosen.size;
     };
     sync();
@@ -157,13 +157,13 @@ export function createZoomFeatures(ctx) {
 
   async function slideZoom() {
     ctx.commitText();
-    const targets = await pickTargets({ title: "Insert Slide Zoom" });
+    const targets = await pickTargets({ title: "插入幻灯片缩放定位" });
     if (targets.length) await addZooms("slide", targets);
   }
   async function sectionZoom() {
     ctx.commitText();
     const targets = await pickTargets({
-      title: "Insert Section Zoom",
+      title: "插入节缩放定位",
       sections: true,
     });
     if (targets.length) await addZooms("section", targets);
@@ -175,7 +175,7 @@ export function createZoomFeatures(ctx) {
       (s) => s.slides.length,
     );
     const targets = await pickTargets({
-      title: "Insert Summary Zoom",
+      title: "插入摘要缩放定位",
       sections: hasSections,
       preselect: () => true,
     });
@@ -248,14 +248,14 @@ export function createZoomFeatures(ctx) {
   const first = () => zooms()[0];
   const tab = () => ({
     id: "zoom",
-    label: "Zoom",
+    label: "缩放定位",
     contextual: true,
     visible: () =>
       ctx.selectedShapes().length > 0 && ctx.selectedShapes().every(isZoom),
     groups: [
       {
         id: "zoom-image",
-        label: "Image",
+        label: "图片",
         icon: "pictures",
         items: [
           {
@@ -263,7 +263,7 @@ export function createZoomFeatures(ctx) {
             id: "zoom-change-image",
             label: "Change\nImage",
             icon: "changePicture",
-            title: "Change Image",
+            title: "更改图片",
             description: "Show a picture of your own on the zoom.",
             run: () => changeImage().catch(ctx.fail),
           },
@@ -272,7 +272,7 @@ export function createZoomFeatures(ctx) {
             id: "zoom-reset-image",
             label: "Reset\nImage",
             icon: "resetPicture",
-            title: "Reset Image",
+            title: "重置图片",
             description: "Show the target slide as it looks now.",
             run: () => resetImage().catch(ctx.fail),
           },
@@ -280,7 +280,7 @@ export function createZoomFeatures(ctx) {
       },
       {
         id: "zoom-options",
-        label: "Zoom Options",
+        label: "缩放选项",
         icon: "zoomSlide",
         items: [
           {
@@ -289,21 +289,21 @@ export function createZoomFeatures(ctx) {
               {
                 type: "check",
                 id: "zoom-return",
-                label: "Return to Zoom",
+                label: "返回到缩放",
                 checked: () => !!dataOf(first() ?? {}).returnToZoom,
                 commit: (on) => setData({ returnToZoom: on }),
               },
               {
                 type: "check",
                 id: "zoom-transition",
-                label: "Zoom Transition",
+                label: "缩放切换",
                 checked: () => dataOf(first() ?? {}).transition !== false,
                 commit: (on) => setData({ transition: on }),
               },
               {
                 type: "spin",
                 id: "zoom-duration",
-                label: "Duration",
+                label: "持续时间",
                 width: 66,
                 min: 0.01,
                 max: 59,

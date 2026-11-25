@@ -4,58 +4,58 @@
 // and says what can be changed about each.
 
 export const CATEGORIES = [
-  { id: "entr", label: "Entrance", hue: "g" },
-  { id: "emph", label: "Emphasis", hue: "y" },
-  { id: "exit", label: "Exit", hue: "r" },
-  { id: "path", label: "Motion Paths", hue: "b" },
+  { id: "entr", label: "进入", hue: "g" },
+  { id: "emph", label: "强调", hue: "y" },
+  { id: "exit", label: "退出", hue: "r" },
+  { id: "path", label: "动作路径", hue: "b" },
 ];
 export const categoryOf = (cls) =>
   CATEGORIES.find((c) => c.id === cls) || {
     id: cls,
-    label: cls === "mediacall" ? "Media" : "Other",
+    label: cls === "mediacall" ? "媒体" : "其他",
     hue: "n",
   };
 
 const DIR8 = [
-  [4, "From Bottom"],
-  [12, "From Bottom-Left"],
-  [8, "From Left"],
-  [9, "From Top-Left"],
-  [1, "From Top"],
-  [3, "From Top-Right"],
-  [2, "From Right"],
-  [6, "From Bottom-Right"],
+  [4, "自底部"],
+  [12, "自左下"],
+  [8, "自左侧"],
+  [9, "自左上"],
+  [1, "自顶部"],
+  [3, "自右上"],
+  [2, "自右侧"],
+  [6, "自右下"],
 ];
 const DIR4 = [
-  [4, "From Bottom"],
-  [8, "From Left"],
-  [2, "From Right"],
-  [1, "From Top"],
+  [4, "自底部"],
+  [8, "自左侧"],
+  [2, "自右侧"],
+  [1, "自顶部"],
 ];
 const toDir = (list) =>
-  list.map(([subtype, label]) => [subtype, label.replace("From", "To")]);
+  list.map(([subtype, label]) => [subtype, label.replace("自", "到")]);
 const SPLIT = [
-  [26, "Horizontal In"],
-  [42, "Horizontal Out"],
-  [21, "Vertical In"],
-  [37, "Vertical Out"],
+  [26, "水平向内"],
+  [42, "水平向外"],
+  [21, "垂直向内"],
+  [37, "垂直向外"],
 ];
 const WHEEL = [
-  [1, "1 Spoke"],
-  [2, "2 Spokes"],
-  [3, "3 Spokes"],
-  [4, "4 Spokes"],
-  [8, "8 Spokes"],
+  [1, "1 根轮辐"],
+  [2, "2 根轮辐"],
+  [3, "3 根轮辐"],
+  [4, "4 根轮辐"],
+  [8, "8 根轮辐"],
 ];
 const BARS = [
-  [10, "Horizontal"],
-  [5, "Vertical"],
+  [10, "水平"],
+  [5, "垂直"],
 ];
 const PATH4 = [
-  [4, "Down"],
-  [8, "Left"],
-  [2, "Right"],
-  [1, "Up"],
+  [4, "向下"],
+  [8, "向左"],
+  [2, "向右"],
+  [1, "向上"],
 ];
 
 // family: basic | subtle | moderate | exciting (the More Effects dialog's
@@ -66,7 +66,7 @@ const entranceAndExit = (cls) => {
   return [
     {
       id: 1,
-      name: name("Appear", "Disappear"),
+      name: name("出现", "消失"),
       family: "basic",
       gallery: true,
       duration: 0,
@@ -74,14 +74,14 @@ const entranceAndExit = (cls) => {
     },
     {
       id: 10,
-      name: "Fade",
+      name: "淡出",
       family: "subtle",
       gallery: true,
       mark: "fade",
     },
     {
       id: 2,
-      name: name("Fly In", "Fly Out"),
+      name: name("飞入", "飞出"),
       family: "basic",
       gallery: true,
       options: exit ? toDir(DIR8) : DIR8,
@@ -90,19 +90,19 @@ const entranceAndExit = (cls) => {
     },
     {
       id: 42,
-      name: name("Float In", "Float Out"),
+      name: name("浮入", "浮出"),
       family: "moderate",
       gallery: true,
       variants: [
-        [42, 0, exit ? "Float Down" : "Float Up"],
-        [47, 0, exit ? "Float Up" : "Float Down"],
+        [42, 0, exit ? "向下浮动" : "向上浮动"],
+        [47, 0, exit ? "向上浮动" : "向下浮动"],
       ],
       alias: [47],
       mark: "float",
     },
     {
       id: 16,
-      name: "Split",
+      name: "拆分",
       family: "basic",
       gallery: true,
       options: SPLIT,
@@ -111,7 +111,7 @@ const entranceAndExit = (cls) => {
     },
     {
       id: 22,
-      name: "Wipe",
+      name: "擦除",
       family: "basic",
       gallery: true,
       options: exit ? toDir(DIR4) : DIR4,
@@ -120,7 +120,7 @@ const entranceAndExit = (cls) => {
     },
     {
       id: 6,
-      name: "Shape",
+      name: "形状",
       family: "basic",
       gallery: true,
       variants: [
@@ -139,7 +139,7 @@ const entranceAndExit = (cls) => {
     },
     {
       id: 21,
-      name: "Wheel",
+      name: "轮循",
       family: "basic",
       gallery: true,
       options: WHEEL,
@@ -148,7 +148,7 @@ const entranceAndExit = (cls) => {
     },
     {
       id: 14,
-      name: "Random Bars",
+      name: "随机线条",
       family: "basic",
       gallery: true,
       options: BARS,
@@ -157,14 +157,14 @@ const entranceAndExit = (cls) => {
     },
     {
       id: 31,
-      name: name("Grow & Turn", "Shrink & Turn"),
+      name: name("放大/旋转", "缩小/旋转"),
       family: "moderate",
       gallery: true,
       mark: "turn",
     },
     {
       id: 53,
-      name: "Zoom",
+      name: "缩放",
       family: "subtle",
       gallery: true,
       options: [
@@ -176,7 +176,7 @@ const entranceAndExit = (cls) => {
     },
     {
       id: 19,
-      name: "Swivel",
+      name: "旋转",
       family: "exciting",
       gallery: true,
       duration: 1000,
@@ -184,7 +184,7 @@ const entranceAndExit = (cls) => {
     },
     {
       id: 26,
-      name: "Bounce",
+      name: "弹跳",
       family: "exciting",
       gallery: true,
       duration: 1000,
@@ -192,7 +192,7 @@ const entranceAndExit = (cls) => {
     },
     {
       id: 3,
-      name: "Blinds",
+      name: "百叶窗",
       family: "basic",
       options: BARS,
       subtype: 10,
@@ -200,7 +200,7 @@ const entranceAndExit = (cls) => {
     },
     {
       id: 5,
-      name: "Checkerboard",
+      name: "棋盘",
       family: "basic",
       options: [
         [10, "Across"],
@@ -211,13 +211,13 @@ const entranceAndExit = (cls) => {
     },
     {
       id: 9,
-      name: name("Dissolve In", "Dissolve Out"),
+      name: name("溶解入", "溶解出"),
       family: "basic",
       mark: "dissolve",
     },
     {
       id: 12,
-      name: name("Peek In", "Peek Out"),
+      name: name("切入", "切出"),
       family: "basic",
       options: exit ? toDir(DIR4) : DIR4,
       subtype: 4,
@@ -225,7 +225,7 @@ const entranceAndExit = (cls) => {
     },
     {
       id: 18,
-      name: "Strips",
+      name: "阶梯",
       family: "basic",
       options: [
         [12, "Left Down"],
@@ -236,17 +236,17 @@ const entranceAndExit = (cls) => {
       subtype: 6,
       mark: "wipe",
     },
-    { id: 20, name: "Wedge", family: "basic", mark: "wheel" },
+    { id: 20, name: "楔入", family: "basic", mark: "wheel" },
     {
       id: 17,
       name: name("Stretch", "Collapse"),
       family: "moderate",
       mark: "zoom",
     },
-    { id: 23, name: "Basic Zoom", family: "moderate", mark: "zoom" },
+    { id: 23, name: "基本缩放", family: "moderate", mark: "zoom" },
     {
       id: 37,
-      name: name("Rise Up", "Sink Down"),
+      name: name("升起", "沉下"),
       family: "moderate",
       mark: "float",
     },
@@ -265,10 +265,10 @@ const COLOR = "color";
 export const EFFECTS = [
   ...entranceAndExit("entr"),
   ...[
-    { id: 26, name: "Pulse", family: "basic", gallery: true, mark: "pulse" },
+    { id: 26, name: "脉冲", family: "basic", gallery: true, mark: "pulse" },
     {
       id: 27,
-      name: "Color Pulse",
+      name: "颜色脉冲",
       family: "basic",
       gallery: true,
       color: true,
@@ -276,7 +276,7 @@ export const EFFECTS = [
     },
     {
       id: 32,
-      name: "Teeter",
+      name: "跷跷板",
       family: "moderate",
       gallery: true,
       duration: 1000,
@@ -284,15 +284,15 @@ export const EFFECTS = [
     },
     {
       id: 8,
-      name: "Spin",
+      name: "陀螺旋",
       family: "basic",
       gallery: true,
       duration: 2000,
       amounts: [
-        [90, "Quarter Spin"],
-        [180, "Half Spin"],
-        [360, "Full Spin"],
-        [720, "Two Spins"],
+        [90, "四分之一旋转"],
+        [180, "半旋转"],
+        [360, "完整旋转"],
+        [720, "两周旋转"],
       ],
       amount: 360,
       spin: true,
@@ -300,7 +300,7 @@ export const EFFECTS = [
     },
     {
       id: 6,
-      name: "Grow/Shrink",
+      name: "放大/缩小",
       family: "basic",
       gallery: true,
       duration: 2000,
@@ -315,22 +315,22 @@ export const EFFECTS = [
     },
     {
       id: 25,
-      name: "Desaturate",
+      name: "不饱和",
       family: "subtle",
       gallery: true,
       mark: "desaturate",
     },
-    { id: 24, name: "Darken", family: "subtle", gallery: true, mark: "darken" },
+    { id: 24, name: "加深", family: "subtle", gallery: true, mark: "darken" },
     {
       id: 30,
-      name: "Lighten",
+      name: "变淡",
       family: "subtle",
       gallery: true,
       mark: "lighten",
     },
     {
       id: 9,
-      name: "Transparency",
+      name: "透明",
       family: "basic",
       gallery: true,
       amounts: [
@@ -344,7 +344,7 @@ export const EFFECTS = [
     },
     {
       id: 19,
-      name: "Object Color",
+      name: "对象颜色",
       family: "subtle",
       gallery: true,
       color: true,
@@ -352,7 +352,7 @@ export const EFFECTS = [
     },
     {
       id: 3,
-      name: "Font Color",
+      name: "字体颜色",
       family: "basic",
       gallery: true,
       color: true,
@@ -361,7 +361,7 @@ export const EFFECTS = [
     },
     {
       id: 18,
-      name: "Underline",
+      name: "下划线",
       family: "subtle",
       gallery: true,
       text: true,
@@ -369,7 +369,7 @@ export const EFFECTS = [
     },
     {
       id: 10,
-      name: "Bold Flash",
+      name: "加粗闪烁",
       family: "moderate",
       gallery: true,
       text: true,
@@ -377,7 +377,7 @@ export const EFFECTS = [
     },
     {
       id: 34,
-      name: "Wave",
+      name: "波浪",
       family: "exciting",
       gallery: true,
       text: true,
@@ -385,32 +385,32 @@ export const EFFECTS = [
     },
     {
       id: 1,
-      name: "Fill Color",
+      name: "填充颜色",
       family: "basic",
       color: true,
       mark: COLOR,
     },
     {
       id: 7,
-      name: "Line Color",
+      name: "线条颜色",
       family: "basic",
       color: true,
       mark: "lineColor",
     },
     {
       id: 15,
-      name: "Bold Reveal",
+      name: "加粗展示",
       family: "moderate",
       text: true,
       mark: "bold",
     },
-    { id: 35, name: "Blink", family: "exciting", mark: "pulse" },
+    { id: 35, name: "闪烁", family: "exciting", mark: "pulse" },
   ].map((e) => ({ cls: "emph", duration: 500, subtype: 0, ...e })),
   ...entranceAndExit("exit"),
   ...[
     {
       id: 42,
-      name: "Lines",
+      name: "直线",
       family: "lines",
       gallery: true,
       options: PATH4,
@@ -419,7 +419,7 @@ export const EFFECTS = [
     },
     {
       id: 37,
-      name: "Arcs",
+      name: "弧形",
       family: "lines",
       gallery: true,
       options: PATH4,
@@ -428,13 +428,13 @@ export const EFFECTS = [
     },
     {
       id: 36,
-      name: "Turns",
+      name: "转弯",
       family: "lines",
       gallery: true,
       options: [
-        [4, "Down"],
+        [4, "向下"],
         [6, "Down Right"],
-        [1, "Up"],
+        [1, "向上"],
         [3, "Up Right"],
       ],
       subtype: 4,
@@ -442,11 +442,11 @@ export const EFFECTS = [
     },
     {
       id: 35,
-      name: "Shapes",
+      name: "形状",
       family: "shapes",
       gallery: true,
       options: [
-        [0, "Circle"],
+        [0, "圆"],
         [1, "Diamond"],
         [2, "Triangle"],
         [3, "Square"],
@@ -457,14 +457,14 @@ export const EFFECTS = [
     },
     {
       id: 50,
-      name: "Loops",
+      name: "循环",
       family: "shapes",
       gallery: true,
       mark: "loops",
     },
     {
       id: 0,
-      name: "Custom Path",
+      name: "自定义路径",
       family: "custom",
       gallery: true,
       custom: true,
@@ -474,13 +474,13 @@ export const EFFECTS = [
 ];
 
 export const FAMILIES = {
-  basic: "Basic",
-  subtle: "Subtle",
-  moderate: "Moderate",
-  exciting: "Exciting",
-  lines: "Lines and Curves",
-  shapes: "Shapes",
-  custom: "Draw Your Own",
+  basic: "基本",
+  subtle: "细微",
+  moderate: "温和",
+  exciting: "华丽",
+  lines: "线条和曲线",
+  shapes: "形状",
+  custom: "自由绘制",
 };
 
 export const effectKey = (entry) => `${entry.cls}:${entry.id}`;

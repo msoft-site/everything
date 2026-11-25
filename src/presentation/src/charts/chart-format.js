@@ -26,38 +26,38 @@ export function chartElements(spec) {
   if (!spec) return [];
   const vertical = valueAxisVertical(spec);
   const list = [
-    { id: "chartArea", label: "Chart Area" },
-    { id: "plotArea", label: "Plot Area" },
+    { id: "chartArea", label: "图表区" },
+    { id: "plotArea", label: "绘图区" },
   ];
   if (spec.title !== undefined)
-    list.push({ id: "title", label: "Chart Title" });
+    list.push({ id: "title", label: "图表标题" });
   if (spec.legend?.position !== null)
-    list.push({ id: "legend", label: "Legend" });
+    list.push({ id: "legend", label: "图例" });
   if (hasAxes(spec) && spec.kind !== "radar") {
     list.push({
       id: "categoryAxis",
       label: isXYKind(spec.kind)
-        ? "Horizontal (Value) Axis"
+        ? "水平(值)轴"
         : vertical
-          ? "Horizontal (Category) Axis"
-          : "Vertical (Category) Axis",
+          ? "水平(类别)轴"
+          : "垂直(类别)轴",
     });
     list.push({
       id: "valueAxis",
-      label: vertical ? "Vertical (Value) Axis" : "Horizontal (Value) Axis",
+      label: vertical ? "垂直(值)轴" : "水平(值)轴",
     });
     list.push({
       id: "gridlines",
-      label: vertical ? "Horizontal Gridlines" : "Vertical Gridlines",
+      label: vertical ? "水平网格线" : "垂直网格线",
     });
   }
   spec.series.forEach((s, i) =>
-    list.push({ id: `series:${i}`, label: `Series "${s.name || i + 1}"` }),
+    list.push({ id: `series:${i}`, label: `系列 "${s.name || i + 1}"` }),
   );
   return list;
 }
 export function elementLabel(spec, id) {
-  return chartElements(spec).find((e) => e.id === id)?.label || "Chart Area";
+  return chartElements(spec).find((e) => e.id === id)?.label || "图表区";
 }
 
 const set = (key, value) => (spec) => {
@@ -96,14 +96,14 @@ export function chartFormatSection({ spec, element, choose, update, h, ctx }) {
   const elements = chartElements(spec);
   if (!elements.some((e) => e.id === element)) element = "chartArea";
   nodes.push(
-    el("h3", {}, "Chart"),
+    el("h3", {}, "图表"),
     h.field(
-      "Chart element",
+      "图表元素",
       el(
         "select",
         {
           class: "input",
-          "aria-label": "Chart element",
+          "aria-label": "图表元素",
           onchange: (e) => choose(e.target.value),
         },
         ...elements.map((e) =>
@@ -207,7 +207,7 @@ export function chartFormatSection({ spec, element, choose, update, h, ctx }) {
         min,
         max,
         step,
-        placeholder: "Auto",
+        placeholder: "自动",
         "aria-label": label,
         onchange: (e) => {
           const raw = e.target.value.trim();
@@ -233,10 +233,10 @@ export function chartFormatSection({ spec, element, choose, update, h, ctx }) {
       el(
         "div",
         { class: "chart-check-row" },
-        check("Bold", style.bold, (on) =>
+        check("加粗", style.bold, (on) =>
           setStyle(styleKey, { bold: on || undefined }),
         ),
-        check("Italic", style.italic, (on) =>
+        check("倾斜", style.italic, (on) =>
           setStyle(styleKey, { italic: on || undefined }),
         ),
       ),
@@ -253,8 +253,8 @@ export function chartFormatSection({ spec, element, choose, update, h, ctx }) {
     case "chartArea":
       nodes.push(
         el("h3", {}, "Fill and outline"),
-        color("Chart fill", spec.chartAreaFill, (c) => set("chartAreaFill", c)),
-        color("Chart outline", spec.chartAreaStrokeColor, (c) =>
+        color("图表填充", spec.chartAreaFill, (c) => set("chartAreaFill", c)),
+        color("图表轮廓", spec.chartAreaStrokeColor, (c) =>
           set("chartAreaStrokeColor", c),
         ),
         h.numInput(
@@ -299,7 +299,7 @@ export function chartFormatSection({ spec, element, choose, update, h, ctx }) {
         );
       if (spec.kind === "bar" || spec.kind === "column")
         nodes.push(
-          el("h3", {}, "Bars"),
+          el("h3", {}, "条柱"),
           h.numInput(
             "Gap width (%)",
             spec.gapWidthPct ?? 150,
@@ -338,8 +338,8 @@ export function chartFormatSection({ spec, element, choose, update, h, ctx }) {
     case "plotArea":
       nodes.push(
         el("h3", {}, "Fill and outline"),
-        color("Plot fill", spec.plotAreaFill, (c) => set("plotAreaFill", c)),
-        color("Plot outline", spec.plotAreaStrokeColor, (c) =>
+        color("绘图区填充", spec.plotAreaFill, (c) => set("plotAreaFill", c)),
+        color("绘图区轮廓", spec.plotAreaStrokeColor, (c) =>
           set("plotAreaStrokeColor", c),
         ),
       );
@@ -356,24 +356,24 @@ export function chartFormatSection({ spec, element, choose, update, h, ctx }) {
       break;
     case "legend":
       nodes.push(
-        el("h3", {}, "Legend"),
+        el("h3", {}, "图例"),
         select(
           "Legend position",
           spec.legend?.position || "r",
           [
-            ["t", "Top"],
-            ["b", "Bottom"],
-            ["l", "Left"],
-            ["r", "Right"],
-            ["tr", "Top Right"],
+            ["t", "靠上"],
+            ["b", "靠下"],
+            ["l", "靠左"],
+            ["r", "靠右"],
+            ["tr", "右上"],
           ],
           (v) => setLegend({ position: v }),
         ),
         check("Overlay on the chart", spec.legend?.overlay, (on) =>
           setLegend({ overlay: on || undefined }),
         ),
-        color("Legend fill", spec.legend?.fill, (c) => setLegend({ fill: c })),
-        color("Legend outline", spec.legend?.strokeColor, (c) =>
+        color("图例填充", spec.legend?.fill, (c) => setLegend({ fill: c })),
+        color("图例轮廓", spec.legend?.strokeColor, (c) =>
           setLegend({ strokeColor: c }),
         ),
         h.numInput(
@@ -425,10 +425,10 @@ export function chartFormatSection({ spec, element, choose, update, h, ctx }) {
           axis.displayUnits || "",
           [
             ["", "None"],
-            ["hundreds", "Hundreds"],
-            ["thousands", "Thousands"],
-            ["millions", "Millions"],
-            ["billions", "Billions"],
+            ["hundreds", "百"],
+            ["thousands", "千"],
+            ["millions", "百万"],
+            ["billions", "十亿"],
           ],
           (v) => setAxis({ displayUnits: v || undefined }),
         ),
@@ -476,10 +476,10 @@ export function chartFormatSection({ spec, element, choose, update, h, ctx }) {
           "Major tick marks",
           spec.valueAxisMajorTickMark || "none",
           [
-            ["none", "None"],
+            ["none", "无"],
             ["out", "Outside"],
             ["in", "Inside"],
-            ["cross", "Cross"],
+            ["cross", "十字形"],
           ],
           (v) => set("valueAxisMajorTickMark", v),
         ),
@@ -489,7 +489,7 @@ export function chartFormatSection({ spec, element, choose, update, h, ctx }) {
     }
     case "categoryAxis":
       nodes.push(
-        el("h3", {}, "Axis options"),
+        el("h3", {}, "坐标轴选项"),
         check(
           isXYKind(spec.kind)
             ? "Values in reverse order"
@@ -524,10 +524,10 @@ export function chartFormatSection({ spec, element, choose, update, h, ctx }) {
           "Major tick marks",
           spec.categoryAxisMajorTickMark || "none",
           [
-            ["none", "None"],
+            ["none", "无"],
             ["out", "Outside"],
             ["in", "Inside"],
-            ["cross", "Cross"],
+            ["cross", "十字形"],
           ],
           (v) => set("categoryAxisMajorTickMark", v),
         ),
@@ -656,11 +656,11 @@ export function chartFormatSection({ spec, element, choose, update, h, ctx }) {
             "Dash type",
             s.lineDash || "solid",
             [
-              ["solid", "Solid"],
-              ["dash", "Dash"],
+              ["solid", "实线"],
+              ["dash", "虚线"],
               ["sysDot", "Round dot"],
               ["sysDash", "Square dot"],
-              ["dashDot", "Dash dot"],
+              ["dashDot", "点划线"],
               ["lgDash", "Long dash"],
             ],
             (v) => setSeries(i, { lineDash: v === "solid" ? undefined : v }),
@@ -673,14 +673,14 @@ export function chartFormatSection({ spec, element, choose, update, h, ctx }) {
               s.markerSymbol || "auto",
               [
                 ["auto", "Automatic"],
-                ["none", "None"],
-                ["circle", "Circle"],
-                ["square", "Square"],
-                ["diamond", "Diamond"],
-                ["triangle", "Triangle"],
+                ["none", "无"],
+                ["circle", "圆形"],
+                ["square", "正方形"],
+                ["diamond", "菱形"],
+                ["triangle", "三角形"],
                 ["x", "X"],
-                ["plus", "Plus"],
-                ["star", "Star"],
+                ["plus", "正偏差"],
+                ["star", "星形"],
               ],
               (v) =>
                 setSeries(i, { markerSymbol: v === "auto" ? undefined : v }),
@@ -767,7 +767,7 @@ export function chartFormatSection({ spec, element, choose, update, h, ctx }) {
         );
       if (supportsTrendline(spec) && !pies(spec))
         nodes.push(
-          el("h3", {}, "Analysis"),
+          el("h3", {}, "分析"),
           select(
             "Trendline",
             s.trendline
@@ -775,7 +775,7 @@ export function chartFormatSection({ spec, element, choose, update, h, ctx }) {
                 ? "forecast"
                 : s.trendline.type
               : "none",
-            [["none", "None"], ...TRENDLINES.map(([id, label]) => [id, label])],
+            [["none", "无"], ...TRENDLINES.map(([id, label]) => [id, label])],
             (v) => (sp) => setTrendline(sp, v, i),
           ),
         );
@@ -793,9 +793,9 @@ export function chartFormatSection({ spec, element, choose, update, h, ctx }) {
             "Error direction",
             bars.type,
             [
-              ["both", "Both"],
-              ["minus", "Minus"],
-              ["plus", "Plus"],
+              ["both", "正负偏差"],
+              ["minus", "负偏差"],
+              ["plus", "正偏差"],
             ],
             (v) => setBars({ type: v }),
           ),
@@ -885,7 +885,7 @@ export function chartFormatSection({ spec, element, choose, update, h, ctx }) {
             "Error bars",
             s.errorBars ? errorBarState({ series: [s] }) : "none",
             [
-              ["none", "None"],
+              ["none", "无"],
               ...ERROR_BARS.map(([id, label]) => [id, label]),
               ...(s.errorBars && errorBarState({ series: [s] }) === "custom"
                 ? [["custom", "Custom"]]

@@ -130,22 +130,22 @@ export function createComments(env, host) {
     if (known) return known;
     const input = el("input", {
       class: "input",
-      value: storedGuestName() || "Guest",
+      value: storedGuestName() || "访客",
       maxlength: 80,
-      "aria-label": "Your name",
+      "aria-label": "您的姓名",
       autofocus: true,
     });
     const ok = await dialog({
-      title: "Your name",
+      title: "您的姓名",
       body: el(
         "form",
         { class: "dialog-body" },
         el(
           "p",
           { class: "helper" },
-          "Comments show who wrote them. Sign in to use your Puter name, or enter the name to show.",
+          "批注会显示其作者。登录以使用您的用户名，或输入要显示的名称。",
         ),
-        el("label", {}, "Name", input),
+        el("label", {}, "姓名", input),
       ),
       confirm: "Continue",
     });
@@ -337,7 +337,7 @@ export function createComments(env, host) {
     const total = allThreads({ filtered: false }).length;
     if (!total) return;
     const ok = await dialog({
-      title: "Delete all comments",
+      title: "删除所有批注",
       body: el(
         "div",
         { class: "dialog-body" },
@@ -372,7 +372,7 @@ export function createComments(env, host) {
   async function step(direction) {
     const list = allThreads();
     if (!list.length) {
-      toast("There are no comments in this presentation.");
+      toast("此演示文稿中没有批注。");
       return;
     }
     let at = state.active
@@ -396,8 +396,8 @@ export function createComments(env, host) {
         next = direction > 0 ? 0 : list.length - 1;
         toast(
           direction > 0
-            ? "Continued from the first comment."
-            : "Continued from the last comment.",
+            ? "从第一条批注继续。"
+            : "从最后一条批注继续。",
         );
       }
     }
@@ -431,18 +431,18 @@ export function createComments(env, host) {
     const total = allThreads({ filtered: false }).length;
     return [
       {
-        label: "Delete Comment",
+        label: "删除批注",
         icon: "o:deleteComment",
         disabled: !entry,
         onSelect: () => entry && deleteThread(entry),
       },
       {
-        label: "Delete All Comments on This Slide",
+        label: "删除此幻灯片上的所有批注",
         disabled: !here,
         onSelect: () => deleteOnSlide(),
       },
       {
-        label: "Delete All Comments in This Presentation",
+        label: "删除此演示文稿中的所有批注",
         disabled: !total,
         danger: true,
         onSelect: () => deleteAll(),
@@ -453,12 +453,12 @@ export function createComments(env, host) {
   function showMenu() {
     return [
       {
-        label: "Comments Pane",
+        label: "批注窗格",
         checked: host.isOpen("comments"),
         onSelect: () => host.toggle("comments"),
       },
       {
-        label: "Show Markup",
+        label: "显示标记",
         checked: prefs.markup,
         onSelect: () => setMarkup(!prefs.markup),
       },
@@ -481,33 +481,33 @@ export function createComments(env, host) {
     };
     openMenu({
       anchor,
-      label: "Filter comments",
+      label: "筛选批注",
       align: "end",
       items: [
         { header: "Show" },
         {
-          label: "All comments",
+          label: "所有批注",
           checked: prefs.filter === "all",
           onSelect: pick("filter", "all"),
         },
         {
-          label: "Open comments",
+          label: "未解决的批注",
           checked: prefs.filter === "unresolved",
           onSelect: pick("filter", "unresolved"),
         },
         {
-          label: "Resolved comments",
+          label: "已解决的批注",
           checked: prefs.filter === "resolved",
           onSelect: pick("filter", "resolved"),
         },
         { separator: true },
         {
-          label: "This slide only",
+          label: "仅此幻灯片",
           checked: prefs.scope === "slide",
           onSelect: pick("scope", "slide"),
         },
         {
-          label: "All slides",
+          label: "所有幻灯片",
           checked: prefs.scope === "deck",
           onSelect: pick("scope", "deck"),
         },
@@ -516,7 +516,7 @@ export function createComments(env, host) {
   }
 
   host.register("comments", {
-    title: "Comments",
+    title: "批注",
     tools: () => [
       iconButton("Filter comments", "SlidersHorizontal", (e) =>
         filterMenu(e.currentTarget),
@@ -589,7 +589,7 @@ export function createComments(env, host) {
       class: "mention-list",
       id: listId,
       role: "listbox",
-      "aria-label": "People to mention",
+      "aria-label": "提及人员",
       hidden: true,
     });
     let options = [],
@@ -686,7 +686,7 @@ export function createComments(env, host) {
     const id = entry.thread.shapeId;
     if (!id) return null;
     const shape = P.findShapeById(entry.slide, Number(id));
-    return shape ? env.shapeLabel(shape) : "A deleted object";
+    return shape ? env.shapeLabel(shape) : "已删除的对象";
   }
 
   function threadCard(entry) {
@@ -701,11 +701,11 @@ export function createComments(env, host) {
       e.stopPropagation();
       openMenu({
         anchor: e.currentTarget,
-        label: replyId ? "Reply options" : "Comment options",
+        label: replyId ? "回复选项" : "批注选项",
         align: "end",
         items: [
           {
-            label: "Edit",
+            label: "编辑",
             icon: "Pencil",
             disabled: !samePerson(person, mine) || env.blocksEdits(),
             onSelect: () => {
@@ -720,7 +720,7 @@ export function createComments(env, host) {
             },
           },
           {
-            label: "Copy Text",
+            label: "复制文本",
             icon: "Copy",
             onSelect: () =>
               navigator.clipboard?.writeText(text).catch(() => {}),
@@ -728,13 +728,13 @@ export function createComments(env, host) {
           { separator: true },
           replyId
             ? {
-                label: "Delete Reply",
+                label: "删除回复",
                 icon: "Trash2",
                 danger: true,
                 onSelect: () => deleteReply(entry, replyId),
               }
             : {
-                label: "Delete Thread",
+                label: "删除会话",
                 icon: "Trash2",
                 danger: true,
                 onSelect: () => deleteThread(entry),
@@ -750,7 +750,7 @@ export function createComments(env, host) {
         const key = `edit:${t.id}:${replyId || ""}`;
         const box = mentionBox({
           key,
-          label: "Edit comment",
+          label: "编辑批注",
           placeholder: "",
           onSubmit: (value) => saveEdit(entry, replyId, value),
           onCancel: () => {
@@ -799,7 +799,7 @@ export function createComments(env, host) {
         el(
           "div",
           { class: "comment-who" },
-          el("span", { class: "comment-name" }, person.name || "Unknown"),
+          el("span", { class: "comment-name" }, person.name || "未知"),
           el(
             "time",
             {
@@ -836,7 +836,7 @@ export function createComments(env, host) {
       !env.blocksEdits() &&
       mentionBox({
         key: replyKey,
-        label: "Reply",
+        label: "回复",
         placeholder: "Reply…",
         rows: 1,
         onSubmit: (value) => reply(entry, value),
@@ -909,7 +909,7 @@ export function createComments(env, host) {
             {
               type: "button",
               class: "btn primary small comment-post",
-              "aria-label": "Post reply",
+              "aria-label": "发布回复",
               "data-tip-title": `Post (${MOD_KEY}+Enter)`,
               onclick: () => reply(entry, replyBox.area.value),
             },
@@ -926,7 +926,7 @@ export function createComments(env, host) {
       c.shapeId && target && P.findShapeById(target, Number(c.shapeId));
     const box = mentionBox({
       key: "new",
-      label: "New comment",
+      label: "新建批注",
       placeholder: "Start a conversation. Type @ to mention someone.",
       rows: 3,
       onSubmit: (value) => post(value),
@@ -950,11 +950,11 @@ export function createComments(env, host) {
       el(
         "div",
         { class: "comment-head" },
-        avatar(who || { name: "Guest", initials: "?" }),
+        avatar(who || { name: "访客", initials: "?" }),
         el(
           "div",
           { class: "comment-who" },
-          el("span", { class: "comment-name" }, who?.name || "You"),
+          el("span", { class: "comment-name" }, who?.name || "您"),
         ),
       ),
       box.node,
@@ -995,8 +995,8 @@ export function createComments(env, host) {
       state.composing = null;
     const filterNote = {
       all: null,
-      unresolved: "Showing open comments",
-      resolved: "Showing resolved comments",
+      unresolved: "显示未解决的批注",
+      resolved: "显示已解决的批注",
     }[prefs.filter];
     if (filterNote || prefs.scope === "deck")
       wrap.append(
@@ -1048,9 +1048,9 @@ export function createComments(env, host) {
             {},
             prefs.scope === "deck" || !anywhere
               ? prefs.filter === "all"
-                ? "No comments yet."
-                : "No comments match the filter."
-              : "No comments on this slide.",
+                ? "暂无批注。"
+                : "没有符合筛选条件的批注。"
+              : "此幻灯片上没有批注。",
           ),
           !env.blocksEdits() &&
             el(

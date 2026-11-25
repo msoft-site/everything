@@ -72,14 +72,14 @@ export function createDocumentDialogs(ctx) {
     const stats = P.getDocumentStatistics(pres);
     const readOnly = ctx.readOnly();
     const fields = {
-      title: textField("Title", core?.title || ""),
+      title: textField("标题", core?.title || ""),
       subject: textField("Subject", core?.subject || ""),
       creator: textField("Author", authorOf(core)),
       manager: textField("Manager", ext?.manager || ""),
       company: textField("Company", ext?.company || ""),
       category: textField("Category", core?.category || ""),
       keywords: textField("Keywords", core?.keywords || "", {
-        placeholder: "Separate keywords with commas",
+        placeholder: "用逗号分隔关键字",
       }),
       description: textField("Comments", core?.description || "", {
         multiline: true,
@@ -103,23 +103,23 @@ export function createDocumentDialogs(ctx) {
       el("dd", {}, target.path || "This device (not saved to Puter yet)"),
       el("dt", {}, "Size"),
       size,
-      el("dt", {}, "Created"),
+      el("dt", {}, "创建时间"),
       el("dd", {}, formatDate(core?.created)),
-      el("dt", {}, "Modified"),
+      el("dt", {}, "修改时间"),
       el("dd", {}, formatDate(core?.modified)),
-      el("dt", {}, "Last modified by"),
+      el("dt", {}, "最后修改者"),
       el("dd", {}, core?.lastModifiedBy || "—"),
-      el("dt", {}, "Revision"),
+      el("dt", {}, "修订版本"),
       el("dd", {}, core?.revision || "—"),
     );
     const statistics = definitionList([
-      ["Slides", String(stats.slides)],
-      ["Hidden slides", String(stats.hiddenSlides)],
-      ["Slides with notes", String(stats.notes)],
-      ["Words on slides", String(stats.words)],
-      ["Words in notes", String(stats.notesWords)],
-      ["Paragraphs", String(stats.paragraphs)],
-      ["Audio and video clips", String(stats.multimediaClips)],
+      ["幻灯片", String(stats.slides)],
+      ["隐藏幻灯片", String(stats.hiddenSlides)],
+      ["带备注的幻灯片", String(stats.notes)],
+      ["幻灯片字数", String(stats.words)],
+      ["备注字数", String(stats.notesWords)],
+      ["段落数", String(stats.paragraphs)],
+      ["音视频剪辑", String(stats.multimediaClips)],
     ]);
     const body = el(
       "form",
@@ -130,7 +130,7 @@ export function createDocumentDialogs(ctx) {
       el(
         "section",
         { class: "file-group", "aria-labelledby": "properties-summary" },
-        el("h3", { id: "properties-summary" }, "Summary"),
+        el("h3", { id: "properties-summary" }, "摘要"),
         el(
           "div",
           { class: "export-grid" },
@@ -140,25 +140,25 @@ export function createDocumentDialogs(ctx) {
       el(
         "section",
         { class: "file-group", "aria-labelledby": "properties-statistics" },
-        el("h3", { id: "properties-statistics" }, "Statistics"),
+        el("h3", { id: "properties-statistics" }, "统计信息"),
         statistics,
       ),
       el(
         "section",
         { class: "file-group", "aria-labelledby": "properties-general" },
-        el("h3", { id: "properties-general" }, "General"),
+        el("h3", { id: "properties-general" }, "常规"),
         general,
       ),
     );
     const modal = openModal({
-      title: "Properties",
+      title: "属性",
       className: "properties-dialog",
       body,
       actions: readOnly
-        ? [{ label: "Close", kind: "primary", onClick: () => true }]
+        ? [{ label: "关闭", kind: "primary", onClick: () => true }]
         : [
-            { label: "Cancel", onClick: () => true },
-            { label: "Save", kind: "primary", onClick: () => apply() },
+            { label: "取消", onClick: () => true },
+            { label: "保存", kind: "primary", onClick: () => apply() },
           ],
     });
     fields.title.input.focus();
@@ -233,9 +233,9 @@ export function createDocumentDialogs(ctx) {
       (selectionOnly ?? chosen.length > 0) ? "selected" : "all",
     );
     scope.inputs[0].disabled = !chosen.length;
-    const cropped = checkField("Delete cropped areas of pictures", true);
+    const cropped = checkField("删除图片的剪裁区域", true);
     const resolution = radioGroup(
-      "Resolution",
+      "分辨率",
       "compress-resolution",
       RESOLUTIONS.map(([v, label, hint]) => [
         v,
@@ -274,12 +274,12 @@ export function createDocumentDialogs(ctx) {
     );
     let busy = false;
     const modal = openModal({
-      title: "Compress pictures",
+      title: "压缩图片",
       className: "compress-dialog",
       body,
       actions: [
-        { label: "Cancel", onClick: () => !busy },
-        { label: "Compress", kind: "primary", onClick: () => run() },
+        { label: "取消", onClick: () => !busy },
+        { label: "压缩", kind: "primary", onClick: () => run() },
       ],
     });
     const [, go] = modal.buttons;
@@ -387,13 +387,13 @@ export function createDocumentDialogs(ctx) {
       "div",
       { class: "dialog-body file-size-body" },
       definitionList([
-        ["File size", fileTotal],
+        ["文件大小", fileTotal],
         [
           "Pictures, audio and video",
           `${formatBytes(mediaTotal)} in ${media.length} file${media.length === 1 ? "" : "s"}`,
         ],
-        ["Embedded fonts", fonts.length ? formatBytes(fontTotal) : "None"],
-        ["Unused media", orphans.length ? `${orphans.length}` : "None"],
+        ["嵌入的字体", fonts.length ? formatBytes(fontTotal) : "无"],
+        ["未使用的媒体", orphans.length ? `${orphans.length}` : "无"],
       ]),
       media.length
         ? el(
@@ -413,10 +413,10 @@ export function createDocumentDialogs(ctx) {
                 el(
                   "tr",
                   {},
-                  el("th", { scope: "col" }, "File"),
-                  el("th", { scope: "col" }, "Type"),
-                  el("th", { scope: "col", class: "num" }, "Size"),
-                  el("th", { scope: "col" }, "Slides"),
+                  el("th", { scope: "col" }, "文件"),
+                  el("th", { scope: "col" }, "类型"),
+                  el("th", { scope: "col", class: "num" }, "大小"),
+                  el("th", { scope: "col" }, "幻灯片"),
                 ),
               ),
               el("tbody", {}, ...rows),
@@ -430,12 +430,12 @@ export function createDocumentDialogs(ctx) {
     );
     const readOnly = ctx.readOnly();
     const modal = openModal({
-      title: "File size",
+      title: "文件大小",
       className: "file-size-dialog",
       body,
       actions: [
         {
-          label: "Remove unused media",
+          label: "删除未使用的媒体",
           id: "remove-unused-media",
           onClick: async () => {
             await ctx.mutate(() => {
@@ -456,7 +456,7 @@ export function createDocumentDialogs(ctx) {
             return true;
           },
         },
-        { label: "Done", kind: "primary", onClick: () => true },
+        { label: "完成", kind: "primary", onClick: () => true },
       ],
     });
     modal.buttons[0].disabled = !orphans.length || readOnly;

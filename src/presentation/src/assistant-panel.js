@@ -144,7 +144,7 @@ export function createAssistantPanel(env) {
       const idle =
         changesDeck(name) || name === "select" ? env.whenIdle?.() : null;
       if (idle) {
-        control?.waiting?.("Waiting for you to finish typing on the slide");
+        control?.waiting?.("正在等待您在幻灯片上完成键入");
         await Promise.race([idle, control?.whenStopped].filter(Boolean));
         if (control?.stopped?.()) return { skipped: true };
       }
@@ -196,10 +196,10 @@ export function createAssistantPanel(env) {
       { class: "ai-head-mark", "aria-hidden": "true" },
       icon("Sparkles", 16),
     ),
-    el("h2", { class: "ai-title", id: "ai-panel-title" }, "Assistant"),
-    iconButton("New chat", "SquarePen", () => newChat()),
+    el("h2", { class: "ai-title", id: "ai-panel-title" }, "助手"),
+    iconButton("新建对话", "SquarePen", () => newChat()),
     iconButton(
-      "Assistant settings",
+      "助手设置",
       "EllipsisVertical",
       (e) => openSettings(e.currentTarget),
       {
@@ -207,7 +207,7 @@ export function createAssistantPanel(env) {
         "aria-expanded": "false",
       },
     ),
-    iconButton("Close the assistant", "X", () => close(), {
+    iconButton("关闭助手", "X", () => close(), {
       title: `Close (${MOD_KEY}+J)`,
     }),
   );
@@ -224,13 +224,13 @@ export function createAssistantPanel(env) {
     class: "ai-input",
     rows: 1,
     placeholder: "Ask or tell the assistant…",
-    "aria-label": "Message the assistant",
+    "aria-label": "给助手发消息",
     enterkeyhint: "send",
   });
   const sendBtn = el("button", {
     type: "submit",
     class: "ai-send",
-    "aria-label": "Send",
+    "aria-label": "发送",
     title: "Send (Enter)",
   });
   sendBtn.append(icon("ArrowUp", 18));
@@ -262,7 +262,7 @@ export function createAssistantPanel(env) {
     class: "ai-resize",
     role: "separator",
     "aria-orientation": "vertical",
-    "aria-label": "Resize the assistant",
+    "aria-label": "调整助手大小",
     tabindex: 0,
     "aria-valuemin": MIN_WIDTH,
   });
@@ -314,9 +314,9 @@ export function createAssistantPanel(env) {
     openMenu({
       anchor,
       align: "end",
-      label: "Assistant settings",
+      label: "助手设置",
       items: [
-        { header: "Changes to the presentation" },
+        { header: "演示文稿更改" },
         ...APPROVAL_MODES.map((m) => ({
           label: m.label,
           checked: settings.approval === m.id,
@@ -326,7 +326,7 @@ export function createAssistantPanel(env) {
           },
         })),
         { separator: true },
-        { label: "New chat", icon: "SquarePen", onSelect: () => newChat() },
+        { label: "新建对话", icon: "SquarePen", onSelect: () => newChat() },
       ],
     });
   }
@@ -434,7 +434,7 @@ export function createAssistantPanel(env) {
       // announced as something to press.
       el(
         "ul",
-        { class: "ai-suggestions", "aria-label": "Suggestions" },
+        { class: "ai-suggestions", "aria-label": "建议" },
         ...list.map((text) =>
           el(
             "li",
@@ -616,7 +616,7 @@ export function createAssistantPanel(env) {
             {
               type: "button",
               class: "ai-step-label linkish",
-              title: "Show on the slide",
+              title: "在幻灯片上显示",
               onclick: () => env.select(target.part, target.ids || []),
             },
             step.label,
@@ -666,7 +666,7 @@ export function createAssistantPanel(env) {
       {
         class: "ai-approve",
         role: "group",
-        "aria-label": "Allow this change?",
+        "aria-label": "允许此更改吗？",
       },
       step.detail && el("p", { class: "ai-approve-detail" }, step.detail),
       el("div", { class: "ai-approve-actions" }, allow, deny),
@@ -713,7 +713,7 @@ export function createAssistantPanel(env) {
   function setBusy(busy) {
     root.classList.toggle("busy", busy);
     sendBtn.replaceChildren(icon(busy ? "Square" : "ArrowUp", busy ? 14 : 18));
-    sendBtn.setAttribute("aria-label", busy ? "Stop" : "Send");
+    sendBtn.setAttribute("aria-label", busy ? "停止" : "发送");
     sendBtn.title = busy ? "Stop (Escape)" : "Send (Enter)";
     sendBtn.classList.toggle("stopping", busy);
   }
@@ -843,7 +843,7 @@ export function createAssistantPanel(env) {
     const items = [];
     const text = reply.fullText;
     if (text && !error) {
-      const copy = iconButton("Copy the reply", "Copy", async () => {
+      const copy = iconButton("复制回复", "Copy", async () => {
         try {
           await navigator.clipboard.writeText(text);
           toast("Reply copied.");
@@ -869,14 +869,14 @@ export function createAssistantPanel(env) {
         "button",
         { type: "button", class: "btn ai-btn-sm ai-undo" },
         icon("Undo2", 14),
-        el("span", {}, "Undo"),
+        el("span", {}, "撤消"),
       );
       const refresh = () => {
         const ok = canUndo(turn);
         undoBtn.disabled = !ok;
         undoBtn.title = ok
-          ? "Undo the changes in this reply"
-          : "The presentation has changed since this reply";
+          ? "撤消此回复中的更改"
+          : "自此回复后演示文稿已发生更改";
       };
       const retire = () => {
         undoBtn.remove();

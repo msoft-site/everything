@@ -142,26 +142,26 @@ export function createPrintDialog(
         ["all", "All slides"],
         ["current", "Current slide"],
         ["selected", `Selected slides (${selectedCount})`],
-        ["custom", "Slide numbers"],
+        ["custom", "幻灯片编号"],
       ],
       settings.range,
     );
-    const custom = textField("Slide numbers", settings.custom, {
+    const custom = textField("幻灯片编号", settings.custom, {
       placeholder: "e.g. 1-3, 5",
-      "aria-label": "Slide numbers to print",
+      "aria-label": "要打印的幻灯片编号",
     });
     const layout = selectField(
-      "Layout",
+      "版式",
       [
-        ["slides", "Full page slides"],
-        ["notes", "Notes pages"],
-        ["outline", "Outline"],
-        ["handouts", "Handouts"],
+        ["slides", "整页幻灯片"],
+        ["notes", "备注页"],
+        ["outline", "大纲"],
+        ["handouts", "讲义"],
       ],
       settings.layout,
     );
     const perPage = selectField(
-      "Slides per page",
+      "每页幻灯片数",
       HANDOUT_COUNTS.map((n) => [
         n,
         n === 3 ? "3, with lines for notes" : `${n}`,
@@ -169,7 +169,7 @@ export function createPrintDialog(
       settings.perPage,
     );
     const order = selectField(
-      "Order",
+      "顺序",
       [
         ["horizontal", "Across, then down"],
         ["vertical", "Down, then across"],
@@ -177,12 +177,12 @@ export function createPrintDialog(
       settings.order,
     );
     const paper = selectField(
-      "Paper",
+      "纸张",
       [
-        ["slide", "Slide size"],
-        ["letter", "US Letter"],
+        ["slide", "幻灯片大小"],
+        ["letter", "信纸"],
         ["a4", "A4"],
-        ["legal", "US Legal"],
+        ["legal", "法律用纸"],
         ["a3", "A3"],
       ],
       settings.paper,
@@ -191,40 +191,40 @@ export function createPrintDialog(
       "Orientation",
       "print-orientation",
       [
-        ["auto", "Automatic"],
-        ["portrait", "Portrait"],
-        ["landscape", "Landscape"],
+        ["auto", "自动"],
+        ["portrait", "纵向"],
+        ["landscape", "横向"],
       ],
       settings.orientation,
     );
     orientation.wrap.classList.add("inline");
     const color = selectField(
-      "Output",
+      "输出",
       [
-        ["color", "Color"],
-        ["grayscale", "Grayscale"],
-        ["bw", "Black and white"],
+        ["color", "颜色"],
+        ["grayscale", "灰度"],
+        ["bw", "纯黑白"],
       ],
       settings.colorMode,
     );
-    const scaleToFit = checkField("Scale to fit paper", settings.scaleToFit);
-    const frame = checkField("Frame slides", settings.frame);
+    const scaleToFit = checkField("根据纸张调整大小", settings.scaleToFit);
+    const frame = checkField("幻灯片加框", settings.frame);
     const includeHidden = checkField(
-      "Print hidden slides",
+      "打印隐藏幻灯片",
       settings.includeHidden,
     );
     const slideNumbers = checkField(
-      "Slide numbers under handout slides",
+      "讲义幻灯片下方显示幻灯片编号",
       settings.slideNumbers,
     );
-    const header = textField("Header", settings.header, { maxlength: 200 });
-    const footer = textField("Footer", settings.footer, { maxlength: 200 });
-    const date = checkField("Date", settings.date);
-    const pageNumbers = checkField("Page numbers", settings.pageNumbers);
+    const header = textField("页眉", settings.header, { maxlength: 200 });
+    const footer = textField("页脚", settings.footer, { maxlength: 200 });
+    const date = checkField("日期", settings.date);
+    const pageNumbers = checkField("页码", settings.pageNumbers);
     const headerFooter = el(
       "fieldset",
       { class: "file-group print-header-footer" },
-      el("legend", {}, "Header and footer"),
+      el("legend", {}, "页眉和页脚"),
       header.wrap,
       footer.wrap,
       date.wrap,
@@ -235,20 +235,20 @@ export function createPrintDialog(
     const stage = el("div", {
       class: "print-preview-stage",
       role: "img",
-      "aria-label": "Print preview",
+      "aria-label": "打印预览",
     });
     let pageIndex = 0;
     let pages = [];
     let slides = [];
-    const prev = iconButton("Previous page", "ChevronLeft", () =>
+    const prev = iconButton("上一页", "ChevronLeft", () =>
       showPage(pageIndex - 1),
     );
-    const next = iconButton("Next page", "ChevronRight", () =>
+    const next = iconButton("下一页", "ChevronRight", () =>
       showPage(pageIndex + 1),
     );
     const preview = el(
       "section",
-      { class: "print-preview", "aria-label": "Preview" },
+      { class: "print-preview", "aria-label": "预览" },
       stage,
       el("div", { class: "print-preview-nav" }, prev, pageLabel, next),
     );
@@ -318,7 +318,7 @@ export function createPrintDialog(
             "Nothing to print with these settings.",
           ),
         );
-        pageLabel.textContent = "No pages";
+        pageLabel.textContent = "无页面";
         prev.disabled = next.disabled = true;
         return;
       }
@@ -376,12 +376,12 @@ export function createPrintDialog(
     let busy = false;
     let controller = null;
     const modal = openModal({
-      title: "Print",
+      title: "打印",
       className: "print-dialog",
       body,
       actions: [
         {
-          label: "Cancel",
+          label: "取消",
           onClick: () => {
             if (busy) {
               controller?.abort();
@@ -390,8 +390,8 @@ export function createPrintDialog(
             return true;
           },
         },
-        { label: "Save as PDF", onClick: () => savePdf() },
-        { label: "Print", kind: "primary", onClick: () => doPrint() },
+        { label: "另存为 PDF", onClick: () => savePdf() },
+        { label: "打印", kind: "primary", onClick: () => doPrint() },
       ],
       onClose: () => {
         remembered = read();
@@ -468,7 +468,7 @@ export function createPrintDialog(
         await ctx.download(blob, `${baseName()}.pdf`, "PDF downloaded.");
         modal.close(true);
       } catch (e) {
-        if (e?.name === "AbortError") ctx.toast("Export stopped.");
+        if (e?.name === "AbortError") ctx.toast("导出已停止。");
         else ctx.fail(e);
       } finally {
         busy = false;

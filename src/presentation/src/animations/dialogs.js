@@ -93,9 +93,9 @@ export async function moreEffectsDialog({ cls, current = null, hasText }) {
       );
   }
   const shown = dialog({
-    title: `Change ${cat?.id === "path" ? "Motion Path" : `${cat?.label} Effect`}`,
+    title: `更改${cat?.id === "path" ? "动作路径" : `${cat?.label}效果`}`,
     body,
-    confirm: "OK",
+    confirm: "确定",
   });
   requestAnimationFrame(() =>
     (
@@ -170,7 +170,7 @@ export async function effectOptionsDialog({
   // ---- Effect ----
   const effectPanel = el("div", { class: "anim-tab-panel" });
   const groups = optionGroups(entry, effect, { hasText, paragraphs }).filter(
-    (g) => g.label !== "Sequence" && g.label !== "Path" && g.label !== "Color",
+    (g) => g.g.label !== "序列" && g.label !== "路径" && g.label !== "颜色" && g.label !== "Sequence" && g.label !== "Path" && g.label !== "Color",
   );
   const groupSelects = groups.map((g) => {
     const active = Math.max(
@@ -191,7 +191,7 @@ export async function effectOptionsDialog({
       type: "color",
       class: "input anim-color",
       value: `#${(effect.color || "E81224").toLowerCase()}`,
-      "aria-label": "Color",
+      "aria-label": "颜色",
       list: "anim-colors",
     });
     const list = el(
@@ -199,7 +199,7 @@ export async function effectOptionsDialog({
       { id: "anim-colors" },
       ...COLORS.map(([v]) => el("option", { value: `#${v.toLowerCase()}` })),
     );
-    effectPanel.append(el("label", {}, "Color", input, list));
+    effectPanel.append(el("label", {}, "颜色", input, list));
     color = input;
   }
   const smoothStart = secondsInput(
@@ -217,10 +217,10 @@ export async function effectOptionsDialog({
   const autoReverse = checkbox("Auto-reverse", effect.autoReverse);
   const reversePath =
     effect.presetClass === "path"
-      ? checkbox("Reverse path direction", false)
+      ? checkbox("反转路径方向", false)
       : null;
   effectPanel.append(
-    el("h3", { class: "anim-dialog-head" }, "Settings"),
+    el("h3", { class: "anim-dialog-head" }, "设置"),
     el(
       "div",
       { class: "anim-field-row" },
@@ -232,9 +232,9 @@ export async function effectOptionsDialog({
     ...(reversePath ? [reversePath.node] : []),
   );
   const afterChoices = [
-    ["none", "Don't Dim"],
-    ["hide", "Hide After Animation"],
-    ["hideOnClick", "Hide on Next Mouse Click"],
+    ["none", "不播放暗化"],
+    ["hide", "动画播放后隐藏"],
+    ["hideOnClick", "下次单击鼠标时隐藏"],
     ...COLORS.map(([v, name]) => [`dim:${v}`, `Dim to ${name}`]),
   ];
   const afterValue = !effect.after
@@ -247,14 +247,14 @@ export async function effectOptionsDialog({
     !afterChoices.some(([v]) => v === afterValue)
   )
     afterChoices.push([afterValue, `Dim to #${effect.after.color}`]);
-  const after = select("After animation", afterChoices, afterValue);
+  const after = select("动画播放后", afterChoices, afterValue);
   // Sound: none, a built-in (synthesized) sound, the effect's own sound, or
   // a file picked with "Other Sound…".
   const ownBuiltIn = effect.sound
     ? builtInSoundNamed(effect.sound.name || "")
     : null;
   const soundChoices = [
-    ["none", "No Sound"],
+    ["none", "无声音"],
     ...BUILT_IN_SOUNDS.map((b) => [`builtin:${b.id}`, b.label]),
   ];
   const soundValue = !effect.sound
@@ -268,7 +268,7 @@ export async function effectOptionsDialog({
       (effect.sound.name || "Sound").replace(/\.[a-z0-9]+$/i, ""),
     ]);
   soundChoices.push(["other", "Other Sound…"]);
-  const sound = select("Sound", soundChoices, soundValue);
+  const sound = select("声音", soundChoices, soundValue);
   let pickedFile = null; // { bytes, name } from Other Sound…
   let lastSound = soundValue;
   const preview = (bytes) => {
@@ -301,11 +301,11 @@ export async function effectOptionsDialog({
     lastSound = sound.input.value;
   });
   const iterate = select(
-    "Animate text",
+    "动画文本",
     [
-      ["all", "All at Once"],
-      ["word", "By Word"],
-      ["letter", "By Letter"],
+      ["all", "同时"],
+      ["word", "按字/词"],
+      ["letter", "按字母"],
     ],
     effect.iterate?.type || "all",
   );
@@ -321,7 +321,7 @@ export async function effectOptionsDialog({
   iterate.input.disabled = !hasText;
   iterateDelay.disabled = !hasText;
   effectPanel.append(
-    el("h3", { class: "anim-dialog-head" }, "Enhancements"),
+    el("h3", { class: "anim-dialog-head" }, "增强"),
     sound.node,
     after.node,
     el(
@@ -336,16 +336,16 @@ export async function effectOptionsDialog({
   // ---- Timing ----
   const timingPanel = el("div", { class: "anim-tab-panel" });
   const start = select(
-    "Start",
+    "开始",
     [
-      ["click", "On Click"],
-      ["with", "With Previous"],
-      ["after", "After Previous"],
+      ["click", "单击时"],
+      ["with", "与上一动画同时"],
+      ["after", "上一动画之后"],
     ],
     effect.start,
   );
-  const delay = secondsInput("Delay", effect.delayMs);
-  const duration = secondsInput("Duration", effect.durationMs, { min: 0 });
+  const delay = secondsInput("延迟", effect.delayMs);
+  const duration = secondsInput("持续时间", effect.durationMs, { min: 0 });
   const repeatValue = effect.repeat === undefined ? "1" : String(effect.repeat);
   const repeatChoices = [
     ["1", "(none)"],
@@ -354,21 +354,21 @@ export async function effectOptionsDialog({
     ["4", "4"],
     ["5", "5"],
     ["10", "10"],
-    ["untilNextClick", "Until Next Click"],
-    ["untilEndOfSlide", "Until End of Slide"],
+    ["untilNextClick", "直到下一次单击"],
+    ["untilEndOfSlide", "直到幻灯片末尾"],
   ];
   if (!repeatChoices.some(([v]) => v === repeatValue))
     repeatChoices.push([repeatValue, repeatValue]);
-  const repeat = select("Repeat", repeatChoices, repeatValue);
-  const rewind = checkbox("Rewind when done playing", effect.rewind);
+  const repeat = select("重复", repeatChoices, repeatValue);
+  const rewind = checkbox("播放完毕后倒退", effect.rewind);
   const others = ctx
     .topLevelShapes(ctx.slide())
     .filter((s) => String(P.getShapeId(s)) !== effect.shapeId);
   const triggerMode = select(
     "Triggers",
     [
-      ["sequence", "Animate as part of click sequence"],
-      ...(others.length ? [["click", "Start effect on click of"]] : []),
+      ["sequence", "作为单击序列的一部分动画化"],
+      ...(others.length ? [["click", "单击下列对象时启动效果"]] : []),
     ],
     effect.trigger ? "click" : "sequence",
   );
@@ -416,12 +416,12 @@ export async function effectOptionsDialog({
     "Automatically after",
     effect.text?.autoAfterMs !== undefined,
   );
-  const autoAfterTime = secondsInput("Seconds", effect.text?.autoAfterMs ?? 0);
+  const autoAfterTime = secondsInput("秒", effect.text?.autoAfterMs ?? 0);
   const animateShape = checkbox(
     "Animate attached shape",
     effect.text?.animateBackground,
   );
-  const reverse = checkbox("In reverse order", effect.text?.reverse);
+  const reverse = checkbox("按相反顺序", effect.text?.reverse);
   textPanel.append(
     groupText.node,
     el(
@@ -440,15 +440,15 @@ export async function effectOptionsDialog({
 
   // Tabs
   const tabs = [
-    ["effect", "Effect"],
-    ["timing", "Timing"],
-    ...(hasText ? [["text", "Text Animation"]] : []),
+    ["effect", "效果"],
+    ["timing", "计时"],
+    ...(hasText ? [["text", "文本动画"]] : []),
   ];
   if (!panels[tab] || (tab === "text" && !hasText)) tab = "effect";
   const tablist = el("div", {
     class: "anim-tabs",
     role: "tablist",
-    "aria-label": "Effect settings",
+    "aria-label": "效果设置",
   });
   const tabButtons = tabs.map(([id, label]) => {
     const b = el(
@@ -501,7 +501,7 @@ export async function effectOptionsDialog({
   const ok = await dialog({
     title: `${effectName(effect)}`,
     body: form,
-    confirm: "OK",
+    confirm: "确定",
   });
   if (!ok) return null;
 

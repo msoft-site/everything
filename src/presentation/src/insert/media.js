@@ -232,9 +232,9 @@ export function createMediaFeatures(ctx) {
       throw new Error("This browser cannot record sound.");
     const name = el("input", {
       class: "input",
-      value: "Recorded Sound",
+      value: "录制的声音",
       maxlength: 120,
-      "aria-label": "Name",
+      "aria-label": "名称",
     });
     const time = el(
       "span",
@@ -370,7 +370,7 @@ export function createMediaFeatures(ctx) {
       body.closest("dialog")?.dispatchEvent(new Event("cancel"));
     };
     await dialog({
-      title: "Record Sound",
+      title: "录制声音",
       body,
       confirm: null,
       cancel: "Cancel",
@@ -391,7 +391,7 @@ export function createMediaFeatures(ctx) {
       ...Array(Math.min(2, buffer.numberOfChannels)).keys(),
     ].map((c) => buffer.getChannelData(c));
     const data = encodeWav(channels, buffer.sampleRate);
-    const label = name.value.trim() || "Recorded Sound";
+    const label = name.value.trim() || "录制的声音";
     await placeMedia({
       kind: "audio",
       data,
@@ -441,12 +441,12 @@ export function createMediaFeatures(ctx) {
     const startInput = el("input", {
       class: "input time-input",
       value: formatTime(media.options.trimStart),
-      "aria-label": "Start time",
+      "aria-label": "开始时间",
     });
     const endInput = el("input", {
       class: "input time-input",
       value: formatTime(Math.max(0, total - media.options.trimEnd)),
-      "aria-label": "End time",
+      "aria-label": "结束时间",
     });
     const scrub = el("input", {
       type: "range",
@@ -455,7 +455,7 @@ export function createMediaFeatures(ctx) {
       value: 0,
       step: 1,
       class: "trim-scrub",
-      "aria-label": "Position",
+      "aria-label": "位置",
     });
     const clock = el("span", { class: "trim-clock" }, formatTime(0));
     const range = el(
@@ -543,7 +543,7 @@ export function createMediaFeatures(ctx) {
     if (media.kind === "audio") body.prepend(player);
     syncRange();
     const ok = await dialog({
-      title: media.kind === "video" ? "Trim Video" : "Trim Audio",
+      title: media.kind === "video" ? "剪裁视频" : "剪裁音频",
       body,
       confirm: "OK",
     });
@@ -724,7 +724,7 @@ export function createMediaFeatures(ctx) {
                 1000,
             )
           : 0,
-      "aria-label": "Position",
+      "aria-label": "位置",
       oninput: (e) => {
         const player = playerFor(obj);
         player.element.currentTime =
@@ -754,7 +754,7 @@ export function createMediaFeatures(ctx) {
       {
         class: `media-bar ${selected ? "selected" : ""} ${playing ? "playing" : ""}`,
         role: "group",
-        "aria-label": `${media?.kind === "audio" ? "Audio" : "Video"} controls`,
+        "aria-label": `${media?.kind === "audio" ? "音频" : "视频"}控件`,
         onpointerdown: (e) => e.stopPropagation(),
         onclick: (e) => e.stopPropagation(),
       },
@@ -809,21 +809,21 @@ export function createMediaFeatures(ctx) {
   const kind = () => (current() ? P.getShapeMediaKind(current()) : null);
   const playbackTab = () => ({
     id: "playback",
-    label: "Playback",
+    label: "播放",
     contextual: true,
     visible: () => !!current(),
     groups: [
       {
         id: "playback-preview",
-        label: "Preview",
+        label: "预览",
         icon: "mediaPlay",
         items: [
           {
             type: "large",
             id: "playback-play",
-            label: "Play",
+            label: "播放",
             icon: "mediaPlay",
-            title: "Play",
+            title: "播放",
             description: "Play the selected video or audio here.",
             run: () => current() && toggle(current()),
           },
@@ -831,7 +831,7 @@ export function createMediaFeatures(ctx) {
       },
       {
         id: "playback-bookmarks",
-        label: "Bookmarks",
+        label: "书签",
         icon: "bookmark",
         items: [
           {
@@ -840,7 +840,7 @@ export function createMediaFeatures(ctx) {
               {
                 type: "small",
                 id: "playback-add-bookmark",
-                label: "Add Bookmark",
+                label: "添加书签",
                 icon: "bookmarkAdd",
                 description: "Mark the current playing position.",
                 run: () => addBookmark().catch(ctx.fail),
@@ -848,7 +848,7 @@ export function createMediaFeatures(ctx) {
               {
                 type: "small",
                 id: "playback-remove-bookmark",
-                label: "Remove Bookmark",
+                label: "删除书签",
                 icon: "bookmarkRemove",
                 enabled: () => !!options()?.bookmarks.length,
                 menu: () =>
@@ -863,15 +863,15 @@ export function createMediaFeatures(ctx) {
       },
       {
         id: "playback-editing",
-        label: "Editing",
+        label: "编辑",
         icon: "trim",
         items: [
           {
             type: "large",
             id: "playback-trim",
-            label: "Trim",
+            label: "剪裁",
             icon: "trim",
-            title: "Trim",
+            title: "剪裁",
             description: "Cut time from the start and end.",
             run: () => trimDialog().catch(ctx.fail),
           },
@@ -881,7 +881,7 @@ export function createMediaFeatures(ctx) {
               {
                 type: "spin",
                 id: "playback-fade-in",
-                label: "Fade In",
+                label: "淡入",
                 width: 70,
                 min: 0,
                 max: 60,
@@ -893,7 +893,7 @@ export function createMediaFeatures(ctx) {
               {
                 type: "spin",
                 id: "playback-fade-out",
-                label: "Fade Out",
+                label: "淡出",
                 width: 70,
                 min: 0,
                 max: 60,
@@ -908,21 +908,21 @@ export function createMediaFeatures(ctx) {
       },
       {
         id: "playback-options",
-        label: "Options",
+        label: "选项",
         icon: "settings",
         items: [
           {
             type: "large",
             id: "playback-volume",
-            label: "Volume",
+            label: "音量",
             icon: "audio",
-            title: "Volume",
+            title: "音量",
             menu: () =>
               [
-                ["Low", 0.33],
-                ["Medium", 0.66],
-                ["High", 1],
-                ["Mute", 0],
+                ["低", 0.33],
+                ["中", 0.66],
+                ["高", 1],
+                ["静音", 0],
               ].map(([label, v]) => ({
                 label,
                 checked:
@@ -942,7 +942,7 @@ export function createMediaFeatures(ctx) {
               {
                 type: "combo",
                 id: "playback-start",
-                label: "Start",
+                label: "开始",
                 width: 150,
                 value: () =>
                   START_LABELS.find(([v]) => v === options()?.start)?.[1] ?? "",
@@ -956,7 +956,7 @@ export function createMediaFeatures(ctx) {
               {
                 type: "check",
                 id: "playback-full-screen",
-                label: "Play Full Screen",
+                label: "全屏播放",
                 visible: () => kind() === "video",
                 checked: () => !!options()?.fullScreen,
                 commit: (on) => setOptions({ fullScreen: on }),
@@ -964,7 +964,7 @@ export function createMediaFeatures(ctx) {
               {
                 type: "check",
                 id: "playback-across-slides",
-                label: "Play Across Slides",
+                label: "跨幻灯片播放",
                 visible: () => kind() === "audio",
                 checked: () => !!options()?.playAcrossSlides,
                 commit: (on) => setOptions({ playAcrossSlides: on }),
@@ -977,21 +977,21 @@ export function createMediaFeatures(ctx) {
               {
                 type: "check",
                 id: "playback-hide",
-                label: "Hide While Not Playing",
+                label: "播完隐藏",
                 checked: () => !!options()?.hideWhileNotPlaying,
                 commit: (on) => setOptions({ hideWhileNotPlaying: on }),
               },
               {
                 type: "check",
                 id: "playback-loop",
-                label: "Loop until Stopped",
+                label: "循环播放，直至停止",
                 checked: () => !!options()?.loop,
                 commit: (on) => setOptions({ loop: on }),
               },
               {
                 type: "check",
                 id: "playback-rewind",
-                label: "Rewind after Playing",
+                label: "播完后快退",
                 checked: () => !!options()?.rewind,
                 commit: (on) => setOptions({ rewind: on }),
               },
@@ -1001,7 +1001,7 @@ export function createMediaFeatures(ctx) {
       },
       {
         id: "playback-poster",
-        label: "Poster Frame",
+        label: "标牌框架",
         icon: "pictures",
         visible: () => kind() === "video",
         items: [
@@ -1010,11 +1010,11 @@ export function createMediaFeatures(ctx) {
             id: "playback-poster-frame",
             label: "Poster\nFrame",
             icon: "posterFrame",
-            title: "Poster Frame",
+            title: "标牌框架",
             description: "The picture shown before the video plays.",
             menu: () => [
               {
-                label: "Current Frame",
+                label: "当前帧",
                 onSelect: () => posterFromCurrentFrame().catch(ctx.fail),
               },
               {
@@ -1044,7 +1044,7 @@ export function createMediaFeatures(ctx) {
     },
     { separator: true },
     {
-      label: "Record Audio…",
+      label: "录制音频…",
       icon: "o:recordAudio",
       onSelect: () => recordAudio().catch(ctx.fail),
     },

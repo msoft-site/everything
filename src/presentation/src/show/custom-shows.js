@@ -20,7 +20,7 @@ export function openCustomShowsDialog(ctx) {
     class: "input show-custom-list",
     id: listId,
     size: 8,
-    "aria-label": "Custom shows",
+    "aria-label": "自定义放映",
   });
   const empty = el(
     "p",
@@ -35,7 +35,7 @@ export function openCustomShowsDialog(ctx) {
         el(
           "option",
           { value: String(s.id) },
-          `${s.name || "Untitled"} (${s.slides.length} slide${s.slides.length === 1 ? "" : "s"})`,
+          `${s.name || "未命名"} (${s.slides.length} 张幻灯片)`,
         ),
       ),
     );
@@ -170,10 +170,10 @@ export function openCustomShowsDialog(ctx) {
     ),
   );
   const modal = openModal({
-    title: "Custom Shows",
+    title: "自定义放映",
     className: "show-custom-dialog",
     body,
-    actions: [{ label: "Close", kind: "secondary", onClick: () => true }],
+    actions: [{ label: "关闭", kind: "secondary", onClick: () => true }],
   });
   modal.dialog.querySelector(".dialog-actions").prepend(buttons.show);
   fill();
@@ -200,12 +200,12 @@ export function defineCustomShow(ctx, show, uniqueName = (n) => n) {
   const label = (s) => {
     const i = deck.indexOf(s);
     const title = ctx.title(s);
-    return `${i + 1}. ${title || "Untitled slide"}`;
+    return `${i + 1}. ${title || "无标题幻灯片"}`;
   };
   const deckList = el("ul", {
     class: "show-custom-pick",
     role: "group",
-    "aria-label": "Slides in presentation",
+    "aria-label": "演示文稿中的幻灯片",
   });
   const boxes = deck.map((s) => {
     const input = el("input", { type: "checkbox", "aria-label": label(s) });
@@ -227,7 +227,7 @@ export function defineCustomShow(ctx, show, uniqueName = (n) => n) {
   const showList = el("ol", {
     class: "show-custom-order",
     role: "listbox",
-    "aria-label": "Slides in custom show",
+    "aria-label": "自定义放映中的幻灯片",
     tabindex: 0,
   });
   let active = 0;
@@ -340,12 +340,12 @@ export function defineCustomShow(ctx, show, uniqueName = (n) => n) {
   return new Promise((resolve) => {
     let result = null;
     const modal = openModal({
-      title: show ? "Edit Custom Show" : "Define Custom Show",
+      title: show ? "编辑自定义放映" : "定义自定义放映",
       className: "show-define-dialog",
       body,
       onClose: () => resolve(result),
       actions: [
-        { label: "Cancel", kind: "secondary", onClick: () => true },
+        { label: "取消", kind: "secondary", onClick: () => true },
         {
           label: "OK",
           kind: "primary",

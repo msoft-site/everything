@@ -158,7 +158,7 @@ export function diffDecks(mine, theirs) {
       aPart: P.getSlidePartName(s),
       aIndex: i,
       bIndex: null,
-      label: slideTitle(s) || slideText(s).split("\n")[0] || "Untitled slide",
+      label: slideTitle(s) || slideText(s).split("\n")[0] || "无标题幻灯片",
     });
   });
   B.forEach((s, j) => {
@@ -170,7 +170,7 @@ export function diffDecks(mine, theirs) {
       bPart: P.getSlidePartName(s),
       bIndex: j,
       aIndex: before ? before[0] + 0.5 : -0.5,
-      label: slideTitle(s) || slideText(s).split("\n")[0] || "Untitled slide",
+      label: slideTitle(s) || slideText(s).split("\n")[0] || "无标题幻灯片",
     });
   });
   for (const [i, j] of pairs) {
@@ -225,7 +225,7 @@ export function diffDecks(mine, theirs) {
       items.push({
         ...base,
         type: "notesChanged",
-        label: "Speaker notes",
+        label: "演讲者备注",
         before: na,
         after: nb,
       });
@@ -246,13 +246,13 @@ export function diffDecks(mine, theirs) {
 }
 
 export const DESCRIBE = {
-  slideInserted: "Slide inserted",
-  slideDeleted: "Slide deleted",
-  textChanged: "Text changed",
-  objectChanged: "Object changed",
-  objectInserted: "Object inserted",
-  objectDeleted: "Object deleted",
-  notesChanged: "Notes changed",
+  slideInserted: "已插入幻灯片",
+  slideDeleted: "已删除幻灯片",
+  textChanged: "文本已修改",
+  objectChanged: "对象已修改",
+  objectInserted: "已插入对象",
+  objectDeleted: "已删除对象",
+  notesChanged: "备注已修改",
 };
 
 // ---- Accepting ---------------------------------------------------------------
@@ -400,7 +400,7 @@ export function createCompare(env, host) {
     state.rejected = new Set();
     recompute();
     host.open("revisions");
-    if (!state.items.length) toast("The presentations are the same.");
+    if (!state.items.length) toast("演示文稿完全相同。");
   }
 
   async function accept(items) {
@@ -466,7 +466,7 @@ export function createCompare(env, host) {
           "div",
           { class: "review-empty" },
           icon("o:compare", 32),
-          el("p", {}, "Compare this presentation with another version of it."),
+          el("p", {}, "将此演示文稿与另一个版本进行比较。"),
           el(
             "button",
             { type: "button", class: "btn primary", onclick: () => start() },
@@ -491,7 +491,7 @@ export function createCompare(env, host) {
           { class: "review-status", role: "status" },
           list.length
             ? `${list.length} change${list.length === 1 ? "" : "s"}`
-            : "No changes left to review.",
+            : "没有需要审阅的更改。",
         ),
         el(
           "button",
@@ -581,7 +581,7 @@ export function createCompare(env, host) {
   }
 
   host.register("revisions", {
-    title: "Revisions",
+    title: "修订",
     render: () => {
       // The deck may have changed by other edits since.
       if (state.theirs) recompute();

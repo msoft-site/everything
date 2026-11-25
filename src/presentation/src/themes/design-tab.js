@@ -33,18 +33,18 @@ import "./themes.css";
 const CUSTOM_COLORS_KEY = "presentation:custom-color-schemes";
 const CUSTOM_FONTS_KEY = "presentation:custom-font-schemes";
 const SLOT_LABELS = {
-  dk1: "Text/Background – Dark 1",
-  lt1: "Text/Background – Light 1",
-  dk2: "Text/Background – Dark 2",
-  lt2: "Text/Background – Light 2",
-  accent1: "Accent 1",
-  accent2: "Accent 2",
-  accent3: "Accent 3",
-  accent4: "Accent 4",
-  accent5: "Accent 5",
-  accent6: "Accent 6",
-  hlink: "Hyperlink",
-  folHlink: "Followed Hyperlink",
+  dk1: "文本/背景 – 深色 1",
+  lt1: "文本/背景 – 浅色 1",
+  dk2: "文本/背景 – 深色 2",
+  lt2: "文本/背景 – 浅色 2",
+  accent1: "辅色 1",
+  accent2: "辅色 2",
+  accent3: "辅色 3",
+  accent4: "辅色 4",
+  accent5: "辅色 5",
+  accent6: "辅色 6",
+  hlink: "超链接",
+  folHlink: "已访问的超链接",
 };
 
 const readList = (key) => {
@@ -177,7 +177,7 @@ export function createThemeTools(host) {
           m.layouts.find((l) => l.type === "title") || m.layouts[0];
         return {
           id: `deck:${m.partName}`,
-          label: i?.name || m.name || "This presentation",
+          label: i?.name || m.name || "此演示文稿",
           description: "A theme this presentation uses",
           section: "deck",
           version: masterStamp(m.partName),
@@ -246,7 +246,7 @@ export function createThemeTools(host) {
     const deck = String(choice.id).startsWith("deck:");
     return [
       {
-        label: "Apply to All Slides",
+        label: "应用到所有幻灯片",
         onSelect: run(() =>
           deck
             ? applyMasterToSlides(choice.id.slice(5), false)
@@ -254,7 +254,7 @@ export function createThemeTools(host) {
         ),
       },
       {
-        label: "Apply to Selected Slides",
+        label: "应用到所选幻灯片",
         disabled: host.masterView(),
         onSelect: run(() =>
           deck
@@ -267,7 +267,7 @@ export function createThemeTools(host) {
   const themeSections = (choices) =>
     [
       {
-        label: "This Presentation",
+        label: "此演示文稿",
         items: choices.filter((c) => c.section === "deck"),
       },
       {
@@ -278,12 +278,12 @@ export function createThemeTools(host) {
   function themeGalleryFooter() {
     return [
       {
-        label: "Browse for Themes…",
+        label: "浏览主题…",
         icon: "o:folderOpen",
         onSelect: browseThemes,
       },
       {
-        label: "Save Current Theme",
+        label: "保存当前主题",
         icon: "o:save",
         onSelect: run(saveTheme),
       },
@@ -423,11 +423,11 @@ export function createThemeTools(host) {
   // The Variants gallery's menu: the theme's colors, fonts, effects and
   // background styles, each a submenu.
   const variantFooter = () => [
-    { label: "Colors", icon: "o:colors", menu: colorsMenu },
-    { label: "Fonts", icon: "o:fonts", menu: fontsMenu },
-    { label: "Effects", icon: "o:effects", menu: effectsMenu },
+    { label: "颜色", icon: "o:colors", menu: colorsMenu },
+    { label: "字体", icon: "o:fonts", menu: fontsMenu },
+    { label: "效果", icon: "o:effects", menu: effectsMenu },
     {
-      label: "Background Styles",
+      label: "背景样式",
       icon: "o:backgroundStyles",
       menu: backgroundStylesMenu,
     },
@@ -486,23 +486,23 @@ export function createThemeTools(host) {
     );
     const own = i?.theme ? i.theme.variants.map((v) => v.name) : [];
     return [
-      custom.length && { header: "Custom" },
+      custom.length && { header: "自定义" },
       ...custom.map((s) => item({ ...s, dark: undefined })),
       own.length && { header: "This theme" },
       ...builtin.filter((s) => own.includes(s.name)).map(item),
-      { header: "Built-in" },
+      { header: "内置" },
       ...builtin
         .filter((s, n) => !own.includes(s.name) && n % 4 === 0)
         .map(item),
       {
-        label: "More Color Schemes",
+        label: "更多颜色方案",
         items: builtin
           .filter((s, n) => !own.includes(s.name) && n % 4 !== 0)
           .map(item),
       },
       { separator: true },
       {
-        label: "Customize Colors…",
+        label: "自定义颜色…",
         icon: "o:colors",
         onSelect: run(customizeColors),
       },
@@ -550,13 +550,13 @@ export function createThemeTools(host) {
     });
     const custom = customFontSchemes();
     return [
-      custom.length && { header: "Custom" },
+      custom.length && { header: "自定义" },
       ...custom.map(item),
-      { header: "Built-in" },
+      { header: "内置" },
       ...FONT_PAIRS.map(item),
       { separator: true },
       {
-        label: "Customize Fonts…",
+        label: "自定义字体…",
         icon: "o:fonts",
         onSelect: run(customizeFonts),
       },
@@ -585,7 +585,7 @@ export function createThemeTools(host) {
     const grid = el("div", {
       class: "bg-styles",
       role: "group",
-      "aria-label": "Background styles",
+      "aria-label": "背景样式",
     });
     for (const style of styles) {
       const b = el("button", {
@@ -607,11 +607,11 @@ export function createThemeTools(host) {
             label: `${style.name} options`,
             items: [
               {
-                label: "Apply to All Slides",
+                label: "应用到所有幻灯片",
                 onSelect: run(() => applyBackgroundStyle(style, false)),
               },
               {
-                label: "Apply to Selected Slides",
+                label: "应用到所选幻灯片",
                 onSelect: run(() => applyBackgroundStyle(style, true)),
               },
             ],
@@ -643,12 +643,12 @@ export function createThemeTools(host) {
       { custom: backgroundStylesNode() },
       { separator: true },
       {
-        label: "Format Background…",
+        label: "设置背景格式…",
         icon: "o:formatBackground",
         onSelect: () => host.formatBackground(),
       },
       {
-        label: "Reset Slide Background",
+        label: "重置幻灯片背景",
         onSelect: run(() =>
           host.mutate(() => {
             const targets = host
@@ -692,7 +692,7 @@ export function createThemeTools(host) {
     const nameInput = el("input", {
       class: "input",
       value: "Custom 1",
-      "aria-label": "Name",
+      "aria-label": "名称",
       maxlength: 60,
     });
     const used = new Set(customColorSchemes().map((s) => s.name));
@@ -762,7 +762,7 @@ export function createThemeTools(host) {
         el(
           "fieldset",
           { class: "scheme-slots" },
-          el("legend", {}, "Theme colors"),
+          el("legend", {}, "主题颜色"),
           ...inputs.map(([slot, input]) =>
             el(
               "label",
@@ -775,7 +775,7 @@ export function createThemeTools(host) {
         el(
           "div",
           { class: "scheme-preview-wrap" },
-          el("span", { class: "helper" }, "Preview"),
+          el("span", { class: "helper" }, "预览"),
           preview,
         ),
       ),
@@ -783,11 +783,11 @@ export function createThemeTools(host) {
         "label",
         { class: "bg-check" },
         darkBox,
-        "Dark background (text in the light colors)",
+        "深色背景（浅色文本）",
       ),
-      el("label", { class: "field" }, el("span", {}, "Name"), nameInput),
+      el("label", { class: "field" }, el("span", {}, "名称"), nameInput),
       button(
-        "Reset",
+        "重置",
         null,
         () => {
           Object.assign(colors, start);
@@ -798,9 +798,9 @@ export function createThemeTools(host) {
       ),
     );
     const ok = await dialog({
-      title: "Customize Colors",
+      title: "自定义颜色",
       body,
-      confirm: "Save",
+      confirm: "保存",
     });
     if (!ok) return;
     const name = nameInput.value.trim() || "Custom";
@@ -836,8 +836,8 @@ export function createThemeTools(host) {
       node.value = families.includes(value) ? value : families[0];
       return node;
     };
-    const major = pick("Heading font", i?.fonts?.major || "Arial");
-    const minor = pick("Body font", i?.fonts?.minor || "Arial");
+    const major = pick("标题字体", i?.fonts?.major || "Arial");
+    const minor = pick("正文字体", i?.fonts?.minor || "Arial");
     const sample = el("div", { class: "font-preview", "aria-hidden": "true" });
     const draw = () =>
       sample.replaceChildren(
@@ -847,12 +847,12 @@ export function createThemeTools(host) {
             class: "font-preview-heading",
             style: `font-family:"${major.value}"`,
           },
-          "Heading",
+          "标题",
         ),
         el(
           "div",
           { class: "font-preview-body", style: `font-family:"${minor.value}"` },
-          "Body text is set in this font. It should read well at any size.",
+          "正文文本使用此字体设置。在任何字号下都应清晰易读。",
         ),
       );
     major.onchange = draw;
@@ -861,7 +861,7 @@ export function createThemeTools(host) {
     const nameInput = el("input", {
       class: "input",
       value: "Custom 1",
-      "aria-label": "Name",
+      "aria-label": "名称",
       maxlength: 60,
     });
     const used = new Set(customFontSchemes().map((s) => s.name));
@@ -873,16 +873,16 @@ export function createThemeTools(host) {
         class: "dialog-body customize-fonts",
         onsubmit: (e) => e.preventDefault(),
       },
-      el("label", { class: "field" }, el("span", {}, "Heading font"), major),
-      el("label", { class: "field" }, el("span", {}, "Body font"), minor),
-      el("span", { class: "helper" }, "Preview"),
+      el("label", { class: "field" }, el("span", {}, "标题字体"), major),
+      el("label", { class: "field" }, el("span", {}, "正文字体"), minor),
+      el("span", { class: "helper" }, "预览"),
       sample,
-      el("label", { class: "field" }, el("span", {}, "Name"), nameInput),
+      el("label", { class: "field" }, el("span", {}, "名称"), nameInput),
     );
     const ok = await dialog({
-      title: "Customize Fonts",
+      title: "自定义字体",
       body,
-      confirm: "Save",
+      confirm: "保存",
     });
     if (!ok) return;
     const scheme = {
@@ -903,7 +903,7 @@ export function createThemeTools(host) {
   // commands, offered while the masters themselves are being edited.
   function masterThemeGroups() {
     const themesMenu = () => [
-      { header: "Built-in" },
+      { header: "内置" },
       ...CATALOG.map((t) => ({
         label: el(
           "span",
@@ -920,12 +920,12 @@ export function createThemeTools(host) {
       })),
       { separator: true },
       {
-        label: "Browse for Themes…",
+        label: "浏览主题…",
         icon: "o:folderOpen",
         onSelect: browseThemes,
       },
       {
-        label: "Save Current Theme",
+        label: "保存当前主题",
         icon: "o:save",
         onSelect: run(saveTheme),
       },
@@ -933,16 +933,16 @@ export function createThemeTools(host) {
     return [
       {
         id: "master-edit-theme",
-        label: "Edit Theme",
+        label: "编辑主题",
         icon: "themes",
         items: [
           {
             type: "large",
             id: "master-themes",
-            label: "Themes",
+            label: "主题",
             icon: "themes",
-            title: "Themes",
-            description: "Give the masters another theme.",
+            title: "主题",
+            description: "为母版应用其他主题。",
             menu: themesMenu,
             menuLabel: "Themes",
           },
@@ -952,30 +952,30 @@ export function createThemeTools(host) {
               {
                 type: "small",
                 id: "master-theme-colors",
-                label: "Colors",
+                label: "颜色",
                 showLabel: true,
                 icon: "colors",
-                title: "Colors",
+                title: "颜色",
                 menu: colorsMenu,
                 menuLabel: "Theme colors",
               },
               {
                 type: "small",
                 id: "master-theme-fonts",
-                label: "Fonts",
+                label: "字体",
                 showLabel: true,
                 icon: "fonts",
-                title: "Fonts",
+                title: "字体",
                 menu: fontsMenu,
                 menuLabel: "Theme fonts",
               },
               {
                 type: "small",
                 id: "master-theme-effects",
-                label: "Effects",
+                label: "效果",
                 showLabel: true,
                 icon: "effects",
-                title: "Effects",
+                title: "效果",
                 menu: effectsMenu,
                 menuLabel: "Theme effects",
               },
@@ -984,9 +984,9 @@ export function createThemeTools(host) {
           {
             type: "large",
             id: "master-background-styles",
-            label: "Background\nStyles",
+            label: "背景\n样式",
             icon: "backgroundStyles",
-            title: "Background Styles",
+            title: "背景样式",
             menu: backgroundStylesMenu,
             menuLabel: "Background styles",
           },
@@ -1028,7 +1028,7 @@ export const themeStartPicture = (key) =>
   themeById(key) && !LEGACY_IDS.has(key)
     ? themePicture(key, 0, {
         title: themeById(key).name,
-        subtitle: "Presentation subtitle",
+        subtitle: "演示文稿副标题",
       })
     : null;
 

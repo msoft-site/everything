@@ -131,7 +131,7 @@ export function createShowFeatures(ctx) {
   async function keepInk(entries) {
     const count = entries.reduce((n, [, strokes]) => n + strokes.length, 0);
     const keep = await dialog({
-      title: "Keep your ink?",
+      title: "保留墨迹注释？",
       body: el(
         "div",
         { class: "dialog-body" },
@@ -142,8 +142,8 @@ export function createShowFeatures(ctx) {
         ),
       ),
       actions: [
-        { label: "Discard", value: false, kind: "secondary" },
-        { label: "Keep Ink", value: true, kind: "primary" },
+        { label: "放弃", value: false, kind: "secondary" },
+        { label: "保留墨迹", value: true, kind: "primary" },
       ],
     });
     if (!keep) return;
@@ -176,7 +176,7 @@ export function createShowFeatures(ctx) {
   }
   async function keepTimings({ timings, totalMs }) {
     const keep = await dialog({
-      title: "Keep the new slide timings?",
+      title: "保留新的幻灯片排练时间？",
       body: el(
         "div",
         { class: "dialog-body" },
@@ -187,8 +187,8 @@ export function createShowFeatures(ctx) {
         ),
       ),
       actions: [
-        { label: "Don't Keep", value: false, kind: "secondary" },
-        { label: "Keep Timings", value: true, kind: "primary" },
+        { label: "不保留", value: false, kind: "secondary" },
+        { label: "保留排练时间", value: true, kind: "primary" },
       ],
     });
     if (!keep) return;
@@ -305,7 +305,7 @@ export function createShowFeatures(ctx) {
     ctx.mutate(() => P.setSlideShowSetup(pres(), { [key]: !!on }));
   const subtitleSettingsMenu = () => [
     {
-      label: "Spoken Language",
+      label: "讲话语言",
       items: SPOKEN_LANGUAGES.map(([code, name]) => ({
         label: name,
         checked: spokenLanguage() === code,
@@ -328,24 +328,24 @@ export function createShowFeatures(ctx) {
   };
   const clearItems = () => [
     {
-      label: "Clear Recording on Current Slide",
+      label: "清除当前幻灯片上的录制",
       disabled: !hasNarration(P, ctx.slide()),
       onSelect: run(() => clearRecordings(false)),
     },
     {
-      label: "Clear Recordings on All Slides",
+      label: "清除所有幻灯片上的录制",
       disabled: !slideNarrated(),
       onSelect: run(() => clearRecordings(true)),
     },
     { separator: true },
     {
-      label: "Clear Timing on Current Slide",
+      label: "清除当前幻灯片上的旁白和排练时间",
       onSelect: run(() =>
         ctx.mutateSlide(ctx.slide(), (s) => setSlideAdvance(P, s, null)),
       ),
     },
     {
-      label: "Clear Timings on All Slides",
+      label: "清除所有幻灯片上的旁白和排练时间",
       onSelect: run(() =>
         ctx.mutate(() =>
           P.getSlides(pres()).forEach((s) => setSlideAdvance(P, s, null)),
@@ -427,7 +427,7 @@ export function createShowFeatures(ctx) {
           onSelect: run(() => record("current")),
         },
         { separator: true },
-        { label: "Clear", items: clearItems() },
+        { label: "清除", items: clearItems() },
         { separator: true },
         {
           label: "Export to Video…",
@@ -450,12 +450,12 @@ export function createShowFeatures(ctx) {
   function recordTab() {
     return {
       id: "record",
-      label: "Record",
+      label: "录制",
       after: "slideshow",
       groups: [
         {
           id: "record-camera",
-          label: "Camera",
+          label: "摄像头",
           icon: "liveCamera",
           items: [
             {
@@ -463,7 +463,7 @@ export function createShowFeatures(ctx) {
               id: "insert-camera",
               label: "Live\nCamera",
               icon: "liveCamera",
-              title: "Insert Live Camera",
+              title: "插入实时摄像头",
               description:
                 "Place your camera on the slide. It shows you live while you present.",
               run: run(() => insertCamera()),
@@ -472,7 +472,7 @@ export function createShowFeatures(ctx) {
         },
         {
           id: "record-start",
-          label: "Record",
+          label: "录制",
           icon: "recordFromStart",
           items: [
             {
@@ -480,7 +480,7 @@ export function createShowFeatures(ctx) {
               id: "record-from-start",
               label: "From\nBeginning",
               icon: "recordFromStart",
-              title: "Record from Beginning",
+              title: "从头开始录制",
               description:
                 "Record your voice, camera and ink as you present, starting with the first slide.",
               run: run(() => record("beginning")),
@@ -490,7 +490,7 @@ export function createShowFeatures(ctx) {
               id: "record-from-current",
               label: "From Current\nSlide",
               icon: "recordFromCurrent",
-              title: "Record from Current Slide",
+              title: "从当前幻灯片开始录制",
               description: "Record your presentation starting with this slide.",
               run: run(() => record("current")),
             },
@@ -498,7 +498,7 @@ export function createShowFeatures(ctx) {
         },
         {
           id: "record-edit",
-          label: "Edit",
+          label: "编辑",
           icon: "clearRecording",
           items: [
             {
@@ -506,7 +506,7 @@ export function createShowFeatures(ctx) {
               id: "clear-recording",
               label: "Clear\nRecording",
               icon: "clearRecording",
-              title: "Clear Recording",
+              title: "清除录制",
               description: "Remove recorded narrations and timings.",
               menu: clearItems,
             },
@@ -515,18 +515,18 @@ export function createShowFeatures(ctx) {
               id: "reset-to-camera",
               label: "Reset to\nCamera",
               icon: "resetToCamera",
-              title: "Reset to Live Camera",
+              title: "重置为实时摄像头",
               description:
                 "Remove recordings and put a live camera where they were.",
               enabled: () => slideNarrated(),
               menu: () => [
                 {
-                  label: "Reset Current Slide",
+                  label: "重置当前幻灯片",
                   disabled: !hasNarration(P, ctx.slide()),
                   onSelect: run(() => resetToCamera(false)),
                 },
                 {
-                  label: "Reset All Slides",
+                  label: "重置所有幻灯片",
                   onSelect: run(() => resetToCamera(true)),
                 },
               ],
@@ -535,7 +535,7 @@ export function createShowFeatures(ctx) {
         },
         {
           id: "record-save",
-          label: "Save",
+          label: "保存",
           icon: "exportVideo",
           items: [
             {
@@ -543,7 +543,7 @@ export function createShowFeatures(ctx) {
               id: "export-video",
               label: "Export to\nVideo",
               icon: "exportVideo",
-              title: "Export to Video",
+              title: "导出为视频",
               description:
                 "Save the presentation, with its recordings and timings, as a video.",
               run: run(() => ctx.exportVideo()),
@@ -558,24 +558,24 @@ export function createShowFeatures(ctx) {
   function menuItems() {
     return [
       {
-        label: "Custom Slide Show",
+        label: "自定义幻灯片放映",
         icon: "o:customShow",
         items: customShowMenu(),
       },
       { separator: true },
       {
-        label: "Presenter View",
+        label: "使用演示者视图",
         icon: "o:presenterView",
         shortcut: "Alt+F5",
         onSelect: run(presenterView),
       },
       {
-        label: "Rehearse Timings",
+        label: "排练计时",
         icon: "o:rehearse",
         onSelect: run(rehearse),
       },
       {
-        label: "Record Slide Show",
+        label: "录制幻灯片放映",
         icon: "o:recordShow",
         items: ribbonApi().recordShowMenu(),
       },
@@ -587,13 +587,13 @@ export function createShowFeatures(ctx) {
       },
       { separator: true },
       {
-        label: "Always Use Subtitles",
+        label: "始终使用字幕",
         checked: !!showPrefs.alwaysSubtitles,
         onSelect: () =>
           (showPrefs.alwaysSubtitles = !showPrefs.alwaysSubtitles),
       },
       {
-        label: "Subtitle Settings",
+        label: "字幕设置",
         icon: "o:subtitleSettings",
         items: subtitleSettingsMenu(),
       },

@@ -7,55 +7,55 @@ import { el, icon, iconButton, openMenu } from "../ui.js";
 import { P, visibleSlideShapes, slideTitle, shapeLabel } from "../model.js";
 
 export const SEVERITIES = [
-  ["error", "Errors"],
-  ["warning", "Warnings"],
-  ["tip", "Tips"],
+  ["error", "错误"],
+  ["warning", "警告"],
+  ["tip", "提示"],
 ];
 
 export const KINDS = {
   missingAlt: {
     severity: "error",
-    title: "Missing alternative text",
-    why: "People who use a screen reader hear the alternative text of a picture, chart or diagram in place of seeing it.",
+    title: "缺少替代文字",
+    why: "使用屏幕阅读器的用户通过听取图片、图表或示意图的可选文字来替代视觉观看。",
     action:
-      "Describe the object, or mark it as decorative if it adds nothing to the content.",
+      "描述该对象，或者如果它对内容无实质贡献，则将其标记为装饰性内容。",
   },
   missingTitle: {
     severity: "error",
-    title: "Missing slide title",
-    why: "Slide titles let people who use screen readers or keyboards find their way and jump to a slide.",
-    action: "Give the slide a title. A hidden title is read out but not shown.",
+    title: "缺少幻灯片标题",
+    why: "幻灯片标题可让使用屏幕阅读器或键盘的用户快速定位并跳转到相应幻灯片。",
+    action: "为幻灯片添加标题。隐藏的标题会被朗读但不会显示。",
   },
   tableHeader: {
     severity: "error",
-    title: "Missing table header",
-    why: "A header row tells screen readers what each column holds as they read the cells.",
+    title: "缺少表格标题",
+    why: "标题行向屏幕阅读器说明各列的内容以便读取单元格。",
     action: "Use the table's first row as its header row.",
   },
   duplicateTitle: {
     severity: "warning",
-    title: "Duplicate slide title",
-    why: "Slides with the same title are hard to tell apart in a list of slides.",
-    action: "Give each slide a title of its own.",
+    title: "幻灯片标题重复",
+    why: "在幻灯片列表中，具有相同标题的幻灯片很难区分。",
+    action: "为每张幻灯片设置专属标题。",
   },
   contrast: {
     severity: "warning",
     title: "Hard-to-read text contrast",
-    why: "Text close in color to what is behind it is hard to read for people with low vision, and for anyone in bright light.",
-    action: "Use a text color that stands out from the background.",
+    why: "文本颜色若与背景颜色过于接近，低视力人群或在强光下的任何人都会难以看清。",
+    action: "使用与背景对比鲜明的文本颜色。",
   },
   emptyPlaceholder: {
     severity: "tip",
-    title: "Empty placeholder",
-    why: "An empty placeholder is invisible in the slide show but a screen reader may still announce it.",
-    action: "Add content to the placeholder or delete it.",
+    title: "空占位符",
+    why: "空占位符在幻灯片放映中不可见，但屏幕阅读器仍可能会朗读它。",
+    action: "向占位符添加内容或将其删除。",
   },
   readingOrder: {
     severity: "tip",
-    title: "Check reading order",
+    title: "检查阅读顺序",
     why: "Screen readers read a slide's objects in the order they were added, which may not match the order they appear in.",
     action:
-      "Open the Reading Order pane and put the objects in the order they should be read.",
+      "打开“阅读顺序”窗格，按阅读顺序排列对象。",
   },
 };
 
@@ -98,7 +98,7 @@ function slideLabel(slide) {
     const text = (P.getShapeText(s) || "").trim().split("\n")[0];
     if (text) return text.length > 48 ? `${text.slice(0, 47)}…` : text;
   }
-  return "Untitled slide";
+  return "未命名幻灯片";
 }
 // The text that reads as a slide's title: in the largest type, then
 // nearest the top.
@@ -263,11 +263,11 @@ export function createAccessibility(env, host) {
       case "missingAlt":
         return [
           {
-            label: "Add a Description",
+            label: "添加描述",
             run: async () => (await go(), env.altText()),
           },
           {
-            label: "Mark as Decorative",
+            label: "标记为装饰性内容",
             run: () =>
               env.mutateShape(shape(), (s) => P.setShapeDecorative(s, true)),
           },
@@ -289,18 +289,18 @@ export function createAccessibility(env, host) {
           },
           empty
             ? {
-                label: "Edit the Title",
+                label: "编辑标题",
                 run: async () => {
                   await env.showObjects(issue.part, [P.getShapeId(empty)]);
                   env.editShapeText(issue.part, P.getShapeId(empty));
                 },
               }
             : {
-                label: "Add a Slide Title",
+                label: "添加幻灯片标题",
                 run: () => env.addTitle(issue, { hidden: false }),
               },
           !empty && {
-            label: "Add a Hidden Slide Title",
+            label: "添加隐藏的幻灯片标题",
             run: () => env.addTitle(issue, { hidden: true }),
           },
         ].filter(Boolean);
@@ -308,7 +308,7 @@ export function createAccessibility(env, host) {
       case "tableHeader":
         return [
           {
-            label: "Use the First Row as Header",
+            label: "将第一行用作表头",
             run: () =>
               env.mutateShape(shape(), (s) =>
                 P.setTableStyleFlags(s, { firstRow: true }),
@@ -321,7 +321,7 @@ export function createAccessibility(env, host) {
         );
         return [
           t && {
-            label: "Edit the Title",
+            label: "编辑标题",
             run: async () => {
               await env.showObjects(issue.part, [P.getShapeId(t)]);
               env.editShapeText(issue.part, P.getShapeId(t));
@@ -332,21 +332,21 @@ export function createAccessibility(env, host) {
       case "contrast":
         return [
           {
-            label: "Use a Readable Text Color",
+            label: "使用易读的文本颜色",
             run: () => env.fixContrast(shape()),
           },
         ];
       case "emptyPlaceholder":
         return [
           {
-            label: "Add Text",
+            label: "添加文本",
             run: async () => {
               await go();
               env.editShapeText(issue.part, issue.shapeId);
             },
           },
           {
-            label: "Delete the Placeholder",
+            label: "删除占位符",
             run: () =>
               env.mutateSlide(issue.slide, (s) => {
                 const target = P.findShapeById(s, issue.shapeId);
@@ -358,7 +358,7 @@ export function createAccessibility(env, host) {
       case "readingOrder":
         return [
           {
-            label: "Open Reading Order Pane",
+            label: "打开阅读顺序窗格",
             run: async () => {
               await env.chooseSlide(issue.slide);
               host.open("readingOrder");
@@ -378,11 +378,11 @@ export function createAccessibility(env, host) {
           "div",
           { class: "review-empty", role: "status" },
           icon("o:accessibility", 32),
-          el("p", {}, "No accessibility issues found."),
+          el("p", {}, "未发现辅助功能问题。"),
           el(
             "p",
             { class: "helper" },
-            "People with disabilities should not have difficulty reading this presentation.",
+            "残障人士阅读此演示文稿时应该不会遇到困难。",
           ),
         ),
       );
@@ -466,12 +466,12 @@ export function createAccessibility(env, host) {
                     ),
                   ),
                   iconButton(
-                    "Recommended actions",
+                    "推荐操作",
                     "ChevronDown",
                     (e) =>
                       openMenu({
                         anchor: e.currentTarget,
-                        label: "Recommended actions",
+                        label: "推荐操作",
                         align: "end",
                         items: fixes(issue).map((f) => ({
                           label: f.label,
@@ -488,9 +488,9 @@ export function createAccessibility(env, host) {
                     el(
                       "div",
                       { class: "a11y-detail" },
-                      el("p", { class: "review-label" }, "Why fix"),
+                      el("p", { class: "review-label" }, "为何修复"),
                       el("p", {}, info.why),
-                      el("p", { class: "review-label" }, "How to fix"),
+                      el("p", { class: "review-label" }, "如何修复"),
                       el("p", {}, info.action),
                       el(
                         "div",
@@ -571,13 +571,13 @@ export function createAccessibility(env, host) {
     );
     if (!list.length) {
       wrap.append(
-        el("p", { class: "review-status" }, "This slide has no objects."),
+        el("p", { class: "review-status" }, "此幻灯片没有对象。"),
       );
       return wrap;
     }
     const selected = new Set(env.selectionIds());
     let dragFrom = null;
-    const ol = el("ol", { class: "order-list", "aria-label": "Reading order" });
+    const ol = el("ol", { class: "order-list", "aria-label": "阅读顺序" });
     list.forEach((shape, i) => {
       const id = P.getShapeId(shape);
       const row = el(
@@ -627,10 +627,10 @@ export function createAccessibility(env, host) {
           },
           shapeLabel(shape, env.pres()),
         ),
-        iconButton("Move up", "ArrowUp", () => move(i, i - 1), {
+        iconButton("上移", "ArrowUp", () => move(i, i - 1), {
           disabled: i === 0 || null,
         }),
-        iconButton("Move down", "ArrowDown", () => move(i, i + 1), {
+        iconButton("下移", "ArrowDown", () => move(i, i + 1), {
           disabled: i === list.length - 1 || null,
         }),
       );
@@ -640,9 +640,9 @@ export function createAccessibility(env, host) {
     return wrap;
   }
 
-  host.register("accessibility", { title: "Accessibility", render });
+  host.register("accessibility", { title: "辅助功能", render });
   host.register("readingOrder", {
-    title: "Reading Order",
+    title: "阅读顺序",
     render: renderOrder,
   });
 
