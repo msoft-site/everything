@@ -187,7 +187,7 @@ export function createSlideSorter(ctx) {
             el(
               "span",
               { class: "sorter-section-count" },
-              `(${group.slides.length} ${group.slides.length === 1 ? "slide" : "slides"})`,
+              `(${group.slides.length} 张幻灯片)`,
             ),
           ),
           el(
@@ -195,7 +195,7 @@ export function createSlideSorter(ctx) {
             {
               type: "button",
               class: "sorter-section-menu icon-btn",
-              "aria-label": `Options for section ${group.name}`,
+              "aria-label": `节 ${group.name} 的选项`,
               "aria-haspopup": "menu",
               onclick: (e) => sectionMenu(e, gi),
             },
@@ -524,7 +524,7 @@ export function createSlideSorter(ctx) {
     const secs = sections();
     const items = [
       {
-        label: "Rename Section…",
+        label: "重命名节…",
         icon: "Pencil",
         onSelect: () => rename(i).catch(ctx.fail),
       },
@@ -534,7 +534,7 @@ export function createSlideSorter(ctx) {
         onSelect: () => removeSection(i, false),
       },
       {
-        label: "Remove Section & Slides",
+        label: "删除节和幻灯片",
         icon: "Trash2",
         danger: true,
         onSelect: () => removeSection(i, true),
@@ -589,7 +589,7 @@ export function createSlideSorter(ctx) {
   }
   function cardMenu(e, part) {
     const group = selectedSlides();
-    const noun = group.length > 1 ? `${group.length} Slides` : "Slide";
+    const noun = group.length > 1 ? `${group.length} 张幻灯片` : "幻灯片";
     const allHidden = group.every((s) => P.isSlideHidden(s));
     const groups = groupSlides(order(), sections());
     const si = groups.findIndex((g) => g.slides.includes(part));
@@ -612,7 +612,7 @@ export function createSlideSorter(ctx) {
           onSelect: () => ctx.addSlideAfter(slideOf(part)),
         },
         {
-          label: `Duplicate ${noun}`,
+          label: `复制${noun}`,
           icon: "Copy",
           onSelect: () => ctx.duplicateSlides(group),
         },
@@ -622,7 +622,7 @@ export function createSlideSorter(ctx) {
           onSelect: () => ctx.setSlidesHidden(group, !allHidden),
         },
         {
-          label: `Delete ${noun}`,
+          label: `删除${noun}`,
           icon: "Trash2",
           danger: true,
           onSelect: () => ctx.deleteSlides(group),
@@ -634,7 +634,7 @@ export function createSlideSorter(ctx) {
           onSelect: () => addSection(part).catch(ctx.fail),
         },
         inSection && {
-          label: "Rename Section…",
+          label: "重命名节…",
           icon: "Pencil",
           onSelect: () => rename(si).catch(ctx.fail),
         },

@@ -491,14 +491,14 @@ export function suggestions(pres, slideIndex = 0, selectionCount = 0) {
     (all[0] ? slideDescription(all[0], pres).trim().length : 0) < 40
   )
     return [
-      "Draft a 6-slide pitch deck for a new product",
-      "Outline a 10-minute talk on a topic I give you",
+      "起草一份包含 6 张幻灯片的新产品推介文稿",
+      "根据我提供的主题制定 10 分钟演讲的大纲",
       "将我的备注制成幻灯片",
     ];
   const out = [];
   if (selectionCount)
     out.push("重写所选文本使其更清晰简练");
-  else out.push(`Tighten the wording on slide ${slideIndex + 1}`);
+  else out.push(`精简幻灯片 ${slideIndex + 1} 上的文案`);
   out.push("总结此演示文稿");
   out.push("为每张幻灯片编写演讲者备注");
   out.push("检查演示文稿中的错别字和格式不一致之处");

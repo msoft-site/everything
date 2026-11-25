@@ -6,18 +6,18 @@
  */
 
 export const AI_ACTIONS = [
-  { id: 'improve', label: 'Improve the writing', icon: 'sparkle', instruction: 'Improve the writing: clearer, tighter, and better flowing, while keeping the meaning, tone, facts, and language.' },
-  { id: 'grammar', label: 'Fix spelling and grammar', icon: 'spell', instruction: 'Fix spelling, grammar, and punctuation only. Keep the wording, meaning, tone, and language; change nothing that is already correct.' },
-  { id: 'shorten', label: 'Make it shorter', icon: 'minimize', instruction: 'Make this shorter, about half the length, keeping the key points, tone, and language.' },
-  { id: 'expand', label: 'Make it longer', icon: 'maximize', instruction: 'Expand this with more detail and supporting sentences, about twice the length, keeping the tone, facts, and language. Do not invent specific facts, names, or figures.' },
-  { id: 'simplify', label: 'Simplify the language', icon: 'text', instruction: 'Rewrite this in plain, simple language a general reader understands, keeping the meaning and language.' },
-  { id: 'formal', label: 'Make it more formal', icon: 'brand', instruction: 'Rewrite this in a more formal, professional register, keeping the meaning and language.' },
-  { id: 'casual', label: 'Make it more casual', icon: 'suggest', instruction: 'Rewrite this in a friendlier, more conversational register, keeping the meaning and language.' },
-  { id: 'summarize', label: 'Summarize', icon: 'outline', instruction: 'Summarize this in a few sentences (or a short bulleted list when it has several distinct points), in the same language.' },
-  { id: 'bullets', label: 'Turn into bullet points', icon: 'bullets', instruction: 'Turn this into a concise bulleted list, one point per line starting with "- ", in the same language.' },
-  { id: 'translate', label: 'Translate to…', icon: 'external', needs: 'language', instruction: (language) => `Translate this into ${language}. Keep the formatting, names, and tone. Output only the translation.` },
-  { id: 'continue', label: 'Continue writing', icon: 'pencil', mode: 'append', instruction: 'Continue this text with one or two more paragraphs in the same voice, tense, and language. Output only the new text that follows it; do not repeat it.' },
-  { id: 'custom', label: 'Ask for anything…', icon: 'edit', needs: 'instruction', instruction: (instruction) => instruction },
+  { id: 'improve', label: '润色文字', icon: 'sparkle', instruction: 'Improve the writing: clearer, tighter, and better flowing, while keeping the meaning, tone, facts, and language.' },
+  { id: 'grammar', label: '修正拼写和语法', icon: 'spell', instruction: 'Fix spelling, grammar, and punctuation only. Keep the wording, meaning, tone, and language; change nothing that is already correct.' },
+  { id: 'shorten', label: '精简内容', icon: 'minimize', instruction: 'Make this shorter, about half the length, keeping the key points, tone, and language.' },
+  { id: 'expand', label: '扩充内容', icon: 'maximize', instruction: 'Expand this with more detail and supporting sentences, about twice the length, keeping the tone, facts, and language. Do not invent specific facts, names, or figures.' },
+  { id: 'simplify', label: '简化语言', icon: 'text', instruction: 'Rewrite this in plain, simple language a general reader understands, keeping the meaning and language.' },
+  { id: 'formal', label: '更正式', icon: 'brand', instruction: 'Rewrite this in a more formal, professional register, keeping the meaning and language.' },
+  { id: 'casual', label: '更通俗', icon: 'suggest', instruction: 'Rewrite this in a friendlier, more conversational register, keeping the meaning and language.' },
+  { id: 'summarize', label: '生成摘要', icon: 'outline', instruction: 'Summarize this in a few sentences (or a short bulleted list when it has several distinct points), in the same language.' },
+  { id: 'bullets', label: '转为项目符号列表', icon: 'bullets', instruction: 'Turn this into a concise bulleted list, one point per line starting with "- ", in the same language.' },
+  { id: 'translate', label: '翻译为…', icon: 'external', needs: 'language', instruction: (language) => `Translate this into ${language}. Keep the formatting, names, and tone. Output only the translation.` },
+  { id: 'continue', label: '续写', icon: 'pencil', mode: 'append', instruction: 'Continue this text with one or two more paragraphs in the same voice, tense, and language. Output only the new text that follows it; do not repeat it.' },
+  { id: 'custom', label: '自定义指令…', icon: 'edit', needs: 'instruction', instruction: (instruction) => instruction },
 ];
 
 export function aiActionById(id) {
@@ -137,8 +137,8 @@ export function listItems(paragraphs) {
  * resolves the cleaned answer or throws a readable error.
  */
 export async function askAi(action, text, { chat, extra = '' } = {}) {
-  if (!text || !text.trim()) throw new Error('Select some text first');
-  if (text.length > 60000) throw new Error('Select less text: the assistant takes up to about 60,000 characters at a time');
+  if (!text || !text.trim()) throw new Error('请先选择文本');
+  if (text.length > 60000) throw new Error('请选择更少的文本：助手一次最多处理约 60,000 个字符');
   let resp;
   try {
     resp = await chat(buildPrompt(action, text, extra));
@@ -149,11 +149,11 @@ export async function askAi(action, text, { chat, extra = '' } = {}) {
     // for the model will not pass on a retry; a rate limit or a timeout will.
     const account = /insufficient|balance|credit|funds|quota/i.test(msg);
     const tooLong = !account && /context|too long|maximum.*length|max(?:imum)? tokens/i.test(msg);
-    throw new Error(account ? 'The AI service is not available for your account right now'
-      : tooLong ? 'Select less text: the assistant could not take all of it at once'
-        : 'The assistant could not answer. Try again in a moment', { cause: e });
+    throw new Error(account ? 'AI 服务当前对您的账户不可用'
+      : tooLong ? '请选择更少的文本：助手无法一次处理这么多内容'
+        : '助手无法回答，请稍后重试', { cause: e });
   }
   const answer = cleanAnswer(responseText(resp));
-  if (!answer) throw new Error('The assistant returned nothing to use');
+  if (!answer) throw new Error('助手未返回有效内容');
   return answer;
 }

@@ -97,8 +97,8 @@ export function createLayoutCommands(host) {
           layoutGallery(host.pres(), {
             label:
               targets.length > 1
-                ? `Layout for ${targets.length} slides`
-                : "Slide layout",
+                ? `${targets.length} 张幻灯片的版式`
+                : "幻灯片版式",
             selected: same ? current : null,
             radio: true,
             onChoose: (part) => changeLayout(targets, part),

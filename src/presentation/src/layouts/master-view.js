@@ -9,7 +9,7 @@
 // their layouts, and the contextual ribbon tab of each view.
 import { el, dialog, openMenu, toast } from "../ui.js";
 import { P } from "../model.js";
-import { templateThumb } from "./gallery.js";
+import { templateThumb, translateLayoutName } from "./gallery.js";
 import "./icons.js";
 import "./layouts.css";
 
@@ -25,9 +25,9 @@ const KINDS = {
 
 const PLACEHOLDER_KINDS = [
   ["content", "内容", "o:insertPlaceholder"],
-  ["contentVertical", "Content (Vertical)", "o:insertPlaceholder"],
+  ["contentVertical", "内容 (竖排)", "o:insertPlaceholder"],
   ["text", "文本", "o:textBox"],
-  ["textVertical", "Text (Vertical)", "o:textDirection"],
+  ["textVertical", "文本 (竖排)", "o:textDirection"],
   ["picture", "图片", "o:picture"],
   ["chart", "图表", "o:chartColumn"],
   ["table", "表格", "o:table"],
@@ -355,15 +355,16 @@ export function createMasterView(host) {
   // ---- The pane ----------------------------------------------------------
 
   function describeLayout(layout) {
-    const name = layout.name || "自定义版式";
-    if (!layout.slideCount) return `${name} layout: not used by any slide`;
+    const rawName = layout.name || "自定义版式";
+    const name = translateLayoutName(rawName);
+    if (!layout.slideCount) return `${name} 版式: 未被任何幻灯片使用`;
     const numbers = [];
     P.getSlides(pres()).forEach((s, i) => {
       const l = P.getSlideLayout(s);
       if (l && P.getSlideLayoutPartName(l) === layout.partName)
         numbers.push(i + 1);
     });
-    return `${name} layout: used by slide${numbers.length > 1 ? "s" : ""} ${numbers.join(", ")}`;
+    return `${name} 版式: 被幻灯片 ${numbers.join("、")} 使用`;
   }
 
   function paneItem({ part, kind, number, label, description, badge }) {
@@ -434,7 +435,7 @@ export function createMasterView(host) {
           onSelect: () => deleteTarget(part),
         },
         {
-          label: layout ? "Rename Layout…" : "Rename Master…",
+          label: layout ? "重命名版式…" : "重命名母版…",
           icon: "o:renameLayout",
           onSelect: () => renameTarget(part),
         },
@@ -461,7 +462,7 @@ export function createMasterView(host) {
             kind: "master",
             number: i + 1,
             label: master.name,
-            description: `${master.name} slide master${master.slideCount ? `: used by ${master.slideCount} slide${master.slideCount > 1 ? "s" : ""}` : ""}`,
+            description: `${master.name} 幻灯片母版${master.slideCount ? `: 被 ${master.slideCount} 张幻灯片使用` : ""}`,
             badge: master.preserve ? "已保留" : null,
           }),
         );
@@ -470,7 +471,7 @@ export function createMasterView(host) {
             paneItem({
               part: layout.partName,
               kind: "layout",
-              label: layout.name,
+              label: translateLayoutName(layout.name),
               description: describeLayout(layout),
             }),
           );
@@ -569,10 +570,10 @@ export function createMasterView(host) {
       {
         type: "large",
         id: "close-master-view",
-        label: "Close Master\nView",
+        label: "关闭母版\n视图",
         icon: "closeMasterView",
         title: "关闭母版视图",
-        description: "Go back to editing slides.",
+        description: "返回编辑幻灯片。",
         run: close,
       },
     ],
@@ -593,21 +594,21 @@ export function createMasterView(host) {
             {
               type: "large",
               id: "insert-slide-master",
-              label: "Insert Slide\nMaster",
+              label: "插入幻灯片\n母版",
               icon: "insertSlideMaster",
               title: "插入幻灯片母版",
               description:
-                "Add a new slide master, with its own theme and set of layouts.",
+                "添加新的幻灯片母版，包含其独立的主题和版式集。",
               run: insertSlideMaster,
             },
             {
               type: "large",
               id: "insert-layout",
-              label: "Insert\nLayout",
+              label: "插入\n版式",
               icon: "insertLayout",
               title: "插入版式",
               description:
-                "Add a custom layout to this master. Add placeholders to make it your own.",
+                "在此母版中添加自定义版式，可添加占位符进行自定义。",
               run: insertLayout,
             },
             {
@@ -620,7 +621,7 @@ export function createMasterView(host) {
                   icon: "deleteLayout",
                   title: "删除",
                   description:
-                    "Delete this layout or master. Layouts that slides use stay.",
+                    "删除此版式或母版。被幻灯片使用的版式将保留。",
                   enabled: () => canDelete(),
                   run: () => deleteTarget(),
                 },
@@ -650,7 +651,7 @@ export function createMasterView(host) {
                   icon: "preserveLayout",
                   title: "保留",
                   description:
-                    "Keep this layout or master in the file even when no slide uses it.",
+                    "即使没有幻灯片使用，也在此文件中保留此版式或母版。",
                   enabled: () => !!entryOf(),
                   pressed: () => !!entryOf()?.entry.preserve,
                   run: () => togglePreserve(),
@@ -667,11 +668,11 @@ export function createMasterView(host) {
             {
               type: "large",
               id: "master-layout-elements",
-              label: "Master\nLayout",
+              label: "母版\n版式",
               icon: "masterLayout",
               title: "母版版式",
               description:
-                "Choose which placeholders the slide master has: title, text, date, slide number and footer.",
+                "选择幻灯片母版包含的占位符：标题、文本、日期、幻灯片编号和页脚。",
               enabled: () => isMaster(),
               menu: () =>
                 [
@@ -685,16 +686,16 @@ export function createMasterView(host) {
                   checked: hasSlot(slot),
                   onSelect: () => setSlot([slot], !hasSlot(slot)),
                 })),
-              menuLabel: "Master placeholders",
+              menuLabel: "母版占位符",
             },
             {
               type: "large",
               id: "insert-placeholder",
-              label: "Insert\nPlaceholder",
+              label: "插入\n占位符",
               icon: "insertPlaceholder",
               title: "插入占位符",
               description:
-                "Add a placeholder to the layout for content, text, a picture, a chart, a table and more.",
+                "向版式添加内容、文本、图片、图表、表格等占位符。",
               split: true,
               enabled: () => isLayout(),
               run: () => insertPlaceholder("content"),
@@ -704,7 +705,7 @@ export function createMasterView(host) {
                   icon,
                   onSelect: () => insertPlaceholder(kind),
                 })),
-              menuLabel: "Placeholder kinds",
+              menuLabel: "占位符类型",
             },
             {
               type: "stack",
@@ -790,10 +791,10 @@ export function createMasterView(host) {
             {
               type: "large",
               id: `${kind}-orientation`,
-              label: notes ? "Notes Page\nOrientation" : "Handout\nOrientation",
+              label: notes ? "备注页\n方向" : "讲义\n方向",
               icon: "pageOrientation",
               title: notes ? "备注页方向" : "讲义方向",
-              description: "Turn the page portrait or landscape.",
+              description: "将页面设置为纵向或横向。",
               menu: () => [
                 {
                   label: "纵向",
@@ -806,26 +807,26 @@ export function createMasterView(host) {
                   onSelect: () => setOrientation("landscape"),
                 },
               ],
-              menuLabel: "Orientation",
+              menuLabel: "页面方向",
             },
             !notes && {
               type: "large",
               id: "handout-slides-per-page",
-              label: "Slides Per\nPage",
+              label: "每页\n幻灯片数",
               icon: "handoutMaster",
               title: "每页幻灯片数",
               description:
-                "Show where slides go on a handout page with this many slides.",
+                "显示包含这么多张幻灯片的讲义页面布局。",
               menu: () =>
                 [1, 2, 3, 4, 6, 9].map((n) => ({
-                  label: `${n} Slide${n > 1 ? "s" : ""}`,
+                  label: `${n} 张幻灯片`,
                   checked: handoutSlots === n,
                   onSelect: () => {
                     handoutSlots = n;
                     host.render();
                   },
                 })),
-              menuLabel: "Slides per page",
+              menuLabel: "每页幻灯片数",
             },
           ].filter(Boolean),
         },

@@ -417,12 +417,12 @@ export function createShowFeatures(ctx) {
       rehearse: run(rehearse),
       recordShowMenu: () => [
         {
-          label: "Record from Beginning…",
+          label: "从头开始录制…",
           icon: "o:recordFromStart",
           onSelect: run(() => record("beginning")),
         },
         {
-          label: "Record from Current Slide…",
+          label: "从当前幻灯片开始录制…",
           icon: "o:recordFromCurrent",
           onSelect: run(() => record("current")),
         },
@@ -430,7 +430,7 @@ export function createShowFeatures(ctx) {
         { label: "清除", items: clearItems() },
         { separator: true },
         {
-          label: "Export to Video…",
+          label: "导出为视频…",
           icon: "o:exportVideo",
           onSelect: run(() => ctx.exportVideo()),
         },
@@ -461,11 +461,11 @@ export function createShowFeatures(ctx) {
             {
               type: "large",
               id: "insert-camera",
-              label: "Live\nCamera",
+              label: "实时\n摄像头",
               icon: "liveCamera",
               title: "插入实时摄像头",
               description:
-                "Place your camera on the slide. It shows you live while you present.",
+                "在幻灯片上放置摄像头画面，可在演示时实时显示。",
               run: run(() => insertCamera()),
             },
           ],
@@ -478,20 +478,20 @@ export function createShowFeatures(ctx) {
             {
               type: "large",
               id: "record-from-start",
-              label: "From\nBeginning",
+              label: "从头\n开始",
               icon: "recordFromStart",
               title: "从头开始录制",
               description:
-                "Record your voice, camera and ink as you present, starting with the first slide.",
+                "从第一张幻灯片开始录制语音、摄像头和墨迹。",
               run: run(() => record("beginning")),
             },
             {
               type: "large",
               id: "record-from-current",
-              label: "From Current\nSlide",
+              label: "从当前\n幻灯片",
               icon: "recordFromCurrent",
               title: "从当前幻灯片开始录制",
-              description: "Record your presentation starting with this slide.",
+              description: "从当前幻灯片开始录制演示文稿。",
               run: run(() => record("current")),
             },
           ],
@@ -504,20 +504,20 @@ export function createShowFeatures(ctx) {
             {
               type: "large",
               id: "clear-recording",
-              label: "Clear\nRecording",
+              label: "清除\n录制",
               icon: "clearRecording",
               title: "清除录制",
-              description: "Remove recorded narrations and timings.",
+              description: "删除已录制的旁白和排练计时。",
               menu: clearItems,
             },
             {
               type: "large",
               id: "reset-to-camera",
-              label: "Reset to\nCamera",
+              label: "重置为\n摄像头",
               icon: "resetToCamera",
               title: "重置为实时摄像头",
               description:
-                "Remove recordings and put a live camera where they were.",
+                "移除录制内容并恢复为实时摄像头。",
               enabled: () => slideNarrated(),
               menu: () => [
                 {
@@ -541,11 +541,11 @@ export function createShowFeatures(ctx) {
             {
               type: "large",
               id: "export-video",
-              label: "Export to\nVideo",
+              label: "导出为\n视频",
               icon: "exportVideo",
               title: "导出为视频",
               description:
-                "Save the presentation, with its recordings and timings, as a video.",
+                "将演示文稿连同录制内容和排练计时一起保存为视频。",
               run: run(() => ctx.exportVideo()),
             },
           ],
@@ -581,7 +581,7 @@ export function createShowFeatures(ctx) {
       },
       { separator: true },
       {
-        label: "Set Up Slide Show…",
+        label: "设置放映方式…",
         icon: "o:setUpShow",
         onSelect: run(setUpShow),
       },

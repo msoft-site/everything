@@ -142,9 +142,9 @@ export function createReview(base) {
               id: "spelling",
               label: "拼写检查",
               icon: "spelling",
-              title: "Spelling (F7)",
+              title: "拼写检查 (F7)",
               description:
-                "Check the spelling of the text in the presentation.",
+                "检查演示文稿中的文本拼写。",
               pressed: () => host.isOpen("spelling"),
               run: () => spelling.open(),
             },
@@ -153,8 +153,8 @@ export function createReview(base) {
               id: "thesaurus",
               label: "同义词库",
               icon: "thesaurus",
-              title: "Thesaurus (Shift+F7)",
-              description: "Find other words for the selected word.",
+              title: "同义词库 (Shift+F7)",
+              description: "查找所选字词的其他同义表达。",
               pressed: () => host.isOpen("thesaurus"),
               run: () => thesaurus.open(),
             },
@@ -168,11 +168,11 @@ export function createReview(base) {
             {
               type: "large",
               id: "check-accessibility",
-              label: "Check\nAccessibility",
+              label: "检查\n辅助功能",
               icon: "accessibility",
               title: "检查辅助功能",
               description:
-                "Find content that people with disabilities might find hard to read.",
+                "查找可能不方便残障人士阅读的内容。",
               split: true,
               pressed: () => host.isOpen("accessibility"),
               run: () => accessibility.open(),
@@ -183,7 +183,7 @@ export function createReview(base) {
                   onSelect: () => accessibility.open(),
                 },
                 {
-                  label: "Alt Text…",
+                  label: "可选文字…",
                   icon: "o:altText",
                   disabled: !one(),
                   onSelect: () => base.altText(),
@@ -194,16 +194,16 @@ export function createReview(base) {
                   onSelect: () => accessibility.openReadingOrder(),
                 },
               ],
-              menuLabel: "Accessibility options",
+              menuLabel: "辅助功能选项",
             },
             {
               type: "large",
               id: "alt-text",
-              label: "Alt\nText",
+              label: "可选\n文字",
               icon: "altText",
               title: "可选文字",
               description:
-                "Describe the selected picture or object for people who use screen readers.",
+                "为使用屏幕阅读器的人群描述所选图片或对象。",
               enabled: () => one(),
               run: () => base.altText(),
             },
@@ -221,7 +221,7 @@ export function createReview(base) {
               icon: "translate",
               title: "翻译",
               description:
-                "Translate the selected text or the slide into another language.",
+                "将所选文本或幻灯片翻译为其他语言。",
               pressed: () => host.isOpen("translate"),
               run: () => translate.open(),
             },
@@ -231,12 +231,12 @@ export function createReview(base) {
               label: "语言",
               icon: "language",
               title: "语言",
-              description: "Choose the proofing language of the selected text.",
+              description: "选择所选文本的校对语言。",
               menu: () => [
                 ...base.languageItems(),
                 { separator: true },
                 {
-                  label: "AutoCorrect Options…",
+                  label: "自动更正选项…",
                   icon: "o:autoCorrect",
                   onSelect: () => autoCorrectDialog(),
                 },
@@ -252,10 +252,10 @@ export function createReview(base) {
             {
               type: "large",
               id: "new-comment",
-              label: "New\nComment",
+              label: "新建\n批注",
               icon: "newComment",
-              title: `New Comment (${MOD_KEY}+Shift+M)`,
-              description: "Add a comment about the selection or the slide.",
+              title: `新建批注 (${MOD_KEY}+Shift+M)`,
+              description: "关于所选内容或幻灯片添加批注。",
               run: () => comments.newComment(),
             },
             {
@@ -288,16 +288,16 @@ export function createReview(base) {
             {
               type: "large",
               id: "show-comments",
-              label: "Show\nComments",
+              label: "显示\n批注",
               icon: "showComments",
               title: "显示批注",
               description:
-                "Open the Comments pane, and show or hide comment markers on the slides.",
+                "打开“批注”窗格，并在幻灯片上显示或隐藏批注标记。",
               split: true,
               pressed: () => comments.isOpen(),
               run: () => comments.toggle(),
               menu: () => comments.showMenu(),
-              menuLabel: "Show Comments options",
+              menuLabel: "显示批注选项",
             },
           ],
         },
@@ -313,7 +313,7 @@ export function createReview(base) {
               icon: "compare",
               title: "比较",
               description:
-                "Compare this presentation with another version and choose which changes to keep.",
+                "将此演示文稿与另一个版本进行比较，并选择要保留的更改。",
               run: () => compare.start(),
             },
             {
@@ -356,11 +356,11 @@ export function createReview(base) {
             {
               type: "large",
               id: "always-read-only",
-              label: "Always Open\nRead-Only",
+              label: "始终以只读\n方式打开",
               icon: "readOnly",
-              title: "Always Open Read-Only",
+              title: "始终以只读方式打开",
               description:
-                "Mark the presentation as final so it opens read-only, to discourage changes.",
+                "将演示文稿标记为最终版本以便以只读方式打开，防止他人进行更改。",
               pressed: () => final.marked(),
               run: () => final.toggle(),
             },
@@ -374,25 +374,25 @@ export function createReview(base) {
   function toolsMenu() {
     return [
       {
-        label: "Spelling…",
+        label: "拼写检查…",
         icon: "o:spelling",
         shortcut: "F7",
         onSelect: () => spelling.open(),
       },
       {
-        label: "Thesaurus…",
+        label: "同义词库…",
         icon: "o:thesaurus",
         shortcut: "Shift+F7",
         onSelect: () => thesaurus.open(),
       },
       {
-        label: "Translate…",
+        label: "翻译…",
         icon: "o:translate",
         onSelect: () => translate.open(),
       },
       { label: "语言", icon: "o:language", items: base.languageItems() },
       {
-        label: "AutoCorrect Options…",
+        label: "自动更正选项…",
         icon: "o:autoCorrect",
         onSelect: () => autoCorrectDialog(),
       },
@@ -408,7 +408,7 @@ export function createReview(base) {
         onSelect: () => accessibility.openReadingOrder(),
       },
       { separator: true },
-      { label: "Compare…", icon: "o:compare", onSelect: () => compare.start() },
+      { label: "比较…", icon: "o:compare", onSelect: () => compare.start() },
       {
         label: "批注",
         icon: "o:showComments",
@@ -420,7 +420,7 @@ export function createReview(base) {
   // Items for the File menu.
   function fileMenuItems() {
     return [
-      { label: "Compare…", icon: "o:compare", onSelect: () => compare.start() },
+      { label: "比较…", icon: "o:compare", onSelect: () => compare.start() },
       {
         label: "标记为最终版本",
         icon: "Lock",

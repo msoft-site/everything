@@ -152,8 +152,8 @@ export function createOutlineView(ctx) {
                 type: "button",
                 class: "outline-icon",
                 tabindex: -1,
-                "aria-label": `Slide ${n}${folded ? ", collapsed" : ""}`,
-                title: "Double-click to collapse or expand",
+                "aria-label": `幻灯片 ${n}${folded ? "，已折叠" : ""}`,
+                title: "双击折叠或展开",
                 onclick: () => row.part && ctx.choose(row.part, []),
                 ondblclick: () => toggle(row.part),
                 oncontextmenu: (e) => {
@@ -163,7 +163,7 @@ export function createOutlineView(ctx) {
               },
               icon("o:normalViewSmall", 14),
             ),
-            editable(row, i, `Slide ${n} title`),
+            editable(row, i, `幻灯片 ${n} 标题`),
           ),
           folded ? null : group,
         );
@@ -185,7 +185,7 @@ export function createOutlineView(ctx) {
           editable(
             row,
             i,
-            `Slide ${slideIndexOf(i) + 1}, level ${row.level} text`,
+            `幻灯片 ${slideIndexOf(i) + 1}，第 ${row.level} 级文本`,
           ),
         ),
       );
@@ -205,7 +205,7 @@ export function createOutlineView(ctx) {
         spellcheck: "true",
         "data-row": String(i),
         "data-placeholder":
-          row.level === 0 ? titleHints.get(row.part) || "Slide title" : "",
+          row.level === 0 ? titleHints.get(row.part) || "幻灯片标题" : "",
       },
       row.text,
     );

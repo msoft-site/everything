@@ -80,36 +80,36 @@ export function friendlyAiError(error) {
       text,
     )
   )
-    return "This chat has grown too long for the AI. Start a new chat to carry on.";
+    return "对话内容过长，已超出 AI 限制。请新建对话以继续。";
   if (
     /rate.?limit|too many requests|\b429\b|overloaded|try again later/i.test(
       both,
     )
   )
-    return "The AI service is busy. Wait a moment, then try again.";
+    return "AI 服务繁忙，请稍候再试。";
   if (
     /insufficient.?(funds|credit|balance)|out of credit|quota|usage.?limit|allowance|billing|payment required|\b402\b/i.test(
       both,
     )
   )
-    return "Your Puter AI allowance has run out for now.";
+    return "AI 额度暂时已用完。";
   if (
     /sign.?in|not signed|unauthori[sz]ed|\b401\b|auth(entication)? (required|failed)|auth_window_closed/i.test(
       both,
     )
   )
-    return "Sign in to Puter to use the assistant.";
+    return "请先登录以使用助手。";
   if (
     /network|failed to fetch|offline|timed? ?out|ECONN|connection/i.test(text)
   )
-    return "The AI service could not be reached. Check your connection.";
+    return "无法连接到 AI 服务，请检查网络连接。";
   return text
-    ? `The AI service said: ${text.slice(0, 300)}`
-    : "The AI service did not answer.";
+    ? `AI 服务返回：${text.slice(0, 300)}`
+    : "AI 服务没有回应。";
 }
 
-// "Slide 3", "slides 3", "Slide 12" in a reply's text.
-const SLIDE_RE = /\b[Ss]lides? (\d{1,3})\b/g;
+// "Slide 3", "slides 3", "Slide 12", "幻灯片 3", "幻灯片3" in a reply's text.
+const SLIDE_RE = /(?:\b[Ss]lides?\s*(\d{1,3})\b|幻灯片\s*(\d{1,3}))/g;
 
 /**
  * The panel for one open presentation. `env` is what the tools need of the
@@ -155,7 +155,7 @@ export function createAssistantPanel(env) {
           target: null,
           history: [],
           content:
-            "Error: slides were added, deleted, or moved while this waited, so its slide numbers no longer name the slides described. Nothing was changed. Read the presentation again before retrying.",
+            "错误：在等待期间幻灯片被添加、删除或移动，因此幻灯片编号不再对应。未进行任何更改。请重新读取演示文稿后再重试。",
         };
       return runTool(name, args, env);
     },
@@ -208,7 +208,7 @@ export function createAssistantPanel(env) {
       },
     ),
     iconButton("关闭助手", "X", () => close(), {
-      title: `Close (${MOD_KEY}+J)`,
+      title: `关闭 (${MOD_KEY}+J)`,
     }),
   );
   const log = el("div", {
@@ -223,7 +223,7 @@ export function createAssistantPanel(env) {
   const input = el("textarea", {
     class: "ai-input",
     rows: 1,
-    placeholder: "Ask or tell the assistant…",
+    placeholder: "向助手提问或发出指令…",
     "aria-label": "给助手发消息",
     enterkeyhint: "send",
   });
@@ -231,14 +231,14 @@ export function createAssistantPanel(env) {
     type: "submit",
     class: "ai-send",
     "aria-label": "发送",
-    title: "Send (Enter)",
+    title: "发送 (Enter)",
   });
   sendBtn.append(icon("ArrowUp", 18));
   // What goes with a message: a label, not a control.
   const chip = el("div", {
     class: "ai-context",
     title:
-      "Sent with your message, with an outline of the slides. Select objects to point the assistant at them.",
+      "将随您的消息以及幻灯片大纲一起发送。选择对象可使助手聚焦于它们。",
   });
   const form = el(
     "form",
@@ -255,7 +255,7 @@ export function createAssistantPanel(env) {
     el(
       "p",
       { class: "ai-disclaimer" },
-      "The assistant can make mistakes. Check what it writes.",
+      "助手可能会出错。请核对重要信息。",
     ),
   );
   const resizer = el("div", {
@@ -390,13 +390,13 @@ export function createAssistantPanel(env) {
           { class: "ai-context-icon", "aria-hidden": "true" },
           icon("PanelLeft", 13),
         ),
-        el("span", { class: "visually-hidden" }, "Sent with your message: "),
-        el("span", { class: "ai-context-label" }, `Slide ${n}`),
+        el("span", { class: "visually-hidden" }, "随您的消息发送："),
+        el("span", { class: "ai-context-label" }, `幻灯片 ${n}`),
         count
           ? el(
               "span",
               { class: "ai-context-count" },
-              `${count} object${count === 1 ? "" : "s"} selected`,
+              `已选择 ${count} 个对象`,
             )
           : null,
       ].filter(Boolean),
@@ -423,12 +423,12 @@ export function createAssistantPanel(env) {
       el(
         "p",
         { class: "ai-empty-title" },
-        "Write, redesign, or ask about your slides",
+        "编写、重新设计或咨询有关幻灯片的问题",
       ),
       el(
         "p",
         { class: "ai-empty-text" },
-        "The assistant reads every slide and can add slides, rewrite and format text, arrange objects, build tables, and write speaker notes. Every change it makes can be undone.",
+        "助手可以读取每张幻灯片，并能添加幻灯片、重写和设置文本格式、排列对象、构建表格以及编写演讲者备注。助手所做的每项更改均可撤销。",
       ),
       // Buttons in list items: a button given the listitem role stops being
       // announced as something to press.
@@ -454,7 +454,7 @@ export function createAssistantPanel(env) {
       el(
         "p",
         { class: "ai-privacy" },
-        "Your messages and the slides the assistant reads are sent to Puter’s AI service to answer them.",
+        "您的消息以及助手读取的幻灯片将发送给 AI 服务进行处理。",
       ),
     );
   }
@@ -475,7 +475,7 @@ export function createAssistantPanel(env) {
     const count = env.pres() ? env.slideCount() : 0;
     const out = [];
     for (const m of text.matchAll(SLIDE_RE)) {
-      const n = Number(m[1]);
+      const n = Number(m[1] || m[2]);
       if (n >= 1 && n <= count)
         out.push({ start: m.index, end: m.index + m[0].length, target: n });
     }
@@ -593,12 +593,12 @@ export function createAssistantPanel(env) {
     skipped: "Minus",
   };
   const STATUS_WORDS = {
-    running: "running",
-    waiting: "waiting for your answer",
-    done: "done",
-    error: "failed",
-    declined: "not allowed",
-    skipped: "not run",
+    running: "运行中",
+    waiting: "等待您的答复",
+    done: "已完成",
+    error: "失败",
+    declined: "未允许",
+    skipped: "未运行",
   };
   function renderStep(row, step) {
     row.className = `ai-step ai-step-${step.status}${changesDeck(step.name) ? " ai-step-change" : ""}`;
@@ -637,7 +637,7 @@ export function createAssistantPanel(env) {
       row.append(el("div", { class: "ai-step-note" }, step.error));
     if (step.status === "declined")
       row.append(
-        el("div", { class: "ai-step-note" }, "Not allowed, so not changed."),
+        el("div", { class: "ai-step-note" }, "未允许，因此未更改。"),
       );
     if (step.status === "waiting") row.append(approvalCard(step));
   }
@@ -654,12 +654,12 @@ export function createAssistantPanel(env) {
         class: "btn primary ai-btn-sm",
         onclick: () => answer(true),
       },
-      "Allow",
+      "允许",
     );
     const deny = el(
       "button",
       { type: "button", class: "btn ai-btn-sm", onclick: () => answer(false) },
-      "Don’t allow",
+      "不允许",
     );
     const card = el(
       "div",
@@ -694,7 +694,7 @@ export function createAssistantPanel(env) {
     return new Promise((resolve) => {
       pendingApproval = { resolve, card: lastCard };
       say(
-        `The assistant wants to ${step.label.charAt(0).toLowerCase()}${step.label.slice(1)}. ${step.detail || ""} Allow or don’t allow.`,
+        `助手希望${step.label}。${step.detail || ""} 是否允许？`,
       );
       if (!isOpen) open({ focus: false });
     });
@@ -714,7 +714,7 @@ export function createAssistantPanel(env) {
     root.classList.toggle("busy", busy);
     sendBtn.replaceChildren(icon(busy ? "Square" : "ArrowUp", busy ? 14 : 18));
     sendBtn.setAttribute("aria-label", busy ? "停止" : "发送");
-    sendBtn.title = busy ? "Stop (Escape)" : "Send (Enter)";
+    sendBtn.title = busy ? "停止 (Escape)" : "发送 (Enter)";
     sendBtn.classList.toggle("stopping", busy);
   }
 
@@ -723,7 +723,7 @@ export function createAssistantPanel(env) {
     if (!message || agent.busy) return;
     if (!cloud.canAI()) {
       toast(
-        "The AI service is not available. Check your connection and reload.",
+        "AI 服务不可用。请检查网络连接并重试。",
       );
       return;
     }
@@ -737,7 +737,7 @@ export function createAssistantPanel(env) {
     const reply = assistantMessage();
     current = reply;
     setBusy(true);
-    say("The assistant is working…");
+    say("助手正在处理…");
     const viewBefore = viewKey();
     const onEvent = (e) => {
       if (destroyed || current !== reply) return;
@@ -786,15 +786,15 @@ export function createAssistantPanel(env) {
                 retry();
               },
             },
-            "Try again",
+            "重试",
           ),
         ),
       );
-      say(`The assistant could not answer: ${message}`);
+      say(`助手无法回答: ${message}`);
     } else {
-      say(outcome.stopped ? "Stopped." : "The assistant has answered.");
+      say(outcome.stopped ? "已停止。" : "助手已回答。");
       if (outcome.stopped)
-        reply.parts.append(el("p", { class: "ai-stopped" }, "Stopped."));
+        reply.parts.append(el("p", { class: "ai-stopped" }, "已停止。"));
     }
     renderFoot(reply, changed, !!outcome.error);
     // Show what changed last, unless the user has moved on meanwhile (to
@@ -846,9 +846,9 @@ export function createAssistantPanel(env) {
       const copy = iconButton("复制回复", "Copy", async () => {
         try {
           await navigator.clipboard.writeText(text);
-          toast("Reply copied.");
+          toast("回复已复制。");
         } catch {
-          toast("The reply could not be copied.");
+          toast("无法复制回复。");
         }
       });
       copy.classList.add("ai-foot-btn");
@@ -863,7 +863,7 @@ export function createAssistantPanel(env) {
       const summary = el(
         "span",
         { class: "ai-foot-summary" },
-        `${count} change${count === 1 ? "" : "s"} made`,
+        `已进行 ${count} 处更改`,
       );
       const undoBtn = el(
         "button",
@@ -885,7 +885,7 @@ export function createAssistantPanel(env) {
       undoBtn.addEventListener("click", async () => {
         if (!canUndo(turn)) {
           toast(
-            "The presentation has changed since. Use Undo in the Edit menu to go back step by step.",
+            "演示文稿在此之后已发生更改。请使用“编辑”菜单中的“撤消”逐步返回。",
           );
           refresh();
           return;
@@ -897,8 +897,8 @@ export function createAssistantPanel(env) {
         if (hadFocus) input.focus({ preventScroll: true });
         await env.undoTurn(turn.first, turn.count);
         summary.classList.add("ai-foot-undone");
-        summary.textContent = `${count} change${count === 1 ? "" : "s"} undone`;
-        say("The assistant's changes were undone.");
+        summary.textContent = `已撤消 ${count} 处更改`;
+        say("已撤消助手的更改。");
       });
       liveUndo = { refresh, retire };
       items.unshift(summary, undoBtn);
@@ -927,7 +927,7 @@ export function createAssistantPanel(env) {
     setBusy(false);
     renderEmpty();
     input.focus();
-    say("New chat.");
+    say("新对话。");
   }
 
   /* ---------- Composer ---------- */
@@ -1034,7 +1034,7 @@ export function createAssistantPanel(env) {
         const draft = input.value.trimEnd();
         open({ prompt: draft ? `${draft}\n\n${text}` : text });
         toast(
-          "The assistant is still answering. Your request is in the message box: send it when the reply is done.",
+          "助手仍在回答中。您的请求已放入输入框：回复完成后即可发送。",
         );
         return;
       }

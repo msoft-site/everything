@@ -126,6 +126,30 @@ export function nextLayoutFor(pres, target) {
  * A gallery of layout pictures for a menu: one section per master, a
  * button per layout. `selected` marks the current layout.
  */
+export const LAYOUT_NAME_MAP = {
+  "Title Slide": "标题幻灯片",
+  "Title and Content": "标题和内容",
+  "Section Header": "节标题",
+  "Two Content": "两栏内容",
+  "Comparison": "比较",
+  "Title Only": "仅标题",
+  "Blank": "空白",
+  "Content with Caption": "内容与题注",
+  "Picture with Caption": "图片与题注",
+  "Title and Vertical Text": "标题和竖排文本",
+  "Vertical Title and Text": "竖排标题和文本",
+  "Quote with Caption": "引言与题注",
+  "Name Card": "名片",
+  "3 Pictures Column": "3 张图片列",
+  "3 Pictures Grid": "3 张图片网格",
+  "Custom Layout": "自定义版式",
+};
+
+export function translateLayoutName(name) {
+  if (!name) return "自定义版式";
+  return LAYOUT_NAME_MAP[name] || name;
+}
+
 export function layoutGallery(
   pres,
   { label, selected = null, onChoose, describe = null, radio = false },
@@ -137,17 +161,20 @@ export function layoutGallery(
   });
   const sections = layoutSections(pres);
   for (const section of sections) {
-    if (sections.length > 1 || section.label)
+    const rawLabel = section.label || "";
+    const sectionLabel = rawLabel === "Office Theme" ? "Office 主题" : rawLabel;
+    if (sections.length > 1 || sectionLabel)
       root.append(
-        el("div", { class: "layout-gallery-heading" }, section.label),
+        el("div", { class: "layout-gallery-heading" }, sectionLabel),
       );
     const grid = el("div", {
       class: "layout-gallery-grid",
       role: "group",
-      "aria-label": section.label || label,
+      "aria-label": sectionLabel || label,
     });
     for (const layout of section.layouts) {
-      const name = layout.name || "Custom Layout";
+      const rawName = layout.name || "Custom Layout";
+      const name = translateLayoutName(rawName);
       const isSelected = layout.partName === selected;
       grid.append(
         el(

@@ -55,6 +55,7 @@ import {
   imageDescription,
 } from "./model.js";
 import { isInk } from "./draw/ink-model.js";
+import { translateLayoutName } from "./layouts/gallery.js";
 
 /** A request the deck refused, in words the model can act on. */
 export class ToolError extends Error {}
@@ -1781,7 +1782,7 @@ export function describeCall(name, args = {}, env) {
     const s = slides(pres)[number - 1];
     const title =
       s && (slideTitle(s, pres) || slideDescription(s, pres).split("\n")[0]);
-    return title ? `slide ${number} (“${clip(title, 40)}”)` : `slide ${number}`;
+    return title ? `幻灯片 ${number}（“${clip(title, 40)}”）` : `幻灯片 ${number}`;
   };
   const objectNames = (slideNo, ids) => {
     const s = slides(pres)[slideNo - 1];
@@ -1790,7 +1791,7 @@ export function describeCall(name, args = {}, env) {
       const shape = P.findShapeById(s, Number(id));
       return shape
         ? `“${clip(shapeLabel(shape, pres).replace(/\s+/g, " "), 40)}”`
-        : `id ${id}`;
+        : `ID ${id}`;
     });
   };
   const count = (ids) => (Array.isArray(ids) ? ids.length : 0);
@@ -1798,91 +1799,97 @@ export function describeCall(name, args = {}, env) {
     case "get_presentation":
       return { label: "检查演示文稿" };
     case "read_slide":
-      return { label: `Read slide ${n(args.slide)}` };
+      return { label: `读取幻灯片 ${n(args.slide)}` };
     case "find_text":
-      return { label: `Search for “${clip(args.query, 40)}”` };
+      return { label: `搜索“${clip(args.query, 40)}”` };
     case "select":
-      return { label: `Show slide ${n(args.slide)}` };
+      return { label: `显示幻灯片 ${n(args.slide)}` };
     case "add_slide":
       return {
-        label: `Add a ${args.layout || "content"} slide${args.title ? ` “${clip(String(args.title).replace(/\n/g, " "), 40)}”` : ""}`,
+        label: `添加一张${args.layout ? `“${translateLayoutName(args.layout)}”` : "内容"}版式幻灯片${args.title ? `“${clip(String(args.title).replace(/\n/g, " "), 40)}”` : ""}`,
       };
     case "duplicate_slide":
-      return { label: `Copy slide ${n(args.slide)}` };
+      return { label: `复制幻灯片 ${n(args.slide)}` };
     case "move_slide":
-      return { label: `Move slide ${n(args.slide)} to position ${args.to}` };
+      return { label: `将幻灯片 ${n(args.slide)} 移动到位置 ${args.to}` };
     case "delete_slides": {
       const list = Array.isArray(args.slides)
         ? [...new Set(args.slides.map(Number))].sort((a, b) => a - b)
         : [];
       return {
-        label: `Delete ${list.length === 1 ? `slide ${list[0]}` : `slides ${list.join(", ")}`}`,
+        label: `删除${list.length === 1 ? `幻灯片 ${list[0]}` : `幻灯片 ${list.join("、")}`}`,
         destructive: true,
-        detail: `This removes ${list.map(slideName).join(", ")} and everything on ${list.length === 1 ? "it" : "them"}.`,
+        detail: `这将删除 ${list.map(slideName).join("、")} 及其包含的所有内容。`,
       };
     }
-    case "set_slide_properties":
+    case "set_slide_properties": {
+      const props = [
+        args.hidden != null && (args.hidden ? "隐藏" : "显示"),
+        args.background && "背景",
+        args.transition && "切换效果",
+      ].filter(Boolean).join("、");
       return {
-        label: `Change ${args.all ? "every slide" : Array.isArray(args.slides) && args.slides.length > 1 ? `slides ${args.slides.join(", ")}` : `slide ${n(args.slides?.[0])}`}: ${[args.hidden != null && (args.hidden ? "hide" : "show"), args.background && "background", args.transition && "transition"].filter(Boolean).join(", ")}`,
+        label: `更改${args.all ? "所有幻灯片" : Array.isArray(args.slides) && args.slides.length > 1 ? `幻灯片 ${args.slides.join("、")}` : `幻灯片 ${n(args.slides?.[0])}`}: ${props}`,
       };
+    }
     case "set_notes":
-      return { label: `Write speaker notes for slide ${n(args.slide)}` };
+      return { label: `为幻灯片 ${n(args.slide)} 编写演讲者备注` };
     case "add_text":
       return {
-        label: `Add text “${clip(String(args.text ?? "").replace(/\n/g, " "), 40)}” to slide ${n(args.slide)}`,
+        label: `在幻灯片 ${n(args.slide)} 上添加文本“${clip(String(args.text ?? "").replace(/\n/g, " "), 40)}”`,
       };
     case "add_shape":
       return {
-        label: `Add a ${(PRESET_NAMES[args.shape] || "shape").toLowerCase()} to slide ${n(args.slide)}`,
+        label: `在幻灯片 ${n(args.slide)} 上添加${PRESET_NAMES[args.shape] || "形状"}`,
       };
     case "add_line":
       return {
-        label: `Add ${args.arrow ? "an arrow" : "a line"} to slide ${n(args.slide)}`,
+        label: `在幻灯片 ${n(args.slide)} 上添加${args.arrow ? "箭头" : "线条"}`,
       };
     case "add_table": {
       const rows = Array.isArray(args.rows) ? args.rows.length : 0;
       const cols = rows
         ? Math.max(...args.rows.map((r) => (Array.isArray(r) ? r.length : 0)))
         : 0;
-      return { label: `Add a ${rows}×${cols} table to slide ${n(args.slide)}` };
+      return { label: `在幻灯片 ${n(args.slide)} 上添加 ${rows}×${cols} 表格` };
     }
     case "set_text":
       return {
-        label: `Rewrite ${objectNames(n(args.slide), [args.id])[0] || "text"} on slide ${n(args.slide)}`,
+        label: `重写幻灯片 ${n(args.slide)} 上的${objectNames(n(args.slide), [args.id])[0] || "文本"}`,
       };
     case "set_table_cells":
-      return { label: `Edit table cells on slide ${n(args.slide)}` };
+      return { label: `编辑幻灯片 ${n(args.slide)} 上的表格单元格` };
     case "format_text":
       return {
-        label: `Format text of ${plural(count(args.ids), "object")} on slide ${n(args.slide)}`,
+        label: `设置幻灯片 ${n(args.slide)} 上 ${count(args.ids)} 个对象的文本格式`,
       };
     case "style_objects":
       return {
-        label: `Restyle ${plural(count(args.ids), "object")} on slide ${n(args.slide)}`,
+        label: `重新设置幻灯片 ${n(args.slide)} 上 ${count(args.ids)} 个对象的样式`,
       };
     case "set_bounds":
       return {
-        label: `Arrange ${plural(count(args.items), "object")} on slide ${n(args.slide)}`,
+        label: `排列幻灯片 ${n(args.slide)} 上 ${count(args.items)} 个对象`,
       };
     case "reorder_objects":
       return {
-        label: `Reorder ${plural(count(args.ids), "object")} on slide ${n(args.slide)}`,
+        label: `调整幻灯片 ${n(args.slide)} 上 ${count(args.ids)} 个对象的层叠顺序`,
       };
     case "delete_objects": {
       const names = objectNames(n(args.slide), args.ids);
       return {
-        label: `Delete ${plural(count(args.ids), "object")} from slide ${n(args.slide)}`,
+        label: `从幻灯片 ${n(args.slide)} 中删除 ${count(args.ids)} 个对象`,
         destructive: true,
-        detail: `This removes ${names.join(", ") || "them"} from slide ${n(args.slide)}.`,
+        detail: `这将从幻灯片 ${n(args.slide)} 中删除 ${names.join("、") || "这些对象"}。`,
       };
     }
     case "replace_text":
       return {
-        label: `Replace “${clip(args.find, 30)}” with “${clip(args.replace, 30)}”`,
+        label: `将“${clip(args.find, 30)}”替换为“${clip(args.replace, 30)}”`,
       };
     case "apply_theme":
       return {
-        label: `Apply the ${THEMES[args.theme]?.name || args.theme} palette`,
+        label: `应用 ${THEMES[args.theme]?.name || args.theme} 配色方案`,
       };
     default:
       return { label: name };

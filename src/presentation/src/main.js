@@ -355,10 +355,10 @@ function selectAllSlides() {
   renderSlideSelection();
 }
 function thumbLabel(s, i, chosen) {
-  const flags = [P.isSlideHidden(s) && "hidden", chosen && "selected"].filter(
+  const flags = [P.isSlideHidden(s) && "隐藏", chosen && "已选中"].filter(
     Boolean,
   );
-  return `Slide ${i + 1}${flags.length ? ` (${flags.join(", ")})` : ""}: ${slideTitle(s, doc?.pres) || slideDescription(s, doc?.pres).split("\n")[0] || "Blank"}`;
+  return `幻灯片 ${i + 1}${flags.length ? ` (${flags.join("，")})` : ""}: ${slideTitle(s, doc?.pres) || slideDescription(s, doc?.pres).split("\n")[0] || "空白"}`;
 }
 function renderSlideSelection() {
   const list = document.querySelector("#slide-list");
@@ -8045,7 +8045,6 @@ function orderItems(obj) {
 }
 function slideItems() {
   return [
-    { label: "新建幻灯片", icon: "Plus", items: layoutItems(slide()) },
     ...slideActions(slide()),
     { separator: true },
     { label: "切换", icon: "Film", items: transitionItems(slide()) },
@@ -8638,7 +8637,7 @@ function slideRow(part) {
       el("img", { alt: "", loading: "lazy", draggable: "false" }),
     ),
     iconButton(
-      "Options for slide",
+      "幻灯片选项",
       "MoreHorizontal",
       (e) => {
         const s = current();
@@ -8865,6 +8864,12 @@ function slideActions(target, { hideUnavailable = false } = {}) {
   const unavailable = (condition) =>
     condition ? (hideUnavailable ? null : { disabled: true }) : {};
   return [
+    !masterView.active && {
+      label: "新建幻灯片",
+      icon: "o:newSlide",
+      shortcut: IS_MAC ? "⌘+Shift+N" : "Ctrl+M",
+      onSelect: () => addSlideAfter(target),
+    },
     {
       label: `复制${noun}`,
       icon: "Copy",
@@ -15313,11 +15318,6 @@ function canvasContextMenu(e) {
       },
       { label: "图片…", icon: "o:picture", onSelect: () => insertImage() },
       { separator: true },
-      !masterView.active && {
-        label: "新建幻灯片",
-        icon: "o:newSlide",
-        items: layoutItems(slide()),
-      },
       ...slideActions(slide(), { hideUnavailable: true }),
       { separator: true },
       {
