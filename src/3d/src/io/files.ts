@@ -211,6 +211,48 @@ export function saveFile(name = app.filename, copy = false, ask = false) {
     );
     return;
   }
+  if (typeof window !== 'undefined' && (window as any).showSaveFilePicker) {
+    (async () => {
+      try {
+        const handle = await (window as any).showSaveFilePicker({
+          suggestedName: name,
+          types: [{
+            description: 'Blender 3D 项目 (*.blend)',
+            accept: { 'application/x-blender': ['.blend'] }
+          }]
+        });
+        const writable = await handle.createWritable();
+        await writable.write(bytes);
+        await writable.close();
+        if (!copy) {
+          app.filename = handle.name;
+          app.dirty = false;
+          fileEvents.keepOriginal = false;
+          fileEvents.saveTarget = {
+            name: handle.name,
+            write: async (b: Uint8Array) => {
+              const w = await handle.createWritable();
+              await w.write(b);
+              await w.close();
+            }
+          };
+        }
+        for (const f of fileEvents.saved) f(handle.name, bytes);
+        app.report('INFO', copy ? `Saved a copy as "${handle.name}"` : `Saved "${handle.name}"`);
+      } catch (err: any) {
+        if (err?.name === 'AbortError') return;
+        download(bytes, name);
+        if (!copy) {
+          app.filename = name;
+          app.dirty = false;
+          fileEvents.keepOriginal = false;
+        }
+        for (const f of fileEvents.saved) f(name, bytes);
+        app.report('INFO', copy ? `Saved a copy as "${name}"` : `Saved "${name}"`);
+      }
+    })();
+    return;
+  }
   if (saveToPuter(bytes, name, copy)) return;
   download(bytes, name);
   if (!copy) {

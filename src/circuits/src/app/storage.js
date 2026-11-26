@@ -211,7 +211,24 @@ export async function pickCloudSave(text, name) {
 }
 
 /** Reads a file from the user's device. */
-export function pickDeviceFile(accept = `${EXT},.json`) {
+export async function pickDeviceFile(accept = `${EXT},.json`) {
+  if (typeof window !== 'undefined' && 'showOpenFilePicker' in window) {
+    try {
+      const [handle] = await window.showOpenFilePicker({
+        types: [{
+          description: 'Circuits 工程文件 (*.circuits, *.json)',
+          accept: { 'application/json': ['.circuits', '.json'] }
+        }]
+      });
+      if (handle) {
+        const file = await handle.getFile();
+        const text = await file.text();
+        return { text, name: file.name.replace(/\.(circuits|json)$/i, ''), file, handle };
+      }
+    } catch (err) {
+      if (err?.name === 'AbortError') return null;
+    }
+  }
   return new Promise((resolve) => {
     const input = document.createElement('input');
     input.type = 'file';
@@ -225,9 +242,27 @@ export function pickDeviceFile(accept = `${EXT},.json`) {
   });
 }
 
-/** Saves bytes or text to the user's device through a download. */
-export function download(data, filename, type = 'application/octet-stream') {
+/** Saves bytes or text to the user's device through a native file picker or download fallback. */
+export async function download(data, filename, type = 'application/octet-stream') {
   const blob = data instanceof Blob ? data : new Blob([data], { type });
+  if (typeof window !== 'undefined' && 'showSaveFilePicker' in window) {
+    try {
+      const ext = filename.includes('.') ? filename.slice(filename.lastIndexOf('.')) : '';
+      const handle = await window.showSaveFilePicker({
+        suggestedName: filename,
+        types: [{
+          description: '文件 (*' + ext + ')',
+          accept: { [type]: [ext || '.*'] }
+        }]
+      });
+      const writable = await handle.createWritable();
+      await writable.write(blob);
+      await writable.close();
+      return handle;
+    } catch (err) {
+      if (err?.name === 'AbortError') return null;
+    }
+  }
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;

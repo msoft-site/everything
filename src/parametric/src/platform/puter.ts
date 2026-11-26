@@ -99,8 +99,8 @@ export function isSignedIn(): boolean {
   }
 }
 
-/** Cloud storage is usable without triggering a sign-in prompt. */
-export const cloudAvailable = () => !!sdk?.fs && (env() === 'app' || isSignedIn());
+/** Cloud storage is disabled in favor of local persistence and native file system. */
+export const cloudAvailable = () => false;
 
 let pictureCache: { value: string | null; at: number } | null = null;
 

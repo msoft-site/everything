@@ -282,57 +282,7 @@ async function writeDevice(app, name, handle) {
 export async function saveAs(app) {
   if (!app.doc) return false;
   const name0 = app.file?.name || app.doc.project.name || 'Untitled';
-  if (usePuterPickers()) {
-    try {
-      const doc = app.doc;
-      const rev = doc.revision;
-      const snapshot = new Map(doc.items);
-      const blob = await encodeProject(doc);
-      const r = await puterSavePicker(blob, `${safeFileName(name0)}${NATIVE_EXT}`);
-      if (!r) return false;
-      doc.markSaved(rev);
-      if (doc !== app.doc) return true;
-      app.file = { ...app.file, name: baseName(r.name), path: r.path, source: 'cloud', handle: null };
-      app.sync.attach(snapshot);
-      addRecent({ name: app.file.name, path: r.path, source: 'cloud' });
-      app.updateTitle();
-      scheduleRecovery(app);
-      toast(`Saved ${app.file.name}.`, { kind: 'success' });
-      return true;
-    } catch (err) {
-      toast(`Could not save: ${err.message || err}`, { kind: 'error' });
-      return false;
-    }
-  }
-  const signed = puterAvailable() && (await isSignedIn().catch(() => false));
-  const choice = await modal({
-    title: 'Save Project',
-    size: 'sm',
-    body: h(
-      'div.open-sources',
-      h('button.btn.big', { type: 'button', onClick: () => document.querySelector('dialog[open]')._close('cloud') }, icon('cloud', 22), h('span', h('strong', 'local storage'), h('small', signed ? 'Keep it in your Puter storage, open it anywhere and share it.' : 'Sign in to keep it in your Puter storage and share it.'))),
-      h('button.btn.big', { type: 'button', onClick: () => document.querySelector('dialog[open]')._close('device') }, icon('device', 22), h('span', h('strong', 'This device'), h('small', 'Save a .bdp file on this computer or phone.'))),
-    ),
-    actions: [{ label: 'Cancel', value: null }],
-  });
-  if (choice === 'device') return writeDevice(app, name0, null);
-  if (choice !== 'cloud') return false;
-  if (!signed && !(await app.signIn())) return false;
-  const name = await promptDialog('Save to Local', 'Project name', name0, { okLabel: 'Save', validate: (v) => (!v ? 'Enter a name.' : null) });
-  if (!name) return false;
-  const path = `${CLOUD_DIR}/${safeFileName(name)}${NATIVE_EXT}`;
-  try {
-    const blob = await encodeProject(app.doc);
-    await cloudWrite(path, blob, false);
-  } catch (err) {
-    if (isExistsError(err)) {
-      if (!(await confirmDialog('Replace project?', `"${name}" already exists in Puter. Replace it?`, { confirm: 'Replace', danger: true }))) return false;
-    } else {
-      toast(`Could not save: ${err.message || err}`, { kind: 'error' });
-      return false;
-    }
-  }
-  return writeCloud(app, path, safeFileName(name));
+  return writeDevice(app, name0, null);
 }
 
 // Import ---------------------------------------------------------------------------------------

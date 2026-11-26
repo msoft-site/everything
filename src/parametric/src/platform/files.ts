@@ -341,7 +341,19 @@ export async function pickCloudSave(text: string, name: string): Promise<Locatio
 }
 
 /** Reads a file from the user's device. */
-export function pickDeviceFile(accept: string): Promise<File | null> {
+export async function pickDeviceFile(accept: string): Promise<File | null> {
+  if (typeof window !== 'undefined' && 'showOpenFilePicker' in window) {
+    try {
+      const [handle] = await (window as any).showOpenFilePicker();
+      if (handle) {
+        const file = await handle.getFile();
+        (file as any)._handle = handle;
+        return file;
+      }
+    } catch (err: any) {
+      if (err?.name === 'AbortError') return null;
+    }
+  }
   return new Promise((resolve) => {
     const input = document.createElement('input');
     input.type = 'file';
@@ -352,9 +364,26 @@ export function pickDeviceFile(accept: string): Promise<File | null> {
   });
 }
 
-/** Saves bytes or text to the user's device through a download. */
-export function download(data: BlobPart | Blob, filename: string, type = 'application/octet-stream') {
+/** Saves bytes or text to the user's device through a native file picker or download. */
+export async function download(data: BlobPart | Blob, filename: string, type = 'application/octet-stream') {
   const blob = data instanceof Blob ? data : new Blob([data], { type });
+  if (typeof window !== 'undefined' && 'showSaveFilePicker' in window) {
+    try {
+      const handle = await (window as any).showSaveFilePicker({
+        suggestedName: filename,
+        types: [{
+          description: 'Parametric 零件 (*.parametric)',
+          accept: { 'application/json': ['.parametric', '.json'] }
+        }]
+      });
+      const writable = await handle.createWritable();
+      await writable.write(blob);
+      await writable.close();
+      return;
+    } catch (err: any) {
+      if (err?.name === 'AbortError') return;
+    }
+  }
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;

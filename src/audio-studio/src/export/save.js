@@ -208,33 +208,59 @@ function markWritten(app, doc, { path, identity, state, options, size, chunks, r
  */
 export async function saveDocument(app, doc, { saveAs = false, copy = false } = {}) {
   if (!doc) return false;
-  const path = doc.source?.type === 'puter' ? doc.source.path : null;
-  const ext = path ? extensionOf(path) : '';
-  const inPlace = path && ext !== 'aac' && !VIDEO_EXTENSIONS.includes(ext);
-  const format = inPlace ? formatForName(path) : null;
-  if (!saveAs && !copy && path && format && getFormat(format)) {
-    if (!puter.isSignedIn() && !(await puter.signIn().catch(() => false))) return false;
-    // The Files panel shows "Saving" while the write is in progress.
-    doc.saving = true;
-    app.emit?.('documents');
-    return withUploadOrder(app, path, async (write, paths) => {
+
+  // 1. If previously saved or associated with a local file handle, overwrite in place:
+  if (!saveAs && !copy && doc._fileHandle) {
+    try {
+      const format = formatForName(doc.name) || 'wav';
       const options = optionsForSave(doc, format);
-      const state = doc.state;
-      const chunks = wavChunksOf(doc);
-      const name = doc.name;
-      const blob = await encodeWithProgress(doc, options, {}, `Saving ${name}`);
+      const blob = await encodeWithProgress(doc, options, {}, `正在保存 ${doc.name}`);
       if (!blob) return false;
-      const item = await write(`Saving ${name}`, blob);
-      // Save As may have moved this document while the old write was pending.
-      const identity = await writtenDestination(paths, item);
-      markWritten(app, doc, { path, identity, state, options, size: blob.size, chunks });
-      app.setStatus(`Saved ${name}`);
+      const writable = await doc._fileHandle.createWritable();
+      await writable.write(blob);
+      await writable.close();
+      doc.markSaved?.(doc.state);
+      app.setStatus?.(`已保存至本地文件 ${doc.name}`);
       return true;
-    }).finally(() => {
-      doc.saving = false;
-      app.emit?.('documents');
-    });
+    } catch (e) {
+      console.warn('In-place save failed, falling back to picker:', e);
+    }
   }
+
+  // 2. First save or Save As or Copy: invoke native file picker if available
+  const ext = extensionOf(doc.name) || 'wav';
+  const base = doc.name.replace(/\.[^.]+$/, '');
+  const suggestedName = copy ? `${base} 副本.${ext}` : doc.name;
+
+  if (typeof window !== 'undefined' && window.showSaveFilePicker) {
+    try {
+      const format = formatForName(suggestedName) || 'wav';
+      const options = optionsForSave(doc, format);
+      const handle = await window.showSaveFilePicker({
+        suggestedName,
+        types: [{
+          description: '音频文件 (*.' + ext + ')',
+          accept: { [`audio/${ext === 'mp3' ? 'mpeg' : (ext === 'm4a' ? 'mp4' : ext)}`]: [`.${ext}`] }
+        }]
+      });
+      const blob = await encodeWithProgress(doc, options, {}, `正在保存 ${handle.name}`);
+      if (!blob) return false;
+      const writable = await handle.createWritable();
+      await writable.write(blob);
+      await writable.close();
+      if (!copy) {
+        doc._fileHandle = handle;
+        if (doc.name !== handle.name) doc.rename?.(handle.name);
+        doc.markSaved?.(doc.state);
+      }
+      app.setStatus?.(`已保存至本地文件 ${handle.name}`);
+      return true;
+    } catch (err) {
+      if (err.name === 'AbortError') return false;
+      console.warn('showSaveFilePicker failed, falling back:', err);
+    }
+  }
+
   return saveFlow(app, doc, { mode: copy ? 'copy' : 'saveAs' });
 }
 

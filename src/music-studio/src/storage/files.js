@@ -215,6 +215,31 @@ export class ProjectFiles {
 
   /** File > Open from this device: a .msproj (or a .mid, imported into the current project). */
   async openDeviceFile() {
+    if (typeof window !== 'undefined' && window.showOpenFilePicker) {
+      try {
+        const [handle] = await window.showOpenFilePicker({
+          types: [{
+            description: 'Music Studio 项目与 MIDI 文件',
+            accept: {
+              'application/json': ['.msproj'],
+              'audio/midi': ['.mid', '.midi']
+            }
+          }]
+        });
+        if (handle) {
+          const file = await handle.getFile();
+          const r = await this.openFile(file);
+          if (r) {
+            this.app._fileHandle = handle;
+            this.setFile({ local: handle.name, name: stripExtension(handle.name) });
+          }
+          return r;
+        }
+        return false;
+      } catch (err) {
+        if (err?.name === 'AbortError') return false;
+      }
+    }
     const [file] = await chooseFiles({ accept: PROJECT_ACCEPT });
     if (file) return this.openFile(file);
     return false;
@@ -240,20 +265,61 @@ export class ProjectFiles {
   async save({ auto = false } = {}) {
     if (this.app.saving) return false;
     const file = this.app.file;
+    if (this.app._fileHandle) {
+      try {
+        const snapshot = this.snapshot();
+        const view = { ...this.store.view };
+        const { blob } = await this.lib.exportFile(snapshot, view);
+        const writable = await this.app._fileHandle.createWritable();
+        await writable.write(blob);
+        await writable.close();
+        if (this.store.project === snapshot) this.store.markSaved();
+        this.app.notify(`已保存至本地文件 ${this.app._fileHandle.name}`);
+        return true;
+      } catch (e) {
+        console.warn('In-place save failed, falling back to saveAs:', e);
+      }
+    }
     if (this.signedIn()) {
       if (file?.path) return this.saveCloudTo(file.path, { auto });
       if (auto) return false;
       return this.saveAs();
     }
     if (auto) return false;
-    // A first save of a project nobody has named yet asks for a name.
-    if (!file?.local && this.store.project.name === 'Untitled') return this.saveAs();
-    return this.saveLocalProject(file?.local, file?.name || this.store.project.name);
+    return this.saveAs();
   }
 
-  /** File > Save as: asks for a name and saves a new copy. */
+  /** File > Save as: asks for a file handle or name and saves a new copy. */
   async saveAs() {
     const loads = this.loads;
+    const snapshot = this.snapshot();
+    const view = { ...this.store.view };
+    const defaultName = this.app.file?.name || snapshot.name || 'Untitled';
+    if (typeof window !== 'undefined' && window.showSaveFilePicker) {
+      try {
+        const handle = await window.showSaveFilePicker({
+          suggestedName: `${defaultName}${FILE_EXT}`,
+          types: [{
+            description: 'Music Studio 项目 (*.msproj)',
+            accept: { 'application/json': ['.msproj'] }
+          }]
+        });
+        const { blob } = await this.lib.exportFile(snapshot, view);
+        const writable = await handle.createWritable();
+        await writable.write(blob);
+        await writable.close();
+        this.app._fileHandle = handle;
+        const clean = stripExtension(handle.name);
+        this.renameProject(clean);
+        this.setFile({ local: handle.name, name: clean });
+        if (this.store.project === snapshot) this.store.markSaved();
+        this.app.notify(`已保存至本地文件 ${handle.name}`);
+        return true;
+      } catch (err) {
+        if (err?.name === 'AbortError') return false;
+        console.warn('showSaveFilePicker failed, falling back:', err);
+      }
+    }
     const cloud = this.signedIn();
     const name = await promptDialog({
       title: 'Save project as',

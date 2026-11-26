@@ -71,27 +71,22 @@ export async function cloudDelete(path) {
 
 /** Inside the Puter desktop, use its native file pickers. */
 export function usePuterPickers() {
-  return puterEnv() === 'app' && typeof puter?.ui?.showOpenFilePicker === 'function';
+  return false;
 }
 
 export async function puterOpenPicker() {
-  const item = await puter.ui.showOpenFilePicker({ accept: ['.bdp'] });
-  const f = Array.isArray(item) ? item[0] : item;
-  if (!f) return null;
-  const blob = await f.read();
-  return { name: f.name, path: f.path, buffer: await blob.arrayBuffer() };
+  return null;
 }
 
 export async function puterSavePicker(blob, suggestedName) {
-  const item = await puter.ui.showSaveFilePicker(blob, suggestedName);
-  return item ? { name: item.name, path: item.path } : null;
+  return null;
 }
 
 // Device files -----------------------------------------------------------------
 
 const EXT_LABEL = { '.bdp': 'Building project', '.ifc': 'IFC model', '.obj': 'OBJ mesh', '.dxf': 'DXF drawing', '.svg': 'SVG image', '.pdf': 'PDF document', '.png': 'PNG image', '.csv': 'CSV table', '.glb': 'glTF binary' };
 
-const FS_ACCESS = typeof window !== 'undefined' && 'showOpenFilePicker' in window && window.self === window.top;
+const FS_ACCESS = typeof window !== 'undefined' && 'showOpenFilePicker' in window;
 
 export async function deviceOpen() {
   if (FS_ACCESS) {

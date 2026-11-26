@@ -9,7 +9,7 @@ import { icon } from './icons.js';
 import { toolSchemas, runTool } from '../assistant/tools.js';
 import { puterAvailable, isSignedIn, whenPuter } from '../platform.js';
 
-const SUGGESTIONS = ['What can you do for me?', 'Check the model for problems', 'Make a door schedule sorted by level', 'List the rooms on Level 1 with their areas'];
+const SUGGESTIONS = ['你能为我做什么？', '检查模型中的问题', '按标高创建门明细表', '列出标高 1 的所有房间及其面积'];
 const MAX_ROUNDS = 8;
 
 const SYSTEM = `You are the assistant inside Building Design, a browser BIM app. The user models buildings with walls, doors, windows, floors, roofs, rooms, levels, views, schedules and sheets.
@@ -54,7 +54,7 @@ export class Assistant {
   render() {
     clear(this.root);
     this.log = h('div.as-log', { role: 'log', 'aria-live': 'polite' });
-    this.input = h('textarea.input.as-input', { rows: 2, placeholder: 'Ask about the project, or ask for a change', 'aria-label': 'Message to the assistant' });
+    this.input = h('textarea.input.as-input', { rows: 2, placeholder: '询问关于项目的信息，或提出修改需求', 'aria-label': '给助手的消息' });
     this.input.addEventListener('keydown', (e) => {
       e.stopPropagation();
       if (e.key === 'Enter' && !e.shiftKey) {
@@ -62,19 +62,19 @@ export class Assistant {
         this.send();
       }
     });
-    const sendBtn = h('button.icon-btn.as-send', { type: 'button', 'aria-label': 'Send', 'data-tip': 'Send (Enter)', onClick: () => this.send() }, icon('send', 16));
+    const sendBtn = h('button.icon-btn.as-send', { type: 'button', 'aria-label': '发送', 'data-tip': '发送 (Enter)', onClick: () => this.send() }, icon('send', 16));
     this.root.append(
-      h('div.pane-head', h('h2.pane-title', { id: 'assist-title' }, icon('sparkles', 15), ' Assistant'), h('span.grow'), h('button.icon-btn.sm', { type: 'button', 'aria-label': 'New conversation', 'data-tip': 'New conversation', onClick: () => this.reset() }, icon('plus', 15)), h('button.icon-btn.sm', { type: 'button', 'aria-label': 'Hide the assistant', 'data-tip': 'Hide', onClick: () => this.app.toggleAssistant(false) }, icon('x', 15))),
+      h('div.pane-head', h('h2.pane-title', { id: 'assist-title' }, icon('sparkles', 15), ' AI 助手'), h('span.grow'), h('button.icon-btn.sm', { type: 'button', 'aria-label': '新会话', 'data-tip': '新会话', onClick: () => this.reset() }, icon('plus', 15)), h('button.icon-btn.sm', { type: 'button', 'aria-label': '隐藏助手', 'data-tip': '隐藏', onClick: () => this.app.toggleAssistant(false) }, icon('x', 15))),
       this.log,
       h('div.as-compose', this.input, sendBtn),
-      h('p.as-note', 'Answers come from an AI model and can be wrong. Its changes can be undone.'),
+      h('p.as-note', '回答由 AI 模型生成，可能存在偏差。所有修改均可撤销。'),
     );
     this.welcome();
   }
 
   welcome() {
     this.log.append(
-      h('div.as-msg.as-bot', 'I can answer questions about this project and make changes: schedules, levels, walls, parameters, finding and selecting elements, and checking the model.'),
+      h('div.as-msg.as-bot', '我可以解答关于此项目的问题并执行修改：明细表、标高、墙体、参数、查找并选择图元以及检查模型。'),
       h('div.as-suggest', SUGGESTIONS.map((s) => h('button.as-chip', { type: 'button', onClick: () => this.send(s) }, icon('corner-down-right', 13), s))),
     );
   }

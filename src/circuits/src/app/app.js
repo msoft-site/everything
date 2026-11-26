@@ -1161,7 +1161,7 @@ export class App extends Emitter {
       // The close cross is a pointer shortcut; keyboard users press Delete or Alt+W.
       const tab = h('div.doc-tab', { role: 'tab', 'aria-selected': String(sel), tabindex: sel ? 0 : -1, title: d.kind === 'lib' ? `Component: ${d.name}` : d.name, 'aria-keyshortcuts': 'Delete' },
         icon(d.kind === 'lib' ? 'package' : d.kind === 'sch' ? 'symbol' : 'board', 14), h('span.name', d.name), d.dirty ? h('span.dot', { title: 'Edited' }, h('span.sr-only', ', edited')) : null,
-        h('span.close', { 'aria-hidden': 'true', title: `Close ${d.name}`, onClick: (e) => { e.stopPropagation(); this.closeTab(id); } }, icon('x', 12)));
+        h('span.close', { 'aria-hidden': 'true', title: `关闭 ${d.name}`, onClick: (e) => { e.stopPropagation(); this.closeTab(id); } }, icon('x', 12)));
       tab.addEventListener('click', () => this.openDoc(id));
       tab.addEventListener('auxclick', (e) => { if (e.button === 1) this.closeTab(id); });
       tab.addEventListener('keydown', (e) => {
@@ -1274,7 +1274,9 @@ export class App extends Emitter {
     const u = ed.kind === 'sch' || ed.units === 'mil' ? 'mil' : this.settings.get('units');
     const o = ed.kind === 'pcb' ? ed.doc.board.origin || { x: 0, y: 0 } : { x: 0, y: 0 };
     const c = ed.cursor;
-    this.coordsCell.textContent = `X: ${formatLength(c.x - o.x, u)}  Y: ${formatLength(c.y - o.y, u)}`;
+    const xStr = formatLength(c.x - o.x, u).replace('mil', ' 密尔');
+    const yStr = formatLength(c.y - o.y, u).replace('mil', ' 密尔');
+    this.coordsCell.textContent = `X: ${xStr}  Y: ${yStr}`;
   }
 
   updateStatus() {
@@ -1287,7 +1289,8 @@ export class App extends Emitter {
     if (ed) {
       this.updateCursor();
       const u = ed.kind === 'sch' || ed.units === 'mil' ? 'mil' : this.settings.get('units');
-      s.append(cell(`Grid: ${formatLength(ed.grid, u)}`, { onClick: () => this.commands.run('view.setGrid'), 'data-tip': 'Change the snap grid', 'data-kbd': 'G' }));
+      const gridStr = formatLength(ed.grid, u).replace('mil', ' 密尔');
+      s.append(cell(`网格: ${gridStr}`, { onClick: () => this.commands.run('view.setGrid'), 'data-tip': 'Change the snap grid', 'data-kbd': 'G' }));
       if (ed.kind === 'pcb') {
         s.append(cell([h('span.swatch', { style: { background: ed.layerColor(ed.activeLayer) } }), LAYERS[ed.activeLayer].name], { onClick: () => this.showPanel('layers'), 'data-tip': 'Current layer' }));
         const a = ed._analysis;

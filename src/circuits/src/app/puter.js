@@ -46,8 +46,8 @@ export function isSignedIn() {
   try { return !!sdk?.auth?.isSignedIn?.(); } catch { return false; }
 }
 
-/** Cloud storage is available when running as a Puter app or signed in. */
-export const cloudAvailable = () => !!sdk?.fs && (env() === 'app' || isSignedIn());
+/** Cloud storage is disabled in favor of native local storage and file system. */
+export const cloudAvailable = () => false;
 
 const pictureCache = new Map();
 

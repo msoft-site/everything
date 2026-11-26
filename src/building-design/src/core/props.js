@@ -402,7 +402,7 @@ const INSTANCE = {
     ro('points', 'Points', 'Dimensions', (el) => String(el.points?.length ?? 0), 'text'),
     ro('area', 'Projected Area', 'Dimensions', (el) => polyArea(topoBoundary(el)), 'area'),
     P('materialId', 'Material', 'Materials and Finishes', 'material'),
-    P('editPoints', 'Points', 'Other', 'button', { action: 'topo-points', text: 'Edit...' }),
+    P('editPoints', 'Points', 'Other', 'button', { action: 'topo-points', text: '编辑...' }),
   ],
   propertyLine: [ro('area', 'Area', 'Dimensions', (el) => polyArea(el.boundary || []), 'area'), ro('perimeter', 'Perimeter', 'Dimensions', (el) => perimeter(el.boundary || [])), comments],
   mass: [
@@ -484,7 +484,7 @@ const templated = (el) => !!el.templateId;
 const viewName = P('name', 'View Name', 'Identity Data', 'text');
 const viewScale = P('scale', 'View Scale', 'Graphics', 'select', { options: (c) => scaleOptions(c.doc.units), get: (el) => el.scale, set: (el, v) => ({ scale: +v }), ro: templated });
 const viewDetail = P('detail', 'Detail Level', 'Graphics', 'select', { options: () => DETAIL, ro: templated });
-const vis = P('vis', 'Visibility/Graphics', 'Graphics', 'button', { action: 'visibility', text: 'Edit...' });
+const vis = P('vis', 'Visibility/Graphics', 'Graphics', 'button', { action: 'visibility', text: '编辑...' });
 const shadowsP = P('shadows', 'Cast Shadows', 'Graphics', 'bool', { get: (el) => !!el.shadows });
 const viewStyle = P('style', 'Visual Style', 'Graphics', 'select', { options: () => STYLES, ro: templated });
 const viewTemplate = P('templateId', 'View Template', 'Identity Data', 'select', {
@@ -545,7 +545,7 @@ const VIEW = {
   legend: [viewScale, viewDetail, vis, viewName],
   elevation: [viewScale, viewStyle, viewDetail, vis, shadowsP, len('depth', 'Far Clip Offset', 'Extents'), viewTemplate, viewName],
   section: [viewScale, viewStyle, viewDetail, vis, shadowsP, len('depth', 'Far Clip Offset', 'Extents'), viewTemplate, viewName],
-  schedule: [viewName, ro('category', 'Category', 'Other', (el) => el.category, 'text'), P('fields', 'Fields', 'Other', 'button', { action: 'schedule-fields', text: 'Edit...' })],
+  schedule: [viewName, ro('category', 'Category', 'Other', (el) => el.category, 'text'), P('fields', 'Fields', 'Other', 'button', { action: 'schedule-fields', text: '编辑...' })],
   sheet: [
     P('number', 'Sheet Number', 'Identity Data', 'text'),
     P('name', 'Sheet Name', 'Identity Data', 'text'),
@@ -578,14 +578,14 @@ export const TYPE_PARAMS = {
         { value: 'foundation', label: 'Foundation' },
       ],
     }),
-    P('layers', 'Structure', 'Construction', 'button', { action: 'edit-layers', text: 'Edit...' }),
+    P('layers', 'Structure', 'Construction', 'button', { action: 'edit-layers', text: '编辑...' }),
     ro('thick', 'Thickness', 'Construction', (t) => typeThickness(t)),
     P('mark', 'Type Mark', 'Identity Data', 'text'),
     P('description', 'Description', 'Identity Data', 'text'),
   ],
-  floorType: [P('layers', 'Structure', 'Construction', 'button', { action: 'edit-layers', text: 'Edit...' }), ro('thick', 'Thickness', 'Construction', (t) => typeThickness(t)), P('mark', 'Type Mark', 'Identity Data', 'text')],
-  roofType: [P('layers', 'Structure', 'Construction', 'button', { action: 'edit-layers', text: 'Edit...' }), ro('thick', 'Thickness', 'Construction', (t) => typeThickness(t)), P('mark', 'Type Mark', 'Identity Data', 'text')],
-  ceilingType: [P('layers', 'Structure', 'Construction', 'button', { action: 'edit-layers', text: 'Edit...' }), len('pattern', 'Grid Spacing (0 for none)', 'Graphics'), P('mark', 'Type Mark', 'Identity Data', 'text')],
+  floorType: [P('layers', 'Structure', 'Construction', 'button', { action: 'edit-layers', text: '编辑...' }), ro('thick', 'Thickness', 'Construction', (t) => typeThickness(t)), P('mark', 'Type Mark', 'Identity Data', 'text')],
+  roofType: [P('layers', 'Structure', 'Construction', 'button', { action: 'edit-layers', text: '编辑...' }), ro('thick', 'Thickness', 'Construction', (t) => typeThickness(t)), P('mark', 'Type Mark', 'Identity Data', 'text')],
+  ceilingType: [P('layers', 'Structure', 'Construction', 'button', { action: 'edit-layers', text: '编辑...' }), len('pattern', 'Grid Spacing (0 for none)', 'Graphics'), P('mark', 'Type Mark', 'Identity Data', 'text')],
   doorType: [
     len('width', 'Width', 'Dimensions'),
     len('height', 'Height', 'Dimensions'),
@@ -694,7 +694,7 @@ export function worksetParams(doc, el) {
   if (WS_VIEWS.has(el.kind))
     return [
       ...out,
-      P('worksets', 'Worksets', 'Graphics', 'button', { action: 'viewWorksets', text: 'Edit...' }),
+      P('worksets', 'Worksets', 'Graphics', 'button', { action: 'viewWorksets', text: '编辑...' }),
       P('wsDisplay', 'Worksharing Display', 'Graphics', 'select', {
         get: (v) => v.wsDisplay || 'off',
         options: () => [
@@ -716,7 +716,7 @@ function scopeParams(doc, el) {
 /** Design option of an element, and the options a view shows, once there are option sets. */
 function optionParams(doc, el) {
   if (!doc.count('optionSet')) return [];
-  if (WS_VIEWS.has(el.kind)) return [P('designOptions', 'Design Options', 'Graphics', 'button', { action: 'viewOptions', text: 'Edit...' })];
+  if (WS_VIEWS.has(el.kind)) return [P('designOptions', 'Design Options', 'Graphics', 'button', { action: 'viewOptions', text: '编辑...' })];
   if (!optionable(doc, el)) return [];
   return [ro('optionId', 'Design Option', 'Identity Data', (e, c) => optionLabel(c.doc, e.optionId), 'text')];
 }

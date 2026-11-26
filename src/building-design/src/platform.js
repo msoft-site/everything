@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Everything that touches Puter directly for identity: environment, sign-in
  * state, user and profile picture. The app works without signing in; cloud
  * files and settings sync need an account.
@@ -6,7 +6,7 @@
 const PIC_KEY = 'bd.profilePicture';
 
 export function puterAvailable() {
-  return typeof globalThis.puter !== 'undefined';
+  return false;
 }
 
 let ready = null;

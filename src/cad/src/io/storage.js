@@ -78,9 +78,8 @@ export async function cloudDelete(path) {
   await puter.fs.delete(path);
 }
 
-/** Inside the Puter desktop, use its native file pickers. */
 export function usePuterPickers() {
-  return puterEnv() === 'app' && typeof puter?.ui?.showOpenFilePicker === 'function';
+  return false;
 }
 
 export async function puterOpenPicker() {

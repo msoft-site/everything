@@ -27,7 +27,7 @@ const DEFAULT_HIDDEN = new Set(['topPaste', 'bottomPaste', 'topSolder', 'bottomS
 
 export class PcbEditor extends CanvasView {
   constructor(app, project, doc) {
-    super(app, { label: `Board ${doc.name}` });
+    super(app, { label: `印制板 ${doc.name}` });
     this.kind = 'pcb';
     this.project = project;
     this.doc = doc;

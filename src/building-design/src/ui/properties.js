@@ -315,7 +315,7 @@ export class PropertiesPanel {
         break;
       }
       case 'button':
-        cell.append(h('button.btn.sm', { id, type: 'button', onClick: () => app.run(p.action, { items }) }, p.text || 'Edit...'));
+        cell.append(h('button.btn.sm', { id, type: 'button', onClick: () => app.run(p.action, { items }) }, p.text || '编辑...'));
         break;
       default:
         cell.append(h('span.ro-text', String(value ?? '')));

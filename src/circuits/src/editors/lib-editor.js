@@ -77,7 +77,7 @@ export class LibDoc extends Emitter {
 
 export class LibEditor extends CanvasView {
   constructor(app, project, libDoc) {
-    super(app, { label: `Component ${libDoc.name}` });
+    super(app, { label: `元器件 ${libDoc.name}` });
     this.kind = 'lib';
     this.project = project;
     this.doc = libDoc;

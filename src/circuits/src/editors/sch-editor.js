@@ -22,7 +22,7 @@ import { installVertexEditing, dropFoldBacks } from './vertex.js';
 
 export class SchEditor extends CanvasView {
   constructor(app, project, doc) {
-    super(app, { label: `Schematic ${doc.name}` });
+    super(app, { label: `原理图 ${doc.name}` });
     this.kind = 'sch';
     this.project = project;
     this.doc = doc;

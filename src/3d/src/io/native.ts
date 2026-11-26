@@ -378,7 +378,19 @@ export function download(bytes: Uint8Array | string, name: string, mime = 'appli
   setTimeout(() => URL.revokeObjectURL(url), 2000);
 }
 
-export function pickFile(accept: string): Promise<File | null> {
+export async function pickFile(accept: string): Promise<File | null> {
+  if (typeof window !== 'undefined' && (window as any).showOpenFilePicker) {
+    try {
+      const [handle] = await (window as any).showOpenFilePicker();
+      if (handle) {
+        const file = await handle.getFile();
+        (file as any)._handle = handle;
+        return file;
+      }
+    } catch (err: any) {
+      if (err?.name === 'AbortError') return null;
+    }
+  }
   return new Promise((res) => {
     const input = document.createElement('input');
     input.type = 'file';
