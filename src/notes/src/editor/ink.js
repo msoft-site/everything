@@ -8,27 +8,27 @@ import { getStroke } from 'perfect-freehand';
  */
 
 export const PENS = [
-  { id: 'pen-black', label: 'Pen: Black, 0.5 mm', color: '#1f1f1f', width: 2.5, highlighter: false },
-  { id: 'pen-blue', label: 'Pen: Blue, 0.5 mm', color: '#1c5fd4', width: 2.5, highlighter: false },
-  { id: 'pen-red', label: 'Pen: Red, 0.5 mm', color: '#c42b1c', width: 2.5, highlighter: false },
-  { id: 'pen-green', label: 'Pen: Green, 0.5 mm', color: '#2b8a3e', width: 2.5, highlighter: false },
-  { id: 'pen-purple', label: 'Pen: Purple, 1 mm', color: '#7e2fa8', width: 4, highlighter: false },
-  { id: 'hl-yellow', label: 'Highlighter: Yellow, 6 mm', color: '#ffe500', width: 16, highlighter: true },
-  { id: 'hl-green', label: 'Highlighter: Green, 6 mm', color: '#5dff5d', width: 16, highlighter: true },
-  { id: 'hl-pink', label: 'Highlighter: Pink, 6 mm', color: '#ff7ce0', width: 16, highlighter: true },
+  { id: 'pen-black', label: '圆珠笔: 黑色, 0.5 毫米', color: '#1f1f1f', width: 2.5, highlighter: false },
+  { id: 'pen-blue', label: '圆珠笔: 蓝色, 0.5 毫米', color: '#1c5fd4', width: 2.5, highlighter: false },
+  { id: 'pen-red', label: '圆珠笔: 红色, 0.5 毫米', color: '#c42b1c', width: 2.5, highlighter: false },
+  { id: 'pen-green', label: '圆珠笔: 绿色, 0.5 毫米', color: '#2b8a3e', width: 2.5, highlighter: false },
+  { id: 'pen-purple', label: '圆珠笔: 紫色, 1 毫米', color: '#7e2fa8', width: 4, highlighter: false },
+  { id: 'hl-yellow', label: '荧光笔: 黄色, 6 毫米', color: '#ffe500', width: 16, highlighter: true },
+  { id: 'hl-green', label: '荧光笔: 绿色, 6 毫米', color: '#5dff5d', width: 16, highlighter: true },
+  { id: 'hl-pink', label: '荧光笔: 粉色, 6 毫米', color: '#ff7ce0', width: 16, highlighter: true },
 ];
 
 export const INK_COLORS = ['#1f1f1f', '#6b6b6b', '#ffffff', '#c42b1c', '#e8590c', '#f2c200', '#2b8a3e', '#0b7285', '#1c5fd4', '#7e2fa8', '#c2255c', '#8b5a2b', '#ffe500', '#5dff5d', '#4fd8ff', '#ff7ce0'];
 export const INK_WIDTHS = [1, 1.5, 2.5, 4, 6, 9, 12, 16, 24];
 
 export const SHAPES = [
-  { kind: 'line', label: 'Line', icon: 'line' },
-  { kind: 'arrow', label: 'Arrow', icon: 'arrow' },
-  { kind: 'doubleArrow', label: 'Double Arrow', icon: 'doubleArrow' },
-  { kind: 'rect', label: 'Rectangle', icon: 'rect' },
-  { kind: 'ellipse', label: 'Ellipse', icon: 'ellipse' },
-  { kind: 'triangle', label: 'Triangle', icon: 'triangle' },
-  { kind: 'diamond', label: 'Diamond', icon: 'diamond' },
+  { kind: 'line', label: '直线', icon: 'line' },
+  { kind: 'arrow', label: '箭头', icon: 'arrow' },
+  { kind: 'doubleArrow', label: '双向箭头', icon: 'doubleArrow' },
+  { kind: 'rect', label: '矩形', icon: 'rect' },
+  { kind: 'ellipse', label: '椭圆', icon: 'ellipse' },
+  { kind: 'triangle', label: '三角形', icon: 'triangle' },
+  { kind: 'diamond', label: '菱形', icon: 'diamond' },
 ];
 
 function polygonToPath(poly) {

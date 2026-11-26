@@ -13,7 +13,7 @@ import { prefs, setPref } from './prefs.js';
 export class Nav {
   constructor(app) {
     this.app = app;
-    this.el = h('div.nav', { role: 'navigation', 'aria-label': 'Notebook navigation' });
+    this.el = h('div.nav', { role: 'navigation', 'aria-label': '笔记本导航' });
     this.buildSections();
     this.buildPages();
     this.el.append(this.sectionsPane, this.pagesPane);
@@ -34,7 +34,7 @@ export class Nav {
   }
 
   resizer(key) {
-    const r = h('div.pane-resizer', { role: 'separator', 'aria-orientation': 'vertical', 'aria-label': key === 'sectionsWidth' ? 'Resize sections pane' : 'Resize pages pane', tabindex: '0', 'aria-valuemin': '120', 'aria-valuemax': '400' });
+    const r = h('div.pane-resizer', { role: 'separator', 'aria-orientation': 'vertical', 'aria-label': key === 'sectionsWidth' ? '调整分区窗格宽度' : '调整页面窗格宽度', tabindex: '0', 'aria-valuemin': '120', 'aria-valuemax': '400' });
     const set = (w) => {
       const v = clamp(Math.round(w), 120, 400);
       setPref(key, v);
@@ -70,15 +70,15 @@ export class Nav {
   // ------------------------------------------------------------ sections
 
   buildSections() {
-    this.nbButton = h('button.nb-picker', { type: 'button', 'aria-haspopup': 'menu', 'aria-expanded': 'false', 'data-tip': 'Notebooks', 'data-tip-desc': 'Switch notebooks or create a new one.' });
+    this.nbButton = h('button.nb-picker', { type: 'button', 'aria-haspopup': 'menu', 'aria-expanded': 'false', 'data-tip': '笔记本', 'data-tip-desc': '切换笔记本或新建笔记本。' });
     this.nbButton.addEventListener('click', () => {
       if (this.nbButton._menuJustClosed) return;
       this.app.openNotebookMenu(this.nbButton);
     });
-    this.sectionsList = h('div.tree', { role: 'tree', 'aria-label': 'Sections' });
+    this.sectionsList = h('div.tree', { role: 'tree', 'aria-label': '分区' });
     this.sectionsBody = h('div.pane-body', this.sectionsList);
-    const add = h('button.pane-add', { type: 'button', 'data-tip': 'Add section', 'data-tip-key': 'Mod+Alt+T', onclick: () => this.app.newSection() }, icon('plus', 16), 'Add section');
-    this.sectionsPane = h('section.pane.sections-pane', { 'aria-label': 'Sections' },
+    const add = h('button.pane-add', { type: 'button', 'data-tip': '新建分区', 'data-tip-key': 'Mod+Alt+T', onclick: () => this.app.newSection() }, icon('plus', 16), '新建分区');
+    this.sectionsPane = h('section.pane.sections-pane', { 'aria-label': '分区' },
       h('div.pane-head', this.nbButton),
       this.sectionsBody,
       h('div.pane-foot', add),
@@ -88,9 +88,9 @@ export class Nav {
       if (e.target.closest('.row')) return;
       e.preventDefault();
       openMenu({ x: e.clientX, y: e.clientY }, [
-        { label: 'New Section', icon: 'plus', run: () => this.app.newSection() },
-        { label: 'New Section Group', icon: 'sectionGroup', run: () => this.app.newSectionGroup() },
-      ], { label: 'Sections' });
+        { label: '新建分区', icon: 'plus', run: () => this.app.newSection() },
+        { label: '新建分区组', icon: 'sectionGroup', run: () => this.app.newSectionGroup() },
+      ], { label: '分区' });
     });
     this.bindTreeKeys(this.sectionsList, 'section');
     this.bindDrop(this.sectionsList, 'section');
@@ -126,10 +126,10 @@ export class Nav {
     const nb = store.notebook(state.notebookId);
     this.nbButton.replaceChildren(
       h('span.nb-glyph', { style: { '--nb-color': this.colorOf(nb?.color) } }),
-      h('span.nb-name', nb ? nb.name : 'No notebook'),
+      h('span.nb-name', nb ? nb.name : '无笔记本'),
       icon('chevDown', 14),
     );
-    this.nbButton.setAttribute('aria-label', nb ? `Notebook: ${nb.name}. Switch notebooks` : 'Notebooks');
+    this.nbButton.setAttribute('aria-label', nb ? `笔记本：${nb.name}。切换笔记本` : '笔记本');
     const rows = [];
     const walk = (list, depth) => {
       list.forEach((node, i) => {
@@ -140,7 +140,7 @@ export class Nav {
     if (nb) walk(nb.sections, 0);
     this.sectionsList.setAttribute('role', 'tree');
     this.sectionsList.replaceChildren(...rows);
-    if (!rows.length) this.setEmpty(this.sectionsList, nb ? 'This notebook has no sections yet. Add one to start writing.' : 'You have no notebooks. Add one to start writing.');
+    if (!rows.length) this.setEmpty(this.sectionsList, nb ? '此笔记本暂无分区。添加分区以开始编写。' : '您暂无笔记本。添加笔记本以开始编写。');
     this.fixRoving(this.sectionsList, state.sectionId);
   }
 
@@ -168,7 +168,7 @@ export class Nav {
       row.append(twisty, h('span.group-icon', icon('sectionGroup', 16, undefined, { plain: true })), h('span.row-label', node.name));
     } else {
       row.append(h('span.section-tab', { style: { '--sec-color': this.colorOf(node.color) } }), h('span.row-label', node.name));
-      if (node.locked) row.append(h('span.lock', { title: 'Password protected' }, icon(this.app.isUnlocked(node.id) ? 'unlock' : 'lock', 14, undefined, { plain: true })));
+      if (node.locked) row.append(h('span.lock', { title: '密码保护' }, icon(this.app.isUnlocked(node.id) ? 'unlock' : 'lock', 14, undefined, { plain: true })));
     }
     const rename = () => this.renameNow(node.id, node.name, (v) => this.app.store.renameNode(node.id, v));
     row.addEventListener('click', (e) => {
@@ -192,25 +192,25 @@ export class Nav {
   // ------------------------------------------------------------ pages
 
   buildPages() {
-    this.sortBtn = h('button.icon-btn', { type: 'button', 'aria-label': 'Sort pages', 'data-tip': 'Sort pages', 'aria-haspopup': 'menu', 'aria-expanded': 'false' }, icon('sort', 18));
+    this.sortBtn = h('button.icon-btn', { type: 'button', 'aria-label': '页面排序', 'data-tip': '页面排序', 'aria-haspopup': 'menu', 'aria-expanded': 'false' }, icon('sort', 18));
     this.sortBtn.addEventListener('click', () => {
       if (this.sortBtn._menuJustClosed) return;
       const current = prefs().pageSort;
       const opt = (id, label) => ({ label, radio: true, checked: current === id, run: () => { setPref('pageSort', id); this.renderPages(); } });
       openMenu(this.sortBtn, [
-        { type: 'header', label: 'Sort pages by' },
-        opt('manual', 'None (your order)'),
-        opt('created', 'Date created'),
-        opt('modified', 'Date modified'),
-        opt('alpha', 'Alphabetical'),
-      ], { label: 'Sort pages', align: 'end' });
+        { type: 'header', label: '按此排序页面' },
+        opt('manual', '默认 (自定义排序)'),
+        opt('created', '创建日期'),
+        opt('modified', '修改日期'),
+        opt('alpha', '按字母顺序'),
+      ], { label: '页面排序', align: 'end' });
     });
     this.sectionLabel = h('span.pane-title.sr-only');
-    this.pagesList = h('div.tree', { role: 'tree', 'aria-label': 'Pages' });
+    this.pagesList = h('div.tree', { role: 'tree', 'aria-label': '页面' });
     this.pagesBody = h('div.pane-body', this.pagesList);
-    const add = h('button.pane-add', { type: 'button', 'data-tip': 'Add page', 'data-tip-key': 'Mod+Alt+N', onclick: () => this.app.newPage() }, icon('plus', 16), 'Add page');
+    const add = h('button.pane-add', { type: 'button', 'data-tip': '新建页面', 'data-tip-key': 'Mod+Alt+N', onclick: () => this.app.newPage() }, icon('plus', 16), '新建页面');
     this.pagesHeadTitle = h('span.row-label.mobile-only-text');
-    this.pagesPane = h('section.pane.pages-pane', { 'aria-label': 'Pages' },
+    this.pagesPane = h('section.pane.pages-pane', { 'aria-label': '页面' },
       h('div.pane-head', this.pagesHeadTitle, h('span.ribbon-spacer'), this.sortBtn),
       this.pagesBody,
       h('div.pane-foot', add),
@@ -228,7 +228,7 @@ export class Nav {
     const cmp = {
       created: (a, b) => (b.meta.created || '').localeCompare(a.meta.created || ''),
       modified: (a, b) => (b.meta.modified || '').localeCompare(a.meta.modified || ''),
-      alpha: (a, b) => (a.meta.title || 'Untitled Page').localeCompare(b.meta.title || 'Untitled Page', undefined, { sensitivity: 'base', numeric: true }),
+      alpha: (a, b) => (a.meta.title || '无标题页面').localeCompare(b.meta.title || '无标题页面', undefined, { sensitivity: 'base', numeric: true }),
     }[sort];
     return flat.sort(cmp);
   }
@@ -238,11 +238,11 @@ export class Nav {
     const section = store.section(state.sectionId);
     this.pagesHeadTitle.textContent = section?.name || '';
     if (!section) {
-      this.setEmpty(this.pagesList, 'Select a section to see its pages.');
+      this.setEmpty(this.pagesList, '选择一个分区以查看其页面。');
       return;
     }
     if (section.locked && !this.app.isUnlocked(section.id)) {
-      this.setEmpty(this.pagesList, 'This section is password protected.');
+      this.setEmpty(this.pagesList, '此分区受密码保护。');
       return;
     }
     const manual = prefs().pageSort === 'manual';
@@ -259,7 +259,7 @@ export class Nav {
     });
     this.pagesList.setAttribute('role', 'tree');
     this.pagesList.replaceChildren(...rows);
-    if (!rows.length) this.setEmpty(this.pagesList, 'No pages in this section. Press Add page to start one.');
+    if (!rows.length) this.setEmpty(this.pagesList, '此分区中暂无页面。点击新建页面以开始编写。');
     this.fixRoving(this.pagesList, state.pageId);
   }
 
@@ -284,7 +284,7 @@ export class Nav {
       });
       row.append(twisty);
     }
-    row.append(h(`span.row-label${title ? '' : '.untitled'}`, title || 'Untitled Page'));
+    row.append(h(`span.row-label${title ? '' : '.untitled'}`, title || '无标题页面'));
     const rename = () => this.renameNow(meta.id, meta.title || '', (v) => this.app.renamePage(meta.id, v), true);
     row.addEventListener('click', (e) => {
       this.app.openPage(meta.id);
@@ -306,7 +306,7 @@ export class Nav {
   updatePageTitle(pageId, title) {
     const row = this.pagesList.querySelector(`.row[data-id="${CSS.escape(pageId)}"] .row-label`);
     if (!row) return;
-    row.textContent = title.trim() || 'Untitled Page';
+    row.textContent = title.trim() || '无标题页面';
     row.classList.toggle('untitled', !title.trim());
   }
 
@@ -352,7 +352,7 @@ export class Nav {
         e.preventDefault();
         // A sorted list doesn't show your order, so moving would change it
         // unseen (dragging is off then too).
-        if (kind === 'page' && prefs().pageSort !== 'manual') announce('Pages are sorted. Sort by None to move them.');
+        if (kind === 'page' && prefs().pageSort !== 'manual') announce('页面已排序。按默认排序即可移动它们。');
         else this.app.moveByKeyboard(kind, row.dataset.id, e.key === 'ArrowUp' ? -1 : 1);
         return;
       }
@@ -481,7 +481,7 @@ export class Nav {
   rename(row, value, commit, allowEmpty = false) {
     const label = row.querySelector('.row-label');
     if (!label) return;
-    const input = h('input.row-rename', { type: 'text', value, 'aria-label': 'New name', spellcheck: 'false' });
+    const input = h('input.row-rename', { type: 'text', value, 'aria-label': '新名称', spellcheck: 'false' });
     label.replaceWith(input);
     row.draggable = false;
     input.focus();

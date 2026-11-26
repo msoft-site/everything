@@ -9,7 +9,7 @@ const rgb = (value, fallback) => (value?.length === 3 ? `rgb(${[...value].join('
  */
 export function createFormLayer({ onChange, onCommit, onTabOut }) {
   const draft = new FormDraft();
-  const root = el('div', { class: 'form-layer', role: 'group', 'aria-label': 'Page form fields' });
+  const root = el('div', { class: 'form-layer', role: 'group', 'aria-label': '页面表单域' });
   const error = el('p', {
     class: 'form-edit-error',
     id: 'form-edit-error',
@@ -129,9 +129,9 @@ export function createFormLayer({ onChange, onCommit, onTabOut }) {
     const attrs = {
       class: 'form-control',
       'data-widget-id': widget.id,
-      'aria-label': `${label}${widget.buttonValue != null ? `: ${widget.buttonLabel ?? widget.buttonValue}` : ''} (on page)${widget.readOnly ? ' (read only)' : ''}`,
+      'aria-label': `${label}${widget.buttonValue != null ? `: ${widget.buttonLabel ?? widget.buttonValue}` : ''}（页面上）${widget.readOnly ? '（只读）' : ''}`,
       'aria-required': widget.required,
-      title: `${label}${widget.readOnly ? ' (read only)' : widget.required ? ' (required)' : ''}`,
+      title: `${label}${widget.readOnly ? '（只读）' : widget.required ? '（必填）' : ''}`,
       disabled: widget.readOnly,
     };
     let control;
@@ -172,9 +172,9 @@ export function createFormLayer({ onChange, onCommit, onTabOut }) {
         // put each option one row below its drawing, under the next option's.
         widget.combo &&
           !widget.multiple &&
-          el('option', { value: '', 'data-placeholder': true }, 'Choose an option'),
+          el('option', { value: '', 'data-placeholder': true }, '请选择一项'),
         ...widget.options.map((option) =>
-          el('option', { value: option.value }, option.label || '(Empty option)'),
+          el('option', { value: option.value }, option.label || '（空选项）'),
         ),
       );
       control.addEventListener('change', () =>

@@ -31,7 +31,7 @@ const unreadBadge = (count) =>
       : "";
 const when = (at) =>
   at
-    ? new Date(at).toLocaleDateString(language === "fr" ? "fr-CA" : "fr-CA", {
+    ? new Date(at).toLocaleDateString(language === "en" ? "en-CA" : language === "fr" ? "fr-CA" : "zh-CN", {
         month: "short",
         day: "numeric",
         year: "numeric",
@@ -44,7 +44,7 @@ const fill = (text, values) =>
   );
 // A count with the language's digit grouping: 1,500, not 1500.
 const figure = (n) =>
-  new Intl.NumberFormat(language === "fr" ? "fr-CA" : "fr-CA").format(n);
+  new Intl.NumberFormat(language === "en" ? "en-CA" : language === "fr" ? "fr-CA" : "zh-CN").format(n);
 // Notifications carry their parts, so each person reads them in their own
 // language. Older ones keep the English text they were saved with.
 const assignmentSuffix = (n) =>
@@ -102,7 +102,7 @@ function shownHTML(n) {
 function timeHTML(at) {
   const date = new Date(at);
   if (Number.isNaN(date.getTime())) return "";
-  return `<time datetime="${date.toISOString()}">${escape(date.toLocaleString(language === "fr" ? "fr-CA" : "fr-CA", { dateStyle: "medium", timeStyle: "short" }))}</time>`;
+  return `<time datetime="${date.toISOString()}">${escape(date.toLocaleString(language === "en" ? "en-CA" : language === "fr" ? "fr-CA" : "zh-CN", { dateStyle: "medium", timeStyle: "short" }))}</time>`;
 }
 // Which board a notification is about, as two from different boards would
 // otherwise read the same.
@@ -405,7 +405,7 @@ export function createOrganizationHome({
           "aria-current",
           sidebarSpaces.querySelector('[aria-current="page"]')
             ? "true"
-            : "真的",
+            : "page",
         );
       const from = document.activeElement;
       if (
@@ -483,7 +483,7 @@ export function createOrganizationHome({
       showSpaces();
       grid.classList.add("org-board-grid");
       const option = (value, label, selected, named = false) =>
-        `<option value="${value}" ${selected ? "selected" : "已选择"}${named ? " data-user-content" : "数据用户内容"}>${label}</option>`;
+        `<option value="${value}" ${selected ? "selected" : ""}${named ? " data-user-content" : ""}>${label}</option>`;
       // Spaces and teams are listed by name, as in the admin console.
       const order = nameOrder();
       const [spaceChoices, teamChoices] = [spaces, teams].map((list) =>
@@ -510,7 +510,7 @@ export function createOrganizationHome({
             ? typing.value
             : null,
         caret = typing ? [typing.selectionStart, typing.selectionEnd] : null;
-      grid.innerHTML = `<form class="org-filters" id="org-filters" role="search" aria-label="${t("Search organization boards")}"><div class="org-filter-main"><label class="field org-query">${t("Search names and content")}<span class="org-search-box">${icon("search")}<input id="of-query" type="search" value="${escape(filters.query || "")}"></span></label><label class="field org-scope">${t("Show")}<select id="of-scope">${option("mine", t("Boards shared with me"), filters.scope === "mine")}${option("organization", t("All organization boards I can open"), filters.scope === "organization")}</select></label><button class="primary">${icon("search")}${t("Search")}</button></div><details class="org-more" ${refined ? "open" : "打开"}><summary>${icon("sliders-horizontal")}${t("More filters")}${refined ? `<span class="badge">${refined}</span>` : ""}</summary><div class="org-filter-grid">${member ? `<label class="field">${t("Space")}<select id="of-space"><option value="">${t("Any", "space")}</option>${spaceChoices.map((s) => option(escape(s.id), escape(s.name), filters.space === s.id, true)).join("")}</select></label><label class="field">${t("Team")}<select id="of-team"><option value="">${t("Any")}</option>${teamChoices.map((tm) => option(escape(tm.id), escape(tm.name), filters.team === tm.id, true)).join("")}</select></label>` : ""}<label class="field">${t("Activity")}<select id="of-activity"><option value="">${t("Any")}</option>${option("active", t("Active in 30 days"), filters.activity === "active")}${option("stale", t("No activity in 90 days"), filters.activity === "stale")}${option("unused", t("Empty boards"), filters.activity === "unused")}</select></label><label class="field">${t("Contains")}<select id="of-type"><option value="">${t("Anything")}</option>${[
+      grid.innerHTML = `<form class="org-filters" id="org-filters" role="search" aria-label="${t("Search organization boards")}"><div class="org-filter-main"><label class="field org-query">${t("Search names and content")}<span class="org-search-box">${icon("search")}<input id="of-query" type="search" value="${escape(filters.query || "")}"></span></label><label class="field org-scope">${t("Show")}<select id="of-scope">${option("mine", t("Boards shared with me"), filters.scope === "mine")}${option("organization", t("All organization boards I can open"), filters.scope === "organization")}</select></label><button class="primary">${icon("search")}${t("Search")}</button></div><details class="org-more" ${refined ? "open" : ""}><summary>${icon("sliders-horizontal")}${t("More filters")}${refined ? `<span class="badge">${refined}</span>` : ""}</summary><div class="org-filter-grid">${member ? `<label class="field">${t("Space")}<select id="of-space"><option value="">${t("Any", "space")}</option>${spaceChoices.map((s) => option(escape(s.id), escape(s.name), filters.space === s.id, true)).join("")}</select></label><label class="field">${t("Team")}<select id="of-team"><option value="">${t("Any")}</option>${teamChoices.map((tm) => option(escape(tm.id), escape(tm.name), filters.team === tm.id, true)).join("")}</select></label>` : ""}<label class="field">${t("Activity")}<select id="of-activity"><option value="">${t("Any")}</option>${option("active", t("Active in 30 days"), filters.activity === "active")}${option("stale", t("No activity in 90 days"), filters.activity === "stale")}${option("unused", t("Empty boards"), filters.activity === "unused")}</select></label><label class="field">${t("Contains")}<select id="of-type"><option value="">${t("Anything")}</option>${[
         ["note", "Sticky notes"],
         ["table", "Tables"],
         ["image", "Images"],

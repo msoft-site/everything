@@ -1,4 +1,5 @@
 import { board } from "./model.js";
+import { t } from "./i18n.js";
 import { searchIndex, searchWords, matchesWord } from "./libraries.js";
 import { inferParents, updateConnectors } from "./scene.js";
 import { newTask, statusFromTitle } from "./planning/task.js";
@@ -33,8 +34,8 @@ export const TEMPLATE_CATALOG = definitions.map(
     id,
     categoryId: category,
     category: categoryNames.get(category),
-    name,
-    description,
+    name: [name[0], t(name[0])],
+    description: [description[0], t(description[0])],
     keywords,
     playbook,
   }),

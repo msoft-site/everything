@@ -22,19 +22,19 @@ void setFontName;
 export function tablePicker(onPick) {
   const ROWS = 8;
   const COLS = 10;
-  const label = h('div.table-picker-label', { 'aria-live': 'polite' }, 'Insert Table');
-  const grid = h('div.table-picker', { role: 'group', 'aria-label': 'Table size' });
+  const label = h('div.table-picker-label', { 'aria-live': 'polite' }, '插入表格');
+  const grid = h('div.table-picker', { role: 'group', 'aria-label': '表格大小' });
   let cur = [1, 1];
   const cells = [];
   const paint = (r, c) => {
     cur = [r, c];
-    label.textContent = `${c} x ${r} Table`;
+    label.textContent = `${c} x ${r} 表格`;
     for (const cell of cells) cell.classList.toggle('on', Number(cell.dataset.r) <= r && Number(cell.dataset.c) <= c);
   };
   for (let r = 1; r <= ROWS; r++) {
     const row = h('div.table-picker-row');
     for (let c = 1; c <= COLS; c++) {
-      const cell = h('button.table-picker-cell', { type: 'button', tabindex: r === 1 && c === 1 ? '0' : '-1', 'aria-label': `${c} by ${r} table`, dataset: { r, c } });
+      const cell = h('button.table-picker-cell', { type: 'button', tabindex: r === 1 && c === 1 ? '0' : '-1', 'aria-label': `${c} 列 ${r} 行表格`, dataset: { r, c } });
       cell.addEventListener('pointerenter', () => paint(r, c));
       cell.addEventListener('focus', () => paint(r, c));
       cell.addEventListener('click', () => onPick(r, c));
@@ -67,15 +67,15 @@ export function insertTableDialog(app) {
   const rows = h('input.input', { type: 'number', min: '1', max: '100', value: '3', id: 'tbl-rows' });
   const cols = h('input.input', { type: 'number', min: '1', max: '30', value: '3', id: 'tbl-cols' });
   openDialog({
-    title: 'Insert Table',
+    title: '插入表格',
     width: 320,
     body: h('div', { style: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' } },
-      h('div.field', h('label.field-label', { for: 'tbl-cols' }, 'Columns'), cols),
-      h('div.field', h('label.field-label', { for: 'tbl-rows' }, 'Rows'), rows),
+      h('div.field', h('label.field-label', { for: 'tbl-cols' }, '列数'), cols),
+      h('div.field', h('label.field-label', { for: 'tbl-rows' }, '行数'), rows),
     ),
     actions: [
-      { label: 'Cancel' },
-      { label: 'Insert', primary: true, run: () => {
+      { label: '取消' },
+      { label: '插入', primary: true, run: () => {
         const r = Math.max(1, Math.min(100, Number(rows.value) || 1));
         const c = Math.max(1, Math.min(30, Number(cols.value) || 1));
         setTimeout(() => app.insertTable(r, c));
@@ -103,7 +103,7 @@ export function pickFiles(app, { accept = '', attach = false } = {}) {
         if (!attach && f.type.startsWith('image/')) await app.editor.insertImage(f);
         else await app.editor.insertAttachment(f);
       }
-      announce(files.length === 1 ? `Inserted ${files[0].name}` : `Inserted ${files.length} files`);
+      announce(files.length === 1 ? `已插入 ${files[0].name}` : `已插入 ${files.length} 个文件`);
     } catch (err) {
       app.reportError(err);
     }
@@ -131,7 +131,7 @@ export function insertPrintout(app, file) {
 }
 
 async function printout(app, file, range) {
-  const dismiss = toast(`Inserting printout of ${file.name}...`, { duration: 60000 });
+  const dismiss = toast(`正在插入 ${file.name} 的打印样式...`, { duration: 60000 });
   let task = null;
   try {
     const [pdfjs, worker] = await Promise.all([import('pdfjs-dist'), import('pdfjs-dist/build/pdf.worker.min.mjs?url')]);
@@ -158,11 +158,11 @@ async function printout(app, file, range) {
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       await page.render({ canvasContext: ctx, viewport, canvas }).promise;
       const blob = await new Promise((r) => canvas.toBlob(r, 'image/png'));
-      if (app.editor.page !== target) throw new Error('its page was closed before it finished');
+      if (app.editor.page !== target) throw new Error('页面在完成前已被关闭');
       const id = await app.store.saveAsset(blob, `printout-${i}.png`, { sectionId });
-      images.push(`<p><img data-asset="${id}" alt="${escapeHtml(`Page ${i} of ${file.name}`)}" style="width: 640px"></p>`);
+      images.push(`<p><img data-asset="${id}" alt="${escapeHtml(`第 ${i} 页 / 共 ${file.name}`)}" style="width: 640px"></p>`);
     }
-    if (app.editor.page !== target) throw new Error('its page was closed before it finished');
+    if (app.editor.page !== target) throw new Error('页面在完成前已被关闭');
     const el = app.editor.createOutlineAt(48, app.editor.nextFreeY(), '');
     const body = el.querySelector('.outline-body');
     body.innerHTML = sanitizeHtml(images.join(''));
@@ -173,10 +173,10 @@ async function printout(app, file, range) {
     app.editor.commit();
     app.editor.layout();
     dismiss();
-    toast(doc.numPages > count ? `Inserted the first ${count} of ${doc.numPages} pages` : `Inserted ${count} ${count === 1 ? 'page' : 'pages'}`);
+    toast(doc.numPages > count ? `已插入前 ${count} 页 / 共 ${doc.numPages} 页` : `已插入 ${count} 页`);
   } catch (err) {
     dismiss();
-    toast(`Couldn't insert the printout: ${err?.message || 'the file could not be read'}`, { kind: 'error' });
+    toast(`无法插入打印样式：${err?.message || '无法读取文件'}`, { kind: 'error' });
   } finally {
     // Frees the parsed document and ends its pdf.js worker.
     task?.destroy().catch(() => {});
@@ -205,7 +205,7 @@ export async function pickFromCloud(app, { accept = '*/*', attach = false } = {}
       if (!attach && (file.type.startsWith('image/') || /\.(png|jpe?g|gif|webp|bmp)$/i.test(file.name))) await app.editor.insertImage(file);
       else await app.editor.insertAttachment(file);
     } catch (err) {
-      toast(`Couldn't insert ${item.name || 'the file'}: ${err?.message || 'read failed'}`, { kind: 'error' });
+      toast(`无法插入 ${item.name || '文件'}：${err?.message || '读取失败'}`, { kind: 'error' });
     }
   }
 }
@@ -229,12 +229,12 @@ export async function insertScreenshot(app) {
     canvas.height = video.videoHeight;
     canvas.getContext('2d').drawImage(video, 0, 0);
     const blob = await new Promise((r) => canvas.toBlob(r, 'image/png'));
-    if (!blob) throw new Error('the screen could not be captured');
+    if (!blob) throw new Error('无法截取屏幕');
     if (range) app.editor.lastRange = range;
     app.editor.restoreRange();
-    await app.editor.insertImage(new File([blob], `Screenshot ${new Date().toLocaleString()}.png`, { type: 'image/png' }), { alt: 'Screenshot' });
+    await app.editor.insertImage(new File([blob], `屏幕截图 ${new Date().toLocaleString().replace(/[/:]/g, '-')}.png`, { type: 'image/png' }), { alt: '屏幕截图' });
   } catch (err) {
-    toast(`Couldn't insert the screenshot: ${err?.message || 'the screen could not be captured'}`, { kind: 'error' });
+    toast(`无法插入屏幕截图：${err?.message || '无法截取屏幕'}`, { kind: 'error' });
   } finally {
     stream.getTracks().forEach((t) => t.stop());
   }
@@ -258,7 +258,7 @@ export async function openAttachment(app, data) {
   try {
     const blob = await app.store.assetBlob(data.asset);
     if (!blob) {
-      toast("This attachment couldn't be found.", { kind: 'error' });
+      toast("未找到此附件。", { kind: 'error' });
       return;
     }
     const view = viewType(data.type || blob.type || '');
@@ -292,7 +292,7 @@ export async function record(app, kind) {
     stream = await navigator.mediaDevices.getUserMedia(kind === 'video' ? { audio: true, video: true } : { audio: true });
   } catch {
     if (app.recorder === starting) app.recorder = null;
-    toast(`Allow ${kind === 'video' ? 'camera and microphone' : 'microphone'} access to record.`, { kind: 'error' });
+    toast(`请允许${kind === 'video' ? '摄像头和麦克风' : '麦克风'}权限以进行录制。`, { kind: 'error' });
     return;
   }
   const types = kind === 'video' ? ['video/webm;codecs=vp9,opus', 'video/webm', 'video/mp4'] : ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4', 'audio/ogg'];
@@ -304,7 +304,7 @@ export async function record(app, kind) {
   } catch {
     stream.getTracks().forEach((t) => t.stop());
     if (app.recorder === starting) app.recorder = null;
-    toast("This browser can't record here.", { kind: 'error' });
+    toast("此浏览器不支持在此录制。", { kind: 'error' });
     return;
   }
   const chunks = [];
@@ -312,11 +312,11 @@ export async function record(app, kind) {
   let started = Date.now();
   let elapsed = 0;
   const time = h('span.rec-time', '0:00');
-  const pauseBtn = h('button.icon-btn', { type: 'button', 'aria-label': 'Pause recording' }, icon('pause', 16));
-  const stopBtn = h('button.btn.small', { type: 'button' }, icon('stop', 14), 'Stop');
+  const pauseBtn = h('button.icon-btn', { type: 'button', 'aria-label': '暂停录制' }, icon('pause', 16));
+  const stopBtn = h('button.btn.small', { type: 'button' }, icon('stop', 14), '停止');
   const preview = kind === 'video' ? h('video', { muted: true, autoplay: true, playsInline: true, style: { width: '120px', borderRadius: '6px' } }) : null;
   if (preview) preview.srcObject = stream;
-  const bar = h('div.recording-bar', { role: 'region', 'aria-label': `${kind === 'video' ? 'Video' : 'Audio'} recording` }, preview, h('span.rec-dot'), h('span', kind === 'video' ? 'Recording video' : 'Recording audio'), time, pauseBtn, stopBtn);
+  const bar = h('div.recording-bar', { role: 'region', 'aria-label': `${kind === 'video' ? '视频' : '音频'}录制` }, preview, h('span.rec-dot'), h('span', kind === 'video' ? '正在录制视频' : '正在录制音频'), time, pauseBtn, stopBtn);
   app.canvasCol.append(bar);
   const tick = setInterval(() => {
     const ms = elapsed + (rec.state === 'recording' ? Date.now() - started : 0);
@@ -329,13 +329,13 @@ export async function record(app, kind) {
       elapsed += Date.now() - started;
       bar.classList.add('paused');
       pauseBtn.replaceChildren(icon('play', 16));
-      pauseBtn.setAttribute('aria-label', 'Resume recording');
+      pauseBtn.setAttribute('aria-label', '继续录制');
     } else {
       rec.resume();
       started = Date.now();
       bar.classList.remove('paused');
       pauseBtn.replaceChildren(icon('pause', 16));
-      pauseBtn.setAttribute('aria-label', 'Pause recording');
+      pauseBtn.setAttribute('aria-label', '暂停录制');
     }
   });
   const stop = () => {
@@ -353,24 +353,24 @@ export async function record(app, kind) {
     const blob = new Blob(chunks, { type });
     if (!blob.size) return;
     const ext = type.includes('mp4') ? (kind === 'video' ? 'mp4' : 'm4a') : type.includes('ogg') ? 'ogg' : 'webm';
-    const name = `${kind === 'video' ? 'Video' : 'Audio'} recording ${new Date().toLocaleString().replace(/[/:]/g, '-')}.${ext}`;
+    const name = `${kind === 'video' ? '视频' : '音频'}录制 ${new Date().toLocaleString().replace(/[/:]/g, '-')}.${ext}`;
     if (range) app.editor.lastRange = range;
     app.editor.restoreRange();
     const file = new File([blob], name, { type });
     try {
       await app.editor.insertAttachment(file, kind);
-      toast('Recording added to the page');
+      toast('录制内容已添加到页面');
     } catch (err) {
       // No page to put it on (its section locked, the page was deleted) or
       // the upload failed: the recording is still worth keeping.
       console.error(err);
-      toast("Couldn't add the recording to a page.", { kind: 'error', duration: 120000, action: { label: 'Save to device', run: () => download(name, file) } });
+      toast("无法将录制内容添加到页面。", { kind: 'error', duration: 120000, action: { label: '保存到设备', run: () => download(name, file) } });
     }
   };
   rec.start(1000);
   app.ribbon.refresh();
   stopBtn.focus();
-  announce('Recording started');
+  announce('录制已开始');
 }
 
 // ------------------------------------------------------------ links
@@ -396,20 +396,20 @@ export function linkDialog(app) {
   const text = h('input.input', { id: 'link-text', type: 'text', value: selectedText, autocomplete: 'off' });
   const address = h('input.input', { id: 'link-address', type: 'text', value: existing?.getAttribute('href') || '', placeholder: 'https://', autocomplete: 'off', spellcheck: 'false' });
   const error = h('p.field-error', { role: 'alert' });
-  const filter = h('input.input', { type: 'search', placeholder: 'Find a page or section', 'aria-label': 'Find a page or section', autocomplete: 'off' });
-  const list = h('div.link-targets', { role: 'listbox', 'aria-label': 'Pages and sections' });
+  const filter = h('input.input', { type: 'search', placeholder: '查找页面或分区', 'aria-label': '查找页面或分区', autocomplete: 'off' });
+  const list = h('div.link-targets', { role: 'listbox', 'aria-label': '页面和分区' });
   const renderTargets = () => {
     const q = normalize(filter.value.trim());
     const rows = [];
     for (const { notebook, section } of app.store.allSections()) {
       const secMatch = !q || normalize(section.name).includes(q);
-      const pages = section.pages.filter((p) => !q || normalize(p.title || 'Untitled Page').includes(q));
+      const pages = section.pages.filter((p) => !q || normalize(p.title || '无标题页面').includes(q));
       if (!secMatch && !pages.length) continue;
       rows.push(targetRow(`#section=${section.id}`, icon('folder', 14, undefined, { plain: true }), `${section.name}`, notebook.name));
-      for (const p of pages.slice(0, 30)) rows.push(targetRow(`#page=${p.id}`, icon('fileText', 14, undefined, { plain: true }), p.title || 'Untitled Page', section.name, p.level));
+      for (const p of pages.slice(0, 30)) rows.push(targetRow(`#page=${p.id}`, icon('fileText', 14, undefined, { plain: true }), p.title || '无标题页面', section.name, p.level));
       if (rows.length > 120) break;
     }
-    list.replaceChildren(...(rows.length ? rows : [h('div.pane-empty', 'Nothing matches.')]));
+    list.replaceChildren(...(rows.length ? rows : [h('div.pane-empty', '无匹配项。')]));
   };
   const targetRow = (href, ic, label, sub, level = 0) => {
     const b = h('button.link-target', { type: 'button', role: 'option', 'aria-selected': String(address.value === href), style: { paddingLeft: `${10 + level * 14}px` } }, ic, h('span', label), h('span.link-target-sub', sub));
@@ -422,26 +422,26 @@ export function linkDialog(app) {
   };
   filter.addEventListener('input', debounce(renderTargets, 100));
   renderTargets();
-  const actions = [{ label: 'Cancel' }];
-  if (existing) actions.unshift({ label: 'Remove Link', run: () => {
+  const actions = [{ label: '取消' }];
+  if (existing) actions.unshift({ label: '删除链接', run: () => {
     const outline = existing.closest('.outline');
     existing.replaceWith(document.createTextNode(existing.textContent));
     if (outline) app.editor.dirty.add(outline);
     app.editor.commit();
   } });
   actions.push({
-    label: 'OK',
+    label: '确定',
     primary: true,
     run: () => {
       let href = address.value.trim();
       if (!href) {
-        error.textContent = 'Enter an address or pick a page.';
+        error.textContent = '请输入地址或选择一个页面。';
         address.focus();
         return false;
       }
       href = completeAddress(href);
       if (!safeUrl(href)) {
-        error.textContent = "That address can't be used as a link.";
+        error.textContent = "该地址不能用作链接。";
         address.focus();
         return false;
       }
@@ -464,12 +464,12 @@ export function linkDialog(app) {
     },
   });
   openDialog({
-    title: existing ? 'Edit Link' : 'Link',
+    title: existing ? '编辑链接' : '插入链接',
     width: 520,
     body: h('div',
-      h('div.field', h('label.field-label', { for: 'link-text' }, 'Text to display'), text),
-      h('div.field', h('label.field-label', { for: 'link-address' }, 'Address'), address, error),
-      h('div.field', h('span.field-label', 'Or pick a location in your notebooks'), filter, list),
+      h('div.field', h('label.field-label', { for: 'link-text' }, '要显示的文本'), text),
+      h('div.field', h('label.field-label', { for: 'link-address' }, '地址'), address, error),
+      h('div.field', h('span.field-label', '或在笔记本中选择一个位置'), filter, list),
     ),
     actions,
     initialFocus: selectedText ? address : text,
@@ -479,9 +479,9 @@ export function linkDialog(app) {
 // ------------------------------------------------------------ equations
 
 const SNIPPETS = [
-  ['x^{2}', 'Superscript'], ['x_{i}', 'Subscript'], ['\\frac{a}{b}', 'Fraction'], ['\\sqrt{x}', 'Square root'], ['\\sqrt[n]{x}', 'Root'],
-  ['\\sum_{i=1}^{n}', 'Sum'], ['\\int_{a}^{b}', 'Integral'], ['\\lim_{x \\to \\infty}', 'Limit'], ['\\begin{pmatrix} a & b \\\\ c & d \\end{pmatrix}', 'Matrix'],
-  ['\\alpha', 'Alpha'], ['\\beta', 'Beta'], ['\\pi', 'Pi'], ['\\theta', 'Theta'], ['\\infty', 'Infinity'], ['\\pm', 'Plus or minus'], ['\\neq', 'Not equal'], ['\\leq', 'Less or equal'], ['\\geq', 'Greater or equal'], ['\\times', 'Times'], ['\\rightarrow', 'Arrow'],
+  ['x^{2}', '平方 / 上标'], ['x_{i}', '下标'], ['\\frac{a}{b}', '分式'], ['\\sqrt{x}', '平方根'], ['\\sqrt[n]{x}', '方根'],
+  ['\\sum_{i=1}^{n}', '求和'], ['\\int_{a}^{b}', '积分'], ['\\lim_{x \\to \\infty}', '极限'], ['\\begin{pmatrix} a & b \\\\ c & d \\end{pmatrix}', '矩阵'],
+  ['\\alpha', 'Alpha'], ['\\beta', 'Beta'], ['\\pi', 'Pi'], ['\\theta', 'Theta'], ['\\infty', '无穷大'], ['\\pm', '正负号'], ['\\neq', '不等号'], ['\\leq', '小于等于'], ['\\geq', '大于等于'], ['\\times', '乘号'], ['\\rightarrow', '箭头'],
 ];
 
 export function equationDialog(app, span) {
@@ -490,9 +490,9 @@ export function equationDialog(app, span) {
   const input = h('textarea.input.mono', { id: 'eq-input', rows: 3, spellcheck: 'false', 'aria-describedby': 'eq-hint' });
   input.value = span?.dataset.tex || '';
   const error = h('p.field-error', { role: 'alert' });
-  const preview = h('div.eq-preview', { 'aria-live': 'polite', 'aria-label': 'Preview' });
+  const preview = h('div.eq-preview', { 'aria-live': 'polite', 'aria-label': '预览' });
   const update = debounce(async () => {
-    preview.innerHTML = input.value.trim() ? await renderMath(input.value, true) : '<span class="field-hint">The preview appears here.</span>';
+    preview.innerHTML = input.value.trim() ? await renderMath(input.value, true) : '<span class="field-hint">此处将显示公式预览。</span>';
   }, 120);
   input.addEventListener('input', update);
   input.addEventListener('input', () => {
@@ -500,7 +500,7 @@ export function equationDialog(app, span) {
     input.removeAttribute('aria-invalid');
   });
   update();
-  const snippets = h('div.eq-snippets', { role: 'group', 'aria-label': 'Insert structure or symbol' }, SNIPPETS.map(([tex, label]) => {
+  const snippets = h('div.eq-snippets', { role: 'group', 'aria-label': '插入结构或符号' }, SNIPPETS.map(([tex, label]) => {
     const b = h('button.btn.small', { type: 'button', title: label, 'aria-label': label });
     renderMath(tex).then((html) => (b.innerHTML = html));
     b.addEventListener('click', () => {
@@ -512,27 +512,27 @@ export function equationDialog(app, span) {
     return b;
   }));
   openDialog({
-    title: span ? 'Edit Equation' : 'Insert Equation',
+    title: span ? '编辑公式' : '插入公式',
     width: 560,
     body: h('div',
-      h('div.field', h('label.field-label', { for: 'eq-input' }, 'Equation (LaTeX)'), input, error, h('p.field-hint', { id: 'eq-hint' }, 'For example: E = mc^2 or \\frac{-b \\pm \\sqrt{b^2-4ac}}{2a}')),
+      h('div.field', h('label.field-label', { for: 'eq-input' }, '公式 (LaTeX)'), input, error, h('p.field-hint', { id: 'eq-hint' }, '例如：E = mc^2 或 \\frac{-b \\pm \\sqrt{b^2-4ac}}{2a}')),
       snippets,
-      h('div.field', h('span.field-label', 'Preview'), preview),
+      h('div.field', h('span.field-label', '预览'), preview),
     ),
     actions: [
-      { label: 'Cancel' },
-      { label: span ? 'Update' : 'Insert', primary: true, run: async () => {
+      { label: '取消' },
+      { label: span ? '更新' : '插入', primary: true, run: async () => {
         const tex = input.value.trim();
         if (!tex) {
           // Like the Link dialog: say what's missing and keep the dialog open.
-          error.textContent = 'Enter an equation.';
+          error.textContent = '请输入公式。';
           input.setAttribute('aria-invalid', 'true');
           input.focus();
           return false;
         }
         if (span) {
           span.dataset.tex = tex;
-          span.setAttribute('aria-label', `Equation: ${tex}`);
+          span.setAttribute('aria-label', `公式: ${tex}`);
           span.innerHTML = await renderMath(tex);
           const outline = span.closest('.outline');
           if (outline) app.editor.dirty.add(outline);
@@ -565,20 +565,20 @@ export function templatesDialog(app) {
         dlg.close();
         const built = t.build();
         app.newPage({ title: built.title, outlines: built.outlines.map((o) => ({ id: uid('o'), w: null, ...o, html: sanitizeHtml(o.html) })) });
-        announce(`${t.label} page added`);
+        announce(`已添加${t.label}页面`);
       });
       return b;
     })),
   )));
-  dlg = openDialog({ title: 'Page Templates', width: 640, body, actions: [{ label: 'Close' }] });
+  dlg = openDialog({ title: '页面模板', width: 640, body, actions: [{ label: '关闭' }] });
 }
 
 // ------------------------------------------------------------ move or copy
 
 export function moveDialog(app, kind, id) {
   const store = app.store;
-  const filter = h('input.input', { type: 'search', placeholder: 'Search', 'aria-label': 'Filter locations', autocomplete: 'off' });
-  const list = h('div.move-targets', { role: 'listbox', 'aria-label': kind === 'page' ? 'Sections' : 'Notebooks and section groups' });
+  const filter = h('input.input', { type: 'search', placeholder: '搜索', 'aria-label': '筛选位置', autocomplete: 'off' });
+  const list = h('div.move-targets', { role: 'listbox', 'aria-label': kind === 'page' ? '分区' : '笔记本和分区组' });
   let target = null;
   const choose = (btn, t) => {
     target = t;
@@ -618,54 +618,54 @@ export function moveDialog(app, kind, id) {
       if (kind === 'page' && !sub.some((s) => !s.disabled)) continue;
       rows.push(nbRow, ...sub);
     }
-    list.replaceChildren(...(rows.length ? rows : [h('div.pane-empty', 'No locations match.')]));
+    list.replaceChildren(...(rows.length ? rows : [h('div.pane-empty', '无匹配的位置。')]));
   };
   filter.addEventListener('input', debounce(render, 100));
   render();
-  const name = kind === 'page' ? store.findPage(id)?.meta.title || 'Untitled Page' : store.findNode(id)?.node.name;
+  const name = kind === 'page' ? store.findPage(id)?.meta.title || '无标题页面' : store.findNode(id)?.node.name;
   const copyFailed = (err) => {
     console.error(err);
-    toast(`Couldn't copy "${name}". Check your connection and try again.`, { kind: 'error' });
+    toast(`无法复制“${name}”。请检查网络后重试。`, { kind: 'error' });
     return 'failed';
   };
   const act = async (copy) => {
     if (!target) {
-      toast(kind === 'page' ? 'Pick a section.' : 'Pick a notebook or section group.');
+      toast(kind === 'page' ? '请选择一个分区。' : '请选择笔记本或分区组。');
       return false;
     }
     if (kind === 'page') {
       if (copy) {
         if ((await store.copyPage(id, { sectionId: target.sectionId }).catch(copyFailed)) === 'failed') return false;
-        toast(`Copied "${name}"`);
+        toast(`已复制“${name}”`);
       } else {
         store.movePage(id, { sectionId: target.sectionId, level: 0 });
         app.openPage(id);
-        toast(`Moved "${name}"`);
+        toast(`已移动“${name}”`);
       }
     } else if (copy) {
       const done = await store.copySection(id, target).catch(copyFailed);
       if (done === 'failed') return false;
       if (!done) {
-        toast("Couldn't copy that section.", { kind: 'error' });
+        toast("无法复制该分区。", { kind: 'error' });
         return false;
       }
-      toast(`Copied "${name}"`);
+      toast(`已复制“${name}”`);
     } else {
       if (!store.moveNode(id, target)) {
-        toast("Can't move a section group into itself.");
+        toast("不能将分区组移动到自身内部。");
         return false;
       }
       app.state.notebookId = target.notebookId;
       app.ensureSelection();
-      toast(`Moved "${name}"`);
+      toast(`已移动“${name}”`);
     }
     return true;
   };
   const dlg = openDialog({
-    title: kind === 'page' ? 'Move or Copy Page' : 'Move or Copy Section',
+    title: kind === 'page' ? '移动或复制页面' : '移动或复制分区',
     width: 460,
-    body: h('div', h('p.dialog-message', `Pick where "${name}" should go.`), filter, list),
-    actions: [{ label: 'Cancel' }, kind === 'group' ? null : { label: 'Copy', run: () => act(true) }, { label: 'Move', primary: true, run: () => act(false) }].filter(Boolean),
+    body: h('div', h('p.dialog-message', `选择“${name}”的目标位置。`), filter, list),
+    actions: [{ label: '取消' }, kind === 'group' ? null : { label: '复制', run: () => act(true) }, { label: '移动', primary: true, run: () => act(false) }].filter(Boolean),
   });
 }
 
@@ -676,12 +676,12 @@ export function pageDateDialog(app) {
   if (!page || app.editor.readOnly) return;
   const input = h('input.input', { id: 'page-date', type: 'datetime-local', value: toLocalInput(page.created) });
   openDialog({
-    title: 'Change Page Date and Time',
+    title: '修改页面日期和时间',
     width: 360,
-    body: h('div.field', h('label.field-label', { for: 'page-date' }, 'Date and time'), input),
+    body: h('div.field', h('label.field-label', { for: 'page-date' }, '日期和时间'), input),
     actions: [
-      { label: 'Cancel' },
-      { label: 'OK', primary: true, run: () => {
+      { label: '取消' },
+      { label: '确定', primary: true, run: () => {
         const d = new Date(input.value);
         if (Number.isNaN(d.getTime())) return false;
         page.created = d.toISOString();
@@ -701,45 +701,45 @@ export function deletedNotesDialog(app) {
   const list = h('div.trash-list');
   const purgeFailed = (what) => (err) => {
     console.error(err);
-    toast(`Couldn't ${what}. Check your connection and try again.`, { kind: 'error' });
+    toast(`无法${what}。请检查网络后重试。`, { kind: 'error' });
   };
   let dlg = null;
   const render = () => {
     list.setAttribute('role', store.trash.length ? 'list' : 'presentation');
     if (!store.trash.length) {
-      list.replaceChildren(h('div.empty-state', icon('trash', 28), h('p', 'Deleted Notes is empty.'), h('p.field-hint', 'Deleted pages, sections and notebooks stay here for 60 days.')));
+      list.replaceChildren(h('div.empty-state', icon('trash', 28), h('p', '已删除笔记为空。'), h('p.field-hint', '已删除的页面、分区和笔记本将在此保留 60 天。')));
       return;
     }
     list.replaceChildren(...store.trash.map((t) => {
-      const name = t.kind === 'page' ? t.pages[0]?.title || (t.sealedPages ? 'Page in a protected section' : 'Untitled Page') : t.kind === 'notebook' ? t.notebook.name : t.node.name;
-      const where = t.kind === 'page' ? `Page${t.pages.length > 1 ? ` and ${t.pages.length - 1} subpage${t.pages.length > 2 ? 's' : ''}` : ''} from ${t.sectionName || 'a section'}` : t.kind === 'notebook' ? 'Notebook' : t.kind === 'group' ? 'Section group' : `Section with ${t.node.pages.length} page${t.node.pages.length === 1 ? '' : 's'}`;
+      const name = t.kind === 'page' ? t.pages[0]?.title || (t.sealedPages ? '受保护分区中的页面' : '无标题页面') : t.kind === 'notebook' ? t.notebook.name : t.node.name;
+      const where = t.kind === 'page' ? `来自 ${t.sectionName || '分区'} 的页面${t.pages.length > 1 ? ` 及 ${t.pages.length - 1} 个子页` : ''}` : t.kind === 'notebook' ? '笔记本' : t.kind === 'group' ? '分区组' : `包含 ${t.node.pages.length} 个页面的分区`;
       const days = Math.max(0, 60 - Math.floor((Date.now() - Date.parse(t.deletedAt)) / 86400000));
       return h('div.trash-item', { role: 'listitem' },
         icon(t.kind === 'page' ? 'fileText' : t.kind === 'notebook' ? 'notebook' : 'folder', 18),
-        h('div.trash-text', h('div.result-title', name), h('div.result-path', `${where} · deleted ${new Date(t.deletedAt).toLocaleDateString()} · ${days} days left`)),
-        h('button.btn.small', { type: 'button', onclick: async () => { if (await app.restoreTrash(t.id)) { render(); toast(`Restored "${name}"`); } } }, 'Restore'),
-        h('button.btn.small.danger', { type: 'button', 'aria-label': `Delete "${name}" permanently`, onclick: async () => {
-          if (!(await confirmDialog({ title: 'Delete permanently?', message: `"${name}" will be deleted for good. This can't be undone.`, okLabel: 'Delete', danger: true }))) return;
-          await store.purge(t.id).catch(purgeFailed(`delete "${name}" permanently`));
+        h('div.trash-text', h('div.result-title', name), h('div.result-path', `${where} · 删除于 ${new Date(t.deletedAt).toLocaleDateString()} · 剩余 ${days} 天`)),
+        h('button.btn.small', { type: 'button', onclick: async () => { if (await app.restoreTrash(t.id)) { render(); toast(`已恢复“${name}”`); } } }, '恢复'),
+        h('button.btn.small.danger', { type: 'button', 'aria-label': `永久删除“${name}”`, onclick: async () => {
+          if (!(await confirmDialog({ title: '永久删除？', message: `“${name}”将被彻底永久删除，无法撤销。`, okLabel: '删除', danger: true }))) return;
+          await store.purge(t.id).catch(purgeFailed(`永久删除“${name}”`));
           render();
-        } }, 'Delete'),
+        } }, '删除'),
       );
     }));
   };
   render();
   dlg = openDialog({
-    title: 'Deleted Notes',
+    title: '已删除笔记',
     width: 620,
     body: list,
     actions: [
-      { label: 'Empty Deleted Notes', danger: true, run: async () => {
+      { label: '清空已删除笔记', danger: true, run: async () => {
         if (!store.trash.length) return false;
-        if (!(await confirmDialog({ title: 'Empty Deleted Notes?', message: 'Everything in Deleted Notes will be deleted for good.', okLabel: 'Empty', danger: true }))) return false;
-        await store.emptyTrash().catch(purgeFailed('empty Deleted Notes'));
+        if (!(await confirmDialog({ title: '清空已删除笔记？', message: '已删除笔记中的所有内容将被彻底永久删除。', okLabel: '清空', danger: true }))) return false;
+        await store.emptyTrash().catch(purgeFailed('清空已删除笔记'));
         render();
         return false;
       } },
-      { label: 'Close', primary: true },
+      { label: '关闭', primary: true },
     ],
   });
   void dlg;
@@ -764,13 +764,13 @@ export function openReader(app) {
       /* ignore */
     }
   };
-  const content = h('article.reader-content', { tabindex: '0', 'aria-label': 'Page text' });
-  content.append(h('h1', page.title || 'Untitled Page'));
+  const content = h('article.reader-content', { tabindex: '0', 'aria-label': '页面文本' });
+  content.append(h('h1', page.title || '无标题页面'));
   const ordered = [...page.outlines].sort((a, b) => a.y - b.y || a.x - b.x);
   for (const o of ordered) {
     for (const para of htmlToText(o.html).split('\n')) if (para.trim()) content.append(h('p', para));
   }
-  const overlay = h('div.reader', { role: 'dialog', 'aria-modal': 'true', 'aria-label': 'Immersive Reader' });
+  const overlay = h('div.reader', { role: 'dialog', 'aria-modal': 'true', 'aria-label': '沉浸式阅读器' });
   const apply = () => {
     overlay.dataset.theme = settings.theme;
     overlay.dataset.font = settings.font;
@@ -783,7 +783,7 @@ export function openReader(app) {
   let speaking = false;
   let reading = 0;
   let readingAt = 0;
-  const playBtn = h('button.reader-play', { type: 'button', 'aria-label': 'Read aloud' }, icon('play', 26));
+  const playBtn = h('button.reader-play', { type: 'button', 'aria-label': '朗读' }, icon('play', 26));
   const stopSpeech = () => {
     // Ends this reading for good: a cancelled utterance may still report
     // its end, which must not read on.
@@ -791,12 +791,12 @@ export function openReader(app) {
     synth?.cancel();
     speaking = false;
     playBtn.replaceChildren(icon('play', 26));
-    playBtn.setAttribute('aria-label', 'Read aloud');
+    playBtn.setAttribute('aria-label', '朗读');
     if (globalThis.CSS?.highlights) CSS.highlights.delete('nt-read');
   };
   const speak = (from = 0) => {
     if (!synth) {
-      toast('Read aloud is not available in this browser.');
+      toast('此浏览器不支持朗读功能。');
       return;
     }
     if (speaking) {
@@ -814,7 +814,7 @@ export function openReader(app) {
     const mine = ++reading;
     speaking = true;
     playBtn.replaceChildren(icon('pause', 26));
-    playBtn.setAttribute('aria-label', 'Pause reading');
+    playBtn.setAttribute('aria-label', '暂停朗读');
     const next = () => {
       if (mine !== reading) return;
       if (!speaking || i >= paras.length) return stopSpeech();
@@ -867,17 +867,17 @@ export function openReader(app) {
     }
   };
   document.addEventListener('keydown', onKey, true);
-  const sizeInput = h('input', { type: 'range', min: '16', max: '56', step: '2', value: String(settings.size), 'aria-label': 'Text size' });
+  const sizeInput = h('input', { type: 'range', min: '16', max: '56', step: '2', value: String(settings.size), 'aria-label': '文字大小' });
   sizeInput.addEventListener('input', () => {
     settings.size = Number(sizeInput.value);
     apply();
   });
-  const fontSel = h('select.select', { 'aria-label': 'Font' }, [['sans', 'Sans serif'], ['serif', 'Serif'], ['mono', 'Monospace']].map(([v, l]) => h('option', { value: v, selected: settings.font === v }, l)));
+  const fontSel = h('select.select', { 'aria-label': '字体' }, [['sans', '无衬线'], ['serif', '衬线'], ['mono', '等宽']].map(([v, l]) => h('option', { value: v, selected: settings.font === v }, l)));
   fontSel.addEventListener('change', () => {
     settings.font = fontSel.value;
     apply();
   });
-  const themeSel = h('select.select', { 'aria-label': 'Page theme' }, [['light', 'Light'], ['sepia', 'Sepia'], ['dark', 'Dark']].map(([v, l]) => h('option', { value: v, selected: settings.theme === v }, l)));
+  const themeSel = h('select.select', { 'aria-label': '页面主题' }, [['light', '浅色'], ['sepia', '羊皮纸'], ['dark', '深色']].map(([v, l]) => h('option', { value: v, selected: settings.theme === v }, l)));
   themeSel.addEventListener('change', () => {
     settings.theme = themeSel.value;
     apply();
@@ -887,7 +887,7 @@ export function openReader(app) {
     settings.spacing = spacing.checked;
     apply();
   });
-  const rateSel = h('select.select', { 'aria-label': 'Voice speed' }, [[0.75, 'Slow'], [1, 'Normal'], [1.25, 'Fast'], [1.5, 'Faster']].map(([v, l]) => h('option', { value: String(v), selected: settings.rate === v }, l)));
+  const rateSel = h('select.select', { 'aria-label': '语速' }, [[0.75, '慢速'], [1, '正常'], [1.25, '快速'], [1.5, '较快']].map(([v, l]) => h('option', { value: String(v), selected: settings.rate === v }, l)));
   rateSel.addEventListener('change', () => {
     settings.rate = Number(rateSel.value);
     if (speaking) {
@@ -899,13 +899,13 @@ export function openReader(app) {
     apply();
   });
   const toolbar = h('div.reader-bar',
-    h('span.reader-title', 'Immersive Reader'),
+    h('span.reader-title', '沉浸式阅读器'),
     h('label.reader-opt', icon('fontSize', 16), sizeInput),
     h('label.reader-opt', fontSel),
     h('label.reader-opt', themeSel),
-    h('label.reader-opt.check-row', spacing, 'Wide spacing'),
-    h('label.reader-opt', 'Voice speed', rateSel),
-    h('button.icon-btn', { type: 'button', 'aria-label': 'Close Immersive Reader', onclick: close }, icon('x', 20)),
+    h('label.reader-opt.check-row', spacing, '宽字符间距'),
+    h('label.reader-opt', '语速', rateSel),
+    h('button.icon-btn', { type: 'button', 'aria-label': '关闭沉浸式阅读器', onclick: close }, icon('x', 20)),
   );
   overlay.append(toolbar, h('div.reader-scroll', content), h('div.reader-foot', playBtn));
   document.body.append(overlay);
@@ -920,7 +920,7 @@ export function emailPage(app) {
   if (!page) return;
   app.editor.flush();
   const { url, truncated } = mailtoForPage(page);
-  if (truncated) toast('This page is too long for an email link, so only its beginning is in the message. Export the page to send all of it.', { duration: 8000 });
+  if (truncated) toast('此页面内容过长，邮件中仅包含开头部分。若要发送完整内容，请导出页面。', { duration: 8000 });
   window.location.href = url;
 }
 
@@ -931,7 +931,7 @@ const MAILTO_MAX = 2000;
 /** A mailto: link for a page, its text cut to fit; truncated says whether it was. */
 export function mailtoForPage(page) {
   const title = page.title || '';
-  const subject = encodeURIComponent(Array.from(title || 'Notes page').slice(0, 200).join(''));
+  const subject = encodeURIComponent(Array.from(title || '笔记页面').slice(0, 200).join(''));
   const head = `mailto:?subject=${subject}&body=`;
   const body = pageText(page).replace(title, '').trim();
   const fits = (text) => head.length + encodeURIComponent(text).length <= MAILTO_MAX;
@@ -958,7 +958,7 @@ function download(name, blob) {
 }
 
 function safeName(s) {
-  return (s || 'Untitled Page').replace(/[\\/:*?"<>|]+/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 80).trim() || 'Untitled Page';
+  return (s || '无标题页面').replace(/[\\/:*?"<>|]+/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 80).trim() || '无标题页面';
 }
 
 async function blobToDataUrl(blob) {
@@ -1009,10 +1009,10 @@ const EXPORT_CSS = 'body{font:11pt/1.4 -apple-system,"Segoe UI",system-ui,sans-s
 async function pageHtmlDocument(app, pages) {
   const sections = [];
   for (const page of pages) {
-    sections.push(`<article><h1 class="page-title">${escapeHtml(page.title || 'Untitled Page')}</h1><div class="meta">${escapeHtml(new Date(page.created).toLocaleString())}</div>${await inlinePageHtml(app, page)}</article>`);
+    sections.push(`<article><h1 class="page-title">${escapeHtml(page.title || '无标题页面')}</h1><div class="meta">${escapeHtml(new Date(page.created).toLocaleString())}</div>${await inlinePageHtml(app, page)}</article>`);
   }
-  const title = pages.length === 1 ? pages[0].title || 'Untitled Page' : 'Notes export';
-  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>${escapeHtml(title)}</title><style>${EXPORT_CSS}</style></head><body>${sections.join('<hr class="page-break">')}</body></html>`;
+  const title = pages.length === 1 ? pages[0].title || '无标题页面' : '笔记导出';
+  return `<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>${escapeHtml(title)}</title><style>${EXPORT_CSS}</style></head><body>${sections.join('<hr class="page-break">')}</body></html>`;
 }
 
 export async function exportPage(app, format) {
@@ -1022,7 +1022,7 @@ export async function exportPage(app, format) {
   const name = safeName(page.title);
   if (format === 'txt') return download(`${name}.txt`, new Blob([pageText(page)], { type: 'text/plain' }));
   if (format === 'md') {
-    const md = [`# ${page.title || 'Untitled Page'}`, ...[...page.outlines].sort((a, b) => a.y - b.y || a.x - b.x).map((o) => htmlToMarkdown(o.html)).filter((md) => md.trim())].join('\n\n');
+    const md = [`# ${page.title || '无标题页面'}`, ...[...page.outlines].sort((a, b) => a.y - b.y || a.x - b.x).map((o) => htmlToMarkdown(o.html)).filter((md) => md.trim())].join('\n\n');
     return download(`${name}.md`, new Blob([md + '\n'], { type: 'text/markdown' }));
   }
   const html = await pageHtmlDocument(app, [page]);
@@ -1050,12 +1050,12 @@ export async function exportNotebook(app, notebookId) {
   const open = protectedSections.filter((s) => app.store.keys.has(s.id));
   if (protectedSections.length) {
     const parts = [];
-    if (locked.length) parts.push(`Locked sections are left out: ${locked.map((s) => `"${s.name}"`).join(', ')}. Unlock them first to include them.`);
-    if (open.length) parts.push(`Unlocked protected sections (${open.map((s) => `"${s.name}"`).join(', ')}) are saved without encryption in the backup file.`);
-    if (!(await confirmDialog({ title: 'Export notebook backup?', message: parts.join(' '), okLabel: 'Export' }))) return;
+    if (locked.length) parts.push(`锁定分区未包含在内: ${locked.map((s) => `"${s.name}"`).join(', ')}。请先解锁以包含它们。`);
+    if (open.length) parts.push(`已解锁的受保护分区 (${open.map((s) => `"${s.name}"`).join(', ')}) 在备份文件中未经加密保存。`);
+    if (!(await confirmDialog({ title: '导出笔记本备份？', message: parts.join(' '), okLabel: '导出' }))) return;
   }
   app.editor.flush();
-  toast('Preparing the backup...');
+  toast('正在准备备份...');
   const pages = {};
   const assets = {};
   for (const section of app.store.sectionsOf(nb)) {
@@ -1126,8 +1126,8 @@ export async function importBackup(app, backup) {
       failed++;
     }
   }
-  if (failed) toast(`${failed} ${failed === 1 ? 'picture or file' : 'pictures or files'} couldn't be imported. Check your connection and import the backup again.`, { kind: 'error' });
-  const nb = store.createNotebook(store.notebooks.some((n) => n.name === backup.notebook.name) ? `${backup.notebook.name} (imported)` : backup.notebook.name, { color: backup.notebook.color, silent: true });
+  if (failed) toast(`${failed} 个图片或文件无法导入。请检查网络并重新导入备份。`, { kind: 'error' });
+  const nb = store.createNotebook(store.notebooks.some((n) => n.name === backup.notebook.name) ? `${backup.notebook.name} (已导入)` : backup.notebook.name, { color: backup.notebook.color, silent: true });
   nb.sections = sections;
   for (const [oldId, page] of Object.entries(backup.pages || {})) {
     const id = fresh(oldId, 'p');
@@ -1179,7 +1179,7 @@ export async function importFileList(app, files) {
         } catch {
           /* refused below */
         }
-        if (data?.format !== 'notes-backup') throw new Error(`${file.name} is not a notebook backup`);
+        if (data?.format !== 'notes-backup') throw new Error(`${file.name} 不是笔记本备份文件`);
         const nb = await importBackup(app, data);
         app.selectNotebook(nb.id);
         count++;
@@ -1201,11 +1201,11 @@ export async function importFileList(app, files) {
       firstPage ||= meta.id;
       count++;
     } catch (err) {
-      toast(`Couldn't import ${file.name}: ${err.message}`, { kind: 'error' });
+      toast(`无法导入 ${file.name}：${err.message}`, { kind: 'error' });
     }
   }
   if (firstPage) app.openPage(firstPage);
-  if (count) toast(`Imported ${count} ${count === 1 ? 'file' : 'files'}`);
+  if (count) toast(`已导入 ${count} 个文件`);
   return count;
 }
 
@@ -1223,7 +1223,7 @@ const PICTURE_TYPES = { png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg',
 function driveFiles(given) {
   const all = [].concat(given || []).filter((it) => it && typeof it === 'object');
   const files = all.filter((it) => typeof it.path === 'string' && it.path && !isDriveDir(it));
-  if (!files.length && all.some(isDriveDir)) toast("Folders can't be opened. Open the files inside instead.", { kind: 'error' });
+  if (!files.length && all.some(isDriveDir)) toast("无法打开文件夹。请改为打开其中的文件。", { kind: 'error' });
   return files;
 }
 
@@ -1235,7 +1235,7 @@ export async function readDriveFile(it, name = driveName(it)) {
   return new File([blob], name, { type });
 }
 
-const readError = (err) => err?.message || err?.error?.message || 'the file could not be read';
+const readError = (err) => err?.message || err?.error?.message || '无法读取文件';
 
 /**
  * Opens local files in Notes: double-click, Open with, Import > From Local
@@ -1247,13 +1247,13 @@ export async function openDriveItems(app, given) {
   for (const it of driveFiles(given)) {
     const name = driveName(it);
     if (!isImportable(name)) {
-      toast(`${name} can't be opened in Notes. Open a Markdown, HTML or text file, or a notebook backup.`, { kind: 'error' });
+      toast(`${name} 无法在笔记中打开。请打开 Markdown、HTML、文本文件或笔记本备份。`, { kind: 'error' });
       continue;
     }
     try {
       files.push(await readDriveFile(it, name));
     } catch (err) {
-      toast(`Couldn't open ${name}: ${readError(err)}`, { kind: 'error' });
+      toast(`无法打开 ${name}：${readError(err)}`, { kind: 'error' });
     }
   }
   return files.length ? importFileList(app, files) : 0;
@@ -1304,7 +1304,7 @@ export async function dropDriveItems(app, given, point) {
     try {
       files.push(await readDriveFile(it, name));
     } catch (err) {
-      toast(`Couldn't insert ${name}: ${readError(err)}`, { kind: 'error' });
+      toast(`无法插入 ${name}：${readError(err)}`, { kind: 'error' });
     }
   }
   // The files take a while to read: if another page was opened meanwhile, they must not land on it.
@@ -1318,14 +1318,14 @@ export function shareDialog(app) {
   if (!page) return;
   app.editor.flush();
   const status = h('p.field-hint', { role: 'status' });
-  const linkInput = h('input.input', { type: 'text', readonly: true, 'aria-label': 'Read-only link', placeholder: 'Publish to create a link' });
-  const copyBtn = h('button.btn', { type: 'button', disabled: true, onclick: () => navigator.clipboard?.writeText(linkInput.value).then(() => toast('Link copied')) }, icon('copy', 14), 'Copy');
-  const expiry = h('select.select', { 'aria-label': 'Link expires after' }, [['1d', '1 day'], ['7d', '7 days'], ['30d', '30 days'], ['365d', '1 year']].map(([v, l]) => h('option', { value: v, selected: v === '30d' }, l)));
-  const publishBtn = h('button.btn.primary', { type: 'button' }, icon('globe', 14), 'Create Link');
-  const stopBtn = h('button.btn', { type: 'button', hidden: !page.published }, 'Stop Sharing');
+  const linkInput = h('input.input', { type: 'text', readonly: true, 'aria-label': '只读链接', placeholder: '发布以创建链接' });
+  const copyBtn = h('button.btn', { type: 'button', disabled: true, onclick: () => navigator.clipboard?.writeText(linkInput.value).then(() => toast('链接已复制')) }, icon('copy', 14), '复制');
+  const expiry = h('select.select', { 'aria-label': '链接过期时间' }, [['1d', '1 天'], ['7d', '7 天'], ['30d', '30 天'], ['365d', '1 年']].map(([v, l]) => h('option', { value: v, selected: v === '30d' }, l)));
+  const publishBtn = h('button.btn.primary', { type: 'button' }, icon('globe', 14), '创建链接');
+  const stopBtn = h('button.btn', { type: 'button', hidden: !page.published }, '停止共享');
   publishBtn.addEventListener('click', async () => {
     publishBtn.disabled = true;
-    status.textContent = 'Publishing...';
+    status.textContent = '正在发布...';
     try {
       const outlines = await inlineOutlines(app, page, { maxImage: 3 * 1024 * 1024, keepTags: true });
       const snapshot = { format: 'notes-shared-page', v: 2, title: page.title, created: page.created, color: page.color, rules: page.rules, outlines, ink: page.ink || [], published: new Date().toISOString() };
@@ -1337,10 +1337,10 @@ export function shareDialog(app) {
       stopBtn.hidden = false;
       page.published = { at: snapshot.published, expires: expiry.value };
       app.store.pageChanged(page);
-      status.textContent = `Anyone with the link can read a copy of this page as it is now, for ${expiry.selectedOptions[0].textContent}. Publish again after editing to update it.`;
+      status.textContent = `任何拥有此链接的人都可以在 ${expiry.selectedOptions[0].textContent} 内阅读此页面的副本。编辑后再次发布可更新内容。`;
       linkInput.select();
     } catch (err) {
-      status.textContent = `Couldn't create the link: ${err?.message || 'request failed'}`;
+      status.textContent = `无法创建链接：${err?.message || '请求失败'}`;
     } finally {
       publishBtn.disabled = false;
     }
@@ -1351,7 +1351,7 @@ export function shareDialog(app) {
       await app.store.backend.remove(`published/${page.id}.json`);
     } catch (err) {
       // The snapshot is still there, so the link still opens it.
-      status.textContent = `Couldn't stop sharing: ${err?.message || 'request failed'}. The link still works. Try again.`;
+      status.textContent = `无法停止共享：${err?.message || '请求失败'}。链接仍然有效，请重试。`;
       return;
     } finally {
       stopBtn.disabled = false;
@@ -1361,57 +1361,57 @@ export function shareDialog(app) {
     linkInput.value = '';
     copyBtn.disabled = true;
     stopBtn.hidden = true;
-    status.textContent = 'Sharing stopped. Existing links no longer open the page.';
+    status.textContent = '已停止共享。现有链接将无法再打开此页面。';
   });
   const pageLink = `${location.origin}${location.pathname}#page=${page.id}`;
   openDialog({
-    title: `Share "${page.title || 'Untitled Page'}"`,
+    title: `共享“${page.title || '无标题页面'}”`,
     width: 520,
     body: h('div',
-      h('h3.share-head', 'Read-only link'),
-      h('p.dialog-message', 'Create a link anyone can open to read this page, without signing in.'),
+      h('h3.share-head', '只读链接'),
+      h('p.dialog-message', '创建任何人都可以打开阅读此页面的链接，无需登录。'),
       h('div.share-row', expiry, publishBtn, stopBtn),
       h('div.share-row', linkInput, copyBtn),
       status,
-      h('h3.share-head', 'Other ways to share'),
+      h('h3.share-head', '其他共享方式'),
       h('div.share-row',
-        h('button.btn', { type: 'button', onclick: () => navigator.clipboard?.writeText(pageLink).then(() => toast('Link copied')) }, icon('link', 14), 'Copy Link to Page'),
-        h('button.btn', { type: 'button', onclick: () => emailPage(app) }, icon('mail', 14), 'Email Page'),
-        h('button.btn', { type: 'button', onclick: (e) => openMenu(e.currentTarget, app.commands.get('export').menu(app), { label: 'Export' }) }, icon('download', 14), 'Export'),
+        h('button.btn', { type: 'button', onclick: () => navigator.clipboard?.writeText(pageLink).then(() => toast('链接已复制')) }, icon('link', 14), '复制页面链接'),
+        h('button.btn', { type: 'button', onclick: () => emailPage(app) }, icon('mail', 14), '通过电子邮件发送页面'),
+        h('button.btn', { type: 'button', onclick: (e) => openMenu(e.currentTarget, app.commands.get('export').menu(app), { label: '导出' }) }, icon('download', 14), '导出'),
       ),
-      h('p.field-hint', '"Copy Link to Page" opens the page in Notes for you (signed in to your account).'),
+      h('p.field-hint', '“复制页面链接”会在笔记中为您打开此页面（需登录账户）。'),
     ),
-    actions: [{ label: 'Done', primary: true }],
+    actions: [{ label: '完成', primary: true }],
   });
 }
 
 // ------------------------------------------------------------ help, shortcuts, about
 
 const EDITING_KEYS = [
-  ['Tab', 'Indent paragraph, or move to the next table cell'],
-  ['Shift+Tab', 'Outdent paragraph, or move to the previous table cell'],
-  ['Escape', 'Stop typing and select the note container'],
-  ['Delete', 'Delete the selected container or ink'],
-  ['Enter', 'In the page title, move to the notes'],
-  ['* then Space', 'Start a bulleted list'],
-  ['1. then Space', 'Start a numbered list'],
-  ['Mod+A', 'Select the container text; press again for all containers'],
-  ['Mod+Wheel', 'Zoom the page'],
-  ['F6', 'Move between the ribbon, panes and the page'],
-  ['Alt+Shift+ArrowUp', 'In the panes: move the page or section up'],
+  ['Tab', '缩进段落，或移动到下一个表格单元格'],
+  ['Shift+Tab', '减少段落缩进，或移动到上一个表格单元格'],
+  ['Escape', '停止键入并选择笔记容器'],
+  ['Delete', '删除所选容器或墨迹'],
+  ['Enter', '在页面标题中，按回车移至笔记内容'],
+  ['* 空格', '开始项目符号列表'],
+  ['1. 空格', '开始编号列表'],
+  ['Mod+A', '选择容器文本；再次按下选择所有容器'],
+  ['Mod+滚轮', '缩放页面'],
+  ['F6', '在功能区、窗格和页面之间切换'],
+  ['Alt+Shift+ArrowUp', '在窗格中：上移页面或分区'],
 ];
 
 export function shortcutsDialog(app) {
   const groups = [
-    ['Notebooks and pages', ['newPage', 'newSubpage', 'newSection', 'makeSubpage', 'promoteSubpage', 'nextPage', 'prevPage', 'search', 'findOnPage', 'syncNow', 'print']],
-    ['Formatting', ['bold', 'italic', 'underline', 'strike', 'subscript', 'superscript', 'highlight', 'clearFormat', 'growFont', 'shrinkFont', 'bullets', 'numbering', 'indent', 'outdent', 'alignLeft', 'alignCenter', 'alignRight', 'moveUp', 'moveDown', 'formatPainter', 'insertLink']],
-    ['Styles', ['style:h1', 'style:h2', 'style:h3', 'style:h4', 'style:h5', 'style:h6', 'style:normal']],
-    ['Tags', ['tag:todo', 'tag:important', 'tag:question', 'tag:remember', 'tag:definition', 'tag:highlight', 'tag:contact', 'tag:address', 'tag:phone', 'removeTags']],
-    ['Insert', ['insertDate', 'insertTime', 'insertDateTime']],
-    ['View', ['zoomIn', 'zoomOut', 'fullPage', 'toggleNav', 'collapseRibbon', 'tellMe', 'undo', 'redo', 'shortcuts', 'help']],
+    ['笔记本与页面', ['newPage', 'newSubpage', 'newSection', 'makeSubpage', 'promoteSubpage', 'nextPage', 'prevPage', 'search', 'findOnPage', 'syncNow', 'print']],
+    ['格式', ['bold', 'italic', 'underline', 'strike', 'subscript', 'superscript', 'highlight', 'clearFormat', 'growFont', 'shrinkFont', 'bullets', 'numbering', 'indent', 'outdent', 'alignLeft', 'alignCenter', 'alignRight', 'moveUp', 'moveDown', 'formatPainter', 'insertLink']],
+    ['样式', ['style:h1', 'style:h2', 'style:h3', 'style:h4', 'style:h5', 'style:h6', 'style:normal']],
+    ['标记', ['tag:todo', 'tag:important', 'tag:question', 'tag:remember', 'tag:definition', 'tag:highlight', 'tag:contact', 'tag:address', 'tag:phone', 'removeTags']],
+    ['插入', ['insertDate', 'insertTime', 'insertDateTime']],
+    ['视图', ['zoomIn', 'zoomOut', 'fullPage', 'toggleNav', 'collapseRibbon', 'tellMe', 'undo', 'redo', 'shortcuts', 'help']],
   ];
-  const filter = h('input.input', { type: 'search', placeholder: 'Search shortcuts', 'aria-label': 'Search shortcuts' });
-  const body = h('div.shortcuts', { tabindex: '0', role: 'region', 'aria-label': 'Shortcut list' });
+  const filter = h('input.input', { type: 'search', placeholder: '搜索快捷键', 'aria-label': '搜索快捷键' });
+  const body = h('div.shortcuts', { tabindex: '0', role: 'region', 'aria-label': '快捷键列表' });
   const render = () => {
     const q = filter.value.trim().toLowerCase();
     const sections = [];
@@ -1421,41 +1421,41 @@ export function shortcutsDialog(app) {
       sections.push(h('section', h('h3', title), h('table.shortcut-table', h('tbody', rows.map((c) => h('tr', h('td', c.label), h('td', h('kbd.kbd', shortcutLabel(c.key)))))))));
     }
     const edit = EDITING_KEYS.filter(([, d]) => !q || d.toLowerCase().includes(q));
-    if (edit.length) sections.push(h('section', h('h3', 'Editing'), h('table.shortcut-table', h('tbody', edit.map(([k, d]) => h('tr', h('td', d), h('td', h('kbd.kbd', shortcutLabel(k.includes('then') || k === 'Mod+Wheel' ? k : k).replace('Wheel', ' + scroll')))))))));
-    body.replaceChildren(...(sections.length ? sections : [h('p.field-hint', 'No shortcuts match.')]));
+    if (edit.length) sections.push(h('section', h('h3', '编辑'), h('table.shortcut-table', h('tbody', edit.map(([k, d]) => h('tr', h('td', d), h('td', h('kbd.kbd', shortcutLabel(k.includes('then') || k === 'Mod+Wheel' ? k : k).replace('Wheel', ' + 滚动')))))))));
+    body.replaceChildren(...(sections.length ? sections : [h('p.field-hint', '无匹配的快捷键。')]));
   };
   filter.addEventListener('input', render);
   render();
-  openDialog({ title: 'Keyboard Shortcuts', width: 620, body: h('div', filter, body), actions: [{ label: 'Close', primary: true }] });
+  openDialog({ title: '键盘快捷键', width: 620, body: h('div', filter, body), actions: [{ label: '关闭', primary: true }] });
 }
 
 export function helpDialog(app) {
   const tip = (ic, title, text) => h('div.help-tip', icon(ic, 20, undefined, { plain: true }), h('div', h('strong', title), h('p', text)));
   openDialog({
-    title: 'Help',
+    title: '帮助',
     width: 560,
     body: h('div.help',
-      tip('container', 'Click anywhere to write', 'Notes are free-form. Click on the page to start a note container, drag its top bar to move it and its right edge to resize it.'),
-      tip('notebooks', 'Notebooks, sections and pages', 'Use the panes on the left. Drag pages to reorder them or to the right to make subpages, and drag sections into section groups.'),
-      tip('todo', 'Tags', `Mark paragraphs with tags such as To Do (${shortcutLabel('Mod+1')}) and Important (${shortcutLabel('Mod+2')}). Find Tags lists them all.`),
-      tip('pen', 'Draw', 'On the Draw tab, pick a pen or highlighter to write by hand. Use Lasso Select to move ink and Insert Space to make room.'),
-      tip('search', 'Search', `Press ${shortcutLabel('Mod+E')} to search every notebook, or ${shortcutLabel('Mod+F')} to find on the current page.`),
-      tip('cloud', 'Saved to your cloud', 'Everything saves automatically to local storage. Deleted items stay in Deleted Notes for 60 days.'),
+      tip('container', '随时随地自由记录', '笔记排版完全自由。点击页面任意位置即可创建笔记容器，拖动顶部栏可移动，拖动右侧边缘可调整大小。'),
+      tip('notebooks', '笔记本、分区和页面', '使用左侧窗格。拖动页面调整顺序或向右拖动设为子页面，将分区拖入分区组中。'),
+      tip('todo', '标记', `使用待办事项 (${shortcutLabel('Mod+1')}) 和重要 (${shortcutLabel('Mod+2')}) 等标记段落。“查找标记”会列出所有标记。`),
+      tip('pen', '绘图与墨迹', '在“绘图”选项卡上选择笔或荧光笔进行手写绘图。使用套索选择移动墨迹，使用插入空白留出空隙。'),
+      tip('search', '搜索', `按 ${shortcutLabel('Mod+E')} 搜索所有笔记本，或按 ${shortcutLabel('Mod+F')} 在当前页面查找。`),
+      tip('cloud', '保存到本地存储', '所有内容自动保存到本地存储。已删除项目将在已删除笔记中保留 60 天。'),
     ),
-    actions: [{ label: 'Keyboard Shortcuts', run: () => setTimeout(() => app.shortcutsDialog()) }, { label: 'Close', primary: true }],
+    actions: [{ label: '键盘快捷键', run: () => setTimeout(() => app.shortcutsDialog()) }, { label: '关闭', primary: true }],
   });
 }
 
 export function aboutDialog() {
   openDialog({
-    title: 'About Notes',
+    title: '关于笔记',
     width: 440,
     body: h('div.about',
       h('img', { src: './favicon.svg', alt: '', width: 56, height: 56 }),
-      h('p', h('strong', 'Notes'), ' is a free-form digital notebook. Your notebooks are stored as files in your own local storage storage.'),
-      h('p.field-hint', 'Built with Puter.js. Icons from Lucide (ISC license). Ink smoothing by perfect-freehand (MIT license). Equations by Temml (MIT license). PDF printouts by pdf.js (Apache-2.0 license).'),
+      h('p', h('strong', '笔记'), ' 是一款自由排版的数字笔记本。您的笔记本将作为文件保存在本地存储中。'),
+      h('p.field-hint', '基于 Puter.js 构建。图标来自 Lucide (ISC 许可证)。墨迹平滑来自 perfect-freehand (MIT 许可证)。公式渲染来自 Temml (MIT 许可证)。PDF 打印来自 pdf.js (Apache-2.0 许可证)。'),
     ),
-    actions: [{ label: 'Close', primary: true }],
+    actions: [{ label: '关闭', primary: true }],
   });
 }
 
@@ -1469,18 +1469,18 @@ function passwordField(id, label, autocomplete) {
 /** Asks for a protected section's password. Resolves true once it is unlocked. */
 export function unlockSection(app, section) {
   return new Promise((resolve) => {
-    const pw = passwordField('unlock-pw', 'Password', 'current-password');
+    const pw = passwordField('unlock-pw', '密码', 'current-password');
     const error = h('p.field-error', { role: 'alert' });
     let ok = false;
     openDialog({
-      title: 'Protected Section',
+      title: '受保护的分区',
       width: 380,
-      body: h('div', h('p.dialog-message', `"${section.name}" is password protected. Enter its password to see its pages.`), pw.field, error),
+      body: h('div', h('p.dialog-message', `“${section.name}”已受密码保护。请输入密码以查看其页面。`), pw.field, error),
       actions: [
-        { label: 'Cancel' },
-        { label: 'Unlock', primary: true, run: async (btn) => {
+        { label: '取消' },
+        { label: '解锁', primary: true, run: async (btn) => {
           if (!pw.input.value) {
-            error.textContent = 'Enter the password.';
+            error.textContent = '请输入密码。';
             return false;
           }
           btn.disabled = true;
@@ -1495,7 +1495,7 @@ export function unlockSection(app, section) {
             return false;
           }
           if (!unlocked) {
-            error.textContent = 'That password is not correct. Passwords are case-sensitive.';
+            error.textContent = '密码不正确。密码区分大小写。';
             pw.input.select();
             return false;
           }
@@ -1517,66 +1517,66 @@ export function passwordDialog(app, section) {
     return;
   }
   const isNew = !section.locked;
-  const first = passwordField('pw-new', isNew ? 'Enter password' : 'New password', 'new-password');
-  const second = passwordField('pw-confirm', 'Confirm password', 'new-password');
+  const first = passwordField('pw-new', isNew ? '输入密码' : '新密码', 'new-password');
+  const second = passwordField('pw-confirm', '确认密码', 'new-password');
   const error = h('p.field-error', { role: 'alert' });
-  const actions = [{ label: 'Cancel' }];
+  const actions = [{ label: '取消' }];
   if (!isNew) {
-    actions.push({ label: 'Remove Password', run: async () => {
-      if (!(await confirmDialog({ title: 'Remove password?', message: `"${section.name}" will no longer be encrypted. Anyone signed in to your account will be able to read it.`, okLabel: 'Remove' }))) return false;
+    actions.push({ label: '删除密码', run: async () => {
+      if (!(await confirmDialog({ title: '删除密码？', message: `“${section.name}”将不再加密。任何可访问此应用的人都将能阅读该分区。`, okLabel: '删除' }))) return false;
       try {
         // False: the section locked again while this dialog was open.
-        if (!(await store.unprotectSection(section.id))) throw new Error('the section is locked. Unlock it and try again.');
+        if (!(await store.unprotectSection(section.id))) throw new Error('分区已锁定。请先解锁后再试。');
       } catch (err) {
-        error.textContent = `Couldn't remove the password: ${err.message}`;
+        error.textContent = `无法删除密码：${err.message}`;
         return false;
       }
       app.unlocked.delete(section.id);
-      toast('Password removed');
+      toast('密码已删除');
       app.renderNav();
       return true;
     } });
   }
   actions.push({
-    label: isNew ? 'Protect' : 'Change Password',
+    label: isNew ? '保护' : '修改密码',
     primary: true,
     run: async (btn) => {
       const a = first.input.value;
       if (a.length < 4) {
-        error.textContent = 'Use at least 4 characters.';
+        error.textContent = '密码长度至少为 4 个字符。';
         first.input.focus();
         return false;
       }
       if (a !== second.input.value) {
-        error.textContent = "The passwords don't match.";
+        error.textContent = "两次输入的密码不一致。";
         second.input.select();
         return false;
       }
       btn.disabled = true;
       app.editor.flush();
       try {
-        if (!(await store.protectSection(section.id, a))) throw new Error('the section is locked. Unlock it and try again.');
+        if (!(await store.protectSection(section.id, a))) throw new Error('分区已锁定。请先解锁后再试。');
       } catch (err) {
-        error.textContent = `Couldn't protect the section: ${err.message}`;
+        error.textContent = `无法保护分区：${err.message}`;
         btn.disabled = false;
         return false;
       }
       app.unlocked.add(section.id);
       app.touchProtected();
-      toast(isNew ? `"${section.name}" is now password protected` : 'Password changed');
+      toast(isNew ? `“${section.name}”现已受密码保护` : '密码已修改');
       app.renderNav();
       return true;
     },
   });
   openDialog({
-    title: isNew ? 'Password Protection' : 'Change Password',
+    title: isNew ? '密码保护' : '修改密码',
     width: 420,
     body: h('div',
-      h('p.dialog-message', isNew ? `Pages in "${section.name}" will be encrypted with this password. They lock again after 10 minutes without use, or with Lock All. Read-only links to its pages stop working.` : `Change the password for "${section.name}", or remove it.`),
+      h('p.dialog-message', isNew ? `“${section.name}”中的页面将使用此密码加密。在闲置 10 分钟后或点击“全部锁定”后将再次锁定。该分区的只读共享链接也将停止工作。` : `修改“${section.name}”的密码，或删除密码。`),
       first.field,
       second.field,
       error,
-      h('p.field-hint', { role: 'note' }, 'Keep the password safe. If you forget it, nobody can recover these notes.'),
+      h('p.field-hint', { role: 'note' }, '请妥善保管密码。如果您忘记密码，将无法找回这些笔记。'),
     ),
     actions,
   });
@@ -1595,75 +1595,75 @@ export function canvasContextMenu(app, e) {
   if (img) {
     e.preventDefault();
     openMenu(point, [
-      { label: 'Alt Text...', icon: 'accessibility', run: () => altTextDialog(app, img) },
-      { label: 'Save As...', icon: 'download', run: async () => {
+      { label: '可选文字...', icon: 'accessibility', run: () => altTextDialog(app, img) },
+      { label: '另存为...', icon: 'download', run: async () => {
         const blob = img.dataset.asset ? await app.store.assetBlob(img.dataset.asset) : null;
         if (blob) download(img.getAttribute('alt') || img.dataset.asset, blob instanceof Blob ? blob : new Blob([blob]));
       } },
-      { label: 'Reset Size', icon: 'pageWidth', run: () => { img.style.removeProperty('width'); img.style.removeProperty('height'); ed.dirty.add(outline); ed.commit(); } },
+      { label: '重置大小', icon: 'pageWidth', run: () => { img.style.removeProperty('width'); img.style.removeProperty('height'); ed.dirty.add(outline); ed.commit(); } },
       { type: 'sep' },
-      { label: 'Delete', icon: 'trash', danger: true, run: () => { img.remove(); ed.clearImageSelection(); ed.dirty.add(outline); ed.commit(); } },
-    ], { label: 'Picture' });
+      { label: '删除', icon: 'trash', danger: true, run: () => { img.remove(); ed.clearImageSelection(); ed.dirty.add(outline); ed.commit(); } },
+    ], { label: '图片' });
     return;
   }
   if (file) {
     e.preventDefault();
     openMenu(point, [
-      { label: 'Open', icon: 'external', run: () => openAttachment(app, file.dataset) },
-      { label: 'Save As...', icon: 'download', run: async () => {
+      { label: '打开', icon: 'external', run: () => openAttachment(app, file.dataset) },
+      { label: '另存为...', icon: 'download', run: async () => {
         const blob = await app.store.assetBlob(file.dataset.asset);
         if (blob) download(file.dataset.name || 'attachment', blob instanceof Blob ? blob : new Blob([blob]));
       } },
       { type: 'sep' },
-      { label: 'Delete', icon: 'trash', danger: true, run: () => { file.remove(); ed.dirty.add(outline); ed.commit(); } },
-    ], { label: 'Attachment' });
+      { label: '删除', icon: 'trash', danger: true, run: () => { file.remove(); ed.dirty.add(outline); ed.commit(); } },
+    ], { label: '附件' });
     return;
   }
   if (bar && outline) {
     e.preventDefault();
     ed.selectOutlines([outline]);
     openMenu(point, [
-      { label: 'Copy', icon: 'copy', run: () => {
+      { label: '复制', icon: 'copy', run: () => {
         const body = outline.querySelector('.outline-body');
         const html = body.innerHTML;
-        navigator.clipboard?.write?.([new ClipboardItem({ 'text/html': new Blob([html], { type: 'text/html' }), 'text/plain': new Blob([body.innerText], { type: 'text/plain' }) })]).then(() => toast('Copied'), () => toast("Couldn't copy."));
+        navigator.clipboard?.write?.([new ClipboardItem({ 'text/html': new Blob([html], { type: 'text/html' }), 'text/plain': new Blob([body.innerText], { type: 'text/plain' }) })]).then(() => toast('已复制'), () => toast("无法复制。"));
       } },
-      { label: 'Fit Width to Content', icon: 'pageWidth', run: () => { const m = ed.outlineModel(outline); m.w = null; ed.place(outline, m); ed.layout(); ed.changed(); } },
-      { label: 'Bring to Front', icon: 'up', run: () => {
+      { label: '自适应内容宽度', icon: 'pageWidth', run: () => { const m = ed.outlineModel(outline); m.w = null; ed.place(outline, m); ed.layout(); ed.changed(); } },
+      { label: '置于顶层', icon: 'up', run: () => {
         const m = ed.outlineModel(outline);
         ed.page.outlines = [...ed.page.outlines.filter((o) => o !== m), m];
         ed.outlinesEl.append(outline);
         ed.changed();
       } },
-      { label: 'Send to Back', icon: 'down', run: () => {
+      { label: '置于底层', icon: 'down', run: () => {
         const m = ed.outlineModel(outline);
         ed.page.outlines = [m, ...ed.page.outlines.filter((o) => o !== m)];
         ed.outlinesEl.prepend(outline);
         ed.changed();
       } },
       { type: 'sep' },
-      { label: 'Delete', icon: 'trash', danger: true, shortcut: 'Delete', run: () => ed.deleteSelectedOutlines() },
-    ], { label: 'Note container' });
+      { label: '删除', icon: 'trash', danger: true, shortcut: 'Delete', run: () => ed.deleteSelectedOutlines() },
+    ], { label: '笔记容器' });
     return;
   }
   if (!outline && !e.target.closest('.page-header')) {
     e.preventDefault();
     const p = ed.pagePoint(e);
     if (ed.ink.selected.size) {
-      openMenu(point, [{ label: 'Delete', icon: 'trash', danger: true, run: () => ed.deleteSelectedOutlines() }], { label: 'Ink' });
+      openMenu(point, [{ label: '删除', icon: 'trash', danger: true, run: () => ed.deleteSelectedOutlines() }], { label: '墨迹' });
       return;
     }
     openMenu(point, [
-      { label: 'Paste', icon: 'paste', run: () => { ed.createOutlineAt(p.x, p.y); app.paste(); } },
+      { label: '粘贴', icon: 'paste', run: () => { ed.createOutlineAt(p.x, p.y); app.paste(); } },
       { type: 'sep' },
-      { label: 'Insert Table', icon: 'table', run: () => { ed.createOutlineAt(p.x, p.y); app.insertTableDialog(); } },
-      { label: 'Insert Picture', icon: 'picture', run: () => { ed.createOutlineAt(p.x, p.y); app.pickFiles({ accept: 'image/*' }); } },
-      { label: 'Attach File', icon: 'file', run: () => { ed.createOutlineAt(p.x, p.y); app.pickFiles({ attach: true }); } },
+      { label: '插入表格', icon: 'table', run: () => { ed.createOutlineAt(p.x, p.y); app.insertTableDialog(); } },
+      { label: '插入图片', icon: 'picture', run: () => { ed.createOutlineAt(p.x, p.y); app.pickFiles({ accept: 'image/*' }); } },
+      { label: '附加文件', icon: 'file', run: () => { ed.createOutlineAt(p.x, p.y); app.pickFiles({ attach: true }); } },
       { type: 'sep' },
-      { label: 'Page Color', icon: 'pageColor', submenu: () => app.commands.get('pageColor').menu(app) },
-      { label: 'Rule Lines', icon: 'ruleLines', submenu: () => app.commands.get('ruleLines').menu(app) },
-      { label: 'Select All', icon: 'pointer', run: () => ed.selectAllOutlines() },
-    ], { label: 'Page' });
+      { label: '页面颜色', icon: 'pageColor', submenu: () => app.commands.get('pageColor').menu(app) },
+      { label: '基准线', icon: 'ruleLines', submenu: () => app.commands.get('ruleLines').menu(app) },
+      { label: '全选', icon: 'pointer', run: () => ed.selectAllOutlines() },
+    ], { label: '页面' });
   }
 }
 
@@ -1671,10 +1671,10 @@ function altTextDialog(app, img) {
   const input = h('textarea.input', { id: 'alt-text', rows: 3 });
   input.value = img.getAttribute('alt') || '';
   openDialog({
-    title: 'Alt Text',
+    title: '可选文字',
     width: 420,
-    body: h('div.field', h('label.field-label', { for: 'alt-text' }, 'Describe this picture for people who use screen readers'), input),
-    actions: [{ label: 'Cancel' }, { label: 'OK', primary: true, run: () => {
+    body: h('div.field', h('label.field-label', { for: 'alt-text' }, '为使用屏幕阅读器的人群描述此图片'), input),
+    actions: [{ label: '取消' }, { label: '确定', primary: true, run: () => {
       img.setAttribute('alt', input.value.trim());
       const outline = img.closest('.outline');
       app.editor.dirty.add(outline);

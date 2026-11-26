@@ -9,7 +9,7 @@ let host = null;
  * Toasts with an action stay longer and pause while hovered or focused.
  */
 export function toast(message, { action, duration, kind = 'info' } = {}) {
-  if (!host) host = h('div.toasts', { role: 'region', 'aria-label': 'Notifications' });
+  if (!host) host = h('div.toasts', { role: 'region', 'aria-label': '通知' });
   // A modal dialog covers the page and makes it inert: while one is open the
   // toasts show inside it, and go back to the page when it closes.
   const dialog = [...document.querySelectorAll('dialog[open]')].at(-1);
@@ -34,7 +34,7 @@ export function toast(message, { action, duration, kind = 'info' } = {}) {
   if (action) {
     el.append(h('button.toast-action', { type: 'button', onclick: () => { dismiss(); action.run(); } }, action.label));
   }
-  el.append(h('button.toast-close.icon-btn', { type: 'button', 'aria-label': 'Dismiss', onclick: dismiss }, icon('x', 14)));
+  el.append(h('button.toast-close.icon-btn', { type: 'button', 'aria-label': '关闭', onclick: dismiss }, icon('x', 14)));
   host.append(el);
   while (host.children.length > 3) host.firstChild.remove();
   const ms = duration ?? (action ? 8000 : 4000);

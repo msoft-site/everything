@@ -154,9 +154,10 @@ export const DATE_FORMATS = {
   iso: 'ISO 标准',
 };
 
-const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-const MONTHS_SHORT = MONTHS.map((m) => m.slice(0, 3));
-export const WEEKDAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+const EN_MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+const MONTHS = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
+const MONTHS_SHORT = MONTHS;
+export const WEEKDAYS = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
 
 const pad = (n, w = 2) => String(n).padStart(w, '0');
 
@@ -201,7 +202,7 @@ function parts(d, gmt) {
 export function formatDatePart(p, format = 'local') {
   switch (format) {
     case 'friendly':
-      return `${MONTHS[p.m]} ${p.d}, ${p.y}`;
+      return `${p.y}年${p.m + 1}月${p.d}日`;
     case 'us':
       return `${p.m + 1}/${p.d}/${p.y}`;
     case 'european':
@@ -312,7 +313,7 @@ export function parseDate(text, opts = {}) {
     let monthIdx = -1;
     const nums = [];
     for (const w of words) {
-      const mi = MONTHS.findIndex((name) => name.toLowerCase().startsWith(w.toLowerCase().slice(0, 3)) && w.length >= 3);
+      const mi = EN_MONTHS.findIndex((name) => name.toLowerCase().startsWith(w.toLowerCase().slice(0, 3)) && w.length >= 3);
       if (mi >= 0 && monthIdx < 0 && /^[a-z]+\.?$/i.test(w)) monthIdx = mi;
       else if (/^\d+(st|nd|rd|th)?$/i.test(w)) nums.push(parseInt(w, 10));
       else if (!/^(on|of|the)$/i.test(w)) return null;

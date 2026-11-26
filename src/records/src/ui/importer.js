@@ -57,7 +57,7 @@ export function inferType(values) {
 }
 
 /** A plan from parsed rows: column names, guessed types, data rows. */
-export function planFromRows(rows, { header = true, name = 'Imported table' } = {}) {
+export function planFromRows(rows, { header = true, name = '导入的数据表' } = {}) {
   // A loop: spreading every row into Math.max overflows the stack on big files.
   const width = rows.reduce((w, r) => Math.max(w, r.length), 0);
   const head = header && rows.length ? rows[0] : [];
@@ -67,7 +67,7 @@ export function planFromRows(rows, { header = true, name = 'Imported table' } = 
   const used = new Set();
   const columns = [];
   for (let i = 0; i < width; i++) {
-    let colName = String(head[i] ?? '').trim() || `Field ${i + 1}`;
+    let colName = String(head[i] ?? '').trim() || `字段 ${i + 1}`;
     let n = 2;
     const baseName = colName;
     while (used.has(colName.toLowerCase())) colName = `${baseName} ${n++}`;
@@ -252,19 +252,19 @@ export async function importFileDialog({ onDone, mode = 'base', table = null, fi
   try {
     text = decodeText(await file.arrayBuffer());
   } catch {
-    toast('Could not read that file.', { error: true });
+    toast('无法读取该文件。', { error: true });
     return;
   }
   const rows = parseCSV(text);
   if (!rows.length) {
-    toast('That file has no rows.', { error: true });
+    toast('该文件没有数据行。', { error: true });
     return;
   }
-  const baseName = file.name.replace(/\.(csv|tsv|txt)$/i, '') || 'Imported';
+  const baseName = file.name.replace(/\.(csv|tsv|txt)$/i, '') || '导入数据';
   let header = true;
   let plan = planFromRows(rows, { header, name: baseName });
-  const nameInput = h('input.input', { type: 'text', value: baseName, 'aria-label': mode === 'base' ? 'Base name' : 'Table name' });
-  const headerToggle = h('input.switch', { type: 'checkbox', role: 'switch', checked: true, 'aria-label': 'First row has field names' });
+  const nameInput = h('input.input', { type: 'text', value: baseName, 'aria-label': mode === 'base' ? '数据库名称' : '数据表名称' });
+  const headerToggle = h('input.switch', { type: 'checkbox', role: 'switch', checked: true, 'aria-label': '第一行包含字段名称' });
   const cols = h('div.import-cols');
   const preview = h('div.import-preview');
   const mapping = [];
@@ -278,17 +278,17 @@ export async function importFileDialog({ onDone, mode = 'base', table = null, fi
     cols.replaceChildren(
       ...plan.columns.map((c, i) => {
         if (mode === 'append') {
-          const select = h('select.select', { 'aria-label': `Field for column ${c.name}`, onchange: () => (mapping[i] = select.value) },
-            h('option', { value: '' }, "Don't import"),
+          const select = h('select.select', { 'aria-label': `列 ${c.name} 对应的字段`, onchange: () => (mapping[i] = select.value) },
+            h('option', { value: '' }, '不导入'),
             table.fields.filter((f) => !TYPES[f.type].computed && f.type !== 'autonumber' && f.type !== 'attachment').map((f) => h('option', { value: f.id, selected: mapping[i] === f.id }, f.name)));
           return h('div.import-col', h('span.import-col-name', c.name), icon('arrowRight', 14), select);
         }
-        const select = h('select.select', { 'aria-label': `Type for ${c.name}`, onchange: () => {
+        const select = h('select.select', { 'aria-label': `${c.name} 的类型`, onchange: () => {
           c.type = select.value;
           c.options = select.value === 'date' ? { includeTime: false } : select.value === 'number' ? { precision: 2 } : undefined;
         } }, IMPORT_TYPES.map((t) => h('option', { value: t, selected: c.type === t }, TYPES[t].label)));
         if (i === 0) select.querySelectorAll('option').forEach((o) => (o.disabled = ['checkbox', 'singleSelect', 'multipleSelect'].includes(o.value)));
-        const include = h('input', { type: 'checkbox', checked: c.include !== false, disabled: i === 0, 'aria-label': `Import ${c.name}`, onchange: () => (c.include = include.checked) });
+        const include = h('input', { type: 'checkbox', checked: c.include !== false, disabled: i === 0, 'aria-label': `导入 ${c.name}`, onchange: () => (c.include = include.checked) });
         return h('div.import-col', h('label.check', include, h('span.import-col-name', c.name)), select);
       }),
     );
@@ -305,22 +305,22 @@ export async function importFileDialog({ onDone, mode = 'base', table = null, fi
   });
   renderCols();
   openDialog({
-    title: mode === 'append' ? `Import into ${table.name}` : mode === 'table' ? 'Import a table' : 'Import a spreadsheet',
+    title: mode === 'append' ? `导入到 ${table.name}` : mode === 'table' ? '导入数据表' : '导入电子表格',
     className: 'wide',
     body: h(
       'div.import',
-      mode === 'append' ? null : h('div.form-row', h('label.field-label', mode === 'base' ? 'Base name' : 'Table name'), nameInput),
-      h('label.switch-row', headerToggle, h('span.grow', 'First row has field names')),
-      h('p.field-hint', `${plan.rows.length} row${plan.rows.length === 1 ? '' : 's'} and ${plan.columns.length} column${plan.columns.length === 1 ? '' : 's'} found in ${file.name}.`),
-      h('h3.import-sub', mode === 'append' ? 'Match columns to fields' : 'Fields'),
+      mode === 'append' ? null : h('div.form-row', h('label.field-label', mode === 'base' ? '数据库名称' : '数据表名称'), nameInput),
+      h('label.switch-row', headerToggle, h('span.grow', '第一行包含字段名称')),
+      h('p.field-hint', `在 ${file.name} 中找到 ${plan.rows.length} 行和 ${plan.columns.length} 列。`),
+      h('h3.import-sub', mode === 'append' ? '匹配列与字段' : '字段'),
       cols,
-      h('h3.import-sub', 'Preview'),
+      h('h3.import-sub', '预览'),
       preview,
     ),
     actions: [
-      { label: 'Cancel' },
+      { label: '取消' },
       {
-        label: 'Import',
+        label: '导入',
         primary: true,
         onClick: async () => {
           plan.name = nameInput.value.trim() || baseName;
@@ -329,7 +329,7 @@ export async function importFileDialog({ onDone, mode = 'base', table = null, fi
             else await onDone({ name: plan.name, plan, mapping });
           } catch (err) {
             console.error(err);
-            toast('The import did not finish. Check the file and try again.', { error: true });
+            toast('导入未能完成。请检查文件后重试。', { error: true });
           }
         },
       },

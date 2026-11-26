@@ -50,7 +50,7 @@ export function exportCsv(base, table, view) {
   const rows = exportRows(base, table, view);
   const name = view ? `${table.name} - ${view.name}` : table.name;
   download(`${safe(name)}.csv`, toCSV(rows));
-  toast(`Downloaded ${rows.length - 1} record${rows.length === 2 ? '' : 's'}`);
+  toast(`已下载 ${rows.length - 1} 条记录`);
 }
 
 /** Print a view as a plain table in a new window. */
@@ -58,7 +58,7 @@ export function printView(base, table, view) {
   const rows = exportRows(base, table, view, { forFile: false });
   const win = window.open('', '_blank');
   if (!win) {
-    toast('Allow pop-ups to print this view.', { error: true });
+    toast('请允许弹出窗口以打印此视图。', { error: true });
     return;
   }
   const head = rows[0].map((c) => `<th>${escapeHtml(c)}</th>`).join('');
@@ -66,7 +66,7 @@ export function printView(base, table, view) {
   win.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>${escapeHtml(`${table.name}: ${view.name}`)}</title>
 <style>body{font:12px -apple-system,system-ui,sans-serif;margin:24px;color:#111}h1{font-size:18px;margin:0 0 4px}p{color:#555;margin:0 0 16px}
 table{border-collapse:collapse;width:100%}th,td{border:1px solid #ccc;padding:4px 6px;text-align:left;vertical-align:top}th{background:#f3f3f3}
-@page{margin:12mm}</style></head><body><h1>${escapeHtml(table.name)}</h1><p>${escapeHtml(view.name)} &middot; ${rows.length - 1} record${rows.length === 2 ? '' : 's'}</p>
+@page{margin:12mm}</style></head><body><h1>${escapeHtml(table.name)}</h1><p>${escapeHtml(view.name)} &middot; ${rows.length - 1} 条记录</p>
 <table><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table></body></html>`);
   win.document.close();
   win.focus();
@@ -79,7 +79,7 @@ export function exportBaseJson(base) {
   for (const t of base.tableList()) records[t.id] = [...t.records.values()];
   const data = { format: 'records-base', version: 1, exportedAt: new Date().toISOString(), doc: base.doc, records };
   download(`${safe(base.doc.name)}.json`, JSON.stringify(data), 'application/json');
-  toast('Base downloaded');
+  toast('数据库已下载');
 }
 
 /** Read a base backup; throws with a readable message when it is not one. */
@@ -88,8 +88,8 @@ export function readBaseJson(text) {
   try {
     data = JSON.parse(String(text).replace(/^\ufeff/, ''));
   } catch {
-    throw new Error('This file is not valid JSON.');
+    throw new Error('此文件不是有效的 JSON 格式。');
   }
-  if (data?.format !== 'records-base' || !data.doc?.tables || !data.records) throw new Error('This file is not a Records base backup.');
+  if (data?.format !== 'records-base' || !data.doc?.tables || !data.records) throw new Error('此文件不是多维表格数据库备份文件。');
   return data;
 }

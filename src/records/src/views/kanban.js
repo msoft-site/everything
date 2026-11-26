@@ -102,15 +102,15 @@ export class KanbanView {
       return s;
     };
     if (f.type === 'singleSelect') {
-      add('', 'Uncategorized', null, null);
+      add('', '未分类', null, null);
       for (const c of f.options.choices) add(c.id, c.name, c.id, c.color);
       for (const r of records) (byKey.get(r.c[f.id] || '') || byKey.get('')).records.push(r);
     } else if (f.type === 'checkbox') {
-      add('0', 'Unchecked', false, 'gray');
-      add('1', 'Checked', true, 'green');
+      add('0', '未勾选', false, 'gray');
+      add('1', '已勾选', true, 'green');
       for (const r of records) byKey.get(r.c[f.id] ? '1' : '0').records.push(r);
     } else if (f.type === 'link') {
-      add('', 'Not linked', null, null);
+      add('', '未关联', null, null);
       const target = this.base.table(f.options.tableId);
       const all = target?.ordered() || [];
       // Every linked record gets a stack in a small table; in a big one only
@@ -130,10 +130,10 @@ export class KanbanView {
       this.hits = [];
       this.shownStacks = [];
       const unusable = this.table.field(this.view.stackFieldId);
-      this.board.replaceChildren(h('div.empty', h('div.empty-icon', icon('vKanban', 22)), h('h2', 'Choose how to stack records'), h('p', `${unusable ? `${unusable.name} can't stack records. ` : ''}Kanban stacks need a single select, checkbox or single-link field.`),
+      this.board.replaceChildren(h('div.empty', h('div.empty-icon', icon('vKanban', 22)), h('h2', '选择记录分组方式'), h('p', `${unusable ? `${unusable.name} 无法用于看板分组。` : ''}看板分组需要单选、复选框或单条关联字段。`),
         this.table.fields.some((x) => x.type === 'singleSelect')
-          ? h('button.btn.primary', { type: 'button', onclick: () => this.base.updateView(this.table.id, this.view.id, { stackFieldId: this.table.fields.find((x) => x.type === 'singleSelect').id }) }, 'Stack by the first select field')
-          : h('button.btn.primary', { type: 'button', onclick: () => this.createStatusField() }, icon('plus', 16), 'Add a Status field')));
+          ? h('button.btn.primary', { type: 'button', onclick: () => this.base.updateView(this.table.id, this.view.id, { stackFieldId: this.table.fields.find((x) => x.type === 'singleSelect').id }) }, '按第一个单选字段分组')
+          : h('button.btn.primary', { type: 'button', onclick: () => this.createStatusField() }, icon('plus', 16), '添加“状态”字段')));
       return;
     }
     const result = runView(this.base, this.table, this.view);
@@ -149,7 +149,7 @@ export class KanbanView {
       ...this.shownStacks.map((s) => {
         const [bg, fg] = chipColors(s.color || 'gray');
         const limit = this.limits.get(s.key) || PAGE;
-        const cards = h('div.stack-cards', { role: 'list', dataset: { cards: this.view.sorts?.length ? 'unordered' : '' }, 'aria-label': `${s.label}, ${s.records.length} records` });
+        const cards = h('div.stack-cards', { role: 'list', dataset: { cards: this.view.sorts?.length ? 'unordered' : '' }, 'aria-label': `${s.label}，${s.records.length} 条记录` });
         for (const r of s.records.slice(0, limit)) {
           const card = recordCard(this.page, this.table, this.view, r, { cover: this.view.coverFieldId, color: colorOf(r), compact: true, max: 8, skip: f.id });
           card.setAttribute('role', 'listitem');
@@ -163,17 +163,17 @@ export class KanbanView {
             this.render();
             // The button is gone: go on from the first card it showed.
             this.board.querySelector(`.card[data-id="${CSS.escape(s.records[limit].id)}"]`)?.focus();
-          } }, `Show ${Math.min(PAGE * 2, s.records.length - limit)} more`));
+          } }, `显示更多（${Math.min(PAGE * 2, s.records.length - limit)} 条）`));
         }
         const header = h('div.stack-head',
           h('h2.stack-title', s.color ? h('span.chip', { style: { background: bg, color: fg } }, h('span.chip-label', s.label)) : h('span.stack-label', s.label)),
           h('span.stack-count', String(s.records.length)),
           h('div.grow'),
-          canAdd ? h('button.icon-btn', { type: 'button', 'aria-label': `Add a record to ${s.label}`, 'data-tip': 'Add record', onclick: () => this.addTo(s) }, icon('plus', 16)) : null,
-          f.type === 'singleSelect' && s.key ? h('button.icon-btn', { type: 'button', 'aria-label': `${s.label} options`, 'aria-haspopup': 'menu', onclick: (e) => this.stackMenu(e.currentTarget, s) }, icon('more', 16)) : null);
-        return h('section.stack', { dataset: { drop: s.key }, 'aria-label': s.label }, header, cards, h('button.stack-add', { type: 'button', onclick: () => this.addTo(s) }, icon('plus', 14), 'Add record'));
+          canAdd ? h('button.icon-btn', { type: 'button', 'aria-label': `向 ${s.label} 添加记录`, 'data-tip': '添加记录', onclick: () => this.addTo(s) }, icon('plus', 16)) : null,
+          f.type === 'singleSelect' && s.key ? h('button.icon-btn', { type: 'button', 'aria-label': `${s.label} 选项`, 'aria-haspopup': 'menu', onclick: (e) => this.stackMenu(e.currentTarget, s) }, icon('more', 16)) : null);
+        return h('section.stack', { dataset: { drop: s.key }, 'aria-label': s.label }, header, cards, h('button.stack-add', { type: 'button', onclick: () => this.addTo(s) }, icon('plus', 14), '添加记录'));
       }),
-      f.type === 'singleSelect' ? h('div.stack.stack-new', h('button.btn.ghost', { type: 'button', onclick: () => this.addStack() }, icon('plus', 16), 'Add stack')) : null,
+      f.type === 'singleSelect' ? h('div.stack.stack-new', h('button.btn.ghost', { type: 'button', onclick: () => this.addStack() }, icon('plus', 16), '添加看板列')) : null,
     ].filter(Boolean));
     this.board.scrollLeft = scroll.left;
     for (const s of this.board.querySelectorAll('.stack')) {
@@ -209,8 +209,8 @@ export class KanbanView {
     this.base.transact(() => {
       if (cur !== zone) this.base.setCell(this.table.id, id, f.id, value);
       if (!this.view.sorts?.length) this.base.moveRecords(this.table.id, [id], beforeId);
-    }, 'Move card');
-    announce(`Moved ${this.base.recordName(this.table.id, id)}${stack && cur !== zone ? ` to ${stack.label}` : ''}`);
+    }, '移动卡片');
+    announce(`已移动 ${this.base.recordName(this.table.id, id)}${stack && cur !== zone ? ` 至 ${stack.label}` : ''}`);
   }
 
   /** Alt+Arrow keys: move a card up or down its stack, or to the next stack, as dragging it would. */
@@ -222,7 +222,7 @@ export class KanbanView {
     if (key === 'ArrowUp' || key === 'ArrowDown') {
       // A sorted view keeps its own order.
       if (this.view.sorts?.length) {
-        announce('Cards are sorted in this view');
+        announce('当前视图已排序');
         return;
       }
       if (key === 'ArrowUp' ? at === 0 : at === s.records.length - 1) return;
@@ -245,34 +245,34 @@ export class KanbanView {
     const f = this.stackField();
     const stacks = this.stacks(runView(this.base, this.table, this.view).records);
     openMenu(pt, [
-      { label: 'Expand record', icon: 'expand', onSelect: () => this.page.openRecord(id) },
-      f ? { label: 'Move to', icon: 'move', submenu: stacks.map((s) => ({ label: s.label, onSelect: () => this.drop({ id, zone: s.key, beforeId: null }) })) } : null,
-      { label: 'Duplicate record', icon: 'copy', onSelect: () => this.base.duplicateRecords(this.table.id, [id]) },
+      { label: '展开记录', icon: 'expand', onSelect: () => this.page.openRecord(id) },
+      f ? { label: '移动到', icon: 'move', submenu: stacks.map((s) => ({ label: s.label, onSelect: () => this.drop({ id, zone: s.key, beforeId: null }) })) } : null,
+      { label: '复制记录', icon: 'copy', onSelect: () => this.base.duplicateRecords(this.table.id, [id]) },
       { type: 'sep' },
-      { label: 'Delete record', icon: 'trash', danger: true, onSelect: () => {
+      { label: '删除记录', icon: 'trash', danger: true, onSelect: () => {
         this.base.deleteRecords(this.table.id, [id]);
-        this.page.toastUndo('Record deleted');
+        this.page.toastUndo('已删除记录');
       } },
-    ], { label: 'Card actions' });
+    ], { label: '卡片操作' });
   }
 
   stackMenu(anchor, s) {
     const f = this.stackField();
     openMenu(anchor, [
-      { label: 'Rename stack', icon: 'pencil', onSelect: async () => {
-        const name = await promptDialog({ title: 'Rename stack', label: 'Name', value: s.label, validate: (v) => (!v ? 'Enter a name.' : f.options.choices.some((c) => c.id !== s.key && c.name.toLowerCase() === v.toLowerCase()) ? 'Another option has this name.' : null) });
+      { label: '重命名看板列', icon: 'pencil', onSelect: async () => {
+        const name = await promptDialog({ title: '重命名看板列', label: '名称', value: s.label, validate: (v) => (!v ? '请输入名称。' : f.options.choices.some((c) => c.id !== s.key && c.name.toLowerCase() === v.toLowerCase()) ? '已存在同名选项。' : null) });
         if (name) this.base.updateField(this.table.id, f.id, { options: { ...f.options, choices: f.options.choices.map((c) => (c.id === s.key ? { ...c, name } : c)) } });
       } },
-      { label: 'Delete stack', icon: 'trash', danger: true, onSelect: () => {
+      { label: '删除看板列', icon: 'trash', danger: true, onSelect: () => {
         this.base.updateField(this.table.id, f.id, { options: { ...f.options, choices: f.options.choices.filter((c) => c.id !== s.key) } });
-        this.page.toastUndo(`Deleted ${s.label}. Its records moved to Uncategorized.`);
+        this.page.toastUndo(`已删除 ${s.label}，其中的记录已移至“未分类”。`);
       } },
     ]);
   }
 
   async addStack() {
     const f = this.stackField();
-    const name = await promptDialog({ title: 'Add stack', label: 'Name', validate: (v) => (!v ? 'Enter a name.' : f.options.choices.some((c) => c.name.toLowerCase() === v.toLowerCase()) ? 'A stack with this name exists.' : null) });
+    const name = await promptDialog({ title: '添加看板列', label: '名称', validate: (v) => (!v ? '请输入名称。' : f.options.choices.some((c) => c.name.toLowerCase() === v.toLowerCase()) ? '已存在同名看板列。' : null) });
     if (!name) return;
     const c = makeChoice(name, f.options.choices);
     c.color = nextColor(f.options.choices.map((x) => x.color));
@@ -281,15 +281,15 @@ export class KanbanView {
 
   createStatusField() {
     const choices = [];
-    for (const [n, color] of [['Todo', 'red'], ['In progress', 'yellow'], ['Done', 'green']]) {
+    for (const [n, color] of [['待办', 'red'], ['进行中', 'yellow'], ['已完成', 'green']]) {
       const c = makeChoice(n, choices);
       c.color = color;
       choices.push(c);
     }
     this.base.transact(() => {
-      const id = this.base.addField(this.table.id, { name: 'Status', type: 'singleSelect', options: { choices } });
+      const id = this.base.addField(this.table.id, { name: '状态', type: 'singleSelect', options: { choices } });
       this.base.updateView(this.table.id, this.view.id, { stackFieldId: id });
-    }, 'Add Status field');
+    }, '添加“状态”字段');
   }
 
   setSearch(query, { keep = false } = {}) {

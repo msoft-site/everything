@@ -421,7 +421,7 @@ function position(menu, anchor, x, y, align, parentPanel) {
  *
  * createMenubar([{ label, open(anchor) }], { label }) -> { el, buttons, destroy }
  */
-export function createMenubar(entries, { label = 'Menu bar' } = {}) {
+export function createMenubar(entries, { label = '菜单栏' } = {}) {
   const bar = el('nav', { class: 'menubar', role: 'menubar', 'aria-label': label });
   const buttons = [];
   const wrap = (i) => ((i % buttons.length) + buttons.length) % buttons.length;

@@ -159,9 +159,10 @@ async function main() {
           return false;
         };
 
+        const rebuildList = (process.env.REBUILD || '').split(',').map((s) => s.trim()).filter(Boolean);
         const needsBuild = isOutdated() ||
           process.env.REBUILD === 'all' ||
-          process.env.REBUILD === currentApp;
+          rebuildList.includes(currentApp);
 
         if (needsBuild) {
           console.log(`  -> 正在编译 ${currentApp}...`);

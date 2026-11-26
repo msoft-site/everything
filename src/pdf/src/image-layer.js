@@ -233,7 +233,7 @@ export function createImageLayer({
       if (!file) return resumeNudge();
       if (!applies()) return;
       try {
-        if (file.size > MAX_IMAGE_SIZE) throw new Error('Choose an image smaller than 20 MB.');
+        if (file.size > MAX_IMAGE_SIZE) throw new Error('请选择小于 20 MB 的图片。');
         const bytes = new Uint8Array(await file.arrayBuffer());
         if (applies()) await finish(false, undefined, false, bytes);
       } catch (error) {
@@ -333,7 +333,7 @@ export function createImageLayer({
     if (!committing)
       for (const input of pendingInputs())
         if (!input.reportValidity())
-          throw new Error('Choose a valid object property before continuing.');
+          throw new Error('请先输入有效的对象属性。');
     if (focusedInput && !committing) {
       preservingInputSelection = preserveSelection;
       try {
@@ -380,7 +380,7 @@ export function createImageLayer({
         'aria-label': `Select ${kind(entry)} ${(entry.labelIndex ?? entry.ordinal) + 1}`,
         'aria-pressed': false,
         ...(entry.invisible
-          ? { title: 'Unpainted path. Select to restore its fill or stroke.' }
+          ? { title: '未绘制路径。选择以恢复其填充或描边。' }
           : {}),
         // Keyboard activation, or a tap: not every browser focuses a tapped button.
         onclick: (e) => {
@@ -484,8 +484,8 @@ export function createImageLayer({
     const move = el('button', {
       type: 'button',
       class: 'image-move',
-      'aria-label': `Move selected ${kind()}`,
-      title: 'Drag to move. Arrow keys move 1 pt; Shift moves 10 pt.',
+      'aria-label': `移动选中的${kind() === 'path' ? '路径' : '图片'}`,
+      title: '拖动以移动。方向键移动 1 磅；按住 Shift 移动 10 磅。',
     });
     move.addEventListener('pointerdown', (e) => begin(e, selected));
     controls.append(move);
@@ -502,7 +502,7 @@ export function createImageLayer({
         class: 'image-resize busy-enabled',
         'data-corner': i,
         'aria-label': `Resize ${kind()}, corner ${i + 1}`,
-        title: 'Drag to resize',
+        title: '拖动以调整大小',
       });
       handle.addEventListener('pointerdown', (e) => begin(e, selected, i));
       controls.append(handle);
@@ -554,18 +554,18 @@ export function createImageLayer({
       el(
         'div',
         { class: 'image-edit-panel', role: 'group', 'aria-label': `Edit ${kind()}` },
-        el('label', {}, 'W', width),
-        el('label', {}, 'H', height),
-        el('label', { class: 'image-ratio' }, ratio, 'Keep proportions'),
-        kind() === 'image' && button('Replace image', 'Image', chooseReplacement, 'text-btn'),
+        el('label', {}, '宽', width),
+        el('label', {}, '高', height),
+        el('label', { class: 'image-ratio' }, ratio, '保持比例'),
+        kind() === 'image' && button('替换图片', 'Image', chooseReplacement, 'text-btn'),
         button(
-          `Delete ${kind()}`,
+          `删除${kind() === 'path' ? '路径' : '图片'}`,
           'Trash2',
           safe(() => finish(true)),
           'text-btn',
         ),
         iconButton(
-          `Close ${kind()} editor`,
+          `关闭${kind() === 'path' ? '路径' : '图片'}编辑器`,
           'X',
           safe(async () => {
             const ordinal = selected.ordinal;
@@ -596,7 +596,7 @@ export function createImageLayer({
         const row = el(
           'div',
           { class: 'path-paint-control' },
-          el('label', {}, toggle, key === 'fill' ? 'Fill' : 'Stroke'),
+          el('label', {}, toggle, key === 'fill' ? '填充' : '描边'),
         );
         if (painted) {
           const input = el('input', {
@@ -615,7 +615,7 @@ export function createImageLayer({
             step: 'any',
             value: Number((alpha * 100).toFixed(6)),
             'aria-label': `${title()} ${key} opacity in percent`,
-            title: `${key === 'fill' ? 'Fill' : 'Stroke'} opacity`,
+            title: `${key === 'fill' ? '填充' : '描边'}不透明度`,
           });
           opacity.onchange = safe(() =>
             opacity.value.trim() && opacity.reportValidity()
@@ -640,14 +640,14 @@ export function createImageLayer({
           required: true,
           'aria-label': `${title()} stroke width in points`,
           title:
-            'Stroke width in points. Stretched paths retain their stroke proportions. Zero uses a hairline.',
+            '描边粗细（磅）。拉伸路径会保持描边比例。输入 0 为极细线。',
         });
         input.onchange = safe(() =>
           input.reportValidity()
             ? finish(false, { width: Number(input.value) / scale })
             : undefined,
         );
-        styles.append(el('label', {}, 'Stroke width', input));
+        styles.append(el('label', {}, '描边粗细', input));
       }
       panel.insertBefore(styles, panel.querySelector('button'));
     }
@@ -658,7 +658,7 @@ export function createImageLayer({
       max: 360,
       step: 'any',
       'aria-label': `${title()} rotation in degrees`,
-      title: 'Clockwise angle on the page. Rotates around the object center.',
+      title: '顺时针旋转角度。绕对象中心旋转。',
     });
     const rotate = safe(async (delta) => {
       if (busy || committing || Math.abs(delta % 360) < 1e-8) return;
@@ -681,9 +681,9 @@ export function createImageLayer({
     const rotations = el(
       'div',
       { class: 'object-rotation' },
-      el('label', {}, 'Angle', angle, '°'),
-      iconButton(`Rotate ${kind()} counterclockwise 90 degrees`, 'RotateCcw', () => rotate(-90)),
-      iconButton(`Rotate ${kind()} clockwise 90 degrees`, 'RotateCw', () => rotate(90)),
+      el('label', {}, '角度', angle, '°'),
+      iconButton(`逆时针旋转${kind() === 'path' ? '路径' : '图片'} 90 度`, 'RotateCcw', () => rotate(-90)),
+      iconButton(`顺时针旋转${kind() === 'path' ? '路径' : '图片'} 90 度`, 'RotateCw', () => rotate(90)),
     );
     const panel = properties.querySelector('.image-edit-panel');
     const styles = panel.querySelector('.path-style-controls');

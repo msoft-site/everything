@@ -325,7 +325,7 @@ export function paintValue(P, field, value, x, y, w, h, opts) {
       const ids = Array.isArray(value) ? value : [];
       if (!ids.length) return;
       const tid = field.options?.tableId;
-      paintChips(P, ids.slice(0, 50).map((id) => ({ label: fctx.recordName(tid, id) || 'Unnamed record', colors: [p.subtle, p.text], square: true, border: p.border })), cx, y, cw, h);
+      paintChips(P, ids.slice(0, 50).map((id) => ({ label: fctx.recordName(tid, id) || '未命名记录', colors: [p.subtle, p.text], square: true, border: p.border })), cx, y, cw, h);
       return;
     }
     case 'attachment': {
@@ -361,7 +361,7 @@ export function paintValue(P, field, value, x, y, w, h, opts) {
       return;
     }
     case 'button': {
-      const label = field.options?.label || 'Open';
+      const label = field.options?.label || '打开';
       P.font(12, 500);
       const bw = Math.min(cw, P.measure(label) + 20);
       P.roundRect(cx, midY - 11, bw, 22, 5, p.subtle, p.borderStrong);

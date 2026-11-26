@@ -99,7 +99,7 @@ export function openCellEditor({ host, rect, page, table, record, field, initial
         if (!t.trim()) return null;
         const v = parseText(field, t);
         if (v === null) {
-          toast(`"${t}" is not a date this field understands.`);
+          toast(`"${t}" 不是有效的日期。`);
           return undefined;
         }
         return v;
@@ -107,7 +107,7 @@ export function openCellEditor({ host, rect, page, table, record, field, initial
       if (!t.trim() && field.type !== 'longText') return null;
       const v = parseText(field, t);
       if (v === null && t.trim() && ['number', 'currency', 'percent', 'duration', 'rating'].includes(field.type)) {
-        toast(`"${t}" is not a valid ${TYPES[field.type].label.toLowerCase()}.`);
+        toast(`"${t}" 不是有效的${TYPES[field.type].label}。`);
         return undefined;
       }
       return v;
@@ -151,7 +151,7 @@ export function openCellEditor({ host, rect, page, table, record, field, initial
       calPop = openPopover(input, cal.el, {
         focus: false,
         className: 'padded',
-        label: 'Choose a date',
+        label: '选择日期',
         expanded: false,
         sheet: false,
         keepFor: (t) => input.contains(t),
@@ -232,7 +232,7 @@ export function openCellEditor({ host, rect, page, table, record, field, initial
 /** Pick options of a select field; new names create options. */
 export function openChoicePicker(anchor, base, table, field, { selected = [], multi = false, query = '', onChange, onClose }) {
   let sel = [...selected];
-  const input = h('input.input', { type: 'text', placeholder: multi ? 'Find or add options' : 'Find or add an option', 'aria-label': 'Find an option', value: query || '', role: 'combobox', 'aria-expanded': 'true', 'aria-autocomplete': 'list' });
+  const input = h('input.input', { type: 'text', placeholder: multi ? '查找或添加选项' : '查找或添加选项', 'aria-label': '查找选项', value: query || '', role: 'combobox', 'aria-expanded': 'true', 'aria-autocomplete': 'list' });
   const list = h('div.choice-list', { role: 'listbox', 'aria-multiselectable': multi ? 'true' : null, id: newId('lst') });
   input.setAttribute('aria-controls', list.id);
   const chips = h('div.chips.choice-selected');
@@ -248,7 +248,7 @@ export function openChoicePicker(anchor, base, table, field, { selected = [], mu
           const c = all.find((x) => x.id === id);
           if (!c) return null;
           const [bg, fg] = chipColors(c.color);
-          return h('span.chip', { style: { background: bg, color: fg } }, h('span.chip-label', c.name), h('button.chip-x', { type: 'button', 'aria-label': `Remove ${c.name}`, onclick: () => toggle(c.id) }, icon('x', 12)));
+          return h('span.chip', { style: { background: bg, color: fg } }, h('span.chip-label', c.name), h('button.chip-x', { type: 'button', 'aria-label': `移除 ${c.name}`, onclick: () => toggle(c.id) }, icon('x', 12)));
         }).filter(Boolean),
       );
       chips.hidden = !sel.length;
@@ -266,9 +266,9 @@ export function openChoicePicker(anchor, base, table, field, { selected = [], mu
     if (q && !exact) {
       const i = items.length;
       items.push({ create: input.value.trim() });
-      list.append(h('div.choice-item', { role: 'option', id: `${list.id}-${i}`, 'aria-selected': 'false', class: `choice-item${i === active ? ' active' : ''}`, onpointerdown: (e) => e.preventDefault(), onclick: () => create(input.value.trim()) }, icon('plus', 14), h('span', `Add "${input.value.trim()}"`)));
+      list.append(h('div.choice-item', { role: 'option', id: `${list.id}-${i}`, 'aria-selected': 'false', class: `choice-item${i === active ? ' active' : ''}`, onpointerdown: (e) => e.preventDefault(), onclick: () => create(input.value.trim()) }, icon('plus', 14), h('span', `添加 "${input.value.trim()}"`)));
     }
-    if (!items.length) list.append(h('div.menu-empty', 'No options yet. Type to add one.'));
+    if (!items.length) list.append(h('div.menu-empty', '暂无选项。输入文本以添加。'));
     if (active >= items.length) active = items.length - 1;
     input.setAttribute('aria-activedescendant', items.length && active >= 0 ? `${list.id}-${active}` : '');
   };
@@ -291,8 +291,8 @@ export function openChoicePicker(anchor, base, table, field, { selected = [], mu
       base.updateField(table.id, field.id, { options: { ...f.options, choices: [...f.options.choices, c] } });
       sel = multi ? [...sel, c.id] : [c.id];
       onChange?.(sel);
-    }, 'Add option');
-    announce(`Added option ${name}`);
+    }, '添加选项');
+    announce(`已添加选项 ${name}`);
     input.value = '';
     // A single select is done once it has its value.
     if (multi) paint();
@@ -336,11 +336,11 @@ export function openRecordPicker(anchor, page, table, field, record, { query = '
   const base = page.base;
   const target = base.table(field.options.tableId);
   if (!target) {
-    toast('The linked table no longer exists.');
+    toast('关联的数据表已不存在。');
     onClose?.();
     return null;
   }
-  const input = h('input.input', { type: 'search', placeholder: `Find a record in ${target.name}`, 'aria-label': `Find a record in ${target.name}`, value: query || '', role: 'combobox', 'aria-expanded': 'true' });
+  const input = h('input.input', { type: 'search', placeholder: `在 ${target.name} 中查找记录`, 'aria-label': `在 ${target.name} 中查找记录`, value: query || '', role: 'combobox', 'aria-expanded': 'true' });
   const list = h('div.record-list', { role: 'listbox', 'aria-multiselectable': field.options.single ? 'false' : 'true', id: newId('lst') });
   input.setAttribute('aria-controls', list.id);
   let active = 0;
@@ -383,7 +383,7 @@ export function openRecordPicker(anchor, page, table, field, record, { query = '
         h('span.menu-check', sel.has(r.id) ? icon('check', 14) : null),
         h('span.record-text', h('span.record-name', name), details.length ? h('span.record-details', details) : null)));
     });
-    if (!shown.length) list.append(h('div.menu-empty', q ? 'No records match' : `${target.name} has no records yet`));
+    if (!shown.length) list.append(h('div.menu-empty', q ? '无匹配记录' : `${target.name} 暂无记录`));
     setActive(active);
   };
   // Arrow keys only move the highlight: the list is not searched again.
@@ -409,9 +409,9 @@ export function openRecordPicker(anchor, page, table, field, record, { query = '
       const [rid] = base.createRecords(target.id, [name ? { [target.primary.id]: name } : {}]);
       const cur = current();
       write(field.options.single ? [rid] : [...cur, rid]);
-    }, 'Add linked record');
+    }, '添加关联记录');
     input.value = '';
-    announce(`Created and linked ${name || 'a new record'}`);
+    announce(`已创建并关联 ${name || '新记录'}`);
     paint();
   };
   input.addEventListener('input', () => {
@@ -435,9 +435,9 @@ export function openRecordPicker(anchor, page, table, field, record, { query = '
       pop.close();
     }
   });
-  const footer = h('button.picker-footer', { type: 'button', onclick: addNew }, icon('plus', 14), h('span', `Add new record to ${target.name}`));
+  const footer = h('button.picker-footer', { type: 'button', onclick: addNew }, icon('plus', 14), h('span', `向 ${target.name} 添加新记录`));
   paint();
-  const pop = openPopover(anchor, h('div.picker.wide', input, list, footer), { focus: input, label: `Link records from ${target.name}`, onClose });
+  const pop = openPopover(anchor, h('div.picker.wide', input, list, footer), { focus: input, label: `从 ${target.name} 关联记录`, onClose });
   return pop;
 }
 
@@ -464,7 +464,7 @@ export async function makeThumb(file) {
 export async function uploadFiles(page, table, field, recordId, files) {
   const list = [...files];
   if (!list.length) return;
-  const t = toast(`Uploading ${list.length} file${list.length === 1 ? '' : 's'}...`, { timeout: 0 });
+  const t = toast(`正在上传 ${list.length} 个文件...`, { timeout: 0 });
   try {
     const atts = [];
     for (const f of list) {
@@ -474,10 +474,10 @@ export async function uploadFiles(page, table, field, recordId, files) {
     const cur = page.base.table(table.id).record(recordId)?.c[field.id] || [];
     page.base.setCell(table.id, recordId, field.id, [...cur, ...atts]);
     t.close();
-    announce(`Uploaded ${atts.length} file${atts.length === 1 ? '' : 's'}`);
+    announce(`已上传 ${atts.length} 个文件`);
   } catch (err) {
     t.close();
-    toast(err?.code === 'storage_limit_reached' || err?.status === 413 ? 'Your local storage is full.' : 'Could not upload the file.', { error: true });
+    toast(err?.code === 'storage_limit_reached' || err?.status === 413 ? '本地存储空间已满。' : '无法上传文件。', { error: true });
   }
 }
 
@@ -530,7 +530,7 @@ export async function previewAttachment(page, att, list = [att]) {
     const url = await fileUrl(page, a.path).catch(() => null);
     if (token !== showing) return;
     if (!url) {
-      body.replaceChildren(h('p', 'This file could not be loaded.'));
+      body.replaceChildren(h('p', '无法加载此文件。'));
       return;
     }
     const isImg = String(a.type).startsWith('image/');
@@ -539,14 +539,14 @@ export async function previewAttachment(page, att, list = [att]) {
     const isAudio = String(a.type).startsWith('audio/');
     body.replaceChildren(
       isImg ? h('img', { src: url, alt: a.name }) : isVideo ? h('video', { src: url, controls: true }) : isAudio ? h('audio', { src: url, controls: true }) : isPdf ? h('iframe', { src: url, title: a.name }) : h('div.att-file', icon('file', 40), h('p', a.name), h('p.muted', formatBytes(a.size))),
-      h('div.att-actions', h('a.btn', { href: url, download: a.name }, icon('download', 16), 'Download'), h('a.btn.ghost', { href: url, target: '_blank', rel: 'noopener' }, icon('external', 16), 'Open in new tab')),
+      h('div.att-actions', h('a.btn', { href: url, download: a.name }, icon('download', 16), '下载'), h('a.btn.ghost', { href: url, target: '_blank', rel: 'noopener' }, icon('external', 16), '在新标签页打开')),
     );
   };
   const nav = list.length > 1
-    ? h('div.att-nav', h('button.icon-btn', { type: 'button', 'aria-label': 'Previous file', onclick: () => {
+    ? h('div.att-nav', h('button.icon-btn', { type: 'button', 'aria-label': '上一个文件', onclick: () => {
       index = (index - 1 + list.length) % list.length;
       show();
-    } }, icon('chevronLeft', 18)), h('button.icon-btn', { type: 'button', 'aria-label': 'Next file', onclick: () => {
+    } }, icon('chevronLeft', 18)), h('button.icon-btn', { type: 'button', 'aria-label': '下一个文件', onclick: () => {
       index = (index + 1) % list.length;
       show();
     } }, icon('chevronRight', 18)))
@@ -563,7 +563,7 @@ export function openAttachments(anchor, page, table, field, record, { onClose } 
     uploadFiles(page, table, field, record.id, fileInput.files).then(paint);
     fileInput.value = '';
   } });
-  const drop = h('button.att-drop', { type: 'button', onclick: () => fileInput.click() }, icon('upload', 18), h('span', 'Drop files here or browse'));
+  const drop = h('button.att-drop', { type: 'button', onclick: () => fileInput.click() }, icon('upload', 18), h('span', '拖拽文件至此处或点击浏览'));
   for (const ev of ['dragenter', 'dragover']) drop.addEventListener(ev, (e) => {
     e.preventDefault();
     drop.classList.add('over');
@@ -579,8 +579,8 @@ export function openAttachments(anchor, page, table, field, record, { onClose } 
     list.replaceChildren(
       ...atts.map((a) =>
         h('li.att-item',
-          h('button.att-open', { type: 'button', onclick: () => previewAttachment(page, a, atts), 'aria-label': `Open ${a.name}` }, attachmentThumb(page, a, 36), h('span.att-name', a.name), h('span.att-size', formatBytes(a.size))),
-          h('button.icon-btn', { type: 'button', 'aria-label': `Remove ${a.name}`, 'data-tip': 'Remove', onclick: () => {
+          h('button.att-open', { type: 'button', onclick: () => previewAttachment(page, a, atts), 'aria-label': `打开 ${a.name}` }, attachmentThumb(page, a, 36), h('span.att-name', a.name), h('span.att-size', formatBytes(a.size))),
+          h('button.icon-btn', { type: 'button', 'aria-label': `移除 ${a.name}`, 'data-tip': '移除', onclick: () => {
             const cur = base.table(table.id).record(record.id)?.c[field.id] || [];
             base.setCell(table.id, record.id, field.id, cur.filter((x) => x.id !== a.id));
             paint();
@@ -589,7 +589,7 @@ export function openAttachments(anchor, page, table, field, record, { onClose } 
     );
   }
   paint();
-  return openPopover(anchor, h('div.picker.wide', drop, fileInput, list), { label: `${field.name} attachments`, onClose, focus: drop });
+  return openPopover(anchor, h('div.picker.wide', drop, fileInput, list), { label: `${field.name} 附件`, onClose, focus: drop });
 }
 
 /** A small thumbnail element for an attachment. */
@@ -633,12 +633,12 @@ export function fieldInput(page, table, field, record, { onChange, form = false,
       return h('button.btn.small', { type: 'button', id, onclick: () => {
         const url = buttonUrl(base, table, record, field);
         if (url) window.open(url, '_blank', 'noopener');
-        else toast('This button has no link yet.');
-      } }, field.options?.label || 'Open');
+        else toast('此按钮尚未配置链接。');
+      } }, field.options?.label || '打开');
     }
     const text = toText(field, value, ctx);
     if (value && typeof value === 'object' && value.error) return h('div.ro-value.error', { id, title: value.message }, value.error);
-    return h('div.ro-value', { id, tabindex: '0' }, text || h('span.muted', 'Empty'));
+    return h('div.ro-value', { id, tabindex: '0' }, text || h('span.muted', '（空）'));
   }
   switch (field.type) {
     case 'longText': {
@@ -659,7 +659,7 @@ export function fieldInput(page, table, field, record, { onChange, form = false,
       const stars = Array.from({ length: max }, (_, i) => h('button.rating-star', {
         type: 'button',
         role: 'radio',
-        'aria-label': `${i + 1} of ${max}`,
+        'aria-label': `${i + 1} / ${max} 星`,
         onclick: () => {
           cur = cur === i + 1 ? 0 : i + 1;
           commit(cur || null);
@@ -680,7 +680,7 @@ export function fieldInput(page, table, field, record, { onChange, form = false,
     case 'multipleSelect':
     case 'link':
     case 'attachment': {
-      const box = h('div.multi-input', { id, tabindex: '0', role: 'button', 'aria-haspopup': 'dialog', 'aria-label': `${field.name}: edit` });
+      const box = h('div.multi-input', { id, tabindex: '0', role: 'button', 'aria-haspopup': 'dialog', 'aria-label': `${field.name}：编辑` });
       let cur = value;
       const paint = () => {
         box.replaceChildren();
@@ -688,7 +688,7 @@ export function fieldInput(page, table, field, record, { onChange, form = false,
           const atts = cur || [];
           // Files picked in a form are not uploaded yet: each can be removed.
           const chip = (a) => (form
-            ? h('span.att-chip', attachmentThumb(page, a, 56), h('span.att-chip-name', a.name), h('button.icon-btn.att-remove', { type: 'button', 'aria-label': `Remove ${a.name}`, onclick: (e) => {
+            ? h('span.att-chip', attachmentThumb(page, a, 56), h('span.att-chip-name', a.name), h('button.icon-btn.att-remove', { type: 'button', 'aria-label': `移除 ${a.name}`, onclick: (e) => {
               e.stopPropagation();
               if (a.preview) URL.revokeObjectURL(a.preview);
               cur = atts.filter((x) => x !== a);
@@ -699,8 +699,8 @@ export function fieldInput(page, table, field, record, { onChange, form = false,
             : h('button.att-chip', { type: 'button', onclick: (e) => {
               e.stopPropagation();
               previewAttachment(page, a, atts);
-            }, 'aria-label': `Open ${a.name}` }, attachmentThumb(page, a, 56), h('span.att-chip-name', a.name)));
-          box.append(h('div.att-strip', atts.map(chip)), h('span.multi-add', icon('plus', 14), atts.length && !form ? 'Add or remove files' : 'Add files'));
+            }, 'aria-label': `打开 ${a.name}` }, attachmentThumb(page, a, 56), h('span.att-chip-name', a.name)));
+          box.append(h('div.att-strip', atts.map(chip)), h('span.multi-add', icon('plus', 14), atts.length && !form ? '添加或移除文件' : '添加文件'));
           return;
         }
         const ids = Array.isArray(cur) ? cur : cur ? [cur] : [];
@@ -715,7 +715,7 @@ export function fieldInput(page, table, field, record, { onChange, form = false,
             chips.append(h('span.chip', { style: { background: bg, color: fg } }, h('span.chip-label', c.name)));
           }
         }
-        box.append(chips, h('span.multi-add', icon(ids.length ? 'chevronDown' : 'plus', 14), ids.length ? '' : field.type === 'link' ? 'Add a record' : 'Select an option'));
+        box.append(chips, h('span.multi-add', icon(ids.length ? 'chevronDown' : 'plus', 14), ids.length ? '' : field.type === 'link' ? '添加记录' : '选择选项'));
       };
       paint();
       const open = () => {
@@ -774,9 +774,9 @@ export function fieldInput(page, table, field, record, { onChange, form = false,
     }
     case 'date': {
       const wrap = h('div.date-input');
-      const input = h('input.input', { type: 'text', id, placeholder: field.options?.includeTime ? 'Date and time' : 'Date', autocomplete: 'off' });
+      const input = h('input.input', { type: 'text', id, placeholder: field.options?.includeTime ? '日期与时间' : '日期', autocomplete: 'off' });
       input.value = value ? formatDate(value, field.options) : '';
-      const btn = h('button.icon-btn', { type: 'button', 'aria-label': 'Open calendar' }, icon('fDate', 16));
+      const btn = h('button.icon-btn', { type: 'button', 'aria-label': '打开日历' }, icon('fDate', 16));
       const save = () => {
         const t = input.value.trim();
         const v = t ? parseText(field, t) : null;
@@ -800,7 +800,7 @@ export function fieldInput(page, table, field, record, { onChange, form = false,
             pop.close();
           },
         });
-        const pop = openPopover(btn, cal.el, { className: 'padded', label: 'Choose a date', focus: false });
+        const pop = openPopover(btn, cal.el, { className: 'padded', label: '选择日期', focus: false });
         requestAnimationFrame(() => cal.focus());
       });
       wrap.append(input, btn);
@@ -832,7 +832,7 @@ export function fieldInput(page, table, field, record, { onChange, form = false,
           if (field.type === 'phone') return `tel:${v.replace(/[^\d+]/g, '')}`;
           return /^https?:\/\//i.test(v) ? v : `https://${v}`;
         };
-        const open = h('a.icon-btn', { href: '#', target: '_blank', rel: 'noopener', 'aria-label': field.type === 'email' ? 'Send email' : field.type === 'phone' ? 'Call' : 'Open link', onclick: (e) => {
+        const open = h('a.icon-btn', { href: '#', target: '_blank', rel: 'noopener', 'aria-label': field.type === 'email' ? '发送邮件' : field.type === 'phone' ? '拨打电话' : '打开链接', onclick: (e) => {
           const u = href();
           if (!u) e.preventDefault();
           else e.currentTarget.href = u;

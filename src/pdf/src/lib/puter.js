@@ -130,18 +130,21 @@ export async function readFile(path, { maxBytes = Infinity, signal } = {}) {
   const file = await overNetwork(() => sdk().fs.read(path), 'read');
   signal?.throwIfAborted();
   if (file.size > maxBytes)
-    throw new Error(`Choose a PDF smaller than ${maxBytes / (1024 * 1024)} MB.`);
+    throw new Error(`请选择小于 ${maxBytes / (1024 * 1024)} MB 的 PDF 文件。`);
   const bytes = await overNetwork(() => file.arrayBuffer(), 'read');
   signal?.throwIfAborted();
   return new Uint8Array(bytes);
 }
 export async function saveFile(name, bytes, path = null) {
+  if (!path) {
+    return saveAs(name, bytes);
+  }
   return overNetwork(
     () =>
       sdk().fs.write(
-        path || `${FOLDER}/${safeName(name)}`,
+        path,
         new Blob([bytes], { type: 'application/pdf' }),
-        { overwrite: !!path, dedupeName: !path, createMissingParents: true },
+        { overwrite: true, dedupeName: false, createMissingParents: true },
       ),
     'saved',
   );

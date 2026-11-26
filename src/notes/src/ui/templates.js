@@ -1,112 +1,112 @@
 /** Page templates (Insert > Page Templates). Outline HTML uses the normal note markup. */
 const todo = (text) => `<p><span class="nt-tag" data-tag="todo" data-done="false" contenteditable="false"></span>${text}</p>`;
-const today = () => new Date().toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+const today = () => new Date().toLocaleDateString('zh-CN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
 export const TEMPLATES = [
   {
     id: 'blank',
-    category: 'Blank',
-    label: 'Blank page',
-    desc: 'An empty page.',
+    category: '空白',
+    label: '空白页',
+    desc: '一个空白页面。',
     build: () => ({ title: '', outlines: [] }),
   },
   {
     id: 'meeting-simple',
-    category: 'Business',
-    label: 'Simple Meeting Notes',
-    desc: 'Agenda, attendees, notes and action items.',
+    category: '商务',
+    label: '简易会议纪要',
+    desc: '议程、参会人员、笔记和待办事项。',
     build: () => ({
-      title: 'Meeting Notes',
+      title: '会议纪要',
       outlines: [
-        { x: 48, y: 140, w: 560, html: `<h2>Meeting Details</h2><p>Date: ${today()}</p><p>Location: </p><h2>Agenda</h2><ol><li><br></li></ol><h2>Attendees</h2><ul><li><br></li></ul><h2>Notes</h2><p><br></p><h2>Action Items</h2>${todo('')}` },
+        { x: 48, y: 140, w: 560, html: `<h2>会议详情</h2><p>日期：${today()}</p><p>地点：</p><h2>议程</h2><ol><li><br></li></ol><h2>参会人员</h2><ul><li><br></li></ul><h2>会议笔记</h2><p><br></p><h2>行动项</h2>${todo('')}` },
       ],
     }),
   },
   {
     id: 'meeting-detailed',
-    category: 'Business',
-    label: 'Detailed Meeting Notes',
-    desc: 'Objective, discussion, decisions and follow-ups.',
+    category: '商务',
+    label: '详细会议纪要',
+    desc: '目标、讨论、决议和后续跟进。',
     build: () => ({
-      title: 'Project Meeting',
+      title: '项目会议',
       outlines: [
-        { x: 48, y: 140, w: 600, html: `<h2>Meeting Details</h2><table><tbody><tr><th>Date</th><td>${today()}</td></tr><tr><th>Time</th><td><br></td></tr><tr><th>Location</th><td><br></td></tr><tr><th>Facilitator</th><td><br></td></tr></tbody></table><h2>Objective</h2><p><br></p><h2>Discussion</h2><ul><li><br></li></ul><h2>Decisions</h2><ul><li><br></li></ul><h2>Follow-up</h2>${todo('')}<h2>Next Meeting</h2><p><br></p>` },
+        { x: 48, y: 140, w: 600, html: `<h2>会议详情</h2><table><tbody><tr><th>日期</th><td>${today()}</td></tr><tr><th>时间</th><td><br></td></tr><tr><th>地点</th><td><br></td></tr><tr><th>主持人</th><td><br></td></tr></tbody></table><h2>目标</h2><p><br></p><h2>讨论内容</h2><ul><li><br></li></ul><h2>决议事项</h2><ul><li><br></li></ul><h2>后续跟进</h2>${todo('')}<h2>下次会议</h2><p><br></p>` },
       ],
     }),
   },
   {
     id: 'todo',
-    category: 'Planners',
-    label: 'To Do List',
-    desc: 'Prioritized checklist.',
+    category: '规划',
+    label: '待办事项列表',
+    desc: '按优先级排列的清单。',
     build: () => ({
-      title: 'To Do List',
+      title: '待办事项列表',
       outlines: [
-        { x: 48, y: 140, w: 420, html: `<h3>High priority</h3>${todo('')}${todo('')}<h3>Medium priority</h3>${todo('')}${todo('')}<h3>Low priority</h3>${todo('')}` },
+        { x: 48, y: 140, w: 420, html: `<h3>高优先级</h3>${todo('')}${todo('')}<h3>中优先级</h3>${todo('')}${todo('')}<h3>低优先级</h3>${todo('')}` },
       ],
     }),
   },
   {
     id: 'weekly',
-    category: 'Planners',
-    label: 'Weekly Planner',
-    desc: 'A table for each day of the week.',
+    category: '规划',
+    label: '每周计划',
+    desc: '按周内每日安排的计划表格。',
     build: () => {
-      const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+      const days = ['星期一', '星期二', '星期三', '星期四', '星期五', '星期六', '星期日'];
       return {
-        title: 'Weekly Planner',
-        outlines: [{ x: 48, y: 140, w: 720, html: `<table><tbody><tr><th>Day</th><th>Plans</th><th>Notes</th></tr>${days.map((d) => `<tr><td>${d}</td><td><br></td><td><br></td></tr>`).join('')}</tbody></table>` }],
+        title: '每周计划',
+        outlines: [{ x: 48, y: 140, w: 720, html: `<table><tbody><tr><th>星期</th><th>计划</th><th>备注</th></tr>${days.map((d) => `<tr><td>${d}</td><td><br></td><td><br></td></tr>`).join('')}</tbody></table>` }],
       };
     },
   },
   {
     id: 'project',
-    category: 'Business',
-    label: 'Project Overview',
-    desc: 'Goals, milestones, team and risks.',
+    category: '商务',
+    label: '项目概览',
+    desc: '目标、里程碑、团队和风险。',
     build: () => ({
-      title: 'Project Overview',
+      title: '项目概览',
       outlines: [
-        { x: 48, y: 140, w: 600, html: '<h2>Summary</h2><p><br></p><h2>Goals</h2><ul><li><br></li></ul><h2>Milestones</h2><table><tbody><tr><th>Milestone</th><th>Owner</th><th>Due</th><th>Status</th></tr><tr><td><br></td><td><br></td><td><br></td><td><br></td></tr><tr><td><br></td><td><br></td><td><br></td><td><br></td></tr></tbody></table><h2>Team</h2><ul><li><br></li></ul><h2>Risks</h2><p><span class="nt-tag" data-tag="critical" contenteditable="false"></span><br></p>' },
+        { x: 48, y: 140, w: 600, html: '<h2>概述</h2><p><br></p><h2>目标</h2><ul><li><br></li></ul><h2>里程碑</h2><table><tbody><tr><th>里程碑</th><th>负责人</th><th>截止日期</th><th>状态</th></tr><tr><td><br></td><td><br></td><td><br></td><td><br></td></tr><tr><td><br></td><td><br></td><td><br></td><td><br></td></tr></tbody></table><h2>团队成员</h2><ul><li><br></li></ul><h2>风险</h2><p><span class="nt-tag" data-tag="critical" contenteditable="false"></span><br></p>' },
       ],
     }),
   },
   {
     id: 'lecture',
-    category: 'Academic',
-    label: 'Lecture Notes',
-    desc: 'Cue column, notes and summary.',
+    category: '学术',
+    label: '课程笔记',
+    desc: '提示栏、笔记和总结。',
     build: () => ({
-      title: 'Lecture Notes',
+      title: '课程笔记',
       outlines: [
-        { x: 48, y: 140, w: 200, html: '<h3>Questions and cues</h3><p><span class="nt-tag" data-tag="question" contenteditable="false"></span><br></p>' },
-        { x: 290, y: 140, w: 480, html: `<h3>Notes</h3><p>Course: </p><p>Date: ${today()}</p><p><br></p>` },
-        { x: 48, y: 420, w: 722, html: '<h3>Summary</h3><p><br></p>' },
+        { x: 48, y: 140, w: 200, html: '<h3>问题与线索</h3><p><span class="nt-tag" data-tag="question" contenteditable="false"></span><br></p>' },
+        { x: 290, y: 140, w: 480, html: `<h3>课堂笔记</h3><p>课程：</p><p>日期：${today()}</p><p><br></p>` },
+        { x: 48, y: 420, w: 722, html: '<h3>总结</h3><p><br></p>' },
       ],
     }),
   },
   {
     id: 'journal',
-    category: 'Personal',
-    label: 'Daily Journal',
-    desc: 'Gratitude, highlights and tomorrow.',
+    category: '个人',
+    label: '每日日记',
+    desc: '感恩、亮点与明日规划。',
     build: () => ({
       title: today(),
       outlines: [
-        { x: 48, y: 140, w: 520, html: '<h3>Today I am grateful for</h3><ul><li><br></li></ul><h3>Highlights</h3><p><br></p><h3>What I learned</h3><p><br></p><h3>Tomorrow</h3>' + todo('') },
+        { x: 48, y: 140, w: 520, html: '<h3>今日值得感恩的事</h3><ul><li><br></li></ul><h3>今日亮点</h3><p><br></p><h3>今日心得</h3><p><br></p><h3>明日规划</h3>' + todo('') },
       ],
     }),
   },
   {
     id: 'recipe',
-    category: 'Personal',
-    label: 'Recipe',
-    desc: 'Ingredients and steps.',
+    category: '个人',
+    label: '菜谱食谱',
+    desc: '用料与制作步骤。',
     build: () => ({
-      title: 'Recipe',
+      title: '菜谱',
       outlines: [
-        { x: 48, y: 140, w: 260, html: '<h3>Ingredients</h3><ul><li><br></li></ul>' },
-        { x: 340, y: 140, w: 420, html: '<h3>Steps</h3><ol><li><br></li></ol><h3>Notes</h3><p><br></p>' },
+        { x: 48, y: 140, w: 260, html: '<h3>食材用料</h3><ul><li><br></li></ul>' },
+        { x: 340, y: 140, w: 420, html: '<h3>制作步骤</h3><ol><li><br></li></ol><h3>备注</h3><p><br></p>' },
       ],
     }),
   },

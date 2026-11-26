@@ -24,7 +24,7 @@ export function decorateTag(span) {
     span.tabIndex = -1;
   } else {
     span.setAttribute('role', 'img');
-    span.setAttribute('aria-label', `${label} tag`);
+    span.setAttribute('aria-label', `${label} 标记`);
   }
 }
 

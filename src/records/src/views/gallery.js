@@ -65,12 +65,12 @@ export class GalleryView {
       e.preventDefault();
       const id = card.dataset.id;
       openMenu({ x: e.clientX, y: e.clientY }, [
-        { label: 'Expand record', icon: 'expand', onSelect: () => this.page.openRecord(id) },
-        { label: 'Duplicate record', icon: 'copy', onSelect: () => this.base.duplicateRecords(this.table.id, [id]) },
+        { label: '展开记录', icon: 'expand', onSelect: () => this.page.openRecord(id) },
+        { label: '复制记录', icon: 'copy', onSelect: () => this.base.duplicateRecords(this.table.id, [id]) },
         { type: 'sep' },
-        { label: 'Delete record', icon: 'trash', danger: true, onSelect: () => {
+        { label: '删除记录', icon: 'trash', danger: true, onSelect: () => {
           this.base.deleteRecords(this.table.id, [id]);
-          this.page.toastUndo('Record deleted');
+          this.page.toastUndo('已删除记录');
         } },
       ]);
     });
@@ -107,9 +107,9 @@ export class GalleryView {
       if (hits.has(r.id)) c.classList.add('search-hit');
       return c;
     });
-    const add = h('button.card.card-add', { type: 'button', onclick: () => this.page.addRecord({}) }, icon('plus', 20), h('span', 'Add record'));
+    const add = h('button.card.card-add', { type: 'button', onclick: () => this.page.addRecord({}) }, icon('plus', 20), h('span', '添加记录'));
     this.grid.replaceChildren(...cards, add);
-    if (!result.records.length && result.total) this.grid.prepend(h('p.gallery-note.muted', 'No records match this view’s filters.'));
+    if (!result.records.length && result.total) this.grid.prepend(h('p.gallery-note.muted', '没有符合当前视图筛选条件的记录。'));
   }
 
   setSearch(query, { keep = false } = {}) {

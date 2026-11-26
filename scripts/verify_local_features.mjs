@@ -34,7 +34,7 @@ async function testApp(appName, url, assertions) {
   console.log(`\n--- Testing ${appName} ---`);
   const browser = await chromium.launch({
     headless: true,
-    executablePath: '/opt/ms-playwright/chromium-1255/chrome-linux64/chrome',
+    executablePath: fs.existsSync('/usr/bin/google-chrome') ? '/usr/bin/google-chrome' : '/opt/ms-playwright/chromium-1255/chrome-linux64/chrome',
     args: [
       '--no-sandbox',
       '--disable-setuid-sandbox',
@@ -66,7 +66,7 @@ async function testApp(appName, url, assertions) {
     console.error(`✗ ${appName} failed:`, err.message);
     throw err;
   } finally {
-    await browser.close();
+    await page.close().catch(() => {}); await browser.close(); await new Promise(r => setTimeout(r, 800));
   }
 }
 

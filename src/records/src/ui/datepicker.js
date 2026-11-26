@@ -12,9 +12,9 @@ export function calendar({ value, onPick, weekStart = 0 }) {
   let month = new Date(focusDay.getFullYear(), focusDay.getMonth(), 1);
   const title = h('div.cal-title', { 'aria-live': 'polite' });
   const grid = h('div.cal-grid', { role: 'grid' });
-  const prev = h('button.icon-btn', { type: 'button', 'aria-label': 'Previous month', onclick: () => shift(-1) }, icon('chevronLeft', 16));
-  const next = h('button.icon-btn', { type: 'button', 'aria-label': 'Next month', onclick: () => shift(1) }, icon('chevronRight', 16));
-  const today = h('button.btn.small.ghost', { type: 'button', onclick: () => pick(new Date()) }, 'Today');
+  const prev = h('button.icon-btn', { type: 'button', 'aria-label': '上个月', onclick: () => shift(-1) }, icon('chevronLeft', 16));
+  const next = h('button.icon-btn', { type: 'button', 'aria-label': '下个月', onclick: () => shift(1) }, icon('chevronRight', 16));
+  const today = h('button.btn.small.ghost', { type: 'button', onclick: () => pick(new Date()) }, '今天');
   const el = h('div.calendar', h('div.cal-head', prev, title, next), grid, h('div.cal-foot', today));
 
   // Focus stays on the month button, so pressing it again keeps paging.
@@ -35,12 +35,12 @@ export function calendar({ value, onPick, weekStart = 0 }) {
   }
 
   function render(focus = false) {
-    title.textContent = `${monthName(month.getMonth())} ${month.getFullYear()}`;
+    title.textContent = `${month.getFullYear()}年${month.getMonth() + 1}月`;
     grid.replaceChildren();
     const head = h('div.cal-row', { role: 'row' });
     for (let i = 0; i < 7; i++) {
       const wd = WEEKDAYS[(i + weekStart) % 7];
-      head.append(h('div.cal-wd', { role: 'columnheader', 'aria-label': wd }, wd.slice(0, 2)));
+      head.append(h('div.cal-wd', { role: 'columnheader', 'aria-label': wd }, wd));
     }
     grid.append(head);
     const first = new Date(month);
@@ -59,7 +59,7 @@ export function calendar({ value, onPick, weekStart = 0 }) {
           role: 'gridcell',
           tabindex: key === focusKey ? '0' : '-1',
           'aria-selected': String(key === selKey),
-          'aria-label': `${monthName(day.getMonth())} ${day.getDate()}, ${day.getFullYear()}`,
+          'aria-label': `${day.getFullYear()}年${day.getMonth() + 1}月${day.getDate()}日`,
           class: `cal-day${day.getMonth() !== month.getMonth() ? ' other' : ''}${key === todayKey ? ' today' : ''}${key === selKey ? ' selected' : ''}`,
           onclick: () => pick(day),
         }, String(day.getDate()));

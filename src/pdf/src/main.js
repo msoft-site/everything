@@ -243,6 +243,7 @@ function settings() {
   closeAppsPanel();
   const accountSummary = el('p', { class: 'muted' });
   const accountActions = el('div', { class: 'stack' });
+  const themeLabels = { system: '跟随系统', light: '浅色', dark: '深色' };
   const select = el(
     'select',
     { id: 'theme-select', class: 'input', onchange: (e) => applyTheme(e.target.value) },
@@ -250,21 +251,21 @@ function settings() {
       el(
         'option',
         { value: t, selected: themeValue() === t },
-        `${t[0].toUpperCase()}${t.slice(1)}`,
+        themeLabels[t] || t,
       ),
     ),
   );
   const body = el(
     'div',
     { class: 'stack' },
-    el('label', { for: 'theme-select' }, 'Appearance'),
+    el('label', { for: 'theme-select' }, '外观'),
     select,
     accountSummary,
-    button('Keyboard shortcuts', 'Keyboard', () => {
+    button('键盘快捷键', 'Keyboard', () => {
       dialog.close();
       shortcuts();
     }),
-    button('About PDF Editor', 'Info', () => {
+    button('关于 PDF 编辑器', 'Info', () => {
       dialog.close();
       about();
     }),
@@ -283,8 +284,8 @@ function settings() {
     }
     const focused = accountActions.contains(document.activeElement);
     accountSummary.textContent = user
-      ? `Signed in as ${user.username}`
-      : 'Work locally. PDFs are saved on your device.';
+      ? `已登录为 ${user.username}`
+      : '本地工作模式。PDF 保存在您的设备上。';
     const nextAction = !user ? 'sign-in' : P.isApp() ? null : 'sign-out';
     if (nextAction === accountAction) return;
     accountAction = nextAction;
@@ -293,7 +294,7 @@ function settings() {
     if (user && !P.isApp())
       accountActions.append(
         button(
-          'Sign out',
+          '退出登录',
           'LogOut',
           run(async (event) => {
             // Safari does not focus clicked buttons; the confirmation needs a return target.
@@ -305,7 +306,7 @@ function settings() {
     if (!user)
       accountActions.append(
         button(
-          'Sign in',
+          '登录',
           'Cloud',
           run(async () => {
             await ensureSignedIn();
@@ -316,7 +317,7 @@ function settings() {
       );
     if (focused) (accountActions.querySelector('button') || select).focus();
   };
-  const dialog = modal('Settings', body);
+  const dialog = modal('设置', body);
   dialog.classList.add('app-dialog');
   refreshAccount();
   settingsAccountViews.add(refreshAccount);
@@ -716,7 +717,7 @@ async function openDocument(
       }),
       onOpen: pickDevice,
       onOpenCloud: pickCloud,
-      onNew: run(() => openDocument(newBlankPdf, 'Untitled.pdf')),
+      onNew: run(() => openDocument(newBlankPdf, '未命名.pdf')),
       onOpenBytes: run((bytes, name) =>
         openDocument(async () => bytes, name, null, { unsaved: true }),
       ),
@@ -753,7 +754,7 @@ function refocusView(selector) {
 }
 /** The app's name, and the library view's own heading. */
 function brand() {
-  return el('h1', { class: 'brand' }, appIcon(), el('span', {}, 'PDF Editor'));
+  return el('h1', { class: 'brand' }, appIcon(), el('span', {}, 'PDF 编辑器'));
 }
 function showHome({ accountRefresh = false } = {}) {
   // Updating the library after signing in belongs to the pending cloud-open workflow.
@@ -766,7 +767,7 @@ function showHome({ accountRefresh = false } = {}) {
   const hadFocus = viewHasFocus();
   editor?.destroy();
   editor = null;
-  document.title = 'PDF Editor';
+  document.title = 'PDF 编辑器';
   P.setWindowTitle('PDF 编辑器');
   if (location.hash !== LIBRARY_HASH) history.replaceState(null, '', LIBRARY_HASH);
   const generation = ++homeGeneration;
@@ -1194,7 +1195,7 @@ window.addEventListener('drop', (e) => {
   document.body.classList.remove('dropping');
   if (!files.length) return;
   // The message lands in the open dialog, which is where the reader is looking.
-  if (dialogOpen()) return toast('Close this dialog to open a dropped file.', { error: true });
+  if (dialogOpen()) return toast('请先关闭此对话框以打开拖放的文件。', { error: true });
   run(() => openFiles(files))();
 });
 window.addEventListener('hashchange', () => {

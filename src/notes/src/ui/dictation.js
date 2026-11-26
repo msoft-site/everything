@@ -20,14 +20,14 @@ export class Dictation {
 
   start() {
     if (!this.supported) {
-      toast('Dictation is not available in this browser.');
+      toast('此浏览器不支持听写功能。');
       return;
     }
     this.app.editor.ensureCaret();
     const rec = new this.Recognition();
     rec.continuous = true;
     rec.interimResults = false;
-    rec.lang = navigator.language || 'en-US';
+    rec.lang = navigator.language || 'zh-CN';
     rec.onresult = (e) => {
       for (let i = e.resultIndex; i < e.results.length; i++) {
         if (!e.results[i].isFinal) continue;
@@ -36,8 +36,8 @@ export class Dictation {
       }
     };
     rec.onerror = (e) => {
-      if (e.error === 'not-allowed' || e.error === 'service-not-allowed') toast('Allow microphone access to dictate.', { kind: 'error' });
-      else if (e.error !== 'no-speech' && e.error !== 'aborted') toast(`Dictation stopped: ${e.error}`, { kind: 'error' });
+      if (e.error === 'not-allowed' || e.error === 'service-not-allowed') toast('请允许麦克风权限以使用听写功能。', { kind: 'error' });
+      else if (e.error !== 'no-speech' && e.error !== 'aborted') toast(`听写已停止：${e.error}`, { kind: 'error' });
     };
     rec.onend = () => {
       if (this.rec === rec) {
@@ -54,7 +54,7 @@ export class Dictation {
     this.rec = rec;
     this.active = true;
     this.app.ribbon.refresh();
-    announce('Dictation on. Start speaking.');
+    announce('听写已开启，请开始说话。');
   }
 
   /**
@@ -79,7 +79,7 @@ export class Dictation {
     const body = saved?.startContainer.isConnected && editableRoot(saved.startContainer);
     if (!body?.classList.contains('outline-body') || !ed.scroller.contains(body)) {
       this.stop();
-      toast('Dictation stopped. Click in a note to dictate there.');
+      toast('听写已停止。请点击笔记以继续听写。');
       return;
     }
     const range = saved.cloneRange();
@@ -101,6 +101,6 @@ export class Dictation {
     this.active = false;
     rec?.stop();
     this.app.ribbon.refresh();
-    announce('Dictation off');
+    announce('听写已关闭');
   }
 }

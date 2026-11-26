@@ -26,7 +26,7 @@ export class CalendarView {
     this.month = new Date(today.getFullYear(), today.getMonth(), 1);
     this.focusDay = dateKey(today);
     this.head = h('div.cal-toolbar');
-    this.grid = h('div.month', { role: 'grid', 'aria-label': 'Month' });
+    this.grid = h('div.month', { role: 'grid', 'aria-label': '月历' });
     this.el = h('div.calendar-view', this.head, this.grid);
     enableCardDrag(this.grid, {
       onDrop: (d) => this.drop(d),
@@ -73,24 +73,24 @@ export class CalendarView {
     const f = this.dateField();
     const m = this.month;
     const nav = h('div.cal-nav',
-      h('button.icon-btn', { type: 'button', 'aria-label': this.weekMode ? 'Previous week' : 'Previous month', onclick: () => this.shift(-1) }, icon('chevronLeft', 18)),
-      h('button.icon-btn', { type: 'button', 'aria-label': this.weekMode ? 'Next week' : 'Next month', onclick: () => this.shift(1) }, icon('chevronRight', 18)),
-      h('button.btn.small', { type: 'button', onclick: () => this.goToday() }, 'Today'));
+      h('button.icon-btn', { type: 'button', 'aria-label': this.weekMode ? '上一周' : '上个月', onclick: () => this.shift(-1) }, icon('chevronLeft', 18)),
+      h('button.icon-btn', { type: 'button', 'aria-label': this.weekMode ? '下一周' : '下个月', onclick: () => this.shift(1) }, icon('chevronRight', 18)),
+      h('button.btn.small', { type: 'button', onclick: () => this.goToday() }, '今天'));
     const ws = addDays(toDate(this.focusDay), -toDate(this.focusDay).getDay());
     const we = addDays(ws, 6);
     const title = h('h2.cal-month', { 'aria-live': 'polite' }, this.weekMode
-      ? `${monthName(ws.getMonth()).slice(0, 3)} ${ws.getDate()} to ${ws.getMonth() === we.getMonth() ? '' : `${monthName(we.getMonth()).slice(0, 3)} `}${we.getDate()}, ${we.getFullYear()}`
-      : `${monthName(m.getMonth())} ${m.getFullYear()}`);
+      ? `${ws.getFullYear()}年${monthName(ws.getMonth())}${ws.getDate()}日 至 ${ws.getMonth() === we.getMonth() ? '' : `${monthName(we.getMonth())}`}${we.getDate()}日`
+      : `${m.getFullYear()}年 ${monthName(m.getMonth())}`);
     if (!f) {
       this.hits = [];
       this.head.replaceChildren(title);
-      this.grid.replaceChildren(h('div.empty', h('div.empty-icon', icon('vCalendar', 22)), h('h2', 'Choose a date field'), h('p', 'Pick a date field from the toolbar to place records on the calendar.'),
+      this.grid.replaceChildren(h('div.empty', h('div.empty-icon', icon('vCalendar', 22)), h('h2', '选择日期字段'), h('p', '从工具栏选择一个日期字段，以便在日历上显示记录。'),
         h('button.btn.primary', { type: 'button', onclick: () => {
           this.base.transact(() => {
-            const id = this.base.addField(this.table.id, { name: 'Date', type: 'date' });
+            const id = this.base.addField(this.table.id, { name: '日期', type: 'date' });
             this.base.updateView(this.table.id, this.view.id, { dateFieldId: id });
-          }, 'Add Date field');
-        } }, icon('plus', 16), 'Add a Date field')));
+          }, '添加“日期”字段');
+        } }, icon('plus', 16), '添加“日期”字段')));
       return;
     }
     const result = runView(this.base, this.table, this.view);
@@ -124,10 +124,10 @@ export class CalendarView {
     this.hits.sort((a, b) => a.start - b.start);
     this.range = { start, end: addDays(start, shownWeeks * 7 - 1) };
     this.ordered = result.records.map((r) => r.id);
-    const unBtn = undated.length ? h('button.btn.small.ghost', { type: 'button', 'aria-haspopup': 'dialog' }, icon('inbox', 14), `${undated.length} without a date`) : null;
-    unBtn?.addEventListener('click', () => this.showList(unBtn, 'Records without a date', undated));
-    const mode = h('div.segmented', { role: 'radiogroup', 'aria-label': 'Calendar range' },
-      ...[['month', 'Month'], ['week', 'Week']].map(([k, l]) => h('button', { type: 'button', role: 'radio', 'aria-checked': String((this.view.calMode || 'month') === k), onclick: () => this.base.updateView(this.table.id, this.view.id, { calMode: k }, { undoable: false }) }, l)));
+    const unBtn = undated.length ? h('button.btn.small.ghost', { type: 'button', 'aria-haspopup': 'dialog' }, icon('inbox', 14), `${undated.length} 条无日期`) : null;
+    unBtn?.addEventListener('click', () => this.showList(unBtn, '无日期的记录', undated));
+    const mode = h('div.segmented', { role: 'radiogroup', 'aria-label': '日历范围' },
+      ...[['month', '月'], ['week', '周']].map(([k, l]) => h('button', { type: 'button', role: 'radio', 'aria-checked': String((this.view.calMode || 'month') === k), onclick: () => this.base.updateView(this.table.id, this.view.id, { calMode: k }, { undoable: false }) }, l)));
     this.head.replaceChildren(...[nav, title, h('div.grow'), unBtn, mode].filter(Boolean));
 
     const todayKey = dateKey(new Date());
@@ -145,18 +145,18 @@ export class CalendarView {
         const cell = h('div.day', {
           role: 'gridcell',
           tabindex: key === this.focusDay ? '0' : '-1',
-          'aria-label': `${monthName(day.getMonth())} ${day.getDate()}, ${list.length} record${list.length === 1 ? '' : 's'}`,
+          'aria-label': `${monthName(day.getMonth())}${day.getDate()}日，${list.length} 条记录`,
           class: `day${inMonth ? '' : ' other'}${key === todayKey ? ' today' : ''}`,
           dataset: { drop: key },
         });
         const cards = h('div.day-events', { dataset: { cards: 'unordered' } });
         for (const ev of list.slice(0, perDay)) cards.append(this.eventEl(ev, colorOf(ev.rec), hits));
         if (list.length > perDay) {
-          const more = h('button.day-more', { type: 'button' }, `${list.length - perDay} more`);
-          more.addEventListener('click', () => this.showList(more, `${monthName(day.getMonth())} ${day.getDate()}`, list.map((x) => x.rec)));
+          const more = h('button.day-more', { type: 'button' }, `还有 ${list.length - perDay} 条`);
+          more.addEventListener('click', () => this.showList(more, `${monthName(day.getMonth())}${day.getDate()}日`, list.map((x) => x.rec)));
           cards.append(more);
         }
-        cell.append(h('div.day-head', h('span.day-num', String(day.getDate())), h('button.icon-btn.day-add', { type: 'button', tabindex: '-1', 'aria-label': `Add a record on ${monthName(day.getMonth())} ${day.getDate()}`, onclick: () => this.addOn(key) }, icon('plus', 14))), cards);
+        cell.append(h('div.day-head', h('span.day-num', String(day.getDate())), h('button.icon-btn.day-add', { type: 'button', tabindex: '-1', 'aria-label': `在 ${monthName(day.getMonth())}${day.getDate()}日 添加记录`, onclick: () => this.addOn(key) }, icon('plus', 14))), cards);
         row.append(cell);
         d = addDays(d, 1);
       }
@@ -243,8 +243,8 @@ export class CalendarView {
     shift(f);
     const endField = this.table.field(this.view.endFieldId);
     if (endField && !isReadOnly(endField)) shift(endField);
-    this.base.setCells(this.table.id, [{ id, cells }], 'Move to date');
-    announce(`Moved to ${monthName(target.getMonth())} ${target.getDate()}`);
+    this.base.setCells(this.table.id, [{ id, cells }], '移至指定日期');
+    announce(`已移至 ${monthName(target.getMonth())}${target.getDate()}日`);
   }
 
   onKey(e) {
@@ -282,7 +282,7 @@ export class CalendarView {
     } else if (e.key === 'ContextMenu') {
       e.preventDefault();
       const r = day.getBoundingClientRect();
-      openMenu({ x: r.left + 10, y: r.top + 20 }, [{ label: 'Add record on this day', icon: 'plus', onSelect: () => this.addOn(day.dataset.drop) }]);
+      openMenu({ x: r.left + 10, y: r.top + 20 }, [{ label: '在此日添加记录', icon: 'plus', onSelect: () => this.addOn(day.dataset.drop) }]);
     }
   }
 
@@ -290,7 +290,7 @@ export class CalendarView {
   moveEvent(ev, n) {
     const f = this.dateField();
     if (!f || isReadOnly(f)) {
-      announce(`${f?.name || 'This date'} is computed and can't be moved`);
+      announce(`${f?.name || '此日期'} 为计算字段，无法移动`);
       return;
     }
     const id = ev.dataset.id;

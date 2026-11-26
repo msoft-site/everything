@@ -21,7 +21,7 @@ export function openDialog({ title, body, actions = [], className = '', onClose,
   const foot = h('div.dialog-foot');
   const el = h(`dialog.dialog${className ? `.${className.split(' ').join('.')}` : ''}`, { 'aria-labelledby': title ? `${id}-t` : null, 'aria-label': title ? null : label || null, 'aria-describedby': describe ? `${id}-b` : null });
   const head = title || closeButton
-    ? h('div.dialog-head', title ? h('h2.dialog-title', { id: `${id}-t` }, title) : h('div', { style: { flex: '1' } }), closeButton ? h('button.icon-btn', { type: 'button', 'aria-label': 'Close', onclick: () => close() }, icon('x', 16)) : null)
+    ? h('div.dialog-head', title ? h('h2.dialog-title', { id: `${id}-t` }, title) : h('div', { style: { flex: '1' } }), closeButton ? h('button.icon-btn', { type: 'button', 'aria-label': '关闭', onclick: () => close() }, icon('x', 16)) : null)
     : null;
   const bodyEl = h('div.dialog-body', { id: describe ? `${id}-b` : null }, body);
   el.append(...[head, bodyEl, actions.length ? foot : null].filter(Boolean));
@@ -90,7 +90,7 @@ export function openDialog({ title, body, actions = [], className = '', onClose,
 }
 
 /** Ask a yes/no question. Resolves true when confirmed. */
-export function confirmDialog({ title, message, confirmLabel = 'Confirm', cancelLabel = 'Cancel', danger = false }) {
+export function confirmDialog({ title, message, confirmLabel = '确定', cancelLabel = '取消', danger = false }) {
   return new Promise((resolve) => {
     let result = false;
     openDialog({
@@ -107,7 +107,7 @@ export function confirmDialog({ title, message, confirmLabel = 'Confirm', cancel
 }
 
 /** Ask for a line of text. Resolves the text, or null when cancelled. */
-export function promptDialog({ title, label, value = '', placeholder = '', confirmLabel = 'Save', validate }) {
+export function promptDialog({ title, label, value = '', placeholder = '', confirmLabel = '保存', validate }) {
   return new Promise((resolve) => {
     let result = null;
     const input = h('input.input', { type: 'text', value, placeholder, 'aria-label': label || title });
@@ -125,7 +125,7 @@ export function promptDialog({ title, label, value = '', placeholder = '', confi
     const dlg = openDialog({
       title,
       body: h('div', label ? h('label.field-label', label) : null, input, error),
-      actions: [{ label: 'Cancel' }, { label: confirmLabel, primary: true, onClick: () => submit() }],
+      actions: [{ label: '取消' }, { label: confirmLabel, primary: true, onClick: () => submit() }],
       onClose: () => resolve(result),
       initialFocus: input,
     });

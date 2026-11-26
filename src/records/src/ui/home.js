@@ -26,7 +26,8 @@ export class HomePage {
     this.store = app.store;
     this.mode = mode;
     this.query = '';
-    document.title = mode === 'trash' ? 'Trash \u2013 Records' : 'Records';
+    this.query = '';
+    document.title = mode === 'trash' ? '回收站 – 多维表格' : '多维表格';
     this.el = h('div.home');
     this.off = this.store.on('index', () => this.renderList());
     this.render();
@@ -43,44 +44,44 @@ export class HomePage {
   render() {
     const nav = (label, ic, hash, current) =>
       h('a.home-nav-item', { href: `#/${hash}`, 'aria-current': current ? 'page' : null }, icon(ic, 16), h('span', label));
-    const create = h('button.btn.primary.block', { type: 'button', onclick: () => this.createBlank() }, icon('plus', 16), 'Create base');
+    const create = h('button.btn.primary.block', { type: 'button', onclick: () => this.createBlank() }, icon('plus', 16), '新建数据表');
     this.navEl = h(
       'nav.home-nav',
-      { 'aria-label': 'Main' },
-      h('div.brand', h('img', { src: './icon-192.png', alt: '', width: 24, height: 24 }), h('span', 'Records')),
-      h('div.home-nav-list', nav('Home', 'home', '', this.mode === 'home'), nav('Trash', 'trash', 'trash', this.mode === 'trash')),
+      { 'aria-label': '主导航' },
+      h('div.brand', h('img', { src: './icon-192.png', alt: '', width: 24, height: 24 }), h('span', '多维表格')),
+      h('div.home-nav-list', nav('主页', 'home', '', this.mode === 'home'), nav('回收站', 'trash', 'trash', this.mode === 'trash')),
       (this.starredNav = h('div.home-nav-starred')),
       h('div.grow'),
       create,
-      h('a.repo-link', { href: REPO_URL, target: '_blank', rel: 'noopener', 'aria-label': 'Source code on GitHub (opens in a new tab)' }, icon('github', 14), h('span', 'Open source on GitHub')),
+      h('a.repo-link', { href: REPO_URL, target: '_blank', rel: 'noopener', 'aria-label': 'GitHub 上的源代码（在新标签页中打开）' }, icon('github', 14), h('span', 'GitHub 开源代码')),
     );
     this.search = h('input.input.home-search', {
       type: 'search',
-      placeholder: 'Search bases',
-      'aria-label': 'Search bases',
+      placeholder: '搜索数据表',
+      'aria-label': '搜索数据表',
       value: this.query,
       oninput: () => {
         this.query = this.search.value;
         this.renderList();
       },
     });
-    const menuBtn = h('button.icon-btn.home-menu-btn', { type: 'button', 'aria-label': 'Menu', onclick: (e) => this.openPhoneMenu(e.currentTarget) }, icon('menu', 18));
+    const menuBtn = h('button.icon-btn.home-menu-btn', { type: 'button', 'aria-label': '菜单', onclick: (e) => this.openPhoneMenu(e.currentTarget) }, icon('menu', 18));
     const top = h('header.home-top', menuBtn, h('div.home-search-wrap', icon('search', 16), this.search), h('div.grow'), this.app.accountButton());
     this.listHost = h('div.home-list-host');
     this.main = h('main.home-content', { id: 'main', tabindex: '-1' });
     if (this.mode === 'trash') {
-      this.main.append(h('div.home-head', h('h1.home-title', 'Trash'), h('div.grow'), h('button.btn', { type: 'button', onclick: () => this.emptyTrash() }, icon('trash', 16), 'Empty trash')), h('p.home-sub', 'Bases in the trash can be restored. Emptying the trash deletes them and their files for good.'), this.listHost);
+      this.main.append(h('div.home-head', h('h1.home-title', '回收站'), h('div.grow'), h('button.btn', { type: 'button', onclick: () => this.emptyTrash() }, icon('trash', 16), '清空回收站')), h('p.home-sub', '回收站中的数据表可以恢复。清空回收站将永久删除它们及其关联文件。'), this.listHost);
     } else {
       const card = (ic, title, text, onclick, color) =>
         h('button.quick-card', { type: 'button', onclick }, h('span.quick-icon', { style: { background: color } }, icon(ic, 18)), h('span.quick-title', title), h('span.quick-text', text));
       this.main.append(
-        h('h1.home-title', 'Home'),
+        h('h1.home-title', '主页'),
         h(
           'div.quick-grid',
-          card('plus', 'Start from scratch', 'A blank base with one table.', () => this.createBlank(), accentColor('blue')),
-          card('template', 'Start with a template', 'Projects, content, sales, inventory and more.', () => this.openTemplates(), accentColor('purple')),
-          card('fileUp', 'Import a spreadsheet', 'Create a base from a CSV file.', () => this.importCsv(), accentColor('green')),
-          card('restore', 'Restore a backup', 'Open a base you downloaded as JSON.', () => this.importBackup(), accentColor('orange')),
+          card('plus', '从零开始', '包含一张数据表的空白数据库。', () => this.createBlank(), accentColor('blue')),
+          card('template', '从模板创建', '涵盖项目管理、内容规划、销售跟进、库存等模板。', () => this.openTemplates(), accentColor('purple')),
+          card('fileUp', '导入电子表格', '从 CSV 文件创建数据表。', () => this.importCsv(), accentColor('green')),
+          card('restore', '恢复备份', '打开之前下载保存为 JSON 的数据表。', () => this.importBackup(), accentColor('orange')),
         ),
         this.listHost,
       );
@@ -91,15 +92,15 @@ export class HomePage {
 
   openPhoneMenu(anchor) {
     openMenu(anchor, [
-      { label: 'Home', icon: 'home', onSelect: () => this.app.navigate('') },
-      { label: 'Trash', icon: 'trash', onSelect: () => this.app.navigate('trash') },
+      { label: '主页', icon: 'home', onSelect: () => this.app.navigate('') },
+      { label: '回收站', icon: 'trash', onSelect: () => this.app.navigate('trash') },
       { type: 'sep' },
-      { label: 'Create base', icon: 'plus', onSelect: () => this.createBlank() },
-      { label: 'Start with a template', icon: 'template', onSelect: () => this.openTemplates() },
-      { label: 'Import a spreadsheet', icon: 'fileUp', onSelect: () => this.importCsv() },
-      { label: 'Restore a backup', icon: 'restore', onSelect: () => this.importBackup() },
+      { label: '新建数据表', icon: 'plus', onSelect: () => this.createBlank() },
+      { label: '从模板创建', icon: 'template', onSelect: () => this.openTemplates() },
+      { label: '导入电子表格', icon: 'fileUp', onSelect: () => this.importCsv() },
+      { label: '恢复备份', icon: 'restore', onSelect: () => this.importBackup() },
       { type: 'sep' },
-      { label: 'Open source on GitHub', icon: 'github', onSelect: () => window.open(REPO_URL, '_blank', 'noopener') },
+      { label: 'GitHub 开源代码', icon: 'github', onSelect: () => window.open(REPO_URL, '_blank', 'noopener') },
     ]);
   }
 
@@ -121,7 +122,7 @@ export class HomePage {
   renderStarredNav() {
     if (!this.starredNav) return;
     const starred = this.store.bases().filter((b) => b.starred);
-    this.starredNav.replaceChildren(...(starred.length ? [h('div.home-nav-title', 'Starred'), ...starred.map((b) => h('a.home-nav-item.base-link', { href: `#/${b.id}` }, h('span.base-icon', { style: { background: accentColor(b.color), width: '20px', height: '20px', borderRadius: '5px' }, 'aria-hidden': 'true' }, icon(b.icon || 'table', 12)), h('span', b.name)))] : []));
+    this.starredNav.replaceChildren(...(starred.length ? [h('div.home-nav-title', '已加星标'), ...starred.map((b) => h('a.home-nav-item.base-link', { href: `#/${b.id}` }, h('span.base-icon', { style: { background: accentColor(b.color), width: '20px', height: '20px', borderRadius: '5px' }, 'aria-hidden': 'true' }, icon(b.icon || 'table', 12)), h('span', b.name)))] : []));
   }
 
   renderList() {
@@ -172,14 +173,14 @@ export class HomePage {
     if (this.mode === 'trash') {
       this.listHost.replaceChildren(
         list.length
-          ? h('ul.base-rows', { 'aria-label': 'Bases in the trash' }, list.map((b) => this.trashRow(b)))
-          : h('div.empty', h('div.empty-icon', icon('trash', 22)), h('h2', 'The trash is empty'), h('p', 'Bases you delete show up here.')),
+          ? h('ul.base-rows', { 'aria-label': '回收站中的数据表' }, list.map((b) => this.trashRow(b)))
+          : h('div.empty', h('div.empty-icon', icon('trash', 22)), h('h2', '回收站为空'), h('p', '您删除的数据表会显示在此处。')),
       );
       return;
     }
     const layout = prefs().homeLayout;
-    const sortLabels = { opened: 'Last opened', name: 'Name', created: 'Date created' };
-    const sortBtn = h('button.btn.ghost.small', { type: 'button', 'aria-haspopup': 'menu' }, `Sort: ${sortLabels[prefs().homeSort] || 'Last opened'}`, icon('chevronDown', 14));
+    const sortLabels = { opened: '最近打开', name: '名称', created: '创建时间' };
+    const sortBtn = h('button.btn.ghost.small', { type: 'button', 'aria-haspopup': 'menu' }, `排序方式：${sortLabels[prefs().homeSort] || '最近打开'}`, icon('chevronDown', 14));
     sortBtn.addEventListener('click', () =>
       openMenu(sortBtn, Object.entries(sortLabels).map(([k, label]) => ({ label, checked: prefs().homeSort === k, radio: true, onSelect: () => {
         setPref('homeSort', k);
@@ -188,20 +189,20 @@ export class HomePage {
     );
     const layoutToggle = h(
       'div.segmented',
-      { role: 'group', 'aria-label': 'Layout' },
-      h('button', { type: 'button', 'aria-pressed': String(layout === 'grid'), 'aria-label': 'Grid layout', 'data-tip': 'Grid', onclick: () => this.setLayout('grid') }, icon('vGallery', 14)),
-      h('button', { type: 'button', 'aria-pressed': String(layout === 'list'), 'aria-label': 'List layout', 'data-tip': 'List', onclick: () => this.setLayout('list') }, icon('vList', 14)),
+      { role: 'group', 'aria-label': '布局' },
+      h('button', { type: 'button', 'aria-pressed': String(layout === 'grid'), 'aria-label': '网格视图', 'data-tip': '网格', onclick: () => this.setLayout('grid') }, icon('vGallery', 14)),
+      h('button', { type: 'button', 'aria-pressed': String(layout === 'list'), 'aria-label': '列表视图', 'data-tip': '列表', onclick: () => this.setLayout('list') }, icon('vList', 14)),
     );
     const starred = list.filter((b) => b.starred);
     const sections = [];
-    if (starred.length && !this.query) sections.push(this.section('Starred', starred, layout, 'starred'));
-    sections.push(this.section(this.query ? 'Results' : 'All bases', list, layout, 'all', h('div.section-tools', sortBtn, layoutToggle)));
+    if (starred.length && !this.query) sections.push(this.section('已加星标', starred, layout, 'starred'));
+    sections.push(this.section(this.query ? '搜索结果' : '所有数据表', list, layout, 'all', h('div.section-tools', sortBtn, layoutToggle)));
     if (!list.length) {
       sections.pop();
       sections.push(
         this.query
-          ? h('div.empty', h('div.empty-icon', icon('search', 22)), h('h2', 'No bases match'), h('p', 'Try a different name.'))
-          : h('div.empty', h('div.empty-icon', icon('database', 22)), h('h2', 'No bases yet'), h('p', 'Create a base from scratch, start from a template, or import a spreadsheet.'), h('button.btn.primary', { type: 'button', onclick: () => this.createBlank() }, icon('plus', 16), 'Create base')),
+          ? h('div.empty', h('div.empty-icon', icon('search', 22)), h('h2', '未找到匹配的数据表'), h('p', '请尝试其他关键词。'))
+          : h('div.empty', h('div.empty-icon', icon('database', 22)), h('h2', '尚无数据表'), h('p', '从零创建、使用模板，或导入现有电子表格。'), h('button.btn.primary', { type: 'button', onclick: () => this.createBlank() }, icon('plus', 16), '新建数据表')),
       );
     }
     this.listHost.replaceChildren(...sections);
@@ -229,16 +230,16 @@ export class HomePage {
   baseActions(b) {
     const star = h('button.icon-btn', {
       type: 'button',
-      'aria-label': b.starred ? `Unstar ${b.name}` : `Star ${b.name}`,
+      'aria-label': b.starred ? `取消星标 ${b.name}` : `加为星标 ${b.name}`,
       'aria-pressed': String(!!b.starred),
-      'data-tip': b.starred ? 'Unstar' : 'Star',
+      'data-tip': b.starred ? '取消星标' : '星标',
       class: `icon-btn star-btn${b.starred ? ' on' : ''}`,
       onclick: (e) => {
         e.preventDefault();
         this.store.setStarred(b.id, !b.starred);
       },
     }, icon('star', 16, { fill: b.starred ? 'currentColor' : 'none' }));
-    const more = h('button.icon-btn', { type: 'button', 'aria-label': `More actions for ${b.name}`, 'aria-haspopup': 'menu', 'data-tip': 'More' }, icon('more', 16));
+    const more = h('button.icon-btn', { type: 'button', 'aria-label': `${b.name} 的更多操作`, 'aria-haspopup': 'menu', 'data-tip': '更多' }, icon('more', 16));
     more.addEventListener('click', (e) => {
       e.preventDefault();
       this.openBaseMenu(more, b);
@@ -247,8 +248,8 @@ export class HomePage {
   }
 
   baseCard(b) {
-    const opened = b.openedAt ? `Opened ${timeAgo(b.openedAt)}` : `Created ${timeAgo(b.createdAt || Date.now())}`;
-    const when = b.tables ? `${b.tables} table${b.tables === 1 ? '' : 's'} \u00b7 ${opened.charAt(0).toLowerCase()}${opened.slice(1)}` : opened;
+    const opened = b.openedAt ? `${timeAgo(b.openedAt)}打开` : `${timeAgo(b.createdAt || Date.now())}创建`;
+    const when = b.tables ? `${b.tables} 张表 · ${opened}` : opened;
     const link = h('a.base-card-link', { href: `#/${b.id}` }, this.baseIcon(b), h('span.base-card-text', h('span.base-name', b.name), h('span.base-meta', when)));
     const li = h('li.base-card', { dataset: { base: b.id } }, link, this.baseActions(b));
     li.addEventListener('contextmenu', (e) => {
@@ -259,7 +260,7 @@ export class HomePage {
   }
 
   baseRow(b) {
-    const when = b.openedAt ? `Opened ${timeAgo(b.openedAt)}` : '';
+    const when = b.openedAt ? `${timeAgo(b.openedAt)}打开` : '';
     const li = h('li.base-row', { dataset: { base: b.id } }, h('a.base-row-link', { href: `#/${b.id}` }, this.baseIcon(b, 28), h('span.base-name', b.name), h('span.base-meta', when)), this.baseActions(b));
     li.addEventListener('contextmenu', (e) => {
       e.preventDefault();
@@ -272,66 +273,66 @@ export class HomePage {
     return h(
       'li.base-row',
       { dataset: { base: b.id } },
-      h('div.base-row-link', this.baseIcon(b, 28), h('span.base-name', b.name), h('span.base-meta', `Deleted ${timeAgo(b.trashedAt)}`)),
+      h('div.base-row-link', this.baseIcon(b, 28), h('span.base-name', b.name), h('span.base-meta', `${timeAgo(b.trashedAt)}删除`)),
       h(
         'div.base-actions.visible',
         h('button.btn.small', { type: 'button', onclick: () => {
           this.store.restoreBase(b.id);
-          toast(`Restored ${b.name}`);
-        } }, icon('restore', 14), 'Restore'),
-        h('button.btn.small.ghost', { type: 'button', onclick: () => this.purge(b) }, 'Delete forever'),
+          toast(`已恢复 ${b.name}`);
+        } }, icon('restore', 14), '恢复'),
+        h('button.btn.small.ghost', { type: 'button', onclick: () => this.purge(b) }, '永久删除'),
       ),
     );
   }
 
   openBaseMenu(anchor, b) {
     openMenu(anchor, [
-      { label: 'Open', icon: 'arrowUpRight', onSelect: () => this.app.navigate(b.id) },
-      { label: 'Rename', icon: 'pencil', onSelect: () => this.rename(b) },
-      { label: 'Change color and icon', icon: 'palette', onSelect: () => this.appearance(anchor instanceof Element ? anchor : null, b) },
-      { label: b.starred ? 'Unstar' : 'Star', icon: 'star', onSelect: () => this.store.setStarred(b.id, !b.starred) },
-      { label: 'Duplicate', icon: 'copy', onSelect: () => this.duplicate(b) },
+      { label: '打开', icon: 'arrowUpRight', onSelect: () => this.app.navigate(b.id) },
+      { label: '重命名', icon: 'pencil', onSelect: () => this.rename(b) },
+      { label: '更改颜色和图标', icon: 'palette', onSelect: () => this.appearance(anchor instanceof Element ? anchor : null, b) },
+      { label: b.starred ? '取消星标' : '加为星标', icon: 'star', onSelect: () => this.store.setStarred(b.id, !b.starred) },
+      { label: '创建副本', icon: 'copy', onSelect: () => this.duplicate(b) },
       { type: 'sep' },
-      { label: 'Move to trash', icon: 'trash', danger: true, onSelect: () => this.trash(b) },
+      { label: '移至回收站', icon: 'trash', danger: true, onSelect: () => this.trash(b) },
     ], { label: b.name });
   }
 
   async rename(b) {
-    const name = await promptDialog({ title: 'Rename base', label: 'Name', value: b.name, validate: (v) => (v ? null : 'Enter a name.') });
+    const name = await promptDialog({ title: '重命名数据表', label: '名称', value: b.name, validate: (v) => (v ? null : '请输入名称。') });
     if (name && name !== b.name) await this.store.updateBase(b.id, { name });
   }
 
   appearance(anchor, b) {
     const panel = appearancePicker(b, (patch) => this.store.updateBase(b.id, patch));
-    openPopover(anchor || document.body, panel, { className: 'padded', label: 'Color and icon' });
+    openPopover(anchor || document.body, panel, { className: 'padded', label: '颜色和图标' });
   }
 
   async duplicate(b) {
-    const t = toast(`Duplicating ${b.name}...`, { timeout: 0 });
+    const t = toast(`正在复制 ${b.name}...`, { timeout: 0 });
     try {
       await this.store.duplicateBase(b.id);
       t.close();
-      toast(`Duplicated ${b.name}`);
+      toast(`已复制 ${b.name}`);
     } catch {
       t.close();
-      toast('Could not duplicate the base.', { error: true });
+      toast('无法复制该数据表。', { error: true });
     }
   }
 
   trash(b) {
     this.store.trashBase(b.id);
-    toast(`Moved ${b.name} to the trash`, { action: { label: 'Undo', onClick: () => this.store.restoreBase(b.id) } });
+    toast(`已将 ${b.name} 移至回收站`, { action: { label: '撤销', onClick: () => this.store.restoreBase(b.id) } });
   }
 
   async purge(b) {
-    const ok = await confirmDialog({ title: `Delete ${b.name} forever?`, message: 'The base, its records and its attachments are deleted from local storage. This cannot be undone.', confirmLabel: 'Delete forever', danger: true });
+    const ok = await confirmDialog({ title: `永久删除 ${b.name}？`, message: '该数据表、记录及附件将从本地存储中彻底删除。此操作无法撤销。', confirmLabel: '永久删除', danger: true });
     if (ok) await this.store.purgeBase(b.id);
   }
 
   async emptyTrash() {
     const list = this.store.trashed();
     if (!list.length) return;
-    const ok = await confirmDialog({ title: 'Empty the trash?', message: `${list.length} base${list.length === 1 ? '' : 's'} and their files will be deleted for good. This cannot be undone.`, confirmLabel: 'Empty trash', danger: true });
+    const ok = await confirmDialog({ title: '清空回收站？', message: `${list.length} 个数据表及其文件将被彻底删除。此操作无法撤销。`, confirmLabel: '清空回收站', danger: true });
     if (!ok) return;
     for (const b of list) await this.store.purgeBase(b.id);
   }
@@ -345,7 +346,7 @@ export class HomePage {
       this.app.navigate(id);
     } catch (err) {
       console.error(err);
-      toast('Could not create the base. Check your connection and try again.', { error: true });
+      toast('无法创建数据表。请检查网络连接后重试。', { error: true });
     } finally {
       this.creating = false;
     }
@@ -354,7 +355,7 @@ export class HomePage {
   createBlank() {
     const colors = BASE_COLORS;
     const color = colors[this.store.bases().length % colors.length];
-    return this.create({ name: 'Untitled base', color, icon: 'table' });
+    return this.create({ name: '未命名数据表', color, icon: 'table' });
   }
 
   openTemplates() {
@@ -365,7 +366,7 @@ export class HomePage {
       return this.create({ name: tpl.name, color: tpl.color, icon: tpl.icon, doc: built.doc, records: built.records });
     };
     dlg = openDialog({
-      title: 'Start with a template',
+      title: '从模板创建',
       className: 'wide',
       body: h(
         'ul.template-grid',
@@ -382,10 +383,10 @@ export class HomePage {
     try {
       const data = readBaseJson(await file.text());
       const id = await this.store.createBase({ name: data.doc.name, color: data.doc.color, icon: data.doc.icon, doc: data.doc, records: data.records });
-      toast(`Restored ${data.doc.name}`);
+      toast(`已恢复 ${data.doc.name}`);
       this.app.navigate(id);
     } catch (err) {
-      toast(err.message || 'Could not restore that file.', { error: true });
+      toast(err.message || '无法恢复该文件。', { error: true });
     }
   }
 
@@ -413,8 +414,8 @@ export function appearancePicker(b, onChange) {
     onChange({ icon: name });
     paint();
   } }, icon(name, 16)));
-  const colors = h('div.swatches', { role: 'radiogroup', 'aria-label': 'Color' }, swatches);
-  const icons = h('div.icon-grid', { role: 'radiogroup', 'aria-label': 'Icon' }, choices);
+  const colors = h('div.swatches', { role: 'radiogroup', 'aria-label': '颜色' }, swatches);
+  const icons = h('div.icon-grid', { role: 'radiogroup', 'aria-label': '图标' }, choices);
   // Marked in place, so the button just chosen keeps focus.
   const paint = () => {
     swatches.forEach((btn, i) => {
@@ -430,5 +431,5 @@ export function appearancePicker(b, onChange) {
     });
   };
   paint();
-  return h('div.appearance', h('div.popover-title', 'Color'), colors, h('div.popover-title', { style: { marginTop: '12px' } }, 'Icon'), icons);
+  return h('div.appearance', h('div.popover-title', '颜色'), colors, h('div.popover-title', { style: { marginTop: '12px' } }, '图标'), icons);
 }

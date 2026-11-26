@@ -13,8 +13,8 @@ export function openQuickSearch(page) {
   const base = page.base;
   const store = page.store;
   const listId = newId('qs');
-  const input = h('input.input.palette-input', { type: 'search', placeholder: 'Search tables, views, records and bases', 'aria-label': 'Quick search', role: 'combobox', 'aria-expanded': 'true', 'aria-controls': listId, autocomplete: 'off' });
-  const list = h('div.palette-list', { id: listId, role: 'listbox', 'aria-label': 'Results' });
+  const input = h('input.input.palette-input', { type: 'search', placeholder: '搜索数据表、视图、记录与数据库', 'aria-label': '快速搜索', role: 'combobox', 'aria-expanded': 'true', 'aria-controls': listId, autocomplete: 'off' });
+  const list = h('div.palette-list', { id: listId, role: 'listbox', 'aria-label': '搜索结果' });
   let items = [];
   let active = 0;
 
@@ -22,8 +22,8 @@ export function openQuickSearch(page) {
     const out = [];
     const ql = q.toLowerCase();
     for (const t of base.tableList()) {
-      if (!q || t.name.toLowerCase().includes(ql)) out.push({ kind: 'Table', label: t.name, icon: 'table', go: () => page.go(t.id, null) });
-      for (const v of t.views) if (q && v.name.toLowerCase().includes(ql)) out.push({ kind: `View in ${t.name}`, label: v.name, icon: VIEW_TYPES[v.type]?.icon, go: () => page.go(t.id, v.id) });
+      if (!q || t.name.toLowerCase().includes(ql)) out.push({ kind: '数据表', label: t.name, icon: 'table', go: () => page.go(t.id, null) });
+      for (const v of t.views) if (q && v.name.toLowerCase().includes(ql)) out.push({ kind: `${t.name} 中的视图`, label: v.name, icon: VIEW_TYPES[v.type]?.icon, go: () => page.go(t.id, v.id) });
     }
     if (q) {
       let n = 0;
@@ -31,7 +31,7 @@ export function openQuickSearch(page) {
         for (const r of t.ordered()) {
           const name = base.recordName(t.id, r.id);
           if (name.toLowerCase().includes(ql)) {
-            out.push({ kind: `Record in ${t.name}`, label: name, icon: 'expand', go: () => {
+            out.push({ kind: `${t.name} 中的记录`, label: name, icon: 'expand', go: () => {
               if (page.tableId !== t.id) page.go(t.id, null);
               page.openRecord(r.id);
             } });
@@ -40,7 +40,7 @@ export function openQuickSearch(page) {
         }
       }
       for (const b of store.bases()) {
-        if (b.id !== base.id && b.name.toLowerCase().includes(ql)) out.push({ kind: 'Base', label: b.name, base: b, go: () => page.app.navigate(b.id) });
+        if (b.id !== base.id && b.name.toLowerCase().includes(ql)) out.push({ kind: '数据库', label: b.name, base: b, go: () => page.app.navigate(b.id) });
       }
     }
     return out;
@@ -54,7 +54,7 @@ export function openQuickSearch(page) {
         it.base ? h('span.base-icon', { style: { width: '18px', height: '18px', borderRadius: '4px', background: accentColor(it.base.color) } }, icon(it.base.icon || 'table', 11)) : icon(it.icon || 'table', 16),
         h('span.menu-label', it.label), h('span.menu-hint', it.kind))),
     );
-    if (!items.length) list.append(h('div.menu-empty', 'Nothing matches'));
+    if (!items.length) list.append(h('div.menu-empty', '无匹配项'));
     setActive(Math.min(active, Math.max(0, items.length - 1)));
   };
 
@@ -92,6 +92,6 @@ export function openQuickSearch(page) {
     }
   });
   paint();
-  const pop = openPopover({ x: window.innerWidth / 2 - Math.min(300, window.innerWidth / 2 - 12), y: 72 }, h('div.palette.menu', h('div.menu-search', input), list), { focus: input, label: 'Quick search', className: 'palette-pop' });
+  const pop = openPopover({ x: window.innerWidth / 2 - Math.min(300, window.innerWidth / 2 - 12), y: 72 }, h('div.palette.menu', h('div.menu-search', input), list), { focus: input, label: '快速搜索', className: 'palette-pop' });
   return pop;
 }

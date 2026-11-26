@@ -77,6 +77,7 @@ export function commonStyle(editor, key) {
 }
 
 export function swapFillStroke(editor) {
+  if (!editor) return;
   const targets = paintTargets(editor);
   if (!targets.length) {
     editor.setStyle({ fill: editor.style.stroke, stroke: editor.style.fill });
@@ -104,11 +105,13 @@ function swapRun(r) {
 }
 
 export function defaultFillStroke(editor) {
+  if (!editor) return;
   applyStyle(editor, { fill: { type: 'solid', color: '#ffffff' }, stroke: { type: 'solid', color: '#000000' }, strokeWidth: 1, dash: [], opacity: 1, blendMode: 'normal' }, 'Default Fill and Stroke');
 }
 
 /** Set the focused paint (fill or stroke) to a solid color, gradient or none. */
 export function setFocusedPaint(editor, kind) {
+  if (!editor) return;
   const key = editor.focusPaint;
   const cur = commonStyle(editor, key);
   let paint = null;

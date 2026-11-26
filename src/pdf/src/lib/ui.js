@@ -385,7 +385,7 @@ export function modal(title, content, actions = [], { signal } = {}) {
       'div',
       { class: 'dialog-head' },
       el('h2', { id: titleId }, title),
-      iconButton('Close dialog', 'X', () => dialog.close()),
+      iconButton('关闭对话框', 'X', () => dialog.close()),
     ),
     el(
       'div',
@@ -466,13 +466,13 @@ export function modal(title, content, actions = [], { signal } = {}) {
   if (signal?.aborted) dialog.close();
   return dialog;
 }
-export function confirmAction(title, message, label = 'Continue', { signal } = {}) {
+export function confirmAction(title, message, label = '继续', { signal } = {}) {
   return new Promise((resolve) => {
     const dialog = modal(
       title,
       el('p', {}, message),
       [
-        button('Cancel', null, () => dialog.close()),
+        button('取消', null, () => dialog.close()),
         button(
           label,
           null,
@@ -500,7 +500,7 @@ export function promptText(title, label, value = '', { signal } = {}) {
     const form = el('form', {}, el('label', { for: 'prompt-input' }, label), input);
     const accept = () => {
       if (!input.value.trim()) {
-        input.setCustomValidity('Enter a name.');
+        input.setCustomValidity('请输入名称。');
         input.reportValidity();
         return;
       }
@@ -518,8 +518,8 @@ export function promptText(title, label, value = '', { signal } = {}) {
       title,
       form,
       [
-        button('Cancel', null, () => dialog.close()),
-        button('Continue', null, accept, 'btn primary'),
+        button('取消', null, () => dialog.close()),
+        button('继续', null, accept, 'btn primary'),
       ],
       { signal },
     );

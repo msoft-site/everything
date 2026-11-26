@@ -43,7 +43,7 @@ export class FormView {
   }
 
   form() {
-    const f = this.view.form || { title: this.table.name, description: '', fields: [], submitLabel: 'Submit', message: 'Thanks for submitting the form.', another: true };
+    const f = this.view.form || { title: this.table.name, description: '', fields: [], submitLabel: '提交', message: '感谢您提交表单。', another: true };
     // Show only fields that still exist and can be filled in (a field can
     // become computed after it was added). A copy: the stored form keeps
     // them, so undoing the change brings them back.
@@ -54,7 +54,7 @@ export class FormView {
     return { ...f, fields };
   }
 
-  save(patch, label = 'Edit form') {
+  save(patch, label = '编辑表单') {
     // Edits to other settings leave the stored field list as it is.
     this.base.updateView(this.table.id, this.view.id, { form: { ...this.form(), fields: this.view.form?.fields || [], ...patch } }, { label });
   }
@@ -62,47 +62,47 @@ export class FormView {
   render() {
     if (this.mode === 'fill') return this.renderFill();
     const form = this.form();
-    this.side = h('aside.form-side', { 'aria-label': 'Fields' });
-    const title = h('input.form-title-input', { type: 'text', value: form.title, 'aria-label': 'Form title', placeholder: 'Form title' });
+    this.side = h('aside.form-side', { 'aria-label': '字段' });
+    const title = h('input.form-title-input', { type: 'text', value: form.title, 'aria-label': '表单标题', placeholder: '表单标题' });
     title.addEventListener('change', () => this.save({ title: title.value }));
-    const desc = h('textarea.form-desc-input', { rows: 2, placeholder: 'Add a description', 'aria-label': 'Form description' });
+    const desc = h('textarea.form-desc-input', { rows: 2, placeholder: '添加表单描述', 'aria-label': '表单描述' });
     desc.value = form.description || '';
     desc.addEventListener('change', () => this.save({ description: desc.value }));
     const list = h('ol.form-fields');
     form.fields.forEach((ff, i) => {
       const field = this.table.field(ff.id);
-      const label = h('input.form-label-input', { type: 'text', value: ff.label || '', placeholder: field.name, 'aria-label': `Label for ${field.name}` });
+      const label = h('input.form-label-input', { type: 'text', value: ff.label || '', placeholder: field.name, 'aria-label': `${field.name} 的标签` });
       label.addEventListener('change', () => this.updateField(i, { label: label.value }));
-      const help = h('input.form-help-input', { type: 'text', value: ff.help || '', placeholder: 'Help text (optional)', 'aria-label': `Help text for ${field.name}` });
+      const help = h('input.form-help-input', { type: 'text', value: ff.help || '', placeholder: '帮助文本（选填）', 'aria-label': `${field.name} 的帮助文本` });
       help.addEventListener('change', () => this.updateField(i, { help: help.value }));
-      const req = h('input.switch', { type: 'checkbox', role: 'switch', checked: !!ff.required, 'aria-label': `${field.name} is required` });
+      const req = h('input.switch', { type: 'checkbox', role: 'switch', checked: !!ff.required, 'aria-label': `${field.name} 为必填项` });
       req.addEventListener('change', () => this.updateField(i, { required: req.checked }));
       list.append(h('li.form-field-card',
         h('div.form-card-head', icon(TYPES[field.type].icon, 14), h('span.muted', field.name), h('div.grow'),
-          h('label.switch-row.small', req, h('span', 'Required')),
-          h('button.icon-btn', { type: 'button', 'aria-label': `Move ${field.name} up`, disabled: i === 0, onclick: () => this.moveField(i, -1) }, icon('arrowUp', 14)),
-          h('button.icon-btn', { type: 'button', 'aria-label': `Move ${field.name} down`, disabled: i === form.fields.length - 1, onclick: () => this.moveField(i, 1) }, icon('arrowDown', 14)),
-          h('button.icon-btn', { type: 'button', 'aria-label': `Remove ${field.name} from the form`, onclick: () => this.save({ fields: form.fields.filter((_, k) => k !== i) }, 'Remove form field') }, icon('x', 14))),
+          h('label.switch-row.small', req, h('span', '必填')),
+          h('button.icon-btn', { type: 'button', 'aria-label': `上移 ${field.name}`, disabled: i === 0, onclick: () => this.moveField(i, -1) }, icon('arrowUp', 14)),
+          h('button.icon-btn', { type: 'button', 'aria-label': `下移 ${field.name}`, disabled: i === form.fields.length - 1, onclick: () => this.moveField(i, 1) }, icon('arrowDown', 14)),
+          h('button.icon-btn', { type: 'button', 'aria-label': `从表单移除 ${field.name}`, onclick: () => this.save({ fields: form.fields.filter((_, k) => k !== i) }, '移除表单字段') }, icon('x', 14))),
         label, help, h('div.form-preview-input', { 'aria-hidden': 'true', inert: '' }, previewInput(field))));
     });
-    const submitLabel = h('input.input', { type: 'text', value: form.submitLabel || 'Submit', 'aria-label': 'Submit button label' });
-    submitLabel.addEventListener('change', () => this.save({ submitLabel: submitLabel.value || 'Submit' }));
-    const message = h('input.input', { type: 'text', value: form.message || '', 'aria-label': 'Message after submitting' });
+    const submitLabel = h('input.input', { type: 'text', value: form.submitLabel || '提交', 'aria-label': '提交按钮文字' });
+    submitLabel.addEventListener('change', () => this.save({ submitLabel: submitLabel.value || '提交' }));
+    const message = h('input.input', { type: 'text', value: form.message || '', 'aria-label': '提交后提示语' });
     message.addEventListener('change', () => this.save({ message: message.value }));
     const another = h('input.switch', { type: 'checkbox', role: 'switch', checked: form.another !== false });
     another.addEventListener('change', () => this.save({ another: another.checked }));
     const canvas = h('div.form-canvas',
       h('div.form-sheet',
-        h('div.form-bar', h('span.muted', 'Editing the form'), h('div.grow'), h('button.btn.primary.small', { type: 'button', onclick: () => {
+        h('div.form-bar', h('span.muted', '正在编辑表单'), h('div.grow'), h('button.btn.primary.small', { type: 'button', onclick: () => {
           this.mode = 'fill';
           this.render();
-        } }, icon('play', 14), 'Open form')),
+        } }, icon('play', 14), '打开表单')),
         title, desc,
-        form.fields.length ? list : h('div.empty', h('p', 'Add fields from the list to build your form.')),
+        form.fields.length ? list : h('div.empty', h('p', '从左侧列表添加字段以构建表单。')),
         h('div.form-settings',
-          h('div.form-row', h('label.field-label', 'Submit button'), submitLabel),
-          h('div.form-row', h('label.field-label', 'Message after submitting'), message),
-          h('label.switch-row', another, h('span.grow', 'Offer to submit another response')))));
+          h('div.form-row', h('label.field-label', '提交按钮'), submitLabel),
+          h('div.form-row', h('label.field-label', '提交后提示语'), message),
+          h('label.switch-row', another, h('span.grow', '允许继续提交下一份回复')))));
     this.el.replaceChildren(this.side, canvas);
     this.renderSide();
   }
@@ -113,10 +113,10 @@ export class FormView {
     const used = new Set(form.fields.map((x) => x.id));
     const available = this.table.fields.filter((f) => !used.has(f.id) && !isReadOnly(f));
     fill(this.side,
-      h('h2.side-title', 'Fields'),
-      available.length ? h('p.muted.side-hint', 'Choose fields to add to the form.') : h('p.muted.side-hint', 'Every field that can be filled in is on the form.'),
-      h('ul.form-available', available.map((f) => h('li', h('button.form-add-field', { type: 'button', onclick: () => this.save({ fields: [...form.fields, { id: f.id, required: false, label: '', help: '' }] }, 'Add form field') }, icon(TYPES[f.type].icon, 14), h('span.grow', f.name), icon('plus', 14))))),
-      available.length > 1 ? h('button.link-btn', { type: 'button', onclick: () => this.save({ fields: [...form.fields, ...available.map((f) => ({ id: f.id, required: false, label: '', help: '' }))] }, 'Add all fields') }, 'Add all fields') : null,
+      h('h2.side-title', '字段'),
+      available.length ? h('p.muted.side-hint', '选择要添加到表单的字段。') : h('p.muted.side-hint', '所有可填写的字段均已添加到表单中。'),
+      h('ul.form-available', available.map((f) => h('li', h('button.form-add-field', { type: 'button', onclick: () => this.save({ fields: [...form.fields, { id: f.id, required: false, label: '', help: '' }] }, '添加表单字段') }, icon(TYPES[f.type].icon, 14), h('span.grow', f.name), icon('plus', 14))))),
+      available.length > 1 ? h('button.link-btn', { type: 'button', onclick: () => this.save({ fields: [...form.fields, ...available.map((f) => ({ id: f.id, required: false, label: '', help: '' }))] }, '添加所有字段') }, '添加所有字段') : null,
     );
   }
 
@@ -130,7 +130,7 @@ export class FormView {
     const fields = [...this.form().fields];
     const [m] = fields.splice(i, 1);
     fields.splice(i + d, 0, m);
-    this.save({ fields }, 'Reorder form');
+    this.save({ fields }, '调整表单顺序');
   }
 
   /** Let go of the previews of images picked in the form being filled in. */
@@ -176,9 +176,9 @@ export class FormView {
       input.addEventListener?.('input', (e) => {
         if ((e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') && !e.target.closest('.date-input')) e.target.dispatchEvent(new Event('change'));
       });
-      return h('div.form-q', h('label.form-q-label', { for: id, id: `${id}-label` }, ff.label || field.name, ff.required ? h('span.req', { 'aria-hidden': 'true' }, ' *') : null, ff.required ? h('span.sr-only', ' (required)') : null), ff.help ? h('p.form-q-help', { id: `${id}-help` }, ff.help) : null, input, err);
+      return h('div.form-q', h('label.form-q-label', { for: id, id: `${id}-label` }, ff.label || field.name, ff.required ? h('span.req', { 'aria-hidden': 'true' }, ' *') : null, ff.required ? h('span.sr-only', '（必填）') : null), ff.help ? h('p.form-q-help', { id: `${id}-help` }, ff.help) : null, input, err);
     });
-    const submit = h('button.btn.primary', { type: 'submit' }, form.submitLabel || 'Submit');
+    const submit = h('button.btn.primary', { type: 'submit' }, form.submitLabel || '提交');
     const formEl = h('form.form-fill', { novalidate: true }, h('h1.form-fill-title', form.title || this.table.name), form.description ? h('p.form-fill-desc', form.description) : null, ...rows, h('div.form-actions', submit));
     formEl.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -192,9 +192,9 @@ export class FormView {
         let msg = null;
         // Text that could not be read keeps the last value that could: never submit that.
         if (control?.classList.contains('invalid')) {
-          msg = `Enter a valid ${KIND[field.type] || 'value'} for ${label}.`;
+          msg = `请为“${label}”输入有效的${KIND[field.type] || '内容'}。`;
           invalid = true;
-        } else if (ff.required && isEmpty(values[field.id])) msg = field.type === 'checkbox' ? `${label} must be checked.` : `${label} is required.`;
+        } else if (ff.required && isEmpty(values[field.id])) msg = field.type === 'checkbox' ? `必须勾选“${label}”。` : `“${label}”为必填项。`;
         if (!msg) continue;
         errors.get(field.id).textContent = msg;
         control?.setAttribute('aria-invalid', 'true');
@@ -203,7 +203,7 @@ export class FormView {
       if (firstBad) {
         // A rating group is not focusable itself: its chosen (or first) star is.
         (firstBad.getAttribute('role') === 'radiogroup' ? firstBad.querySelector('[aria-checked="true"]') || firstBad.querySelector('button') : firstBad).focus?.();
-        announce(invalid ? 'Some fields need fixing.' : 'Some required fields are empty.');
+        announce(invalid ? '部分字段填写有误，请检查。' : '部分必填字段尚未填写。');
         return;
       }
       submit.disabled = true;
@@ -219,11 +219,11 @@ export class FormView {
             if (atts.length) cells[fid] = atts;
           } else if (!isEmpty(v)) cells[fid] = v;
         }
-        this.base.createRecords(this.table.id, [cells], { label: 'Submit form' });
+        this.base.createRecords(this.table.id, [cells], { label: '提交表单' });
         this.dropPreviews();
         this.showDone(form);
       } catch {
-        toast('Could not submit the form.', { error: true });
+        toast('无法提交表单。', { error: true });
         submit.disabled = false;
       }
     });
@@ -231,31 +231,31 @@ export class FormView {
       this.dropPreviews();
       this.mode = 'build';
       this.render();
-    } }, icon('arrowLeft', 14), 'Back to editing')), h('div.form-sheet', formEl)));
+    } }, icon('arrowLeft', 14), '返回编辑')), h('div.form-sheet', formEl)));
     formEl.querySelector('input, textarea, [tabindex="0"]')?.focus();
   }
 
   showDone(form) {
-    const again = h('button.btn.primary', { type: 'button', onclick: () => this.renderFill() }, 'Submit another response');
+    const again = h('button.btn.primary', { type: 'button', onclick: () => this.renderFill() }, '继续提交下一份回复');
     this.el.replaceChildren(h('div.form-canvas.fill', h('div.form-sheet.done', { role: 'status' },
       h('div.empty-icon', icon('check', 24)),
-      h('h2', form.message || 'Thanks for submitting the form.'),
+      h('h2', form.message || '感谢您提交表单。'),
       form.another !== false ? again : null,
       h('button.btn.ghost', { type: 'button', onclick: () => {
         this.mode = 'build';
         this.render();
-      } }, 'Back to editing'))));
+      } }, '返回编辑'))));
     (form.another !== false ? again : this.el.querySelector('button'))?.focus();
   }
 }
 
 // What a field's text should be, for "Enter a valid ..." errors.
-const KIND = { number: 'number', currency: 'amount', percent: 'percentage', duration: 'duration', date: 'date', email: 'email address', url: 'link', phone: 'phone number' };
+const KIND = { number: '数字', currency: '金额', percent: '百分比', duration: '时长', date: '日期', email: '电子邮箱', url: '链接', phone: '电话号码' };
 
 function previewInput(field) {
   if (field.type === 'longText') return h('div.input.fake.tall');
   if (field.type === 'checkbox') return h('span.card-check.off');
-  if (field.type === 'attachment') return h('div.input.fake', icon('upload', 14), ' Upload files');
+  if (field.type === 'attachment') return h('div.input.fake', icon('upload', 14), ' 上传文件');
   if (field.type === 'singleSelect' || field.type === 'multipleSelect' || field.type === 'link') return h('div.input.fake', icon('chevronDown', 14));
   return h('div.input.fake');
 }

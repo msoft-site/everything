@@ -32,8 +32,8 @@ export function appsButton({ env = 'web' } = {}) {
   return h('button.icon-btn.apps-btn', {
     type: 'button',
     html: GRID_SVG,
-    'aria-label': 'Apps',
-    'data-tip': 'Apps',
+    'aria-label': '应用',
+    'data-tip': '应用',
     'aria-haspopup': 'dialog',
     'aria-expanded': 'false',
     onclick: (e) => {
@@ -84,20 +84,20 @@ export function destroyAppsPanel() {
 
 function build() {
   const close = h('button.icon-btn.apps-panel-action.apps-panel-close', {
-    type: 'button', 'aria-label': 'Close', 'data-tip': 'Close', onclick: () => closeAppsPanel({ focus: true }),
+    type: 'button', 'aria-label': '关闭', 'data-tip': '关闭', onclick: () => closeAppsPanel({ focus: true }),
   }, icon('x', 16));
   const newTab = h('a.icon-btn.apps-panel-action.apps-panel-newtab', {
-    href: APPS_NEWTAB_URL, target: '_blank', rel: 'noopener noreferrer', 'aria-label': 'Open apps in a new tab', 'data-tip': 'Open in new tab',
+    href: APPS_NEWTAB_URL, target: '_blank', rel: 'noopener noreferrer', 'aria-label': '在新标签页中打开应用', 'data-tip': '在新标签页打开',
   }, icon('external', 16));
   frame = h('iframe.apps-frame', {
-    title: 'Your Puter apps', referrerpolicy: 'strict-origin-when-cross-origin', allow: 'clipboard-read; clipboard-write',
+    title: '应用列表', referrerpolicy: 'strict-origin-when-cross-origin', allow: 'clipboard-read; clipboard-write',
   });
   const body = h('div.apps-panel-body.is-loading',
-    h('div.apps-panel-loading', { role: 'status', 'aria-label': 'Loading apps' }, h('div.spinner')),
+    h('div.apps-panel-loading', { role: 'status', 'aria-label': '正在加载应用' }, h('div.spinner')),
     frame,
   );
-  panel = h('div.apps-panel', { role: 'dialog', 'aria-label': 'Apps', tabindex: '-1', hidden: true },
-    h('div.apps-panel-header', h('span.apps-panel-title', 'Apps'), h('div.apps-panel-actions', newTab, close)),
+  panel = h('div.apps-panel', { role: 'dialog', 'aria-label': '应用', tabindex: '-1', hidden: true },
+    h('div.apps-panel-header', h('span.apps-panel-title', '应用'), h('div.apps-panel-actions', newTab, close)),
     body,
   );
   panel.addEventListener('keydown', (e) => {

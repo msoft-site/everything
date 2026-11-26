@@ -460,34 +460,34 @@ export function createEditor({
   );
   const saveStatus = el('span', { class: 'save-status' });
   const protectionBadge = button(
-    'Protected',
+    '受保护',
     'Lock',
     safe(() => (access().owner ? securityDialog() : unlockOwner())),
     'protection-badge',
-    { title: 'Protected. Change or remove the password and restrictions.', hidden: true },
+    { title: '已受保护。更改或删除密码及使用限制。', hidden: true },
   );
   /** A tooltip naming a command and its shortcut, as this platform writes it. */
   const withShortcut = (label, spec) => `${label} (${formatShortcut(spec)})`;
   const saveButton = button(
-    'Save to Local',
+    '保存到本地',
     'Cloud',
     safe(() => save()),
     'btn primary',
   );
   const undoButton = stepButton(
-    'Undo',
+    '撤销',
     'Undo2',
     safe(() => history('undo')),
     {
-      title: withShortcut('Undo', 'Mod+Z'),
+      title: withShortcut('撤销', 'Mod+Z'),
     },
   );
   const redoButton = stepButton(
-    'Redo',
+    '重做',
     'Redo2',
     safe(() => history('redo')),
     {
-      title: withShortcut('Redo', 'Mod+Shift+Z'),
+      title: withShortcut('重做', 'Mod+Shift+Z'),
     },
   );
   // Discard a pending object edit before a pointer click can blur its numeric
@@ -501,7 +501,7 @@ export function createEditor({
     min: 1,
     value: 1,
     class: 'page-input',
-    'aria-label': 'Page number',
+    'aria-label': '页码',
     oninput: () => {
       pageInputDirty = true;
     },
@@ -555,20 +555,20 @@ export function createEditor({
     });
     return button;
   }
-  const prevButton = stepButton('Previous page', 'ChevronLeft', () => navigateBy(-1));
-  const nextButton = stepButton('Next page', 'ChevronRight', () => navigateBy(1));
+  const prevButton = stepButton('上一页', 'ChevronLeft', () => navigateBy(-1));
+  const nextButton = stepButton('下一页', 'ChevronRight', () => navigateBy(1));
   /** The steps the zoom buttons, shortcuts, and wheel move through. */
   const ZOOM_LEVELS = [0.25, 0.33, 0.5, 0.67, 0.75, 0.9, 1, 1.1, 1.25, 1.5, 1.75, 2, 2.5, 3, 4];
   const zoomSelect = el(
     'select',
     {
       class: 'zoom-select',
-      'aria-label': 'Zoom',
+      'aria-label': '缩放',
       onchange: safe((e) => setZoom(e.target.value)),
     },
     ...[
-      ['fit', 'Fit width'],
-      ['page', 'Fit page'],
+      ['fit', '适合宽度'],
+      ['page', '适合整页'],
       ['0.5', '50%'],
       ['0.75', '75%'],
       ['1', '100%'],
@@ -583,16 +583,16 @@ export function createEditor({
   const customZoomOption = el('option', { value: '', 'data-custom': 'true' });
   // The status bar keeps its compact line icons; the glass drawings are for commands.
   const zoomOutButton = stepButton(
-    'Zoom out',
+    '缩小',
     icon('ZoomOut', 18, { plain: true }),
     safe(() => setZoom(zoomStep(-1))),
-    { title: withShortcut('Zoom out', 'Mod+Minus') },
+    { title: withShortcut('缩小', 'Mod+Minus') },
   );
   const zoomInButton = stepButton(
-    'Zoom in',
+    '放大',
     icon('ZoomIn', 18, { plain: true }),
     safe(() => setZoom(zoomStep(1))),
-    { title: withShortcut('Zoom in', 'Mod+Plus') },
+    { title: withShortcut('放大', 'Mod+Plus') },
   );
   /** The zoom for the current scale mode, from the page's natural size and the workspace. */
   function computeZoom(natural, mode = scaleMode) {
@@ -740,11 +740,11 @@ export function createEditor({
         anchor: entry.button,
         x: e.clientX,
         y: e.clientY,
-        label: 'Bookmark',
+        label: '书签',
         items: [
           {
             permission: 'assemble',
-            label: 'Rename bookmark…',
+            label: '重命名书签…',
             icon: 'Pencil',
             disabled: busy,
             onSelect: pageDialog(async () => {
@@ -759,7 +759,7 @@ export function createEditor({
           },
           {
             permission: 'assemble',
-            label: 'Remove bookmark',
+            label: '删除书签',
             icon: 'Trash2',
             disabled: busy,
             onSelect: pageAction(() =>
@@ -817,7 +817,7 @@ export function createEditor({
       }
       const doc = await PDFDocument.load(session.bytes, { updateMetadata: false });
       const bytes = attachmentBytes(doc, key);
-      if (!bytes) throw new Error('This attachment could not be read.');
+      if (!bytes) throw new Error('无法读取此附件。');
       download(bytes, fileName, 'application/octet-stream');
     }),
     onRemove: safe(async (key, fileName) => {
@@ -829,7 +829,7 @@ export function createEditor({
           !(await confirmAction(
             '删除附件？',
             `从第 ${pageFile.page + 1} 页删除“${fileName}”及其回形针图标？在 PDF 打开期间您可以撤销此操作。`,
-            'Remove',
+            '删除',
           ))
         )
           return;
@@ -842,13 +842,13 @@ export function createEditor({
       requireAccess('edit');
       if (
         !(await confirmAction(
-          'Remove attachment?',
+          '删除附件？',
           `从当前 PDF 中删除“${fileName}”？在 PDF 打开期间您可以撤销此操作。`,
-          'Remove',
+          '删除',
         ))
       )
         return;
-      await mutate((doc) => removeAttachment(doc, key) || false, `${fileName} removed.`);
+      await mutate((doc) => removeAttachment(doc, key) || false, `“${fileName}”已删除。`);
     }),
   });
   // PDF.js lists the document's own attachments; files attached to paperclip comments on the
@@ -874,7 +874,7 @@ export function createEditor({
               while (keys.has(key)) key += '+';
               keys.add(key);
               files.set(key, { fileId: a.fileId, page: a.pageIndex, id: a.id });
-              const where = `Page ${a.pageIndex + 1}`;
+              const where = `第 ${a.pageIndex + 1} 页`;
               entries.push([
                 key,
                 {
@@ -904,7 +904,7 @@ export function createEditor({
       const bytes = new Uint8Array(await file.arrayBuffer());
       await mutate(
         (doc) => addAttachment(doc, { name: file.name, bytes, mimeType: file.type || undefined }),
-        `${file.name} attached.`,
+        `已附加“${file.name}”。`,
       );
       if (!destroyed) showSidebarTab('attachments');
     });
@@ -969,7 +969,7 @@ export function createEditor({
     { class: 'standards-bar tone-unknown', role: 'status', hidden: true },
     el('span', { class: 'signature-bar-icon', 'aria-hidden': 'true' }, icon('Info', 15)),
     standardsText,
-    button('Check compliance', null, () => pageDialog(() => pdfaDialog('check'))(), 'text-btn'),
+    button('检查合规性', null, () => pageDialog(() => pdfaDialog('check'))(), 'text-btn'),
   );
   /** The bytes signatures cover: an encrypted file's own bytes until it is edited. */
   const signedBytes = () =>
@@ -1038,15 +1038,15 @@ export function createEditor({
   let sidebarTab = 'pages';
   // The panel is narrow: the tabs are icons and the heading names the one that is open.
   const SIDEBAR_TABS = [
-    ['pages', 'Pages', 'LayoutGrid'],
-    ['outline', 'Outline', 'ListTree'],
-    ['comments', 'Comments', 'MessageSquareText'],
-    ['attachments', 'Attachments', 'Paperclip'],
-    ['layers', 'Layers', 'Layers'],
-    ['signatures', 'Signatures', 'signatures'],
-    ['accessibility', 'Accessibility check', 'Accessibility'],
+    ['pages', '页面', 'LayoutGrid'],
+    ['outline', '大纲', 'ListTree'],
+    ['comments', '批注', 'MessageSquareText'],
+    ['attachments', '附件', 'Paperclip'],
+    ['layers', '图层', 'Layers'],
+    ['signatures', '签名', 'signatures'],
+    ['accessibility', '无障碍检查', 'Accessibility'],
   ];
-  const sidebarTitle = el('h2', {}, 'Pages');
+  const sidebarTitle = el('h2', {}, '页面');
   const commentsBadge = el('span', { class: 'tab-count', hidden: true });
   const visibleTabs = () =>
     [...sidebarTabs.querySelectorAll('[role="tab"]')].filter((tab) => !tab.hidden);
@@ -1055,7 +1055,7 @@ export function createEditor({
     {
       class: 'sidebar-tabs',
       role: 'tablist',
-      'aria-label': 'Side panel',
+      'aria-label': '侧边栏面板',
       'aria-orientation': 'vertical',
     },
     ...SIDEBAR_TABS.map(([id, label, glyph]) =>
@@ -1120,8 +1120,8 @@ export function createEditor({
     const title = SIDEBAR_TABS.find(([tab]) => tab === id)[1];
     sidebarTitle.textContent = title;
     // One landmark holds all three panels, so its name follows the tab that is open.
-    sidebar.setAttribute('aria-label', `${title} panel`);
-    const close = `Close ${title.toLowerCase()} panel`;
+    sidebar.setAttribute('aria-label', `${title}面板`);
+    const close = `关闭${title}面板`;
     sidebarClose.setAttribute('aria-label', close);
     sidebarClose.title = close;
     sidebarTabs.querySelectorAll('[role="tab"]').forEach((tab) => {
@@ -1198,10 +1198,10 @@ export function createEditor({
     }
   }
   // The navigation panels open beside the right-hand rail, as in desktop PDF editors.
-  const sidebarClose = iconButton('Close pages panel', 'X', () => toggleSidebar(false));
+  const sidebarClose = iconButton('关闭页面面板', 'X', () => toggleSidebar(false));
   const sidebar = el(
     'aside',
-    { id: 'page-sidebar', class: 'page-sidebar', 'aria-label': 'Pages panel' },
+    { id: 'page-sidebar', class: 'page-sidebar', 'aria-label': '页面面板' },
     el('div', { class: 'sidebar-head' }, sidebarTitle, sidebarClose),
     thumbnails,
     outline.el,
@@ -1216,7 +1216,7 @@ export function createEditor({
   const overlay = el('canvas', {
     class: 'drawing-overlay',
     tabindex: '0',
-    'aria-label': 'PDF annotation surface. Use Place at page center for keyboard annotation.',
+    'aria-label': 'PDF 批注区域。使用“放置在页面中心”进行键盘批注。',
   });
   const textTargets = el('div', { class: 'text-targets', hidden: true });
   const highlightTargets = el('div', { class: 'highlight-targets' });
@@ -1406,7 +1406,7 @@ export function createEditor({
   const pageStackElement = el('div', { class: 'paper-wrap page-stack' }, paper, pageCaption);
   const workspace = el(
     'div',
-    { class: 'workspace', role: 'region', tabindex: '0', 'aria-label': 'PDF page view' },
+    { class: 'workspace', role: 'region', tabindex: '0', 'aria-label': 'PDF 页面视图' },
     pageStackElement,
   );
   // Every page in one scrolling column; the page being worked on holds the editing layers.
@@ -1450,7 +1450,7 @@ export function createEditor({
           await duplicatePages(doc, indices);
           for (const i of new Set(indices)) if (i < pageIndex) pageIndex++;
         },
-        indices.length === 1 ? 'Page duplicated.' : `${indices.length} pages duplicated.`,
+        indices.length === 1 ? '页面已复制。' : `已复制 ${indices.length} 页。`,
         'assemble',
       ),
     ),
@@ -1460,7 +1460,7 @@ export function createEditor({
           insertBlankPage(doc, after);
           if (after < pageIndex) pageIndex++;
         },
-        'Blank page inserted.',
+        '已插入空白页。',
         'assemble',
       ),
     ),
@@ -1519,15 +1519,15 @@ export function createEditor({
     },
     true,
   );
-  const accessibleText = el('div', { class: 'sr-only', role: 'region', 'aria-label': 'Page text' });
+  const accessibleText = el('div', { class: 'sr-only', role: 'region', 'aria-label': '页面文本' });
   // A touch screen is tapped, not clicked (a double tap edits text as a double click does), so
   // the hints use its words there.
   const touchScreen = window.matchMedia?.('(hover: none) and (pointer: coarse)');
   // While preparing a form, Select shows the fields as boxes to move and open.
   const selectHint = () =>
     preparing
-      ? 'Choose a field type to add a field. Drag fields to move them; double-click one for its properties.'
-      : 'Click to select, drag to move, or double-click text to edit.';
+      ? '选择表单域类型以添加表单域。拖动表单域进行移动；双击可打开其属性。'
+      : (touchScreen?.matches ? '轻触选中，拖动移动，双击文本进行编辑。' : '单击选中，拖动移动，双击文本进行编辑。');
   const forPointer = (text) =>
     touchScreen?.matches
       ? text
@@ -1538,12 +1538,12 @@ export function createEditor({
   const hint = el(
     'span',
     { class: 'tool-hint' },
-    forPointer('Click to select, drag to move, or double-click text to edit.'),
+    touchScreen?.matches ? '轻触选中，拖动移动，双击文本进行编辑。' : '单击选中，拖动移动，双击文本进行编辑。',
   );
   const colorInput = el('input', {
     type: 'color',
     value: color,
-    'aria-label': 'Annotation color',
+    'aria-label': '批注颜色',
     oninput: (e) => {
       color = e.target.value;
       toolColors[colorGroup()] = color;
@@ -1557,7 +1557,7 @@ export function createEditor({
   const widthInput = el(
     'select',
     {
-      'aria-label': 'Stroke width',
+      'aria-label': '描边粗细',
       onchange: (e) => {
         stroke = Number(e.target.value);
       },
@@ -1567,7 +1567,7 @@ export function createEditor({
   const sizeInput = el(
     'select',
     {
-      'aria-label': 'Text size',
+      'aria-label': '文字大小',
       onchange: (e) => {
         // Text comments keep their own size; the Text tool keeps its own.
         if (['textbox', 'callout'].includes(tool)) {
@@ -1716,23 +1716,23 @@ export function createEditor({
       updateStatus();
     }
   }
-  const boldButton = iconButton('Bold', 'Bold', () => toggleTextStyle('bold'), {
+  const boldButton = iconButton('加粗', 'Bold', () => toggleTextStyle('bold'), {
     class: 'icon-btn style-toggle',
     'aria-pressed': 'false',
     hidden: true,
   });
-  const italicButton = iconButton('Italic', 'Italic', () => toggleTextStyle('italic'), {
+  const italicButton = iconButton('斜体', 'Italic', () => toggleTextStyle('italic'), {
     class: 'icon-btn style-toggle',
     'aria-pressed': 'false',
     hidden: true,
   });
-  const underlineButton = iconButton('Underline', 'Underline', () => toggleTextStyle('underline'), {
+  const underlineButton = iconButton('下划线', 'Underline', () => toggleTextStyle('underline'), {
     class: 'icon-btn style-toggle',
     'aria-pressed': 'false',
     hidden: true,
   });
   const strikethroughButton = iconButton(
-    'Strikethrough',
+    '删除线',
     'Strikethrough',
     () => toggleTextStyle('strikethrough'),
     {
@@ -1742,21 +1742,21 @@ export function createEditor({
     },
   );
   const SHAPE_HINTS = {
-    rectangle: 'Drag to draw a rectangle. Hold Shift for a square.',
-    ellipse: 'Drag to draw an ellipse. Hold Shift for a circle.',
-    line: 'Drag to draw a line. Hold Shift to snap to 45 degrees.',
-    arrow: 'Drag from the tail to the tip of the arrow. Hold Shift to snap to 45 degrees.',
+    rectangle: '拖动绘制矩形。按住 Shift 绘制正方形。',
+    ellipse: '拖动绘制椭圆。按住 Shift 绘制正圆形。',
+    line: '拖动绘制线条。按住 Shift 吸附到 45 度角。',
+    arrow: '从箭尾拖动到箭头。按住 Shift 吸附到 45 度角。',
     check: forPointer(
-      'Click to place a check mark, or drag to size it. Hold Shift for a square box.',
+      '点击放置勾选标记，或拖动调整大小。按住 Shift 保持正方形。',
     ),
-    cross: forPointer('Click to place a cross, or drag to size it. Hold Shift for a square box.'),
+    cross: forPointer('点击放置叉号，或拖动调整大小。按住 Shift 保持正方形。'),
   };
   /** Marks placed with a click, in points. */
   const MARK_SIZE = 14;
   const shapeSelect = el(
     'select',
     {
-      'aria-label': 'Shape type',
+      'aria-label': '形状类型',
       hidden: true,
       onchange: () => {
         gesture = null;
@@ -1764,21 +1764,21 @@ export function createEditor({
         if (tool === 'shape') hint.textContent = SHAPE_HINTS[shapeSelect.value];
       },
     },
-    el('option', { value: 'rectangle' }, 'Rectangle'),
-    el('option', { value: 'ellipse' }, 'Ellipse'),
-    el('option', { value: 'line' }, 'Line'),
-    el('option', { value: 'arrow' }, 'Arrow'),
-    el('option', { value: 'check' }, 'Check mark'),
-    el('option', { value: 'cross' }, 'Cross'),
+    el('option', { value: 'rectangle' }, '矩形'),
+    el('option', { value: 'ellipse' }, '椭圆'),
+    el('option', { value: 'line' }, '直线'),
+    el('option', { value: 'arrow' }, '箭头'),
+    el('option', { value: 'check' }, '勾选标记'),
+    el('option', { value: 'cross' }, '叉号'),
   );
   const centerButton = button(
-    'Place at page center',
+    '放置于页面中心',
     'Plus',
     safe(() => placeCentered()),
     'text-btn',
   );
   const cropMarginsButton = button(
-    'Margins…',
+    '边距…',
     'Crop',
     safe(() => cropDialog()),
     'text-btn',
@@ -1787,7 +1787,7 @@ export function createEditor({
     },
   );
   const cropDoneButton = button(
-    'Done',
+    '完成',
     'Check',
     safe(() => setTool('select')),
     'text-btn',
@@ -1798,7 +1798,7 @@ export function createEditor({
   const highlightMode = el(
     'select',
     {
-      'aria-label': 'Highlight mode',
+      'aria-label': '高亮模式',
       hidden: true,
       onchange: () => {
         gesture = null;
@@ -1806,18 +1806,18 @@ export function createEditor({
         updateHighlightMode();
       },
     },
-    el('option', { value: 'text' }, 'Text'),
-    el('option', { value: 'area' }, 'Area'),
+    el('option', { value: 'text' }, '文本'),
+    el('option', { value: 'area' }, '区域'),
   );
   const highlightArea = () => highlightMode.value === 'area';
   const commentShape = el(
     'select',
-    { 'aria-label': 'Comment shape', hidden: true },
-    el('option', { value: 'square' }, 'Rectangle'),
-    el('option', { value: 'circle' }, 'Oval'),
-    el('option', { value: 'line' }, 'Line'),
-    el('option', { value: 'arrow' }, 'Arrow'),
-    el('option', { value: 'cloud' }, 'Cloud'),
+    { 'aria-label': '批注形状', hidden: true },
+    el('option', { value: 'square' }, '矩形'),
+    el('option', { value: 'circle' }, '椭圆'),
+    el('option', { value: 'line' }, '直线'),
+    el('option', { value: 'arrow' }, '箭头'),
+    el('option', { value: 'cloud' }, '云朵'),
   );
   // Measuring: a distance, a perimeter, or an area, in the units of a drawing scale.
   const measureScale = { unit: 'in', ratio: 1 };
@@ -1825,7 +1825,7 @@ export function createEditor({
   const measureMode = el(
     'select',
     {
-      'aria-label': 'Measure',
+      'aria-label': '测量模式',
       hidden: true,
       onchange: () => {
         measurePath = [];
@@ -1833,14 +1833,14 @@ export function createEditor({
         hint.textContent = measureHint();
       },
     },
-    el('option', { value: 'distance' }, 'Distance'),
-    el('option', { value: 'perimeter' }, 'Perimeter'),
-    el('option', { value: 'area' }, 'Area'),
+    el('option', { value: 'distance' }, '距离'),
+    el('option', { value: 'perimeter' }, '周长'),
+    el('option', { value: 'area' }, '面积'),
   );
   const measureUnit = el(
     'select',
     {
-      'aria-label': 'Measuring unit',
+      'aria-label': '测量单位',
       hidden: true,
       onchange: () => (measureScale.unit = measureUnit.value),
     },
@@ -1855,8 +1855,8 @@ export function createEditor({
     step: 'any',
     value: 1,
     hidden: true,
-    'aria-label': 'Scale: one page unit stands for',
-    title: 'Scale: one unit on the page stands for this many real units',
+    'aria-label': '比例：1 个页面单位代表',
+    title: '比例：页面上的 1 个单位代表的实际单位数量',
     onchange: () => {
       const value = Number(measureRatio.value);
       if (value > 0) measureScale.ratio = value;
@@ -1865,16 +1865,16 @@ export function createEditor({
   });
   const measureHint = () =>
     measureMode.value === 'distance'
-      ? 'Drag to measure a distance.'
+      ? '拖动以测量距离。'
       : forPointer(
-          `Click each corner of the ${measureMode.value === 'area' ? 'area' : 'path'}; double-click or press Enter to finish, Escape to start over.`,
+          `点击${measureMode.value === 'area' ? '区域' : '路径'}的每个角；双击或按回车完成，按 Escape 重新开始。`,
         );
   // Text markup: a highlight, an underline, or a strikethrough, each with its usual color.
   const MARKUP_COLORS = { highlight: '#f2c438', underline: '#2d9d5c', strikeout: '#dc3c3c' };
   const markupKind = el(
     'select',
     {
-      'aria-label': 'Markup type',
+      'aria-label': '标记类型',
       hidden: true,
       onchange: () => {
         color = toolColors.highlight = MARKUP_COLORS[markupKind.value];
@@ -1884,17 +1884,17 @@ export function createEditor({
         toolsPanel.refresh();
       },
     },
-    el('option', { value: 'highlight' }, 'Highlight'),
-    el('option', { value: 'underline' }, 'Underline'),
-    el('option', { value: 'strikeout' }, 'Strikethrough'),
-    el('option', { value: 'redact', hidden: true }, 'Redaction'),
+    el('option', { value: 'highlight' }, '高亮'),
+    el('option', { value: 'underline' }, '下划线'),
+    el('option', { value: 'strikeout' }, '删除线'),
+    el('option', { value: 'redact', hidden: true }, '涂黑密文'),
   );
   function labelMarkupButton() {
     const label = {
-      highlight: 'Highlight selection',
-      underline: 'Underline selection',
-      strikeout: 'Strike through selection',
-      redact: 'Mark selection for redaction',
+      highlight: '高亮选中内容',
+      underline: '为选中内容加下划线',
+      strikeout: '为选中内容加删除线',
+      redact: '标记选中内容以密文',
     }[markupKind.value];
     highlightButton.querySelector('span').textContent = label;
     highlightButton.setAttribute('aria-label', label);
@@ -1927,7 +1927,7 @@ export function createEditor({
     toolsPanel.refresh();
   }
   const highlightButton = button(
-    'Highlight selection',
+    '高亮选中内容',
     'Highlighter',
     safe(() => applyHighlight()),
     'text-btn',
@@ -1962,17 +1962,17 @@ export function createEditor({
   );
   const toolButtons = new Map();
   const toolDefs = [
-    ['select', 'Select', 'MousePointer2'],
-    ['hand', 'Hand', 'Hand'],
-    ['text', 'Text', 'Type'],
-    ['highlight', 'Highlight', 'Highlighter'],
-    ['ink', 'Draw', 'Pencil'],
-    ['shape', 'Shape', 'Square'],
-    ['note', 'Note', 'StickyNote'],
+    ['select', '选择', 'MousePointer2'],
+    ['hand', '平移', 'Hand'],
+    ['text', '文本', 'Type'],
+    ['highlight', '高亮', 'Highlighter'],
+    ['ink', '绘制', 'Pencil'],
+    ['shape', '形状', 'Square'],
+    ['note', '便签', 'StickyNote'],
   ];
   const toolGroup = el(
     'div',
-    { class: 'tool-group', role: 'group', 'aria-label': 'Annotation tools' },
+    { class: 'tool-group', role: 'group', 'aria-label': '批注工具' },
     ...toolDefs.map(([id, label, glyph]) => {
       const b = button(
         label,
@@ -1993,8 +1993,8 @@ export function createEditor({
   const searchInput = el('input', {
     type: 'search',
     class: 'input',
-    placeholder: 'Find text or tools',
-    'aria-label': 'Find in PDF',
+    placeholder: '查找文本或工具',
+    'aria-label': '在 PDF 中查找',
     role: 'combobox',
     'aria-autocomplete': 'list',
     'aria-expanded': 'false',
@@ -2010,12 +2010,12 @@ export function createEditor({
   const toolList = el('div', {
     id: 'find-tool-list',
     role: 'listbox',
-    'aria-label': 'Matching tools',
+    'aria-label': '匹配的工具',
   });
   const toolSuggestions = el(
     'div',
     { class: 'find-tool-suggestions', hidden: true },
-    el('div', { class: 'find-tool-heading', 'aria-hidden': 'true' }, 'Tools'),
+    el('div', { class: 'find-tool-heading', 'aria-hidden': 'true' }, '工具'),
     toolList,
   );
   const suggestedTools = () => [...toolList.querySelectorAll('[role="option"]')];
@@ -2067,7 +2067,7 @@ export function createEditor({
             id: `find-tool-option-${i}`,
             role: 'option',
             'aria-selected': 'false',
-            'aria-label': `Open tool: ${entry.label}`,
+            'aria-label': `打开工具: ${entry.label}`,
             // A tool this PDF does not allow is offered as the pane shows it, dimmed: choosing
             // it used to close the find bar and do nothing.
             disabled: !toolsPanel.allows(entry.id),
@@ -2417,11 +2417,11 @@ export function createEditor({
             {
               class: 'icon-btn download-btn',
               // When Puter opened the app the shortcut saves to another folder instead.
-              ...(!P.launchedByPuter() && { title: withShortcut('Download', 'Mod+Shift+S') }),
+              ...(!P.launchedByPuter() && { title: withShortcut('下载', 'Mod+Shift+S') }),
             },
           ),
           iconButton(
-            'Print file',
+            '打印文件',
             'Printer',
             () => {
               if (!busy) pageDialog(printDialog)();
@@ -2429,7 +2429,7 @@ export function createEditor({
             {
               class: 'icon-btn print-btn',
               'data-permission': 'print',
-              title: withShortcut('Print file', 'Mod+P'),
+              title: withShortcut('打印文件', 'Mod+P'),
             },
           ),
           saveButton,
@@ -2461,7 +2461,7 @@ export function createEditor({
             el('div', { class: 'page-navigation' }, prevButton, pageInput, pageTotal, nextButton),
             el(
               'div',
-              { class: 'zoom-controls', role: 'group', 'aria-label': 'Zoom controls' },
+              { class: 'zoom-controls', role: 'group', 'aria-label': '缩放控制' },
               zoomOutButton,
               zoomSelect,
               zoomInButton,
@@ -2470,7 +2470,7 @@ export function createEditor({
         ),
       ),
       // The rail comes first in the keyboard order, so a tab leads straight into its panel.
-      el('nav', { class: 'right-rail', 'aria-label': 'Panels' }, sidebarTabs, pagesButton),
+      el('nav', { class: 'right-rail', 'aria-label': '侧边面板' }, sidebarTabs, pagesButton),
       sidebar,
       accessibleText,
     ),
@@ -2554,7 +2554,7 @@ export function createEditor({
     setStepOff(zoomInButton, busy || !pdf || zoom >= ZOOM_LEVELS.at(-1) - 1e-9);
     setStepOff(zoomOutButton, busy || !pdf || zoom <= ZOOM_LEVELS[0] + 1e-9);
     setText(nameButton.querySelector('span'), name.replace(/\.pdf$/i, ''));
-    nameButton.setAttribute('aria-label', `Rename ${name}`);
+    nameButton.setAttribute('aria-label', `重命名 ${name}`);
     // The name is clipped on narrow screens, so the tooltip carries it in full.
     nameButton.title = name;
     pageForms.setBusy(busy || !pageReady || !access().fill);
@@ -2562,7 +2562,7 @@ export function createEditor({
     const pendingText =
       pendingTextEdit() || pendingNoteEdit() || pageForms.draft.dirty || pageImages.dirty;
     const unsaved = session.dirty || pendingText || protectionDirty;
-    const title = `${unsaved ? '* ' : ''}${shownTitle || name} · PDF Editor`;
+    const title = `${unsaved ? '* ' : ''}${shownTitle || name} · PDF 编辑器`;
     if (document.title !== title) document.title = title;
     // The desktop window shows the file, marked while it has unsaved changes, as its neighbours do.
     P.setWindowTitle(`${unsaved ? '● ' : ''}${name}`);
@@ -2570,39 +2570,39 @@ export function createEditor({
     if (tool === 'select' && !access().owner)
       setText(
         hint,
-        'This PDF has document permissions. Select Protected to view them or unlock editing.',
+        '此 PDF 设有文档权限。选择“受保护”可查看权限或解锁编辑。',
       );
     protectionBadge.disabled = busy;
     protectionBadge.title = access().owner
-      ? 'Protected. Change or remove the password and restrictions.'
-      : 'View permissions or unlock editing with the permissions password.';
+      ? '已保护。可更改或移除密码与限制。'
+      : '查看权限，或使用权限密码解锁编辑。';
     document.body.classList.toggle('pdf-restricted-print', !access().printHighQuality);
     setText(
       printNotice,
       access().print
-        ? 'Use File → Print in PDF Editor to print this document at its allowed resolution.'
-        : 'Printing is not allowed by this PDF’s permissions.',
+        ? '请使用 PDF 编辑器中的“文件 → 打印”，按允许的分辨率打印此文档。'
+        : '此 PDF 的权限不允许打印。',
     );
     setText(
       saveStatus,
       activity
         ? activity
         : saving
-          ? 'Saving…'
+          ? '正在保存…'
           : initializing
-            ? 'Opening PDF…'
+            ? '正在打开 PDF…'
             : unsaved
-              ? 'Unsaved changes'
+              ? '有未保存的更改'
               : path && cloudRevision === session.revision
-                ? 'Saved to local storage'
+                ? '已保存到本地'
                 : downloadedRevision === session.revision
-                  ? 'Downloaded'
-                  : 'Local file',
+                  ? '已下载'
+                  : '本地文件',
     );
     saveStatus.title = saveStatus.textContent;
     saveButton.disabled = saving || busy;
     // Without a session the button says what saving needs first.
-    const saveLabel = signedOut() ? 'Sign in to save' : path ? 'Save' : 'Save to Local';
+    const saveLabel = path ? '保存' : '保存到本地';
     setText(saveButton.querySelector('span'), saveLabel);
     saveButton.setAttribute('aria-label', saveLabel);
     saveButton.title = withShortcut(saveLabel, 'Mod+S');
@@ -2631,7 +2631,7 @@ export function createEditor({
       if (!pageInputDirty) pageInput.value = String(pageIndex + 1);
       pageInput.max = String(pdf.numPages);
       setText(pageTotal, `/ ${pdf.numPages}`);
-      setText(statusPage, `${pdf.numPages} ${pdf.numPages === 1 ? 'page' : 'pages'}`);
+      setText(statusPage, `${pdf.numPages} 页`);
     }
     const destination = clampPageIndex(pendingNavigation?.index ?? pageIndex);
     // Side by side, the buttons turn pairs: the other page of the pair on view is in sight.
@@ -2758,8 +2758,8 @@ export function createEditor({
         // The badge is decorative, so its number is spelled into the tab's own name. A PDF with
         // more comments than the list holds is counted as "and more", not as that number.
         const commentsTab = sidebarTabs.querySelector('[data-tab="comments"]');
-        const shown = capped ? `${total.toLocaleString()} or more` : String(total);
-        const commentsLabel = total ? `Comments (${shown})` : 'Comments';
+        const shown = capped ? `${total.toLocaleString()} 条以上` : String(total);
+        const commentsLabel = total ? `批注（${shown}）` : '批注';
         commentsTab.setAttribute('aria-label', commentsLabel);
         commentsTab.setAttribute('title', commentsLabel);
       });
@@ -3077,7 +3077,7 @@ export function createEditor({
       markSearch();
       // A comment chosen from the list opens once the page is ready to show its editor.
       if (revealComment) applyRevealComment().catch(() => {});
-      pageCaption.textContent = `Page ${pageIndex + 1} of ${pdf.numPages}`;
+      pageCaption.textContent = `第 ${pageIndex + 1} 页，共 ${pdf.numPages} 页`;
       outline.setCurrent(pageIndex);
       thumbnails
         .querySelectorAll('.thumbnail')
@@ -3246,7 +3246,7 @@ export function createEditor({
           type: 'button',
           class: 'thumbnail',
           'data-index': i,
-          'aria-label': `Go to page ${i + 1}`,
+          'aria-label': `转到第 ${i + 1} 页`,
           'aria-current': i === pageIndex ? 'page' : 'false',
           tabindex: i === stop && !restore?.menu ? 0 : -1,
           onclick: () => {
@@ -3260,7 +3260,7 @@ export function createEditor({
       );
       // Each page has its own menu, on a button beside it and on a right click.
       const menuButton = iconButton(
-        `Page ${i + 1} actions`,
+        `第 ${i + 1} 页操作`,
         'EllipsisVertical',
         (e) => {
           // Safari does not focus buttons on pointer activation. Give the menu a stable
@@ -3269,7 +3269,7 @@ export function createEditor({
           openMenu({
             anchor: e.currentTarget,
             items: pageItems(i),
-            label: `Page ${i + 1}`,
+            label: `第 ${i + 1} 页`,
             align: 'auto',
             minWidth: 230,
           });
@@ -3291,7 +3291,7 @@ export function createEditor({
             openMenu({
               anchor: menuButton,
               items: pageItems(i),
-              label: `Page ${i + 1}`,
+              label: `第 ${i + 1} 页`,
               x: e.clientX,
               y: e.clientY,
               minWidth: 230,
@@ -3798,28 +3798,28 @@ export function createEditor({
     highlightButton.hidden = tool !== 'highlight' || highlightArea();
     hint.textContent = {
       select: selectHint(),
-      text: 'Click existing text to edit, or click an empty area to add text.',
-      highlight: 'Select text, then choose Highlight selection. Use Area for scanned pages.',
-      ink: 'Draw on the page with a mouse, pen, or touch.',
+      text: '单击已有文本进行编辑，或单击空白区域添加文本。',
+      highlight: '先选中文本，再选择“高亮选中内容”。扫描页请使用“区域”。',
+      ink: '用鼠标、手写笔或触摸在页面上绘制。',
       shape: SHAPE_HINTS[shapeSelect.value],
-      note: 'Click where the note should go, or click a note to read or edit it.',
-      crop: 'Drag over the part of the page to keep, then choose which pages to crop.',
-      link: 'Drag over the text or area that should open a web address or another page.',
-      hand: 'Drag to move through the pages. Hold Space with any tool to do the same.',
-      certsign: 'Drag a box where the signature should appear, or click an empty signature field.',
-      textbox: 'Drag a box for the text comment, or click to place one.',
-      callout: 'Drag from the spot the comment points at to where its box goes.',
-      cshape: 'Drag to draw a shape. Hold Shift to keep it regular.',
-      pencil: 'Draw on the page; each stroke becomes a comment you can move or delete.',
+      note: '单击放置便签的位置，或单击已有便签进行查看或编辑。',
+      crop: '拖动选择要保留的页面区域，然后选择要裁剪的页面。',
+      link: '拖动选择用于打开网址或其他页面的文本或区域。',
+      hand: '拖动以浏览页面。使用任何工具时按住空格键也可平移。',
+      certsign: '拖动框选签名出现的位置，或单击空的签名域。',
+      textbox: '拖动框选文本批注区域，或单击放置。',
+      callout: '从批注指向的位置拖动到批注框的位置。',
+      cshape: '拖动绘制形状。按住 Shift 可保持规则形状。',
+      pencil: '在页面上绘制；每一笔都会成为可移动或删除的批注。',
       measure: measureHint(),
       field:
-        'Drag a box where the field goes, or click to place one. Drag fields to move them; double-click one for its properties.',
+        '拖动框选表单域位置，或单击放置。拖动表单域可移动；双击可打开其属性。',
     }[tool];
     hint.textContent = forPointer(hint.textContent);
     syncStyleButtons();
     if (redacting()) {
       hint.textContent =
-        'Select text, then choose Mark selection for redaction. Choose Area to drag over pictures or any part of the page.';
+        '先选中文本，再选择“标记选中内容以密文”。选择“区域”可拖动框选图片或页面任意部分。';
       colorInput.hidden = true;
     }
     toolsPanel.refresh();
@@ -3862,11 +3862,11 @@ export function createEditor({
     // Redaction marks share this tool; their hint names their own command.
     hint.textContent = redacting()
       ? area
-        ? 'Drag over an area to mark it for redaction.'
-        : 'Select text, then choose Mark selection for redaction. Choose Area to drag over pictures or any part of the page.'
+        ? '拖动框选区域以标记为密文。'
+        : '先选中文本，再选择“标记选中内容以密文”。选择“区域”可拖动框选图片或页面任意部分。'
       : area
-        ? 'Drag over an area to highlight it.'
-        : 'Select text, then choose Highlight selection. Use Area for scanned pages.';
+        ? '拖动框选区域以高亮。'
+        : '先选中文本，再选择“高亮选中内容”。扫描页请使用“区域”。';
     if (area) {
       if (highlightSelection || highlightCaptureTimer) window.getSelection()?.removeAllRanges();
       clearHighlightSelection();
@@ -4156,7 +4156,7 @@ export function createEditor({
       kind,
       id: kind === 'note' ? noteEdit.entry.id : selectedHighlight.id,
       page: pageIndex,
-      reply: properties.root.querySelector('[aria-label="Reply text"]')?.value ?? '',
+      reply: properties.root.querySelector('[aria-label="回复内容"]')?.value ?? '',
       label: held?.getAttribute('aria-label'),
       // Or its place on the page, when that has the keyboard.
       target: targets.contains(active) ? [...targets.children].indexOf(active) : -1,
@@ -4180,7 +4180,7 @@ export function createEditor({
       if (!selectedHighlight) return;
       renderHighlightTargets();
     }
-    const reply = properties.root.querySelector('[aria-label="Reply text"]');
+    const reply = properties.root.querySelector('[aria-label="回复内容"]');
     if (reply && held.reply) reply.value = held.reply;
     // Saving the note's words handed the keyboard to the page meanwhile.
     if (!canFocusSelection(null)) return;
@@ -4597,8 +4597,8 @@ export function createEditor({
     if (link.blocked) {
       toast(
         link.address
-          ? 'This link has an address that cannot be opened here.'
-          : 'This link opens something that cannot be opened here.',
+          ? '此链接的地址无法在此打开。'
+          : '此链接指向的内容无法在此打开。',
       );
       return;
     }
@@ -4645,7 +4645,7 @@ export function createEditor({
         onSelect: safe(() => followLink(link)),
       },
       link.url && {
-        label: 'Copy link address',
+        label: '复制链接地址',
         icon: 'Copy',
         disabled: !access().copy,
         onSelect: safe(async () => {
@@ -4657,11 +4657,11 @@ export function createEditor({
       !link.blocked && { separator: true },
       {
         permission: 'annotate',
-        label: 'Remove link',
+        label: '删除链接',
         icon: 'Unlink',
         disabled: busy || !canEditLink(link),
         onSelect: pageAction(() =>
-          mutate((doc) => removeLink(doc, pageIndex, link.id), 'Link removed.', 'annotate'),
+          mutate((doc) => removeLink(doc, pageIndex, link.id), '链接已删除。', 'annotate'),
         ),
       },
     ].filter(Boolean);
@@ -4681,19 +4681,19 @@ export function createEditor({
       const target = el('button', {
         type: 'button',
         class: 'link-target',
-        title: canEditLink(link) ? 'Edit link' : 'Link options',
+        title: canEditLink(link) ? '编辑链接' : '链接选项',
         'aria-label': link.url
-          ? `Link to ${linkLabel(link.url)}`
+          ? `链接到 ${linkLabel(link.url)}`
           : link.blocked
             ? link.address
-              ? 'Link with an unsupported address'
-              : 'Link with an unsupported action'
-            : 'Link to another page',
+              ? '包含不受支持地址的链接'
+              : '包含不受支持操作的链接'
+            : '跳转到其他页面的链接',
         'aria-haspopup': canEditLink(link) ? 'dialog' : 'menu',
         onclick: safe(() => {
           if (busy) return;
           if (canEditLink(link)) return editLink(link);
-          openMenu({ anchor: target, items: linkMenuItems(link), label: 'Link' });
+          openMenu({ anchor: target, items: linkMenuItems(link), label: '链接' });
         }),
       });
       target.dataset.linkId = link.id;
@@ -4720,7 +4720,7 @@ export function createEditor({
   async function placeLink(rect, page) {
     const choice = await linkDialog();
     if (!choice || destroyed) return;
-    await mutate((doc) => addLink(doc, page, { rect, ...choice }), 'Link added.', 'annotate');
+    await mutate((doc) => addLink(doc, page, { rect, ...choice }), '链接已添加。', 'annotate');
     if (!destroyed && tool === 'link') await setTool('select');
   }
   let editingLink = null;
@@ -4768,7 +4768,7 @@ export function createEditor({
       const ordinal = links.findIndex((entry) => entry.id === link.id);
       await mutate(
         (doc) => updateLink(doc, sourcePage, link.id, choice),
-        'Link updated.',
+        '链接已更新。',
         'annotate',
       );
       if (destroyed || sourcePage !== pageIndex) return;
@@ -4901,26 +4901,26 @@ export function createEditor({
     drawCropPreview(ctx, cropDraft.screen);
     const panel = el(
       'div',
-      { class: 'crop-panel', role: 'group', 'aria-label': 'Crop area' },
+      { class: 'crop-panel', role: 'group', 'aria-label': '裁剪区域' },
       button(
-        'Crop this page',
+        '裁剪当前页面',
         'Crop',
         safe(() => applyCrop([cropDraft.page])),
         'btn primary',
       ),
       button(
-        'Crop all pages',
+        '裁剪所有页面',
         'Files',
         safe(() => applyCrop(Array.from({ length: pdf.numPages }, (_, i) => i))),
         'btn',
       ),
-      iconButton('Discard crop area', 'X', () => {
+      iconButton('放弃裁剪区域', 'X', () => {
         discardCropDraft();
         clearOverlay();
         overlay.focus({ preventScroll: true });
       }),
     );
-    properties.show('crop', 'Crop', panel);
+    properties.show('crop', '裁剪', panel);
     panel.querySelector('button').focus({ preventScroll: true });
   }
   async function applyCrop(indices) {
@@ -4929,7 +4929,7 @@ export function createEditor({
     // The reload after the change drops the draft; a refused crop keeps it for another try.
     await mutate(
       (doc) => cropPages(doc, indices, cropMargins(doc, draft.page, draft.rect)),
-      indices.length > 1 ? `All ${indices.length} pages cropped.` : 'Page cropped.',
+      indices.length > 1 ? `All ${indices.length} pages cropped.` : '页面已裁剪。',
     );
     if (!destroyed && tool === 'crop') await setTool('select');
   }
@@ -4987,7 +4987,7 @@ export function createEditor({
       apply();
     };
     const d = modal('裁剪页面', form, [
-      button('Cancel', null, () => d.close()),
+      button('取消', null, () => d.close()),
       button('裁剪', 'Crop', apply, 'btn primary'),
     ]);
     fields[0].input.focus();
@@ -5328,8 +5328,8 @@ export function createEditor({
       const target = el('button', {
         class: 'text-target',
         type: 'button',
-        'aria-label': `Edit text: ${readingOrder(run.text)?.text ?? run.text}`,
-        title: 'Edit text',
+        'aria-label': `编辑文本: ${readingOrder(run.text)?.text ?? run.text}`,
+        title: '编辑文本',
         onclick: safe(async (e) => {
           if (tool !== 'text' && e.detail) return;
           const point = e.detail ? textPointerPoint(e) : null;
@@ -5374,7 +5374,7 @@ export function createEditor({
       pageForms.clearHistory();
       return;
     }
-    if (busy || destroyed) throw new Error('Please wait for the current edit to finish.');
+    if (busy || destroyed) throw new Error('请等待当前编辑完成。');
     const priorFocus = document.activeElement;
     const snapshot = pageForms.draft.snapshot();
     const values = pageForms.draft.values;
@@ -5414,7 +5414,7 @@ export function createEditor({
   async function commitTextEdit(apply = true) {
     const edit = textEdit;
     if (!edit) return;
-    if (busy) throw new Error('Please wait for the current edit to finish.');
+    if (busy) throw new Error('请等待当前编辑完成。');
     const priorFocus = document.activeElement;
     if (apply) {
       // Finishing from the keyboard can leave a numeric field focused. Blur it to
@@ -5601,8 +5601,8 @@ export function createEditor({
           rows: 1,
           // No maxlength: a browser cuts a long paste short without a word; saving says why
           // text is too long and keeps the whole draft for shortening.
-          'aria-label': run ? 'Edit text' : 'Text to add',
-          placeholder: run ? '' : 'Type your text',
+          'aria-label': run ? '编辑文本' : '添加文本',
+          placeholder: run ? '' : '输入文本',
           spellcheck: true,
           wrap: 'off',
         });
@@ -5651,19 +5651,19 @@ export function createEditor({
     const error = el('p', { class: 'text-edit-error', role: 'alert', hidden: true });
     const panel = el(
       'div',
-      { class: 'text-edit-actions', role: 'group', 'aria-label': 'Text properties' },
+      { class: 'text-edit-actions', role: 'group', 'aria-label': '文本属性' },
       el(
         'div',
         { class: 'text-edit-buttons' },
         button(
-          'Delete',
+          '删除',
           'Trash2',
           safe(async () => {
             input.value = '';
             await finishDrafts();
           }),
           'btn danger',
-          { 'aria-label': 'Delete text' },
+          { 'aria-label': '删除文本' },
         ),
       ),
       error,
@@ -6153,7 +6153,7 @@ export function createEditor({
     input.onchange = safe(async () => {
       const file = input.files[0];
       if (!file || busy) return;
-      if (file.size > MAX_IMAGE_SIZE) throw new Error('Choose an image smaller than 20 MB.');
+      if (file.size > MAX_IMAGE_SIZE) throw new Error('请选择小于 20 MB 的图片。');
       await setTool('select');
       const index = pageIndex,
         priorFocus = document.activeElement;
@@ -6162,7 +6162,7 @@ export function createEditor({
         // image just as they wait for embedding and rendering it.
         const bytes = new Uint8Array(await file.arrayBuffer());
         await addImage(doc, index, bytes);
-      }, 'Image added. Drag to move or resize it.');
+      }, '已添加图片。拖动可移动或调整大小。');
       const entry = imageRunCache
         .get(pageIndex)
         ?.filter((entry) => entry.kind === 'image')
@@ -6451,15 +6451,15 @@ export function createEditor({
       class: 'input note-text',
       rows: 4,
       maxlength: 5000,
-      placeholder: 'Write a note',
-      'aria-label': entry ? 'Note text' : 'New note text',
+      placeholder: '输入便签内容',
+      'aria-label': entry ? '便签文本' : '新便签文本',
       spellcheck: true,
     });
     textarea.value = entry?.text || '';
     const colorPick = el('input', {
       type: 'color',
       value: entry?.hex || toolColors.note,
-      'aria-label': 'Note color',
+      'aria-label': '便签颜色',
     });
     const when = entry?.modified?.toLocaleString(undefined, {
       dateStyle: 'medium',
@@ -6485,11 +6485,11 @@ export function createEditor({
       {
         class: 'note-editor',
         role: 'group',
-        'aria-label': entry ? (readOnly ? 'Read note' : 'Edit note') : 'New note',
+        'aria-label': entry ? (readOnly ? '查看便签' : '编辑便签') : '新建便签',
       },
       meta,
       textarea,
-      entry?.contentsLocked && el('p', { class: 'muted' }, 'Text is locked for this note.'),
+      entry?.contentsLocked && el('p', { class: 'muted' }, '此便签的文本已锁定。'),
       error,
       thread && thread.status,
       thread && thread.replies,
@@ -6500,21 +6500,21 @@ export function createEditor({
         { class: 'note-editor-actions' },
         colorPick,
         button(
-          'Close',
+          '关闭',
           'X',
           safe(() => finishNoteEdit()),
           'btn',
-          { 'aria-label': 'Close note' },
+          { 'aria-label': '关闭便签' },
         ),
         entry &&
           !readOnly &&
           !entry.propertiesLocked &&
           button(
-            'Delete',
+            '删除',
             'Trash2',
             safe(() => finishNoteEdit(true)),
             'btn danger',
-            { 'aria-label': 'Delete note' },
+            { 'aria-label': '删除便签' },
           ),
       ),
     );
@@ -6544,7 +6544,7 @@ export function createEditor({
       error,
       page: pageIndex,
     };
-    properties.show('note', entry ? 'Note' : 'New note', panel);
+    properties.show('note', entry ? 'Note' : '新便签', panel);
     renderNoteTargets();
     if (canFocus()) textarea.focus({ preventScroll: true });
     updateStatus();
@@ -6580,7 +6580,7 @@ export function createEditor({
   async function finishNoteEdit(remove = false) {
     const edit = noteEdit;
     if (!edit) return;
-    if (busy) throw new Error('Please wait for the current edit to finish.');
+    if (busy) throw new Error('请等待当前编辑完成。');
     const priorFocus = document.activeElement;
     const returnFocus = () => {
       if (
@@ -6626,7 +6626,7 @@ export function createEditor({
     } catch (error) {
       noteEdit = edit;
       edit.panel.inert = false;
-      properties.show('note', edit.entry ? 'Note' : 'New note', edit.panel);
+      properties.show('note', edit.entry ? 'Note' : '新便签', edit.panel);
       edit.error.textContent = error.message;
       edit.error.hidden = false;
       if (document.activeElement === document.body || document.activeElement === priorFocus)
@@ -6661,7 +6661,7 @@ export function createEditor({
     const priorFocus = document.activeElement;
     await mutate(
       (doc) => drawSignature(doc, index, signature, target, { hex, outline, rotation }),
-      'Signature added. Drag to move or resize it.',
+      '已添加签名。拖动可移动或调整大小。',
     );
     const entry = imageRunCache
       .get(pageIndex)
@@ -6713,7 +6713,7 @@ export function createEditor({
     const priorFocus = document.activeElement;
     await mutate(
       (doc) => drawStamp(doc, index, choice, target, { rotation }),
-      'Stamp added. Drag to move or resize it.',
+      '已添加图章。拖动可移动或调整大小。',
     );
     const entry = imageRunCache
       .get(pageIndex)
@@ -6918,7 +6918,7 @@ export function createEditor({
       apply();
     };
     const d = modal('填写表单', form, [
-      button('Cancel', null, () => d.close()),
+      button('取消', null, () => d.close()),
       button('保存表单', 'Check', apply, 'btn primary'),
     ]);
   }
@@ -6986,12 +6986,12 @@ export function createEditor({
     if (destroyed) return false;
     if (!file) {
       const choice = await choose(
-        'This PDF was moved or deleted',
+        '此 PDF 已被移动或删除',
         `${name} is no longer where it was opened from in local storage. Your changes are still here: save them as a new file, or put the file back where it was.`,
         [
-          ['Keep editing', 'cancel'],
-          ['Put it back', 'restore'],
-          ['Save as a new file', 'copy', 'btn primary'],
+          ['继续编辑', 'cancel'],
+          ['恢复原文件', 'restore'],
+          ['另存为新文件', 'copy', 'btn primary'],
         ],
       );
       return choice === 'restore' ? here : choice === 'copy' ? null : false;
@@ -7000,12 +7000,12 @@ export function createEditor({
     const changed = file.size !== remote.size || (!moved && file.modified > remote.modified);
     if (!changed) return { path: file.path, name: file.name };
     const choice = await choose(
-      'This PDF changed elsewhere',
+      '此 PDF 已在别处被更改',
       `${file.name} was saved in local storage after you opened it here, perhaps in another window or on another device. Replace that version with yours, or keep both by saving yours as a new file.`,
       [
-        ['Keep editing', 'cancel'],
-        ['Replace it', 'replace', 'btn danger'],
-        ['Save as a new file', 'copy', 'btn primary'],
+        ['继续编辑', 'cancel'],
+        ['替换它', 'replace', 'btn danger'],
+        ['另存为新文件', 'copy', 'btn primary'],
       ],
     );
     return choice === 'replace'
@@ -7028,11 +7028,11 @@ export function createEditor({
     const reason = reasonOf(error);
     return (
       (await choose(
-        'This PDF could not be saved',
+        '无法保存此 PDF',
         `Puter could not save ${name}${reason ? ` (${reason})` : ''}. Your changes are still here. Save them as a new file in your PDF Editor folder instead?`,
         [
-          ['Keep editing', 'cancel'],
-          ['Save as a new file', 'copy', 'btn primary'],
+          ['继续编辑', 'cancel'],
+          ['另存为新文件', 'copy', 'btn primary'],
         ],
       )) === 'copy'
     );
@@ -7330,7 +7330,7 @@ export function createEditor({
             title: '导出为',
             items: [
               ...[
-                ['docx', 'Microsoft Word (.docx)…', 'export-docx'],
+                ['docx', 'Microsoft Word (.docx) 文档…', 'export-docx'],
                 ['xlsx', '电子表格 (.xlsx)…', 'export-xlsx'],
                 ['pptx', '演示文稿 (.pptx)…', 'export-pptx'],
                 ['rtf', '富文本 (.rtf)…', 'export-rtf'],
@@ -7448,7 +7448,7 @@ export function createEditor({
                 onSelect: () => pageDialog(pageNumbersDialog)(),
               },
               {
-                label: 'Bates numbering…',
+                label: '贝茨编号…',
                 icon: 'bates',
                 permission: 'edit',
                 disabled: noDocument(),
@@ -7771,7 +7771,7 @@ export function createEditor({
                 onSelect: () => safe(formDialog)(),
               },
               {
-                label: 'Add text',
+                label: '添加文本',
                 icon: 'add-text',
                 pressed: toolPressed('text'),
                 permission: 'edit',
@@ -8150,7 +8150,7 @@ export function createEditor({
       },
       {
         id: 'crop',
-        label: 'Crop pages',
+        label: '裁剪页面',
         group: 'Create & Edit',
         permission: 'edit',
         run: () => pageAction(() => setTool('crop'))(),
@@ -8307,7 +8307,7 @@ export function createEditor({
       {
         id: 'print',
         label: '打印',
-        group: 'Print production',
+        group: '印刷制作',
         permission: 'print',
         run: () => pageDialog(printDialog)(),
       },
@@ -8418,7 +8418,7 @@ export function createEditor({
         onSelect: safe(securityDialog),
       },
       protection && {
-        label: 'Remove password',
+        label: '移除密码',
         icon: 'LockOpen',
         disabled: busy,
         onSelect: safe(async () => {
@@ -8625,17 +8625,17 @@ export function createEditor({
   function pageItems(index = pageIndex) {
     const count = pdf?.numPages || 1;
     return [
-      { header: `Page ${index + 1} of ${count}` },
+      { header: `第 ${index + 1} 页，共 ${count} 页` },
       {
         permission: 'assemble',
-        label: 'Rotate clockwise',
+        label: '顺时针旋转',
         icon: 'RotateCw',
         disabled: busy,
         onSelect: pageAction(() => mutate((doc) => rotatePage(doc, index), null, 'assemble')),
       },
       {
         permission: 'assemble',
-        label: 'Rotate counterclockwise',
+        label: '逆时针旋转',
         icon: 'RotateCcw',
         disabled: busy,
         onSelect: pageAction(() => mutate((doc) => rotatePage(doc, index, -90), null, 'assemble')),
@@ -8682,7 +8682,7 @@ export function createEditor({
         icon: 'Bookmark',
         disabled: busy,
         onSelect: pageDialog(async () => {
-          const title = await promptText('Add bookmark', 'Bookmark name', `Page ${index + 1}`);
+          const title = await promptText('添加书签', '书签名称', `Page ${index + 1}`);
           if (title == null || destroyed) return;
           let added = false;
           await mutate(
@@ -8690,7 +8690,7 @@ export function createEditor({
               addBookmark(doc, { title, pageIndex: index });
               added = true;
             },
-            'Bookmark added. Find it in the Outline tab.',
+            '书签已添加。可在“大纲”选项卡中找到。',
             'assemble',
           );
           if (!added || destroyed || editorRoot.classList.contains('hide-pages')) return;
@@ -8725,9 +8725,9 @@ export function createEditor({
           let changed = null;
           await mutate(
             (doc) => (changed = resetCrop(doc, [index])),
-            'The full page is shown again.',
+            '已恢复显示完整页面。',
           );
-          if (changed === false && !destroyed) toast('This page is not cropped.');
+          if (changed === false && !destroyed) toast('此页面未被裁剪。');
         }),
       },
       { separator: true },
@@ -8758,14 +8758,14 @@ export function createEditor({
               await duplicatePage(doc, index);
               afterInsert(index);
             },
-            'Page duplicated.',
+            '页面已复制。',
             'assemble',
           ),
         ),
       },
       {
         permission: 'assemble',
-        label: 'Insert pictures as pages…',
+        label: '插入图片作为页面…',
         icon: 'Images',
         disabled: busy,
         onSelect: pageAction(() => insertPicturePages(index)),
@@ -8825,7 +8825,7 @@ export function createEditor({
         permission: 'edit',
         label: '文本',
         icon: 'Type',
-        hint: 'Then click the page where the text goes',
+        hint: '然后单击放置文本的页面',
         onSelect: safe(() => setTool('text')),
       },
       { permission: 'edit', label: '图片…', icon: 'Image', disabled: busy, onSelect: insertImage },
@@ -8859,14 +8859,14 @@ export function createEditor({
       },
       {
         permission: 'edit',
-        label: 'Page numbers…',
+        label: '页码…',
         icon: 'Hash',
         disabled: busy || !pdf,
         onSelect: pageDialog(pageNumbersDialog),
       },
       {
         permission: 'edit',
-        label: 'Header and footer…',
+        label: '页眉和页脚…',
         icon: 'PanelTopBottomDashed',
         disabled: busy || !pdf,
         onSelect: pageDialog(headerFooterDialog),
@@ -8970,7 +8970,7 @@ export function createEditor({
     requireAccess('fill');
     if (protection)
       throw new Error(
-        'Remove the password before signing with a certificate. Encrypting the file again would invalidate the signature.',
+        '使用证书签名前请先移除密码。再次加密文件会使签名失效。',
       );
     await finishDrafts();
     const chosen = await chooseDigitalId(digitalIds, dialogOptions);
@@ -9006,8 +9006,8 @@ export function createEditor({
     await setTool('select');
     toast(
       certify
-        ? 'Certified. Download or save the PDF to keep the certification.'
-        : 'Signed. Download or save the PDF to keep the signature.',
+        ? '已认证。请下载或保存 PDF 以保留认证。'
+        : '已签名。请下载或保存 PDF 以保留签名。',
     );
   }
   /** Delete several pages at once, after one confirmation. */
@@ -9016,15 +9016,15 @@ export function createEditor({
     const list = [...new Set(indices)].sort((a, b) => b - a);
     if (!list.length) return false;
     if (list.length >= pdf.numPages) {
-      toast('Keep at least one page in the PDF.', { error: true });
+      toast('PDF 中至少需要保留一页。', { error: true });
       return false;
     }
     if (list.length === 1) return deletePageAt(list[0]);
     if (
       !(await confirmAction(
-        `Delete ${list.length} pages?`,
-        `Remove pages ${formatPageRange([...list].reverse())}? Bookmarks and links to them will go to a neighbouring page. You can undo this while the PDF is open.`,
-        'Delete pages',
+        `删除 ${list.length} 个页面？`,
+        `确定要删除页面 ${formatPageRange([...list].reverse())} 吗？指向它们的书签和链接将重定向到相邻页面。在 PDF 保持打开期间可以撤销此操作。`,
+        '删除页面',
       ))
     )
       return false;
@@ -9054,7 +9054,7 @@ export function createEditor({
         reorderPages(doc, order);
         pageIndex = order.indexOf(pageIndex);
       },
-      moved === 1 ? 'Page moved.' : `${moved} pages moved.`,
+      moved === 1 ? '页面已移动。' : `${moved} pages moved.`,
       'assemble',
     );
   }
@@ -9091,7 +9091,7 @@ export function createEditor({
       !(await confirmAction(
         'Delete this page?',
         `Remove page ${index + 1}? Bookmarks and links to it will go to the ${index + 1 < pdf.numPages ? 'next' : 'previous'} page. You can undo this while the PDF is open.`,
-        'Delete page',
+        '删除页面',
       ))
     )
       return false;
@@ -9126,7 +9126,7 @@ export function createEditor({
           afterInsert(after, images.length);
         },
         files.length === 1
-          ? 'Picture added as a page.'
+          ? '已将图片添加为页面。'
           : `${files.length} pictures added as pages.`,
         'assemble',
         { signal: dialogController.signal },
@@ -9155,7 +9155,7 @@ export function createEditor({
       if (searchButton.disabled) return;
       const text = query.value.trim();
       const patterns = patternBoxes.filter((entry) => entry.box.checked);
-      if (!text && !patterns.length) throw new Error('Enter text or choose a pattern to find.');
+      if (!text && !patterns.length) throw new Error('请输入要查找的文本或选择一种模式。');
       searchButton.disabled = true;
       status.textContent = 'Searching…';
       try {
@@ -9190,7 +9190,7 @@ export function createEditor({
         status.textContent = [
           found.length
             ? `${found.length} ${found.length === 1 ? 'match' : 'matches'} found. Choose the ones to mark.`
-            : 'No matches found.',
+            : '未找到匹配项。',
           unsearchable.length &&
             `Some text on ${unsearchable.length === 1 ? 'page' : 'pages'} ${formatPageRange(unsearchable)} cannot be searched. Check it by eye.`,
         ]
@@ -9219,7 +9219,7 @@ export function createEditor({
       const chosen = [...results.querySelectorAll('input:checked')].map(
         (box) => found[Number(box.dataset.index)],
       );
-      if (!chosen.length) throw new Error('Choose at least one match to mark.');
+      if (!chosen.length) throw new Error('请至少选择一个要标记的匹配项。');
       await mutateDialog(
         d,
         (doc) => {
@@ -9234,14 +9234,14 @@ export function createEditor({
     const form = el(
       'form',
       { class: 'stack' },
-      labeled('redact-query', 'Find text', query),
+      labeled('redact-query', '查找文本', query),
       el(
         'label',
         { class: 'checkbox-row', for: 'redact-whole' },
-        el('span', {}, 'Whole words only'),
+        el('span', {}, '仅匹配整个单词'),
         whole,
       ),
-      el('p', { class: 'muted' }, 'Or find patterns'),
+      el('p', { class: 'muted' }, '或查找模式'),
       el(
         'div',
         { class: 'redact-patterns' },
@@ -9261,10 +9261,10 @@ export function createEditor({
       e.preventDefault();
       search();
     };
-    const searchButton = button('Search', 'Search', search, 'btn');
-    const markButton = button('Mark selected', null, mark, 'btn primary', { disabled: true });
-    const d = modal('Find text and redact', form, [
-      button('Cancel', null, () => d.close()),
+    const searchButton = button('搜索', 'Search', search, 'btn');
+    const markButton = button('标记选中项', null, mark, 'btn primary', { disabled: true });
+    const d = modal('查找文本并密文处理', form, [
+      button('取消', null, () => d.close()),
       searchButton,
       markButton,
     ]);
@@ -9277,7 +9277,7 @@ export function createEditor({
       class: 'input',
       maxlength: 100,
       value: redactionStyle.overlayText,
-      placeholder: 'For example: Redacted',
+      placeholder: '例如：机密',
     });
     const repeat = el('input', {
       type: 'checkbox',
@@ -9290,24 +9290,24 @@ export function createEditor({
       if (missing.length) {
         overlay.focus();
         throw new Error(
-          `Overlay text cannot show ${missing.slice(0, 5).join(' ')}. Use Latin letters, digits, and punctuation.`,
+          `覆盖文本无法显示 ${missing.slice(0, 5).join(' ')}。请使用拉丁字母、数字和标点符号。`,
         );
       }
       redactionStyle.fill = fill.value;
       redactionStyle.overlayText = overlay.value;
       redactionStyle.repeat = repeat.checked;
       d.close();
-      toast('New redaction marks use these settings.');
+      toast('新的密文标记将使用这些设置。');
     });
     const form = el(
       'form',
       { class: 'stack' },
-      labeled('redact-fill', 'Fill color', fill),
-      labeled('redact-overlay', 'Overlay text', overlay),
+      labeled('redact-fill', '填充颜色', fill),
+      labeled('redact-overlay', '覆盖文本', overlay),
       el(
         'label',
         { class: 'checkbox-row', for: 'redact-repeat' },
-        el('span', {}, 'Repeat overlay text to fill the area'),
+        el('span', {}, '重复覆盖文本以填满区域'),
         repeat,
       ),
     );
@@ -9315,9 +9315,9 @@ export function createEditor({
       e.preventDefault();
       save();
     };
-    const d = modal('Redaction properties', form, [
-      button('Cancel', null, () => d.close()),
-      button('Save', null, save, 'btn primary'),
+    const d = modal('密文属性', form, [
+      button('取消', null, () => d.close()),
+      button('保存', null, save, 'btn primary'),
     ]);
   }
   /** Mark whole pages for redaction. */
@@ -9341,12 +9341,12 @@ export function createEditor({
             addRedactionMarks(doc, index, [area], redactionStyle);
           }
         },
-        `${indices.length === 1 ? 'The page is' : `${indices.length} pages are`} marked for redaction.`,
+        `${indices.length === 1 ? '该页面已' : `${indices.length} 个页面已`}标记为密文。`,
       );
     });
-    const d = modal('Redact pages', el('div', { class: 'stack' }, choices.list), [
-      button('Cancel', null, () => d.close()),
-      button('Mark pages', null, apply, 'btn primary'),
+    const d = modal('密文处理页面', el('div', { class: 'stack' }, choices.list), [
+      button('取消', null, () => d.close()),
+      button('标记页面', null, apply, 'btn primary'),
     ]);
   }
   /** Apply every mark: what lies under it is removed from the file, then it is filled. */
@@ -9362,7 +9362,7 @@ export function createEditor({
         d,
         async (doc) => {
           report = await applyRedactions(doc, { codec: createImageCodec(loadPdf) });
-          if (report === false) throw new Error('There are no redaction marks to apply.');
+          if (report === false) throw new Error('没有可应用的密文标记。');
           if (sanitize.checked)
             sanitized = await sanitizeDocument(doc, {
               ...SANITIZE_DEFAULTS,
@@ -9386,32 +9386,32 @@ export function createEditor({
         report.images.redacted &&
           `erased the marked part of ${count(report.images.redacted, 'image')}`,
       ].filter(Boolean);
-      const summary = `Redactions applied${done.length ? `: ${done.join('; ')}` : ''}. Save or download to keep the redacted file.`;
+      const summary = `密文已应用${done.length ? `：${done.join('；')}` : ''}。保存或下载以保留密文处理后的文件。`;
       const warnings = [...new Set([...report.warnings, ...(sanitized?.warnings || [])])];
       if (!warnings.length) return toast(summary);
       // What could not be handled as usual must not pass by in a brief message: someone could
       // share the file believing everything under the marks is gone.
       const notice = modal(
-        'Check the redacted PDF',
+        '检查密文处理后的 PDF',
         el(
           'div',
           { class: 'stack' },
           el('p', {}, summary),
-          el('p', {}, 'Not everything went as usual. Check these before you share the file:'),
+          el('p', {}, '部分操作未完全按预期完成。在分享文件之前请检查以下内容：'),
           el('ul', {}, ...warnings.map((warning) => el('li', {}, warning))),
         ),
-        [button('OK', null, () => notice.close(), 'btn primary')],
+        [button('确定', null, () => notice.close(), 'btn primary')],
       );
     });
     const d = modal(
-      'Apply redactions',
+      '应用密文',
       el(
         'div',
         { class: 'stack' },
         el(
           'p',
           {},
-          `${redactionMarks.length ? `${redactionMarks.length} ${redactionMarks.length === 1 ? 'mark' : 'marks'} will be applied. ` : ''}Text, pictures, drawings, links, and comments under each mark are removed from the PDF, not just covered. A form field under a mark is removed everywhere it appears.`,
+          `${redactionMarks.length ? `将应用 ${redactionMarks.length} 个标记。` : ''}每个标记下方的文本、图片、绘图、链接和批注都将从 PDF 中彻底移除，而不仅仅是遮盖。如果标记覆盖了表单字段，该字段在所有位置都会被移除。`,
         ),
         el(
           'label',
@@ -9420,17 +9420,17 @@ export function createEditor({
             'span',
             {},
             // Everything it takes, links and recognized text above all, which readers miss.
-            'Also remove hidden information (metadata, scripts, attachments, links to websites and files, hidden text including recognized OCR text, and hidden layers)',
+            '同时移除隐藏信息（元数据、脚本、附件、外部网站和文件链接、隐藏文本（包括 OCR 识别文本）以及隐藏图层）',
           ),
           sanitize,
         ),
         el(
           'p',
           { class: 'muted' },
-          'You can undo this while the PDF is open. Once saved, the removed content cannot be recovered.',
+          '在 PDF 保持打开期间可以撤销此操作。一旦保存，移除的内容将无法恢复。',
         ),
       ),
-      [button('Cancel', null, () => d.close()), button('Apply', null, apply, 'btn primary')],
+      [button('取消', null, () => d.close()), button('应用', null, apply, 'btn primary')],
     );
   }
   /** Remove hidden information, choosing which kinds. */
@@ -9438,21 +9438,21 @@ export function createEditor({
     requireAccess('edit');
     const { sanitizeDocument, sanitizedCount, SANITIZE_DEFAULTS } = await loadSanitize();
     const LABELS = {
-      metadata: 'Metadata (author, title, XMP, and the camera, time, and location in photos)',
-      privateData: 'Private data of other applications',
-      javascript: 'Scripts',
-      actions: 'Links and actions that open other files or sites',
-      attachments: 'File attachments',
-      thumbnails: 'Embedded page thumbnails',
-      searchIndex: 'Embedded search index',
-      webCapture: 'Web capture information',
-      hiddenText: 'Hidden text (including OCR text layers)',
-      comments: 'Comments and markups',
-      formFields: 'Form fields',
-      hiddenLayers: 'Hidden layers',
-      alternateImages: 'Alternate images',
-      unusedContent: 'Images and drawings the pages do not use',
-      bookmarks: 'Bookmarks',
+      metadata: '元数据（作者、标题、XMP 以及照片中的相机、时间和位置信息）',
+      privateData: '其他应用程序的私有数据',
+      javascript: '脚本',
+      actions: '打开其他文件或网站的链接和操作',
+      attachments: '文件附件',
+      thumbnails: '嵌入的页面缩略图',
+      searchIndex: '嵌入的搜索索引',
+      webCapture: '网页抓取信息',
+      hiddenText: '隐藏文本（包括 OCR 文本图层）',
+      comments: '批注和标记',
+      formFields: '表单字段',
+      hiddenLayers: '隐藏图层',
+      alternateImages: '替代图片',
+      unusedContent: '页面未使用的图片和绘图',
+      bookmarks: '书签',
     };
     const boxes = Object.entries(LABELS).map(([key, label]) => ({
       key,
@@ -9465,7 +9465,7 @@ export function createEditor({
     }));
     const apply = safe(async () => {
       if (!boxes.some((entry) => entry.box.checked))
-        throw new Error('Choose at least one kind of information to remove.');
+        throw new Error('请至少选择一种要移除的信息类型。');
       const options = Object.fromEntries(boxes.map((entry) => [entry.key, entry.box.checked]));
       let report = null;
       const committed = await mutateDialog(
@@ -9479,28 +9479,28 @@ export function createEditor({
       );
       if (!report || destroyed || (!committed && sanitizedCount(report))) return;
       const summary = committed
-        ? 'Hidden information removed. Save or download to keep the cleaned file.'
-        : 'No hidden information of the chosen kinds was found.';
+        ? '隐藏信息已移除。保存或下载以保留清理后的文件。'
+        : '未发现所选类型的隐藏信息。';
       if (!report.warnings.length) return toast(summary);
       // Content that could not be examined may still hide what was asked to go.
       const notice = modal(
-        'Check the cleaned PDF',
+        '检查清理后的 PDF',
         el(
           'div',
           { class: 'stack' },
           el('p', {}, summary),
-          el('p', {}, 'Not everything could be examined. Check these before you share the file:'),
+          el('p', {}, '部分内容无法检查。在分享文件之前请检查以下内容：'),
           el('ul', {}, ...[...new Set(report.warnings)].map((warning) => el('li', {}, warning))),
         ),
-        [button('OK', null, () => notice.close(), 'btn primary')],
+        [button('确定', null, () => notice.close(), 'btn primary')],
       );
     });
     const d = modal(
-      'Remove hidden information',
+      '移除隐藏信息',
       el(
         'div',
         { class: 'stack' },
-        el('p', { class: 'muted' }, 'Choose what to remove from the PDF.'),
+        el('p', { class: 'muted' }, '选择要从 PDF 中移除的内容。'),
         ...boxes.map((entry) =>
           el(
             'label',
@@ -9510,7 +9510,7 @@ export function createEditor({
           ),
         ),
       ),
-      [button('Cancel', null, () => d.close()), button('Remove', null, apply, 'btn primary')],
+      [button('取消', null, () => d.close()), button('移除', null, apply, 'btn primary')],
     );
   }
   /**
@@ -9524,8 +9524,8 @@ export function createEditor({
       id: 'combine-current',
       checked: !untouchedBlank(),
     });
-    const list = el('ol', { class: 'combine-list', 'aria-label': 'Files to combine' });
-    const empty = el('p', { class: 'muted' }, 'Add PDFs or pictures to combine them.');
+    const list = el('ol', { class: 'combine-list', 'aria-label': '要合并的文件' });
+    const empty = el('p', { class: 'muted' }, '添加 PDF 或图片以进行合并。');
     // Rows are drawn again after each change; `focus` names the row and button ([up, down,
     // remove]) that takes the keyboard focus, so it is not lost with the pressed button.
     const render = (focus) => {
@@ -9540,16 +9540,16 @@ export function createEditor({
               'span',
               { class: 'muted combine-kind' },
               entry.kind === 'pdf'
-                ? `${entry.pages} ${entry.pages === 1 ? 'page' : 'pages'}`
-                : 'Picture',
+                ? `${entry.pages} 页`
+                : '图片',
             ),
-            iconButton(`Move ${entry.name} up`, 'ArrowUp', () => move(i, -1), {
+            iconButton(`上移 ${entry.name}`, 'ArrowUp', () => move(i, -1), {
               disabled: i === 0,
             }),
-            iconButton(`Move ${entry.name} down`, 'ArrowDown', () => move(i, 1), {
+            iconButton(`下移 ${entry.name}`, 'ArrowDown', () => move(i, 1), {
               disabled: i === entries.length - 1,
             }),
-            iconButton(`Remove ${entry.name}`, 'Trash2', () => {
+            iconButton(`移除 ${entry.name}`, 'Trash2', () => {
               entries.splice(i, 1);
               render({ row: Math.min(i, entries.length - 1), button: 2 });
             }),
@@ -9616,7 +9616,7 @@ export function createEditor({
           : []),
         ...entries,
       ];
-      if (parts.length < 2) throw new Error('Choose at least two files to combine.');
+      if (parts.length < 2) throw new Error('请至少选择两个要合并的文件。');
       if (parts[0]?.current) requireAccess('copy');
       combineButton.disabled = true;
       d.setAttribute('aria-busy', 'true');
@@ -9644,7 +9644,7 @@ export function createEditor({
         const bytes = await savePdf(doc);
         if (!d.open || destroyed) return;
         d.close();
-        await onOpenBytes(bytes, 'Combined.pdf');
+        await onOpenBytes(bytes, '合并.pdf');
       } finally {
         combineButton.disabled = false;
         d.removeAttribute('aria-busy');
@@ -9672,7 +9672,7 @@ export function createEditor({
           '页面将按此顺序复制到一个新的 PDF 中。表单字段将被拼合以保持其内容可见。',
         ),
       ),
-      [button('Cancel', null, () => d.close()), combineButton],
+      [button('取消', null, () => d.close()), combineButton],
     );
     render();
   }
@@ -9691,7 +9691,7 @@ export function createEditor({
       const f = input.files[0];
       if (!f || !canOpenDialog(version)) return;
       try {
-        if (f.size > MAX_FILE_SIZE) throw new Error('Choose a PDF smaller than 100 MB.');
+        if (f.size > MAX_FILE_SIZE) throw new Error('请选择小于 100 MB 的 PDF 文件。');
         let bytes = new Uint8Array(await f.arrayBuffer());
         if (!canOpenDialog(version)) return;
         let source = await validatePdf(bytes).catch((error) => {
@@ -9723,7 +9723,7 @@ export function createEditor({
       type: 'text',
       class: 'input',
       placeholder: '例如：1-3, 5',
-      'aria-label': 'Pages of the other PDF',
+      'aria-label': '另一个 PDF 的页面',
       inputmode: 'numeric',
       autocomplete: 'off',
     });
@@ -9734,22 +9734,22 @@ export function createEditor({
         el('input', { type: 'radio', name: group, value, checked }),
         el('span', {}, label),
       );
-    const rangeChoice = choice('insert-pages', 'range', 'Pages', false);
+    const rangeChoice = choice('insert-pages', 'range', '指定页面', false);
     rangeInput.addEventListener('input', () => {
       rangeChoice.querySelector('input').checked = true;
     });
     const pages = el(
       'div',
-      { class: 'choice-list', role: 'radiogroup', 'aria-label': 'Pages to insert' },
-      choice('insert-pages', 'all', `All pages (${sourceCount})`, true),
+      { class: 'choice-list', role: 'radiogroup', 'aria-label': '要插入的页面' },
+      choice('insert-pages', 'all', `所有页面 (${sourceCount})`, true),
       el('div', { class: 'choice-with-input' }, rangeChoice, rangeInput),
     );
     const where = el(
       'div',
-      { class: 'choice-list', role: 'radiogroup', 'aria-label': 'Where to insert' },
-      choice('insert-where', 'after', `After page ${current + 1}`, true),
-      choice('insert-where', 'end', 'At the end', false),
-      choice('insert-where', 'start', 'At the beginning', false),
+      { class: 'choice-list', role: 'radiogroup', 'aria-label': '插入位置' },
+      choice('insert-where', 'after', `第 ${current + 1} 页之后`, true),
+      choice('insert-where', 'end', '文档末尾', false),
+      choice('insert-where', 'start', '文档开头', false),
     );
     const form = el(
       'form',
@@ -9761,7 +9761,7 @@ export function createEditor({
       ),
       el('p', { class: 'muted' }, 'Pages'),
       pages,
-      el('p', { class: 'muted' }, 'Place them'),
+      el('p', { class: 'muted' }, '放置它们'),
       where,
     );
     let inserting = false;
@@ -9842,7 +9842,7 @@ export function createEditor({
       go();
     };
     const d = modal('前往页面', form, [
-      button('Cancel', null, () => d.close()),
+      button('取消', null, () => d.close()),
       button('前往', null, go, 'btn primary'),
     ]);
     input.focus();
@@ -9983,7 +9983,7 @@ export function createEditor({
       apply();
     };
     const d = modal('添加水印', form, [
-      button('Cancel', null, () => d.close()),
+      button('取消', null, () => d.close()),
       button('添加水印', 'Stamp', apply, 'btn primary'),
     ]);
     text.focus();
@@ -9997,12 +9997,12 @@ export function createEditor({
     if (!doc) return;
     const details = documentDetails(doc, session.bytes);
     const labels = {
-      topLeft: 'Top left',
-      topCenter: 'Top center',
-      topRight: 'Top right',
-      bottomLeft: 'Bottom left',
-      bottomCenter: 'Bottom center',
-      bottomRight: 'Bottom right',
+      topLeft: '左上方',
+      topCenter: '顶部居中',
+      topRight: '右上方',
+      bottomLeft: '左下方',
+      bottomCenter: '底部居中',
+      bottomRight: '右下方',
     };
     const inputs = Object.fromEntries(
       HEADER_SLOTS.map((slot) => [
@@ -10013,7 +10013,7 @@ export function createEditor({
           autocomplete: 'off',
           placeholder:
             slot === 'bottomCenter'
-              ? 'Page {page} of {pages}'
+              ? '第 {page} 页 / 共 {pages} 页'
               : slot === 'topLeft'
                 ? '{title}'
                 : slot === 'topRight'
@@ -10072,9 +10072,9 @@ export function createEditor({
         { class: 'field-grid header-slots' },
         ...HEADER_SLOTS.map((slot) => labeled(`header-${slot}`, labels[slot], inputs[slot])),
       ),
-      el('div', { class: 'field-grid' }, labeled('header-size', 'Size (pt)', size)),
+      el('div', { class: 'field-grid' }, labeled('header-size', '字号 (磅)', size)),
       batesSection,
-      el('p', { class: 'muted' }, 'Pages'),
+      el('p', { class: 'muted' }, '页面'),
       choices.list,
     );
     const apply = safe(async () => {
@@ -10099,7 +10099,7 @@ export function createEditor({
                 }
               : null,
           }),
-        `${bates && numbered ? 'Bates numbers' : 'Header and footer'} added to ${pagesPhrase(indices)}.`,
+        `${bates && numbered ? '贝茨编号' : '页眉和页脚'}已添加到 ${pagesPhrase(indices)}。`,
       );
     });
     form.onsubmit = (e) => {
@@ -10107,7 +10107,7 @@ export function createEditor({
       apply();
     };
     const d = modal(bates ? '贝茨编号' : '页眉和页脚', form, [
-      button('Cancel', null, () => d.close()),
+      button('取消', null, () => d.close()),
       bates
         ? button('添加贝茨编号', 'Hash', apply, 'btn primary')
         : button('添加页眉和页脚', 'PanelTopBottomDashed', apply, 'btn primary'),
@@ -10118,12 +10118,17 @@ export function createEditor({
   /** Number the chosen pages in a corner or centered at the top or bottom. */
   function pageNumbersDialog() {
     if (!pdf) return;
+    const positionLabels = {
+      'top-left': '左上方',
+      'top-center': '顶部居中',
+      'top-right': '右上方',
+      'bottom-left': '左下方',
+      'bottom-center': '底部居中',
+      'bottom-right': '右下方',
+    };
     const position = selectInput(
       'numbers-position',
-      NUMBER_POSITIONS.map((key) => {
-        const [vertical, horizontal] = key.split('-');
-        return [key, `${vertical[0].toUpperCase() + vertical.slice(1)} ${horizontal}`];
-      }),
+      NUMBER_POSITIONS.map((key) => [key, positionLabels[key] || key]),
       'bottom-center',
     );
     const format = selectInput(
@@ -10164,7 +10169,7 @@ export function createEditor({
         labeled('numbers-start', '起始页码', start),
         labeled('numbers-size', '字号 (磅)', size),
       ),
-      el('p', { class: 'muted' }, 'Pages'),
+      el('p', { class: 'muted' }, '页面'),
       choices.list,
     );
     const apply = safe(async () => {
@@ -10179,7 +10184,7 @@ export function createEditor({
             start: start.value,
             size: size.value,
           }),
-        `Page numbers added to ${pagesPhrase(indices)}.`,
+        `页码已添加到 ${pagesPhrase(indices)}。`,
       );
     });
     form.onsubmit = (e) => {
@@ -10187,7 +10192,7 @@ export function createEditor({
       apply();
     };
     const d = modal('添加页码', form, [
-      button('Cancel', null, () => d.close()),
+      button('取消', null, () => d.close()),
       button('添加页码', 'Hash', apply, 'btn primary'),
     ]);
     position.focus();
@@ -10217,7 +10222,7 @@ export function createEditor({
       print();
     };
     const d = modal('打印', form, [
-      button('Cancel', null, () => d.close()),
+      button('取消', null, () => d.close()),
       button('打印', 'Printer', print, 'btn primary'),
     ]);
   }
@@ -10249,7 +10254,7 @@ export function createEditor({
     let handing = false;
     const progress = el('p', { class: 'muted', role: 'status' }, '正在准备页面…');
     const d = modal('正在打印', el('div', { class: 'stack' }, progress), [
-      button('Cancel', null, () => controller.abort()),
+      button('取消', null, () => controller.abort()),
     ]);
     // Escape and the close button cancel too; the dialog also closes on its own right before
     // the browser's print dialog takes over.
@@ -10263,7 +10268,7 @@ export function createEditor({
         signal: controller.signal,
         onProgress: (done, total) => {
           if (done < total) {
-            progress.textContent = `Preparing page ${done + 1} of ${total}…`;
+            progress.textContent = `正在准备第 ${done + 1} 页，共 ${total} 页…`;
             return;
           }
           handing = true;
@@ -10326,34 +10331,34 @@ export function createEditor({
     const when = (date) =>
       date ? date.toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' }) : '';
     const facts = [
-      ['Pages', String(details.pages)],
-      ['File size', formatBytes(details.size)],
-      ['Created', when(details.created)],
-      ['Modified', when(details.modified)],
-      ['Created with', details.creator],
-      ['Produced by', details.producer],
+      ['页数', String(details.pages)],
+      ['文件大小', formatBytes(details.size)],
+      ['创建时间', when(details.created)],
+      ['修改时间', when(details.modified)],
+      ['创建工具', details.creator],
+      ['生成工具', details.producer],
     ].filter(([, value]) => value);
     // How the PDF asks to open, and the fonts its pages use.
     const view = readInitialView(doc);
     const layout = selectInput(
       'detail-layout',
       [
-        ['default', 'Default'],
-        ['single', 'Single page'],
-        ['continuous', 'Single page, scrolling'],
-        ['two', 'Two-page'],
-        ['two-continuous', 'Two-page, scrolling'],
+        ['default', '默认'],
+        ['single', '单页'],
+        ['continuous', '单页连续滚动'],
+        ['two', '双页'],
+        ['two-continuous', '双页连续滚动'],
       ],
       view.layout,
     );
     const panel = selectInput(
       'detail-panel',
       [
-        ['none', 'Page only'],
-        ['bookmarks', 'Bookmarks panel and page'],
-        ['pages', 'Pages panel and page'],
-        ['attachments', 'Attachments panel and page'],
-        ['layers', 'Layers panel and page'],
+        ['none', '仅页面'],
+        ['bookmarks', '书签面板和页面'],
+        ['pages', '页面面板和页面'],
+        ['attachments', '附件面板和页面'],
+        ['layers', '图层面板和页面'],
       ],
       view.panel,
     );
@@ -10368,9 +10373,9 @@ export function createEditor({
     const zoom = selectInput(
       'detail-zoom',
       [
-        ['default', 'Default'],
-        ['fit', 'Fit width'],
-        ['page', 'Fit page'],
+        ['default', '默认'],
+        ['fit', '适合宽度'],
+        ['page', '适合整页'],
         // A magnification the list lacks is offered as the file has it, so it is kept.
         ...[0.5, 0.75, 1, 1.25, 1.5, 2, view.zoom]
           .filter((value, i, all) => typeof value === 'number' && all.indexOf(value) === i)
@@ -10387,19 +10392,19 @@ export function createEditor({
     const initialView = el(
       'details',
       { class: 'detail-section' },
-      el('summary', {}, 'Initial view'),
+      el('summary', {}, '初始视图'),
       el(
         'div',
         { class: 'field-grid' },
-        labeled('detail-layout', 'Page layout', layout),
-        labeled('detail-panel', 'Navigation', panel),
-        labeled('detail-open-page', 'Open to page', openPage),
-        labeled('detail-zoom', 'Magnification', zoom),
+        labeled('detail-layout', '页面布局', layout),
+        labeled('detail-panel', '导航', panel),
+        labeled('detail-open-page', '打开到页码', openPage),
+        labeled('detail-zoom', '缩放比例', zoom),
       ),
       el(
         'label',
         { class: 'checkbox-row', for: 'detail-display-title' },
-        el('span', {}, 'Window shows the name stored in the document, not the file name'),
+        el('span', {}, '窗口显示文档中存储的标题，而非文件名'),
         displayTitle,
       ),
     );
@@ -10407,7 +10412,7 @@ export function createEditor({
     const fontList = el(
       'details',
       { class: 'detail-section' },
-      el('summary', {}, `Fonts (${fonts.length})`),
+      el('summary', {}, `字体（${fonts.length}）`),
       fonts.length
         ? el(
             'ul',
@@ -10427,7 +10432,7 @@ export function createEditor({
               ),
             ),
           )
-        : el('p', { class: 'muted' }, 'The pages use no fonts.'),
+        : el('p', { class: 'muted' }, '这些页面未使用字体。'),
     );
     if (!access().edit)
       [layout, panel, openPage, zoom, displayTitle].forEach((control) => (control.disabled = true));
@@ -10476,7 +10481,7 @@ export function createEditor({
       apply();
     };
     const d = modal('文档属性', form, [
-      button('Cancel', null, () => d.close()),
+      button('取消', null, () => d.close()),
       ...(access().edit ? [button('保存属性', 'Check', apply, 'btn primary')] : []),
     ]);
     inputs.title.focus();
@@ -10488,8 +10493,8 @@ export function createEditor({
     const format = selectInput(
       'images-format',
       [
-        ['image/png', 'PNG (sharp, larger files)'],
-        ['image/jpeg', 'JPEG (smaller files)'],
+        ['image/png', 'PNG（清晰，文件较大）'],
+        ['image/jpeg', 'JPEG（文件较小）'],
       ],
       'image/png',
     );
@@ -10530,8 +10535,8 @@ export function createEditor({
       apply();
     };
     const d = modal('将页面下载为图片', form, [
-      button('Cancel', null, () => d.close()),
-      button('Download', 'ImageDown', apply, 'btn primary'),
+      button('取消', null, () => d.close()),
+      button('下载', 'ImageDown', apply, 'btn primary'),
     ]);
     format.focus();
   }
@@ -10549,9 +10554,9 @@ export function createEditor({
     busy = true;
     updateStatus();
     const controller = new AbortController();
-    const progress = el('p', { class: 'muted', role: 'status' }, 'Preparing pages…');
+    const progress = el('p', { class: 'muted', role: 'status' }, '正在准备页面…');
     const d = modal('正在将页面下载为图片', el('div', { class: 'stack' }, progress), [
-      button('Cancel', null, () => controller.abort()),
+      button('取消', null, () => controller.abort()),
     ]);
     // Escape and the close button cancel too; the dialog closes on its own when done.
     let done = false;
@@ -10566,7 +10571,7 @@ export function createEditor({
       let picture;
       for (const [k, index] of indices.entries()) {
         controller.signal.throwIfAborted();
-        progress.textContent = `Rendering page ${k + 1} of ${indices.length}…`;
+        progress.textContent = `正在渲染第 ${k + 1} 页，共 ${indices.length} 页…`;
         const blob = await pageImage(thisPdf, index, { dpi, type, signal: controller.signal });
         if (destroyed) return;
         // Limit the base before adding the page number so long names cannot collide in a ZIP.
@@ -10625,8 +10630,8 @@ export function createEditor({
       });
       const d = modal(
         title,
-        el('div', { class: 'stack' }, labeled('comment-text', 'Text', area)),
-        [button('Cancel', null, () => d.close()), button('Add', null, done, 'btn primary')],
+        el('div', { class: 'stack' }, labeled('comment-text', '文本', area)),
+        [button('取消', null, () => d.close()), button('添加', null, done, 'btn primary')],
         dialogOptions,
       );
       d.addEventListener('close', () => resolve(), { once: true });
@@ -10779,7 +10784,7 @@ export function createEditor({
       const rect = boxed
         ? normalizeRect(pdfPoint(g.start), pdfPoint(end))
         : readerRectOnPage(g.start, 180 * pt, 50 * pt);
-      return commentTextDialog('Text box', (doc, text) =>
+      return commentTextDialog('文本框', (doc, text) =>
         addTextBox(doc, g.page, {
           rect,
           text,
@@ -10852,15 +10857,15 @@ export function createEditor({
     const status = el(
       'select',
       {
-        'aria-label': 'Review status',
+        'aria-label': '审阅状态',
         disabled: !access().annotate,
         onchange: () =>
           safe(() =>
             run(
               (doc, id) =>
                 setReviewState(doc, pageIndex, id, { state: status.value, author: author() }),
-              `Status set to ${status.value}.`,
-              'Review status',
+              `状态已设为 ${status.value}。`,
+              '审阅状态',
             ),
           )(),
       },
@@ -10871,8 +10876,8 @@ export function createEditor({
     const replyText = el('textarea', {
       class: 'input',
       rows: 2,
-      placeholder: 'Write a reply',
-      'aria-label': 'Reply text',
+      placeholder: '写回复',
+      'aria-label': '回复内容',
     });
     const reply = safe(async () => {
       const text = replyText.value.trim();
@@ -10882,8 +10887,8 @@ export function createEditor({
       try {
         await run(
           (doc, id) => addReply(doc, pageIndex, id, { text, author: author() }),
-          'Reply added.',
-          'Reply text',
+          '回复已添加。',
+          '回复内容',
         );
       } finally {
         delete replyText.dataset.sent;
@@ -10916,12 +10921,12 @@ export function createEditor({
       );
     const replies = replyItems(entry.replies || []);
     return {
-      status: el('label', { class: 'annotation-status' }, el('span', {}, 'Status'), status),
+      status: el('label', { class: 'annotation-status' }, el('span', {}, '状态'), status),
       replies:
         replies.length > 0 &&
-        el('ul', { class: 'annotation-replies', 'aria-label': 'Replies' }, ...replies),
+        el('ul', { class: 'annotation-replies', 'aria-label': '回复' }, ...replies),
       replyText,
-      replyButton: button('Reply', null, reply, 'btn', { disabled: !access().annotate }),
+      replyButton: button('回复', null, reply, 'btn', { disabled: !access().annotate }),
     };
   }
   /** The selected comment's text, look, replies, and review status in the properties panel. */
@@ -10948,7 +10953,7 @@ export function createEditor({
       class: 'input',
       rows: 3,
       maxlength: 20000,
-      'aria-label': entry.subtype === 'FreeText' ? 'Text' : 'Comment',
+      'aria-label': entry.subtype === 'FreeText' ? '文本' : '批注',
       readOnly: !!entry.lockedContents || !!entry.readOnly || !access().annotate,
     });
     text.value = entry.contents || '';
@@ -10974,7 +10979,7 @@ export function createEditor({
     const color = el('input', {
       type: 'color',
       value: entry.color || '#e5322d',
-      'aria-label': entry.subtype === 'FreeText' ? 'Text color' : 'Color',
+      'aria-label': entry.subtype === 'FreeText' ? '文字颜色' : '颜色',
       disabled: !accepts('color'),
       onchange: () => apply({ color: color.value }),
     });
@@ -10982,14 +10987,14 @@ export function createEditor({
     const fill = el('input', {
       type: 'color',
       value: entry.fill || '#ffffff',
-      'aria-label': 'Fill color',
+      'aria-label': '填充颜色',
       disabled: !accepts('fill'),
       onchange: () => apply({ fill: fill.value }),
     });
     const noFill = el('input', {
       type: 'checkbox',
       checked: !entry.fill,
-      'aria-label': 'No fill',
+      'aria-label': '无填充',
       disabled: !accepts('fill'),
       onchange: () => apply({ fill: noFill.checked ? null : fill.value }),
     });
@@ -10999,7 +11004,7 @@ export function createEditor({
     const width = el(
       'select',
       {
-        'aria-label': 'Line width',
+        'aria-label': '线宽',
         disabled: !accepts('width'),
         onchange: () => apply({ width: Number(width.value) / pagePt }),
       },
@@ -11015,7 +11020,7 @@ export function createEditor({
       max: 100,
       step: 5,
       value: Math.round((entry.opacity ?? 1) * 100),
-      'aria-label': 'Opacity',
+      'aria-label': '不透明度',
       disabled: !accepts('opacity'),
       onchange: () => apply({ opacity: Number(opacity.value) / 100 }),
     });
@@ -11029,7 +11034,7 @@ export function createEditor({
         step: 'any',
         required: true,
         value: Number(((entry.fontSize || 12 / pagePt) * pagePt).toPrecision(12)),
-        'aria-label': 'Font size',
+        'aria-label': '字号',
         disabled: !accepts('fontSize'),
         onchange: () => {
           if (fontSize.reportValidity()) apply({ fontSize: Number(fontSize.value) / pagePt });
@@ -11059,16 +11064,16 @@ export function createEditor({
       el(
         'div',
         { class: 'annotation-style' },
-        el('label', {}, el('span', {}, 'Color'), color),
-        fillable && el('label', {}, el('span', {}, 'Fill'), fill),
+        el('label', {}, el('span', {}, '颜色'), color),
+        fillable && el('label', {}, el('span', {}, '填充'), fill),
         // Said in words: a bare tick beside Fill read as "filled" for a shape with no fill.
-        fillable && el('label', { class: 'annotation-check' }, noFill, el('span', {}, 'No fill')),
+        fillable && el('label', { class: 'annotation-check' }, noFill, el('span', {}, '无填充')),
         // A text box without a frame has no line for a width to change.
         annotationAccepts(entry.subtype, 'width') &&
           (entry.subtype !== 'FreeText' || entry.borderColor) &&
-          el('label', {}, el('span', {}, 'Width'), width),
-        el('label', {}, el('span', {}, 'Opacity'), opacity),
-        fontSize && el('label', {}, el('span', {}, 'Font size'), fontSize),
+          el('label', {}, el('span', {}, '线宽'), width),
+        el('label', {}, el('span', {}, '不透明度'), opacity),
+        fontSize && el('label', {}, el('span', {}, '字号'), fontSize),
       ),
       thread.status,
       thread.replies,
@@ -11077,7 +11082,7 @@ export function createEditor({
         'div',
         { class: 'annotation-actions' },
         thread.replyButton,
-        button('Delete', 'Trash2', () => afterText(() => removeAnnotation(entry)), 'btn danger', {
+        button('删除', 'Trash2', () => afterText(() => removeAnnotation(entry)), 'btn danger', {
           disabled: entry.locked || entry.readOnly || !access().annotate,
         }),
       ),
@@ -11141,7 +11146,7 @@ export function createEditor({
     const base = safeName(name).replace(/\.pdf$/i, '');
     // A file with nothing in it would only leave the reader wondering what went wrong.
     if (!doc.getPages().some((page) => listAnnotations(doc, page).length)) {
-      toast('This PDF has no comments to export.');
+      toast('此 PDF 没有可导出的批注。');
       return;
     }
     if (kind === 'summary') {
@@ -11163,7 +11168,7 @@ export function createEditor({
       const file = input.files?.[0];
       if (!file) return;
       // Reading a file that cannot be imported anyway would only hold up the tab.
-      if (file.size > MAX_XFDF_SIZE) throw new Error('This comments file is too large to import.');
+      if (file.size > MAX_XFDF_SIZE) throw new Error('此批注文件过大，无法导入。');
       const xfdf = await file.text();
       let result = null;
       await mutate(
@@ -11188,8 +11193,8 @@ export function createEditor({
       const added = imported
         ? `${new Intl.ListFormat('en').format(parts)} imported.`
         : skipped
-          ? 'No comments were imported.'
-          : 'There were no new comments to import.';
+          ? '未导入任何批注。'
+          : '没有可导入的新批注。';
       // Comments left out must not pass by unnoticed: they are missing from the PDF.
       if (skipped)
         toast(
@@ -11202,10 +11207,10 @@ export function createEditor({
   }
   /* ---------- Prepare a form ---------- */
   const FIELD_DEFAULTS = {
-    dropdown: { options: ['Option 1', 'Option 2', 'Option 3'] },
-    listbox: { options: ['Option 1', 'Option 2', 'Option 3'] },
+    dropdown: { options: ['选项 1', '选项 2', '选项 3'] },
+    listbox: { options: ['选项 1', '选项 2', '选项 3'] },
     button: { label: 'Button' },
-    radio: { exportValue: 'Choice 1' },
+    radio: { exportValue: '选项 1' },
   };
   async function refreshDesigner() {
     if (!preparing || !pdf || !viewport) return;
@@ -11293,11 +11298,11 @@ export function createEditor({
     const nameInput = el('input', { class: 'input', value: field.name, maxlength: 120 });
     const tooltip = el('input', { class: 'input', value: props.tooltip || '', maxlength: 300 });
     const required = checkbox('field-required', 'Required', props.required);
-    const readOnly = checkbox('field-readonly', 'Read only', props.readOnly);
+    const readOnly = checkbox('field-readonly', '只读', props.readOnly);
     const border = el('input', { type: 'color', value: props.borderColor || '#000000' });
-    const noBorder = checkbox('field-no-border', 'No border', !props.borderColor);
+    const noBorder = checkbox('field-no-border', '无边框', !props.borderColor);
     const fill = el('input', { type: 'color', value: props.backgroundColor || '#ffffff' });
-    const noFill = checkbox('field-no-fill', 'No fill', !props.backgroundColor);
+    const noFill = checkbox('field-no-fill', '无填充', !props.backgroundColor);
     // Choosing a color means having one.
     border.addEventListener('input', () => (noBorder.box.checked = false));
     fill.addEventListener('input', () => (noFill.box.checked = false));
@@ -11326,15 +11331,15 @@ export function createEditor({
     const specific = [];
     const read = {};
     if (field.type === 'text' || field.type === 'date') {
-      const multiline = checkbox('field-multiline', 'Multi-line', props.multiline);
-      const password = checkbox('field-password', 'Password (characters hidden)', props.password);
+      const multiline = checkbox('field-multiline', '多行', props.multiline);
+      const password = checkbox('field-password', '密码（字符隐藏）', props.password);
       const maxLength = el('input', {
         class: 'input',
         type: 'number',
         min: 1,
         step: 1,
         value: props.maxLength ?? '',
-        placeholder: 'No limit',
+        placeholder: '无限制',
       });
       const alignment = selectInput(
         'field-alignment',
@@ -11347,9 +11352,9 @@ export function createEditor({
       );
       const defaultValue = el('input', { class: 'input', value: props.defaultValue || '' });
       specific.push(
-        labeled('field-default', 'Default value', defaultValue),
+        labeled('field-default', '默认值', defaultValue),
         labeled('field-alignment', 'Alignment', alignment),
-        labeled('field-maxlength', 'Character limit', maxLength),
+        labeled('field-maxlength', '字符数限制', maxLength),
         ...(field.type === 'text' ? [multiline.row, password.row] : []),
       );
       Object.assign(read, {
@@ -11368,10 +11373,10 @@ export function createEditor({
         Object.keys(BUTTON_STYLES).map((key) => [key, key[0].toUpperCase() + key.slice(1)]),
         props.style || 'check',
       );
-      const checked = checkbox('field-checked', 'Checked by default', props.checkedByDefault);
+      const checked = checkbox('field-checked', '默认选中', props.checkedByDefault);
       specific.push(
-        labeled('field-export', 'Export value', exportValue),
-        labeled('field-style', 'Check style', style),
+        labeled('field-export', '导出值', exportValue),
+        labeled('field-style', '选中样式', style),
         checked.row,
       );
       Object.assign(read, {
@@ -11387,10 +11392,10 @@ export function createEditor({
         'aria-describedby': 'field-options-hint',
       });
       options.value = (props.options || []).map((option) => option.label ?? option).join('\n');
-      const editable = checkbox('field-editable', 'Allow typing a custom value', props.editable);
-      const multi = checkbox('field-multi', 'Allow choosing several', props.multiSelect);
+      const editable = checkbox('field-editable', '允许输入自定义值', props.editable);
+      const multi = checkbox('field-multi', '允许多选', props.multiSelect);
       specific.push(
-        labeled('field-options', 'Options, one per line', options),
+        labeled('field-options', '选项（每行一个）', options),
         field.type === 'dropdown' ? editable.row : multi.row,
       );
       Object.assign(read, {
@@ -11477,22 +11482,22 @@ export function createEditor({
       'form',
       { class: 'stack' },
       labeled('field-name', 'Name', nameInput),
-      labeled('field-tooltip', 'Tooltip (read to screen reader users)', tooltip),
+      labeled('field-tooltip', '工具提示（供读屏用户朗读）', tooltip),
       el('div', { class: 'field-grid' }, required.row, readOnly.row),
       ...specific,
       el(
         'div',
         { class: 'field-grid' },
-        labeled('field-border', 'Border color', border, noBorder.row),
-        labeled('field-fill', 'Fill color', fill, noFill.row),
+        labeled('field-border', '边框颜色', border, noBorder.row),
+        labeled('field-fill', '填充颜色', fill, noFill.row),
       ),
-      labeled('field-size', 'Font size (0 fits the box)', fontSize),
+      labeled('field-size', '字号（0 表示适应框）', fontSize),
       size &&
         el(
           'div',
           { class: 'field-grid' },
-          labeled('field-width', 'Width (pt)', size.width),
-          labeled('field-height', 'Height (pt)', size.height),
+          labeled('field-width', '宽度（pt）', size.width),
+          labeled('field-height', '高度（pt）', size.height),
         ),
     );
     form.onsubmit = (e) => {
@@ -11500,11 +11505,11 @@ export function createEditor({
       save();
     };
     // A new field is already on the page: Done keeps it with whatever was set here.
-    const d = modal(`${fieldTypeLabel(field.type)} properties`, form, [
-      button('Delete field', 'Trash2', remove, 'btn danger'),
+    const d = modal(`${fieldTypeLabel(field.type)}属性`, form, [
+      button('删除字段', 'Trash2', remove, 'btn danger'),
       ...(created
-        ? [button('Done', null, save, 'btn primary')]
-        : [button('Cancel', null, () => d.close()), button('Save', null, save, 'btn primary')]),
+        ? [button('完成', null, save, 'btn primary')]
+        : [button('取消', null, () => d.close()), button('保存', null, save, 'btn primary')]),
     ]);
     nameInput.select();
   }
@@ -11530,7 +11535,7 @@ export function createEditor({
     }
     const list = el(
       'ul',
-      { class: 'redact-results', 'aria-label': 'Fields found' },
+      { class: 'redact-results', 'aria-label': '发现的字段' },
       ...found.map((field, i) =>
         el(
           'li',
@@ -11542,7 +11547,7 @@ export function createEditor({
             el(
               'span',
               {},
-              `Page ${field.page + 1}: ${fieldTypeLabel(field.type)} “${field.name || field.label || 'Untitled'}”`,
+              `第 ${field.page + 1} 页：${fieldTypeLabel(field.type)} “${field.name || field.label || '无标题'}”`,
             ),
           ),
         ),
@@ -11564,7 +11569,7 @@ export function createEditor({
               multiline: field.multiline || undefined,
             });
         },
-        `${chosen.length} ${chosen.length === 1 ? 'field' : 'fields'} created.`,
+        `已创建 ${chosen.length} 个字段。`,
         'edit',
       );
     });
@@ -11576,12 +11581,12 @@ export function createEditor({
         el(
           'p',
           { class: 'muted' },
-          `${found.length} possible ${found.length === 1 ? 'field was' : 'fields were'} found in blanks, lines, and boxes. Choose the ones to create.`,
+          `在空白、线条和框线中发现了 ${found.length} 个可能的字段。请选择要创建的字段。`,
         ),
         list,
       ),
       [
-        button('Cancel', null, () => d.close()),
+        button('取消', null, () => d.close()),
         button('创建字段', null, create, 'btn primary'),
       ],
     );
@@ -11638,12 +11643,12 @@ export function createEditor({
         const doc = await PDFDocument.load(session.bytes, { updateMetadata: false });
         // The title readers show, as Document details has it: the XMP one unless Info is newer.
         const { documentDetails } = await import('./core/details.js');
-        const title = await promptText('Document title', 'Title', documentDetails(doc).title);
+        const title = await promptText('文档标题', 'Title', documentDetails(doc).title);
         if (title == null) return;
         await run(
           (d) => a11y.setTitle(d, title),
           'Title set; readers will show it.',
-          'The PDF already has this title.',
+          'PDF 已使用此标题。',
         );
         break;
       }
@@ -11652,15 +11657,15 @@ export function createEditor({
         const doc = await PDFDocument.load(session.bytes, { updateMetadata: false });
         const current = doc.catalog.lookup(PDFName.of('Lang'))?.decodeText?.().trim();
         const lang = await promptText(
-          'Document language',
-          'Language (for example en-US or fr-CA)',
+          '文档语言',
+          '语言（例如 zh-CN 或 en-US）',
           current || navigator.language || 'en-US',
         );
         if (lang == null) return;
         await run(
           (d) => a11y.setLanguage(d, lang.trim()),
-          'Language set.',
-          'The PDF already has this language.',
+          '语言已设置。',
+          'PDF 已使用此语言。',
         );
         break;
       }
@@ -11760,10 +11765,10 @@ export function createEditor({
         'div',
         { class: 'stack alt-text-list' },
         ...figures.map((figure, i) =>
-          labeled(`alt-${i}`, `Figure ${i + 1} on page ${figure.page + 1}`, inputs[i]),
+          labeled(`alt-${i}`, `第 ${figure.page + 1} 页插图 ${i + 1}`, inputs[i]),
         ),
       ),
-      [button('Cancel', null, () => d.close()), button('Save', null, save, 'btn primary')],
+      [button('取消', null, () => d.close()), button('保存', null, save, 'btn primary')],
     );
     return dialogFinished(d, () => saving);
   }
@@ -11788,7 +11793,7 @@ export function createEditor({
       saving = mutateDialog(
         d,
         (doc) => setFieldDescriptions(doc, descriptions),
-        'Fields described.',
+        '已保存字段说明。',
       );
       await saving;
     });
@@ -11800,7 +11805,7 @@ export function createEditor({
         { class: 'stack' },
         ...fields.map((field, i) => labeled(`field-tip-${i}`, field.name, inputs[i])),
       ),
-      [button('Cancel', null, () => d.close()), button('Save', null, save, 'btn primary')],
+      [button('取消', null, () => d.close()), button('保存', null, save, 'btn primary')],
     );
     return dialogFinished(d, () => saving);
   }
@@ -11808,7 +11813,7 @@ export function createEditor({
   function showStandardsBar() {
     standardsBar.hidden = !pdfaClaim;
     if (pdfaClaim)
-      standardsText.textContent = `This file claims compliance with PDF/A-${pdfaClaim.part}${pdfaClaim.conformance}. Edits keep that claim only if the result still complies.`;
+      standardsText.textContent = `此文件声明符合 PDF/A-${pdfaClaim.part}${pdfaClaim.conformance} 标准。仅当编辑后的结果仍符合规范时，该声明才有效。`;
   }
   /** Check against a PDF/A level, or convert to it, and show what is left to fix. */
   async function pdfaDialog(mode = 'check') {
@@ -11833,13 +11838,13 @@ export function createEditor({
           'p',
           { class: 'muted' },
           mode === 'check'
-            ? 'Preflight the PDF against a PDF/A level and list what does not comply.'
-            : 'Fix what can be fixed automatically (color profile, metadata, fonts of the standard 14, scripts, annotation appearances) and report what remains. Password protection is not allowed in PDF/A.',
+            ? '对照 PDF/A 标准级别进行预检并列出不合规项。'
+            : '自动修复可自动处理的内容（颜色配置文件、元数据、标准 14 种字体、脚本、批注外观）并报告剩余问题。PDF/A 不允许使用密码保护。',
         ),
         labeled('pdfa-level', '标准级别', levelSelect),
       ),
       [
-        button('Cancel', null, () => d.close()),
+        button('取消', null, () => d.close()),
         button(mode === 'check' ? '检查' : '转换', null, run, 'btn primary'),
       ],
     );
@@ -11857,7 +11862,7 @@ export function createEditor({
           el(
             'span',
             {},
-            `${issue.message}${issue.count > 1 ? ` (${issue.count})` : ''}${Number.isInteger(issue.page) ? ` — page ${issue.page}` : ''}`,
+            `${issue.message}${issue.count > 1 ? ` (${issue.count})` : ''}${Number.isInteger(issue.page) ? ` — 第 ${issue.page} 页` : ''}`,
           ),
         ),
       ),
@@ -11871,14 +11876,14 @@ export function createEditor({
           'p',
           {},
           report.compliant
-            ? 'No problems were found for this level.'
-            : `${issues.length} ${issues.length === 1 ? 'problem remains' : 'problems remain'}.`,
+            ? '此级别未发现问题。'
+            : `仍有 ${issues.length} 个问题。`,
         ),
         fixed.length > 0 &&
           el(
             'details',
             { open: true },
-            el('summary', {}, `Fixed (${fixed.length})`),
+            el('summary', {}, `已修复 (${fixed.length})`),
             el(
               'ul',
               {},
@@ -11891,21 +11896,21 @@ export function createEditor({
         el(
           'p',
           { class: 'muted' },
-          'This check covers the PDF/A rules that matter most in practice; a dedicated validator checks every clause.',
+          '此检查涵盖实践中最重要的 PDF/A 规则；专用验证器可检查全部条款。',
         ),
       ),
-      [button('Close', null, () => d.close(), 'btn primary')],
+      [button('关闭', null, () => d.close(), 'btn primary')],
     );
   }
   async function preflight(part, conformance) {
     const { preflightPdfA } = await import('./core/pdfa.js');
     const doc = await PDFDocument.load(session.bytes, { updateMetadata: false });
     const report = preflightPdfA(doc, { part, conformance, bytes: session.bytes });
-    showPdfaReport(`PDF/A-${part}${conformance} check`, report);
+    showPdfaReport(`PDF/A-${part}${conformance} 检查`, report);
   }
   async function convertPdfA(part, conformance) {
     requireAccess('edit');
-    if (protection) throw new Error('Remove the password first: PDF/A files cannot be encrypted.');
+    if (protection) throw new Error('请先移除密码：PDF/A 文件不能加密。');
     const { convertToPdfA, pdfaIdentification } = await import('./core/pdfa.js');
     let result = null;
     const previous = pdfaClaim;
@@ -11924,7 +11929,7 @@ export function createEditor({
     const doc = await PDFDocument.load(session.bytes, { updateMetadata: false });
     pdfaClaim = pdfaIdentification(doc);
     showStandardsBar();
-    showPdfaReport(`Saved as PDF/A-${part}${conformance}`, result, result.fixed);
+    showPdfaReport(`已另存为 PDF/A-${part}${conformance}`, result, result.fixed);
   }
   /* ---------- Compare files ---------- */
   let comparison = null; // { view, tasks }
@@ -11939,7 +11944,7 @@ export function createEditor({
       input.onchange = safe(async () => {
         const file = input.files?.[0];
         if (!file) return;
-        if (file.size > MAX_FILE_SIZE) throw new Error('Choose a PDF smaller than 100 MB.');
+        if (file.size > MAX_FILE_SIZE) throw new Error('请选择小于 100 MB 的 PDF 文件。');
         let bytes = new Uint8Array(await file.arrayBuffer());
         const source = await validatePdf(bytes).catch((error) => {
           if (error.code !== 'encrypted') throw error;
@@ -11961,7 +11966,7 @@ export function createEditor({
       d.close();
       await runCompare(chosen, { currentIsNew: newer.checked });
     });
-    const compareButton = button('Compare', null, run, 'btn primary', { disabled: true });
+    const compareButton = button('比较', null, run, 'btn primary', { disabled: true });
     const d = modal(
       '比较文件',
       el(
@@ -11970,7 +11975,7 @@ export function createEditor({
         el(
           'p',
           { class: 'muted' },
-          `Compare ${name} with another version. Text that was inserted, deleted, or replaced, formatting changes, pictures, and added, removed, or moved pages are shown side by side.`,
+          `将“${name}”与另一个版本进行比较。并排显示插入、删除或替换的文本、格式更改、图片以及添加、删除或移动的页面。`,
         ),
         el(
           'div',
@@ -11981,11 +11986,11 @@ export function createEditor({
         el(
           'label',
           { class: 'checkbox-row', for: 'compare-newer' },
-          el('span', {}, `${name} is the newer version`),
+          el('span', {}, `${name} 是较新版本`),
           newer,
         ),
       ),
-      [button('Cancel', null, () => d.close()), compareButton],
+      [button('取消', null, () => d.close()), compareButton],
     );
   }
   async function runCompare(other, { currentIsNew = false } = {}) {
@@ -11996,10 +12001,10 @@ export function createEditor({
     busy = true;
     updateStatus();
     const controller = new AbortController();
-    const bar = el('progress', { max: 1, value: 0, 'aria-label': 'Comparison progress' });
+    const bar = el('progress', { max: 1, value: 0, 'aria-label': '比对进度' });
     const progress = el('p', { class: 'muted', role: 'status' }, '正在读取两个版本…');
     const d = modal('正在比较', el('div', { class: 'stack' }, progress, bar), [
-      button('Cancel', null, () => controller.abort()),
+      button('取消', null, () => controller.abort()),
     ]);
     let done = false;
     d.addEventListener('close', () => {
@@ -12020,7 +12025,7 @@ export function createEditor({
         onProgress: ({ phase, done: finished, total }) => {
           bar.value = total ? (phase === 'read' ? 0.9 : 1) * (finished / total) : 0;
           progress.textContent =
-            phase === 'read' ? `Reading pages (${finished} of ${total})…` : 'Comparing…';
+            phase === 'read' ? `正在读取页面（${finished} / ${total}）…` : '正在比对…';
         },
       });
       done = true;
@@ -12078,7 +12083,7 @@ export function createEditor({
       id: 'batch-current',
       checked: !untouchedBlank(),
     });
-    const list = el('ul', { class: 'combine-list', 'aria-label': 'Files to process' });
+    const list = el('ul', { class: 'combine-list', 'aria-label': '要处理的文件' });
     const renderFiles = () =>
       list.replaceChildren(
         ...files.map((file, i) =>
@@ -12086,7 +12091,7 @@ export function createEditor({
             'li',
             { class: 'combine-row' },
             el('span', { class: 'combine-name', title: file.name }, file.name),
-            iconButton(`Remove ${file.name}`, 'Trash2', () => {
+            iconButton(`移除 ${file.name}`, 'Trash2', () => {
               files.splice(i, 1);
               renderFiles();
               // The pressed button is gone; the file that takes its place, the one before it,
@@ -12103,7 +12108,7 @@ export function createEditor({
         // A file that cannot be added stops the rest, but those already added are listed.
         try {
           for (const file of input.files) {
-            if (file.size > MAX_FILE_SIZE) throw new Error(`${file.name} is larger than 100 MB.`);
+            if (file.size > MAX_FILE_SIZE) throw new Error(`${file.name} 大小超过 100 MB。`);
             files.push({ name: file.name, bytes: new Uint8Array(await file.arrayBuffer()) });
           }
         } finally {
@@ -12117,18 +12122,18 @@ export function createEditor({
       rotate: selectInput(
         'batch-rotate-degrees',
         [
-          ['90', 'Clockwise'],
-          ['270', 'Counterclockwise'],
-          ['180', 'Upside down'],
+          ['90', '顺时针 90°'],
+          ['270', '逆时针 90°'],
+          ['180', '旋转 180°'],
         ],
         '90',
       ),
       watermark: el('input', {
         id: 'batch-watermark-text',
         class: 'input',
-        value: 'CONFIDENTIAL',
+        value: '机密文件',
         maxlength: 200,
-        'aria-label': 'Watermark text',
+        'aria-label': '水印文本',
       }),
       pageNumbers: selectInput(
         'batch-numbers-format',
@@ -12141,9 +12146,9 @@ export function createEditor({
       bates: el('input', {
         id: 'batch-bates-prefix',
         class: 'input',
-        placeholder: 'Prefix, e.g. ABC',
+        placeholder: '前缀，例如 ABC',
         maxlength: 40,
-        'aria-label': 'Bates prefix',
+        'aria-label': '贝茨前缀',
       }),
       compress: selectInput(
         'batch-compress-level',
@@ -12155,13 +12160,13 @@ export function createEditor({
         class: 'input',
         type: 'password',
         autocomplete: 'new-password',
-        placeholder: 'Password to open',
-        'aria-label': 'Password for the processed files',
+        placeholder: '打开密码',
+        'aria-label': '已处理文件的密码',
       }),
     };
-    controls.rotate.setAttribute('aria-label', 'Rotation');
-    controls.pageNumbers.setAttribute('aria-label', 'Page number format');
-    controls.compress.setAttribute('aria-label', 'File size level');
+    controls.rotate.setAttribute('aria-label', '旋转角度');
+    controls.pageNumbers.setAttribute('aria-label', '页码格式');
+    controls.compress.setAttribute('aria-label', '压缩级别');
     const steps = Object.entries(BATCH_STEP_LABELS).map(([type, label]) => ({
       type,
       box: el('input', { type: 'checkbox', id: `batch-step-${type}` }),
@@ -12195,7 +12200,7 @@ export function createEditor({
               return { type: 'rotate', degrees: Number(value) };
             case 'watermark':
               // Said here, while the dialog is open, rather than once per file afterwards.
-              if (!value.trim()) throw new Error('Enter the watermark text.');
+              if (!value.trim()) throw new Error('请输入水印文本。');
               return { type: 'watermark', text: value };
             case 'pageNumbers':
               return { type: 'pageNumbers', format: value, position: 'bottom-center' };
@@ -12210,7 +12215,7 @@ export function createEditor({
             case 'compress':
               return { type: 'compress', level: value };
             case 'protect':
-              if (!value) throw new Error('Enter the password for the protected files.');
+              if (!value) throw new Error('请输入受保护文件的密码。');
               return { type: 'protect', open: value };
             default:
               return { type: step.type };
@@ -12236,20 +12241,20 @@ export function createEditor({
         el(
           'p',
           { class: 'muted' },
-          'Apply the same steps to several PDFs. The results download together.',
+          '对多个 PDF 应用相同的步骤。处理结果将一起下载。',
         ),
         el(
           'label',
           { class: 'checkbox-row', for: 'batch-current' },
-          el('span', {}, `Include ${name}`),
+          el('span', {}, `包含 ${name}`),
           includeCurrent,
         ),
         addButton,
         list,
-        el('h3', { class: 'batch-heading' }, 'Steps, in this order'),
+        el('h3', { class: 'batch-heading' }, '按此顺序执行步骤'),
         ...stepRows,
       ),
-      [button('Cancel', null, () => d.close()), button('开始处理', null, run, 'btn primary')],
+      [button('取消', null, () => d.close()), button('开始处理', null, run, 'btn primary')],
     );
   }
   async function runBatchSteps(inputs, steps) {
@@ -12258,10 +12263,10 @@ export function createEditor({
     busy = true;
     updateStatus();
     const controller = new AbortController();
-    const progress = el('p', { class: 'muted', role: 'status' }, 'Starting…');
-    const bar = el('progress', { max: inputs.length, value: 0, 'aria-label': 'Batch progress' });
+    const progress = el('p', { class: 'muted', role: 'status' }, '正在启动…');
+    const bar = el('progress', { max: inputs.length, value: 0, 'aria-label': '批量处理进度' });
     const d = modal('正在处理文件', el('div', { class: 'stack' }, progress, bar), [
-      button('Cancel', null, () => controller.abort()),
+      button('取消', null, () => controller.abort()),
     ]);
     let done = false;
     d.addEventListener('close', () => {
@@ -12346,10 +12351,10 @@ export function createEditor({
           'div',
           { class: 'stack' },
           el('p', {}, summary),
-          el('p', {}, 'Not everything went as usual. Check these before you share the files:'),
+          el('p', {}, '部分操作未完全按预期完成。在分享文件之前请检查以下内容：'),
           el('ul', {}, ...warnings.map((warning) => el('li', {}, warning))),
         ),
-        [button('OK', null, () => notice.close(), 'btn primary')],
+        [button('确定', null, () => notice.close(), 'btn primary')],
       );
     } catch (error) {
       if (!['AbortError', 'RenderingCancelledException'].includes(error?.name)) throw error;
@@ -12370,7 +12375,7 @@ export function createEditor({
     return pageSpeechText((await page.getTextContent()).items);
   }
   async function readAloud(toEnd = false) {
-    if (!canSpeak()) throw new Error('Reading aloud is not available here.');
+    if (!canSpeak()) throw new Error('此处无法使用朗读功能。');
     stopReading();
     const generation = Symbol('reading');
     reading = { generation, toEnd };
@@ -12420,13 +12425,13 @@ export function createEditor({
     const speaking = !!reading;
     return [
       {
-        label: 'Read this page',
+        label: '朗读此页',
         icon: 'BookOpen',
         disabled: !pdf || !canSpeak(),
         onSelect: safe(() => readAloud(false)),
       },
       {
-        label: 'Read to end of document',
+        label: '朗读到文档末尾',
         disabled: !pdf || !canSpeak(),
         onSelect: safe(() => readAloud(true)),
       },
@@ -12468,11 +12473,11 @@ export function createEditor({
       el(
         'label',
         { class: 'checkbox-row', for: 'ocr-skip' },
-        el('span', {}, 'Skip pages that already have text'),
+        el('span', {}, '跳过已有文本的页面'),
         skip,
       ),
       el('div', { class: 'field-grid' }, labeled('ocr-dpi', 'Resolution', dpi)),
-      el('p', { class: 'muted' }, 'Pages'),
+      el('p', { class: 'muted' }, '页面'),
       choices.list,
     );
     const apply = safe(async () => {
@@ -12485,7 +12490,7 @@ export function createEditor({
       apply();
     };
     const d = modal('识别文本', form, [
-      button('Cancel', null, () => d.close()),
+      button('取消', null, () => d.close()),
       button('识别文本', null, apply, 'btn primary'),
     ]);
   }
@@ -12496,10 +12501,10 @@ export function createEditor({
     busy = true;
     updateStatus();
     const controller = new AbortController();
-    const bar = el('progress', { max: 1, value: 0, 'aria-label': 'Recognition progress' });
+    const bar = el('progress', { max: 1, value: 0, 'aria-label': '识别进度' });
     const progress = el('p', { class: 'muted', role: 'status' }, '正在启动文本识别…');
     const d = modal('正在识别文本', el('div', { class: 'stack' }, progress, bar), [
-      button('Cancel', null, () => controller.abort()),
+      button('取消', null, () => controller.abort()),
     ]);
     let done = false;
     d.addEventListener('close', () => {
@@ -12522,7 +12527,7 @@ export function createEditor({
             continue;
           }
         }
-        progress.textContent = `Recognizing page ${index + 1} (${k + 1} of ${pages.length})…`;
+        progress.textContent = `正在识别第 ${index + 1} 页（共 ${pages.length} 页中的第 ${k + 1} 页）…`;
         // Only the page is read: the words of comments and form fields are not part of the
         // scan, and would stay behind as page text after they change or are removed.
         const picture = await pageImage(thisPdf, index, {
@@ -12547,8 +12552,8 @@ export function createEditor({
       if (!results.length) {
         toast(
           skipped === pages.length
-            ? 'These pages already have text, so there was nothing to recognize.'
-            : 'No text was found on these pages.',
+            ? '这些页面已包含文本，因此无需识别。'
+            : '在这些页面上未找到文本。',
         );
         return;
       }
@@ -12558,7 +12563,7 @@ export function createEditor({
         async (doc) => {
           for (const { index, result } of results) await addOcrTextLayer(doc, index, result);
         },
-        `Recognized ${words.toLocaleString()} ${words === 1 ? 'word' : 'words'} on ${results.length} ${results.length === 1 ? 'page' : 'pages'}. The text can now be searched and selected.`,
+        `在 ${results.length} 个页面上识别了 ${words.toLocaleString()} 个字词。现在可以对文本进行搜索和选择了。`,
       );
     } catch (error) {
       if (!['AbortError', 'RenderingCancelledException'].includes(error?.name)) throw error;
@@ -12580,8 +12585,8 @@ export function createEditor({
     }, null);
     toast(
       removed
-        ? `Recognized text removed from ${removed} ${removed === 1 ? 'page' : 'pages'}.`
-        : 'This PDF has no text recognized here.',
+        ? `已从 ${removed} 个页面中移除识别文本。`
+        : '此 PDF 中没有在此处识别的文本。',
     );
   }
   /** Export to an Office or text format: choose the pages (and slide pictures for PPTX). */
@@ -12589,12 +12594,12 @@ export function createEditor({
     requireAccess('copy');
     if (!pdf) return;
     const labels = {
-      docx: 'Microsoft Word document',
-      xlsx: 'Spreadsheet',
-      pptx: 'Presentation',
-      txt: 'Plain text',
-      html: 'Web page',
-      rtf: 'Rich text',
+      docx: 'Microsoft Word 文档',
+      xlsx: '电子表格',
+      pptx: '演示文稿',
+      txt: '纯文本',
+      html: '网页',
+      rtf: '富文本',
     };
     const choices = pageChoices('office-pages', pdf.numPages, { all: true });
     const backgrounds = el('input', { type: 'checkbox', id: 'office-backgrounds' });
@@ -12606,29 +12611,29 @@ export function createEditor({
         'p',
         { class: 'muted' },
         {
-          docx: 'Text becomes editable paragraphs, headings, lists, and tables, with the pictures in place.',
-          xlsx: 'Tables and aligned text become worksheet cells, one sheet per page; numbers, money, and dates stay numbers.',
-          pptx: 'Each page becomes a slide with its text in editable boxes and its pictures in place.',
-          txt: 'The text of each page in reading order.',
-          html: 'Headings, paragraphs, lists, tables, and pictures as a web page.',
-          rtf: 'Formatted text that most word processors open.',
+          docx: '文本将转为可编辑的段落、标题、列表和表格，并保留图片位置。',
+          xlsx: '表格和对齐的文本将转为工作表单元格，每页对应一个工作表；数字、货币和日期保留为数值。',
+          pptx: '每页将转为幻灯片，文本位于可编辑框中并保留图片位置。',
+          txt: '按阅读顺序排列的每页纯文本。',
+          html: '作为包含标题、段落、列表、表格和图片的网页。',
+          rtf: '大多数文字处理软件均可打开的格式化文本。',
         }[format],
       ),
       format === 'pptx' &&
         el(
           'label',
           { class: 'checkbox-row', for: 'office-backgrounds' },
-          el('span', {}, 'Put a picture of each page behind its slide (keeps drawings and charts)'),
+          el('span', {}, '在每张幻灯片后放置页面背景图片（保留绘图和图表）'),
           backgrounds,
         ),
       format === 'xlsx' &&
         el(
           'label',
           { class: 'checkbox-row', for: 'office-single-sheet' },
-          el('span', {}, 'Put every page on one worksheet'),
+          el('span', {}, '将所有页面放入单个工作表中'),
           singleSheet,
         ),
-      el('p', { class: 'muted' }, 'Pages'),
+      el('p', { class: 'muted' }, '页面'),
       choices.list,
     );
     const apply = safe(async () => {
@@ -12644,8 +12649,8 @@ export function createEditor({
       e.preventDefault();
       apply();
     };
-    const d = modal(`Export to ${labels[format]}`, form, [
-      button('Cancel', null, () => d.close()),
+    const d = modal(`导出为 ${labels[format]}`, form, [
+      button('取消', null, () => d.close()),
       button('导出', 'Download', apply, 'btn primary'),
     ]);
   }
@@ -12655,10 +12660,10 @@ export function createEditor({
     busy = true;
     updateStatus();
     const controller = new AbortController();
-    const bar = el('progress', { max: 1, value: 0, 'aria-label': 'Export progress' });
+    const bar = el('progress', { max: 1, value: 0, 'aria-label': '导出进度' });
     const progress = el('p', { class: 'muted', role: 'status' }, '正在读取页面…');
-    const d = modal(`Exporting to ${label}`, el('div', { class: 'stack' }, progress, bar), [
-      button('Cancel', null, () => controller.abort()),
+    const d = modal(`正在导出为 ${label}`, el('div', { class: 'stack' }, progress, bar), [
+      button('取消', null, () => controller.abort()),
     ]);
     let done = false;
     d.addEventListener('close', () => {
@@ -12687,10 +12692,10 @@ export function createEditor({
           const count = pages.length;
           progress.textContent =
             finished < count
-              ? `Page ${finished + 1} of ${count}…`
+              ? `正在处理第 ${finished + 1} 页（共 ${count} 页）…`
               : finished < total - 1
-                ? `Drawing slide ${finished - count + 1} of ${count}…`
-                : 'Writing the file…';
+                ? `正在绘制幻灯片 ${finished - count + 1}（共 ${count} 张）…`
+                : '正在写入文件…';
         },
         renderPage: async (index, scale = 2) =>
           new Uint8Array(
@@ -12728,7 +12733,7 @@ export function createEditor({
     if (!pdf) return;
     // The tools pane offers Split whatever the length; the menus disable it instead.
     if (pdf.numPages < 2)
-      throw new Error('This PDF has only one page, so there is nothing to split.');
+      throw new Error('此 PDF 只有一页，无需拆分。');
     const count = pdf.numPages;
     const every = el('input', {
       type: 'number',
@@ -12737,14 +12742,14 @@ export function createEditor({
       max: count - 1,
       step: 1,
       value: Math.max(Math.min(count - 1, 2), Math.ceil(count / MAX_SPLIT_FILES)),
-      'aria-label': 'Pages per part',
+      'aria-label': '每份页数',
       inputmode: 'numeric',
     });
     const points = el('input', {
       type: 'text',
       class: 'input',
-      placeholder: 'e.g. 3, 7',
-      'aria-label': 'Pages where new parts begin',
+      placeholder: '例如：3, 7',
+      'aria-label': '新分卷起始页码',
       inputmode: 'numeric',
       autocomplete: 'off',
     });
@@ -12762,14 +12767,14 @@ export function createEditor({
       );
     const list = el(
       'div',
-      { class: 'choice-list', role: 'radiogroup', 'aria-label': 'How to split' },
-      choice('each', `Each page as its own PDF (${count} files)`, count <= MAX_SPLIT_FILES),
+      { class: 'choice-list', role: 'radiogroup', 'aria-label': '拆分方式' },
+      choice('each', `每页拆分为单独的 PDF（共 ${count} 个文件）`, count <= MAX_SPLIT_FILES),
       // "Every 2 pages": the number alone did not say what it counts.
-      choice('every', 'Every', count > MAX_SPLIT_FILES, [
+      choice('every', '每', count > MAX_SPLIT_FILES, [
         every,
-        el('span', { 'aria-hidden': 'true' }, 'pages'),
+        el('span', { 'aria-hidden': 'true' }, '页'),
       ]),
-      choice('at', 'New part before pages', false, points),
+      choice('at', '在指定页之前拆分为新部分', false, points),
     );
     for (const [input, value] of [
       [every, 'every'],
@@ -12871,8 +12876,8 @@ export function createEditor({
         ),
       };
     };
-    const fields = option('flatten-fields', 'Form fields', counts.fields);
-    const annotations = option('flatten-annotations', 'Comments and markups', counts.annotations);
+    const fields = option('flatten-fields', '表单域', counts.fields);
+    const annotations = option('flatten-annotations', '批注与标记', counts.annotations);
     const form = el(
       'form',
       { class: 'stack' },
@@ -12924,7 +12929,7 @@ export function createEditor({
       apply();
     };
     const d = modal('拼合', form, [
-      button('Cancel', null, () => d.close()),
+      button('取消', null, () => d.close()),
       button('拼合', 'Layers', apply, 'btn primary'),
     ]);
   }
@@ -12947,7 +12952,7 @@ export function createEditor({
     );
     const list = el(
       'div',
-      { class: 'choice-list', role: 'radiogroup', 'aria-label': 'Picture quality' },
+      { class: 'choice-list', role: 'radiogroup', 'aria-label': '图片质量' },
       ...rows,
     );
     const form = el(
@@ -12956,7 +12961,7 @@ export function createEditor({
       el(
         'p',
         { class: 'muted' },
-        `This PDF is ${formatBytes(session.bytes.length)}. Pictures are shrunk to the chosen resolution and saved as JPEG; text, drawings, and form fields stay sharp, and leftovers from earlier edits are removed. Undo brings the original back.`,
+        `当前 PDF 大小为 ${formatBytes(session.bytes.length)}。图片将缩小至所选分辨率并保存为 JPEG；文本、绘图和表单字段保持清晰，先前编辑留下的残留内容将被移除。撤销可恢复原始内容。`,
       ),
       list,
     );
@@ -12970,7 +12975,7 @@ export function createEditor({
       apply();
     };
     const d = modal('压缩 PDF 大小', form, [
-      button('Cancel', null, () => d.close()),
+      button('取消', null, () => d.close()),
       button('压缩', 'Shrink', apply, 'btn primary'),
     ]);
     list.querySelector('input:checked')?.focus();
@@ -12979,7 +12984,7 @@ export function createEditor({
     requireAccess('edit');
     if (busy || destroyed) return;
     // Rewriting the file invalidates its signatures, as any other edit does.
-    if (!(await confirmSignedEdit()) || busy || destroyed) return;
+    if (!(await confirmSignedEdit())) return;
     busy = true;
     activity = '正在压缩文件大小…';
     updateStatus();
@@ -13012,7 +13017,7 @@ export function createEditor({
     const progress = el(
       'p',
       { class: 'muted', role: 'status', hidden: true },
-      'Preparing your PDF…',
+      '正在准备您的 PDF…',
     );
     let extracting = false;
     const form = el(
@@ -13061,7 +13066,7 @@ export function createEditor({
     const d = modal(
       '提取页面',
       form,
-      [button('Cancel', null, () => d.close()), downloadButton],
+      [button('取消', null, () => d.close()), downloadButton],
       dialogOptions,
     );
   }
@@ -13146,13 +13151,13 @@ export function createEditor({
           markSearch();
         }
       } else {
-        searchCount.textContent = 'No matches';
+        searchCount.textContent = '无匹配项';
         markSearch();
       }
     } catch {
       if (isCurrent()) {
         pendingSearch = null;
-        searchCount.textContent = 'Search unavailable';
+        searchCount.textContent = '搜索不可用';
       }
     }
   }
@@ -13201,7 +13206,7 @@ export function createEditor({
       }
       activeMatch = start;
     } else activeMatch = (activeMatch + direction + total) % total;
-    searchCount.textContent = `${activeMatch + 1} of ${total}`;
+    searchCount.textContent = `第 ${activeMatch + 1} 项，共 ${total} 项`;
     const { page } = locateMatch(activeMatch);
     // A same-page match is still a navigation choice when an older request is pending.
     if (page === pageIndex && !pendingNavigation) markSearch();

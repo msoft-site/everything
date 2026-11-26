@@ -58,18 +58,18 @@ export function openFieldEditor(anchor, page, table, { field = null, onCreated, 
   if (state.type === 'formula') state.options.formula = toDisplay(state.options.formula, table.fields);
   if (state.type === 'button') state.options.url = toDisplay(state.options.url || '', table.fields);
   let showDesc = !!state.description;
-  const nameInput = h('input.input', { type: 'text', placeholder: 'Field name (optional)', 'aria-label': 'Field name', value: state.name, oninput: () => (state.name = nameInput.value) });
-  const typeBtn = h('button.type-btn', { type: 'button', 'aria-haspopup': 'menu', 'aria-label': 'Field type' });
+  const nameInput = h('input.input', { type: 'text', placeholder: '字段名称（可选）', 'aria-label': '字段名称', value: state.name, oninput: () => (state.name = nameInput.value) });
+  const typeBtn = h('button.type-btn', { type: 'button', 'aria-haspopup': 'menu', 'aria-label': '字段类型' });
   const optionsHost = h('div.field-options');
   const descHost = h('div');
   const error = h('p.field-error', { role: 'alert' });
-  const saveBtn = h('button.btn.primary', { type: 'button' }, editing ? 'Save' : 'Create field');
+  const saveBtn = h('button.btn.primary', { type: 'button' }, editing ? '保存' : '创建字段');
   const panel = h('div.field-editor', nameInput, typeBtn, h('p.type-desc'), optionsHost, descHost, error, h('div.popover-footer',
     h('button.link-btn.muted', { type: 'button', onclick: () => {
       showDesc = !showDesc;
       renderDesc();
-    } }, icon(showDesc ? 'minus' : 'plus', 14), showDesc ? 'Remove description' : 'Add description'),
-    h('div', { style: { display: 'flex', gap: '8px' } }, h('button.btn', { type: 'button', onclick: () => pop.close() }, 'Cancel'), saveBtn)));
+    } }, icon(showDesc ? 'minus' : 'plus', 14), showDesc ? '移除描述' : '添加描述'),
+    h('div', { style: { display: 'flex', gap: '8px' } }, h('button.btn', { type: 'button', onclick: () => pop.close() }, '取消'), saveBtn)));
 
   function renderType() {
     typeBtn.replaceChildren(icon(TYPES[state.type].icon, 16), h('span.grow', TYPES[state.type].label), icon('chevronDown', 14));
@@ -86,7 +86,7 @@ export function openFieldEditor(anchor, page, table, { field = null, onCreated, 
       lastGroup = g;
       items.push({ label: TYPES[t].label, icon: TYPES[t].icon, checked: state.type === t, radio: true, keywords: DESCRIPTIONS[t], onSelect: () => setType(t) });
     }
-    openMenu(typeBtn, items, { search: true, searchPlaceholder: 'Find a field type', label: 'Field types', width: 300 });
+    openMenu(typeBtn, items, { search: true, searchPlaceholder: '查找字段类型', label: '字段类型', width: 300 });
   });
 
   function setType(t) {
@@ -120,10 +120,10 @@ export function openFieldEditor(anchor, page, table, { field = null, onCreated, 
   function renderDesc() {
     descHost.replaceChildren();
     if (!showDesc) return;
-    const ta = h('textarea.textarea', { rows: 2, placeholder: 'Describe this field', 'aria-label': 'Description', oninput: () => (state.description = ta.value) });
+    const ta = h('textarea.textarea', { rows: 2, placeholder: '描述此字段', 'aria-label': '描述', oninput: () => (state.description = ta.value) });
     ta.value = state.description;
-    descHost.append(row('Description', ta));
-    panel.querySelector('.popover-footer .link-btn').replaceChildren(icon('minus', 14), 'Remove description');
+    descHost.append(row('描述', ta));
+    panel.querySelector('.popover-footer .link-btn').replaceChildren(icon('minus', 14), '移除描述');
   }
 
   const linkFields = () => table.fields.filter((f) => f.type === 'link' && f.id !== field?.id);
@@ -139,29 +139,29 @@ export function openFieldEditor(anchor, page, table, { field = null, onCreated, 
     const parts = [];
     switch (state.type) {
       case 'text':
-        parts.push(row('Default value', h('input.input', { type: 'text', value: o.default || '', placeholder: 'None', oninput: (e) => (o.default = e.target.value || undefined) })));
+        parts.push(row('默认值', h('input.input', { type: 'text', value: o.default || '', placeholder: '无', oninput: (e) => (o.default = e.target.value || undefined) })));
         break;
       case 'number':
-        parts.push(row('Precision', sel(PRECISIONS, o.precision ?? 0, (v) => (o.precision = Number(v)), 'Precision')));
+        parts.push(row('小数位数', sel(PRECISIONS, o.precision ?? 0, (v) => (o.precision = Number(v)), '小数位数')));
         break;
       case 'currency':
-        parts.push(h('div.form-pair', row('Symbol', h('input.input', { type: 'text', value: o.symbol ?? '$', maxLength: 4, oninput: (e) => (o.symbol = e.target.value) })), row('Precision', sel(PRECISIONS, o.precision ?? 2, (v) => (o.precision = Number(v)), 'Precision'))));
+        parts.push(h('div.form-pair', row('货币符号', h('input.input', { type: 'text', value: o.symbol ?? '$', maxLength: 4, oninput: (e) => (o.symbol = e.target.value) })), row('小数位数', sel(PRECISIONS, o.precision ?? 2, (v) => (o.precision = Number(v)), '小数位数'))));
         break;
       case 'percent':
-        parts.push(row('Precision', sel(PRECISIONS, o.precision ?? 0, (v) => (o.precision = Number(v)), 'Precision')));
+        parts.push(row('小数位数', sel(PRECISIONS, o.precision ?? 0, (v) => (o.precision = Number(v)), '小数位数')));
         break;
       case 'duration':
-        parts.push(row('Format', sel(DURATION_FORMATS.map((f) => [f, f]), o.format || 'h:mm', (v) => (o.format = v), 'Duration format')));
+        parts.push(row('格式', sel(DURATION_FORMATS.map((f) => [f, f]), o.format || 'h:mm', (v) => (o.format = v), '时长格式')));
         break;
       case 'rating':
         parts.push(h('div.form-pair',
-          row('Maximum', sel([1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => [n, String(n)]), o.max || 5, (v) => (o.max = Number(v)), 'Maximum')),
-          row('Icon', sel([['star', 'Star'], ['heart', 'Heart'], ['thumbsUp', 'Thumbs up'], ['flag', 'Flag']], o.icon || 'star', (v) => (o.icon = v), 'Icon'))));
-        parts.push(row('Color', colorRow(o.color || 'yellow', (c) => (o.color = c))));
+          row('最大值', sel([1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => [n, String(n)]), o.max || 5, (v) => (o.max = Number(v)), '最大值')),
+          row('图标', sel([['star', '星星'], ['heart', '爱心'], ['thumbsUp', '点赞'], ['flag', '旗帜']], o.icon || 'star', (v) => (o.icon = v), '图标'))));
+        parts.push(row('颜色', colorRow(o.color || 'yellow', (c) => (o.color = c))));
         break;
       case 'checkbox':
-        parts.push(row('Color', colorRow(o.color || 'green', (c) => (o.color = c))));
-        parts.push(toggle('Checked by default', o.default === true, (v) => (o.default = v || undefined)));
+        parts.push(row('颜色', colorRow(o.color || 'green', (c) => (o.color = c))));
+        parts.push(toggle('默认勾选', o.default === true, (v) => (o.default = v || undefined)));
         break;
       case 'singleSelect':
       case 'multipleSelect':
@@ -170,26 +170,26 @@ export function openFieldEditor(anchor, page, table, { field = null, onCreated, 
       case 'date':
       case 'createdTime':
       case 'lastModifiedTime':
-        parts.push(row('Date format', sel(Object.entries(DATE_FORMATS).map(([k, l]) => [k, `${l} (${exampleDate(k)})`]), o.dateFormat || 'local', (v) => (o.dateFormat = v), 'Date format')));
-        parts.push(toggle('Include time', o.includeTime, (v) => {
+        parts.push(row('日期格式', sel(Object.entries(DATE_FORMATS).map(([k, l]) => [k, `${l} (${exampleDate(k)})`]), o.dateFormat || 'local', (v) => (o.dateFormat = v), '日期格式')));
+        parts.push(toggle('包含时间', o.includeTime, (v) => {
           o.includeTime = v;
           renderOptions();
         }));
         if (o.includeTime) {
-          parts.push(row('Time format', sel([['12h', '12 hour'], ['24h', '24 hour']], o.timeFormat || '12h', (v) => (o.timeFormat = v), 'Time format')));
-          parts.push(toggle('Show times in GMT for everyone', o.gmt, (v) => (o.gmt = v)));
+          parts.push(row('时间格式', sel([['12h', '12 小时制'], ['24h', '24 小时制']], o.timeFormat || '12h', (v) => (o.timeFormat = v), '时间格式')));
+          parts.push(toggle('所有人均以 GMT 格式显示时间', o.gmt, (v) => (o.gmt = v)));
         }
-        if (state.type === 'date') parts.push(toggle("Default to today's date", o.default === 'today', (v) => (o.default = v ? 'today' : undefined)));
+        if (state.type === 'date') parts.push(toggle('默认为当天日期', o.default === 'today', (v) => (o.default = v ? 'today' : undefined)));
         break;
       case 'link': {
         const tables = base.tableList();
         if (editing && field.type === 'link') {
-          parts.push(row('Linked table', h('div.ro-value', base.table(o.tableId)?.name || 'Missing table')));
+          parts.push(row('关联数据表', h('div.ro-value', base.table(o.tableId)?.name || '缺失数据表')));
         } else {
           if (!o.tableId) o.tableId = tables.find((t) => t.id !== table.id)?.id || table.id;
-          parts.push(row('Link to', sel(tables.map((t) => [t.id, t.id === table.id ? `${t.name} (this table)` : t.name]), o.tableId, (v) => (o.tableId = v), 'Linked table')));
+          parts.push(row('关联至', sel(tables.map((t) => [t.id, t.id === table.id ? `${t.name} (当前表)` : t.name]), o.tableId, (v) => (o.tableId = v), '关联数据表')));
         }
-        parts.push(toggle('Allow linking to multiple records', !o.single, (v) => (o.single = !v)));
+        parts.push(toggle('允许关联多条记录', !o.single, (v) => (o.single = !v)));
         break;
       }
       case 'lookup':
@@ -197,23 +197,23 @@ export function openFieldEditor(anchor, page, table, { field = null, onCreated, 
       case 'count': {
         const links = linkFields();
         if (!links.length) {
-          parts.push(h('p.field-hint', 'Add a "Link to another record" field first, then come back.'));
+          parts.push(h('p.field-hint', '请先添加“关联其他记录”字段，然后再进行设置。'));
           break;
         }
         if (!o.linkFieldId || !table.field(o.linkFieldId)) o.linkFieldId = links[0].id;
-        parts.push(row('Linked field', sel(links.map((f) => [f.id, `${f.name} (${base.table(f.options.tableId)?.name || '?'})`]), o.linkFieldId, (v) => {
+        parts.push(row('关联字段', sel(links.map((f) => [f.id, `${f.name} (${base.table(f.options.tableId)?.name || '?'})`]), o.linkFieldId, (v) => {
           o.linkFieldId = v;
           o.targetFieldId = null;
           renderOptions();
-        }, 'Linked field')));
+        }, '关联字段')));
         if (state.type !== 'count') {
           const target = base.table(table.field(o.linkFieldId).options.tableId);
           const tfields = target ? target.fields : [];
           if (!o.targetFieldId || !target?.field(o.targetFieldId)) o.targetFieldId = tfields[0]?.id || null;
-          parts.push(row(state.type === 'lookup' ? 'Field to look up' : 'Field to summarize', sel(tfields.map((f) => [f.id, f.name]), o.targetFieldId, (v) => (o.targetFieldId = v), 'Target field')));
+          parts.push(row(state.type === 'lookup' ? '查找引用的字段' : '汇总字段', sel(tfields.map((f) => [f.id, f.name]), o.targetFieldId, (v) => (o.targetFieldId = v), '目标字段')));
         }
         if (state.type === 'rollup') {
-          parts.push(h('div.form-pair', row('Summary', sel(Object.entries(ROLLUP_FUNCTIONS), o.fn || 'sum', (v) => (o.fn = v), 'Summary')), row('Precision', sel(PRECISIONS, o.precision ?? 0, (v) => (o.precision = Number(v)), 'Precision'))));
+          parts.push(h('div.form-pair', row('汇总方式', sel(Object.entries(ROLLUP_FUNCTIONS), o.fn || 'sum', (v) => (o.fn = v), '汇总方式')), row('小数位数', sel(PRECISIONS, o.precision ?? 0, (v) => (o.precision = Number(v)), '小数位数'))));
         }
         break;
       }
@@ -221,8 +221,8 @@ export function openFieldEditor(anchor, page, table, { field = null, onCreated, 
         parts.push(formulaEditor(o));
         break;
       case 'button':
-        parts.push(row('Label', h('input.input', { type: 'text', value: o.label || 'Open', oninput: (e) => (o.label = e.target.value) })));
-        parts.push(row('Link', h('input.input', { type: 'text', value: o.url || '', placeholder: '"https://example.com/search?q=" & {Name}', oninput: (e) => (o.url = e.target.value) }), 'A web address, or a formula that builds one from the record.'));
+        parts.push(row('标签', h('input.input', { type: 'text', value: o.label || '打开', oninput: (e) => (o.label = e.target.value) })));
+        parts.push(row('链接', h('input.input', { type: 'text', value: o.url || '', placeholder: '"https://example.com/search?q=" & {Name}', oninput: (e) => (o.url = e.target.value) }), '网页链接，或者从记录字段构建链接的公式。'));
         break;
       default:
     }
@@ -240,7 +240,7 @@ export function openFieldEditor(anchor, page, table, { field = null, onCreated, 
       btn.replaceChildren(...(cur === HUES[i] ? [icon('check', 12)] : []));
     });
     paint(value);
-    return h('div.swatches', { role: 'radiogroup', 'aria-label': 'Color' }, swatches);
+    return h('div.swatches', { role: 'radiogroup', 'aria-label': '颜色' }, swatches);
   }
 
   function choicesEditor(o) {
@@ -249,11 +249,11 @@ export function openFieldEditor(anchor, page, table, { field = null, onCreated, 
     const wrap = h('div');
     let dragIndex = -1;
     // The default option list follows the options as they change.
-    const defaultSel = state.type === 'singleSelect' ? h('select.select', { 'aria-label': 'Default option', onchange: () => (o.default = defaultSel.value || undefined) }) : null;
+    const defaultSel = state.type === 'singleSelect' ? h('select.select', { 'aria-label': '默认选项', onchange: () => (o.default = defaultSel.value || undefined) }) : null;
     const paintDefault = () => {
       if (!defaultSel) return;
       if (o.default && !o.choices.some((c) => c.id === o.default)) o.default = undefined;
-      defaultSel.replaceChildren(h('option', { value: '' }, 'None'), ...o.choices.map((c) => h('option', { value: c.id, selected: o.default === c.id }, c.name || 'Untitled')));
+      defaultSel.replaceChildren(h('option', { value: '' }, '无'), ...o.choices.map((c) => h('option', { value: c.id, selected: o.default === c.id }, c.name || '未命名')));
     };
     // Removing or recoloring an option keeps focus in the same place.
     const paint = () => keepFocus(wrap, () => {
@@ -261,22 +261,22 @@ export function openFieldEditor(anchor, page, table, { field = null, onCreated, 
       list.replaceChildren(
         ...o.choices.map((c, i) => {
           const [bg, fg] = chipColors(c.color);
-          const colorBtn = h('button.choice-color', { type: 'button', 'aria-label': `Color of ${c.name || 'option'}`, style: { background: bg, color: fg, borderColor: fg } });
+          const colorBtn = h('button.choice-color', { type: 'button', 'aria-label': c.name ? `${c.name} 的颜色` : '选项颜色', style: { background: bg, color: fg, borderColor: fg } });
           colorBtn.addEventListener('click', () => {
-            const grid = h('div.swatches', { role: 'radiogroup', 'aria-label': 'Color' });
+            const grid = h('div.swatches', { role: 'radiogroup', 'aria-label': '颜色' });
             const names = [...HUES, ...HUES.map((x) => `${x}Strong`)];
             grid.style.gridTemplateColumns = 'repeat(10, 22px)';
-            const pick = openPopover(colorBtn, grid, { className: 'padded', label: 'Option color' });
+            const pick = openPopover(colorBtn, grid, { className: 'padded', label: '选项颜色' });
             grid.append(...names.map((n) => {
               const [b, f] = chipColors(n);
-              return h('button.swatch', { type: 'button', role: 'radio', 'aria-checked': String(c.color === n), 'aria-label': n.replace('Strong', ' (strong)'), style: { background: b, color: f, borderColor: f }, onclick: () => {
+              return h('button.swatch', { type: 'button', role: 'radio', 'aria-checked': String(c.color === n), 'aria-label': n.replace('Strong', ' (加重)'), style: { background: b, color: f, borderColor: f }, onclick: () => {
                 c.color = n;
                 pick.close();
                 paint();
               } }, c.color === n ? icon('check', 12) : null);
             }));
           });
-          const input = h('input.input', { type: 'text', value: c.name, 'aria-label': `Option ${i + 1}`, placeholder: 'Option name', oninput: () => {
+          const input = h('input.input', { type: 'text', value: c.name, 'aria-label': `选项 ${i + 1}`, placeholder: '选项名称', oninput: () => {
             c.name = input.value;
             paintDefault();
           } });
@@ -293,7 +293,7 @@ export function openFieldEditor(anchor, page, table, { field = null, onCreated, 
             }
           });
           const li = h('li.choice-row', { draggable: 'true' }, h('span.choice-grip', { 'aria-hidden': 'true' }, icon('grip', 14)), colorBtn, input,
-            h('button.icon-btn', { type: 'button', 'aria-label': `Remove ${c.name || 'option'}`, onclick: () => {
+            h('button.icon-btn', { type: 'button', 'aria-label': `删除 ${c.name || '选项'}`, onclick: () => {
               o.choices.splice(i, 1);
               paint();
             } }, icon('x', 14)));
@@ -323,19 +323,19 @@ export function openFieldEditor(anchor, page, table, { field = null, onCreated, 
       list.querySelectorAll('input.input')[at]?.focus();
     };
     paint();
-    const defaultSelect = defaultSel ? row('Default option', defaultSel) : null;
+    const defaultSelect = defaultSel ? row('默认选项', defaultSel) : null;
     return append(wrap, [
-      h('div.choice-head', h('span.field-label', 'Options'), h('button.link-btn.muted', { type: 'button', onclick: () => {
+      h('div.choice-head', h('span.field-label', '选项'), h('button.link-btn.muted', { type: 'button', onclick: () => {
         o.choices.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
         paint();
-      } }, icon('sortAsc', 14), 'Alphabetize')),
+      } }, icon('sortAsc', 14), '按字母排序')),
       list,
-      h('button.link-btn', { type: 'button', onclick: () => addChoice() }, icon('plus', 14), 'Add option'),
+      h('button.link-btn', { type: 'button', onclick: () => addChoice() }, icon('plus', 14), '添加选项'),
       defaultSelect]);
   }
 
   function formulaEditor(o) {
-    const ta = h('textarea.textarea.formula-input', { rows: 4, spellcheck: false, 'aria-label': 'Formula', placeholder: 'For example: {Price} * {Quantity}', autocomplete: 'off' });
+    const ta = h('textarea.textarea.formula-input', { rows: 4, spellcheck: false, 'aria-label': '公式', placeholder: '例如：{单价} * {数量}', autocomplete: 'off' });
     ta.value = o.formula || '';
     const status = h('p.formula-status', { 'aria-live': 'polite' });
     const check = () => {
@@ -349,7 +349,7 @@ export function openFieldEditor(anchor, page, table, { field = null, onCreated, 
         const stored = fromDisplay(ta.value, table.fields.filter((f) => f.id !== field?.id));
         const p = prepare(stored);
         if (p.error) throw new Error(p.error);
-        status.textContent = 'Valid formula';
+        status.textContent = '公式有效';
         status.className = 'formula-status ok';
       } catch (err) {
         status.textContent = err.message;
@@ -366,17 +366,17 @@ export function openFieldEditor(anchor, page, table, { field = null, onCreated, 
       ta.setSelectionRange(pos, pos);
       check();
     };
-    const fieldsList = h('div.formula-ref', h('div.menu-header', 'Fields'), table.fields.filter((f) => f.id !== field?.id).map((f) => h('button.formula-item', { type: 'button', onclick: () => insert(fieldRef(f.name)) }, icon(TYPES[f.type].icon, 14), h('span', f.name))));
+    const fieldsList = h('div.formula-ref', h('div.menu-header', '字段'), table.fields.filter((f) => f.id !== field?.id).map((f) => h('button.formula-item', { type: 'button', onclick: () => insert(fieldRef(f.name)) }, icon(TYPES[f.type].icon, 14), h('span', f.name))));
     const funcs = h('div.formula-ref');
     for (const [group, fns] of Object.entries(FUNCTION_HELP)) {
       funcs.append(h('div.menu-header', group));
       for (const [name, sig] of Object.entries(fns)) funcs.append(h('button.formula-item', { type: 'button', title: sig, onclick: () => insert(`${name}()`) }, h('code', name), h('span.muted', sig.slice(name.length))));
     }
     check();
-    const fmt = row('Format', h('div.form-pair',
-      sel([['auto', 'Automatic'], ['integer', 'Integer'], ['decimal', 'Decimal'], ['currency', 'Currency'], ['percent', 'Percent'], ['duration', 'Duration']], o.format || 'auto', (v) => (o.format = v), 'Number format'),
-      sel(PRECISIONS, o.precision ?? 2, (v) => (o.precision = Number(v)), 'Precision')), 'Applies when the formula gives a number.');
-    return h('div', row('Formula', ta), status, fmt, h('details.formula-help', h('summary', 'Fields and functions'), h('div.formula-cols', fieldsList, funcs)));
+    const fmt = row('格式', h('div.form-pair',
+      sel([['auto', '自动'], ['integer', '整数'], ['decimal', '小数'], ['currency', '货币'], ['percent', '百分比'], ['duration', '时长']], o.format || 'auto', (v) => (o.format = v), '数字格式'),
+      sel(PRECISIONS, o.precision ?? 2, (v) => (o.precision = Number(v)), '小数位数')), '当公式计算结果为数字时生效。');
+    return h('div', row('公式', ta), status, fmt, h('details.formula-help', h('summary', '字段与函数'), h('div.formula-cols', fieldsList, funcs)));
   }
 
   async function save() {
@@ -390,7 +390,7 @@ export function openFieldEditor(anchor, page, table, { field = null, onCreated, 
         return;
       }
       if (!opts.formula.trim()) {
-        error.textContent = 'Enter a formula.';
+        error.textContent = '请输入公式。';
         return;
       }
       // A formula that does not parse is not saved.
@@ -420,14 +420,14 @@ export function openFieldEditor(anchor, page, table, { field = null, onCreated, 
       const seen = new Set();
       for (const c of opts.choices) {
         if (seen.has(c.name.toLowerCase())) {
-          error.textContent = `There are two options named "${c.name}".`;
+          error.textContent = `存在两个同名为“${c.name}”的选项。`;
           return;
         }
         seen.add(c.name.toLowerCase());
       }
     }
     if (['lookup', 'rollup', 'count'].includes(state.type) && !opts.linkFieldId) {
-      error.textContent = 'Add a linked record field first.';
+      error.textContent = '请先添加关联记录字段。';
       return;
     }
     const name = state.name.trim();
@@ -437,15 +437,15 @@ export function openFieldEditor(anchor, page, table, { field = null, onCreated, 
         const withData = typeChanged && [...table.records.values()].some((r) => r.c[field.id] !== undefined);
         const numbered = state.type === 'autonumber';
         if (withData && (isComputed({ type: state.type }) || numbered)) {
-          const message = numbered ? 'Values in this field will be replaced by numbers in the order records were created. You can undo this.' : 'Values in this field will be replaced by computed values. You can undo this.';
-          const ok = await confirmDialog({ title: `Change ${field.name} to ${TYPES[state.type].label.toLowerCase()}?`, message, confirmLabel: 'Change type' });
+          const message = numbered ? '此字段中的值将被替换为按记录创建顺序排列的编号。此操作可以撤销。' : '此字段中的值将被替换为计算结果值。此操作可以撤销。';
+          const ok = await confirmDialog({ title: `将 ${field.name} 更改为 ${TYPES[state.type].label}？`, message, confirmLabel: '更改类型' });
           if (!ok) return;
         }
         const patch = { options: opts, description: state.description.trim() || undefined };
         if (name && name !== field.name) patch.name = name;
         if (typeChanged) patch.type = state.type;
         base.updateField(table.id, field.id, patch);
-        if (typeChanged && withData) page.toastUndo(`Converted ${field.name} to ${TYPES[state.type].label.toLowerCase()}`);
+        if (typeChanged && withData) page.toastUndo(`已将 ${field.name} 转换为 ${TYPES[state.type].label}`);
       } else {
         const id = base.addField(table.id, { name: name || TYPES[state.type].label, type: state.type, options: opts, description: state.description.trim() || undefined });
         onCreated?.(id);
@@ -467,7 +467,7 @@ export function openFieldEditor(anchor, page, table, { field = null, onCreated, 
   renderType();
   renderOptions();
   renderDesc();
-  const pop = openPopover(anchor, panel, { className: 'padded', label: editing ? `Edit ${field.name}` : 'New field', focus: nameInput, width: 380 });
+  const pop = openPopover(anchor, panel, { className: 'padded', label: editing ? `编辑 ${field.name}` : '新建字段', focus: nameInput, width: 380 });
   return pop;
 }
 
@@ -477,7 +477,7 @@ function exampleDate(fmt) {
   void d;
   switch (fmt) {
     case 'friendly':
-      return 'September 7, 2026';
+      return '2026年9月7日';
     case 'us':
       return '9/7/2026';
     case 'european':
@@ -485,7 +485,7 @@ function exampleDate(fmt) {
     case 'iso':
       return '2026-09-07';
     default:
-      return `${p.m + 1}/${p.d}/${p.y}`;
+      return `${p.y}/${p.m + 1}/${p.d}`;
   }
 }
 
@@ -493,9 +493,9 @@ function exampleDate(fmt) {
 export function sortLabels(field, ctx) {
   const kind = valueKind(field, ctx);
   if (kind === 'number') return ['1 → 9', '9 → 1'];
-  if (kind === 'checkbox') return ['Unchecked → checked', 'Checked → unchecked'];
-  if (kind === 'date') return ['Oldest → newest', 'Newest → oldest'];
-  if (field.type === 'singleSelect') return ['First → last', 'Last → first'];
+  if (kind === 'checkbox') return ['未勾选 → 已勾选', '已勾选 → 未勾选'];
+  if (kind === 'date') return ['最早 → 最新', '最新 → 最早'];
+  if (field.type === 'singleSelect') return ['排前 → 排后', '排后 → 排前'];
   return ['A → Z', 'Z → A'];
 }
 
@@ -506,28 +506,28 @@ export function fieldMenuItems(page, table, field, { onEdit, onInsert, onFreeze,
   const [asc, desc] = sortLabels(field, base.compute.ctx);
   const v = view || page.view;
   return [
-    { label: 'Edit field', icon: 'pencil', onSelect: onEdit },
-    { label: 'Duplicate field', icon: 'copy', onSelect: () => base.duplicateField(table.id, field.id) },
-    onInsert ? { label: 'Insert left', icon: 'insertLeft', disabled: index === 0, onSelect: () => onInsert('left') } : null,
-    onInsert ? { label: 'Insert right', icon: 'insertRight', onSelect: () => onInsert('right') } : null,
+    { label: '编辑字段', icon: 'pencil', onSelect: onEdit },
+    { label: '复制字段', icon: 'copy', onSelect: () => base.duplicateField(table.id, field.id) },
+    onInsert ? { label: '在左侧插入', icon: 'insertLeft', disabled: index === 0, onSelect: () => onInsert('left') } : null,
+    onInsert ? { label: '在右侧插入', icon: 'insertRight', onSelect: () => onInsert('right') } : null,
     { type: 'sep' },
-    { label: `Sort ${asc}`, icon: 'sortAsc', onSelect: () => base.updateView(table.id, v.id, { sorts: [{ fieldId: field.id, dir: 'asc' }] }, { label: 'Sort' }) },
-    { label: `Sort ${desc}`, icon: 'sortDesc', onSelect: () => base.updateView(table.id, v.id, { sorts: [{ fieldId: field.id, dir: 'desc' }] }, { label: 'Sort' }) },
-    { label: 'Filter by this field', icon: 'filter', onSelect: () => {
+    { label: `按 ${asc} 排序`, icon: 'sortAsc', onSelect: () => base.updateView(table.id, v.id, { sorts: [{ fieldId: field.id, dir: 'asc' }] }, { label: '排序' }) },
+    { label: `按 ${desc} 排序`, icon: 'sortDesc', onSelect: () => base.updateView(table.id, v.id, { sorts: [{ fieldId: field.id, dir: 'desc' }] }, { label: '排序' }) },
+    { label: '按此字段筛选', icon: 'filter', onSelect: () => {
       const cond = { id: newConditionId(), fieldId: field.id, op: defaultOp(field, base.compute.ctx), value: null };
-      base.updateView(table.id, v.id, { filters: { conjunction: v.filters?.conjunction || 'and', conditions: [...(v.filters?.conditions || []), cond] } }, { label: 'Filter' });
+      base.updateView(table.id, v.id, { filters: { conjunction: v.filters?.conjunction || 'and', conditions: [...(v.filters?.conditions || []), cond] } }, { label: '筛选' });
       requestAnimationFrame(() => page.viewbarEl?.querySelector('.tool-btn.t-filter')?.click());
     } },
-    v?.type === 'grid' || v?.type === 'list' ? { label: 'Group by this field', icon: 'group', onSelect: () => base.updateView(table.id, v.id, { groups: [...(v.groups || []).filter((g) => g.fieldId !== field.id), { fieldId: field.id, dir: 'asc' }] }, { label: 'Group' }) } : null,
-    onFreeze ? { label: index + 1 === frozen ? 'Unfreeze fields' : 'Freeze up to this field', icon: 'freeze', onSelect: index + 1 === frozen ? () => base.updateView(table.id, v.id, { frozen: 1 }, { label: 'Unfreeze' }) : onFreeze } : null,
+    v?.type === 'grid' || v?.type === 'list' ? { label: '按此字段分组', icon: 'group', onSelect: () => base.updateView(table.id, v.id, { groups: [...(v.groups || []).filter((g) => g.fieldId !== field.id), { fieldId: field.id, dir: 'asc' }] }, { label: '分组' }) } : null,
+    onFreeze ? { label: index + 1 === frozen ? '取消冻结字段' : '冻结至此字段', icon: 'freeze', onSelect: index + 1 === frozen ? () => base.updateView(table.id, v.id, { frozen: 1 }, { label: '取消冻结' }) : onFreeze } : null,
     { type: 'sep' },
-    { label: 'Edit field description', icon: 'info', onSelect: onEdit },
-    !isPrimary ? { label: 'Hide field', icon: 'eyeOff', onSelect: () => base.updateView(table.id, v.id, { hidden: [...new Set([...(v.hidden || []), field.id])] }, { label: 'Hide field' }) } : null,
-    !isPrimary ? { label: 'Delete field', icon: 'trash', danger: true, onSelect: async () => {
-      const ok = await confirmDialog({ title: `Delete ${field.name}?`, message: field.type === 'link' && field.options.inverseId ? 'The field and its values are deleted, along with the matching link field in the other table. You can undo this.' : 'The field and its values are deleted. You can undo this.', confirmLabel: 'Delete field', danger: true });
+    { label: '编辑字段描述', icon: 'info', onSelect: onEdit },
+    !isPrimary ? { label: '隐藏字段', icon: 'eyeOff', onSelect: () => base.updateView(table.id, v.id, { hidden: [...new Set([...(v.hidden || []), field.id])] }, { label: '隐藏字段' }) } : null,
+    !isPrimary ? { label: '删除字段', icon: 'trash', danger: true, onSelect: async () => {
+      const ok = await confirmDialog({ title: `确定删除 ${field.name}？`, message: field.type === 'link' && field.options.inverseId ? '此字段及其数据将被删除，另一张表中对应的关联字段也会一并删除。此操作可以撤销。' : '此字段及其数据将被删除。此操作可以撤销。', confirmLabel: '删除字段', danger: true });
       if (!ok) return;
       base.deleteField(table.id, field.id);
-      page.toastUndo(`Deleted ${field.name}`);
+      page.toastUndo(`已删除 ${field.name}`);
     } } : null,
   ];
 }

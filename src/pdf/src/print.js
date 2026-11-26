@@ -100,7 +100,7 @@ export async function pageImage(
       signal,
     );
     signal?.throwIfAborted();
-    if (!blob) throw new Error('This page could not be turned into a picture.');
+    if (!blob) throw new Error('无法将此页面转换为图片。');
     const picture = await waitFor(() => withResolution(blob, scale * 72), signal);
     signal?.throwIfAborted();
     return picture;
@@ -177,13 +177,13 @@ export async function printPages(
           signal,
         );
         signal?.throwIfAborted();
-        if (!blob) throw new Error('This page could not be prepared for printing.');
+        if (!blob) throw new Error('无法准备此页面进行打印。');
       } finally {
         canvas.width = canvas.height = 0;
       }
       const url = URL.createObjectURL(blob);
       urls.push(url);
-      const image = el('img', { src: url, alt: `Page ${index + 1}` });
+      const image = el('img', { src: url, alt: `第 ${index + 1} 页` });
       sheets.append(
         el(
           'div',
@@ -195,7 +195,7 @@ export async function printPages(
         await waitFor(() => image.decode(), signal);
       } catch {
         signal?.throwIfAborted();
-        throw new Error(`Page ${index + 1} could not be prepared for printing. Please try again.`);
+        throw new Error(`第 ${index + 1} 页无法准备打印，请重试。`);
       }
     }
     signal?.throwIfAborted();

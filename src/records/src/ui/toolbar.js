@@ -30,7 +30,7 @@ function toolButton(cls, ic, label, { on = false } = {}) {
  */
 function fieldOptions(fields, current) {
   const options = fields.map((f) => h('option', { value: f.id, selected: f.id === current }, f.name));
-  if (!fields.some((f) => f.id === current)) options.unshift(h('option', { value: '', disabled: true, selected: true }, 'Choose a field'));
+  if (!fields.some((f) => f.id === current)) options.unshift(h('option', { value: '', disabled: true, selected: true }, '选择字段'));
   return options;
 }
 
@@ -54,47 +54,47 @@ export function renderToolbar(host, page, table, view) {
   const hiddenCount = (view.hidden || []).filter((id) => table.field(id) && id !== table.schema.primaryFieldId).length;
   const cards = view.type === 'kanban' || view.type === 'gallery' || view.type === 'calendar' || view.type === 'timeline';
   if (view.type === 'form') {
-    host.replaceChildren(h('span.muted', { style: { padding: '0 8px' } }, 'Build the form on the left, then open it to fill it in.'));
+    host.replaceChildren(h('span.muted', { style: { padding: '0 8px' } }, '在左侧构建表单，然后打开进行填写。'));
     return;
   }
   if (view.type === 'kanban') {
     // Only a field the board can stack by (as the board itself shows).
     const f = table.field(view.stackFieldId);
-    items.push(panelFrom(toolButton('stack', 'vKanban', canStack(f) ? `Stacked by ${f.name}` : 'Choose a stack field', { on: false }), () => kanbanPanel(page, table, view, update), { label: 'Stack settings' }));
+    items.push(panelFrom(toolButton('stack', 'vKanban', canStack(f) ? `按 ${f.name} 堆叠` : '选择堆叠字段', { on: false }), () => kanbanPanel(page, table, view, update), { label: '堆叠设置' }));
   }
   if (view.type === 'calendar' || view.type === 'timeline') {
     const f = table.field(view.dateFieldId);
-    items.push(panelFrom(toolButton('dates', 'fDate', f ? (view.endFieldId && table.field(view.endFieldId) ? `${f.name} to ${table.field(view.endFieldId).name}` : f.name) : 'Choose a date field'), () => datesPanel(page, table, view, update), { label: 'Date settings' }));
+    items.push(panelFrom(toolButton('dates', 'fDate', f ? (view.endFieldId && table.field(view.endFieldId) ? `${f.name} 至 ${table.field(view.endFieldId).name}` : f.name) : '选择日期字段'), () => datesPanel(page, table, view, update), { label: '日期设置' }));
   }
   if (view.type === 'gallery') {
-    items.push(panelFrom(toolButton('cover', 'image', 'Cover'), () => coverPanel(table, view, update), { label: 'Card cover' }));
+    items.push(panelFrom(toolButton('cover', 'image', '封面'), () => coverPanel(table, view, update), { label: '卡片封面' }));
   }
-  items.push(panelFrom(toolButton('hide', cards ? 'layers' : 'eyeOff', cards ? 'Customize cards' : hiddenCount ? `${hiddenCount} hidden field${hiddenCount === 1 ? '' : 's'}` : 'Hide fields', { on: !cards && !!hiddenCount }), () => hidePanel(page, table, view, update, cards), { label: cards ? 'Fields on cards' : 'Hide fields' }));
+  items.push(panelFrom(toolButton('hide', cards ? 'layers' : 'eyeOff', cards ? '自定义卡片' : hiddenCount ? `已隐藏 ${hiddenCount} 个字段` : '隐藏字段', { on: !cards && !!hiddenCount }), () => hidePanel(page, table, view, update, cards), { label: cards ? '卡片显示的字段' : '隐藏字段' }));
   const nFilter = countConditions(view.filters, isActive);
-  items.push(panelFrom(toolButton('filter', 'filter', nFilter ? `Filtered by ${filterSummary(table, view)}` : 'Filter', { on: !!nFilter }), () => filterPanel(page, table, view, update), { label: 'Filter', wide: true }));
+  items.push(panelFrom(toolButton('filter', 'filter', nFilter ? `按 ${filterSummary(table, view)} 筛选` : '筛选', { on: !!nFilter }), () => filterPanel(page, table, view, update), { label: '筛选', wide: true }));
   if (view.type === 'grid' || view.type === 'list') {
     const nGroup = view.groups?.length || 0;
-    items.push(panelFrom(toolButton('group', 'group', nGroup ? `Grouped by ${nGroup} field${nGroup === 1 ? '' : 's'}` : 'Group', { on: !!nGroup }), () => levelsPanel(page, table, view, update, 'groups'), { label: 'Group' }));
+    items.push(panelFrom(toolButton('group', 'group', nGroup ? `按 ${nGroup} 个字段分组` : '分组', { on: !!nGroup }), () => levelsPanel(page, table, view, update, 'groups'), { label: '分组' }));
   }
   if (view.type !== 'calendar') {
     const nSort = view.sorts?.length || 0;
-    items.push(panelFrom(toolButton('sort', 'arrowUpDown', nSort ? `Sorted by ${nSort} field${nSort === 1 ? '' : 's'}` : 'Sort', { on: !!nSort }), () => levelsPanel(page, table, view, update, 'sorts'), { label: 'Sort' }));
+    items.push(panelFrom(toolButton('sort', 'arrowUpDown', nSort ? `按 ${nSort} 个字段排序` : '排序', { on: !!nSort }), () => levelsPanel(page, table, view, update, 'sorts'), { label: '排序' }));
   }
   if (view.type === 'grid' || view.type === 'list' || view.type === 'kanban' || view.type === 'calendar' || view.type === 'timeline' || view.type === 'gallery') {
     const on = view.color && view.color.type !== 'none';
-    items.push(panelFrom(toolButton('color', 'color', 'Color', { on }), () => colorPanel(page, table, view, update), { label: 'Record colors', wide: true }));
+    items.push(panelFrom(toolButton('color', 'color', '颜色', { on }), () => colorPanel(page, table, view, update), { label: '记录颜色', wide: true }));
   }
   if (view.type === 'grid') {
-    const rh = h('button.tool-btn', { type: 'button', 'aria-label': `Row height: ${ROW_HEIGHTS[view.rowHeight || 'short'].label}`, 'data-tip': 'Row height', 'aria-haspopup': 'menu' }, icon('rowHeight', 16));
-    rh.addEventListener('click', () => openMenu(rh, Object.entries(ROW_HEIGHTS).map(([k, v]) => ({ label: v.label, checked: (view.rowHeight || 'short') === k, radio: true, onSelect: () => update({ rowHeight: k }, 'Row height') })), { label: 'Row height' }));
+    const rh = h('button.tool-btn', { type: 'button', 'aria-label': `行高：${ROW_HEIGHTS[view.rowHeight || 'short'].label}`, 'data-tip': '行高', 'aria-haspopup': 'menu' }, icon('rowHeight', 16));
+    rh.addEventListener('click', () => openMenu(rh, Object.entries(ROW_HEIGHTS).map(([k, v]) => ({ label: v.label, checked: (view.rowHeight || 'short') === k, radio: true, onSelect: () => update({ rowHeight: k }, '调整行高') })), { label: '行高' }));
     items.push(rh);
   }
-  const share = h('button.tool-btn', { type: 'button', 'aria-haspopup': 'menu', 'aria-label': 'Share', 'data-tip': 'Share' }, icon('share', 16), h('span.tool-label', 'Share'));
+  const share = h('button.tool-btn', { type: 'button', 'aria-haspopup': 'menu', 'aria-label': '分享', 'data-tip': '分享' }, icon('share', 16), h('span.tool-label', '分享'));
   share.addEventListener('click', () => openMenu(share, [
-    { label: 'Download CSV', icon: 'download', description: 'The records and fields this view shows.', onSelect: () => exportCsv(base, table, view) },
-    { label: 'Print view', icon: 'printer', onSelect: () => printView(base, table, view) },
-    { label: 'Copy link to this view', icon: 'link', description: 'Opens this view for you on any device.', onSelect: () => navigator.clipboard.writeText(location.href.split('#')[0] + `#/${page.baseId}/${table.id}/${view.id}`).then(() => toast('Link copied'), () => toast('Could not copy the link.', { error: true })) },
-  ], { label: 'Share and export', width: 300 }));
+    { label: '下载 CSV', icon: 'download', description: '包含此视图展示的记录与字段。', onSelect: () => exportCsv(base, table, view) },
+    { label: '打印视图', icon: 'printer', onSelect: () => printView(base, table, view) },
+    { label: '复制此视图链接', icon: 'link', description: '可在任意设备上直接打开此视图。', onSelect: () => navigator.clipboard.writeText(location.href.split('#')[0] + `#/${page.baseId}/${table.id}/${view.id}`).then(() => toast('链接已复制'), () => toast('无法复制链接。', { error: true })) },
+  ], { label: '分享与导出', width: 300 }));
   items.push(share);
   // An edit in an open panel redraws the toolbar: the panel stays with its button.
   for (const btn of items) {
@@ -121,14 +121,14 @@ function filterSummary(table, view) {
   };
   walk(view.filters);
   if (names.length === 1) return names[0];
-  return `${names.length} fields`;
+  return `${names.length} 个字段`;
 }
 
 /* ------------------------------------------------------------ hide fields */
 
 function hidePanel(page, table, view, update, cards) {
   const primary = table.schema.primaryFieldId;
-  const search = h('input.input', { type: 'search', placeholder: 'Find a field', 'aria-label': 'Find a field' });
+  const search = h('input.input', { type: 'search', placeholder: '查找字段', 'aria-label': '查找字段' });
   const list = h('ul.hide-list');
   let dragId = null;
   const paint = () => {
@@ -138,12 +138,12 @@ function hidePanel(page, table, view, update, cards) {
     for (const f of orderedFields(table, view)) {
       if (f.id === primary && !cards) continue;
       if (q && !f.name.toLowerCase().includes(q)) continue;
-      const cb = h('input.switch', { type: 'checkbox', role: 'switch', checked: !hidden.has(f.id), 'aria-label': `Show ${f.name}`, disabled: f.id === primary, onchange: () => {
+      const cb = h('input.switch', { type: 'checkbox', role: 'switch', checked: !hidden.has(f.id), 'aria-label': `显示 ${f.name}`, disabled: f.id === primary, onchange: () => {
         const set = new Set(view.hidden || []);
         if (cb.checked) set.delete(f.id);
         else set.add(f.id);
         // The switch already shows the change: redrawing would take its focus.
-        update({ hidden: [...set] }, cb.checked ? 'Show field' : 'Hide field');
+        update({ hidden: [...set] }, cb.checked ? '显示字段' : '隐藏字段');
       } });
       const li = h('li.hide-item', { draggable: 'true' }, h('span.choice-grip', { 'aria-hidden': 'true' }, icon('grip', 14)), h('label.switch-row.grow', cb, icon(TYPES[f.type].icon, 14), h('span.grow', f.name)));
       li.addEventListener('dragstart', (e) => {
@@ -157,7 +157,7 @@ function hidePanel(page, table, view, update, cards) {
         if (!dragId || dragId === f.id || f.id === primary) return;
         const ids = orderedFields(table, view).map((x) => x.id).filter((x) => x !== dragId);
         ids.splice(ids.indexOf(f.id), 0, dragId);
-        update({ order: ids }, 'Reorder fields');
+        update({ order: ids }, '调整字段顺序');
         dragId = null;
         paint();
       });
@@ -166,14 +166,14 @@ function hidePanel(page, table, view, update, cards) {
   };
   search.addEventListener('input', paint);
   paint();
-  const all = (show) => update({ hidden: show ? [] : table.fields.filter((f) => f.id !== primary).map((f) => f.id) }, show ? 'Show all fields' : 'Hide all fields');
+  const all = (show) => update({ hidden: show ? [] : table.fields.filter((f) => f.id !== primary).map((f) => f.id) }, show ? '显示所有字段' : '隐藏所有字段');
   return h('div.hide-panel', search, list, h('div.popover-footer', h('button.btn.small', { type: 'button', onclick: () => {
     all(false);
     paint();
-  } }, 'Hide all'), h('button.btn.small', { type: 'button', onclick: () => {
+  } }, '全部隐藏'), h('button.btn.small', { type: 'button', onclick: () => {
     all(true);
     paint();
-  } }, 'Show all')));
+  } }, '全部显示')));
 }
 
 /* ----------------------------------------------------------------- filter */
@@ -186,7 +186,7 @@ function filterPanel(page, table, view, update) {
   let filters = structuredClone(view.filters || emptyFilter());
   const commit = () => {
     // The view can go (deleted, or undone) while the panel is open.
-    if (base.table(table.id)?.view(view.id)) update({ filters: structuredClone(filters) }, 'Filter');
+    if (base.table(table.id)?.view(view.id)) update({ filters: structuredClone(filters) }, '筛选');
   };
   const save = debounce(commit, 350);
   const saveNow = () => {
@@ -197,7 +197,7 @@ function filterPanel(page, table, view, update) {
   host.flush = () => save.flush();
 
   const fieldSelect = (cond, onChange) => {
-    const s = h('select.select', { 'aria-label': 'Field', onchange: () => onChange(s.value) }, fieldOptions(table.fields, cond.fieldId));
+    const s = h('select.select', { 'aria-label': '字段', onchange: () => onChange(s.value) }, fieldOptions(table.fields, cond.fieldId));
     return s;
   };
 
@@ -211,12 +211,12 @@ function filterPanel(page, table, view, update) {
       else save();
     };
     if (kind === 'checkbox') {
-      const cb = h('input', { type: 'checkbox', checked: !!cond.value, 'aria-label': 'Checked', onchange: () => set(cb.checked, true) });
+      const cb = h('input', { type: 'checkbox', checked: !!cond.value, 'aria-label': '已勾选', onchange: () => set(cb.checked, true) });
       if (cond.value === null || cond.value === undefined) cond.value = false;
-      return h('label.check.filter-value', cb, h('span', 'Checked'));
+      return h('label.check.filter-value', cb, h('span', '已勾选'));
     }
     if (kind === 'select' && field.type === 'singleSelect' && (cond.op === 'is' || cond.op === 'isNot')) {
-      const s = h('select.select.filter-value', { 'aria-label': 'Value', onchange: () => set(s.value || null, true) }, h('option', { value: '' }, 'Select an option'), field.options.choices.map((c) => h('option', { value: c.id, selected: cond.value === c.id }, c.name)));
+      const s = h('select.select.filter-value', { 'aria-label': '值', onchange: () => set(s.value || null, true) }, h('option', { value: '' }, '选择一个选项'), field.options.choices.map((c) => h('option', { value: c.id, selected: cond.value === c.id }, c.name)));
       return s;
     }
     if ((kind === 'select' && field.type === 'singleSelect') || (kind === 'multi' && field.type === 'multipleSelect')) {
@@ -229,7 +229,7 @@ function filterPanel(page, table, view, update) {
           if (!c) return null;
           const [bg, fg] = chipColors(c.color);
           return h('span.chip', { style: { background: bg, color: fg } }, c.name);
-        }).filter(Boolean) : [h('span.muted', 'Select options')]));
+        }).filter(Boolean) : [h('span.muted', '选择选项')]));
       };
       cond.value = ids;
       paint();
@@ -249,7 +249,7 @@ function filterPanel(page, table, view, update) {
       const wrap = h('div.filter-value.date-filter');
       const modes = cond.op === 'isWithin' ? WITHIN_MODES : DATE_MODES;
       if (!cond.value || typeof cond.value !== 'object' || !(cond.value.mode in modes)) cond.value = { mode: cond.op === 'isWithin' ? 'pastWeek' : 'today' };
-      const modeSel = h('select.select', { 'aria-label': 'Date', onchange: () => {
+      const modeSel = h('select.select', { 'aria-label': '日期', onchange: () => {
         cond.value = { mode: modeSel.value };
         saveNow();
         render();
@@ -257,18 +257,18 @@ function filterPanel(page, table, view, update) {
       wrap.append(modeSel);
       const m = cond.value.mode;
       if (m === 'daysAgo' || m === 'daysFromNow' || m === 'pastDays' || m === 'nextDays') {
-        const n = h('input.input.small-num', { type: 'number', min: '0', value: cond.value.n ?? '', 'aria-label': 'Number of days', oninput: () => set({ ...cond.value, n: n.value === '' ? null : Number(n.value) }) });
+        const n = h('input.input.small-num', { type: 'number', min: '0', value: cond.value.n ?? '', 'aria-label': '天数', oninput: () => set({ ...cond.value, n: n.value === '' ? null : Number(n.value) }) });
         wrap.append(n);
       }
       if (m === 'exactDate') {
-        const btn = h('button.select', { type: 'button' }, cond.value.date ? formatDate(cond.value.date, { dateFormat: 'local' }) : 'Pick a date');
+        const btn = h('button.select', { type: 'button' }, cond.value.date ? formatDate(cond.value.date, { dateFormat: 'local' }) : '选择日期');
         btn.addEventListener('click', () => {
           const cal = calendar({ value: cond.value.date, onPick: (d) => {
             set({ mode: 'exactDate', date: `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}` }, true);
             pop.close();
             render();
           } });
-          const pop = openPopover(btn, cal.el, { className: 'padded', label: 'Pick a date', focus: false });
+          const pop = openPopover(btn, cal.el, { className: 'padded', label: '选择日期', focus: false });
           requestAnimationFrame(() => cal.focus());
         });
         wrap.append(btn);
@@ -276,10 +276,10 @@ function filterPanel(page, table, view, update) {
       return wrap;
     }
     if (field.type === 'attachment' && cond.op === 'hasFileType') {
-      const s = h('select.select.filter-value', { 'aria-label': 'File type', onchange: () => set(s.value, true) }, h('option', { value: '' }, 'Choose a type'), Object.entries(FILE_TYPES).map(([k, l]) => h('option', { value: k, selected: cond.value === k }, l)));
+      const s = h('select.select.filter-value', { 'aria-label': '文件类型', onchange: () => set(s.value, true) }, h('option', { value: '' }, '选择类型'), Object.entries(FILE_TYPES).map(([k, l]) => h('option', { value: k, selected: cond.value === k }, l)));
       return s;
     }
-    const input = h('input.input.filter-value', { type: kind === 'number' ? 'text' : 'text', inputMode: kind === 'number' ? 'decimal' : 'text', placeholder: 'Enter a value', 'aria-label': 'Value', value: cond.value ?? '' });
+    const input = h('input.input.filter-value', { type: kind === 'number' ? 'text' : 'text', inputMode: kind === 'number' ? 'decimal' : 'text', placeholder: '输入值', 'aria-label': '值', value: cond.value ?? '' });
     input.addEventListener('input', () => set(input.value));
     return input;
   };
@@ -287,7 +287,7 @@ function filterPanel(page, table, view, update) {
   const conditionRow = (cond, group, i, depth) => {
     const field = table.field(cond.fieldId);
     const ops = field ? operatorsFor(field, base.compute.ctx) : [];
-    const opSel = h('select.select', { 'aria-label': 'Operator', onchange: () => {
+    const opSel = h('select.select', { 'aria-label': '运算符', onchange: () => {
       const wasNoValue = NO_VALUE_OPS.has(cond.op);
       const prevOp = cond.op;
       cond.op = opSel.value;
@@ -296,14 +296,14 @@ function filterPanel(page, table, view, update) {
       saveNow();
       render();
     } }, ops.map(([k, l]) => h('option', { value: k, selected: cond.op === k }, l)));
-    const lead = i === 0 ? h('span.filter-lead', 'Where') : i === 1 ? conjSelect(group) : h('span.filter-lead', group.conjunction === 'or' ? 'or' : 'and');
+    const lead = i === 0 ? h('span.filter-lead', '当满足') : i === 1 ? conjSelect(group) : h('span.filter-lead', group.conjunction === 'or' ? '或' : '且');
     return h('div.filter-row', lead, fieldSelect(cond, (fid) => {
       cond.fieldId = fid;
       cond.op = defaultOp(table.field(fid), base.compute.ctx);
       cond.value = null;
       saveNow();
       render();
-    }), opSel, valueEditor(cond), h('button.icon-btn', { type: 'button', 'aria-label': 'Remove condition', onclick: () => {
+    }), opSel, valueEditor(cond), h('button.icon-btn', { type: 'button', 'aria-label': '删除条件', onclick: () => {
       group.conditions.splice(i, 1);
       saveNow();
       render();
@@ -312,11 +312,11 @@ function filterPanel(page, table, view, update) {
   };
 
   const conjSelect = (group) => {
-    const s = h('select.select.conj', { 'aria-label': 'Match', onchange: () => {
+    const s = h('select.select.conj', { 'aria-label': '匹配规则', onchange: () => {
       group.conjunction = s.value;
       saveNow();
       render();
-    } }, h('option', { value: 'and', selected: group.conjunction !== 'or' }, 'and'), h('option', { value: 'or', selected: group.conjunction === 'or' }, 'or'));
+    } }, h('option', { value: 'and', selected: group.conjunction !== 'or' }, '且'), h('option', { value: 'or', selected: group.conjunction === 'or' }, '或'));
     return s;
   };
 
@@ -329,8 +329,8 @@ function filterPanel(page, table, view, update) {
     const rows = h('div.filter-rows');
     group.conditions.forEach((c, i) => {
       if (c.conditions) {
-        const lead = i === 0 ? h('span.filter-lead', 'Where') : i === 1 ? conjSelect(group) : h('span.filter-lead', group.conjunction === 'or' ? 'or' : 'and');
-        rows.append(h('div.filter-row.nested', lead, h('div.filter-group', groupBlock(c, depth + 1), h('button.icon-btn.group-remove', { type: 'button', 'aria-label': 'Remove condition group', onclick: () => {
+        const lead = i === 0 ? h('span.filter-lead', '当满足') : i === 1 ? conjSelect(group) : h('span.filter-lead', group.conjunction === 'or' ? '或' : '且');
+        rows.append(h('div.filter-row.nested', lead, h('div.filter-group', groupBlock(c, depth + 1), h('button.icon-btn.group-remove', { type: 'button', 'aria-label': '删除条件组', onclick: () => {
           group.conditions.splice(i, 1);
           saveNow();
           render();
@@ -342,18 +342,18 @@ function filterPanel(page, table, view, update) {
         group.conditions.push(newCondition());
         saveNow();
         render();
-      } }, icon('plus', 14), 'Add condition'),
+      } }, icon('plus', 14), '添加条件'),
       depth === 0 ? h('button.link-btn.muted', { type: 'button', onclick: () => {
         group.conditions.push({ id: newConditionId(), conjunction: 'and', conditions: [newCondition()] });
         saveNow();
         render();
-      } }, icon('plus', 14), 'Add condition group') : null);
+      } }, icon('plus', 14), '添加条件组') : null);
     return h('div', rows, add);
   };
 
   function render() {
     keepFocus(host, () => host.replaceChildren(
-      filters.conditions.length ? h('p.panel-intro', 'In this view, show records') : h('p.panel-intro.muted', 'No filter conditions are applied to this view.'),
+      filters.conditions.length ? h('p.panel-intro', '在此视图中，显示符合以下条件的记录：') : h('p.panel-intro.muted', '此视图未应用任何筛选条件。'),
       groupBlock(filters, 0),
     ));
   }
@@ -371,37 +371,37 @@ function levelsPanel(page, table, view, update, key) {
   const render = () => keepFocus(host, () => {
     const levels = view[key] || [];
     fill(host,
-      levels.length ? null : h('p.panel-intro.muted', key === 'sorts' ? 'Choose a field to sort by.' : 'Choose a field to group by.'),
+      levels.length ? null : h('p.panel-intro.muted', key === 'sorts' ? '选择用于排序的字段。' : '选择用于分组的字段。'),
       h('div.level-rows', levels.map((lv, i) => {
         const field = table.field(lv.fieldId);
-        const s = h('select.select', { 'aria-label': key === 'sorts' ? `Sort field ${i + 1}` : `Group field ${i + 1}`, onchange: () => {
+        const s = h('select.select', { 'aria-label': key === 'sorts' ? `排序字段 ${i + 1}` : `分组字段 ${i + 1}`, onchange: () => {
           const next = levels.map((x) => ({ ...x }));
           next[i].fieldId = s.value;
-          update({ [key]: next }, key === 'sorts' ? 'Sort' : 'Group');
+          update({ [key]: next }, key === 'sorts' ? '排序' : '分组');
           render();
         } }, table.fields.filter(usable).map((f) => h('option', { value: f.id, selected: f.id === lv.fieldId }, f.name)));
-        const [asc, desc] = field ? sortLabels(field, base.compute.ctx) : ['A → Z', 'Z → A'];
-        const dir = h('div.segmented', { role: 'radiogroup', 'aria-label': 'Direction' },
+        const [asc, desc] = field ? sortLabels(field, base.compute.ctx) : ['升序', '降序'];
+        const dir = h('div.segmented', { role: 'radiogroup', 'aria-label': '顺序' },
           ...[['asc', asc], ['desc', desc]].map(([d, l]) => h('button', { type: 'button', role: 'radio', 'aria-checked': String((lv.dir || 'asc') === d), onclick: () => {
             const next = levels.map((x) => ({ ...x }));
             next[i].dir = d;
-            update({ [key]: next }, key === 'sorts' ? 'Sort' : 'Group');
+            update({ [key]: next }, key === 'sorts' ? '排序' : '分组');
             render();
           } }, l)));
-        return h('div.level-row', h('span.filter-lead', i === 0 ? (key === 'sorts' ? 'Sort by' : 'Group by') : 'then by'), s, dir, h('button.icon-btn', { type: 'button', 'aria-label': 'Remove', onclick: () => {
-          update({ [key]: levels.filter((_, k) => k !== i) }, key === 'sorts' ? 'Sort' : 'Group');
+        return h('div.level-row', h('span.filter-lead', i === 0 ? (key === 'sorts' ? '按' : '按') : '然后按'), s, dir, h('button.icon-btn', { type: 'button', 'aria-label': '删除', onclick: () => {
+          update({ [key]: levels.filter((_, k) => k !== i) }, key === 'sorts' ? '排序' : '分组');
           render();
         } }, icon('x', 14)));
       })),
       (key === 'groups' && levels.length >= 3) ? null : (() => {
-        const add = h('button.link-btn', { type: 'button', 'aria-haspopup': 'menu' }, icon('plus', 14), key === 'sorts' ? 'Add a sort' : 'Add a group');
+        const add = h('button.link-btn', { type: 'button', 'aria-haspopup': 'menu' }, icon('plus', 14), key === 'sorts' ? '添加排序' : '添加分组');
         add.addEventListener('click', () => openMenu(add, table.fields.filter(usable).filter((f) => !levels.some((l) => l.fieldId === f.id)).map((f) => ({ label: f.name, icon: TYPES[f.type].icon, onSelect: () => {
-          update({ [key]: [...levels, { fieldId: f.id, dir: 'asc' }] }, key === 'sorts' ? 'Sort' : 'Group');
+          update({ [key]: [...levels, { fieldId: f.id, dir: 'asc' }] }, key === 'sorts' ? '排序' : '分组');
           render();
-        } })), { search: true, searchPlaceholder: 'Find a field', label: 'Fields' }));
+        } })), { search: true, searchPlaceholder: '查找字段', label: '字段' }));
         return h('div.filter-add', add);
       })(),
-      key === 'groups' && levels.length ? h('div.popover-footer', h('button.btn.small', { type: 'button', onclick: () => update({ collapsed: collectPaths(page, view) }, 'Collapse groups') }, 'Collapse all'), h('button.btn.small', { type: 'button', onclick: () => update({ collapsed: [] }, 'Expand groups') }, 'Expand all')) : null,
+      key === 'groups' && levels.length ? h('div.popover-footer', h('button.btn.small', { type: 'button', onclick: () => update({ collapsed: collectPaths(page, view) }, '折叠分组') }, '全部折叠'), h('button.btn.small', { type: 'button', onclick: () => update({ collapsed: [] }, '展开分组') }, '全部展开')) : null,
     );
   });
   render();
@@ -428,38 +428,38 @@ function colorPanel(page, table, view, update) {
   const selects = table.fields.filter((f) => f.type === 'singleSelect');
   const render = () => keepFocus(host, () => {
     const c = view.color || { type: 'none' };
-    const mode = h('div.segmented', { role: 'radiogroup', 'aria-label': 'Color records' },
-      ...[['none', 'None'], ['select', 'By option'], ['conditions', 'By conditions']].map(([k, l]) => h('button', { type: 'button', role: 'radio', 'aria-checked': String(c.type === k), onclick: () => {
-        if (k === 'select') update({ color: { type: 'select', fieldId: selects[0]?.id || null } }, 'Color');
-        else if (k === 'conditions') update({ color: { type: 'conditions', rules: c.rules || [] } }, 'Color');
-        else update({ color: { type: 'none' } }, 'Color');
+    const mode = h('div.segmented', { role: 'radiogroup', 'aria-label': '记录着色' },
+      ...[['none', '无'], ['select', '按选项'], ['conditions', '按条件']].map(([k, l]) => h('button', { type: 'button', role: 'radio', 'aria-checked': String(c.type === k), onclick: () => {
+        if (k === 'select') update({ color: { type: 'select', fieldId: selects[0]?.id || null } }, '颜色');
+        else if (k === 'conditions') update({ color: { type: 'conditions', rules: c.rules || [] } }, '颜色');
+        else update({ color: { type: 'none' } }, '颜色');
         render();
       } }, l)));
     const body = [];
     if (c.type === 'select') {
-      if (!selects.length) body.push(h('p.field-hint', 'Add a single select field to color records by its options.'));
-      else body.push(h('div.form-row', h('label.field-label', 'Field'), (() => {
-        const s = h('select.select', { 'aria-label': 'Color field', onchange: () => update({ color: { type: 'select', fieldId: s.value } }, 'Color') }, fieldOptions(selects, c.fieldId));
+      if (!selects.length) body.push(h('p.field-hint', '添加单选字段以按其选项为记录着色。'));
+      else body.push(h('div.form-row', h('label.field-label', '字段'), (() => {
+        const s = h('select.select', { 'aria-label': '着色字段', onchange: () => update({ color: { type: 'select', fieldId: s.value } }, '颜色') }, fieldOptions(selects, c.fieldId));
         return s;
-      })()), h('p.field-hint', 'Records take the color of their option.'));
+      })()), h('p.field-hint', '记录将采用对应选项的颜色。'));
     }
     if (c.type === 'conditions') {
       const rules = c.rules || [];
       body.push(h('div.color-rules', rules.map((r, i) => {
-        const sw = h('button.swatch', { type: 'button', 'aria-label': `Color: ${r.color}`, style: { background: accentColor(r.color) } });
+        const sw = h('button.swatch', { type: 'button', 'aria-label': `颜色：${r.color}`, style: { background: accentColor(r.color) } });
         sw.addEventListener('click', () => {
-          const grid = h('div.swatches', { role: 'radiogroup', 'aria-label': 'Color' }, HUES.map((hue) => h('button.swatch', { type: 'button', role: 'radio', 'aria-checked': String(r.color === hue), 'aria-label': hue, style: { background: accentColor(hue) }, onclick: () => {
+          const grid = h('div.swatches', { role: 'radiogroup', 'aria-label': '颜色' }, HUES.map((hue) => h('button.swatch', { type: 'button', role: 'radio', 'aria-checked': String(r.color === hue), 'aria-label': hue, style: { background: accentColor(hue) }, onclick: () => {
             const next = structuredClone(rules);
             next[i].color = hue;
-            update({ color: { type: 'conditions', rules: next } }, 'Color');
+            update({ color: { type: 'conditions', rules: next } }, '颜色');
             pop.close();
             render();
           } })));
-          const pop = openPopover(sw, grid, { className: 'padded', label: 'Rule color' });
+          const pop = openPopover(sw, grid, { className: 'padded', label: '规则颜色' });
         });
         const cond = r.filter?.conditions?.[0];
         const f = cond && table.field(cond.fieldId);
-        const desc = f ? `${f.name} ${operatorsFor(f, page.base.compute.ctx).find(([k]) => k === cond.op)?.[1] || ''} ${describeValue(f, cond)}` : 'Any record';
+        const desc = f ? `${f.name} ${operatorsFor(f, page.base.compute.ctx).find(([k]) => k === cond.op)?.[1] || ''} ${describeValue(f, cond)}` : '任何记录';
         const edit = h('button.btn.small.ghost.rule-edit', { type: 'button' }, desc.trim(), icon('chevronDown', 12));
         edit.addEventListener('click', () => {
           // A rule's conditions use the same builder as filters.
@@ -467,9 +467,9 @@ function colorPanel(page, table, view, update) {
           const panel = filterPanel(page, table, fake, (patch) => {
             const next = structuredClone(view.color.rules);
             next[i].filter = patch.filters;
-            update({ color: { type: 'conditions', rules: next } }, 'Color');
+            update({ color: { type: 'conditions', rules: next } }, '颜色');
           });
-          const pop = openPopover(edit, panel, { className: 'padded tool-panel wide', label: 'Rule conditions', beforeClose: () => {
+          const pop = openPopover(edit, panel, { className: 'padded tool-panel wide', label: '规则条件', beforeClose: () => {
             panel.flush();
             // Redrawn with the new conditions; focus returns to the rule's new button.
             render();
@@ -477,17 +477,17 @@ function colorPanel(page, table, view, update) {
             if (again) pop.reanchor(again);
           } });
         });
-        return h('div.color-rule', sw, edit, h('button.icon-btn', { type: 'button', 'aria-label': 'Remove rule', onclick: () => {
-          update({ color: { type: 'conditions', rules: rules.filter((_, k) => k !== i) } }, 'Color');
+        return h('div.color-rule', sw, edit, h('button.icon-btn', { type: 'button', 'aria-label': '删除规则', onclick: () => {
+          update({ color: { type: 'conditions', rules: rules.filter((_, k) => k !== i) } }, '颜色');
           render();
         } }, icon('x', 14)));
       })), h('div.filter-add', h('button.link-btn', { type: 'button', onclick: () => {
         const used = rules.map((r) => r.color);
         const color = HUES.find((x) => !used.includes(x)) || 'blue';
         const f = table.primary;
-        update({ color: { type: 'conditions', rules: [...rules, { id: newConditionId(), color, filter: { conjunction: 'and', conditions: [{ id: newConditionId(), fieldId: f.id, op: defaultOp(f, page.base.compute.ctx), value: null }] } }] } }, 'Color');
+        update({ color: { type: 'conditions', rules: [...rules, { id: newConditionId(), color, filter: { conjunction: 'and', conditions: [{ id: newConditionId(), fieldId: f.id, op: defaultOp(f, page.base.compute.ctx), value: null }] } }] } }, '颜色');
         render();
-      } }, icon('plus', 14), 'Add a color rule')), h('p.field-hint', 'The first matching rule colors a record.'));
+      } }, icon('plus', 14), '添加颜色规则')), h('p.field-hint', '第一条匹配的规则将决定记录的颜色。'));
     }
     host.replaceChildren(mode, ...body);
   });
@@ -504,7 +504,7 @@ function describeValue(field, cond) {
     return ids.map((id) => field.options.choices.find((c) => c.id === id)?.name).filter(Boolean).join(', ');
   }
   if (typeof v === 'object' && v.mode) return v.mode === 'exactDate' ? v.date : (DATE_MODES[v.mode] || WITHIN_MODES[v.mode] || '');
-  if (typeof v === 'boolean') return v ? 'checked' : 'unchecked';
+  if (typeof v === 'boolean') return v ? '已勾选' : '未勾选';
   return String(v);
 }
 
@@ -512,38 +512,38 @@ function describeValue(field, cond) {
 
 function kanbanPanel(page, table, view, update) {
   const stackable = table.fields.filter(canStack);
-  const s = h('select.select', { 'aria-label': 'Stack by', onchange: () => update({ stackFieldId: s.value }, 'Stack by') }, fieldOptions(stackable, view.stackFieldId));
-  const empty = h('input.switch', { type: 'checkbox', role: 'switch', checked: !!view.hideEmptyStacks, onchange: () => update({ hideEmptyStacks: empty.checked }, 'Hide empty stacks') });
+  const s = h('select.select', { 'aria-label': '分组堆叠依据', onchange: () => update({ stackFieldId: s.value }, '分组堆叠') }, fieldOptions(stackable, view.stackFieldId));
+  const empty = h('input.switch', { type: 'checkbox', role: 'switch', checked: !!view.hideEmptyStacks, onchange: () => update({ hideEmptyStacks: empty.checked }, '隐藏空分组') });
   const attachments = table.fields.filter((f) => f.type === 'attachment');
-  const cover = h('select.select', { 'aria-label': 'Card cover', onchange: () => update({ coverFieldId: cover.value || null }, 'Card cover') }, h('option', { value: '' }, 'No cover'), attachments.map((f) => h('option', { value: f.id, selected: f.id === view.coverFieldId }, f.name)));
+  const cover = h('select.select', { 'aria-label': '卡片封面', onchange: () => update({ coverFieldId: cover.value || null }, '卡片封面') }, h('option', { value: '' }, '无封面'), attachments.map((f) => h('option', { value: f.id, selected: f.id === view.coverFieldId }, f.name)));
   return h('div',
-    stackable.length ? h('div.form-row', h('label.field-label', 'Stack records by'), s) : h('p.field-hint', 'Add a single select or checkbox field to stack records by.'),
-    h('label.switch-row', empty, h('span.grow', 'Hide empty stacks')),
-    h('div.form-row', { style: { marginTop: '10px' } }, h('label.field-label', 'Card cover'), cover));
+    stackable.length ? h('div.form-row', h('label.field-label', '记录分组堆叠依据'), s) : h('p.field-hint', '添加单选或复选框字段以进行分组堆叠。'),
+    h('label.switch-row', empty, h('span.grow', '隐藏空分组')),
+    h('div.form-row', { style: { marginTop: '10px' } }, h('label.field-label', '卡片封面'), cover));
 }
 
 function datesPanel(page, table, view, update) {
   // Formulas count when they give dates (a number would read as a 1970 date).
   const dates = table.fields.filter((f) => ['date', 'createdTime', 'lastModifiedTime'].includes(f.type) || (f.type === 'formula' && page.base.compute.formulaKind(f) === 'date'));
-  const start = h('select.select', { 'aria-label': 'Start date', onchange: () => update({ dateFieldId: start.value }, 'Date field') }, fieldOptions(dates, view.dateFieldId));
-  const end = h('select.select', { 'aria-label': 'End date', onchange: () => update({ endFieldId: end.value || null }, 'End date field') }, h('option', { value: '' }, 'None (single day)'), dates.filter((f) => !isComputed(f) || f.type === 'formula').map((f) => h('option', { value: f.id, selected: f.id === view.endFieldId }, f.name)));
+  const start = h('select.select', { 'aria-label': '开始日期', onchange: () => update({ dateFieldId: start.value }, '日期字段') }, fieldOptions(dates, view.dateFieldId));
+  const end = h('select.select', { 'aria-label': '结束日期', onchange: () => update({ endFieldId: end.value || null }, '结束日期字段') }, h('option', { value: '' }, '无（单日）'), dates.filter((f) => !isComputed(f) || f.type === 'formula').map((f) => h('option', { value: f.id, selected: f.id === view.endFieldId }, f.name)));
   const parts = [
-    dates.length ? h('div.form-row', h('label.field-label', 'Start date'), start) : h('p.field-hint', 'Add a date field to place records on the calendar.'),
-    dates.length ? h('div.form-row', h('label.field-label', 'End date'), end) : null,
+    dates.length ? h('div.form-row', h('label.field-label', '开始日期'), start) : h('p.field-hint', '添加日期字段以在日历上展示记录。'),
+    dates.length ? h('div.form-row', h('label.field-label', '结束日期'), end) : null,
   ];
   if (view.type === 'timeline') {
-    const scale = h('select.select', { 'aria-label': 'Scale', onchange: () => update({ scale: scale.value }, 'Timeline scale') }, [['day', 'Days'], ['week', 'Weeks'], ['month', 'Months'], ['quarter', 'Quarters']].map(([k, l]) => h('option', { value: k, selected: (view.scale || 'week') === k }, l)));
-    parts.push(h('div.form-row', h('label.field-label', 'Scale'), scale));
+    const scale = h('select.select', { 'aria-label': '时间粒度', onchange: () => update({ scale: scale.value }, '时间线刻度') }, [['day', '天'], ['week', '周'], ['month', '月'], ['quarter', '季度']].map(([k, l]) => h('option', { value: k, selected: (view.scale || 'week') === k }, l)));
+    parts.push(h('div.form-row', h('label.field-label', '时间粒度'), scale));
   }
   return h('div', ...parts);
 }
 
 function coverPanel(table, view, update) {
   const attachments = table.fields.filter((f) => f.type === 'attachment');
-  const cover = h('select.select', { 'aria-label': 'Cover field', onchange: () => update({ coverFieldId: cover.value || null }, 'Card cover') }, h('option', { value: '' }, 'No cover'), attachments.map((f) => h('option', { value: f.id, selected: f.id === view.coverFieldId }, f.name)));
-  const fit = h('div.segmented', { role: 'radiogroup', 'aria-label': 'Image fit' }, ...[['cover', 'Crop'], ['contain', 'Fit']].map(([k, l]) => h('button', { type: 'button', role: 'radio', 'aria-checked': String((view.coverFit || 'cover') === k), onclick: (e) => {
-    update({ coverFit: k }, 'Cover fit');
+  const cover = h('select.select', { 'aria-label': '封面字段', onchange: () => update({ coverFieldId: cover.value || null }, '卡片封面') }, h('option', { value: '' }, '无封面'), attachments.map((f) => h('option', { value: f.id, selected: f.id === view.coverFieldId }, f.name)));
+  const fit = h('div.segmented', { role: 'radiogroup', 'aria-label': '图片适应方式' }, ...[['cover', '裁剪填满'], ['contain', '完整显示']].map(([k, l]) => h('button', { type: 'button', role: 'radio', 'aria-checked': String((view.coverFit || 'cover') === k), onclick: (e) => {
+    update({ coverFit: k }, '封面适应方式');
     e.currentTarget.parentElement.querySelectorAll('button').forEach((b) => b.setAttribute('aria-checked', String(b === e.currentTarget)));
   } }, l)));
-  return h('div', h('div.form-row', h('label.field-label', 'Cover image'), cover), attachments.length ? h('div.form-row', h('label.field-label', 'Image'), fit) : h('p.field-hint', 'Add an attachment field to show images on cards.'));
+  return h('div', h('div.form-row', h('label.field-label', '封面图片'), cover), attachments.length ? h('div.form-row', h('label.field-label', '图片'), fit) : h('p.field-hint', '添加附件字段以在卡片上显示图片。'));
 }

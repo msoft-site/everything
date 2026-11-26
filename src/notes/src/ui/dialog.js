@@ -22,7 +22,7 @@ export function openDialog({ title, body, actions = [], width = 440, className =
   };
   const header = h('div.dialog-header',
     h('h2.dialog-title', { id: titleId }, title),
-    h('button.icon-btn.dialog-close', { type: 'button', 'aria-label': 'Close', onclick: () => close(null) }, icon('x', 16)),
+    h('button.icon-btn.dialog-close', { type: 'button', 'aria-label': '关闭', onclick: () => close(null) }, icon('x', 16)),
   );
   const content = h('div.dialog-body', body);
   const footer = h('div.dialog-actions');
@@ -83,7 +83,7 @@ export function openDialog({ title, body, actions = [], width = 440, className =
 }
 
 /** Asks for a line of text. Resolves to the string or null. */
-export function promptText({ title, label, value = '', placeholder = '', okLabel = 'OK', validate } = {}) {
+export function promptText({ title, label, value = '', placeholder = '', okLabel = '确定', validate } = {}) {
   return new Promise((resolve) => {
     const id = `f-${Math.random().toString(36).slice(2, 8)}`;
     const input = h('input.input', { id, type: 'text', value, placeholder, autocomplete: 'off', spellcheck: 'false' });
@@ -93,13 +93,13 @@ export function promptText({ title, label, value = '', placeholder = '', okLabel
       title,
       body: h('div.field', h('label.field-label', { for: id }, label), input, error),
       actions: [
-        { label: 'Cancel', run: () => {} },
+        { label: '取消', run: () => {} },
         {
           label: okLabel,
           primary: true,
           run: () => {
             const v = input.value.trim();
-            const problem = validate?.(v) || (!v ? 'Enter a name.' : '');
+            const problem = validate?.(v) || (!v ? '请输入名称。' : '');
             if (problem) {
               error.textContent = problem;
               input.setAttribute('aria-invalid', 'true');
@@ -120,14 +120,14 @@ export function promptText({ title, label, value = '', placeholder = '', okLabel
 }
 
 /** Yes/no confirmation. Resolves true when confirmed. */
-export function confirmDialog({ title, message, okLabel = 'OK', danger = false } = {}) {
+export function confirmDialog({ title, message, okLabel = '确定', danger = false } = {}) {
   return new Promise((resolve) => {
     let ok = false;
     openDialog({
       title,
       body: h('p.dialog-message', message),
       actions: [
-        { label: 'Cancel', run: () => {} },
+        { label: '取消', run: () => {} },
         { label: okLabel, primary: true, danger, run: () => (ok = true) },
       ],
       onClose: () => resolve(ok),

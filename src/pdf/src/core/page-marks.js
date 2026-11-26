@@ -12,8 +12,8 @@ export const WATERMARK_SIZES = { small: 0.4, medium: 0.55, large: 0.7 };
 export const WATERMARK_LAYOUTS = { diagonal: 45, horizontal: 0 };
 export const NUMBER_FORMATS = {
   plain: '{n}',
-  page: 'Page {n}',
-  of: 'Page {n} of {N}',
+  page: '第 {n} 页',
+  of: '第 {n} 页 / 共 {N} 页',
   slash: '{n} / {N}',
   dashes: '- {n} -',
 };

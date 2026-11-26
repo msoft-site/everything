@@ -54,10 +54,10 @@ export async function hydrate(root, store) {
     if (span.dataset.hydrated) continue;
     span.dataset.hydrated = '1';
     const kind = span.dataset.kind || 'file';
-    const name = span.dataset.name || 'Attachment';
+    const name = span.dataset.name || '附件';
     span.replaceChildren();
     span.setAttribute('role', 'group');
-    span.setAttribute('aria-label', `${kind === 'audio' ? 'Audio recording' : kind === 'video' ? 'Video recording' : 'Attached file'}: ${name}`);
+    span.setAttribute('aria-label', `${kind === 'audio' ? '音频录制' : kind === 'video' ? '视频录制' : '附件文件'}：${name}`);
     const head = h('span.nt-file-head',
       h('span.nt-file-icon', icon(fileIconName(span.dataset.type, name), 20, undefined, { plain: true })),
       h('span.nt-file-name', name),
@@ -71,14 +71,14 @@ export async function hydrate(root, store) {
     } else {
       span.tabIndex = 0;
       span.setAttribute('role', 'button');
-      span.setAttribute('aria-label', `Open attachment ${name}`);
+      span.setAttribute('aria-label', `打开附件 ${name}`);
       span.append(head);
     }
   }
   for (const span of root.querySelectorAll('span.nt-math')) {
     span.contentEditable = 'false';
     span.setAttribute('role', 'img');
-    span.setAttribute('aria-label', `Equation: ${span.dataset.tex || ''}`);
+    span.setAttribute('aria-label', `公式：${span.dataset.tex || ''}`);
     span.tabIndex = -1;
     jobs.push(renderMath(span.dataset.tex).then((html) => (span.innerHTML = html)));
   }

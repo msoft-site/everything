@@ -101,17 +101,17 @@ export class App {
 
     // Title bar
     this.undoBtn = this.chromeButton('undo');
-    this.redoBtn = this.chromeButton('redo');
-    const moreBtn = h('button.icon-btn.desktop-only', { type: 'button', 'aria-label': 'More commands', 'data-tip': 'More commands' }, icon('more', 18));
+    this.redoBtn = this.redoBtn = this.chromeButton('redo');
+    const moreBtn = h('button.icon-btn.desktop-only', { type: 'button', 'aria-label': '更多命令', 'data-tip': '更多命令' }, icon('more', 18));
     moreBtn.addEventListener('click', () => {
       if (moreBtn._menuJustClosed) return;
-      openMenu(moreBtn, fileMenu(this), { label: 'More commands' });
+      openMenu(moreBtn, fileMenu(this), { label: '更多命令' });
     });
-    this.mobileBack = h('button.icon-btn.mobile-only.mobile-back', { type: 'button', 'aria-label': 'Back', onclick: () => this.setMobileView(this.root.dataset.mobileView === 'page' ? 'pages' : 'sections') }, icon('chevLeft', 22));
-    this.titleText = h('div.titlebar-title', { 'aria-live': 'off' }, 'Notes');
-    this.syncBtn = h('button.icon-btn.sync-btn', { type: 'button', 'aria-label': 'All changes saved', 'data-tip': 'All changes saved', 'data-status': 'saved', onclick: () => this.syncNow() }, icon('cloudCheck', 18));
-    this.shareBtn = h('button.share-btn', { type: 'button', 'data-tip': 'Share', 'aria-label': 'Share', onclick: () => this.runCommand('share') }, icon('share', 16), h('span', 'Share'));
-    this.mobileMore = h('button.icon-btn.mobile-only', { type: 'button', 'aria-label': 'More commands' }, icon('more', 20));
+    this.mobileBack = h('button.icon-btn.mobile-only.mobile-back', { type: 'button', 'aria-label': '返回', onclick: () => this.setMobileView(this.root.dataset.mobileView === 'page' ? 'pages' : 'sections') }, icon('chevLeft', 22));
+    this.titleText = h('div.titlebar-title', { 'aria-live': 'off' }, '笔记');
+    this.syncBtn = h('button.icon-btn.sync-btn', { type: 'button', 'aria-label': '所有更改已保存', 'data-tip': '所有更改已保存', 'data-status': 'saved', onclick: () => this.syncNow() }, icon('cloudCheck', 18));
+    this.shareBtn = h('button.share-btn', { type: 'button', 'data-tip': '共享', 'aria-label': '共享', onclick: () => this.runCommand('share') }, icon('share', 16), h('span', '共享'));
+    this.mobileMore = h('button.icon-btn.mobile-only', { type: 'button', 'aria-label': '更多命令' }, icon('more', 20));
     // Where puter.js has <puter-user-menu> (user-menu.js), it ends the title bar with the Apps launcher and the
     // account, and the app's own Apps button and the rail's account button stand down. Its Sign out is the app's,
     // which saves first; a sign-in or sign-out it did by itself reaches the app as a session change.
@@ -124,12 +124,12 @@ export class App {
       // Phones have no rail, so More carries the account menu too. Beside the element only its Theme, Keyboard
       // Shortcuts and About would be left, and the File menu has all three.
       const items = this.userMenu ? fileMenu(this) : [...fileMenu(this), { type: 'sep' }, ...this.accountItems()];
-      openMenu(this.mobileMore, items, { label: 'More commands', align: 'end' });
+      openMenu(this.mobileMore, items, { label: '更多命令', align: 'end' });
     });
     this.titlebar = h('header.titlebar', { role: 'banner' },
       h('div.titlebar-start',
         this.mobileBack,
-        h('div.app-mark', h('img', { src: './favicon.svg', alt: '' }), h('span', 'Notes')),
+        h('div.app-mark', h('img', { src: './favicon.svg', alt: '' }), h('span', '笔记')),
         h('span.desktop-only', { style: { display: 'contents' } }, this.undoBtn, this.redoBtn, moreBtn),
       ),
       this.titleText,
@@ -138,26 +138,26 @@ export class App {
 
     // Ribbon
     this.ribbon = new Ribbon(this, { tabs: RIBBON_TABS, commands: this.commands, galleries: this.galleries });
-    this.fileBtn = h('button.ribbon-tab.file-tab', { type: 'button', 'aria-haspopup': 'menu', 'aria-expanded': 'false' }, 'File');
+    this.fileBtn = h('button.ribbon-tab.file-tab', { type: 'button', 'aria-haspopup': 'menu', 'aria-expanded': 'false' }, '文件');
     this.fileBtn.addEventListener('click', () => {
       if (this.fileBtn._menuJustClosed) return;
-      openMenu(this.fileBtn, fileMenu(this), { label: 'File' });
+      openMenu(this.fileBtn, fileMenu(this), { label: '文件' });
     });
     this.ribbon.tabList.before(this.fileBtn);
 
     // Workspace
-    this.rail = h('nav.rail', { 'aria-label': 'Views' });
+    this.rail = h('nav.rail', { 'aria-label': '视图' });
     this.railButtons = {
-      notebooks: this.railButton('notebooks', 'Notebooks', 'notebooks'),
-      search: this.railButton('search', 'Search', 'search', 'Mod+E'),
-      recent: this.railButton('recent', 'Recent Notes', 'recent'),
+      notebooks: this.railButton('notebooks', '笔记本', 'notebooks'),
+      search: this.railButton('search', '搜索', 'search', 'Mod+E'),
+      recent: this.railButton('recent', '最近笔记', 'recent'),
     };
-    this.avatar = h('button.avatar-btn', { type: 'button', 'aria-label': 'Account', 'data-tip': this.user?.username || 'Account', 'aria-haspopup': 'menu', 'aria-expanded': 'false' }, this.initials());
+    this.avatar = h('button.avatar-btn', { type: 'button', 'aria-label': '账户', 'data-tip': this.user?.username || '账户', 'aria-haspopup': 'menu', 'aria-expanded': 'false' }, this.initials());
     this.avatar.addEventListener('click', () => {
       if (this.avatar._menuJustClosed) return;
       closeAppsPanel();
       const r = this.avatar.getBoundingClientRect();
-      openMenu({ x: r.right + 6, y: r.bottom }, this.accountItems(), { label: 'Account' });
+      openMenu({ x: r.right + 6, y: r.bottom }, this.accountItems(), { label: '账户' });
     });
     this.rail.append(...Object.values(this.railButtons), h('span.rail-spacer'));
     if (!this.userMenu) this.rail.append(this.avatar);
@@ -165,22 +165,22 @@ export class App {
     this.nav = new Nav(this);
     this.search = new SearchPanel(this);
     this.recent = new RecentPanel(this);
-    this.pageHeading = h('h1.sr-only', 'Notes');
+    this.pageHeading = h('h1.sr-only', '笔记');
     this.canvasCol = h('div.canvas-col', this.pageHeading);
     this.editor = new PageEditor({ store: this.store, host: this.canvasCol });
     this.editor.ink.inkToShape = Boolean(prefs().inkToShape);
     this.bindEditor();
     this.find = new FindBar(this);
-    this.exitFullBtn = h('button.btn.exit-full', { type: 'button', hidden: true, onclick: () => this.toggleFullPage() }, icon('exitFullPage', 16), 'Exit Full Page View');
+    this.exitFullBtn = h('button.btn.exit-full', { type: 'button', hidden: true, onclick: () => this.toggleFullPage() }, icon('exitFullPage', 16), '退出整页视图');
     this.canvasCol.append(this.exitFullBtn);
     this.taskPanes = new TaskPanes(this);
     this.main = h('main.main', { id: 'main' }, this.canvasCol, this.taskPanes.el);
     this.workspace = h('div.workspace', this.rail, this.nav.el, this.search.el, this.recent.el, this.main);
 
-    this.bottomBar = h('nav.bottom-bar', { 'aria-label': 'Bottom navigation' },
-      this.bottomButton('notebooks', 'Notebooks', 'notebooks'),
-      this.bottomButton('search', 'Search', 'search'),
-      this.bottomButton('recent', 'Recent', 'recent'),
+    this.bottomBar = h('nav.bottom-bar', { 'aria-label': '底部导航' },
+      this.bottomButton('notebooks', '笔记本', 'notebooks'),
+      this.bottomButton('search', '搜索', 'search'),
+      this.bottomButton('recent', '最近', 'recent'),
     );
 
     root.append(this.titlebar, this.ribbon.el, this.workspace, this.bottomBar);
@@ -236,12 +236,12 @@ export class App {
     const items = [];
     if (this.user) items.push({ type: 'header', label: this.user.username });
     items.push(
-      { label: 'Theme', icon: this.commands.get('theme').dynamicIcon(), submenu: () => this.commands.get('theme').menu(this) },
-      { label: 'Keyboard Shortcuts', icon: 'keyboard', run: () => this.runCommand('shortcuts') },
-      { label: 'About Notes', icon: 'info', run: () => this.runCommand('about') },
+      { label: '主题', icon: this.commands.get('theme').dynamicIcon(), submenu: () => this.commands.get('theme').menu(this) },
+      { label: '键盘快捷键', icon: 'keyboard', run: () => this.runCommand('shortcuts') },
+      { label: '关于笔记', icon: 'info', run: () => this.runCommand('about') },
     );
     if (this.env !== 'app' && this.onSignOut) {
-      items.push({ type: 'sep' }, { label: 'Sign Out', icon: 'logout', run: () => this.signOut() });
+      items.push({ type: 'sep' }, { label: '退出登录', icon: 'logout', run: () => this.signOut() });
     }
     return items;
   }
@@ -275,10 +275,10 @@ export class App {
       this.applyLayout();
     }
     this.root.dataset.mobileView = view;
-    this.mobileBack.setAttribute('aria-label', view === 'page' ? 'Back to pages' : 'Back to sections');
+    this.mobileBack.setAttribute('aria-label', view === 'page' ? '返回页面列表' : '返回分区列表');
     if (view === 'page') this.titleText.textContent = this.currentTitle();
-    else if (view === 'pages') this.titleText.textContent = this.store.section(this.state.sectionId)?.name || 'Pages';
-    else this.titleText.textContent = this.store.notebook(this.state.notebookId)?.name || 'Notes';
+    else if (view === 'pages') this.titleText.textContent = this.store.section(this.state.sectionId)?.name || '页面';
+    else this.titleText.textContent = this.store.notebook(this.state.notebookId)?.name || '笔记';
     if (window.innerWidth > 760) this.updateTitle();
   }
 
@@ -330,7 +330,7 @@ export class App {
     this.state.fullPage = !this.state.fullPage;
     this.applyLayout();
     this.ribbon.refresh();
-    announce(this.state.fullPage ? 'Full page view' : 'Normal view');
+    announce(this.state.fullPage ? '整页视图' : '常规视图');
   }
 
   themeChanged() {
@@ -399,7 +399,7 @@ export class App {
         // Edits still only in the editor (typed, or a stroke being drawn)
         // count as unsaved, also when they start while the copy is read.
         const busy = () => this.editor.page?.id === id && Boolean(this.editor.dirty.size || this.editor.commitSoon.pending() || this.editor.ink.active);
-        if (id && !busy() && (await this.store.refreshPage(id, { busy }))) toast('This page was updated on another device.');
+        if (id && !busy() && (await this.store.refreshPage(id, { busy }))) toast('此页面已在另一台设备上更新。');
       } catch {
         /* offline */
       }
@@ -408,15 +408,15 @@ export class App {
 
   updateSync(status) {
     const map = {
-      saved: ['cloudCheck', 'All changes saved'],
-      pending: ['cloud', 'Changes not yet saved'],
-      saving: ['sync', 'Saving changes...'],
-      error: ['cloudAlert', "Can't save right now. Your changes are kept and will be retried."],
+      saved: ['cloudCheck', '所有更改已保存'],
+      pending: ['cloud', '更改尚未保存'],
+      saving: ['sync', '正在保存更改...'],
+      error: ['cloudAlert', '暂无法保存。更改已保留，稍后将重试。'],
     };
     const [ic, label] = map[status] || map.saved;
     this.syncBtn.replaceChildren(icon(ic, 18));
     this.syncBtn.dataset.status = status;
-    this.syncBtn.setAttribute('aria-label', `${label.replace(/\.+$/, '')}. Sync now`);
+    this.syncBtn.setAttribute('aria-label', `${label.replace(/\.+$/, '')}。立即同步`);
     this.syncBtn.dataset.tip = label;
   }
 
@@ -425,9 +425,9 @@ export class App {
     try {
       await this.store.flush();
       await this.store.refresh();
-      toast(this.store.status === 'error' ? "Some changes couldn't be saved yet. Retrying." : 'All changes saved', { kind: this.store.status === 'error' ? 'error' : 'info' });
+      toast(this.store.status === 'error' ? '部分更改尚未保存，正在重试。' : '所有更改已保存', { kind: this.store.status === 'error' ? 'error' : 'info' });
     } catch {
-      toast("Couldn't reach your cloud storage. Changes will be retried.", { kind: 'error' });
+      toast('无法连接存储。更改将在恢复后重试。', { kind: 'error' });
     }
   }
 
@@ -455,11 +455,11 @@ export class App {
       const id = hash.slice(6);
       if (id === this.state.pageId) return;
       if (this.store.findPage(id)) this.openPage(id);
-      else toast("That page isn't available. It may have been deleted.", { kind: 'error' });
+      else toast('该页面不可用，可能已被删除。', { kind: 'error' });
     } else if (hash.startsWith('#section=')) {
       const id = hash.slice(9);
       if (this.store.section(id)) this.selectSection(id, { focus: false });
-      else toast("That section isn't available. It may have been deleted.", { kind: 'error' });
+      else toast('该分区不可用，可能已被删除。', { kind: 'error' });
     }
   }
 
@@ -503,15 +503,15 @@ export class App {
 
   currentTitle() {
     const f = this.state.pageId && this.store.findPage(this.state.pageId);
-    return f ? f.meta.title?.trim() || 'Untitled Page' : 'Notes';
+    return f ? f.meta.title?.trim() || '无标题页面' : '笔记';
   }
 
   updateTitle() {
     const title = this.currentTitle();
     const nb = this.store.notebook(this.state.notebookId);
-    document.title = this.state.pageId ? `${title} - Notes` : 'Notes';
-    this.pageHeading.textContent = this.state.pageId ? title : 'Notes';
-    if (!this.isPhone()) this.titleText.textContent = nb ? `${title}${this.state.pageId ? ' - ' : ''}${this.state.pageId ? nb.name : ''}` : 'Notes';
+    document.title = this.state.pageId ? `${title} - 笔记` : '笔记';
+    this.pageHeading.textContent = this.state.pageId ? title : '笔记';
+    if (!this.isPhone()) this.titleText.textContent = nb ? `${title}${this.state.pageId ? ' - ' : ''}${this.state.pageId ? nb.name : ''}` : '笔记';
     else if (this.root.dataset.mobileView === 'page') this.titleText.textContent = title;
   }
 
@@ -578,7 +578,7 @@ export class App {
     if (!page) {
       // A file that is there but can't be parsed won't load on a retry.
       const damaged = failure instanceof SyntaxError;
-      toast(damaged ? "Couldn't open this page: its file is damaged." : "Couldn't open this page. Check your connection and try again.", { kind: 'error' });
+      toast(damaged ? "无法打开此页面：文件已损坏。" : "无法打开此页面。请检查网络连接后重试。", { kind: 'error' });
       this.showEmpty(damaged ? 'damaged' : 'load-error');
       if (this.isPhone()) this.setMobileView('page');
       return;
@@ -625,18 +625,18 @@ export class App {
       // The selected page couldn't be loaded; the list keeps it selected.
       const id = this.state.pageId;
       // A damaged file can also be a read that went wrong once: offer a retry too.
-      const retry = h('button.btn.primary', { type: 'button', onclick: () => id && this.openPage(id, { focus: true }) }, 'Try again');
+      const retry = h('button.btn.primary', { type: 'button', onclick: () => id && this.openPage(id, { focus: true }) }, '重试');
       body = kind === 'damaged'
-        ? h('div', icon('cloudOff', 32), h('h2', "This page can't be opened"), h('p', 'Its file is damaged.'), retry)
-        : h('div', icon('cloudOff', 32), h('h2', "Couldn't open this page"), h('p', 'Check your connection and try again.'), retry);
+        ? h('div', icon('cloudOff', 32), h('h2', "无法打开此页面"), h('p', '文件已损坏。'), retry)
+        : h('div', icon('cloudOff', 32), h('h2', "无法打开此页面"), h('p', '请检查网络连接后重试。'), retry);
     } else if (kind === 'locked') {
-      body = h('div', icon('lock', 32), h('h2', 'This section is password protected'), h('p', 'Enter its password to see its pages.'), h('button.btn.primary', { type: 'button', onclick: () => section && this.selectSection(section.id) }, 'Unlock'));
+      body = h('div', icon('lock', 32), h('h2', '此分区受密码保护'), h('p', '请输入密码以查看其页面。'), h('button.btn.primary', { type: 'button', onclick: () => section && this.selectSection(section.id) }, '解锁'));
     } else if (!this.store.notebook(this.state.notebookId)) {
-      body = h('div', icon('notebook', 32), h('h2', 'No notebooks yet'), h('p', 'Add a notebook to start writing.'), h('button.btn.primary', { type: 'button', onclick: () => this.newNotebook() }, 'Add notebook'));
+      body = h('div', icon('notebook', 32), h('h2', '尚无笔记本'), h('p', '添加笔记本以开始记录。'), h('button.btn.primary', { type: 'button', onclick: () => this.newNotebook() }, '添加笔记本'));
     } else if (!section) {
-      body = h('div', icon('notebook', 32), h('h2', 'No sections yet'), h('p', 'Add a section to start writing.'), h('button.btn.primary', { type: 'button', onclick: () => this.newSection() }, 'Add section'));
+      body = h('div', icon('notebook', 32), h('h2', '尚无分区'), h('p', '添加分区以开始记录。'), h('button.btn.primary', { type: 'button', onclick: () => this.newSection() }, '添加分区'));
     } else {
-      body = h('div', icon('newPage', 32), h('h2', 'No pages in this section'), h('p', 'Add a page to start writing.'), h('button.btn.primary', { type: 'button', onclick: () => this.newPage() }, 'Add page'));
+      body = h('div', icon('newPage', 32), h('h2', '此分区暂无页面'), h('p', '添加页面以开始记录。'), h('button.btn.primary', { type: 'button', onclick: () => this.newPage() }, '添加页面'));
     }
     this.canvasCol.append(h('div.canvas-empty', body));
     this.updateFormatState();
@@ -688,11 +688,11 @@ export class App {
   async lockAll() {
     const ids = [...this.store.keys.keys()];
     if (!ids.length) {
-      toast('There are no unlocked protected sections.');
+      toast('没有已解锁的受保护分区。');
       return;
     }
     for (const id of ids) await this.lockSection(id);
-    toast('Protected sections locked');
+    toast('受保护分区已锁定');
   }
 
   /** Protected sections lock again after ten minutes without activity. */
@@ -731,7 +731,7 @@ export class App {
     }
     const meta = this.store.createPage(section.id, { index, level, title, outlines, rules: prefs().defaultRules || null });
     this.openPage(meta.id, { focus: true });
-    announce(sub ? 'New subpage added' : 'New page added');
+    announce(sub ? '已添加新子页面' : '已添加新页面');
     return meta;
   }
 
@@ -756,16 +756,16 @@ export class App {
   async newSectionGroup() {
     const nb = this.store.notebook(this.state.notebookId);
     if (!nb) return;
-    const name = await promptText({ title: 'New Section Group', label: 'Section group name', value: 'New Section Group' });
+    const name = await promptText({ title: '新建分区组', label: '分区组名称', value: '新建分区组' });
     if (!name) return;
     this.store.createGroup(nb.id, { name });
   }
 
   async newNotebook() {
-    const name = await promptText({ title: 'New Notebook', label: 'Notebook name', value: '', placeholder: 'My Notebook', okLabel: 'Create' });
+    const name = await promptText({ title: '新建笔记本', label: '笔记本名称', value: '', placeholder: '我的笔记本', okLabel: '创建' });
     if (!name) return;
     const nb = this.store.createNotebook(name);
-    const s = this.store.createSection(nb.id, { name: 'New Section 1' });
+    const s = this.store.createSection(nb.id, { name: '新建分区 1' });
     const meta = this.store.createPage(s.id);
     this.openPage(meta.id, { focus: true });
   }
@@ -781,7 +781,7 @@ export class App {
         this.renderNav();
       }, (err) => {
         console.error(err);
-        toast("Couldn't rename the page. Check your connection and try again.", { kind: 'error' });
+        toast("无法重命名页面。请检查网络连接后重试。", { kind: 'error' });
         this.renderNav();
       });
     }
@@ -801,14 +801,14 @@ export class App {
       if (next) this.openPage(next.id);
       else this.showEmpty();
     }
-    toast(`Page "${f.meta.title || 'Untitled Page'}" moved to Deleted Notes`, { action: { label: 'Undo', run: () => this.restoreTrash(entry.id) } });
+    toast(`页面“${f.meta.title || '无标题页面'}”已移至已删除笔记`, { action: { label: '撤销', run: () => this.restoreTrash(entry.id) } });
   }
 
   async deleteSection(id) {
     const f = this.store.findNode(id);
     if (!f) return;
-    const kind = f.node.type === 'group' ? 'section group' : 'section';
-    const ok = await confirmDialog({ title: `Delete ${kind}?`, message: `"${f.node.name}" and its pages will be moved to Deleted Notes. You can restore it from there for ${60} days.`, okLabel: 'Delete', danger: true });
+    const kind = f.node.type === 'group' ? '分区组' : '分区';
+    const ok = await confirmDialog({ title: `删除${kind}？`, message: `“${f.node.name}”及其页面将被移至已删除笔记。您可以在 60 天内从那里恢复。`, okLabel: '删除', danger: true });
     if (!ok) return;
     this.editor.flush();
     const entry = this.store.deleteNode(id);
@@ -817,13 +817,13 @@ export class App {
       this.state.pageId = null;
     }
     this.ensureSelection();
-    toast(`"${f.node.name}" moved to Deleted Notes`, { action: { label: 'Undo', run: () => this.restoreTrash(entry.id) } });
+    toast(`“${f.node.name}”已移至已删除笔记`, { action: { label: '撤销', run: () => this.restoreTrash(entry.id) } });
   }
 
   async deleteNotebook(id) {
     const nb = this.store.notebook(id);
     if (!nb) return;
-    const ok = await confirmDialog({ title: 'Delete notebook?', message: `"${nb.name}" will be moved to Deleted Notes. You can restore it from there for 60 days.`, okLabel: 'Delete', danger: true });
+    const ok = await confirmDialog({ title: '删除笔记本？', message: `“${nb.name}”将被移至已删除笔记。您可以在 60 天内从那里恢复。`, okLabel: '删除', danger: true });
     if (!ok) return;
     const entry = this.store.deleteNotebook(id);
     if (this.state.notebookId === id) {
@@ -832,12 +832,12 @@ export class App {
       this.state.pageId = null;
     }
     this.ensureSelection();
-    toast(`"${nb.name}" moved to Deleted Notes`, { action: { label: 'Undo', run: () => this.restoreTrash(entry.id) } });
+    toast(`“${nb.name}”已移至已删除笔记`, { action: { label: '撤销', run: () => this.restoreTrash(entry.id) } });
   }
 
   async restoreTrash(trashId) {
     if (!(await this.store.openTrash(trashId))) {
-      toast('Unlock the protected section first to restore this page.', { kind: 'error' });
+      toast('请先解锁受保护的分区以恢复此页面。', { kind: 'error' });
       return false;
     }
     const kind = this.store.trash.find((t) => t.id === trashId)?.kind;
@@ -845,21 +845,21 @@ export class App {
     if (!r) {
       // Nothing was restored: the section it goes back to is locked, or
       // there is no notebook left to put it in.
-      toast(kind === 'page' && this.store.notebooks.length ? 'Unlock the protected section first to restore this page.' : "Couldn't restore this. Create a notebook first, then try again.", { kind: 'error' });
+      toast(kind === 'page' && this.store.notebooks.length ? '请先解锁受保护的分区以恢复此页面。' : "无法恢复。请先创建笔记本，然后重试。", { kind: 'error' });
       return false;
     }
     if (r.pageId) this.openPage(r.pageId);
     else if (r?.sectionId) this.selectSection(r.sectionId, { focus: false });
     else if (r?.notebookId) this.selectNotebook(r.notebookId);
     else this.ensureSelection();
-    announce('Restored');
+    announce('已恢复');
     return true;
   }
 
   setPageLevel(delta) {
     if (!this.state.pageId) return;
-    if (!this.store.setPageLevel(this.state.pageId, delta)) announce(delta > 0 ? "Can't make this page a subpage here" : 'Already a top-level page');
-    else announce(delta > 0 ? 'Made subpage' : 'Promoted subpage');
+    if (!this.store.setPageLevel(this.state.pageId, delta)) announce(delta > 0 ? "无法在此处将该页面设为子页面" : '已经是顶级页面');
+    else announce(delta > 0 ? '已设为子页面' : '已升级为顶级页面');
   }
 
   /** Alt+Shift+Up/Down in the panes. */
@@ -887,7 +887,7 @@ export class App {
       this.store.moveNode(id, { notebookId: f.notebook.id, parentId: f.parent?.id || null, index: dir > 0 ? index + 1 : index });
     }
     requestAnimationFrame(() => this.nav.focusRow(id));
-    announce(dir < 0 ? 'Moved up' : 'Moved down');
+    announce(dir < 0 ? '已上移' : '已下移');
   }
 
   /** Drag-and-drop result from the panes. */
@@ -895,11 +895,11 @@ export class App {
     if (drag.kind === 'page') {
       if (target.into) {
         if (this.store.isLocked(target.into)) {
-          toast('Unlock that section before moving pages into it.', { kind: 'error' });
+          toast('在移动页面之前，请先解锁该分区。', { kind: 'error' });
           return;
         }
         if (this.store.movePage(drag.id, { sectionId: target.into, level: 0 })) {
-          toast('Page moved');
+          toast('页面已移动');
           // When the open page moved (or went along as a subpage), follow
           // it to its new section, as Move or Copy does.
           const f = this.state.pageId && this.store.findPage(this.state.pageId);
@@ -940,62 +940,62 @@ export class App {
   openNotebookMenu(anchor) {
     const current = this.state.notebookId;
     openMenu(anchor, [
-      { type: 'header', label: 'Notebooks' },
+      { type: 'header', label: '笔记本' },
       ...this.store.notebooks.map((nb) => ({ label: nb.name, radio: true, checked: nb.id === current, swatch: this.nav.colorOf(nb.color), run: () => this.selectNotebook(nb.id) })),
       { type: 'sep' },
-      { label: 'Add Notebook', icon: 'plus', run: () => this.newNotebook() },
-      { label: 'Notebook Settings', icon: 'notebook', disabled: !current, submenu: () => this.notebookItems(this.store.notebook(current)) },
-    ], { label: 'Notebooks' });
+      { label: '添加笔记本', icon: 'plus', run: () => this.newNotebook() },
+      { label: '笔记本设置', icon: 'notebook', disabled: !current, submenu: () => this.notebookItems(this.store.notebook(current)) },
+    ], { label: '笔记本' });
   }
 
   notebookItems(nb) {
     if (!nb) return [];
     const index = this.store.notebooks.indexOf(nb);
     return [
-      { label: 'Rename Notebook...', icon: 'penLine', run: async () => {
-        const name = await promptText({ title: 'Rename Notebook', label: 'Notebook name', value: nb.name, okLabel: 'Rename' });
+      { label: '重命名笔记本...', icon: 'penLine', run: async () => {
+        const name = await promptText({ title: '重命名笔记本', label: '笔记本名称', value: nb.name, okLabel: '重命名' });
         if (name) this.store.renameNotebook(nb.id, name);
       } },
-      { label: 'Notebook Color', icon: 'palette', submenu: () => SECTION_COLORS.map((c) => ({ label: c.label, swatch: this.nav.colorOf(c.id), radio: true, checked: nb.color === c.id, run: () => this.store.setNotebookColor(nb.id, c.id) })) },
-      { label: 'Move Up', icon: 'up', disabled: index <= 0, run: () => this.store.moveNotebook(nb.id, index - 1) },
-      { label: 'Move Down', icon: 'down', disabled: index >= this.store.notebooks.length - 1, run: () => this.store.moveNotebook(nb.id, index + 1) },
-      { label: 'Export Notebook Backup', icon: 'download', run: () => features.exportNotebook(this, nb.id) },
+      { label: '笔记本颜色', icon: 'palette', submenu: () => SECTION_COLORS.map((c) => ({ label: c.label, swatch: this.nav.colorOf(c.id), radio: true, checked: nb.color === c.id, run: () => this.store.setNotebookColor(nb.id, c.id) })) },
+      { label: '上移', icon: 'up', disabled: index <= 0, run: () => this.store.moveNotebook(nb.id, index - 1) },
+      { label: '下移', icon: 'down', disabled: index >= this.store.notebooks.length - 1, run: () => this.store.moveNotebook(nb.id, index + 1) },
+      { label: '导出笔记本备份', icon: 'download', run: () => features.exportNotebook(this, nb.id) },
       { type: 'sep' },
-      { label: 'Delete Notebook', icon: 'trash', danger: true, run: () => this.deleteNotebook(nb.id) },
+      { label: '删除笔记本', icon: 'trash', danger: true, run: () => this.deleteNotebook(nb.id) },
     ];
   }
 
   sectionMenu(node, point) {
     if (node.type === 'group') {
       openMenu(point, [
-        { label: 'Rename', icon: 'penLine', shortcut: 'F2', run: () => this.renameRow(node.id, node.name) },
-        { label: node.collapsed ? 'Expand' : 'Collapse', icon: node.collapsed ? 'expand' : 'collapse', run: () => this.store.toggleGroup(node.id) },
+        { label: '重命名', icon: 'penLine', shortcut: 'F2', run: () => this.renameRow(node.id, node.name) },
+        { label: node.collapsed ? '展开' : '折叠', icon: node.collapsed ? 'expand' : 'collapse', run: () => this.store.toggleGroup(node.id) },
         { type: 'sep' },
-        { label: 'New Section', icon: 'newSection', run: () => {
+        { label: '新建分区', icon: 'newSection', run: () => {
           const s = this.store.createSection(this.state.notebookId, { parentId: node.id });
           this.store.createPage(s.id);
           this.selectSection(s.id);
         } },
-        { label: 'New Section Group', icon: 'sectionGroup', run: () => this.store.createGroup(this.state.notebookId, { parentId: node.id }) },
-        { label: 'Move or Copy...', icon: 'folderOpen', run: () => this.moveDialog('group', node.id) },
+        { label: '新建分区组', icon: 'sectionGroup', run: () => this.store.createGroup(this.state.notebookId, { parentId: node.id }) },
+        { label: '移动或复制...', icon: 'folderOpen', run: () => this.moveDialog('group', node.id) },
         { type: 'sep' },
-        { label: 'Delete', icon: 'trash', danger: true, run: () => this.nav.refocusAfter('section', this.deleteSection(node.id)) },
+        { label: '删除', icon: 'trash', danger: true, run: () => this.nav.refocusAfter('section', this.deleteSection(node.id)) },
       ], { label: node.name });
       return;
     }
     openMenu(point, [
-      { label: 'Rename', icon: 'penLine', shortcut: 'F2', run: () => this.renameRow(node.id, node.name) },
-      { label: 'Section Color', icon: 'palette', submenu: () => SECTION_COLORS.map((c) => ({ label: c.label, swatch: this.nav.colorOf(c.id), radio: true, checked: node.color === c.id, run: () => this.store.setSectionColor(node.id, c.id) })) },
-      { label: 'Move or Copy...', icon: 'folderOpen', run: () => this.moveDialog('section', node.id) },
-      { label: 'Copy Link to Section', icon: 'link', run: () => this.copyLink('section', node.id) },
-      { label: node.locked ? 'Password Protection...' : 'Password Protect This Section...', icon: 'lock', run: () => features.passwordDialog(this, node) },
-      { label: 'Lock Section', icon: 'lock', hidden: !(node.locked && this.isUnlocked(node.id)), run: () => this.lockSection(node.id) },
-      { label: 'Export Section', icon: 'download', run: () => features.exportSection(this, node.id) },
+      { label: '重命名', icon: 'penLine', shortcut: 'F2', run: () => this.renameRow(node.id, node.name) },
+      { label: '分区颜色', icon: 'palette', submenu: () => SECTION_COLORS.map((c) => ({ label: c.label, swatch: this.nav.colorOf(c.id), radio: true, checked: node.color === c.id, run: () => this.store.setSectionColor(node.id, c.id) })) },
+      { label: '移动或复制...', icon: 'folderOpen', run: () => this.moveDialog('section', node.id) },
+      { label: '复制分区链接', icon: 'link', run: () => this.copyLink('section', node.id) },
+      { label: node.locked ? '密码保护...' : '为此分区设置密码保护...', icon: 'lock', run: () => features.passwordDialog(this, node) },
+      { label: '锁定分区', icon: 'lock', hidden: !(node.locked && this.isUnlocked(node.id)), run: () => this.lockSection(node.id) },
+      { label: '导出分区', icon: 'download', run: () => features.exportSection(this, node.id) },
       { type: 'sep' },
-      { label: 'New Section', icon: 'newSection', run: () => this.newSection() },
-      { label: 'New Section Group', icon: 'sectionGroup', run: () => this.newSectionGroup() },
+      { label: '新建分区', icon: 'newSection', run: () => this.newSection() },
+      { label: '新建分区组', icon: 'sectionGroup', run: () => this.newSectionGroup() },
       { type: 'sep' },
-      { label: 'Delete', icon: 'trash', danger: true, shortcut: 'Delete', run: () => this.nav.refocusAfter('section', this.deleteSection(node.id)) },
+      { label: '删除', icon: 'trash', danger: true, shortcut: 'Delete', run: () => this.nav.refocusAfter('section', this.deleteSection(node.id)) },
     ], { label: node.name });
   }
 
@@ -1009,29 +1009,29 @@ export class App {
     if (!f) return;
     const level = meta.level || 0;
     openMenu(point, [
-      { label: 'New Page', icon: 'newPage', run: () => { this.state.pageId = meta.id; this.newPage(); } },
-      { label: 'New Subpage', icon: 'subpage', run: () => { this.state.pageId = meta.id; this.newPage({ sub: true }); } },
+      { label: '新建页面', icon: 'newPage', run: () => { this.state.pageId = meta.id; this.newPage(); } },
+      { label: '新建子页面', icon: 'subpage', run: () => { this.state.pageId = meta.id; this.newPage({ sub: true }); } },
       { type: 'sep' },
-      { label: 'Rename', icon: 'penLine', shortcut: 'F2', run: () => {
+      { label: '重命名', icon: 'penLine', shortcut: 'F2', run: () => {
         const row = this.nav.pagesList.querySelector(`.row[data-id="${CSS.escape(meta.id)}"]`);
         if (row) this.nav.rename(row, meta.title || '', (v) => this.renamePage(meta.id, v), true);
       } },
-      { label: 'Make Subpage', icon: 'subpage', shortcut: 'Mod+Alt+BracketRight', disabled: f.index === 0 || level >= 2, run: () => this.store.setPageLevel(meta.id, 1) },
-      { label: 'Promote Subpage', icon: 'promote', shortcut: 'Mod+Alt+BracketLeft', disabled: level === 0, run: () => this.store.setPageLevel(meta.id, -1) },
-      { label: meta.collapsed ? 'Expand Subpages' : 'Collapse Subpages', icon: meta.collapsed ? 'expand' : 'collapse', disabled: !(f.section.pages[f.index + 1] && (f.section.pages[f.index + 1].level || 0) > level), run: () => this.store.togglePageCollapsed(meta.id) },
+      { label: '设为子页面', icon: 'subpage', shortcut: 'Mod+Alt+BracketRight', disabled: f.index === 0 || level >= 2, run: () => this.store.setPageLevel(meta.id, 1) },
+      { label: '升级为顶级页面', icon: 'promote', shortcut: 'Mod+Alt+BracketLeft', disabled: level === 0, run: () => this.store.setPageLevel(meta.id, -1) },
+      { label: meta.collapsed ? '展开子页面' : '折叠子页面', icon: meta.collapsed ? 'expand' : 'collapse', disabled: !(f.section.pages[f.index + 1] && (f.section.pages[f.index + 1].level || 0) > level), run: () => this.store.togglePageCollapsed(meta.id) },
       { type: 'sep' },
-      { label: 'Move or Copy...', icon: 'folderOpen', run: () => this.moveDialog('page', meta.id) },
-      { label: 'Duplicate Page', icon: 'copy', run: async () => {
+      { label: '移动或复制...', icon: 'folderOpen', run: () => this.moveDialog('page', meta.id) },
+      { label: '复制页面', icon: 'copy', run: async () => {
         const m = await this.store.copyPage(meta.id).catch((err) => {
           console.error(err);
-          toast(`Couldn't duplicate "${meta.title || 'Untitled Page'}". Check your connection and try again.`, { kind: 'error' });
+          toast(`无法复制“${meta.title || '无标题页面'}”。请检查网络连接后重试。`, { kind: 'error' });
         });
         if (m) this.openPage(m.id);
       } },
-      { label: 'Copy Link to Page', icon: 'link', run: () => this.copyLink('page', meta.id) },
+      { label: '复制页面链接', icon: 'link', run: () => this.copyLink('page', meta.id) },
       { type: 'sep' },
-      { label: 'Delete Page', icon: 'trash', danger: true, shortcut: 'Delete', run: () => this.nav.refocusAfter('page', this.deletePage(meta.id)) },
-    ], { label: meta.title || 'Untitled Page' });
+      { label: '删除页面', icon: 'trash', danger: true, shortcut: 'Delete', run: () => this.nav.refocusAfter('page', this.deletePage(meta.id)) },
+    ], { label: meta.title || '无标题页面' });
   }
 
   // ------------------------------------------------------------ editor wiring
@@ -1046,7 +1046,7 @@ export class App {
       // An open Find bar follows the edit instead of pointing at old text.
       if (!this.find.el.hidden) refind();
     });
-    ed.on('insert-failed', ({ file, err }) => toast(`Couldn't insert ${file.name || 'the file'}: ${err?.message || 'upload failed'}`, { kind: 'error' }));
+    ed.on('insert-failed', ({ file, err }) => toast(`无法插入 ${file.name || '文件'}：${err?.message || '上传失败'}`, { kind: 'error' }));
     ed.on('title-input', (title) => {
       if (this.state.pageId) this.nav.updatePageTitle(this.state.pageId, title);
     });
@@ -1061,9 +1061,9 @@ export class App {
     ed.on('navigate', ({ kind, id }) => {
       if (kind === 'page') {
         if (this.store.findPage(id)) this.openPage(id);
-        else toast("That page isn't available. It may have been deleted.", { kind: 'error' });
+        else toast('该页面不可用，可能已被删除。', { kind: 'error' });
       } else if (this.store.section(id)) this.selectSection(id);
-      else toast("That section isn't available. It may have been deleted.", { kind: 'error' });
+      else toast('该分区不可用，可能已被删除。', { kind: 'error' });
     });
     ed.on('open-file', (data) => features.openAttachment(this, data));
     ed.on('edit-math', (span) => this.equationDialog(span));
@@ -1099,7 +1099,7 @@ export class App {
   setTool(tool, opts) {
     this.editor.ink.setTool(tool, opts);
     this.ribbon.refresh();
-    announce(`${{ type: 'Type', lasso: 'Lasso Select', eraser: 'Eraser', pen: 'Pen', shape: 'Shape', space: 'Insert Space' }[tool] || tool} tool`);
+    announce(`${{ type: '文字', lasso: '套索选择', eraser: '橡皮擦', pen: '笔', shape: '图形', space: '插入空白' }[tool] || tool} 工具`);
   }
 
   /**
@@ -1113,7 +1113,7 @@ export class App {
       ink.pen = { ...pen };
       ink.recolor(changes);
       this.ribbon.refresh();
-      announce('Selected ink changed');
+      announce('所选墨迹已更改');
       return;
     }
     this.setTool('pen', { pen });
@@ -1149,8 +1149,8 @@ export class App {
   buildCombo(kind, ribbon) {
     const isName = kind === 'fontName';
     const listId = `combo-${kind}`;
-    const input = h('input', { type: 'text', 'aria-label': isName ? 'Font' : 'Font Size', role: 'combobox', 'aria-expanded': 'false', 'aria-autocomplete': 'list', 'aria-controls': listId, spellcheck: 'false', autocomplete: 'off' });
-    const btn = h('button', { type: 'button', tabindex: '-1', 'aria-label': isName ? 'Font list' : 'Font size list' }, icon('chevDown', 12));
+    const input = h('input', { type: 'text', 'aria-label': isName ? '字体' : '字号', role: 'combobox', 'aria-expanded': 'false', 'aria-autocomplete': 'list', 'aria-controls': listId, spellcheck: 'false', autocomplete: 'off' });
+    const btn = h('button', { type: 'button', tabindex: '-1', 'aria-label': isName ? '字体列表' : '字号列表' }, icon('chevDown', 12));
     const wrap = h('div.rb-combo', { style: { width: isName ? '128px' : '52px' } }, input, btn);
     const apply = (value) => {
       this.editor.restoreRange();
@@ -1172,7 +1172,7 @@ export class App {
         ? FONTS.map((f) => ({ label: f.label, radio: true, checked: this.format.fontName === f.label, run: () => apply(f.label) }))
         : SIZES.map((s) => ({ label: String(s), radio: true, checked: this.format.fontSize === s, run: () => apply(s) }));
       // Escape goes back to the box, or to the note when the arrow opened the list.
-      openMenu(wrap, items, { label: isName ? 'Fonts' : 'Font sizes', className: isName ? 'font-menu' : 'size-menu' });
+      openMenu(wrap, items, { label: isName ? '字体' : '字号', className: isName ? 'font-menu' : 'size-menu' });
     };
     btn.addEventListener('mousedown', (e) => e.preventDefault());
     btn.addEventListener('click', openList);
@@ -1210,7 +1210,7 @@ export class App {
   // ------------------------------------------------------------ Tell Me
 
   buildTellMe() {
-    const input = h('input', { type: 'search', placeholder: 'Tell me', 'aria-label': 'Tell me what you want to do', role: 'combobox', 'aria-expanded': 'false', 'aria-autocomplete': 'list', autocomplete: 'off', spellcheck: 'false' });
+    const input = h('input', { type: 'search', placeholder: '告诉我您想做什么', 'aria-label': '告诉我您想做什么', role: 'combobox', 'aria-expanded': 'false', 'aria-autocomplete': 'list', autocomplete: 'off', spellcheck: 'false' });
     this.tellMeInput = input;
     const wrap = h('div.tell-me', icon('tellMe', 14), input);
     let menu = null;
@@ -1227,9 +1227,9 @@ export class App {
       }).slice(0, 10);
       const items = matches.length
         ? matches.map((c) => ({ label: c.label, icon: c.icon, shortcut: c.key, disabled: c.enabled ? !c.enabled(this) : false, submenu: c.menu && !c.run ? () => c.menu(this) : undefined, run: c.run ? () => { input.value = ''; this.editor.restoreRange(); this.runCommand(c.id); } : undefined }))
-        : [{ label: `No commands match "${input.value}"`, disabled: true }];
+        : [{ label: `未找到与“${input.value}”匹配的命令`, disabled: true }];
       // Escape from the results goes back to the box, not the page body.
-      menu = openMenu(wrap, items, { label: 'Commands', onClose: () => input.setAttribute('aria-expanded', 'false') });
+      menu = openMenu(wrap, items, { label: '命令', onClose: () => input.setAttribute('aria-expanded', 'false') });
       input.setAttribute('aria-expanded', 'true');
       input.focus();
     };
@@ -1289,7 +1289,7 @@ export class App {
 
   reportError(err) {
     console.error(err);
-    toast(err?.message ? `Something went wrong: ${err.message}` : 'Something went wrong.', { kind: 'error' });
+    toast(err?.message ? `出现错误：${err.message}` : '出现错误。', { kind: 'error' });
   }
 
   bindKeys() {
@@ -1353,7 +1353,7 @@ export class App {
   clipboard(kind) {
     if (!this.editor.restoreRange()) return;
     const ok = document.execCommand(kind);
-    if (!ok) toast(`Use ${shortcutLabel(kind === 'cut' ? 'Mod+X' : 'Mod+C')} to ${kind}.`);
+    if (!ok) toast(`使用 ${shortcutLabel(kind === 'cut' ? 'Mod+X' : 'Mod+C')} 进行${kind === 'cut' ? '剪切' : '复制'}。`);
   }
 
   async paste() {
@@ -1379,7 +1379,7 @@ export class App {
       }
       throw new Error('no clipboard access');
     } catch {
-      toast(`Press ${shortcutLabel('Mod+V')} to paste. Your browser blocks pasting from a button.`);
+      toast(`按 ${shortcutLabel('Mod+V')} 进行粘贴。您的浏览器阻止了通过按钮粘贴。`);
     }
   }
 
@@ -1400,7 +1400,7 @@ export class App {
     this.painter = { bold: f.bold, italic: f.italic, underline: f.underline, strike: f.strike, color: cs?.color, background: findBackground(el), fontSize: f.fontSize, fontFamily: el?.closest('[style*="font-family"]')?.style.fontFamily || '' };
     this.editor.scroller.style.cursor = 'copy';
     this.ribbon.refresh();
-    announce('Format Painter on. Select text to apply the formatting.');
+    announce('格式刷已开启。选择文字以应用格式。');
   }
 
   applyFormatPainter() {
@@ -1433,7 +1433,7 @@ export class App {
     // Puter it holds the app window's launch parameters, which are not part
     // of a link to keep or pass on.
     const url = `${location.origin}${location.pathname}#${kind}=${id}`;
-    navigator.clipboard?.writeText(url).then(() => toast('Link copied'), () => toast("Couldn't copy the link."));
+    navigator.clipboard?.writeText(url).then(() => toast('链接已复制'), () => toast("无法复制链接。"));
   }
 
   tablePicker(close) {

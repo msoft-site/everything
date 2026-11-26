@@ -104,12 +104,12 @@ export function createCompareView({ oldPdf, newPdf, oldName, newName, result, on
   // Toolbar ------------------------------------------------------------------------------------
   const position = el('span', { class: 'compare-position' });
   const live = el('span', { class: 'sr-only', 'aria-live': 'polite' });
-  const prev = iconButton('Previous change', 'ChevronUp', () => step(-1));
-  const next = iconButton('Next change', 'ChevronDown', () => step(1));
+  const prev = iconButton('上一个更改', 'ChevronUp', () => step(-1));
+  const next = iconButton('下一个更改', 'ChevronDown', () => step(1));
   const filterButtons = Object.entries({
-    all: 'All',
-    text: 'Text',
-    format: 'Formatting',
+    all: '全部',
+    text: '文本',
+    format: '格式',
   }).map(([key, label]) =>
     el(
       'button',
@@ -123,14 +123,14 @@ export function createCompareView({ oldPdf, newPdf, oldName, newName, result, on
       label,
     ),
   );
-  const listToggle = iconButton('Show list of changes', 'PanelLeft', () => showList(side.hidden));
+  const listToggle = iconButton('显示更改列表', 'PanelLeft', () => showList(side.hidden));
   const exportButton = button(
-    'Export report',
+    '导出报告',
     'Download',
     async () => {
       exportButton.disabled = true;
       try {
-        download(await exportReport(), `${stem(newName)} compare report.pdf`);
+        download(await exportReport(), `${stem(newName)} 比对报告.pdf`);
       } finally {
         exportButton.disabled = false;
       }
@@ -140,13 +140,13 @@ export function createCompareView({ oldPdf, newPdf, oldName, newName, result, on
   const toolbar = el(
     'div',
     { class: 'compare-toolbar' },
-    el('h2', { class: 'compare-title' }, 'Compare'),
+    el('h2', { class: 'compare-title' }, '文档比对'),
     el(
       'span',
       { class: 'compare-files' },
-      el('span', { class: 'compare-file is-old', title: `Old file: ${oldName}` }, oldName),
+      el('span', { class: 'compare-file is-old', title: `旧文件: ${oldName}` }, oldName),
       arrow(),
-      el('span', { class: 'compare-file is-new', title: `New file: ${newName}` }, newName),
+      el('span', { class: 'compare-file is-new', title: `新文件: ${newName}` }, newName),
     ),
     el(
       'span',
@@ -164,13 +164,13 @@ export function createCompareView({ oldPdf, newPdf, oldName, newName, result, on
     next,
     el(
       'div',
-      { class: 'compare-filter', role: 'group', 'aria-label': 'Show changes' },
-      el('span', { class: 'compare-filter-label', 'aria-hidden': 'true' }, 'Show:'),
+      { class: 'compare-filter', role: 'group', 'aria-label': '显示更改' },
+      el('span', { class: 'compare-filter-label', 'aria-hidden': 'true' }, '显示:'),
       filterButtons,
     ),
     exportButton,
-    button('Close', 'X', () => onClose?.(), 'btn compare-close', {
-      'aria-label': 'Close compare',
+    button('关闭', 'X', () => onClose?.(), 'btn compare-close', {
+      'aria-label': '关闭比对',
     }),
     live,
   );
@@ -179,7 +179,7 @@ export function createCompareView({ oldPdf, newPdf, oldName, newName, result, on
   const list = el('div', {
     class: 'compare-list',
     role: 'listbox',
-    'aria-label': 'Changes',
+    'aria-label': '更改列表',
     onkeydown: onListKey,
   });
   const empty = el('p', { class: 'compare-empty', hidden: true });
@@ -274,8 +274,8 @@ export function createCompareView({ oldPdf, newPdf, oldName, newName, result, on
   const heads = el(
     'div',
     { class: 'compare-heads', 'aria-hidden': 'true' },
-    el('div', {}, el('strong', {}, 'Old'), ` ${oldName}`),
-    el('div', {}, el('strong', {}, 'New'), ` ${newName}`),
+    el('div', {}, el('strong', {}, '旧文件'), ` ${oldName}`),
+    el('div', {}, el('strong', {}, '新文件'), ` ${newName}`),
   );
   const papers = []; // { side, index, node, canvas, marks, rendered, task, row }
   const rows = result.pages.map((entry, row) => {
@@ -287,7 +287,7 @@ export function createCompareView({ oldPdf, newPdf, oldName, newName, result, on
         const node = el(
           'div',
           { class: 'compare-placeholder' },
-          sideName === 'old' ? 'Not in the old file' : 'Not in the new file',
+          sideName === 'old' ? '旧文件中不存在' : '新文件中不存在',
         );
         return { node, size: other, placeholder: true };
       }
@@ -316,14 +316,14 @@ export function createCompareView({ oldPdf, newPdf, oldName, newName, result, on
     const label = (sideName, c) => {
       const index = sideName === 'old' ? entry.oldIndex : entry.newIndex;
       const badge = {
-        added: 'Inserted page',
-        removed: 'Deleted page',
-        moved: 'Moved page',
+        added: '已插入页面',
+        removed: '已删除页面',
+        moved: '已移动页面',
       }[entry.status];
       return el(
         'div',
         { class: 'compare-page-label' },
-        index == null ? '' : `${sideName === 'old' ? 'Old' : 'New'} page ${index + 1}`,
+        index == null ? '' : `${sideName === 'old' ? '旧文件' : '新文件'} 第 ${index + 1} 页`,
         badge && !c.placeholder
           ? el('span', { class: `compare-badge is-${entry.status}` }, badge)
           : null,
@@ -353,7 +353,7 @@ export function createCompareView({ oldPdf, newPdf, oldName, newName, result, on
     {
       class: 'compare-docs',
       tabindex: '0',
-      'aria-label': 'Old and new documents side by side',
+      'aria-label': '并排显示旧文档和新文档',
     },
     sheet,
   );
@@ -406,7 +406,7 @@ export function createCompareView({ oldPdf, newPdf, oldName, newName, result, on
     'section',
     {
       class: 'compare-view',
-      'aria-label': 'Compare files',
+      'aria-label': '比对文件',
       'data-filter': filter,
       onkeydown: (e) => {
         if (e.key === 'Escape' && !e.defaultPrevented) {
@@ -461,8 +461,8 @@ export function createCompareView({ oldPdf, newPdf, oldName, newName, result, on
     const visible = visibleItems();
     const at = visible.findIndex((item) => item.index === selected);
     position.textContent = visible.length
-      ? `${at === -1 ? '–' : at + 1} of ${visible.length}`
-      : 'None';
+      ? `第 ${at === -1 ? '–' : at + 1} 项 / 共 ${visible.length} 项`
+      : '无';
     prev.disabled =
       !visible.length || (at !== -1 ? at === 0 : !visible.some((i) => i.index < selected));
     next.disabled =
@@ -485,7 +485,7 @@ export function createCompareView({ oldPdf, newPdf, oldName, newName, result, on
     });
     const visible = visibleItems();
     const at = visible.findIndex((i) => i.index === item.index);
-    live.textContent = `${at + 1} of ${visible.length}: ${itemLabel(item)}`;
+    live.textContent = `第 ${at + 1} 项 / 共 ${visible.length} 项: ${itemLabel(item)}`;
   }
   /**
    * Show a change chosen in the list. On a narrow screen the list lies over the documents, so
@@ -532,8 +532,8 @@ export function createCompareView({ oldPdf, newPdf, oldName, newName, result, on
     const visible = visibleItems();
     empty.hidden = visible.length > 0;
     empty.textContent = items.length
-      ? 'No changes of this kind.'
-      : 'No differences found. The text of both files is the same.';
+      ? '无此类更改。'
+      : '未发现差异。两个文件的文本完全相同。';
     // Keep the selection on something the list shows.
     if (visible.length && !visible.some((item) => item.index === selected)) {
       const after = visible.find((item) => item.index > selected) || visible.at(-1);
@@ -543,7 +543,7 @@ export function createCompareView({ oldPdf, newPdf, oldName, newName, result, on
   function showList(show) {
     side.hidden = !show;
     listToggle.setAttribute('aria-pressed', String(show));
-    listToggle.setAttribute('aria-label', 'Show list of changes');
+    listToggle.setAttribute('aria-label', '显示更改列表');
     root.classList.toggle('list-hidden', !show);
   }
 

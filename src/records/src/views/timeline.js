@@ -59,7 +59,7 @@ export class TimelineView {
     const start = this.field(this.view.dateFieldId);
     if (!start) {
       this.hits = [];
-      this.el.replaceChildren(h('div.empty', h('div.empty-icon', icon('vTimeline', 22)), h('h2', 'Choose dates'), h('p', 'Pick a start date field (and an end date) from the toolbar.')));
+      this.el.replaceChildren(h('div.empty', h('div.empty-icon', icon('vTimeline', 22)), h('h2', '选择日期'), h('p', '从工具栏选择开始日期字段（以及结束日期）。')));
       return;
     }
     const end = this.field(this.view.endFieldId);
@@ -104,11 +104,11 @@ export class TimelineView {
       const x = daysBetween(min, d) * ppd;
       const w = daysBetween(d, next) * ppd;
       // The name stays in view while any of its month is (see .tl-month span).
-      axisTop.append(h('div.tl-month', { style: { left: `${x}px`, width: `${w}px` } }, h('span', scale === 'quarter' ? `${monthName(d.getMonth()).slice(0, 3)} ${d.getFullYear()}` : `${monthName(d.getMonth())} ${d.getFullYear()}`)));
+      axisTop.append(h('div.tl-month', { style: { left: `${x}px`, width: `${w}px` } }, h('span', `${d.getFullYear()}年 ${monthName(d.getMonth())}`)));
       d = next;
     }
 
-    const names = h('div.tl-names', { role: 'list', 'aria-label': 'Records' });
+    const names = h('div.tl-names', { role: 'list', 'aria-label': '记录' });
     const lanes = h('div.tl-lanes', { style: { width: `${width}px`, height: `${Math.min(rows.length, MAX_ROWS) * ROW_H}px` } });
     const todayX = daysBetween(min, today) * ppd;
     lanes.append(h('div.tl-today', { style: { left: `${todayX}px` }, 'aria-hidden': 'true' }));
@@ -152,7 +152,7 @@ export class TimelineView {
       const x = daysBetween(min, r.s) * ppd;
       const w = Math.max(ppd, (daysBetween(r.s, r.e) + 1) * ppd);
       const color = colorOf(r.rec) || 'blue';
-      const label = `${name}, ${dateKey(r.s)}${r.e > r.s ? ` to ${dateKey(r.e)}` : ''}`;
+      const label = `${name}，${dateKey(r.s)}${r.e > r.s ? ` 至 ${dateKey(r.e)}` : ''}`;
       // Short bars get their resize handles outside, so most of the bar still moves it.
       lanes.append(h(`div.tl-bar${hit}${w < 24 ? '.short' : ''}`, { tabindex: '0', role: 'button', 'aria-label': label, title: label, dataset: { id: r.rec.id }, style: { left: `${x}px`, top: `${i * ROW_H + 6}px`, width: `${w}px`, '--bar': accentColor(color), '--bar-fg': chipColors(`${color.replace(/Strong$/, '')}Strong`)[1] } },
         editable ? h('span.tl-handle.left', { dataset: { edge: 'start' } }) : null,
@@ -160,8 +160,8 @@ export class TimelineView {
         editable && end && !isReadOnly(end) ? h('span.tl-handle.right', { dataset: { edge: 'end' } }) : null));
     });
     const note = [];
-    if (undated) note.push(`${undated} record${undated === 1 ? '' : 's'} without a start date`);
-    if (rows.length > MAX_ROWS) note.push(`showing the first ${MAX_ROWS} records`);
+    if (undated) note.push(`${undated} 条记录无开始日期`);
+    if (rows.length > MAX_ROWS) note.push(`仅显示前 ${MAX_ROWS} 条记录`);
     const scroller = h('div.tl-scroll', h('div.tl-axis', { style: { width: `${width}px` } }, axisTop, axisBottom), lanes);
     // Where the last render scrolled to (it may not be applied yet: renders
     // can follow each other before the next frame).
@@ -190,7 +190,7 @@ export class TimelineView {
     this.el.replaceChildren(
       h('div.tl-toolbar', h('button.btn.small', { type: 'button', onclick: () => {
         scroller.scrollLeft = Math.max(0, todayX - scroller.clientWidth / 3);
-      } }, 'Today'), note.length ? h('span.muted', note.join(', ')) : null, h('div.grow'), h('span.muted.tl-tip', 'Alt+Arrow keys move a focused bar')),
+      } }, '今天'), note.length ? h('span.muted', note.join('，')) : null, h('div.grow'), h('span.muted.tl-tip', '按 Alt+方向键 移动选中的时间条')),
       h('div.tl-body', h('div.tl-side', h('div.tl-side-head', this.table.primary.name), clip), scroller),
     );
     let target;
@@ -294,8 +294,8 @@ export class TimelineView {
       this.render(false);
       if (focused) this.el.querySelector(`.tl-bar[data-id="${CSS.escape(id)}"]`)?.focus({ preventScroll: true });
     } else {
-      this.base.setCells(this.table.id, [{ id, cells }], 'Change dates');
-      announce(`Moved ${days > 0 ? 'later' : 'earlier'} by ${Math.abs(days)} day${Math.abs(days) === 1 ? '' : 's'}`);
+      this.base.setCells(this.table.id, [{ id, cells }], '修改日期');
+      announce(`已向${days > 0 ? '后' : '前'}移动 ${Math.abs(days)} 天`);
       requestAnimationFrame(() => this.el.querySelector(`.tl-bar[data-id="${CSS.escape(id)}"]`)?.focus());
     }
   }

@@ -762,7 +762,7 @@ export function createMiroMigration(deps) {
               ]
                 .filter(Boolean)
                 .join(" · ");
-              return `<label><input type="checkbox" data-board="${escape(b.id)}" ${state.selected.has(b.id) ? "checked" : "检查过"}><span><span data-user-content>${escape(b.name)}</span> <small data-user-content>${escape(meta)}</small></span></label>`;
+              return `<label><input type="checkbox" data-board="${escape(b.id)}" ${state.selected.has(b.id) ? "checked" : ""}><span><span data-user-content>${escape(b.name)}</span> <small data-user-content>${escape(meta)}</small></span></label>`;
             })
             .join("") +
           (boards.length > rows.length

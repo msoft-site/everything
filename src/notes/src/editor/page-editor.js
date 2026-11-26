@@ -49,13 +49,13 @@ export class PageEditor extends Emitter {
     this.surface = 'auto';
     this.commitSoon = debounce(() => this.commit(), 350);
 
-    this.scroller = h('div.canvas-scroll', { tabindex: '-1', role: 'region', 'aria-label': 'Page canvas' });
+    this.scroller = h('div.canvas-scroll', { tabindex: '-1', role: 'region', 'aria-label': '页面画布' });
     this.sizer = h('div.page-sizer');
     this.pageEl = h('div.page', { role: 'document' });
     this.header = h('div.page-header');
-    this.titleEl = h('div.page-title', { contenteditable: readOnly ? 'false' : 'plaintext-only', role: 'textbox', 'aria-label': 'Page title', 'data-placeholder': '', spellcheck: 'true' });
-    this.dateBtn = h('button.page-date', { type: 'button', 'aria-label': 'Page date' });
-    this.timeBtn = h('button.page-time', { type: 'button', 'aria-label': 'Page time' });
+    this.titleEl = h('div.page-title', { contenteditable: readOnly ? 'false' : 'plaintext-only', role: 'textbox', 'aria-label': '页面标题', 'data-placeholder': '', spellcheck: 'true' });
+    this.dateBtn = h('button.page-date', { type: 'button', 'aria-label': '页面日期' });
+    this.timeBtn = h('button.page-time', { type: 'button', 'aria-label': '页面时间' });
     this.header.append(this.titleEl, h('div.page-meta', this.dateBtn, this.timeBtn));
     this.outlinesEl = h('div.outlines');
     this.pageEl.append(this.header, this.outlinesEl);
@@ -157,15 +157,15 @@ export class PageEditor extends Emitter {
       contenteditable: this.readOnly ? 'false' : 'true',
       role: 'textbox',
       'aria-multiline': 'true',
-      'aria-label': 'Note container',
+      'aria-label': '笔记容器',
       spellcheck: 'true',
     });
     body.innerHTML = sanitizeHtml(o.html);
     if (!this.readOnly) ensureBlocks(body);
     const el = h('div.outline', { dataset: { id: o.id } },
-      h('div.outline-bar', { 'aria-hidden': 'true', title: 'Drag to move this note container' }),
+      h('div.outline-bar', { 'aria-hidden': 'true', title: '拖动以移动此笔记容器' }),
       body,
-      h('div.outline-resize', { 'aria-hidden': 'true', title: 'Drag to change the width' }),
+      h('div.outline-resize', { 'aria-hidden': 'true', title: '拖动以调整宽度' }),
     );
     this.place(el, o);
     return el;

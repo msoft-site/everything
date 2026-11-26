@@ -18,10 +18,10 @@ export class Ribbon {
     this.current = 'home';
     this.contextual = null;
     this.controls = [];
-    this.el = h('div.ribbon', { role: 'region', 'aria-label': 'Ribbon', dataset: { collapsed: String(prefs().ribbonCollapsed) } });
-    this.tabList = h('div.ribbon-tabs', { role: 'tablist', 'aria-label': 'Ribbon tabs' });
+    this.el = h('div.ribbon', { role: 'region', 'aria-label': '功能区', dataset: { collapsed: String(prefs().ribbonCollapsed) } });
+    this.tabList = h('div.ribbon-tabs', { role: 'tablist', 'aria-label': '功能区选项卡' });
     this.panel = h('div.ribbon-panel', { role: 'tabpanel' });
-    this.collapseBtn = h('button.icon-btn.ribbon-collapse', { type: 'button', 'data-tip': 'Collapse the Ribbon', 'data-tip-key': 'Mod+F1', 'aria-label': 'Collapse the Ribbon', onclick: () => this.toggleCollapsed() }, icon('chevUp', 16));
+    this.collapseBtn = h('button.icon-btn.ribbon-collapse', { type: 'button', 'data-tip': '折叠功能区', 'data-tip-key': 'Mod+F1', 'aria-label': '折叠功能区', onclick: () => this.toggleCollapsed() }, icon('chevUp', 16));
     this.tellMe = app.buildTellMe();
     this.el.append(h('div.ribbon-tabs-row', this.tabList, this.tellMe, h('span.ribbon-spacer'), this.collapseBtn), this.panel);
     this.panel.addEventListener('mousedown', (e) => {
@@ -157,7 +157,7 @@ export class Ribbon {
     this.el.dataset.collapsed = String(collapsed);
     this.el.classList.remove('peek');
     this.collapseBtn.replaceChildren(icon(collapsed ? 'chevDown' : 'chevUp', 16));
-    const label = collapsed ? 'Always show the Ribbon' : 'Collapse the Ribbon';
+    const label = collapsed ? '始终显示功能区' : '折叠功能区';
     this.collapseBtn.setAttribute('aria-label', label);
     this.collapseBtn.dataset.tip = label;
     this.collapseBtn.setAttribute('aria-expanded', String(!collapsed));
@@ -170,7 +170,7 @@ export class Ribbon {
     this.controls = [];
     // Combos register themselves as they are built; drop the old panel's.
     this.app.combos = [];
-    const toolbar = h('div.ribbon-toolbar', { role: 'toolbar', 'aria-label': `${tab.label} commands` });
+    const toolbar = h('div.ribbon-toolbar', { role: 'toolbar', 'aria-label': `${tab.label} 命令` });
     for (const group of tab.groups) {
       const g = h('div.rb-group', { role: 'group', 'aria-label': group.label });
       for (const item of group.items) {
@@ -275,10 +275,10 @@ export class Ribbon {
 
   split(c, { size = 'small', showLabel = false } = {}) {
     const main = this.button(c, { size, showLabel });
-    const arrow = h('button.rb-btn', { type: 'button', 'aria-label': `${c.label} options`, 'data-tip': `${c.label} options`, 'aria-haspopup': 'menu', 'aria-expanded': 'false' }, icon('chevDown', 12));
+    const arrow = h('button.rb-btn', { type: 'button', 'aria-label': `${c.label} 选项`, 'data-tip': `${c.label} 选项`, 'aria-haspopup': 'menu', 'aria-expanded': 'false' }, icon('chevDown', 12));
     arrow.addEventListener('click', () => {
       if (arrow._menuJustClosed) return;
-      openMenu(arrow, c.menu(this.app), { label: `${c.label} options` });
+      openMenu(arrow, c.menu(this.app), { label: `${c.label} 选项` });
     });
     this.controls.push({ el: arrow, c, splitArrow: true });
     if (size === 'big') {
@@ -309,7 +309,7 @@ export class Ribbon {
       this.controls.push({ el: b, entry, gallery });
       itemsEl.append(b);
     }
-    const more = h('button.rb-gallery-more', { type: 'button', 'aria-label': `More ${gallery.label}`, 'data-tip': `More ${gallery.label}`, 'aria-haspopup': 'menu', 'aria-expanded': 'false' }, icon('chevDown', 12));
+    const more = h('button.rb-gallery-more', { type: 'button', 'aria-label': `更多${gallery.label}`, 'data-tip': `更多${gallery.label}`, 'aria-haspopup': 'menu', 'aria-expanded': 'false' }, icon('chevDown', 12));
     more.addEventListener('click', () => {
       if (more._menuJustClosed) return;
       openMenu(more, gallery.menu(this.app), { label: gallery.label });

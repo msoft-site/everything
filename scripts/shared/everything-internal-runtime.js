@@ -408,7 +408,7 @@
         input.click();
       });
     },
-    async showSaveFilePicker(arg1, arg2) {
+    showSaveFilePicker(arg1, arg2) {
       let blob = null;
       let filename = 'download';
       if (arg1 instanceof Blob) {
@@ -422,44 +422,223 @@
       if (!blob && arg2 instanceof Blob) {
         blob = arg2;
       }
-      const cleanFilename = String(filename || 'download').split('/').pop() || 'download';
-      const path = cleanFilename.endsWith('.pptx') ? `Presentations/${cleanFilename}` : `Documents/${cleanFilename}`;
-      if (blob) {
-        try {
-          await internalFS.write(path, blob, { overwrite: true, dedupeName: false, createMissingParents: true });
-        } catch (e) {
-          console.warn('[runtime] write to internalFS failed:', e);
+      let cleanFilename = String(filename || 'download').split('/').pop() || 'download';
+      cleanFilename = cleanFilename.replace(/[<>:"/\\|?*]+/g, '').trim() || 'download';
+
+      // Default directory based on file type
+      let defaultDir = 'Documents';
+      if (/\.(pptx|ppt|ppsx)$/i.test(cleanFilename)) defaultDir = 'Presentations';
+      else if (/\.(xlsx|xls|csv|tsv|ods)$/i.test(cleanFilename)) defaultDir = 'Spreadsheets';
+      else if (/\.(notes\.json|notes|note)$/i.test(cleanFilename)) defaultDir = 'Notes';
+      else if (/\.(photo|psd|png|jpg|jpeg|webp|svg|gif|avif)$/i.test(cleanFilename)) defaultDir = 'Pictures';
+      else if (/\.(pdf)$/i.test(cleanFilename)) defaultDir = 'Documents';
+      else if (/\.(json|wb|whiteboard)$/i.test(cleanFilename)) defaultDir = 'Whiteboards';
+
+      const taskPromise = (async () => {
+        // Automated test bypass (headless test runner flag or script automation)
+        if (typeof window !== 'undefined' && window.__AUTO_CONFIRM_SAVE_PICKER__) {
+          const fullPath = `${defaultDir}/${cleanFilename}`;
+          if (blob) {
+            try { await internalFS.write(fullPath, blob, { overwrite: true, dedupeName: false, createMissingParents: true }); } catch (e) {}
+          }
+          return {
+            name: cleanFilename,
+            path: fullPath,
+            size: blob ? blob.size : 0,
+            modified: Date.now(),
+            mtime: Date.now(),
+            async write(content) {
+              const b = content instanceof Blob ? content : new Blob([content]);
+              try { await internalFS.write(fullPath, b, { overwrite: true }); } catch {}
+            }
+          };
         }
-        try {
-          const a = document.createElement('a');
-          a.href = URL.createObjectURL(blob);
-          a.download = cleanFilename;
-          a.click();
-          setTimeout(() => URL.revokeObjectURL(a.href), 1000);
-        } catch (e) {
-          console.warn('[runtime] download failed:', e);
+
+        if (typeof document === 'undefined') {
+          const fullPath = `${defaultDir}/${cleanFilename}`;
+          return { name: cleanFilename, path: fullPath, size: blob?.size || 0, modified: Date.now(), mtime: Date.now(), async write() {} };
         }
-      }
-      return {
-        name: cleanFilename,
-        path: path,
-        size: blob ? blob.size : 0,
-        modified: Date.now(),
-        mtime: Date.now(),
-        async write(content) {
-          const b = content instanceof Blob ? content : new Blob([content]);
-          try {
-            await internalFS.write(path, b, { overwrite: true });
-          } catch {}
-          try {
-            const a = document.createElement('a');
-            a.href = URL.createObjectURL(b);
-            a.download = cleanFilename;
-            a.click();
-            setTimeout(() => URL.revokeObjectURL(a.href), 1000);
-          } catch {}
-        }
-      };
+
+        // Show in-page modal dialog for directory and filename selection
+        return new Promise((resolve) => {
+          const overlay = document.createElement('div');
+          overlay.className = 'everything-save-modal-overlay';
+          overlay.style.cssText = `
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(4px);
+            z-index: 9999999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+          `;
+
+          const modal = document.createElement('div');
+          modal.className = 'everything-save-modal';
+          modal.style.cssText = `
+            background: #ffffff;
+            color: #0f172a;
+            border-radius: 12px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 480px;
+            padding: 24px;
+            border: 1px solid #e2e8f0;
+          `;
+
+          const isDark = document.documentElement.classList.contains('dark') || document.body?.classList.contains('dark') || window.matchMedia?.('(prefers-color-scheme: dark)')?.matches;
+          if (isDark) {
+            modal.style.background = '#1e293b';
+            modal.style.color = '#f8fafc';
+            modal.style.borderColor = '#334155';
+          }
+
+          modal.innerHTML = `
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+              <div style="font-size: 17px; font-weight: 600; display: flex; align-items: center; gap: 8px;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #3b82f6;"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                <span>保存到本地 / 另存为</span>
+              </div>
+              <button type="button" class="everything-modal-close" style="background: none; border: none; font-size: 20px; line-height: 1; cursor: pointer; color: ${isDark ? '#94a3b8' : '#64748b'}; padding: 4px;">&times;</button>
+            </div>
+            <p style="margin: 0 0 18px 0; font-size: 13px; color: ${isDark ? '#94a3b8' : '#64748b'}; line-height: 1.5;">
+              请选择保存目录并设置文件名。文件将保存在虚拟本地文件系统中，并自动下载到本地。
+            </p>
+            <div style="margin-bottom: 14px;">
+              <label style="display: block; font-size: 13px; font-weight: 500; margin-bottom: 6px;">选择保存目录：</label>
+              <select class="everything-save-dir-select" style="width: 100%; box-sizing: border-box; padding: 8px 12px; border-radius: 6px; border: 1px solid ${isDark ? '#475569' : '#cbd5e1'}; background: ${isDark ? '#0f172a' : '#f8fafc'}; color: inherit; font-size: 14px; outline: none;">
+                <option value="Documents" ${defaultDir === 'Documents' ? 'selected' : ''}>文档 (Documents)</option>
+                <option value="Presentations" ${defaultDir === 'Presentations' ? 'selected' : ''}>演示文稿 (Presentations)</option>
+                <option value="Spreadsheets" ${defaultDir === 'Spreadsheets' ? 'selected' : ''}>工作表 (Spreadsheets)</option>
+                <option value="Notes" ${defaultDir === 'Notes' ? 'selected' : ''}>我的笔记 (Notes)</option>
+                <option value="Whiteboards" ${defaultDir === 'Whiteboards' ? 'selected' : ''}>白板图稿 (Whiteboards)</option>
+                <option value="Pictures" ${defaultDir === 'Pictures' ? 'selected' : ''}>图像作品 (Pictures)</option>
+                <option value="Downloads" ${defaultDir === 'Downloads' ? 'selected' : ''}>下载目录 (Downloads)</option>
+                <option value="" ${defaultDir === '' ? 'selected' : ''}>根目录 (/)</option>
+                <option value="__custom__">自定义目录路径...</option>
+              </select>
+              <input type="text" class="everything-save-custom-dir" placeholder="输入自定义目录名，如：Projects/Report" style="display: none; width: 100%; box-sizing: border-box; margin-top: 8px; padding: 8px 12px; border-radius: 6px; border: 1px solid ${isDark ? '#475569' : '#cbd5e1'}; background: ${isDark ? '#0f172a' : '#ffffff'}; color: inherit; font-size: 14px; outline: none;">
+            </div>
+            <div style="margin-bottom: 20px;">
+              <label style="display: block; font-size: 13px; font-weight: 500; margin-bottom: 6px;">设置保存文件名：</label>
+              <input type="text" class="everything-save-filename-input" value="${cleanFilename.replace(/"/g, '&quot;')}" style="width: 100%; box-sizing: border-box; padding: 8px 12px; border-radius: 6px; border: 1px solid ${isDark ? '#475569' : '#cbd5e1'}; background: ${isDark ? '#0f172a' : '#ffffff'}; color: inherit; font-size: 14px; outline: none;">
+            </div>
+            <div style="display: flex; justify-content: flex-end; gap: 10px;">
+              <button type="button" class="everything-save-cancel-btn" style="padding: 8px 16px; border-radius: 6px; border: 1px solid ${isDark ? '#475569' : '#cbd5e1'}; background: transparent; color: inherit; font-size: 14px; cursor: pointer;">取消</button>
+              <button type="button" class="everything-save-confirm-btn" style="padding: 8px 18px; border-radius: 6px; border: none; background: #2563eb; color: #ffffff; font-size: 14px; font-weight: 500; cursor: pointer;">确定保存</button>
+            </div>
+          `;
+
+          overlay.appendChild(modal);
+          document.body.appendChild(overlay);
+
+          const dirSelect = modal.querySelector('.everything-save-dir-select');
+          const customDirInput = modal.querySelector('.everything-save-custom-dir');
+          const filenameInput = modal.querySelector('.everything-save-filename-input');
+          const confirmBtn = modal.querySelector('.everything-save-confirm-btn');
+          const cancelBtn = modal.querySelector('.everything-save-cancel-btn');
+          const closeBtn = modal.querySelector('.everything-modal-close');
+
+          dirSelect.addEventListener('change', () => {
+            if (dirSelect.value === '__custom__') {
+              customDirInput.style.display = 'block';
+              customDirInput.focus();
+            } else {
+              customDirInput.style.display = 'none';
+            }
+          });
+
+          const cleanup = () => {
+            overlay.remove();
+            document.removeEventListener('keydown', handleKey);
+          };
+
+          const handleCancel = () => {
+            cleanup();
+            resolve(null);
+          };
+
+          const handleConfirm = async () => {
+            let chosenDir = dirSelect.value === '__custom__' ? customDirInput.value.trim() : dirSelect.value;
+            chosenDir = chosenDir.replace(/^\/+|\/+$/g, '');
+            let finalName = filenameInput.value.trim() || cleanFilename;
+            const originalExtMatch = cleanFilename.match(/\.[a-zA-Z0-9]+$/);
+            if (originalExtMatch && !finalName.toLowerCase().endsWith(originalExtMatch[0].toLowerCase())) {
+              finalName += originalExtMatch[0];
+            }
+            finalName = finalName.replace(/[<>:"/\\|?*]+/g, '').trim() || 'saved-file';
+            const fullPath = chosenDir ? `${chosenDir}/${finalName}` : finalName;
+
+            cleanup();
+
+            if (blob) {
+              try {
+                await internalFS.write(fullPath, blob, { overwrite: true, dedupeName: false, createMissingParents: true });
+              } catch (e) {
+                console.warn('[runtime] write to internalFS failed:', e);
+              }
+              try {
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = finalName;
+                a.click();
+                setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+              } catch (e) {
+                console.warn('[runtime] download failed:', e);
+              }
+            }
+
+            resolve({
+              name: finalName,
+              path: fullPath,
+              size: blob ? blob.size : 0,
+              modified: Date.now(),
+              mtime: Date.now(),
+              async write(content) {
+                const b = content instanceof Blob ? content : new Blob([content]);
+                try {
+                  await internalFS.write(fullPath, b, { overwrite: true });
+                } catch {}
+                try {
+                  const a = document.createElement('a');
+                  a.href = URL.createObjectURL(b);
+                  a.download = finalName;
+                  a.click();
+                  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+                } catch {}
+              }
+            });
+          };
+
+          const handleKey = (e) => {
+            if (e.key === 'Escape') {
+              handleCancel();
+            } else if (e.key === 'Enter' && (e.target === filenameInput || e.target === customDirInput)) {
+              handleConfirm();
+            }
+          };
+
+          confirmBtn.onclick = handleConfirm;
+          cancelBtn.onclick = handleCancel;
+          closeBtn.onclick = handleCancel;
+          document.addEventListener('keydown', handleKey);
+
+          setTimeout(() => {
+            filenameInput.focus();
+            const dotIdx = filenameInput.value.lastIndexOf('.');
+            if (dotIdx > 0) {
+              filenameInput.setSelectionRange(0, dotIdx);
+            } else {
+              filenameInput.select();
+            }
+          }, 30);
+        });
+      })();
+
+      taskPromise.undefinedOnCancel = taskPromise.then((res) => (res === null ? undefined : res));
+      return taskPromise;
     },
     async showDirectoryPicker() {
       return new Promise((resolve) => {
@@ -8277,6 +8456,21 @@
     "Your books are stored in your own Puter account. Powered by Puter.": "您的账目数据安全保存在本地独立沙箱中。"
   };
 
+  /* EXTRA_DICT_BEGIN */
+  const EXTRA_DICTS = {"photo-studio":{"1080 × 1080 px":"1080× 1080 px (中文(简体) ).","1170 × 2532 px":"1170× 2532 px (中文(简体) ).","1600 × 1000 px":"1600×1000 px (中文(简体) ).","1920 × 1080 px":"1920×1080 px (中文(简体) ).","210 × 297 mm":"210×297毫米口径","6 × 4 in":"6 × 4 英寸 内","AI Expand…":"AI 扩展...","AI Fill…":"人工智能填充...","AI Recompose…":"AI重编...","Add a layer style":"添加层样式","Add a layer, paint on it without touching the photo, then change its opacity and visibility.":"新建图层即可在不破坏原图的情况下绘制，并可随时调整不透明度与可见性。","Add a title, draw a shape behind it and give it a shadow.":"添加标题文本，在下方绘制衬底形状并赋予投影效果。","Adjustment and fill layers":"调整与填充图层","Adjustment layers":"调整图层","Adjustments":"调整","Again":"再来","Align horizontal centers":"水平居中对齐","Align vertical centers":"垂直居中对齐","All presets and custom sizes":"所有预设和自定义大小","All tutorials":"全部教程","Application menu":"应用程序菜单","Artboards to Files…":"艺术板到文件...","Artboards to PDF…":"艺术板到 PDF...","Assign Profile…":"指定配置文件...","Assisted":"辅助模式","Assisted: the Assistant, quick actions and the essential tools":"辅助模式：AI 助手、快捷操作与常用核心工具","Auto-Align Layers…":"自动对齐图层...","Auto-Blend Layers…":"自动块层...","Auto-Select":"自动选择","Auto-select target":"自动选择目标","Batch…":"批发...","Blend mode":"混合模式","Bottom panels":"底板","Brighten a flat image with an adjustment layer you can change or switch off at any time.":"使用调整图层提亮平淡的画面，可随时微调或关闭效果。","Browse Puter…":"浏览 Puter...","Browse…":"浏览...","Brushes":"布鲁什","Change screen mode":"更改屏幕模式","Channels":"通道","Character":"字符","Choose what the status bar shows":"选择状态栏显示的内容","Close Others":"关闭其它","Close Untitled @ 60%":"关闭无标题@ 60%","Collapsed panels":"折叠面板","Color Lookup Tables…":"颜色查找表...","Color hue":"颜色色调","Color saturation and brightness":"颜色饱和和亮度","Color theme":"颜色主题","Conditional Mode Change…":"有条件模式更改...","Contact Sheet…":"联系人工作表...","Context Fill…":"内容填充...","Context Scale":"背景缩放","Convert Warp Anchor Point":"转换扭曲锁定点","Copy Merged":"复制已合并","Create Batch Link…":"创建批次链接...","Create Large web page":"创建大型网页","Create Photo print 6 × 4":"创建相片打印 6×4","Create Square social post":"创建 Square 社交帖","Create Standard phone":"创建标准电话","Create a new group":"创建新组","Create a new layer":"创建新图层","Create new fill or adjustment layer":"创建新填充或调整层","Crop and Straighten Photos":"裁剪和直取相片","Custom size":"自定义尺寸","Darker Color":"深色","Data Sets as Files…":"数据集为文件...","Default colors":"默认颜色","Default foreground and background colors":"默认前景色和背景色","Define Brush Preset…":"定义笔刷预设...","Define Custom Shape…":"定义自定义形状...","Define Pattern…":"定义图案...","Delete All Empty Layers":"删除所有空层","Describe an Edit…":"描述编辑...","Describe an edit":"描述编辑需求","Dissolve":"溶解","Distort":"扭曲","Distribute horizontal centers":"水平居中分布","Distribute vertical centers":"垂直居中分布","Document Sizes:":"文档大小 :","Document layers":"文档层","Document preview":"文档预览","Download Image Assets (.zip)":"下载图像资产 (.zip)","Download Original PSD":"下载原始私营部门司","Download Project (.photo)":"下载工程 (. photo)","Drag to move":"拖曳以移动","Drop here to move to the top level":"拖放到此处以移至顶层","Drop image files here to open them":"将图像文件拖放到此处即可打开","Edit Toolbar":"编辑工具栏","Edit in Quick Mask mode":"以快速蒙版模式编辑","Edit toolbar":"编辑工具栏","Edit with Prompt…":"用提示编辑...","Editing tools":"编辑工具","Editor mode":"编辑器模式","Embedded objects":"嵌入对象","Export Animation…":"导出动画...","Export CMYK TIFF":"导出 CMYK TIFF","Export GIF…":"导出 GIF...","Export Layers at Several Sizes":"以多个大小导出图层","Export Layers to Files…":"导出图层到文件...","Export PNG in Image Mode":"以图像模式导出 PNG","Export PSD":"出口私营部门司","Export SVG":"导出 SVG","Export TIFF in Image Mode":"在图像模式中导出 TIFF","Export TIFF…":"导出 TIFF...","Export a copy for the web, repeat it in one click and keep an editable project.":"导出适合网页发布的副本，支持一键重复导出并保留可编辑的源工程。","Export for Web…":"导出为 Web...","Exporting your work":"导出作品","Fade…":"淡出...","File Info…":"文件信息...","Files you open or save show up here.":"您打开或保存的文件会显示在此处。","Filter layers by kind":"按类型划分的过滤层","Filter layers by name":"按名称过滤层","Find and Replace Text…":"查找并替换文本...","Fit Image…":"符合图像...","Flatten All Layer Effects":"平整所有图层效果","Flatten All Masks":"平整所有遮罩","For example: brighten this photo, crop it to a square and add a soft vignette":"例如: 亮出这张相片, 把它剪成正方形, 并添加一个柔软的花纹","Foreground color":"前景色","Foreground color value":"前景色数值","Frame Tool":"画框工具","Free Transform":"自由变换","Generation History":"世代历史","Gradients":"渐变","Grid from Open Documents":"打开文档的网格","Hand Tool":"抓手工具","Hard Mix":"实色混合","Hex color":"十六进制颜色","Histories":"历史","History":"历史","History Brush Tool":"历史记录画笔工具","Horizontal Type Tool":"横排文字工具","Image Assets":"图像资产","Image Assets: show the generated files and problems":"图像资产: 显示生成的文件和问题","Image Processor…":"图像处理器...","Image canvas":"图像画布","Images from Device…":"来自设备的图像...","Import Layers from Local…":"从本地导入图层...","Info":"资讯","Inspect Provenance…":"检查证明...","Invite to Edit…":"请编辑...","Kind":"种类","Large web page":"大型网页","Layer Comps":"图层comps","Layer Comps to Files…":"层comps 到文件...","Layer Comps to PDF…":"层comps 到 PDF...","Layer filtering":"图层过滤","Layers basics":"图层基础","Learn":"学习","Lens Correction…":"镜头校正...","Lighter Color":"浅色","Linear Burn":"线性加深","Linear Dodge":"线性道奇","Linear Light":"线性光","Link layers":"链接层","Link or unlink the selected layers":"链接或取消链接选定的层","Load Files into Stack…":"将文件装入 Stack...","Lock all":"全部锁定","Lock image pixels":"锁定图像像素","Lock layer":"锁层","Lock transparency":"锁定透明度","Lock transparent pixels":"锁定透明像素","Masking a subject":"主体蒙版","Merge to HDR…":"合并到 HDR...","More align and distribute options":"更多对齐与分布选项","More presets…":"更多预设…","More quick actions and bar options":"更快的行动和条形选项","Move the quick actions bar":"移动快速动作栏","New Snapshot…":"新建快照...","New fill or adjustment layer":"新建填充或调整层","New from a preset":"从预设新建","No recent files":"暂无最近文件","Open a photo or a layered PSD, or create something from scratch.":"打开照片、多图层 PSD，或从空白画布开始创建。","Open as Embedded Object…":"打开为嵌入式对象...","Open documents":"已打开的文档","Open from Local…":"从本地打开…","PDF Presentation…":"PDF 演示文稿...","PHOTO STUDIO":"图像工作室","PSD · PSB · TIFF · PNG · JPEG · WebP · AVIF · GIF · BMP · .photo":"私营部门司-PSB-TIFF-PNG-JPEG-WebP-AVIF-GIF-BMP-相片","Package as ZIP":"ZIP 软件包","Panels":"小组讨论","Panorama…":"全景图...","Paragraph":"段落","Paste Into":"粘贴到","Paste Outside":"粘贴外部","Paste Text Attributes":"粘贴文本属性","Paste in Place":"在位置粘贴","Paste without Formatting":"不格式粘贴","Path Selection Tool":"路径选择工具","Paths to Vector File…":"矢量文件的路径...","Patterns":"图案","Perspective Warp":"视角扭曲","Photo Studio":"图像工作室","Photo print 6 × 4":"6 × 4 照片打印","Pin Light":"点光","Pin Warp":"平面扭曲","Pixel layers":"像素图层","Place Embedded…":"嵌入地点...","Place Linked from local storage…":"从本地存储中链接到的位置...","Place Linked…":"已链接的位置...","Preset Manager…":"预设管理器...","Print One Copy":"打印一份副本","Pro: the full workspace":"专业模式：完整专业工作区","Properties of the open image appear here":"打开图像的属性会显示在此处","Quick Export as PNG":"快速导出为 PNG","Quick Mask mode":"快速蒙版模式","Quick actions bar":"快速动作栏","RGB / 8":"RGB / 8 (韩语)","Random Color Swatches":"随机颜色表","Recent":"近期","Recent documents":"最近的文件","Recent features":"最新功能","Recent features, each with a button to try it.":"近期上线的新功能，每个均附带试用入口。","Recent files":"最近文件","Remove Reflections…":"删除反射...","Remove Warp Split":"删除扭曲分割","Remove the chosen image":"删除选中的图像","Rename Layers by Pattern":"按图案重命名图层","Render Video…":"朗德视频...","Retouching a blemish":"修饰瑕疵","Revert":"还原","Rotate 180°":"旋转180度","Rotate 90° Clockwise":"顺时针旋转 90°","Rotate 90° Counter Clockwise":"逆时针旋转 90°","Rotate Object…":"旋转对象...","Save Version…":"保存版本...","Script Events Manager…":"脚本事件管理器...","Select an object, hide everything around it with a layer mask and refine the edge with a brush.":"选择对象，使用图层蒙版隐藏周边内容，并用画笔优化边缘细节。","Sends your request, the document’s size and layer list and a small preview to local AI service (account; may use credits).":"将您的请求、文档尺寸、图层列表及低清预览发送至本地智能服务处理。","Set background color":"设置背景色","Set foreground color":"设置前景色","Shape layers":"形状图层","Share for Review…":"用于审查的共享...","Show Transform Controls":"显示变换控件","Show Transform Guides":"显示变形向导","Show or hide panels":"显示或隐藏面板","Skew":"扭曲","Sky Replacement…":"替换天空...","Split Warp Crosswise":"交叉分割扭曲","Split Warp Horizontally":"水平分割曲面","Split Warp Vertically":"垂直分割曲面","Square social post":"方形社交帖子","Standard phone":"标准手机","Start with an image.":"从图像开始。","Statistics…":"统计...","Stop Sharing…":"停止共享...","Swatches":"色板","Switch colors":"切换颜色","Switch foreground and background colors":"切换前景色和背景色","Text and shapes":"文字与形状","The Assistant plans the edit with Photo Studio’s own commands for you to review before anything changes.":"助手会使用图像工作室的原生命令规划编辑步骤，供您在应用更改前进行审核。","Toggle Last State":"切换最后一个状态","Toggle panels":"切换面板显示","Tool Presets":"工具预设","Tool options":"工具选项","Tool presets":"工具预设","Toolbar…":"工具栏...","Turn layer filtering on or off":"打开或关闭层过滤","Type a zoom level and press Enter":"键入缩放关卡并按 Enter","Type layers":"文字图层","Untitled":"未命名","Untitled @ 60%":"无标题@ 60%","Variable Data Sets…":"变量数据集...","Video Cache":"视频缓存","Video Frames to Layers…":"视频画框架到图层...","Vivid Light":"亮光","Warp":"扭曲","What a click selects: the layer under the pointer or its outermost group":"点击选择的目标：光标下的图层或其最外层编组","What’s New":"新功能速览","Without an image, a new document is created":"未提供图像时，将自动创建新文档","Your layers will appear here":"图层将显示在此处","Zoom in and remove small spots with one click each.":"放大画布，一键快速去除细小瑕疵与污点。","Edit Toolbar\nChoose which tools show and in what order":"编辑工具栏\n选择显示的工具及其顺序","Edit in Quick Mask mode (Q)\nDouble-click or Alt-click for options":"以快速蒙版模式编辑 (Q)\n双击或按住 Alt 点击查看选项","Change screen mode (F)\nRight-click, hold or press → for the list":"更改屏幕模式 (F)\n右键点击、按住或按 → 查看列表","AI Expand":"AI 扩展...","AI Fill":"人工智能填充...","AI Recompose":"AI重编...","Artboards to Files":"艺术板到文件...","Artboards to PDF":"艺术板到 PDF...","Assign Profile":"指定配置文件...","Auto-Align Layers":"自动对齐图层...","Auto-Blend Layers":"自动块层...","Batch":"批发...","Browse Puter":"浏览 Puter...","Browse":"浏览...","Color Lookup Tables":"颜色查找表...","Conditional Mode Change":"有条件模式更改...","Contact Sheet":"联系人工作表...","Context Fill":"内容填充...","Create Batch Link":"创建批次链接...","Data Sets as Files":"数据集为文件...","Define Brush Preset":"定义笔刷预设...","Define Custom Shape":"定义自定义形状...","Define Pattern":"定义图案...","Describe an Edit":"描述编辑...","Document Sizes":"文档大小","Edit with Prompt":"用提示编辑...","Export Animation":"导出动画...","Export GIF":"导出 GIF...","Export Layers to Files":"导出图层到文件...","Export TIFF":"导出 TIFF...","Export for Web":"导出为 Web...","Fade":"淡出...","File Info":"文件信息...","Find and Replace Text":"查找并替换文本...","Fit Image":"符合图像...","Image Processor":"图像处理器...","Images from Device":"来自设备的图像...","Import Layers from Local":"从本地导入图层...","Inspect Provenance":"检查证明...","Invite to Edit":"请编辑...","Layer Comps to Files":"层comps 到文件...","Layer Comps to PDF":"层comps 到 PDF...","Lens Correction":"镜头校正...","Load Files into Stack":"将文件装入 Stack...","Merge to HDR":"合并到 HDR...","More presets":"更多预设","New Snapshot":"新建快照...","Open as Embedded Object":"打开为嵌入式对象...","Open from Local":"从本地打开","PDF Presentation":"PDF 演示文稿...","Panorama":"全景图...","Paths to Vector File":"矢量文件的路径...","Place Embedded":"嵌入地点...","Place Linked from local storage":"从本地存储中链接到的位置...","Place Linked":"已链接的位置...","Preset Manager":"预设管理器...","Remove Reflections":"删除反射...","Render Video":"朗德视频...","Rotate Object":"旋转对象...","Save Version":"保存版本...","Script Events Manager":"脚本事件管理器...","Share for Review":"用于审查的共享...","Sky Replacement":"替换天空...","Statistics":"统计...","Stop Sharing":"停止共享...","Toolbar":"工具栏...","Variable Data Sets":"变量数据集...","Video Frames to Layers":"视频画框架到图层..."},"vector-studio":{"A3, 297 x 420 mm":"A3，297 × 420 毫米","A4, 210 x 297 mm":"A4，210 × 297 毫米","A5, 148 x 210 mm":"A5，148 × 210 毫米","Above the line":"在行上方","Above the path":"在路径上方","Actions":"动作","Actions panel menu":"动作面板菜单","Active artboard":"当前画板","Active perspective plane":"当前透视平面","Add Anchor Point Tool":"添加锚点工具","Add Each Selected Object as an Asset":"将每个选中对象添加为资源","Add New Effect":"添加新效果","Add Selection as One Asset":"将选区添加为单个资源","Affected Linked Files":"受影响的链接文件","Aki":"字间距","Align Center":"居中对齐","Aligned":"对齐","Align Left":"左对齐","Alignment Guides":"对齐参考线","Alignment to the path":"与路径的对齐方式","Align On":"对齐于","Align on character":"按字符对齐","Align Right":"右对齐","Align to":"对齐到","Align to Artboard":"对齐到画板","Align to Selection":"对齐到所选对象","All Affected Objects":"所有受影响的对象","All Caps":"全部大写","All on Active Artboard":"当前画板上的全部对象","All Rasterized Regions":"所有栅格化区域","All sizes and settings":"所有尺寸和设置","All tools":"所有工具","All Tools":"所有工具","Anchor Point Tool":"锚点工具","Android":"安卓","Angle span":"角度跨度","Angular":"角度","Anti-aliasing":"消除锯齿","Anti-alias rasters":"栅格消除锯齿","Any style":"任意风格","Application menu":"应用程序菜单","Apply Last Effect":"应用上次效果","Apply to Selected Type":"应用于所选文字","Arabic Presentation Forms-B":"阿拉伯语表现形式-B","Arc":"弧形","Arch":"拱形","Arc Lower":"下弧形","Arc Tool":"弧形工具","Arc Upper":"上弧形","Area Graph":"面积图","Area Graph Tool":"面积图工具","Area Type":"区域文字","Area Type Options...":"区域文字选项…","Area Type Tool":"区域文字工具","Arrange and Shape":"排列与形状","Arrange and Shape panels":"排列与形状面板","Arrange and Shape: Pathfinder, Align, Blend, Transform, Trace Image, 3D and Materials, Magic Wand":"排列与形状：路径查找器、对齐、混合、变换、图像描摹、3D 和材质、魔棒","Arrange by Column":"按列排列","Arrange by Row":"按行排列","Art":"插画","Artboard":"画板","Artboard Options":"画板选项","Artboard preset":"画板预设","Artboards":"画板","Artboard Tool":"画板工具","Art & Illustration":"艺术与插画","Artistic":"艺术效果","Asset Export":"资源导出","Asset Export panel menu":"资源导出面板菜单","Assets":"资源","Assign Profile...":"指定配置文件…","Attach to measured objects":"附着到被测量对象","Attributes":"属性","Automation and Output":"自动化与输出","Axis angle":"轴角度","Bar Graph":"条形图","Bar Graph Tool":"条形图工具","Baseline shift":"基线偏移","Basic":"基础","Basic Latin":"基本拉丁语","Basic Spacing":"基本间距","Begin Recording":"开始录制","Below the line":"在行下方","Below the path":"在路径下方","Bend":"弯曲","Bend along":"沿…弯曲","Black and white":"黑白","Blank Print presets":"空白打印预设","Bleed":"出血","Blend":"混合","Blending":"混合","Blend Tool":"混合工具","Bloat":"膨胀","Bloat Tool":"膨胀工具","Bottom center":"底部居中","Bottom left":"左下","Bottom left corner X":"左下角 X","Bottom left corner Y":"左下角 Y","Bottom right":"右下","Bottom right corner X":"右下角 X","Bottom right corner Y":"右下角 Y","Bound to":"绑定到","Break Link to Symbol":"断开符号链接","Brick by Column":"按列砖形","Brick by Row":"按行砖形","Brushes":"画笔","Brush Strokes":"画笔描边","Brush & Width":"画笔与宽度","Bulge":"凸出","Bullets":"项目符号","Bullets and Numbering":"项目符号和编号","Bullets and Numbering Options":"项目符号和编号选项","Burasagari":"悬挂","Business Card":"名片","Business Card, 3.5 x 2 in":"名片，3.5 × 2 英寸","Business Card, 3.5 x 2 in, front and back":"名片，3.5 × 2 英寸，正反面","Cap Height":"大写字母高度","Capture Data Set":"捕捉数据组","Centered on the path":"在路径居中","Center-Justified Tab":"居中对齐制表符","Centimeters":"厘米","Change Screen Mode":"更改屏幕模式","Change to right-to-left layout":"切换为从右到左布局","Character":"字符","Character Edit":"字符编辑","Character Edit Tool":"字符编辑工具","Character options":"字符选项","Character panel menu":"字符面板菜单","Character rotation":"字符旋转","Character rotation presets":"字符旋转预设","Character Styles":"字符样式","Character Styles panel menu":"字符样式面板菜单","Chinese":"中文","Choose a style for new type.":"为新文字选择样式。","Clear Overrides":"清除覆盖","Clear Results":"清除结果","Click":"单击","Clip complex regions":"剪切复杂区域","Close panels":"关闭面板","CMYK":"CMYK","CMYK Color":"CMYK 颜色","Collapsed panels":"已折叠的面板","Collect For Export":"收集以导出","Color":"颜色","Color and Paint":"颜色与填充","Color and Paint: Color, Swatches, Stroke, Gradient, Transparency, Appearance, Graphic Styles, Brushes, Pattern Options, Color Guide":"颜色与填充：颜色、色板、描边、渐变、透明度、外观、图形样式、画笔、图案选项、颜色参考","Color and Paint panels":"颜色与填充面板","Color Guide":"颜色参考","Column Graph":"柱形图","Column Graph Tool":"柱形图工具","Columns":"列","Combining Diacritical Marks":"组合附加符号","Comment":"评论","Compound Path":"复合路径","Constrain":"约束","Constrain width and height proportions":"约束宽度和高度比例","Content":"内容","Contextual Alternates":"上下文替代字","Control":"控制","Convert all strokes to outlines":"将所有描边转换为轮廓","Convert all text to outlines":"将所有文字转换为轮廓","Convert to Shape":"转换为形状","Cover the lettering in the image":"覆盖图像中的文字","Create Gradient Mesh...":"创建渐变网格…","Create Library":"创建库","Create New Action":"创建新动作","Create New Set":"创建新组","Create New Style":"创建新样式","Create Object Mosaic...":"创建对象马赛克…","Create Outlines":"创建轮廓","Create Trim Marks":"创建裁切标记","Crisp":"清晰","Crop Image":"裁剪图像","Crop Marks":"裁剪标记","Cropping":"裁剪","Crystallize":"晶格化","Crystallize Tool":"晶格化工具","Curvature":"曲率","Curvature Tool":"曲率工具","Cyan":"青色","Data set":"数据组","Data Set":"数据组","Decimal-Justified Tab":"小数点对齐制表符","Default Actions":"默认动作","Default Figure":"默认数字","Default Fill and Stroke":"默认填色和描边","Default Position":"默认位置","Delete Anchor Point Tool":"删除锚点工具","Delete Artboard":"删除画板","Delete Character Style":"删除字符样式","Delete Paragraph Style":"删除段落样式","Delete saved preset":"删除已存预设","Delete Saved Preset":"删除已存预设","Delete Selection":"删除所选内容","Delete Symbol":"删除符号","Delete Variable":"删除变量","Denominator":"分母","Describe what to generate":"描述要生成的内容","Describe what to generate, like \"a fox curled up asleep\"":"描述要生成的内容，例如“蜷缩着睡觉的狐狸”","Deselect":"取消选择","Detach":"分离","Detail":"细节","Detected text":"检测到的文字","Detect Surface":"检测表面","Dimension Tool":"尺寸工具","Dimension type":"尺寸类型","Direct Selection":"直接选择","Direct Selection Tool":"直接选择工具","Discard Overprint":"放弃叠印","Discretionary Ligatures":"自选连字","Distance between objects":"对象之间的距离","Distort":"扭曲","Distort & Transform":"扭曲和变换","Distribute":"分布","Document: Artboards, Info, Navigator, History, Links, Attributes, Document Info, Comments":"文档：画板、信息、导航器、历史记录、链接、属性、文档信息、评论","Document Info":"文档信息","Document name":"文档名称","Document panels":"文档面板","Document Raster Effects Settings...":"文档栅格效果设置…","Document / Scale":"文档 / 比例","Document Scripts…":"文档脚本…","Document Setup":"文档设置","Document Setup...":"文档设置…","Documents you share, or open from a share link, appear here.":"您共享的或通过共享链接打开的文档会显示在这里。","Drag":"拖动","Drag mesh points and handles with the Direct Selection tool to follow curved surfaces.":"使用直接选择工具拖动网格点和手柄，使其贴合曲面。","Drag to move the task bar":"拖动以移动任务栏","Drag tools onto the Tools panel to add them, or from the panel onto this drawer to remove them.":"将工具拖到“工具”面板即可添加，从面板拖回此抽屉即可移除。","Draw Behind":"背面绘图","Drawing Modes":"绘图模式","Drawing Modes: Draw Normal":"绘图模式：正常绘图","Draw Inside":"内部绘图","Draw logos, icons, illustrations and layouts with precise vector tools.":"使用精确的矢量工具绘制标志、图标、插画和版式。","Draw Normal":"正常绘图","Draw with Pencil":"用铅笔绘制","Drop to make a symbol":"拖放以创建符号","Edit Art":"编辑图稿","Edit Artboards":"编辑画板","Effect Gallery...":"效果画廊…","Ellipse":"椭圆","Ellipse Tool":"椭圆工具","Embed":"嵌入","Em Box":"全角字框","Ends":"端点","English: Australia":"英语：澳大利亚","English: Canada":"英语：加拿大","English: UK":"英语：英国","English: USA":"英语：美国","Entire Font":"整个字体","Envelope Distort":"封套扭曲","Envelope type":"封套类型","Eraser Tool":"橡皮擦工具","Even":"均匀","Event":"事件","Event Poster":"活动海报","Event Poster, 18 x 24 in":"活动海报，18 × 24 英寸","Exclude":"排除","Exit Isolation Mode":"退出隔离模式","Expand":"扩展","Expand...":"扩展…","Expand Appearance":"扩展外观","Expanded Patterns":"已扩展的图案","Export assets":"导出资源","Eyedropper Tool":"吸管工具","Feet":"英尺","Feet & Inches":"英尺和英寸","Few colors":"少量颜色","Figure":"数字","Figure style":"数字样式","File Info...":"文件信息…","Files you open or save appear here.":"您打开或保存的文件会显示在这里。","Files you save with Save As appear here.":"您通过“另存为”保存的文件会显示在这里。","Fill":"填色","Fill and stroke":"填色和描边","Filled Arrow":"实心箭头","Fill with Placeholder Text":"用占位符文本填充","Film & Video":"影视","Filter recent files":"筛选最近的文件","Find/Replace Font...":"查找/替换字体…","First artboard":"第一个画板","First-line left indent":"首行左缩进","Fish":"鱼形","Fisheye":"鱼眼","Fit All":"全部适合","Fit All in Window":"全部适合窗口","Fit artboard":"适合画板","Fit Artboard":"适合画板","Fit Artboard in Window":"画板适合窗口","Fit Headline":"适合标题","Fits Artboard 1.":"适合画板 1。","Fit to Photo":"适合照片","Fixed distance":"固定距离","Flag":"旗帜","Flare":"光晕","Flare Tool":"光晕工具","Flattener preset":"拼合器预设","Flattener preview":"拼合器预览","Flattener Preview":"拼合器预览","Flattener Preview panel menu":"拼合器预览面板菜单","Flatten Transparency...":"拼合透明度…","Flip Across":"横向翻转","Flip Along":"纵向翻转","Flip alternate columns horizontally":"水平翻转交替列","Flip alternate columns vertically":"垂直翻转交替列","Flip alternate rows horizontally":"水平翻转交替行","Flip alternate rows vertically":"垂直翻转交替行","Flip columns":"翻转列","Flip Horizontal":"水平翻转","Flip rows":"翻转行","Flip Vertical":"垂直翻转","Font family: Inter":"字体系列：Inter","Font height reference":"字体高度参照","Font size":"字体大小","Font size presets":"字体大小预设","Forced":"强制","Format 1":"格式 1","Fractions":"分数","Free Distort":"自由扭曲","Free Transform":"自由变换","Free Transform options":"自由变换选项","Free Transform Tool":"自由变换工具","French: Canada":"法语：加拿大","Full color":"全彩","Gap Options…":"间隙选项…","Generate":"生成","Generate panel menu":"生成面板菜单","Generate Vectors":"生成矢量图","Generating":"生成中","Generating...":"正在生成…","Generation History":"生成历史","Generation History panel menu":"生成历史面板菜单","Generations":"生成记录","Generative":"生成式","Geometric":"几何","German: Switzerland":"德语：瑞士","Glyphs":"字形","Glyphs panel menu":"字形面板菜单","Gradient":"渐变","Gradient and mesh resolution":"渐变和网格分辨率","Gradient Tool":"渐变工具","Graph":"图表","Graphic Styles":"图形样式","Grid":"网格","Grid by Column":"按列网格","Grid by Row":"按行网格","Grid type":"网格类型","Group Selection":"编组选择","Group Selection Tool":"编组选择工具","Hand":"抓手","Hand drawn":"手绘","Hand Tool":"抓手工具","HD Video 1920 x 1080":"高清视频 1920 × 1080","Hide Black plate":"隐藏黑版","Hide CMYK":"隐藏 CMYK","Hide Corner Widget":"隐藏边角构件","Hide Cyan plate":"隐藏青版","Hide Gradient Controls":"隐藏渐变控件","Hide Grid":"隐藏网格","Hide Magenta plate":"隐藏洋红版","Hide perspective grid":"隐藏透视网格","Hide Yellow plate":"隐藏黄版","Highlight":"高亮","High Resolution":"高分辨率","History":"历史记录","Horizontal Align Center":"水平居中对齐","Horizontal Align Left":"水平左对齐","Horizontal Align Right":"水平右对齐","Horizontal distortion":"水平扭曲","Horizontal Distribute Center":"水平居中分布","Horizontal Distribute Space":"水平间距分布","Horizontal Plane":"水平平面","Horizontal scale":"水平缩放","Horizontal scale presets":"水平缩放预设","Horizontal spacing":"水平间距","Hyphenate":"连字","Icon":"图标","Icon 512 x 512":"图标 512 × 512","Icon Grid":"图标网格","Icon Grid, 512 x 512 px with keylines":"图标网格，512 × 512 像素（含关键线）","Ideographic Face":"表意字面","Inches":"英寸","Include Default Actions":"包含默认动作","Inflate":"膨胀","Info":"信息","In line":"行内","Insert Break Character":"插入分隔符","Insert Special Character":"插入特殊字符","Insert Whitespace Character":"插入空白字符","Instances":"实例","Interlace":"交错","Interlace Tool":"交错工具","Intersect":"相交","In the line":"在行内","Invite to Edit":"邀请编辑","Invite to Edit...":"邀请编辑…","iOS":"iOS","Isolate Selected Group":"隔离选中的编组","JavaScript, e.g. alert(evt.target.id)":"JavaScript，例如 alert(evt.target.id)","JavaScript for the event":"事件的 JavaScript","Join":"连接","Join Tool":"连接工具","JPEG":"JPEG","Justify All Lines":"两端对齐，末行也对齐","Justify with Last Line Aligned Center":"两端对齐，末行居中","Justify with Last Line Aligned Left":"两端对齐，末行左对齐","Justify with Last Line Aligned Right":"两端对齐，末行右对齐","Keep colors, graphics and styles you use often in a library, ready in every document.":"将常用的颜色、图形和样式保存在库中，在每个文档中随时可用。","Kerning":"字距调整","Kerning (between the characters at the insertion point) presets":"字距调整（插入点处字符之间）预设","Keyboard Increment":"键盘增量","Kinsoku":"禁则","Knife":"刻刀","Label":"标签","Landscape":"横向","Language":"语言","Large List View":"大列表视图","Larger glyphs":"较大的字形","Lasso Tool":"套索工具","Last artboard":"最后一个画板","Last Effect...":"上次效果…","Last opened":"最近打开","Latin Extended-A":"拉丁语扩展-A","Leader":"前导符","Leading":"行距","Leading presets":"行距预设","Left indent":"左缩进","Left-Justified Tab":"左对齐制表符","Left Plane":"左侧平面","Legal, 8.5 x 14 in":"法律文书，8.5 × 14 英寸","Letter, 8.5 x 11 in":"信纸，8.5 × 11 英寸","Letters":"字母","Libraries":"库","Libraries panel menu":"库面板菜单","Library":"库","Library options":"库选项","Linear":"线性","Linear orientation":"线性方向","Line art":"线稿","Line art and text resolution":"线稿和文字分辨率","Line Graph":"折线图","Line Graph Tool":"折线图工具","Line Segment":"直线段","Line Segment Tool":"直线段工具","Link bleed values":"链接出血值","List":"列表","Lists and margins":"列表和边距","Lock Guides":"锁定参考线","Lock Slices":"锁定切片","Low Resolution":"低分辨率","Magenta":"洋红","Magic Wand Tool":"魔棒工具","Make all settings the same":"使所有设置相同","Make Linked File Dynamic":"使链接文件动态化","Make Mockup":"创建样机","Make Pixel Perfect":"对齐像素网格","Make Text Dynamic":"使文本动态化","Make Visibility Dynamic":"使可见性动态化","Matches":"匹配项","Match Font":"匹配字体","Match Font...":"匹配字体…","Match Font panel menu":"匹配字体面板菜单","Matching fonts":"匹配的字体","Match the style of the selection":"匹配所选内容的样式","Measure":"度量","Measure Tool":"度量工具","Medium Resolution":"中分辨率","Merge Brush":"合并画笔","Merge Brush Tool":"合并画笔工具","Mesh: bend with Direct Selection":"网格：用直接选择工具弯曲","Mesh Tool":"网格工具","Meters":"米","Middle left":"左中","Middle right":"右中","Millimeters":"毫米","Minimal":"极简","Minus Front":"减去顶层","Mirror":"镜像","Mixed":"混合","Mobile":"移动端","Mockup":"样机","Mockup panel menu":"样机面板菜单","Mojikumi":"标点挤压","More options":"更多选项","More Pathfinder options":"更多路径查找器选项","More Presets":"更多预设","Mosaic":"马赛克","Mostly Raster":"以栅格为主","Move/Copy Artwork with Artboard":"随画板移动/复制图稿","Move task bar":"移动任务栏","New Artboard":"新建画板","New Symbol":"新建符号","New Variable":"新建变量","Next artboard":"下一个画板","Next Data Set":"下一个数据组","Next Document":"下一个文档","Next Object Above":"上一层对象","Next Object Below":"下一层对象","No Active Plane":"无活动平面","No data sets":"没有数据组","No document":"没有文档","No document open.":"没有打开的文档。","No libraries":"没有库","None":"无","[Normal Character Style]":"[常规字符样式]","Normal Character Style":"常规字符样式","[Normal Paragraph Style]":"[常规段落样式]","Normal Paragraph Style":"常规段落样式","No Selection":"未选择","No symbols yet. Select artwork and choose New Symbol, drag artwork here, or place one from a library.":"还没有符号。请选择图稿并选择“新建符号”，或将图稿拖到此处，也可从库中置入。","Numbers":"数字","Numerator":"分子","Object":"对象","Objects on Path":"路径上的对象","Open a document to add interactivity.":"打开文档以添加交互。","Open a document to generate into it.":"打开文档以便向其中生成内容。","Open a document to preview flattening.":"打开文档以预览拼合效果。","Open a document to preview its separations.":"打开文档以预览其分色。","Open a document to set type.":"打开文档以设置文字。","Open a document to use variables.":"打开文档以使用变量。","Open Brushes Panel":"打开画笔面板","Open from This Computer...":"从本机打开…","Open or create a document to see its properties.":"打开或创建文档以查看其属性。","OpenType":"OpenType","OpenType features":"OpenType 功能","OpenType panel menu":"OpenType 面板菜单","Optical Margin Alignment":"光学边距对齐","Option+Click":"Option+单击","Options of Selected Object":"所选对象的选项","Ordinals":"序数","Outlined Strokes":"轮廓化描边","Outlined Text":"轮廓化文字","Outlines":"轮廓","Outlines with Source Image":"轮廓与源图像","Overprint":"叠印","Overprint preview":"叠印预览","Overprint Preview":"叠印预览","Package...":"打包…","Paintbrush":"画笔","Paintbrush Tool":"画笔工具","Paint Bucket Tool":"实时上色工具","Paint Regions":"填色区域","Paint type":"填充类型","Panels":"面板","Paper cut":"剪纸","Paragraph":"段落","Paragraph panel menu":"段落面板菜单","Paragraph Styles":"段落样式","Paragraph Styles panel menu":"段落样式面板菜单","Paste in Back":"贴在后面","Paste in Front":"贴在前面","Paste in Place":"就地粘贴","Pastel":"粉彩","Paste on All Artboards":"粘贴到所有画板","Paste Without Formatting":"无格式粘贴","Path Eraser":"路径橡皮擦","Path Eraser Tool":"路径橡皮擦工具","Pathfinder":"路径查找器","Pattern editing":"图案编辑","Pattern Tile":"图案拼贴","Pattern Tile Tool":"图案拼贴工具","PDF":"PDF","PDF Presets...":"PDF 预设…","Pencil Tool":"铅笔工具","Pen Tool":"钢笔工具","Perspective Distort":"透视扭曲","Perspective: four corners":"透视：四个角","Perspective Grid":"透视网格","Perspective Grid Presets...":"透视网格预设…","Perspective Grid Tool":"透视网格工具","Perspective Selection":"透视选区","Perspective Selection Tool":"透视选区工具","Phone 390 x 844":"手机 390 × 844","Phone Large 430 x 932":"大屏手机 430 × 932","Picas":"派卡","Pie Graph":"饼图","Pie Graph Tool":"饼图工具","Pin Bar Position":"固定栏位置","Pin Warp":"图钉变形","Pin Warp Tool":"图钉变形工具","Pixel":"像素","Pixelate":"像素化","Pixel Preview":"像素预览","Pixels":"像素","Place...":"置入…","Place Copy":"置入副本","Place Image":"置入图像","Place Symbol Instance":"置入符号实例","Plates":"色版","Play Selection":"播放所选内容","PNG":"PNG","Points":"点","Polar Grid":"极坐标网格","Polar Grid Tool":"极坐标网格工具","Polygon":"多边形","Polygon Tool":"多边形工具","Portrait":"纵向","Portuguese: Brazil":"葡萄牙语：巴西","Position":"位置","Postcard":"明信片","Postcard, 6 x 4 in":"明信片，6 × 4 英寸","Poster":"海报","Precision":"精度","Preserve Overprint":"保留叠印","Preset":"预设","Preset categories":"预设类别","Preset Details":"预设详情","Preview separations":"预览分色","Previous artboard":"上一个画板","Previous Data Set":"上一个数据组","Previous Document":"上一个文档","Print Tiling":"打印拼贴","Print Tiling Tool":"打印拼贴工具","Profile: Coated Web Press (300% ink). Ink limit 300%.":"配置文件：Coated Web Press（300% 油墨）。油墨上限 300%。","Prompt":"提示词","Prompts and results you generate appear here, so you can use them again.":"您生成的提示词和结果会显示在这里，便于再次使用。","Proof Colors":"校样颜色","Proof Setup":"校样设置","Proportional Lining":"比例等高数字","Proportional Oldstyle":"比例旧式数字","Pucker":"收缩","Pucker Tool":"收缩工具","Punctuation":"标点符号","Put artwork on a photo":"将图稿放到照片上","Quick Actions":"快速操作","Radar Graph":"雷达图","Radar Graph Tool":"雷达图工具","Radial":"径向","Radius":"半径","Raster Effects":"栅格效果","Raster-fill Text and Strokes":"栅格填充文字和描边","Rasterize...":"栅格化…","Rasterized Complex Regions":"已栅格化的复杂区域","Rasterized Complex Regions: 0 regions.":"已栅格化的复杂区域：0 个区域。","Rasters":"栅格","Raster/Vector balance":"栅格/矢量平衡","Rearrange All":"全部重新排列","Recent":"最近","Recent files":"最近的文件","Recent Fonts":"最近使用的字体","Recently used glyphs":"最近使用的字形","Rectangle Tool":"矩形工具","Rectangular Grid":"矩形网格","Rectangular Grid Tool":"矩形网格工具","Redefine Character Style":"重新定义字符样式","Redefine Paragraph Style":"重新定义段落样式","Reference point":"参考点","Reflect":"镜像","Reflect Tool":"镜像工具","Refresh":"刷新","Refresh Your files":"刷新您的文件","Region":"区域","Region Selection":"区域选择","Region Selection Tool":"区域选择工具","Remove Asset":"移除资源","Remove scale 1":"移除比例 1","Repeat":"重复","Repeat Options":"重复选项","Repeat type":"重复类型","Replace with Text":"替换为文字","Reselect":"重新选择","Reset Bar Position":"重置栏位置","Reset Transformation":"重置变换","Reset View Rotation":"重置视图旋转","Reshape":"整形","Reshape Tool":"整形工具","Resolve Missing Fonts...":"解决缺失字体…","Result":"结果","Result with Outlines":"含轮廓的结果","Retro":"复古","Reverse direction":"反向","Reverse overlap":"反向重叠","Revert":"恢复","Rewrite...":"改写…","RGB Color":"RGB 颜色","Right indent":"右缩进","Right-Justified Tab":"右对齐制表符","Right Plane":"右侧平面","Rise":"上升","Rotate":"旋转","Rotate Tool":"旋转工具","Rotate View Tool":"旋转视图工具","Rotate View to Selection":"将视图旋转到所选对象","Rotate with the path":"随路径旋转","Rounded Rectangle Tool":"圆角矩形工具","Rows":"行","Rulers & Grids":"标尺与网格","Same":"相同","Saved in local storage":"已保存在本地存储","Saved Selections":"已存选区","Saved Views":"已存视图","Save preset":"保存预设","Save Preset":"保存预设","Save Selected Slices...":"存储所选切片…","Scale 1":"比例 1","Scale Corners":"缩放圆角","Scale Strokes & Effects":"缩放描边和效果","Scale Tool":"缩放工具","Scallop":"扇贝","Scallop Tool":"扇贝工具","Scatter Graph":"散点图","Scatter Graph Tool":"散点图工具","Scene":"场景","Scissors":"剪刀","Scissors Tool":"剪刀工具","Search library":"搜索库","Search this library":"搜索此库","Select a placed image with lettering, or type converted to outlines, to find matching fonts and make the text editable again.":"选择带有文字的置入图像或已转为轮廓的文字，即可查找匹配字体并使文字重新可编辑。","Select artwork and choose Add Selection, or Object > Collect For Export, to add assets.":"选择图稿后选择“添加所选内容”或“对象 > 收集以导出”，即可添加资源。","Select artwork to use its style":"选择图稿以使用其样式","Select Asset Artwork":"选择资源图稿","Select a text object and choose Make Text Dynamic, or any object and Make Visibility Dynamic.":"选择文字对象并选择“使文本动态化”，或选择任意对象并选择“使可见性动态化”。","Selection preview. Drag to choose the region with the lettering.":"选区预览。拖动以选择含有文字的区域。","Selection Tool":"选择工具","Select one object to give it event handlers for SVG export.":"选择一个对象，为其添加用于 SVG 导出的事件处理程序。","Select Regions":"选择区域","Select type or click in text to set its tab stops.":"选择文字或在文本中单击以设置其制表位。","Select your artwork and a placed photo (File > Place), then make a mockup. The art bends onto the photo in perspective and picks up its lighting.":"选择您的图稿和一张已置入的照片（文件 > 置入），然后创建样机。图稿会以透视方式贴合照片并吸收其光影。","Separations Preview":"分色预览","Separations Preview panel menu":"分色预览面板菜单","Set Event":"设置事件","Settings apply to new type.":"设置将应用于新文字。","Shape":"形状","Shape Builder":"形状生成器","Shape Builder Tool":"形状生成器工具","Shape Modes":"形状模式","Shared":"共享","Shared documents":"共享文档","Share for Review...":"共享以供审阅…","Sharp":"锐利","Shear":"倾斜","Shear Tool":"倾斜工具","Shell Lower":"下弧形外壳","Shell Upper":"上弧形外壳","Shortcut Reference":"快捷键参考","Show Artboards":"显示画板","Show as Grid":"以网格显示","Show as List":"以列表显示","Show Bounding Box":"显示定界框","Show Grid":"显示网格","Show Guides":"显示参考线","Show Hidden Characters":"显示隐藏字符","Show or hide":"显示或隐藏","Show or hide panels":"显示或隐藏面板","Show or hide the process plates":"显示或隐藏印刷色版","Show Paint Region Gaps":"显示填色区域间隙","Show Print Tiling":"显示打印拼贴","Show Properties Panel":"显示属性面板","Show Ruler Above the Text":"在文本上方显示标尺","Show Rulers":"显示标尺","Show single plates in black":"以黑色显示单个色版","Show Slices":"显示切片","Show Text Threads":"显示文本串接","Show Transparency Grid":"显示透明度网格","Show used spot colors only":"仅显示已使用的专色","Simulate Overprint":"模拟叠印","Single or double column":"单列或双列","Sketch":"素描","Sketch Shape":"草图形状","Sketch Shape Tool":"草图形状工具","Slice":"切片","Slice Selection":"切片选择","Slice Selection Tool":"切片选择工具","Slice Tool":"切片工具","Small Caps":"小型大写字母","Smaller glyphs":"较小的字形","Small List View":"小列表视图","Smart Punctuation...":"智能标点…","Smooth":"平滑","Smooth Tool":"平滑工具","Snapping Preferences...":"吸附首选项…","Snap to Grid":"对齐网格","Snap to Letterforms":"对齐字形","Snap to Pixel":"对齐像素","Snap to Point":"对齐点","Snap to Ruler Ticks":"对齐标尺刻度","Social Post":"社交帖子","Social Post, 1080 x 1080 px":"社交帖子，1080 × 1080 像素","Soft":"柔和","Sort recent files":"排序最近的文件","Source Image":"源图像","Space after paragraph":"段后间距","Space before paragraph":"段前间距","Spacing":"间距","Spacing Modifier Letters":"间距修饰字母","Spiral":"螺旋线","Spiral Tool":"螺旋线工具","Square Post 1080 x 1080":"方形帖子 1080 × 1080","Squeeze":"挤压","Stacked Bar Graph":"堆积条形图","Stacked Bar Graph Tool":"堆积条形图工具","Stacked Column Graph":"堆积柱形图","Stacked Column Graph Tool":"堆积柱形图工具","Standard":"标准","Standard Ligatures":"标准连字","Start a new file fast":"快速新建文件","Start angle":"起始角度","Start from an editable layout. Everything is made of regular shapes and type.":"从可编辑的版式开始。所有内容均由普通形状和文字构成。","Start Global Edit":"开始全局编辑","Start offset":"起始偏移","Star Tool":"星形工具","Start with a selection":"从选区开始","Sticker":"贴纸","Stop Recording":"停止录制","Story 1080 x 1920":"快拍 1080 × 1920","Strength":"强度","Strikethrough":"删除线","Stroke":"描边","Stroke color":"描边颜色","Stroke weight":"描边粗细","Strong":"强","Stylistic Alternates":"样式替代字","Stylistic Sets":"样式集","Stylize":"风格化","Subscript":"下标","Suffix":"后缀","Suffix 1":"后缀 1","Suggest a prompt":"推荐提示词","Superscript":"上标","SVG":"SVG","SVG Filters":"SVG 滤镜","SVG Interactivity":"SVG 交互","SVG Interactivity panel menu":"SVG 交互面板菜单","Swap Fill and Stroke":"互换填色和描边","Swash":"花体","Swatches":"色板","Symbol Libraries menu":"符号库菜单","Symbol Options":"符号选项","Symbols":"符号","Symbol Screener":"符号滤色器","Symbol Screener Tool":"符号滤色器工具","Symbol Scruncher":"符号紧缩器","Symbol Scruncher Tool":"符号紧缩器工具","Symbol Shifter":"符号移位器","Symbol Shifter Tool":"符号移位器工具","Symbol Sizer":"符号缩放器","Symbol Sizer Tool":"符号缩放器工具","Symbols panel menu":"符号面板菜单","Symbol Spinner":"符号旋转器","Symbol Spinner Tool":"符号旋转器工具","Symbol Sprayer":"符号喷枪","Symbol Sprayer Tool":"符号喷枪工具","Symbol Stainer":"符号着色器","Symbol Stainer Tool":"符号着色器工具","Symbol Styler":"符号样式器","Symbol Styler Tool":"符号样式器工具","System Info...":"系统信息…","Tab alignment":"制表符对齐","Tablet 820 x 1180":"平板 820 × 1180","Tabloid, 11 x 17 in":"小报，11 × 17 英寸","Tab position":"制表符位置","Tab ruler":"制表符标尺","Tabs":"制表符","Tabs panel menu":"制表符面板菜单","Tabular Lining":"表格等高数字","Tabular Oldstyle":"表格旧式数字","Take on the photo’s light and shadow":"沿用照片的光影","Task Bar":"任务栏","Task bar options":"任务栏选项","Texture displacement":"纹理置换","Text Wrap":"文本绕排","Threaded Text":"串接文本","Thread Text":"串接文本","Thumbnails":"缩略图","Thumbnail View":"缩略图视图","Tick":"刻度","Titling Alternates":"标题替代字","Toggle single or double column tools":"切换单列或双列工具栏","Tool":"工具","Tool Options":"工具选项","Tool Options…":"工具选项…","Top center":"顶部居中","Top left":"左上","Top left corner X":"左上角 X","Top left corner Y":"左上角 Y","Top right":"右上","Top right corner X":"右上角 X","Top right corner Y":"右上角 Y","Total ink":"总油墨量","to zoom in":"放大","to zoom into an area":"放大到某个区域","to zoom out":"缩小","Traced Image":"描摹图像","Trace Image":"图像描摹","Trace preset":"描摹预设","Tracking":"字符间距","Tracking presets":"字符间距预设","Transparency Flattener Presets...":"透明度拼合器预设…","Transparent Objects":"透明对象","Tsume":"字距收紧","Tsume (tighten the space beside characters) presets":"字距收紧（收紧字符旁间距）预设","Turn objects by":"对象旋转角度","Twirl":"旋转扭曲","Twirl Tool":"旋转扭曲工具","Twist":"扭转","Type Conversion":"文字转换","Type on a Path":"路径文字","Type on a Path Tool":"路径文字工具","Type Orientation":"文字方向","Type Tool":"文字工具","Unbind Variable":"解除变量绑定","Underline":"下划线","Ungroup All":"全部取消编组","Unicode blocks":"Unicode 区块","Unite":"联集","Unlock All":"全部解锁","Update Selection":"更新所选内容","Use Preview Bounds":"使用预览边界","Use Whole Selection":"使用整个选区","Using the whole selection":"正在使用整个选区","Variable":"变量","Variables":"变量","Variables panel menu":"变量面板菜单","Variations":"变体","Vectors":"矢量图","Vector Studio":"矢量设计","Vertical Align Bottom":"垂直底对齐","Vertical Align Center":"垂直居中对齐","Vertical Align Top":"垂直顶对齐","Vertical Area Type":"直排区域文字","Vertical Area Type Tool":"直排区域文字工具","Vertical distortion":"垂直扭曲","Vertical Distribute Center":"垂直居中分布","Vertical Distribute Space":"垂直间距分布","Vertical scale":"垂直缩放","Vertical scale presets":"垂直缩放预设","Vertical spacing":"垂直间距","Vertical Type":"直排文字","Vertical Type on a Path":"直排路径文字","Vertical Type on a Path Tool":"直排路径文字工具","Vertical Type Tool":"直排文字工具","Video":"视频","Vivid":"鲜艳","Warp":"变形","Warp style":"变形样式","Warp Tool":"变形工具","Wave":"波浪","Web 1280 x 800":"网页 1280 × 800","Web 1366 x 768":"网页 1366 × 768","Web 1920 x 1080":"网页 1920 × 1080","Web Banner":"网页横幅","Web Banner, 1200 x 628 px":"网页横幅，1200 × 628 像素","WebP":"WebP","Welcome Screen":"欢迎屏幕","What's New...":"新增功能…","Whole Selection":"整个选区","Width profile":"宽度配置文件","Width Tool":"宽度工具","Wrinkle":"皱褶","Wrinkle Tool":"皱褶工具","x Height":"x 高度","Yards":"码","Your files":"您的文件","Zip several files":"压缩多个文件","Zoom presets":"缩放预设","Zoom Tool":"缩放工具","to zoom":"缩放","3D and Materials":"3D 和材质","3.5 x 2 in, front and back":"3.5 × 2 英寸，正反面","512 x 512 px with keylines":"512 × 512 像素（含关键线）","Inter Regular: 515 glyphs":"Inter Regular：515 个字形","1 Artboard 1":"1 个画板 1","1st":"第 1","Alternates for Current Selection":"当前选区的替代字形","Alternates of the selected glyph":"所选字形的替代字形","Area Type Options":"区域文字选项","Assign Profile":"指定配置文件","Create Gradient Mesh":"创建渐变网格","Create Object Mosaic":"创建对象马赛克","Document Raster Effects Settings":"文档栅格效果设置","Document Scripts":"文档脚本","Effect Gallery":"效果画廊","File Info":"文件信息","Find/Replace Font":"查找/替换字体","Flatten Transparency":"拼合透明度","Gap Options":"间隙选项","Last Effect":"上次效果","Open from This Computer":"从本机打开","Package":"打包","PDF Presets":"PDF 预设","Perspective Grid Presets":"透视网格预设","Place":"置入","Rasterize":"栅格化","Resolve Missing Fonts":"解决缺失字体","Rewrite":"改写","Save Selected Slices":"存储所选切片","Share for Review":"共享以供审阅","Smart Punctuation":"智能标点","Snapping Preferences":"吸附首选项","System Info":"系统信息","Transparency Flattener Presets":"透明度拼合器预设","What's New":"新增功能"}};
+  const APP_ID = (typeof location !== 'undefined' && (location.pathname.match(/\/app\/([^/]+)/) || [])[1]) || '';
+  if (EXTRA_DICTS[APP_ID]) Object.assign(UI_DICTIONARY, EXTRA_DICTS[APP_ID]);
+  const EXTRA_PATTERNS = [
+    // "Arc Tool, in toolbar" -> "弧形工具，位于工具栏"
+    (s, t) => { const m = s.match(/^(.+), in toolbar$/); if (!m) return null; const b = t(m[1]) || (t(m[1] + ' Tool')); return b ? b + '，位于工具栏' : null; },
+    // "Foo Tool" -> "Foo工具"
+    (s, t) => { const m = s.match(/^(.+) Tool$/); if (!m) return null; const b = t(m[1]); return b ? b + '工具' : null; },
+    (s) => { const m = s.match(/^Welcome back, (.+)$/); return m ? '欢迎回来，' + m[1] : null; },
+    (s) => { const m = s.match(/^(\d+(?:\.\d+)?) x (\d+(?:\.\d+)?) (px|in|mm|pt|cm)$/); if (!m) return null; return m[1] + ' × ' + m[2] + ' ' + ({px:'像素',in:'英寸',mm:'毫米',pt:'点',cm:'厘米'})[m[3]]; },
+    (s, t) => { const m = s.match(/^(.+?) (\d+(?:\.\d+)?) x (\d+(?:\.\d+)?) (px|in|mm|pt|cm)$/); if (!m) return null; const b = t(m[1]); return b ? b + '，' + m[2] + ' × ' + m[3] + ' ' + ({px:'像素',in:'英寸',mm:'毫米',pt:'点',cm:'厘米'})[m[4]] : null; },
+  ];
+  /* EXTRA_DICT_END */
+
     const LOWER_DICTIONARY = {};
   for (const [k, v] of Object.entries(UI_DICTIONARY)) {
     LOWER_DICTIONARY[k.toLowerCase()] = v;
@@ -8285,7 +8479,7 @@
   function getTranslation(str) {
     if (!str || typeof str !== 'string') return null;
     let trimmed = str.trim();
-    if (!trimmed || trimmed.length > 120) return null;
+    if (!trimmed || trimmed.length > 400) return null;
 
     let colon = false;
     let ellipsis = false;
@@ -8310,6 +8504,20 @@
     }
 
     let match = UI_DICTIONARY[trimmed] || LOWER_DICTIONARY[trimmed.toLowerCase()];
+    if (!match && trimmed.includes('\n')) {
+      const lines = trimmed.split('\n');
+      const translatedLines = lines.map((l) => getTranslation(l) || l);
+      if (translatedLines.some((l, idx) => l !== lines[idx])) {
+        match = translatedLines.join('\n');
+      }
+    }
+    if (!match && typeof EXTRA_PATTERNS !== 'undefined') {
+      for (const fn of EXTRA_PATTERNS) {
+        let r = null;
+        try { r = fn(trimmed, (x) => UI_DICTIONARY[x] || LOWER_DICTIONARY[x.toLowerCase()] || null); } catch (e) { r = null; }
+        if (r) { match = r; break; }
+      }
+    }
     if (!match) {
       // Check for (shortcut) or (count) patterns like "Undo (Ctrl+Z)"
       const bracketMatch = trimmed.match(/^([^(]+)\s*\(([^)]+)\)$/);
@@ -8491,19 +8699,17 @@
       }
     } else if (node.nodeType === (NodeRef.ELEMENT_NODE || 1)) {
       const tag = (node.tagName || '').toUpperCase();
-      if (tag === 'SCRIPT' || tag === 'STYLE' || tag === 'NOSCRIPT' || tag === 'CODE' || tag === 'PRE' || tag === 'CANVAS') {
+      if (tag === 'SCRIPT' || tag === 'STYLE' || tag === 'NOSCRIPT' || tag === 'CODE' || tag === 'PRE') {
         return;
       }
-      if (tag === 'SVG' || tag === 'PATH' || tag === 'G' || tag === 'USE' || tag === 'DEFS' || tag === 'SYMBOL') {
-        return;
-      }
+      const isSvgInner = (tag === 'PATH' || tag === 'G' || tag === 'USE' || tag === 'DEFS' || tag === 'SYMBOL');
       const cls = typeof node.className === 'string' ? node.className : '';
       if (cls && (cls.includes('material-icons') || cls.includes('material-symbols') || cls.includes('lucide') || cls.includes('fa-') || cls.includes('feather-'))) {
         return;
       }
 
       // Check attributes: placeholder, title, aria-label, alt, data-tooltip, data-title
-      ['placeholder', 'title', 'aria-label', 'alt', 'data-tooltip', 'data-title', 'data-original-title'].forEach((attr) => {
+      ['placeholder', 'title', 'aria-label', 'alt', 'data-tooltip', 'data-title', 'data-original-title', 'data-tip', 'data-label', 'label'].forEach((attr) => {
         if (typeof node.getAttribute === 'function') {
           const val = node.getAttribute(attr);
           if (val) {
@@ -8598,7 +8804,7 @@
       subtree: true,
       characterData: true,
       attributes: true,
-      attributeFilter: ['placeholder', 'title', 'aria-label', 'alt', 'data-tooltip', 'data-title', 'value']
+      attributeFilter: ['placeholder', 'title', 'aria-label', 'alt', 'data-tooltip', 'data-title', 'value', 'data-tip', 'data-label', 'label']
     });
 
     // Route change triggers

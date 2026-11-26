@@ -14,20 +14,20 @@ const field = (id, label, control, hint) =>
     hint && el('p', { class: 'muted field-hint' }, hint),
   );
 
-const WRONG_PASSWORD = 'The password is not right for this digital ID file.';
+const WRONG_PASSWORD = '此数字身份证文件的密码不正确。';
 /** Why a digital ID cannot sign now: its certificate expired or is not valid yet; or null. */
 function validityProblem(summary, now = new Date()) {
   const day = (date) => date.toLocaleDateString(undefined, { dateStyle: 'medium' });
   if (now > summary.validTo)
-    return `This digital ID expired on ${day(summary.validTo)}. Choose another one to sign with.`;
+    return `此数字身份证已于 ${day(summary.validTo)} 过期。请选择其他身份证进行签名。`;
   if (now < summary.validFrom)
-    return `This digital ID is valid from ${day(summary.validFrom)}. Choose another one to sign with.`;
+    return `此数字身份证自 ${day(summary.validFrom)} 起生效。请选择其他身份证进行签名。`;
   return null;
 }
 function errorText(error) {
   if (error?.name === 'Pkcs12PasswordError' || /password|mac/i.test(error?.message || ''))
     return WRONG_PASSWORD;
-  return error?.message || 'This digital ID could not be used.';
+  return error?.message || '无法使用此数字身份证。';
 }
 
 /**
@@ -43,7 +43,7 @@ export function chooseDigitalId(identities = [], { signal } = {}) {
     };
     const radios = el(
       'div',
-      { class: 'choice-list', role: 'radiogroup', 'aria-label': 'Digital ID' },
+      { class: 'choice-list', role: 'radiogroup', 'aria-label': '数字身份证' },
       ...identities.map((entry, i) =>
         el(
           'label',
@@ -58,7 +58,7 @@ export function chooseDigitalId(identities = [], { signal } = {}) {
           el(
             'span',
             {},
-            `${entry.summary.commonName || 'Digital ID'}${entry.summary.email ? ` (${entry.summary.email})` : ''}`,
+            `${entry.summary.commonName || '数字身份证'}${entry.summary.email ? ` (${entry.summary.email})` : ''}`,
           ),
         ),
       ),
@@ -72,7 +72,7 @@ export function chooseDigitalId(identities = [], { signal } = {}) {
           checked: !identities.length,
           onchange: () => mode('file'),
         }),
-        el('span', {}, 'Use a digital ID file (.pfx or .p12)'),
+        el('span', {}, '使用数字身份证文件 (.pfx 或 .p12)'),
       ),
       el(
         'label',
@@ -83,7 +83,7 @@ export function chooseDigitalId(identities = [], { signal } = {}) {
           value: 'create',
           onchange: () => mode('create'),
         }),
-        el('span', {}, 'Create a new digital ID'),
+        el('span', {}, '创建新的数字身份证'),
       ),
     );
     const file = el('input', {
@@ -102,7 +102,7 @@ export function chooseDigitalId(identities = [], { signal } = {}) {
     const keyType = el(
       'select',
       { class: 'input' },
-      el('option', { value: 'RSA-2048' }, 'RSA 2048-bit'),
+      el('option', { value: 'RSA-2048' }, 'RSA 2048 位'),
       el('option', { value: 'P-256' }, 'ECDSA P-256'),
     );
     const newPassword = el('input', {
@@ -115,21 +115,21 @@ export function chooseDigitalId(identities = [], { signal } = {}) {
       file: el(
         'div',
         { class: 'stack' },
-        field('id-file', 'Digital ID file', file),
-        field('id-file-password', 'Password', filePassword),
+        field('id-file', '数字身份证文件', file),
+        field('id-file-password', '密码', filePassword),
       ),
       create: el(
         'div',
         { class: 'stack' },
-        field('id-name', 'Name', name),
-        field('id-email', 'Email (optional)', email),
-        field('id-organization', 'Organization (optional)', organization),
-        field('id-key', 'Key type', keyType),
+        field('id-name', '姓名', name),
+        field('id-email', '电子邮箱 (可选)', email),
+        field('id-organization', '单位/组织 (可选)', organization),
+        field('id-key', '密钥类型', keyType),
         field(
           'id-password',
-          'Password for the ID file',
+          '身份证文件的密码',
           newPassword,
-          'The new ID is downloaded as a .p12 file protected by this password, so you can sign with it again. Others see it as self-signed until they trust it.',
+          '新的身份证将以受该密码保护的 .p12 文件形式下载，以便您再次签名使用。在其他人信任此身份证前，它将被视为自签名证书。',
         ),
       ),
     };
@@ -139,7 +139,7 @@ export function chooseDigitalId(identities = [], { signal } = {}) {
       el(
         'p',
         { class: 'muted' },
-        'A certificate signature proves who signed and shows any change made afterwards.',
+        '证书签名可证明签署者身份，并能显示此后的任何更改。',
       ),
       radios,
       sections.existing,
@@ -171,7 +171,7 @@ export function chooseDigitalId(identities = [], { signal } = {}) {
           result = chosen;
         } else if (choice === 'file') {
           const chosen = file.files?.[0];
-          if (!chosen) return fail('Choose a digital ID file.', file);
+          if (!chosen) return fail('请选择数字身份证文件。', file);
           const identity = await importPkcs12(
             new Uint8Array(await chosen.arrayBuffer()),
             filePassword.value,
@@ -182,13 +182,13 @@ export function chooseDigitalId(identities = [], { signal } = {}) {
           if (problem) return fail(problem, file);
           result = { identity, summary };
         } else {
-          if (!name.value.trim()) return fail('Enter the name to sign with.', name);
+          if (!name.value.trim()) return fail('请输入用于签名的姓名。', name);
           // The address goes into the certificate, where readers show it as the signer's.
           email.value = email.value.trim();
           if (!email.checkValidity())
-            return fail('Enter a valid email address, or leave it empty.', email);
+            return fail('请输入有效的电子邮箱地址，或留空。', email);
           if (newPassword.value.length < 6)
-            return fail('Use a password of at least 6 characters for the ID file.', newPassword);
+            return fail('身份证文件密码至少需要 6 个字符。', newPassword);
           const identity = await createSelfSignedId({
             name: name.value.trim(),
             email: email.value.trim(),
@@ -200,7 +200,7 @@ export function chooseDigitalId(identities = [], { signal } = {}) {
           if (!dialog.open) return;
           download(
             new Blob([p12], { type: 'application/x-pkcs12' }),
-            `${name.value.trim().replace(/[\\/:*?"<>|]+/g, ' ')} digital ID.p12`,
+            `${name.value.trim().replace(/[\\/:*?"<>|]+/g, ' ')} 数字身份证.p12`,
           );
           result = { identity, summary: describeIdentity(identity) };
         }
@@ -222,11 +222,11 @@ export function chooseDigitalId(identities = [], { signal } = {}) {
       e.preventDefault();
       choose();
     };
-    const submit = button('Continue', null, () => choose(), 'btn primary');
+    const submit = button('继续', null, () => choose(), 'btn primary');
     const dialog = modal(
-      'Choose a digital ID',
+      '选择数字身份证',
       form,
-      [button('Cancel', null, () => dialog.close()), submit],
+      [button('取消', null, () => dialog.close()), submit],
       { signal },
     );
     dialog.addEventListener('close', () => resolve(result), { once: true });
@@ -244,16 +244,16 @@ export function signatureDetailsDialog(summary, { certify = false, signal } = {}
     const reason = el('input', {
       class: 'input',
       maxlength: 200,
-      value: certify ? 'I am the author of this document' : '',
+      value: certify ? '我是此文档的作者' : '',
     });
     const location = el('input', { class: 'input', maxlength: 120 });
     const contact = el('input', { class: 'input', maxlength: 120 });
     const level = el(
       'select',
       { class: 'input' },
-      el('option', { value: '2' }, 'Form filling and signing'),
-      el('option', { value: '3' }, 'Form filling, commenting, and signing'),
-      el('option', { value: '1' }, 'No changes'),
+      el('option', { value: '2' }, '允许表单填写与签名'),
+      el('option', { value: '3' }, '允许表单填写、批注与签名'),
+      el('option', { value: '1' }, '不允许任何更改'),
     );
     const form = el(
       'form',
@@ -261,16 +261,16 @@ export function signatureDetailsDialog(summary, { certify = false, signal } = {}
       el(
         'p',
         {},
-        `Sign as ${summary.commonName || 'this digital ID'}${summary.email ? ` (${summary.email})` : ''}.`,
+        `以 ${summary.commonName || '此数字身份证'} 签名${summary.email ? ` (${summary.email})` : ''}。`,
       ),
-      field('sig-reason', 'Reason (optional)', reason),
-      field('sig-location', 'Location (optional)', location),
-      field('sig-contact', 'Contact information (optional)', contact),
-      certify && field('sig-certify', 'Changes allowed after certifying', level),
+      field('sig-reason', '签名原因 (可选)', reason),
+      field('sig-location', '签署地点 (可选)', location),
+      field('sig-contact', '联系信息 (可选)', contact),
+      certify && field('sig-certify', '认证后允许的更改', level),
       el(
         'p',
         { class: 'muted' },
-        'The signed PDF is the version on screen now. Any later edit here will invalidate the signature, so sign last.',
+        '签署后的 PDF 为当前屏幕上显示的版本。在此之后的任何编辑都会导致签名失效，因此请在完成所有编辑后再签名。',
       ),
     );
     const sign = () => {
@@ -287,11 +287,11 @@ export function signatureDetailsDialog(summary, { certify = false, signal } = {}
       sign();
     };
     const dialog = modal(
-      certify ? 'Certify document' : 'Sign with a certificate',
+      certify ? '认证文档' : '使用证书签名',
       form,
       [
-        button('Cancel', null, () => dialog.close()),
-        button(certify ? 'Certify' : 'Sign', null, sign, 'btn primary'),
+        button('取消', null, () => dialog.close()),
+        button(certify ? '认证' : '签名', null, sign, 'btn primary'),
       ],
       { signal },
     );

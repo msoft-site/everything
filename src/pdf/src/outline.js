@@ -121,7 +121,7 @@ export function createOutlinePanel({ onNavigate, onMenu }) {
         class: 'outline-list',
         ...(depth
           ? { role: 'group', hidden: true }
-          : { role: 'tree', 'aria-label': 'Document outline' }),
+          : { role: 'tree', 'aria-label': '文档大纲' }),
       });
     const build = (list) => {
       const rootGroup = makeGroup(0);
@@ -135,7 +135,7 @@ export function createOutlinePanel({ onNavigate, onMenu }) {
         const { depth, parent, group } = frame;
         const position = frame.next++;
         const item = frame.list[position];
-        const title = String(item.title || '').trim() || 'Untitled';
+        const title = String(item.title || '').trim() || '无标题';
         const label = el(
           'button',
           {
@@ -170,7 +170,7 @@ export function createOutlinePanel({ onNavigate, onMenu }) {
             onMenu(entry, e);
           });
         if (entry.page == null && !item.items?.length && item.url)
-          label.title = `${title} (web link, not followed)`;
+          label.title = `${title}（网页链接，未跳转）`;
         nextEntries.push(entry);
         const row = el('li', { role: 'none', class: 'outline-row' }, label);
         if (item.items?.length) {
@@ -188,7 +188,7 @@ export function createOutlinePanel({ onNavigate, onMenu }) {
             {
               type: 'button',
               class: 'outline-toggle',
-              'aria-label': `Expand ${title}`,
+              'aria-label': `展开 ${title}`,
               tabindex: -1,
               onclick: () => {
                 // Keep the tree's tab stop visible when a focused descendant is collapsed.
@@ -229,7 +229,7 @@ export function createOutlinePanel({ onNavigate, onMenu }) {
         el(
           'p',
           { class: 'outline-note muted' },
-          `Only the first ${MAX_ITEMS.toLocaleString()} of ${flat.length.toLocaleString()} bookmarks are listed.`,
+          `仅列出前 ${MAX_ITEMS.toLocaleString()} 个书签（共 ${flat.length.toLocaleString()} 个）。`,
         ),
       );
     entries = nextEntries;
@@ -272,7 +272,7 @@ export function createOutlinePanel({ onNavigate, onMenu }) {
       toggle.classList.toggle('open', expanded);
       toggle.setAttribute(
         'aria-label',
-        `${expanded ? 'Collapse' : 'Expand'} ${entry.button.title}`,
+        `${expanded ? '折叠' : '展开'} ${entry.button.title}`,
       );
     }
   }

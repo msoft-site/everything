@@ -119,7 +119,7 @@ async function viewShared(url) {
     data = await res.json();
     if (data?.format !== 'notes-shared-page') throw new Error('format');
   } catch {
-    errorScreen('This link has expired or was removed', 'Ask the person who shared it for a new link.');
+    errorScreen('此链接已过期或已被移除', '请联系共享此链接的用户获取新链接。');
     return;
   }
   root.removeAttribute('aria-busy');
@@ -133,10 +133,10 @@ async function viewShared(url) {
   const str = (v) => (typeof v === 'string' ? v : '');
   const title = str(data.title);
   const published = new Date(str(data.published));
-  document.title = `${title || 'Shared page'} - Notes`;
+  document.title = `${title || '共享页面'} - 笔记`;
   const host = h('div.canvas-col');
   root.replaceChildren(h('div.shared-view',
-    h('header.read-only-banner', { role: 'banner' }, h('img', { src: './favicon.svg', alt: '', width: 20, height: 20 }), h('strong', 'Notes'), h('span.banner-wide', 'Shared read-only page'), h('span.banner-narrow', 'Read-only'), h('span.spacer'), Number.isNaN(published.getTime()) ? null : h('span', h('span.banner-published', 'Published '), published.toLocaleDateString())),
+    h('header.read-only-banner', { role: 'banner' }, h('img', { src: './favicon.svg', alt: '', width: 20, height: 20 }), h('strong', '笔记'), h('span.banner-wide', '共享只读页面'), h('span.banner-narrow', '只读'), h('span.spacer'), Number.isNaN(published.getTime()) ? null : h('span', h('span.banner-published', '发布于 '), published.toLocaleDateString('zh-CN'))),
     h('main#main.main', host),
   ));
   installTooltips(document);

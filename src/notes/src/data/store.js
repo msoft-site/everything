@@ -126,8 +126,8 @@ export class Store extends Emitter {
 
   async createStarterNotebook(name) {
     const nb = this.createNotebook(name, { silent: true });
-    const quick = this.createSection(nb.id, { name: 'Quick Notes', color: 'yellow', silent: true });
-    this.createSection(nb.id, { name: 'New Section 1', color: 'green', silent: true });
+    const quick = this.createSection(nb.id, { name: '快速笔记', color: 'yellow', silent: true });
+    this.createSection(nb.id, { name: '新建分区 1', color: 'green', silent: true });
     this.createPage(quick.id, { title: '', silent: true });
     await this.flush();
     return nb;

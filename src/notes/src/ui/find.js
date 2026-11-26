@@ -64,12 +64,12 @@ export class FindBar {
     this.app = app;
     this.ranges = [];
     this.index = -1;
-    this.input = h('input.input', { type: 'search', placeholder: 'Find on page', 'aria-label': 'Find on page', autocomplete: 'off', spellcheck: 'false' });
+    this.input = h('input.input', { type: 'search', placeholder: '在页面上查找', 'aria-label': '在页面上查找', autocomplete: 'off', spellcheck: 'false' });
     this.count = h('span.find-count', { role: 'status', 'aria-live': 'polite' });
-    const prev = h('button.icon-btn', { type: 'button', 'aria-label': 'Previous match', 'data-tip': 'Previous match', 'data-tip-key': 'Shift+Enter', onclick: () => this.step(-1) }, icon('chevUp', 16));
-    const next = h('button.icon-btn', { type: 'button', 'aria-label': 'Next match', 'data-tip': 'Next match', 'data-tip-key': 'Enter', onclick: () => this.step(1) }, icon('chevDown', 16));
-    const close = h('button.icon-btn', { type: 'button', 'aria-label': 'Close find', onclick: () => this.close() }, icon('x', 16));
-    this.el = h('div.find-bar', { role: 'search', 'aria-label': 'Find on page', hidden: true }, icon('search', 16), this.input, this.count, prev, next, close);
+    const prev = h('button.icon-btn', { type: 'button', 'aria-label': '上一处匹配', 'data-tip': '上一处匹配', 'data-tip-key': 'Shift+Enter', onclick: () => this.step(-1) }, icon('chevUp', 16));
+    const next = h('button.icon-btn', { type: 'button', 'aria-label': '下一处匹配', 'data-tip': '下一处匹配', 'data-tip-key': 'Enter', onclick: () => this.step(1) }, icon('chevDown', 16));
+    const close = h('button.icon-btn', { type: 'button', 'aria-label': '关闭查找', onclick: () => this.close() }, icon('x', 16));
+    this.el = h('div.find-bar', { role: 'search', 'aria-label': '在页面上查找', hidden: true }, icon('search', 16), this.input, this.count, prev, next, close);
     app.canvasCol.append(this.el);
     const runSoon = debounce(() => this.run(), 120);
     this.input.addEventListener('input', () => {
@@ -172,10 +172,10 @@ export class FindBar {
 
   show({ quiet = false } = {}) {
     const n = this.ranges.length;
-    const count = n ? `${this.index + 1} of ${n}` : 'No matches';
+    const count = n ? `${this.index + 1} / ${n}` : '无匹配项';
     if (this.count.textContent !== count) this.count.textContent = count;
     if (!n) {
-      if (!quiet) announce('No matches');
+      if (!quiet) announce('无匹配项');
       return;
     }
     const r = this.ranges[this.index];

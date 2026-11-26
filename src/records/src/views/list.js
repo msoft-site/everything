@@ -106,7 +106,7 @@ export class ListView {
             return;
           }
           const field = this.table.field(n.fieldId);
-          const label = n.value === null || n.value === undefined ? 'Empty' : toText(field, n.value, this.base.compute.ctx) || 'Empty';
+          const label = n.value === null || n.value === undefined ? '（空）' : toText(field, n.value, this.base.compute.ctx) || '（空）';
           const open = !collapsed.has(n.path);
           out.push(h('button.list-group-head', { type: 'button', 'aria-expanded': String(open), dataset: { path: n.path }, style: { paddingLeft: `${12 + depth * 16}px` } }, icon(open ? 'chevronDown' : 'chevronRight', 14), h('span.muted', field?.name || ''), h('strong', label), h('span.list-count', String(n.records.length))));
           if (!open) continue;
@@ -125,11 +125,11 @@ export class ListView {
     this.drawn = count;
     // Only collapsed group headers may be left to show.
     const left = this.shown.length - count;
-    if (more) out.push(h('button.btn.ghost.list-more', { type: 'button' }, left > 0 ? `Show more (${left} left)` : 'Show more'));
+    if (more) out.push(h('button.btn.ghost.list-more', { type: 'button' }, left > 0 ? `显示更多（剩余 ${left} 条）` : '显示更多'));
     out.push(h('button.btn.ghost.list-add', { type: 'button', onclick: (e) => {
       e.stopPropagation();
       this.page.addRecord({});
-    } }, icon('plus', 16), 'Add record'));
+    } }, icon('plus', 16), '添加记录'));
     this.list.replaceChildren(...out);
   }
 

@@ -45,8 +45,8 @@
 
 export const PLANES = ['left', 'right', 'floor'];
 export const GRID_TYPES = ['one', 'two', 'three'];
-export const PLANE_LABELS = { left: 'Left Plane', right: 'Right Plane', floor: 'Horizontal Plane', none: 'No Active Plane' };
-export const TYPE_LABELS = { one: 'One Point Perspective', two: 'Two Point Perspective', three: 'Three Point Perspective' };
+export const PLANE_LABELS = { left: '左侧平面', right: '右侧平面', floor: '水平平面', none: '无活动平面' };
+export const TYPE_LABELS = { one: '一点透视', two: '两点透视', three: '三点透视' };
 export const DEFAULT_COLORS = Object.freeze({ left: '#4a78f0', right: '#f08a3c', floor: '#3aa66a' });
 
 const EPS = 1e-9;

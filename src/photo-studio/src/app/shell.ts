@@ -53,7 +53,7 @@ Right-click, hold or press → for the list" aria-label="Change screen mode">${s
       <div id="ruler-x" class="ruler ruler-x" aria-hidden="true"></div>
       <div id="ruler-y" class="ruler ruler-y" aria-hidden="true"></div>
       <div id="viewport" tabindex="0" aria-label="Image canvas">
-        <div id="stage"><canvas id="canvas" aria-label="Document preview"></canvas><svg id="overlay" aria-hidden="true"></svg></div>
+        <div id="stage"><canvas id="canvas" aria-label="文档预览"></canvas><svg id="overlay" aria-hidden="true"></svg></div>
         <svg id="screen-overlay" aria-hidden="true"></svg>
       </div>
     </div>

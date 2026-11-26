@@ -7,7 +7,7 @@ import { MAX_COMMENTS, collectComments } from './core/comments.js';
  */
 let metaIds = 0;
 export function createCommentsPanel({ onSelect }) {
-  const list = el('div', { class: 'comments', role: 'group', 'aria-label': 'Comments' });
+  const list = el('div', { class: 'comments', role: 'group', 'aria-label': '批注' });
   const root = el('div', { class: 'comments-panel', tabindex: -1 }, list);
   let generation = 0,
     count = 0,
@@ -28,7 +28,7 @@ export function createCommentsPanel({ onSelect }) {
         el(
           'p',
           { class: 'comments-empty muted' },
-          'No comments yet. Add a note, or highlight some text, to see it listed here.',
+          '暂无批注。添加便签或突出显示文本后，会显示在此处。',
         ),
       );
       return;
@@ -39,8 +39,8 @@ export function createCommentsPanel({ onSelect }) {
     for (const comment of comments) {
       if (comment.page !== lastPage) {
         lastPage = comment.page;
-        list.append(el('h3', { class: 'comments-page' }, `Page ${comment.page + 1}`));
-        pageList = el('ul', { class: 'comments-list', 'aria-label': `Page ${comment.page + 1}` });
+        list.append(el('h3', { class: 'comments-page' }, `第 ${comment.page + 1} 页`));
+        pageList = el('ul', { class: 'comments-list', 'aria-label': `第 ${comment.page + 1} 页` });
         list.append(pageList);
       }
       const swatch = el(
@@ -66,7 +66,7 @@ export function createCommentsPanel({ onSelect }) {
               class: 'comment-item',
               'data-comment-id': comment.id,
               'data-comment-page': comment.page,
-              'aria-label': `${comment.kind} on page ${comment.page + 1}${comment.text ? ': ' + comment.text.slice(0, 80) : ''}`,
+              'aria-label': `第 ${comment.page + 1} 页的${comment.kind}${comment.text ? '：' + comment.text.slice(0, 80) : ''}`,
               'aria-describedby': metaId,
               onclick: () => onSelect(comment),
             },
@@ -87,7 +87,7 @@ export function createCommentsPanel({ onSelect }) {
         el(
           'p',
           { class: 'comments-empty muted' },
-          `Only the first ${count.toLocaleString()} comments are listed.`,
+          `仅列出前 ${count.toLocaleString()} 条批注。`,
         ),
       );
   }
@@ -98,7 +98,7 @@ export function createCommentsPanel({ onSelect }) {
   async function load(pdf, { isCurrent = () => true } = {}) {
     const token = ++generation;
     if (!list.firstChild)
-      list.append(el('p', { class: 'comments-empty muted' }, 'Looking for comments…'));
+      list.append(el('p', { class: 'comments-empty muted' }, '正在查找批注…'));
     const comments = await collectComments(pdf, {
       isCurrent: () => token === generation && isCurrent(),
     });

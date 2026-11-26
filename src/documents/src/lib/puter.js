@@ -321,7 +321,7 @@ export async function pickImage() {
  * Puter's Save dialog; elsewhere it goes into the app folder.
  */
 export function asksWhereToSave() {
-  return false;
+  return canSaveFiles();
 }
 
 /** How long after the dialog is asked for a key or click can still reach this window before the desktop covers it. */

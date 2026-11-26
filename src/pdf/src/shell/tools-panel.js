@@ -173,7 +173,7 @@ export function createToolsPanel({ catalog, can = () => true, onClose, onChange,
     back.hidden = !tool;
     headIcon.hidden = !tool;
     headIcon.replaceChildren(...(tool ? [toolIcon(tool.icon || tool.id, 20)] : []));
-    heading.textContent = tool ? tool.label : 'All tools';
+    heading.textContent = tool ? tool.label : '所有工具';
     root.dataset.tool = tool ? tool.id : 'all';
     if (tool) renderTool(tool);
     else renderList();

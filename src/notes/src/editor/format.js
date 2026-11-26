@@ -10,7 +10,7 @@ export const DEFAULT_FONT = 'Default';
 export const DEFAULT_SIZE = 11;
 
 export const FONTS = [
-  { label: 'Default', value: '' },
+  { label: '默认', value: '' },
   { label: 'Arial', value: 'Arial, Helvetica, sans-serif' },
   { label: 'Helvetica', value: 'Helvetica, Arial, sans-serif' },
   { label: 'Verdana', value: 'Verdana, Geneva, sans-serif' },
@@ -20,23 +20,23 @@ export const FONTS = [
   { label: 'Times New Roman', value: "'Times New Roman', Times, serif" },
   { label: 'Garamond', value: 'Garamond, Georgia, serif' },
   { label: 'Courier New', value: "'Courier New', Courier, monospace" },
-  { label: 'Monospace', value: 'ui-monospace, Menlo, Consolas, monospace' },
+  { label: '等宽字体', value: 'ui-monospace, Menlo, Consolas, monospace' },
 ];
 
 export const SIZES = [8, 9, 10, 10.5, 11, 12, 14, 16, 18, 20, 24, 28, 32, 36, 40, 44, 48, 54, 60, 66, 72, 80, 88, 96];
 
 export const STYLES = [
-  { id: 'h1', label: 'Heading 1', tag: 'H1', key: 'Mod+Alt+1' },
-  { id: 'h2', label: 'Heading 2', tag: 'H2', key: 'Mod+Alt+2' },
-  { id: 'h3', label: 'Heading 3', tag: 'H3', key: 'Mod+Alt+3' },
-  { id: 'h4', label: 'Heading 4', tag: 'H4', key: 'Mod+Alt+4' },
-  { id: 'h5', label: 'Heading 5', tag: 'H5', key: 'Mod+Alt+5' },
-  { id: 'h6', label: 'Heading 6', tag: 'H6', key: 'Mod+Alt+6' },
-  { id: 'title', label: 'Page Title', tag: 'P', cls: 'nt-pagetitle' },
-  { id: 'cite', label: 'Citation', tag: 'P', cls: 'nt-cite' },
-  { id: 'quote', label: 'Quote', tag: 'BLOCKQUOTE' },
-  { id: 'code', label: 'Code', tag: 'PRE' },
-  { id: 'normal', label: 'Normal', tag: 'P', key: 'Mod+Alt+0' },
+  { id: 'h1', label: '标题 1', tag: 'H1', key: 'Mod+Alt+1' },
+  { id: 'h2', label: '标题 2', tag: 'H2', key: 'Mod+Alt+2' },
+  { id: 'h3', label: '标题 3', tag: 'H3', key: 'Mod+Alt+3' },
+  { id: 'h4', label: '标题 4', tag: 'H4', key: 'Mod+Alt+4' },
+  { id: 'h5', label: '标题 5', tag: 'H5', key: 'Mod+Alt+5' },
+  { id: 'h6', label: '标题 6', tag: 'H6', key: 'Mod+Alt+6' },
+  { id: 'title', label: '页面标题', tag: 'P', cls: 'nt-pagetitle' },
+  { id: 'cite', label: '引用标注', tag: 'P', cls: 'nt-cite' },
+  { id: 'quote', label: '引用块', tag: 'BLOCKQUOTE' },
+  { id: 'code', label: '代码', tag: 'PRE' },
+  { id: 'normal', label: '正文', tag: 'P', key: 'Mod+Alt+0' },
 ];
 
 const STYLE_CLASSES = STYLES.filter((s) => s.cls).map((s) => s.cls);

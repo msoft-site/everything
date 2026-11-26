@@ -39,7 +39,7 @@ export function valueNode(page, table, field, value) {
       return value ? h('span.card-check', { style: { background: accentColor(field.options?.color || 'green') } }, icon('check', 12, { strokeWidth: 3 })) : h('span.card-check.off');
     case 'rating': {
       const max = field.options?.max || 5;
-      return h('span.card-rating', { 'aria-label': `${value || 0} of ${max}` }, Array.from({ length: max }, (_, i) => h('span', { style: { color: i < (value || 0) ? accentColor(field.options?.color || 'yellow') : 'var(--border-strong)' } }, icon('star', 12, { fill: i < (value || 0) ? 'currentColor' : 'none' }))));
+      return h('span.card-rating', { 'aria-label': `${value || 0} / ${max} 星` }, Array.from({ length: max }, (_, i) => h('span', { style: { color: i < (value || 0) ? accentColor(field.options?.color || 'yellow') : 'var(--border-strong)' } }, icon('star', 12, { fill: i < (value || 0) ? 'currentColor' : 'none' }))));
     }
     case 'attachment':
       return h('span.card-files', (value || []).slice(0, 4).map((a) => {

@@ -30,7 +30,7 @@ function highlightSnippet(text, terms) {
 function resultRow(app, { notebook, section, meta, snippet }, terms, find) {
   const color = app.nav.colorOf(section.color);
   const btn = h('button.result', { type: 'button', 'aria-current': String(meta.id === app.state.pageId), dataset: { id: meta.id } },
-    h('div.result-title', meta.title?.trim() || 'Untitled Page'),
+    h('div.result-title', meta.title?.trim() || '无标题页面'),
     h('div.result-path', h('span.dot', { style: { '--sec-color': color } }), `${notebook.name} › ${section.name}`, h('span', { style: { marginLeft: 'auto' } }, formatRelative(meta.modified || meta.created))),
   );
   if (snippet) btn.append(h('div.result-snippet', { html: highlightSnippet(snippet, terms) }));
@@ -42,14 +42,14 @@ function resultRow(app, { notebook, section, meta, snippet }, terms, find) {
 export class SearchPanel {
   constructor(app) {
     this.app = app;
-    this.input = h('input.input', { type: 'search', placeholder: 'Search notes', 'aria-label': 'Search notes', autocomplete: 'off', spellcheck: 'false' });
-    this.scope = h('select', { 'aria-label': 'Search scope' });
+    this.input = h('input.input', { type: 'search', placeholder: '搜索笔记', 'aria-label': '搜索笔记', autocomplete: 'off', spellcheck: 'false' });
+    this.scope = h('select', { 'aria-label': '搜索范围' });
     this.status = h('div.sr-only', { role: 'status', 'aria-live': 'polite' });
-    this.results = h('div.side-body', { role: 'region', 'aria-label': 'Search results' });
-    this.el = h('section.side-panel', { 'aria-label': 'Search', hidden: true },
-      h('div.side-head', h('h2.side-title', 'Search'), h('button.icon-btn', { type: 'button', 'aria-label': 'Close search', onclick: () => app.closeSidePanel() }, icon('x', 16))),
+    this.results = h('div.side-body', { role: 'region', 'aria-label': '搜索结果' });
+    this.el = h('section.side-panel', { 'aria-label': '搜索', hidden: true },
+      h('div.side-head', h('h2.side-title', '搜索'), h('button.icon-btn', { type: 'button', 'aria-label': '关闭搜索', onclick: () => app.closeSidePanel() }, icon('x', 16))),
       h('div.search-box', icon('search', 16), this.input),
-      h('label.search-scope', 'In', this.scope),
+      h('label.search-scope', '范围', this.scope),
       this.status,
       this.results,
     );
@@ -106,10 +106,10 @@ export class SearchPanel {
     const nb = store.notebook(state.notebookId);
     const section = store.section(state.sectionId);
     const options = [
-      ['all', 'All Notebooks'],
-      nb && [`notebook:${nb.id}`, `This Notebook (${nb.name})`],
-      section && [`section:${section.id}`, `This Section (${section.name})`],
-      state.pageId && [`page:${state.pageId}`, 'This Page'],
+      ['all', '所有笔记本'],
+      nb && [`notebook:${nb.id}`, `当前笔记本 (${nb.name})`],
+      section && [`section:${section.id}`, `当前分区 (${section.name})`],
+      state.pageId && [`page:${state.pageId}`, '当前页面'],
     ].filter(Boolean);
     const sig = options.join('\n');
     if (sig === this.scopeSig) return false;
@@ -142,25 +142,25 @@ export class SearchPanel {
     const token = (this.token = Symbol('search'));
     this.shown = null;
     if (!q) {
-      this.results.replaceChildren(h('div.empty-state', icon('search', 28), h('p', 'Search titles and text in your notebooks.')));
+      this.results.replaceChildren(h('div.empty-state', icon('search', 28), h('p', '搜索笔记本中的标题和文本。')));
       this.status.textContent = '';
       return;
     }
-    if (!refresh) this.results.replaceChildren(h('div.empty-state', h('div.spinner'), h('p', 'Searching...')));
+    if (!refresh) this.results.replaceChildren(h('div.empty-state', h('div.spinner'), h('p', '正在搜索...')));
     const { results, total } = await this.app.store.search(q, { scope: this.scope.value || 'all', count: true });
     if (token !== this.token) return;
     const terms = normalize(q).split(/\s+/).filter(Boolean);
     const focused = this.results.contains(document.activeElement) ? document.activeElement.closest('.result')?.dataset.id : null;
     const count = total > results.length
-      ? `Showing the first ${results.length} of ${total.toLocaleString()} results`
-      : `${results.length} ${results.length === 1 ? 'result' : 'results'}`;
+      ? `显示前 ${results.length} 项，共 ${total.toLocaleString()} 项结果`
+      : `共 ${results.length} 项结果`;
     if (!results.length) {
-      this.results.replaceChildren(h('div.empty-state', h('p', `No results for "${q}".`)));
+      this.results.replaceChildren(h('div.empty-state', h('p', `未找到与“${q}”相关的结果。`)));
     } else {
       this.results.replaceChildren(h('div.group-label', count), ...results.map((r) => resultRow(this.app, r, terms, q)));
     }
     if (focused) this.results.querySelector(`.result[data-id="${CSS.escape(focused)}"]`)?.focus();
-    const status = results.length ? count : 'No results';
+    const status = results.length ? count : '无结果';
     if (!refresh || this.status.textContent !== status) this.status.textContent = status;
     this.shown = key;
   }
@@ -171,8 +171,8 @@ export class RecentPanel {
   constructor(app) {
     this.app = app;
     this.list = h('div.side-body');
-    this.el = h('section.side-panel', { 'aria-label': 'Recent notes', hidden: true },
-      h('div.side-head', h('h2.side-title', 'Recent Notes'), h('button.icon-btn', { type: 'button', 'aria-label': 'Close recent notes', onclick: () => app.closeSidePanel() }, icon('x', 16))),
+    this.el = h('section.side-panel', { 'aria-label': '最近笔记', hidden: true },
+      h('div.side-head', h('h2.side-title', '最近笔记'), h('button.icon-btn', { type: 'button', 'aria-label': '关闭最近笔记', onclick: () => app.closeSidePanel() }, icon('x', 16))),
       this.list,
     );
     this.list.addEventListener('keydown', (e) => {
@@ -187,7 +187,7 @@ export class RecentPanel {
   render() {
     const items = this.app.store.recentPages(50);
     if (!items.length) {
-      this.list.replaceChildren(h('div.empty-state', icon('recent', 28), h('p', 'Pages you edit show up here.')));
+      this.list.replaceChildren(h('div.empty-state', icon('recent', 28), h('p', '您编辑过的页面将显示在此处。')));
       return;
     }
     const groups = new Map();
@@ -195,7 +195,7 @@ export class RecentPanel {
     for (const it of items) {
       const d = new Date(it.meta.modified || it.meta.created);
       const days = Math.floor((now - d) / 86400000);
-      const label = days < 1 && d.getDate() === now.getDate() ? 'Today' : days < 7 ? 'This Week' : days < 31 ? 'This Month' : 'Older';
+      const label = days < 1 && d.getDate() === now.getDate() ? '今天' : days < 7 ? '本周' : days < 31 ? '本月' : '更早';
       if (!groups.has(label)) groups.set(label, []);
       groups.get(label).push(it);
     }

@@ -1030,32 +1030,31 @@ function compareImages(oldImages, newImages) {
 // ---------------------------------------------------------------------------------------------
 // Wording shared by the view and the report
 
-const plural = (n, one, many = `${one}s`) => `${n} ${n === 1 ? one : many}`;
-/** "12 changes: 5 insertions, 4 deletions, 3 replacements" and so on, or "No differences". */
+/** "共 12 处更改：5 处插入，4 处删除，3 处替换" 等，或 "未发现差异"。 */
 export function describeSummary(summary) {
-  if (!summary.total) return 'No differences found';
+  if (!summary.total) return '未发现差异';
   const parts = [
-    summary.inserted && plural(summary.inserted, 'insertion'),
-    summary.deleted && plural(summary.deleted, 'deletion'),
-    summary.replaced && plural(summary.replaced, 'replacement'),
-    summary.formatting && plural(summary.formatting, 'formatting change'),
-    summary.imageChanges && plural(summary.imageChanges, 'image change'),
-    summary.pagesAdded && plural(summary.pagesAdded, 'page inserted', 'pages inserted'),
-    summary.pagesRemoved && plural(summary.pagesRemoved, 'page deleted', 'pages deleted'),
-    summary.pagesMoved && plural(summary.pagesMoved, 'page moved', 'pages moved'),
-    summary.otherChanges && plural(summary.otherChanges, 'other change'),
+    summary.inserted && `${summary.inserted} 处插入`,
+    summary.deleted && `${summary.deleted} 处删除`,
+    summary.replaced && `${summary.replaced} 处替换`,
+    summary.formatting && `${summary.formatting} 处格式更改`,
+    summary.imageChanges && `${summary.imageChanges} 处图片更改`,
+    summary.pagesAdded && `插入 ${summary.pagesAdded} 页`,
+    summary.pagesRemoved && `删除 ${summary.pagesRemoved} 页`,
+    summary.pagesMoved && `移动 ${summary.pagesMoved} 页`,
+    summary.otherChanges && `${summary.otherChanges} 处其他更改`,
   ].filter(Boolean);
-  return `${plural(summary.total, 'change')}: ${parts.join(', ')}`;
+  return `共 ${summary.total} 处更改：${parts.join('，')}`;
 }
 export const CHANGE_LABELS = {
-  insert: 'Inserted',
-  delete: 'Deleted',
-  replace: 'Replaced',
-  format: 'Formatting',
-  image: 'Image',
+  insert: '已插入',
+  delete: '已删除',
+  replace: '已替换',
+  format: '格式更改',
+  image: '图片',
 };
 const fontLabel = (f) => `${f.font ? `${f.font} ` : ''}${f.size} pt`;
-/** A one-line account of a change, e.g. 'Replaced "three" with "four"'. */
+/** A one-line account of a change, e.g. '将 "three" 替换为 "four"'. */
 export function describeChange(change, limit = 120) {
   const cut = (text) => {
     const flat = text.replace(/\s+/g, ' ').trim();
@@ -1063,29 +1062,29 @@ export function describeChange(change, limit = 120) {
   };
   switch (change.type) {
     case 'insert':
-      return `Inserted "${cut(change.newText)}"`;
+      return `已插入 “${cut(change.newText)}”`;
     case 'delete':
-      return `Deleted "${cut(change.oldText)}"`;
+      return `已删除 “${cut(change.oldText)}”`;
     case 'replace':
-      return `Replaced "${cut(change.oldText)}" with "${cut(change.newText)}"`;
+      return `将 “${cut(change.oldText)}” 替换为 “${cut(change.newText)}”`;
     case 'format':
-      return `Formatting of "${cut(change.newText)}": ${fontLabel(change.format.old)} to ${fontLabel(change.format.new)}`;
+      return `“${cut(change.newText)}” 的格式：从 ${fontLabel(change.format.old)} 改为 ${fontLabel(change.format.new)}`;
     default:
-      return change.detail || 'Image changed';
+      return change.detail || '图片已更改';
   }
 }
-/** "Page 3", or "Page 3 → 4" when the page moved between the versions. */
+/** "第 3 页", 或 "第 3 页 → 第 4 页" 当页面移动时。 */
 export function pageLabel(entry) {
-  if (entry.newIndex == null) return `Page ${entry.oldIndex + 1} (old)`;
+  if (entry.newIndex == null) return `第 ${entry.oldIndex + 1} 页 (旧)`;
   if (entry.oldIndex == null || entry.oldIndex === entry.newIndex)
-    return `Page ${entry.newIndex + 1}`;
-  return `Page ${entry.oldIndex + 1} → ${entry.newIndex + 1}`;
+    return `第 ${entry.newIndex + 1} 页`;
+  return `第 ${entry.oldIndex + 1} 页 → 第 ${entry.newIndex + 1} 页`;
 }
 export function describePageStatus(entry) {
-  if (entry.status === 'added') return `Page ${entry.newIndex + 1} inserted`;
-  if (entry.status === 'removed') return `Page ${entry.oldIndex + 1} deleted`;
+  if (entry.status === 'added') return `插入了第 ${entry.newIndex + 1} 页`;
+  if (entry.status === 'removed') return `删除了第 ${entry.oldIndex + 1} 页`;
   if (entry.status === 'moved')
-    return `Page moved from ${entry.oldIndex + 1} to ${entry.newIndex + 1}`;
+    return `页面从第 ${entry.oldIndex + 1} 页移至第 ${entry.newIndex + 1} 页`;
   return null;
 }
 

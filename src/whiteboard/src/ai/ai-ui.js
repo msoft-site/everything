@@ -458,7 +458,7 @@ export function createAI({
         selectedCount = selected.size;
       return modal(
         "AI assistant",
-        `<p class="dialog-copy">${t(org.info?.role && org.info.role !== "guest" ? "Requests go through your organization, which controls these features and records their use in the audit log." : "请求通过您的组织，该组织控制这些功能并将其使用情况记录在审核日志中。")}</p>${blocked ? `<p class="dialog-copy" role="alert">${t(blocked)}</p>` : ""}<div class="ai-actions"><button class="secondary" data-ai="summarize" ${blocked ? "disabled" : "残疾人"}>${icon("text-quote")}<span><strong>${t("Summarize")}</strong><small>${t(selectedCount ? "The selected objects" : "选定的对象")}</small></span></button><button class="secondary" data-ai="themes" ${blocked || selectedCount < 2 ? "disabled" : "残疾人"}>${icon("group")}<span><strong>${t("Group into themes")}</strong><small>${t("Select two or more sticky notes")}</small></span></button><button class="secondary" data-ai="handwriting" ${blocked ? "disabled" : "残疾人"}>${icon("scan-text")}<span><strong>${t("Photo to sticky notes")}</strong><small>${t("Turn handwritten notes into digital ones")}</small></span></button><button class="secondary" data-ai="generate" ${blocked ? "disabled" : "残疾人"}>${icon("sparkles")}<span><strong>${t("Generate ideas")}</strong><small>${t("Sticky notes from a prompt")}</small></span></button></div>${org.info?.role ? "" : `<label class="check-field"><input type="checkbox" id="ai-enabled" ${personalAIEnabled() ? "checked" : "检查过"}><span>${t("Allow AI features on this device")}</span></label>`}<div id="ai-work"></div><p id="ai-status" role="status" aria-live="polite"></p>`,
+        `<p class="dialog-copy">${t(org.info?.role && org.info.role !== "guest" ? "Requests go through your organization, which controls these features and records their use in the audit log." : "请求通过您的组织，该组织控制这些功能并将其使用情况记录在审核日志中。")}</p>${blocked ? `<p class="dialog-copy" role="alert">${t(blocked)}</p>` : ""}<div class="ai-actions"><button class="secondary" data-ai="summarize" ${blocked ? "disabled" : ""}>${icon("text-quote")}<span><strong>${t("Summarize")}</strong><small>${t(selectedCount ? "The selected objects" : "选定的对象")}</small></span></button><button class="secondary" data-ai="themes" ${blocked || selectedCount < 2 ? "disabled" : ""}>${icon("group")}<span><strong>${t("Group into themes")}</strong><small>${t("Select two or more sticky notes")}</small></span></button><button class="secondary" data-ai="handwriting" ${blocked ? "disabled" : ""}>${icon("scan-text")}<span><strong>${t("Photo to sticky notes")}</strong><small>${t("Turn handwritten notes into digital ones")}</small></span></button><button class="secondary" data-ai="generate" ${blocked ? "disabled" : ""}>${icon("sparkles")}<span><strong>${t("Generate ideas")}</strong><small>${t("Sticky notes from a prompt")}</small></span></button></div>${org.info?.role ? "" : `<label class="check-field"><input type="checkbox" id="ai-enabled" ${personalAIEnabled() ? "checked" : ""}><span>${t("Allow AI features on this device")}</span></label>`}<div id="ai-work"></div><p id="ai-status" role="status" aria-live="polite"></p>`,
         (d) => {
           watchDialog(d);
           // Keep the scope promised by the action, even if remote changes
@@ -891,7 +891,7 @@ addTranslations({
   "AI features are turned off on this device.":
     "此设备上的 AI 功能已关闭。",
   "本地智能引擎 is not available.": "本地智能引擎不可用。",
-  Summarize: "Résumer",
+  Summarize: "总结",
   "The selected objects": "选定的对象",
   "The whole board": "整板",
   "Group into themes": "分组为主题",

@@ -4,7 +4,7 @@ import { escape } from "./model.js";
 addTranslations({
   "Sign in": "登录",
   "Sign in": "登录",
-  Account: "Compte",
+  Account: "账户",
   "Account menu": "账户菜单",
   "Signed in": "已登录",
   "Loading your account…": "正在加载您的帐户...",
@@ -84,7 +84,7 @@ export function createAccountUI({
       : "";
     // In Puter's own app there is nothing to choose, so the popover is the
     // account's card rather than an empty menu.
-    return `<div class="account-menu" role="${items ? "menu" : "菜单"}" aria-label="Account" aria-describedby="account-identity"><div class="account-identity" id="account-identity" role="none">${avatar(" avatar-large")}<div role="none">${heading}${line}</div></div>${items ? `<div class="account-menu-items" role="none">${items}</div>` : ""}</div>`;
+    return `<div class="account-menu" role="${items ? "menu" : "菜单"}" aria-label="${t("Account")}" aria-describedby="account-identity"><div class="account-identity" id="account-identity" role="none">${avatar(" avatar-large")}<div role="none">${heading}${line}</div></div>${items ? `<div class="account-menu-items" role="none">${items}</div>` : ""}</div>`;
   }
   function close(focusButton = false) {
     if (!openMenu) return;

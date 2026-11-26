@@ -73,7 +73,7 @@ const standsDown = () => onDesktop() || hasUserMenu();
 
 /** The title bar button. Hidden where it stands down; refreshAppsButtons() follows the SDK. */
 export function appsButton() {
-  const button = iconButton('Apps', gridIcon(), (e) => {
+  const button = iconButton('应用', gridIcon(), (e) => {
     e.preventDefault();
     if (isOpen && trigger === e.currentTarget) closeAppsPanel();
     else openAppsPanel(e.currentTarget);
@@ -128,7 +128,7 @@ export function closeAppsPanel({ focus = false } = {}) {
 }
 
 function build() {
-  const close = iconButton('Close', 'X', () => closeAppsPanel({ focus: true }), {
+  const close = iconButton('关闭', 'X', () => closeAppsPanel({ focus: true }), {
     class: 'icon-btn apps-panel-action',
   });
   const newTab = el(
@@ -138,14 +138,14 @@ function build() {
       href: APPS_NEWTAB_URL,
       target: '_blank',
       rel: 'noopener noreferrer',
-      title: 'Open in a new tab',
-      'aria-label': 'Open your apps in a new tab',
+      title: '在新标签页中打开',
+      'aria-label': '在新标签页中打开您的应用',
     },
     icon('ExternalLink', 16, { plain: true }),
   );
   frame = el('iframe', {
     class: 'apps-frame',
-    title: 'Your Puter apps',
+    title: '您的应用',
     referrerpolicy: 'strict-origin-when-cross-origin',
     allow: 'clipboard-read; clipboard-write',
   });
@@ -154,18 +154,18 @@ function build() {
     { class: 'apps-panel-body is-loading' },
     el(
       'div',
-      { class: 'apps-panel-loading', role: 'status', 'aria-label': 'Loading your apps' },
+      { class: 'apps-panel-loading', role: 'status', 'aria-label': '正在加载您的应用' },
       el('span', { class: 'apps-panel-spinner', 'aria-hidden': 'true' }),
     ),
     frame,
   );
   panel = el(
     'div',
-    { class: 'apps-panel', role: 'dialog', 'aria-label': 'Apps', tabindex: '-1', hidden: true },
+    { class: 'apps-panel', role: 'dialog', 'aria-label': '应用', tabindex: '-1', hidden: true },
     el(
       'div',
       { class: 'apps-panel-header' },
-      el('span', { class: 'apps-panel-title' }, 'Apps'),
+      el('span', { class: 'apps-panel-title' }, '应用'),
       el('div', { class: 'apps-panel-actions' }, newTab, close),
     ),
     body,

@@ -42,7 +42,7 @@ export function createAccessibilityReport({ onFix, onGoTo } = {}) {
   const empty = el(
     'p',
     { class: 'a11y-empty muted' },
-    'Run the check to see how well this PDF works with screen readers and other assistive technology.',
+    '运行检查以了解此 PDF 在屏幕阅读器和其他辅助技术下的无障碍支持情况。',
   );
   const categories = el('div', { class: 'a11y-categories' });
   const root = el('div', { class: 'a11y-report' }, summary, empty, categories);
@@ -103,7 +103,7 @@ export function createAccessibilityReport({ onFix, onGoTo } = {}) {
               onclick: () => onGoTo?.(detail.page),
               title: `Go to page ${detail.page + 1}`,
             },
-            `Page ${detail.page + 1}`,
+            `第 ${detail.page + 1} 页`,
           )
         : null,
       detail.text ? el('span', {}, detail.text) : null,
@@ -227,7 +227,7 @@ export function createAccessibilityReport({ onFix, onGoTo } = {}) {
         );
       summary.setAttribute(
         'aria-label',
-        `${failed} failed, ${manual} need a manual check, ${passed} passed`,
+        `${failed} 项未通过，${manual} 项需手动检查，${passed} 项已通过`,
       );
       categories.replaceChildren(...report.categories.map(categoryBlock));
       refocus = focused;

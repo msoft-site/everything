@@ -22,14 +22,14 @@ export function openRecordDialog(page, table, recordId, { list, onNavigate, onCl
   let showHidden = false;
   const titleEl = h('h2.record-title');
   const pos = h('span.record-pos.muted');
-  const prev = h('button.icon-btn', { type: 'button', 'aria-label': 'Previous record', 'data-tip': 'Previous record', 'data-kbd': `${modLabel()}Shift+,`, onclick: () => step(-1) }, icon('chevronUp', 18));
-  const next = h('button.icon-btn', { type: 'button', 'aria-label': 'Next record', 'data-tip': 'Next record', 'data-kbd': `${modLabel()}Shift+.`, onclick: () => step(1) }, icon('chevronDown', 18));
-  const more = h('button.icon-btn', { type: 'button', 'aria-label': 'Record actions', 'aria-haspopup': 'menu', 'data-tip': 'More' }, icon('more', 18));
-  const close = h('button.icon-btn', { type: 'button', 'aria-label': 'Close record', 'data-tip': 'Close', 'data-kbd': 'Esc' }, icon('x', 18));
+  const prev = h('button.icon-btn', { type: 'button', 'aria-label': '上一条记录', 'data-tip': '上一条记录', 'data-kbd': `${modLabel()}Shift+,`, onclick: () => step(-1) }, icon('chevronUp', 18));
+  const next = h('button.icon-btn', { type: 'button', 'aria-label': '下一条记录', 'data-tip': '下一条记录', 'data-kbd': `${modLabel()}Shift+.`, onclick: () => step(1) }, icon('chevronDown', 18));
+  const more = h('button.icon-btn', { type: 'button', 'aria-label': '记录操作', 'aria-haspopup': 'menu', 'data-tip': '更多' }, icon('more', 18));
+  const close = h('button.icon-btn', { type: 'button', 'aria-label': '关闭记录', 'data-tip': '关闭', 'data-kbd': 'Esc' }, icon('x', 18));
   const fieldsEl = h('div.record-fields');
   const commentsEl = h('div.record-comments');
-  const body = h('div.record', h('div.record-head', h('div.record-nav', prev, next), pos, h('div.grow'), more, close), h('div.record-body', h('div.record-main', titleEl, fieldsEl), h('aside.record-side', { 'aria-label': 'Comments' }, commentsEl)));
-  const dlg = openDialog({ body, className: 'xwide record-dialog', closeButton: false, label: 'Record', onClose: (o) => onClose?.(o) });
+  const body = h('div.record', h('div.record-head', h('div.record-nav', prev, next), pos, h('div.grow'), more, close), h('div.record-body', h('div.record-main', titleEl, fieldsEl), h('aside.record-side', { 'aria-label': '评论' }, commentsEl)));
+  const dlg = openDialog({ body, className: 'xwide record-dialog', closeButton: false, label: '记录详情', onClose: (o) => onClose?.(o) });
   dlg.el.querySelector('.dialog-head')?.remove();
   const record = () => base.table(table.id)?.record(recId);
   const view = page.view;
@@ -50,7 +50,7 @@ export function openRecordDialog(page, table, recordId, { list, onNavigate, onCl
     const j = target(ids, d);
     if (j < 0) return;
     show(ids[j]);
-    announce(`Record ${j + 1} of ${ids.length}`);
+    announce(`第 ${j + 1} 条，共 ${ids.length} 条记录`);
   }
 
   /** Shows another record, keeping focus on the same field. */
@@ -78,11 +78,11 @@ export function openRecordDialog(page, table, recordId, { list, onNavigate, onCl
     const ids = list();
     const i = ids.indexOf(recId);
     if (i >= 0) lastIndex = i;
-    pos.textContent = i >= 0 ? `${i + 1} of ${ids.length}` : '';
+    pos.textContent = i >= 0 ? `${i + 1} / ${ids.length}` : '';
     prev.disabled = target(ids, -1) < 0;
     next.disabled = target(ids, 1) < 0;
     titleEl.textContent = base.recordName(table.id, recId);
-    dlg.el.setAttribute('aria-label', `Record: ${titleEl.textContent}`);
+    dlg.el.setAttribute('aria-label', `记录：${titleEl.textContent}`);
     renderFields(rec);
     renderComments(rec);
   }
@@ -96,7 +96,7 @@ export function openRecordDialog(page, table, recordId, { list, onNavigate, onCl
     const hidden = (view ? orderedFields(table, view) : []).filter((f) => !shownIds.has(f.id));
     const fieldRow = (f) => {
       const id = `rf-${f.id}`;
-      const label = h('label.record-label', { for: id }, icon(TYPES[f.type].icon, 14), h('span', f.name), f.description ? h('span.info-dot', { 'data-tip': f.description, tabindex: '0', 'aria-label': `About ${f.name}: ${f.description}` }, icon('info', 12)) : null);
+      const label = h('label.record-label', { for: id }, icon(TYPES[f.type].icon, 14), h('span', f.name), f.description ? h('span.info-dot', { 'data-tip': f.description, tabindex: '0', 'aria-label': `关于 ${f.name}：${f.description}` }, icon('info', 12)) : null);
       label.addEventListener('contextmenu', (e) => {
         e.preventDefault();
         openMenu({ x: e.clientX, y: e.clientY }, fieldMenuItems(page, table, f, { onEdit: () => openFieldEditor(label, page, table, { field: f }), view }));
@@ -126,23 +126,23 @@ export function openRecordDialog(page, table, recordId, { list, onNavigate, onCl
         ? h('button.link-btn.muted.hidden-toggle', { type: 'button', 'aria-expanded': String(showHidden), onclick: () => {
           showHidden = !showHidden;
           renderFields(record());
-        } }, icon(showHidden ? 'chevronDown' : 'chevronRight', 14), `${hidden.length} field${hidden.length === 1 ? '' : 's'} hidden in this view`)
+        } }, icon(showHidden ? 'chevronDown' : 'chevronRight', 14), `此视图中已隐藏 ${hidden.length} 个字段`)
         : null,
       ...(showHidden ? hidden.map(fieldRow) : []),
-      h('button.link-btn.add-field-btn', { type: 'button', onclick: (e) => openFieldEditor(e.currentTarget, page, table, {}) }, icon('plus', 14), 'Add a field to this table'),
+      h('button.link-btn.add-field-btn', { type: 'button', onclick: (e) => openFieldEditor(e.currentTarget, page, table, {}) }, icon('plus', 14), '向此表添加字段'),
     );
   }
 
   // The comment box is built once: changes elsewhere in the base re-render
   // the activity and comments, never a comment being written.
-  const commentInput = h('textarea.textarea.comment-input', { rows: 2, placeholder: 'Leave a comment', 'aria-label': 'New comment' });
+  const commentInput = h('textarea.textarea.comment-input', { rows: 2, placeholder: '发表评论...', 'aria-label': '新评论' });
   const send = () => {
     const text = commentInput.value.trim();
     if (!text) return;
-    const cm = [...(record()?.cm || []), { id: newId('cmt'), by: page.store.user || 'You', at: Date.now(), text }];
+    const cm = [...(record()?.cm || []), { id: newId('cmt'), by: page.store.user || '我', at: Date.now(), text }];
     base.apply({ t: 'rec.meta', table: table.id, id: recId, patch: { cm } }, { undoable: false });
     commentInput.value = '';
-    announce('Comment added');
+    announce('已添加评论');
   };
   commentInput.addEventListener('keydown', (e) => {
     if (e.isComposing || e.keyCode === 229) return;
@@ -152,7 +152,7 @@ export function openRecordDialog(page, table, recordId, { list, onNavigate, onCl
     }
   });
   const activityEl = h('div.record-feed');
-  commentsEl.append(activityEl, h('div.comment-compose', commentInput, h('button.btn.small.primary', { type: 'button', onclick: send }, 'Comment')));
+  commentsEl.append(activityEl, h('div.comment-compose', commentInput, h('button.btn.small.primary', { type: 'button', onclick: send }, '发送')));
   let draftFor = recId;
 
   function renderComments(rec) {
@@ -162,52 +162,52 @@ export function openRecordDialog(page, table, recordId, { list, onNavigate, onCl
       commentInput.value = '';
       draftFor = recId;
     }
-    const creator = rec.cb ? ` by ${rec.cb}` : '';
+    const creator = rec.cb ? `（由 ${rec.cb}）` : '';
     const activity = h('div.record-activity',
-      h('p', icon('fCreatedTime', 14), h('span', `Created ${timeAgo(rec.ct)}${creator}`), h('span.muted', formatDate(new Date(rec.ct).toISOString(), { includeTime: true }))),
-      rec.mt && rec.mt !== rec.ct ? h('p', icon('fModifiedTime', 14), h('span', `Last changed ${timeAgo(rec.mt)}${rec.mb ? ` by ${rec.mb}` : ''}`)) : null);
+      h('p', icon('fCreatedTime', 14), h('span', `创建于 ${timeAgo(rec.ct)}${creator}`), h('span.muted', formatDate(new Date(rec.ct).toISOString(), { includeTime: true }))),
+      rec.mt && rec.mt !== rec.ct ? h('p', icon('fModifiedTime', 14), h('span', `最后修改于 ${timeAgo(rec.mt)}${rec.mb ? `（由 ${rec.mb}）` : ''}`)) : null);
     const history = (rec.h || []).slice().reverse().map((e) => {
       const f = table.field(e.f);
       if (!f) return null;
-      const what = e.to && e.from ? [' changed ', h('strong', f.name), ` from \u201c${e.from}\u201d to \u201c${e.to}\u201d`] : e.to ? [' set ', h('strong', f.name), ` to \u201c${e.to}\u201d`] : [' cleared ', h('strong', f.name)];
-      return h('li.history-item', h('span', h('strong', e.by || 'Someone'), ...what), h('span.muted', timeAgo(e.t)));
+      const what = e.to && e.from ? [' 将 ', h('strong', f.name), ` 从“${e.from}”修改为“${e.to}”`] : e.to ? [' 将 ', h('strong', f.name), ` 设为“${e.to}”`] : [' 清空了 ', h('strong', f.name)];
+      return h('li.history-item', h('span', h('strong', e.by || '有人'), ...what), h('span.muted', timeAgo(e.t)));
     }).filter(Boolean);
     fill(activityEl,
-      h('h3.side-title', 'Activity'),
+      h('h3.side-title', '动态记录'),
       activity,
-      history.length ? h('ul.history-list', { 'aria-label': 'Changes' }, history) : null,
-      h('h3.side-title', 'Comments'),
+      history.length ? h('ul.history-list', { 'aria-label': '修改记录' }, history) : null,
+      h('h3.side-title', '评论'),
       comments.length
         ? h('ul.comment-list', comments.map((c) => h('li.comment',
           avatar(c.by, c.by === page.store.user ? page.app.picture : null, 'small'),
           h('div.comment-body', h('div.comment-meta', h('strong', c.by), h('span.muted', timeAgo(c.at))), h('p.comment-text', c.text)),
-          c.by === (page.store.user || 'You') ? h('button.icon-btn', { type: 'button', 'aria-label': 'Delete comment', onclick: () => {
+          c.by === (page.store.user || '我') ? h('button.icon-btn', { type: 'button', 'aria-label': '删除评论', onclick: () => {
             base.apply({ t: 'rec.meta', table: table.id, id: recId, patch: { cm: (record()?.cm || []).filter((x) => x.id !== c.id) } }, { undoable: false });
           } }, icon('trash', 14)) : null)))
-        : h('p.muted.no-comments', 'No comments yet.'),
+        : h('p.muted.no-comments', '暂无评论。'),
     );
   }
 
   more.addEventListener('click', () => {
     openMenu(more, [
-      { label: 'Copy record link', icon: 'link', onSelect: () => copyText(recordUrl(page, recId), 'Link copied') },
-      { label: 'Duplicate record', icon: 'copy', onSelect: () => {
+      { label: '复制记录链接', icon: 'link', onSelect: () => copyText(recordUrl(page, recId), '链接已复制') },
+      { label: '复制记录', icon: 'copy', onSelect: () => {
         const [id] = base.duplicateRecords(table.id, [recId]);
         if (id) show(id);
       } },
-      { label: 'Print record', icon: 'printer', onSelect: () => printRecord(page, table, record()) },
+      { label: '打印记录', icon: 'printer', onSelect: () => printRecord(page, table, record()) },
       { type: 'sep' },
-      { label: 'Delete record', icon: 'trash', danger: true, onSelect: () => {
+      { label: '删除记录', icon: 'trash', danger: true, onSelect: () => {
         const id = recId;
         const ids = list();
         const i = ids.indexOf(id);
         base.deleteRecords(table.id, [id]);
-        page.toastUndo('Record deleted');
+        page.toastUndo('已删除记录');
         const nextId = ids[i + 1] || ids[i - 1];
         if (nextId && base.table(table.id).record(nextId)) show(nextId);
         else dlg.close();
       } },
-    ], { label: 'Record actions' });
+    ], { label: '记录操作' });
   });
   close.addEventListener('click', () => dlg.close());
   dlg.el.addEventListener('keydown', (e) => {
@@ -242,7 +242,7 @@ function printRecord(page, table, rec) {
   const win = window.open('', '_blank');
   if (!win) return;
   const esc = (s) => String(s).replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' })[c]);
-  win.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>${esc(base.recordName(table.id, rec.id))}</title><style>body{font:13px system-ui,sans-serif;margin:32px}h1{font-size:20px}dt{font-weight:600;margin-top:12px;color:#444}dd{margin:2px 0 0;white-space:pre-wrap}</style></head><body><h1>${esc(base.recordName(table.id, rec.id))}</h1><dl>${rows.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v) || '<span style="color:#888">Empty</span>'}</dd>`).join('')}</dl></body></html>`);
+  win.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>${esc(base.recordName(table.id, rec.id))}</title><style>body{font:13px system-ui,sans-serif;margin:32px}h1{font-size:20px}dt{font-weight:600;margin-top:12px;color:#444}dd{margin:2px 0 0;white-space:pre-wrap}</style></head><body><h1>${esc(base.recordName(table.id, rec.id))}</h1><dl>${rows.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v) || '<span style="color:#888">（空）</span>'}</dd>`).join('')}</dl></body></html>`);
   win.document.close();
   setTimeout(() => win.print(), 200);
 }

@@ -24,7 +24,7 @@ export function isMenuOpen() {
  * Opens a menu at an anchor element (below it) or a {x, y} point.
  * Returns a handle with close().
  */
-export function openMenu(anchor, items, { label = 'Menu', onClose, align = 'start', returnFocus = true, parent = null, className = '' } = {}) {
+export function openMenu(anchor, items, { label = '菜单', onClose, align = 'start', returnFocus = true, parent = null, className = '' } = {}) {
   if (!parent) closeAllMenus();
   const previousFocus = document.activeElement;
   const menu = h(`div.menu${className ? '.' + className : ''}`, { role: 'menu', 'aria-label': label, tabindex: '-1' });
@@ -70,7 +70,7 @@ export function openMenu(anchor, items, { label = 'Menu', onClose, align = 'star
       continue;
     }
     if (item.type === 'swatches') {
-      const grid = h('div.menu-swatches', { role: 'group', 'aria-label': item.label || 'Colors' });
+      const grid = h('div.menu-swatches', { role: 'group', 'aria-label': item.label || '颜色' });
       for (const color of item.colors) {
         const value = typeof color === 'string' ? color : color.value;
         const name = typeof color === 'string' ? color : color.label;

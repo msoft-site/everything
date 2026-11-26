@@ -159,7 +159,7 @@ function frameChoicesHTML(frames, id, legend, allowNone = false) {
   return `<fieldset id="${id}" class="frame-choices"><legend>${t(legend)}</legend><div class="slide-choices">${choices
     .map(
       (frame, index) =>
-        `<label><input type="radio" name="${name}" value="${frame ? escape(frame.id) : ""}" ${index === 0 ? "checked" : "检查过"}><span>${frame ? frameTitleHTML(frame, "Untitled frame") : t("No frame")}</span></label>`,
+        `<label><input type="radio" name="${name}" value="${frame ? escape(frame.id) : ""}" ${index === 0 ? "checked" : ""}><span>${frame ? frameTitleHTML(frame, "Untitled frame") : t("No frame")}</span></label>`,
     )
     .join("")}</div></fieldset>`;
 }
@@ -366,8 +366,8 @@ export function createFeatures(api) {
   function linkDialog(i) {
     const editing = !!i;
     api.modal(
-      editing ? "Edit link" : "编辑链接",
-      `<form aria-describedby="link-conflict-error"><div class="field"><span id="link-label-label">Label</span><div id="link-label"></div><p id="link-label-error" role="alert" hidden></p></div><label class="field">URL<input id="link-url" type="text" inputmode="url" maxlength="2048" autocomplete="off" spellcheck="false" placeholder="https://example.com" value="${escape(i?.url || "")}" required aria-describedby="link-url-error link-conflict-error"></label><p id="link-url-error" role="alert" hidden></p><p id="link-conflict-error" class="dialog-copy" role="alert" tabindex="-1" hidden></p><div class="dialog-footer">${editing ? '<button type="button" class="secondary" id="open-link">Open link</button>' : ""}<button class="primary" type="submit">${editing ? "Save changes" : "保存更改"}</button></div></form>`,
+      editing ? "编辑链接" : "添加链接",
+      `<form aria-describedby="link-conflict-error"><div class="field"><span id="link-label-label">链接名称</span><div id="link-label"></div><p id="link-label-error" role="alert" hidden></p></div><label class="field">URL 网址<input id="link-url" type="text" inputmode="url" maxlength="2048" autocomplete="off" spellcheck="false" placeholder="https://example.com" value="${escape(i?.url || "")}" required aria-describedby="link-url-error link-conflict-error"></label><p id="link-url-error" role="alert" hidden></p><p id="link-conflict-error" class="dialog-copy" role="alert" tabindex="-1" hidden></p><div class="dialog-footer">${editing ? '<button type="button" class="secondary" id="open-link">打开链接</button>' : ""}<button class="primary" type="submit">${editing ? "保存更改" : "添加链接"}</button></div></form>`,
       (d) => {
         const field = labelField(d, "link-label", i, true);
         const urlField = d.querySelector("#link-url"),
@@ -487,8 +487,8 @@ export function createFeatures(api) {
         ];
     let cellLanguages = clone(i?.cellLanguages || {});
     api.modal(
-      i ? "Edit table" : "编辑表格",
-      `<form aria-describedby="table-conflict-error table-paste-error table-size-error"><div class="table-actions"><button type="button" data-table="row">Add row</button><button type="button" data-table="col">Add column</button><button type="button" data-table="remove-row">Remove last row</button><button type="button" data-table="remove-col">Remove last column</button></div><div id="cell-editor" class="cell-editor" aria-describedby="table-conflict-error table-paste-error table-size-error"></div><p id="table-conflict-error" class="dialog-copy" role="alert" tabindex="-1" hidden></p><p id="table-paste-error" class="dialog-copy" role="alert" hidden></p><p id="table-size-error" class="dialog-copy" role="alert" tabindex="-1" hidden></p><div class="dialog-footer"><button class="primary" type="submit">${i ? "Save changes" : "保存更改"}</button></div></form>`,
+      i ? "编辑表格" : "添加表格",
+      `<form aria-describedby="table-conflict-error table-paste-error table-size-error"><div class="table-actions"><button type="button" data-table="row">添加行</button><button type="button" data-table="col">添加列</button><button type="button" data-table="remove-row">删除末行</button><button type="button" data-table="remove-col">删除末列</button></div><div id="cell-editor" class="cell-editor" aria-describedby="table-conflict-error table-paste-error table-size-error"></div><p id="table-conflict-error" class="dialog-copy" role="alert" tabindex="-1" hidden></p><p id="table-paste-error" class="dialog-copy" role="alert" hidden></p><p id="table-size-error" class="dialog-copy" role="alert" tabindex="-1" hidden></p><div class="dialog-footer"><button class="primary" type="submit">${i ? "保存更改" : "创建表格"}</button></div></form>`,
       (d) => {
         const form = d.querySelector("form"),
           conflictError = d.querySelector("#table-conflict-error"),
@@ -807,8 +807,8 @@ export function createFeatures(api) {
   }
   function fileDialog(i) {
     api.modal(
-      "File attachment",
-      `<form aria-describedby="file-conflict-error"><div class="field"><span id="file-label-label">Label</span><div id="file-label"></div></div><p class="dialog-copy"><span data-user-content>${escape(i.fileName)}</span> · ${escape(fileDetails({ ...i, text: i.fileName }))}</p><p id="file-conflict-error" class="dialog-copy" role="alert" tabindex="-1" hidden></p><div class="dialog-footer"><button class="secondary" type="button" id="replace-file">Attach file</button><button class="secondary" type="button" id="download-file">Download attachment</button>${api.canImportFile?.(i) ? `<button class="secondary" type="button" id="import-file">Import contents</button>` : ""}<button class="primary">Save changes</button></div></form>`,
+      "文件附件",
+      `<form aria-describedby="file-conflict-error"><div class="field"><span id="file-label-label">附件标签</span><div id="file-label"></div></div><p class="dialog-copy"><span data-user-content>${escape(i.fileName)}</span> · ${escape(fileDetails({ ...i, text: i.fileName }))}</p><p id="file-conflict-error" class="dialog-copy" role="alert" tabindex="-1" hidden></p><div class="dialog-footer"><button class="secondary" type="button" id="replace-file">选择/替换文件</button><button class="secondary" type="button" id="download-file">下载附件</button>${api.canImportFile?.(i) ? `<button class="secondary" type="button" id="import-file">导入内容</button>` : ""}<button class="primary">保存更改</button></div></form>`,
       (d) => {
         const field = labelField(d, "file-label", i),
           form = d.querySelector("form"),
@@ -939,36 +939,36 @@ export function createFeatures(api) {
       entries
         .map(
           ([key, label]) =>
-            `<button data-organize="${key}" ${disabled ? "disabled" : "残疾人"}>${label}</button>`,
+            `<button data-organize="${key}" ${disabled ? "disabled" : ""}>${label}</button>`,
         )
         .join("");
     api.modal(
-      "Organize selection",
+      "整理选中的对象",
       `<div class="arrange-sections">
-      <fieldset><legend>Position</legend><button type="button" class="secondary" data-organize="move">Move selection</button></fieldset>
-      <fieldset><legend>Alignment</legend><div class="arrange-grid">${options(
+      <fieldset><legend>位置</legend><button type="button" class="secondary" data-organize="move">移动选区</button></fieldset>
+      <fieldset><legend>对齐</legend><div class="arrange-grid">${options(
         [
-          ["left", "Align left"],
-          ["top", "Align top"],
-          ["center", "Center horizontally"],
-          ["middle", "Center vertically"],
-          ["right", "Align right"],
-          ["bottom", "Align bottom"],
+          ["left", "左对齐"],
+          ["top", "顶端对齐"],
+          ["center", "水平居中"],
+          ["middle", "垂直居中"],
+          ["right", "右对齐"],
+          ["bottom", "底端对齐"],
         ],
         count < 2,
       )}</div></fieldset>
-      <fieldset><legend>Spacing</legend><p class="dialog-copy">Select at least three objects or groups to distribute evenly.</p><div class="arrange-grid">${options(
+      <fieldset><legend>分布间距</legend><p class="dialog-copy">选择至少三个对象或编组以均匀分布。</p><div class="arrange-grid">${options(
         [
-          ["horizontal", "Distribute horizontally"],
-          ["vertical", "Distribute vertically"],
+          ["horizontal", "水平等距分布"],
+          ["vertical", "垂直等距分布"],
         ],
         count < 3,
       )}</div></fieldset>
-      <fieldset><legend>Layer order</legend><div class="arrange-grid">${[
-        ["front", "Bring to front"],
-        ["forward", "Bring forward"],
-        ["backward", "Send backward"],
-        ["back", "Send to back"],
+      <fieldset><legend>图层顺序</legend><div class="arrange-grid">${[
+        ["front", "置于顶层"],
+        ["forward", "上移一层"],
+        ["backward", "下移一层"],
+        ["back", "置于底层"],
       ]
         .map((entry) =>
           options(
@@ -978,14 +978,14 @@ export function createFeatures(api) {
           ),
         )
         .join("")}</div></fieldset>
-      <fieldset><legend>Group and organize</legend><div class="arrange-grid">${options(
+      <fieldset><legend>编组与组织</legend><div class="arrange-grid">${options(
         [
-          ["group", "Group selection"],
-          ["ungroup", "Ungroup selection"],
-          ["connect", "Connect selected objects"],
-          ["frame", "Create frame around selection"],
-          ["cluster", "Cluster sticky notes"],
-          ["snippet", "Save as reusable content"],
+          ["group", "编组选区"],
+          ["ungroup", "取消编组"],
+          ["connect", "连接选中的对象"],
+          ["frame", "围绕选区创建画框"],
+          ["cluster", "便签聚类"],
+          ["snippet", "保存为可复用内容"],
         ],
       )}</div></fieldset>
       ${frameChoicesHTML(
@@ -993,7 +993,7 @@ export function createFeatures(api) {
         "parent-frame",
         "Move into frame",
         true,
-      )}<button class="secondary" id="assign-frame">Move into frame</button></div>`,
+      )}<button class="secondary" id="assign-frame">移入画框</button></div>`,
       (d) => {
         d.querySelectorAll("[data-organize]").forEach(
           (btn) =>
@@ -1049,8 +1049,8 @@ export function createFeatures(api) {
   function presentationSetup() {
     const frames = orderedFrames((api.visualBoard?.() || api.board()).items);
     api.modal(
-      "Presentation",
-      `<p class="dialog-copy">${frames.length ? "Choose frames in presentation order." : "按演示顺序选择帧。"}</p>${frames.length > 1 ? `<div class="slide-choice-actions"><button type="button" class="text-btn" id="slides-all">${t("Select all")}</button><button type="button" class="text-btn" id="slides-none">${t("Select none")}</button></div>` : ""}<div class="slide-choices" role="group" aria-label="${t("Frames")}" ${frames.length ? "" : "hidden"}>${frames.map((f, n) => `<label><input type="checkbox" value="${escape(f.id)}" aria-describedby="presentation-error" checked><span>${f.text ? frameTitleHTML(f) : escape(untitledFrame(n))}</span></label>`).join("")}</div><p id="presentation-error" class="dialog-copy" role="alert" hidden></p><div class="dialog-footer">${api.selection().size ? '<button class="secondary" id="present-selection">Present selection</button>' : ""}<button class="primary" id="start-presentation">${frames.length ? "Start presentation" : "开始演示"}</button></div>`,
+      "演示放映设置",
+      `<p class="dialog-copy">${frames.length ? "按演示顺序勾选要放映的画框：" : "画板暂无画框，将直接放映选区或全局。"}</p>${frames.length > 1 ? `<div class="slide-choice-actions"><button type="button" class="text-btn" id="slides-all">${t("Select all")}</button><button type="button" class="text-btn" id="slides-none">${t("Select none")}</button></div>` : ""}<div class="slide-choices" role="group" aria-label="${t("Frames")}" ${frames.length ? "" : "hidden"}>${frames.map((f, n) => `<label><input type="checkbox" value="${escape(f.id)}" aria-describedby="presentation-error" checked><span>${f.text ? frameTitleHTML(f) : escape(untitledFrame(n))}</span></label>`).join("")}</div><p id="presentation-error" class="dialog-copy" role="alert" hidden></p><div class="dialog-footer">${api.selection().size ? '<button class="secondary" id="present-selection">放映选区</button>' : ""}<button class="primary" id="start-presentation">开始放映</button></div>`,
       (d) => {
         const choices = d.querySelector(".slide-choices"),
           error = d.querySelector("#presentation-error");
@@ -1127,8 +1127,8 @@ export function createFeatures(api) {
       regions.findIndex((r) => r.frameId && api.selection().has(r.frameId)),
     );
     const dialog = api.modal(
-      "Presentation",
-      `<div class="presentation-stage"><canvas id="slide-canvas" role="img" tabindex="0" aria-labelledby="slide-title" aria-describedby="slide-outline"></canvas></div><div class="presentation-controls"><button class="secondary" id="slide-prev">Previous slide</button><span id="slide-count" role="status" aria-live="polite"></span><button class="secondary" id="slide-next">Next slide</button><button class="secondary" id="slide-fullscreen">Fullscreen</button><button class="primary" id="slide-exit">Exit presentation</button></div><p class="presentation-hint"><span class="hint-keys">${t("Use arrow keys or Space to navigate slides. Press Escape to exit.")}</span><span class="hint-touch">${t("Swipe left or right, or use the buttons, to change slides.")}</span></p><div id="slide-outline" class="sr-only"></div>`,
+      "演示放映",
+      `<div class="presentation-stage"><canvas id="slide-canvas" role="img" tabindex="0" aria-labelledby="slide-title" aria-describedby="slide-outline"></canvas></div><div class="presentation-controls"><button class="secondary" id="slide-prev">上一张</button><span id="slide-count" role="status" aria-live="polite"></span><button class="secondary" id="slide-next">下一张</button><button class="secondary" id="slide-fullscreen">全屏</button><button class="primary" id="slide-exit">退出放映</button></div><p class="presentation-hint"><span class="hint-keys">${t("Use arrow keys or Space to navigate slides. Press Escape to exit.")}</span><span class="hint-touch">${t("Swipe left or right, or use the buttons, to change slides.")}</span></p><div id="slide-outline" class="sr-only"></div>`,
       (d) => {
         d.classList.add("presentation-dialog");
         api.presentTimer?.(d);
@@ -1424,8 +1424,8 @@ export function createFeatures(api) {
     const readOnly = () => !!api.readOnly?.();
     const retention = `<details class="history-retention"><summary>${t("How long versions are kept")}</summary><p class="dialog-copy">${t("The 30 most recent versions are kept on this device, and one for each quarter hour of the last 30 days (up to 200 more), within 50 MB; when space runs short, the last version of each day is kept before the others. Pictures shared by several versions are stored once. Named checkpoints and the version saved before each restoration are kept apart from these: the newest 100, within another 50 MB.")}</p></details>`;
     const d = api.modal(
-      "Version history",
-      `<div class="history-layout"><section class="history-preview" aria-labelledby="history-preview-title"><div class="history-preview-head"><div class="history-preview-name"><strong id="history-preview-title">${t("Preview of the version")}</strong><small id="history-preview-meta"></small></div><div class="history-zoom" role="group" aria-label="${t("Preview of the version")}"><button type="button" class="icon-btn" data-preview-zoom="out" aria-label="${t("Zoom out of the preview")}" title="${t("Zoom out of the preview")}" disabled><i data-lucide="minus" aria-hidden="true"></i></button><button type="button" class="icon-btn" data-preview-zoom="fit" aria-label="${t("Fit the version in the preview")}" title="${t("Fit the version in the preview")}" disabled><i data-lucide="maximize" aria-hidden="true"></i></button><button type="button" class="icon-btn" data-preview-zoom="in" aria-label="${t("Zoom in on the preview")}" title="${t("Zoom in on the preview")}" disabled><i data-lucide="plus" aria-hidden="true"></i></button></div></div><div class="history-stage"><canvas id="history-preview-canvas" role="img" tabindex="0" aria-describedby="history-changes history-preview-help" hidden></canvas><p class="history-empty">${t("Choose a version to see the board as it was then, with what has changed since.")}</p></div><p id="history-preview-help" class="sr-only">${t("Drag to move around this version. Ctrl/Cmd + scroll, a pinch or the + and - keys zoom.")}</p><div class="history-changes" id="history-changes" role="status" aria-live="polite"></div></section><div class="history-sidebar"><p class="dialog-copy">${t(shared ? "保留此共享白板上的所有编辑记录，以便恢复任何早期版本。恢复操作将保存为新版本，绝不会清除历史记录。" : "Versions of this board are saved on this device as you edit. Restoring one keeps the current version first, and Undo takes it back.")}</p>${shared ? "" : retention}${readOnly() ? `<p class="dialog-copy">${t("You can view earlier versions and open one as a copy. Only people who can edit this board restore versions.")}</p>` : ""}<p id="history-status" class="dialog-copy" role="status" aria-live="polite" tabindex="-1" hidden></p>${shared ? `<h3>${t("Shared board history")}</h3><div class="revision-list" id="shared-revisions"><p>${t("Loading…")}</p></div>` : ""}<h3>${t("Versions on this device")}</h3>${shared ? retention : ""}<details class="checkpoint-details"><summary autofocus><i data-lucide="bookmark-plus" aria-hidden="true"></i>${t("Name the current version")}</summary><form class="checkpoint-create"><label class="field">Checkpoint name<input id="checkpoint-label" maxlength="120" value="${t("Checkpoint")}"></label><button class="primary" id="checkpoint-create">Create checkpoint</button></form></details><label class="history-filter"><input type="checkbox" id="history-named">${t("Named versions only")}</label><div class="revision-list" id="local-revisions"></div></div></div>`,
+      "版本历史记录",
+      `<div class="history-layout"><section class="history-preview" aria-labelledby="history-preview-title"><div class="history-preview-head"><div class="history-preview-name"><strong id="history-preview-title">${t("Preview of the version")}</strong><small id="history-preview-meta"></small></div><div class="history-zoom" role="group" aria-label="${t("Preview of the version")}"><button type="button" class="icon-btn" data-preview-zoom="out" aria-label="${t("Zoom out of the preview")}" title="${t("Zoom out of the preview")}" disabled><i data-lucide="minus" aria-hidden="true"></i></button><button type="button" class="icon-btn" data-preview-zoom="fit" aria-label="${t("Fit the version in the preview")}" title="${t("Fit the version in the preview")}" disabled><i data-lucide="maximize" aria-hidden="true"></i></button><button type="button" class="icon-btn" data-preview-zoom="in" aria-label="${t("Zoom in on the preview")}" title="${t("Zoom in on the preview")}" disabled><i data-lucide="plus" aria-hidden="true"></i></button></div></div><div class="history-stage"><canvas id="history-preview-canvas" role="img" tabindex="0" aria-describedby="history-changes history-preview-help" hidden></canvas><p class="history-empty">${t("Choose a version to see the board as it was then, with what has changed since.")}</p></div><p id="history-preview-help" class="sr-only">${t("Drag to move around this version. Ctrl/Cmd + scroll, a pinch or the + and - keys zoom.")}</p><div class="history-changes" id="history-changes" role="status" aria-live="polite"></div></section><div class="history-sidebar"><p class="dialog-copy">${t(shared ? "保留此共享白板上的所有编辑记录，以便恢复任何早期版本。恢复操作将保存为新版本，绝不会清除历史记录。" : "Versions of this board are saved on this device as you edit. Restoring one keeps the current version first, and Undo takes it back.")}</p>${shared ? "" : retention}${readOnly() ? `<p class="dialog-copy">${t("You can view earlier versions and open one as a copy. Only people who can edit this board restore versions.")}</p>` : ""}<p id="history-status" class="dialog-copy" role="status" aria-live="polite" tabindex="-1" hidden></p>${shared ? `<h3>${t("Shared board history")}</h3><div class="revision-list" id="shared-revisions"><p>${t("Loading…")}</p></div>` : ""}<h3>${t("Versions on this device")}</h3>${shared ? retention : ""}<details class="checkpoint-details"><summary autofocus><i data-lucide="bookmark-plus" aria-hidden="true"></i>${t("Name the current version")}</summary><form class="checkpoint-create"><label class="field">检查点名称<input id="checkpoint-label" maxlength="120" value="${t("Checkpoint")}"></label><button class="primary" id="checkpoint-create">创建检查点</button></form></details><label class="history-filter"><input type="checkbox" id="history-named">${t("Named versions only")}</label><div class="revision-list" id="local-revisions"></div></div></div>`,
     );
     // A history dialog can stay open through address-bar navigation. Its
     // versions must never be restored into whichever board is now open.
@@ -1551,7 +1551,7 @@ export function createFeatures(api) {
           : `<span>${t("Same as the board now.")}</span>`
       }${
         changes.removed.size || changes.changed.size
-          ? `<label class="history-highlight"><input type="checkbox" id="history-highlight" ${highlight() ? "checked" : "检查过"}>${t("Highlight changes")}</label>`
+          ? `<label class="history-highlight"><input type="checkbox" id="history-highlight" ${highlight() ? "checked" : ""}>${t("Highlight changes")}</label>`
           : ""
       }`;
       changesNote
@@ -1855,7 +1855,7 @@ export function createFeatures(api) {
         recoverable.length > 1
           ? `<details class="connection-choices deleted-choices"><summary>${t("Choose deleted objects")}</summary><fieldset class="frame-choices"><legend class="sr-only">${t("Deleted objects")}</legend><div class="slide-choices">${listed.map((i) => `<label><input type="checkbox" value="${escape(i.id)}" checked><span>${objectNameHTML(i, 120)}</span></label>`).join("")}</div>${unlisted.length ? `<p class="dialog-copy">${t("The first {shown} are listed; the other {rest} are recovered with them.").replace("{shown}", listed.length).replace("{rest}", unlisted.length)}</p>` : ""}</fieldset></details>`
           : ""
-      }${frames.length ? `${frameChoicesHTML(frames, "restore-frame", "Frame")}<button class="secondary" data-part="frame" ${readOnly() ? "disabled" : "残疾人"}>${t("Restore this frame")}</button>` : ""}${manageHTML(localId)}`;
+      }${frames.length ? `${frameChoicesHTML(frames, "restore-frame", "Frame")}<button class="secondary" data-part="frame" ${readOnly() ? "disabled" : ""}>${t("Restore this frame")}</button>` : ""}${manageHTML(localId)}`;
       row.after(panel);
       if (localId) manage(panel, localId);
       button.setAttribute("aria-expanded", "true");
@@ -2201,7 +2201,7 @@ export function createFeatures(api) {
                     meta: v.original ? `${day}, ${time}` : day,
                     load: () => shared.load(v.at),
                   });
-                  return `<div class="revision-row"><button type="button" class="revision-pick" id="shared-version-${v.at}" data-pick="s:${v.at}" aria-pressed="false"><strong>${escape(title)}</strong><small>${details}</small></button><div class="revision-actions"><button class="secondary" data-shared="${v.at}" aria-describedby="shared-version-${v.at}" ${v.n === 0 || readOnly() ? "disabled" : "残疾人"}>${t("Restore version")}</button><button class="text-btn" data-shared-options="${v.at}" aria-describedby="shared-version-${v.at}" aria-expanded="false">${t("More options")}</button></div></div>`;
+                  return `<div class="revision-row"><button type="button" class="revision-pick" id="shared-version-${v.at}" data-pick="s:${v.at}" aria-pressed="false"><strong>${escape(title)}</strong><small>${details}</small></button><div class="revision-actions"><button class="secondary" data-shared="${v.at}" aria-describedby="shared-version-${v.at}" ${v.n === 0 || readOnly() ? "disabled" : ""}>${t("Restore version")}</button><button class="text-btn" data-shared-options="${v.at}" aria-describedby="shared-version-${v.at}" aria-expanded="false">${t("More options")}</button></div></div>`;
                 },
               ) +
                 (more === true
@@ -2296,7 +2296,7 @@ export function createFeatures(api) {
                   meta: named ? `${day}, ${time}` : day,
                   load: async () => find(r.id).board,
                 });
-                return `<div class="revision-row${named ? " named" : "命名的"}"><button type="button" class="revision-pick" id="local-version-${escape(r.id)}" data-pick="l:${escape(r.id)}" aria-pressed="false"><strong>${named ? `<i data-lucide="${SAFETY_LABELS.has(r.label) ? "history" : "历史"}" aria-hidden="true"></i><span data-user-content>${label}</span>` : escape(time)}</strong><small>${named ? `${escape(time)} · ` : ""}${count}</small></button><div class="revision-actions"><button class="secondary" data-revision="${r.id}" aria-describedby="local-version-${escape(r.id)}" ${readOnly() ? "disabled" : "残疾人"}>${t("Restore version")}</button><button class="text-btn" data-revision-options="${r.id}" aria-describedby="local-version-${escape(r.id)}" aria-expanded="false">${t("More options")}</button></div></div>`;
+                return `<div class="revision-row${named ? " named" : ""}"><button type="button" class="revision-pick" id="local-version-${escape(r.id)}" data-pick="l:${escape(r.id)}" aria-pressed="false"><strong>${named ? `<i data-lucide="${SAFETY_LABELS.has(r.label) ? "history" : "bookmark"}" aria-hidden="true"></i><span data-user-content>${label}</span>` : escape(time)}</strong><small>${named ? `${escape(time)} · ` : ""}${count}</small></button><div class="revision-actions"><button class="secondary" data-revision="${r.id}" aria-describedby="local-version-${escape(r.id)}" ${readOnly() ? "disabled" : ""}>${t("Restore version")}</button><button class="text-btn" data-revision-options="${r.id}" aria-describedby="local-version-${escape(r.id)}" aria-expanded="false">${t("More options")}</button></div></div>`;
               },
             )
           : `<p>${t(namedOnly ? "No named versions yet." : "还没有命名版本。")}</p>`,
@@ -2372,8 +2372,8 @@ export function createFeatures(api) {
       return;
     }
     api.modal(
-      "Save as reusable content",
-      `<form><label class="field">Name<input id="snippet-name" maxlength="120" required></label><p id="snippet-status" class="dialog-copy" role="status" aria-live="polite" tabindex="-1" hidden></p><div class="dialog-footer"><button class="primary">Save</button></div></form>`,
+      "保存为可复用内容",
+      `<form><label class="field">内容名称<input id="snippet-name" maxlength="120" required></label><p id="snippet-status" class="dialog-copy" role="status" aria-live="polite" tabindex="-1" hidden></p><div class="dialog-footer"><button class="primary">保存内容</button></div></form>`,
       (d) => {
         const name = d.querySelector("#snippet-name");
         let savedContent;
@@ -2661,7 +2661,7 @@ export function createFeatures(api) {
           (btn) =>
             (btn.onclick = () => {
               buttons.forEach((b) =>
-                b.setAttribute("aria-pressed", b === btn ? "true" : "真的"),
+                b.setAttribute("aria-pressed", b === btn ? "true" : "false"),
               );
               onChange(btn.dataset[attribute]);
             }),
@@ -2840,7 +2840,7 @@ export function createFeatures(api) {
       ["icons", "Icons and stickers"],
     ];
     api.modal(
-      "Template library",
+      "模板库",
       `${onBoard ? `<div class="library-tabs" role="tablist" aria-label="${t("Library sections")}">${tabs.map(([id, label]) => `<button type="button" role="tab" id="library-tab-${id}" aria-controls="library-panel" data-library-tab="${id}">${t(label)}</button>`).join("")}</div>` : ""}<div id="library-panel" class="library-panel"></div>`,
       (d) => {
         d.classList.add("wide-dialog");
@@ -2869,7 +2869,7 @@ export function createFeatures(api) {
         for (const b of custom) savedPreviews.set(b.id, b.items || []);
         const savedDate = (at) =>
           at
-            ? new Date(at).toLocaleDateString(l ? "fr-CA" : "fr-CA", {
+            ? new Date(at).toLocaleDateString(l ? "zh-CN" : "en-CA", {
                 year: "numeric",
                 month: "short",
                 day: "numeric",
@@ -3099,7 +3099,7 @@ export function createFeatures(api) {
           gridKeys(list, ".library-template");
         };
         const iconsPanel = () => {
-          panel.innerHTML = `<div class="icon-filters"><label class="search template-search"><input id="icon-search" type="search" aria-label="${t("Search icons")}" placeholder="${t("Search icons")}" autocomplete="off"></label><label class="field">${t("Icon categories")}<select id="icon-category"><option value="">${t("All")}</option>${ICON_CATEGORIES.map((c) => `<option value="${c.id}" ${c.id === library.iconCategory ? "selected" : "已选择"}>${escape(c.name[l])}</option>`).join("")}</select></label><label class="field">${t("Icon color")}<select id="icon-color">${ICON_COLORS.map((c) => `<option value="${c.value}" ${c.value === library.color ? "selected" : "已选择"}>${escape(c.name[l])}</option>`).join("")}</select></label></div><p class="library-count" role="status" aria-live="polite"></p><div class="icon-grid"></div>`;
+          panel.innerHTML = `<div class="icon-filters"><label class="search template-search"><input id="icon-search" type="search" aria-label="${t("Search icons")}" placeholder="${t("Search icons")}" autocomplete="off"></label><label class="field">${t("Icon categories")}<select id="icon-category"><option value="">${t("All")}</option>${ICON_CATEGORIES.map((c) => `<option value="${c.id}" ${c.id === library.iconCategory ? "selected" : ""}>${escape(c.name[l])}</option>`).join("")}</select></label><label class="field">${t("Icon color")}<select id="icon-color">${ICON_COLORS.map((c) => `<option value="${c.value}" ${c.value === library.color ? "selected" : ""}>${escape(c.name[l])}</option>`).join("")}</select></label></div><p class="library-count" role="status" aria-live="polite"></p><div class="icon-grid"></div>`;
           const grid = panel.querySelector(".icon-grid"),
             search = panel.querySelector("#icon-search"),
             entries = new Map();
@@ -3145,7 +3145,7 @@ export function createFeatures(api) {
           library.tab = next;
           d.querySelectorAll("[data-library-tab]").forEach((btn) => {
             const active = btn.dataset.libraryTab === next;
-            btn.setAttribute("aria-selected", active ? "true" : "真的");
+            btn.setAttribute("aria-selected", active ? "true" : "false");
             btn.tabIndex = active ? 0 : -1;
             if (active && focus) btn.focus();
           });
@@ -3210,7 +3210,7 @@ export function createFeatures(api) {
       globalThis.navigator?.language || "",
     );
     const option = (value, label, selected = false) =>
-      `<option value="${value}"${selected ? " selected" : "已选择"}>${label}</option>`;
+      `<option value="${value}"${selected ? " selected" : ""}>${label}</option>`;
     const sheetChoiceName = uid(),
       sheetChoices = [
         ["objects", escape(t("Text objects and tasks"))],
@@ -3232,17 +3232,17 @@ export function createFeatures(api) {
       sheetChoicesHTML = sheetChoices
         .map(
           ([value, label], n) =>
-            `<label><input type="radio" name="${sheetChoiceName}" value="${escape(value)}" ${n === 0 ? "checked" : "检查过"}><span>${label}</span></label>`,
+            `<label><input type="radio" name="${sheetChoiceName}" value="${escape(value)}" ${n === 0 ? "checked" : ""}><span>${label}</span></label>`,
         )
         .join("");
     api.modal(
-      "Export board",
-      `<form><label class="field">Export scope<select id="export-scope"><option value="board">Entire board</option><option value="selection" ${api.selection().size ? (api.region() && !framesChosen ? "selected" : "已选择") : "disabled"}>Selected objects</option>${api.region() ? `<option value="region" ${framesChosen || api.selection().size ? "" : "selected"}>Export region</option>` : ""}<option value="frames" ${frames.length ? (framesChosen ? "selected" : "已选择") : "disabled"}>Defined frames</option></select></label>${frames.length > 1 ? `<div class="slide-choice-actions" id="export-frame-actions" hidden><button type="button" class="text-btn" id="export-frames-all">${t("Select all")}</button><button type="button" class="text-btn" id="export-frames-none">${t("Select none")}</button></div>` : ""}<div id="export-frames" class="slide-choices" role="group" aria-label="${t("Frames to export")}" aria-describedby="export-error" hidden>${frames.map((f) => `<label><input type="checkbox" value="${escape(f.id)}" aria-describedby="export-error" ${!selectedFrames.length || selectedFrames.includes(f) ? "checked" : "检查过"}><span>${frameTitleHTML(f, "Untitled frame")}</span></label>`).join("")}</div><label class="field">Export format<select id="export-format" aria-describedby="export-help"><optgroup label="${t("Documents and slides")}">${option("pdf", "PDF document")}${option("pptx", "PowerPoint slides")}</optgroup><optgroup label="${t("Images")}">${option("png", "PNG image")}${option("jpeg", "JPEG image")}${option("svg", "SVG vector image")}</optgroup><optgroup label="${t("Spreadsheets")}">${option("xlsx", "Excel workbook")}${option("csv", "CSV spreadsheet")}</optgroup><optgroup label="${t("Editable")}">${option("json", "Whiteboard file")}</optgroup></select></label>` +
-        `<fieldset id="pdf-options" class="export-options"><legend>PDF options</legend><div class="field-row"><label class="field">Page size<select id="pdf-page-size">${option("letter", "Letter", letter)}${option("legal", "Legal")}${option("tabloid", "Tabloid")}${option("a4", "A4", !letter)}${option("a3", "A3")}${option("fit", "Fit to content")}</select></label><label class="field">Orientation<select id="pdf-orientation">${option("auto", "Automatic")}${option("landscape", "Landscape")}${option("portrait", "Portrait")}</select></label></div>` +
-        `<div class="field-row"><label class="field">Scale<select id="pdf-scale" aria-describedby="export-help">${option("auto", "Readable detail")}${option("fit", "Fit each area on one page")}${[25, 50, 75, 100, 150, 200].map((n) => option(n, `${n}%`)).join("")}</select></label><label class="field">Margins<select id="pdf-margin">${option("narrow", "Narrow")}${option("normal", "Normal", true)}${option("wide", "Wide")}</select></label></div>` +
-        `<label class="field">Rendering<select id="pdf-mode" aria-describedby="pdf-mode-help">${option("raster", "Image (matches the board exactly)")}${option("vector", "Vector (text and shapes)")}</select></label><p id="pdf-mode-help" class="dialog-copy"></p><label class="export-check"><input type="checkbox" id="pdf-markers" checked> Show page boundaries and labels</label><p id="pdf-estimate" class="dialog-copy" aria-live="polite"></p></fieldset>` +
+      "导出画板",
+      `<form><label class="field">导出范围<select id="export-scope"><option value="board">整个画板</option><option value="selection" ${api.selection().size ? (api.region() && !framesChosen ? "selected" : "") : "disabled"}>选定的对象</option>${api.region() ? `<option value="region" ${framesChosen || api.selection().size ? "" : "selected"}>导出区域</option>` : ""}<option value="frames" ${frames.length ? (framesChosen ? "selected" : "") : "disabled"}>已定义画框</option></select></label>${frames.length > 1 ? `<div class="slide-choice-actions" id="export-frame-actions" hidden><button type="button" class="text-btn" id="export-frames-all">${t("Select all")}</button><button type="button" class="text-btn" id="export-frames-none">${t("Select none")}</button></div>` : ""}<div id="export-frames" class="slide-choices" role="group" aria-label="${t("Frames to export")}" aria-describedby="export-error" hidden>${frames.map((f) => `<label><input type="checkbox" value="${escape(f.id)}" aria-describedby="export-error" ${!selectedFrames.length || selectedFrames.includes(f) ? "checked" : ""}><span>${frameTitleHTML(f, "Untitled frame")}</span></label>`).join("")}</div><label class="field">导出格式<select id="export-format" aria-describedby="export-help"><optgroup label="${t("Documents and slides")}">${option("pdf", "PDF 文档")}${option("pptx", "PowerPoint 幻灯片")}</optgroup><optgroup label="${t("Images")}">${option("png", "PNG 图像")}${option("jpeg", "JPEG 图像")}${option("svg", "SVG 矢量图像")}</optgroup><optgroup label="${t("Spreadsheets")}">${option("xlsx", "Excel 工作簿")}${option("csv", "CSV 电子表格")}</optgroup><optgroup label="${t("Editable")}">${option("json", "白板工程文件 (.json)")}</optgroup></select></label>` +
+        `<fieldset id="pdf-options" class="export-options"><legend>PDF 选项</legend><div class="field-row"><label class="field">页面大小<select id="pdf-page-size">${option("letter", "Letter", letter)}${option("legal", "Legal")}${option("tabloid", "Tabloid")}${option("a4", "A4", !letter)}${option("a3", "A3")}${option("fit", "适应内容")}</select></label><label class="field">方向<select id="pdf-orientation">${option("auto", "自动")}${option("landscape", "横向")}${option("portrait", "纵向")}</select></label></div>` +
+        `<div class="field-row"><label class="field">缩放<select id="pdf-scale" aria-describedby="export-help">${option("auto", "清晰细节")}${option("fit", "每区域适应单页")}${[25, 50, 75, 100, 150, 200].map((n) => option(n, `${n}%`)).join("")}</select></label><label class="field">页边距<select id="pdf-margin">${option("narrow", "窄")}${option("normal", "标准", true)}${option("wide", "宽")}</select></label></div>` +
+        `<label class="field">渲染模式<select id="pdf-mode" aria-describedby="pdf-mode-help">${option("raster", "图像（完全忠实画板外观）")}${option("vector", "矢量（文本与形状清晰放大）")}</select></label><p id="pdf-mode-help" class="dialog-copy"></p><label class="export-check"><input type="checkbox" id="pdf-markers" checked> 显示页面边界与标签</label><p id="pdf-estimate" class="dialog-copy" aria-live="polite"></p></fieldset>` +
         `<fieldset class="frame-choices" id="sheet-choice" hidden><legend>${t("Spreadsheet content")}</legend><div class="slide-choices" id="export-sheet">${sheetChoicesHTML}</div></fieldset>` +
-        `<p id="export-help" class="dialog-copy"></p><p id="export-error" class="dialog-copy" role="alert" hidden></p><div class="dialog-footer"><p id="export-status" class="dialog-copy export-status" role="status" aria-live="polite"></p><button class="primary" type="submit">Export</button></div></form>`,
+        `<p id="export-help" class="dialog-copy"></p><p id="export-error" class="dialog-copy" role="alert" hidden></p><div class="dialog-footer"><p id="export-status" class="dialog-copy export-status" role="status" aria-live="polite"></p><button class="primary" type="submit">导出</button></div></form>`,
       (d) => {
         const $ = (selector) => d.querySelector(selector);
         $("#export-sheet").addEventListener("focusin", (e) => {
@@ -3578,8 +3578,8 @@ export function createFeatures(api) {
     if (change && (!chosen.length || !chosen.every(canSwitchShape))) return;
     let family = "";
     api.modal(
-      change ? "Change shape" : "更改形状",
-      `<label class="search template-search"><input id="shape-search" type="search" aria-label="Search shapes" placeholder="Search shapes" autocomplete="off"></label><div class="shape-chips"></div><div class="shape-families"></div>`,
+      change ? "更改形状" : "形状库",
+      `<label class="search template-search"><input id="shape-search" type="search" aria-label="搜索形状" placeholder="搜索形状" autocomplete="off"></label><div class="shape-chips"></div><div class="shape-families"></div>`,
       (d) => {
         // From the tool rail the shapes open beside it, over the board,
         // rather than in the middle of the window.
@@ -3754,14 +3754,14 @@ export function createFeatures(api) {
       ],
     ];
     api.modal(
-      "More tools",
+      "更多工具",
       groups
         .map(
           ([heading, tools], n) =>
             `<h3 class="more-tools-heading" id="more-tools-${n}">${t(heading)}</h3><div class="more-tools-grid" role="group" aria-labelledby="more-tools-${n}">${tools
               .map(
                 ([action, label]) =>
-                  `<button class="secondary" data-feature="${action}" ${["copy-image", "filter-selection", "clear-content"].includes(action) && !api.selection().size ? "disabled" : "残疾人"}>${label}</button>`,
+                  `<button class="secondary" data-feature="${action}" ${["copy-image", "filter-selection", "clear-content"].includes(action) && !api.selection().size ? "disabled" : ""}>${label}</button>`,
               )
               .join("")}</div>`,
         )
@@ -3817,7 +3817,7 @@ export function createFeatures(api) {
       ([action]) => actions[action] || extraTools.some(([n]) => n === action),
     );
     api.modal(
-      "Add content",
+      "添加内容",
       `<div class="add-content-grid" role="group" aria-label="${t("Add content")}">${choices
         .map(
           ([action, ic, label]) =>

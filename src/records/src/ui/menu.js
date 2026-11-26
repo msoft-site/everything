@@ -14,7 +14,7 @@ let seq = 0;
 export function openMenu(anchor, items, opts = {}) {
   const id = `menu-${++seq}`;
   const list = h('div.menu-list', { role: 'none' });
-  const search = opts.search ? h('input.input', { type: 'text', placeholder: opts.searchPlaceholder || 'Find...', 'aria-label': opts.searchPlaceholder || 'Find', role: 'combobox', 'aria-expanded': 'true', 'aria-controls': id, autocomplete: 'off', spellcheck: false }) : null;
+  const search = opts.search ? h('input.input', { type: 'text', placeholder: opts.searchPlaceholder || '查找...', 'aria-label': opts.searchPlaceholder || '查找', role: 'combobox', 'aria-expanded': 'true', 'aria-controls': id, autocomplete: 'off', spellcheck: false }) : null;
   const root = h('div.menu', { role: 'menu', id, 'aria-label': opts.label || null, tabindex: '-1' });
   if (search) root.append(h('div.menu-search', search));
   root.append(list);
@@ -79,7 +79,7 @@ export function openMenu(anchor, items, opts = {}) {
       list.append(el);
       rows.push({ item, el });
     }
-    if (!rows.length) list.append(h('div.menu-empty', opts.emptyText || 'No matches'));
+    if (!rows.length) list.append(h('div.menu-empty', opts.emptyText || '无匹配项'));
     if (active >= rows.length) active = rows.length - 1;
     if (search) setActive(rows.length ? Math.max(0, active) : -1, false);
   }

@@ -66,7 +66,7 @@ export class GridView {
       'aria-multiselectable': 'true',
       'aria-describedby': `${this.id}-help`,
     }, this.spacer, this.a11y);
-    this.help = h('p.sr-only', { id: `${this.id}-help` }, 'Use arrow keys to move between cells, Enter to edit, Space to expand a record, and the context menu key or Shift+F10 for more actions.');
+    this.help = h('p.sr-only', { id: `${this.id}-help` }, '使用方向键在单元格间移动，按 Enter 编辑，按空格键展开记录，按菜单键或 Shift+F10 打开更多操作。');
     this.overlay = h('div.grid-overlay');
     this.el = h('div.grid-root', this.canvas, this.scroller, this.overlay, this.help);
     this.ctx = this.canvas.getContext('2d', { alpha: false });
@@ -242,11 +242,11 @@ export class GridView {
     const filtered = this.result.total > 0;
     this.emptyEl = h('div.grid-empty', { role: 'status' },
       h('div.empty-icon', icon(filtered ? 'filter' : 'vGrid', 22)),
-      h('h2', filtered ? 'No records match' : 'No records yet'),
-      h('p', filtered ? 'Every record is hidden by this view\u2019s filters.' : 'Add a record, paste rows from a spreadsheet, or import a CSV file.'),
+      h('h2', filtered ? '无匹配记录' : '暂无记录'),
+      h('p', filtered ? '当前视图的筛选条件已隐藏所有记录。' : '添加记录、从电子表格粘贴行，或导入 CSV 文件。'),
       filtered
-        ? h('button.btn', { type: 'button', onclick: () => this.base.updateView(this.table.id, this.view.id, { filters: { conjunction: 'and', conditions: [] } }, { label: 'Clear filters' }) }, 'Clear filters')
-        : h('button.btn.primary', { type: 'button', onclick: () => this.addRecordIn({ groups: [] }) }, icon('plus', 16), 'Add record'));
+        ? h('button.btn', { type: 'button', onclick: () => this.base.updateView(this.table.id, this.view.id, { filters: { conjunction: 'and', conditions: [] } }, { label: '清除筛选' }) }, '清除筛选')
+        : h('button.btn.primary', { type: 'button', onclick: () => this.addRecordIn({ groups: [] }) }, icon('plus', 16), '添加记录'));
     this.overlay.append(this.emptyEl);
   }
 
@@ -449,7 +449,7 @@ export class GridView {
       P.icon('plus', this.compact ? 14 : 22, y + row.h / 2 - 8, 16, hovered ? p.text : p.text3);
       if (hovered && !this.compact) {
         P.font();
-        P.text('Add record', 44, y + row.h / 2, 160, p.text2);
+        P.text('添加记录', 44, y + row.h / 2, 160, p.text2);
       }
       return;
     }
@@ -476,7 +476,7 @@ export class GridView {
     let vw;
     if (value === null || value === undefined || (Array.isArray(value) && !value.length)) {
       P.font(13, 600);
-      vw = P.text('Empty', x, vy, maxW, p.text3);
+      vw = P.text('（空）', x, vy, maxW, p.text3);
     } else if (field && (field.type === 'singleSelect' || field.type === 'multipleSelect')) {
       ctx.save();
       ctx.beginPath();
@@ -489,10 +489,10 @@ export class GridView {
       vw = Math.min(maxW, P.measure(names) + 24 * (Array.isArray(value) ? value.length : 1));
     } else {
       P.font(13, 600);
-      vw = P.text(field ? toText(field, value, this.base.compute.ctx) || 'Empty' : '', x, vy, maxW, p.text);
+      vw = P.text(field ? toText(field, value, this.base.compute.ctx) || '（空）' : '', x, vy, maxW, p.text);
     }
     P.font(12);
-    P.text(`${row.count} ${row.count === 1 ? 'record' : 'records'}`, x + vw + 12, vy, 140, p.text3);
+    P.text(`${row.count} 条记录`, x + vw + 12, vy, 140, p.text3);
     P.font();
   }
 
@@ -726,7 +726,7 @@ export class GridView {
           ctx.fillRect(x, y + 1, col.w, FOOTER_H - 1);
         }
         if (text) P.text(text, x + 8, mid, col.w - 16, p.text2, 'right');
-        else if (hovered) P.text('Summarize', x + 8, mid, col.w - 30, p.text3, 'right');
+        else if (hovered) P.text('汇总', x + 8, mid, col.w - 30, p.text3, 'right');
         if (hovered && !text) P.icon('chevronDown', x + col.w - 20, mid - 6, 12, p.text3);
       }
     };
@@ -746,8 +746,8 @@ export class GridView {
     const n = this.result.records.length;
     const total = this.table.records.size;
     const label = this.checked.size
-      ? `${this.checked.size} selected`
-      : n === total ? `${n} ${n === 1 ? 'record' : 'records'}` : `${n} of ${total} records`;
+      ? `已选 ${this.checked.size} 条`
+      : n === total ? `${n} 条记录` : `${n} / ${total} 条记录`;
     P.text(label, 12, mid, L.frozenW - 24 - (L.frozen > 0 ? 0 : 0), p.text2);
     paintCols(1, L.frozen - 1);
     const firstText = L.cols[0] && this.view.summaries?.[L.cols[0].field.id] ? this.summaryText(L.cols[0]) : null;
@@ -1028,7 +1028,7 @@ export class GridView {
   pressButton(rec, field) {
     const url = buttonUrl(this.base, this.table, rec, field);
     if (url) window.open(url, '_blank', 'noopener');
-    else toast('This button has no link yet. Set one in the field settings.');
+    else toast('此按钮尚未配置链接，请在字段设置中添加。');
   }
 
   onDblClick(e) {
@@ -1088,8 +1088,8 @@ export class GridView {
       label: SUMMARIES[fn],
       checked: current === fn,
       radio: true,
-      onSelect: () => this.base.updateView(this.table.id, this.view.id, { summaries: { ...(this.view.summaries || {}), [col.field.id]: fn } }, { label: 'Change summary' }),
-    })), { placement: 'top-start', label: `Summary for ${col.field.name}` });
+      onSelect: () => this.base.updateView(this.table.id, this.view.id, { summaries: { ...(this.view.summaries || {}), [col.field.id]: fn } }, { label: '更改汇总方式' }),
+    })), { placement: 'top-start', label: `${col.field.name} 的汇总方式` });
   }
 
   startDrag(e, drag) {
@@ -1248,7 +1248,7 @@ export class GridView {
         // A column shown narrower than its saved width (no room on this
         // screen) keeps that width when dragged wider: only narrowing saves.
         const narrowed = (this.view.widths?.[field.id] ?? 0) > d.startW;
-        if (d.w !== d.startW && !(narrowed && d.w > d.startW)) this.base.updateView(this.table.id, this.view.id, { widths: { ...(this.view.widths || {}), [field.id]: d.w } }, { label: 'Resize field' });
+        if (d.w !== d.startW && !(narrowed && d.w > d.startW)) this.base.updateView(this.table.id, this.view.id, { widths: { ...(this.view.widths || {}), [field.id]: d.w } }, { label: '调整字段列宽' });
         else this.recompute();
         break;
       }
@@ -1265,8 +1265,8 @@ export class GridView {
         const { id: moving, name } = L.cols[d.from].field;
         const rest = L.cols.map((c) => c.field.id).filter((id) => id !== moving);
         const at = d.to > d.from ? d.to - 1 : d.to;
-        this.base.updateView(this.table.id, this.view.id, { order: this.orderWith(moving, rest[at]) }, { label: 'Move field' });
-        announce(`Moved ${name}`);
+        this.base.updateView(this.table.id, this.view.id, { order: this.orderWith(moving, rest[at]) }, { label: '移动字段' });
+        announce(`已移动 ${name}`);
         break;
       }
       case 'rowmove': {
@@ -1300,8 +1300,8 @@ export class GridView {
       const row = this.layout.rows[hit.row];
       if (row.k === 'group') {
         openMenu(pt, [
-          { label: 'Collapse all groups', icon: 'collapse', onSelect: () => this.setAllGroups(true) },
-          { label: 'Expand all groups', icon: 'expand', onSelect: () => this.setAllGroups(false) },
+          { label: '折叠所有分组', icon: 'collapse', onSelect: () => this.setAllGroups(true) },
+          { label: '展开所有分组', icon: 'expand', onSelect: () => this.setAllGroups(false) },
         ]);
         return;
       }
@@ -1391,7 +1391,7 @@ export class GridView {
   }
 
   announceChecked() {
-    announce(this.checked.size ? `${this.checked.size} record${this.checked.size === 1 ? '' : 's'} selected` : 'Selection cleared');
+    announce(this.checked.size ? `已选择 ${this.checked.size} 条记录` : '已清除选择');
   }
 
   /** The screen reader proxy: the active cell's field, value and position. */
@@ -1400,7 +1400,7 @@ export class GridView {
     if (!this.cursor || !L.records.length) {
       this.scroller.removeAttribute('aria-activedescendant');
       this.headProxy.replaceChildren();
-      this.cellProxy.textContent = L.records.length ? '' : 'No records';
+      this.cellProxy.textContent = L.records.length ? '' : '无记录';
       return;
     }
     const { r, c } = this.cursor;
@@ -1416,15 +1416,15 @@ export class GridView {
     }
     const v = this.base.compute.value(this.table, rec, col.field);
     let text = toText(col.field, v, this.base.compute.ctx);
-    if (col.field.type === 'checkbox') text = v ? 'checked' : 'not checked';
+    if (col.field.type === 'checkbox') text = v ? '已勾选' : '未勾选';
     this.headProxy.replaceChildren(h('div', { role: 'columnheader', 'aria-colindex': String(c + 1) }, col.field.name));
     this.rowProxy.setAttribute('aria-rowindex', String(r + 2));
     this.rowProxy.setAttribute('aria-selected', String(this.checked.has(rec.id)));
     this.cellProxy.setAttribute('aria-colindex', String(c + 1));
     this.cellProxy.setAttribute('aria-readonly', String(isReadOnly(col.field)));
     const rg = this.range();
-    const multi = rg && (rg.r1 > rg.r0 || rg.c1 > rg.c0) ? `, ${rg.r1 - rg.r0 + 1} by ${rg.c1 - rg.c0 + 1} cells selected` : '';
-    this.cellProxy.textContent = `${col.field.name}: ${text || 'empty'}${multi}`;
+    const multi = rg && (rg.r1 > rg.r0 || rg.c1 > rg.c0) ? `，已选择 ${rg.r1 - rg.r0 + 1} × ${rg.c1 - rg.c0 + 1} 个单元格` : '';
+    this.cellProxy.textContent = `${col.field.name}：${text || '（空）'}${multi}`;
     this.scroller.setAttribute('aria-activedescendant', this.cellProxy.id);
   }
 
@@ -1558,7 +1558,7 @@ export class GridView {
           this.anchor = { r: 0, c: 0 };
           this.cursor = { r: lastR, c: lastC };
           this.afterSelect();
-          announce('Selected all cells');
+          announce('已选择所有单元格');
         }
       } else if (k === 'd') {
         e.preventDefault();
@@ -1597,7 +1597,7 @@ export class GridView {
       for (const f of fields) cells[f.id] = !first;
       changes.push({ id: rec.id, cells });
     }
-    this.base.setCells(this.table.id, changes, 'Toggle checkboxes');
+    this.base.setCells(this.table.id, changes, '切换复选框');
   }
 
   /* --------------------------------------------------------------- editing */
@@ -1711,14 +1711,14 @@ export class GridView {
     const r = this.layout.records.findIndex((x) => x.id === id);
     if (r >= 0) {
       this.setCursor(r, 0);
-      announce('Record added');
+      announce('已添加记录');
     } else this.hiddenAdded(id);
     return id;
   }
 
   /** A record just added that the view's filters hide. */
   hiddenAdded(id) {
-    toast('Record added. It is hidden by this view’s filters.', { action: { label: 'Open', onClick: () => this.page.openRecord(id) } });
+    toast('已添加记录。当前视图的筛选条件已将其隐藏。', { action: { label: '打开', onClick: () => this.page.openRecord(id) } });
   }
 
   /** New records in a group get that group's values. */
@@ -1761,25 +1761,25 @@ export class GridView {
     const rg = this.range();
     const multiCell = rg && (rg.r1 > rg.r0 || rg.c1 > rg.c0);
     openMenu(pt, [
-      !many ? { label: 'Insert record above', icon: 'insertAbove', onSelect: () => this.insertRecord(rec.id, { before: true }) } : null,
-      !many ? { label: 'Insert record below', icon: 'insertBelow', hint: 'Shift+Enter', onSelect: () => this.insertRecord(rec.id) } : null,
-      { label: many ? `Duplicate ${ids.length} records` : 'Duplicate record', icon: 'copy', onSelect: () => this.base.duplicateRecords(this.table.id, ids) },
-      !many ? { label: 'Expand record', icon: 'expand', hint: 'Space', onSelect: () => this.page.openRecord(rec.id) } : null,
-      !many ? { label: 'Copy record link', icon: 'link', onSelect: () => copyText(recordUrl(this.page, rec.id), 'Link copied') } : null,
+      !many ? { label: '在上方插入记录', icon: 'insertAbove', onSelect: () => this.insertRecord(rec.id, { before: true }) } : null,
+      !many ? { label: '在下方插入记录', icon: 'insertBelow', hint: 'Shift+Enter', onSelect: () => this.insertRecord(rec.id) } : null,
+      { label: many ? `复制 ${ids.length} 条记录` : '复制记录', icon: 'copy', onSelect: () => this.base.duplicateRecords(this.table.id, ids) },
+      !many ? { label: '展开记录', icon: 'expand', hint: 'Space', onSelect: () => this.page.openRecord(rec.id) } : null,
+      !many ? { label: '复制记录链接', icon: 'link', onSelect: () => copyText(recordUrl(this.page, rec.id), '已复制链接') } : null,
       { type: 'sep' },
-      multiCell ? { label: 'Clear selected cells', icon: 'x', onSelect: () => this.clearRange() } : null,
-      { label: many ? `Delete ${ids.length} records` : 'Delete record', icon: 'trash', danger: true, onSelect: () => this.deleteRecords(ids) },
-    ], { label: 'Record actions' });
+      multiCell ? { label: '清空选中单元格', icon: 'x', onSelect: () => this.clearRange() } : null,
+      { label: many ? `删除 ${ids.length} 条记录` : '删除记录', icon: 'trash', danger: true, onSelect: () => this.deleteRecords(ids) },
+    ], { label: '记录操作' });
   }
 
   async deleteRecords(ids) {
     if (ids.length > 1) {
-      const ok = await confirmDialog({ title: `Delete ${ids.length} records?`, message: 'You can undo this right after.', confirmLabel: 'Delete', danger: true });
+      const ok = await confirmDialog({ title: `确定删除 ${ids.length} 条记录吗？`, message: '删除后可立即撤销。', confirmLabel: '删除', danger: true });
       if (!ok) return;
     }
     this.base.deleteRecords(this.table.id, ids);
     for (const id of ids) this.checked.delete(id);
-    this.page.toastUndo(ids.length === 1 ? 'Record deleted' : `${ids.length} records deleted`);
+    this.page.toastUndo(ids.length === 1 ? '已删除记录' : `已删除 ${ids.length} 条记录`);
     this.focus();
   }
 
@@ -1803,8 +1803,8 @@ export class GridView {
       if (Object.keys(cells).length) changes.push({ id: rec.id, cells });
     }
     if (changes.length) {
-      this.base.setCells(this.table.id, changes, 'Clear cells');
-      announce('Cleared');
+      this.base.setCells(this.table.id, changes, '清空单元格');
+      announce('已清空');
     }
   }
 
@@ -1829,7 +1829,7 @@ export class GridView {
       }
       changes.push({ id: rec.id, cells });
     }
-    if (changes.length) this.base.setCells(this.table.id, changes, 'Fill cells');
+    if (changes.length) this.base.setCells(this.table.id, changes, '填充单元格');
     this.anchor = { r: rg.r0, c: rg.c0 };
     this.cursor = { r: end, c: rg.c1 };
     this.afterSelect();
@@ -1943,12 +1943,12 @@ export class GridView {
         const f = this.table.field(fid);
         base.updateField(tableId, fid, { options: { ...f.options, choices: [...f.options.choices, ...choices] } });
       }
-      if (changes.length) base.setCells(tableId, changes, 'Paste');
-    }, 'Paste');
+      if (changes.length) base.setCells(tableId, changes, '粘贴');
+    }, '粘贴');
     this.anchor = { r: startR, c: startC };
     this.cursor = { r: Math.min(startR + height - 1, this.layout.records.length - 1), c: Math.min(startC + width - 1, L.cols.length - 1) };
     this.afterSelect();
-    announce(needed > 0 ? `Pasted and added ${needed} record${needed === 1 ? '' : 's'}` : 'Pasted');
+    announce(needed > 0 ? `已粘贴并新增 ${needed} 条记录` : '已粘贴');
   }
 
   parseFor(field, text, choiceAdds) {
@@ -1978,11 +1978,11 @@ export class GridView {
     openMenu(anchor, fieldMenuItems(this.page, this.table, col.field, {
       onEdit: () => this.editField(c),
       onInsert: (side) => this.addField(side === 'left' ? c : c + 1),
-      onFreeze: c < this.layout.cols.length - 1 && !this.compact ? () => this.base.updateView(this.table.id, this.view.id, { frozen: c + 1 }, { label: 'Freeze fields' }) : null,
+      onFreeze: c < this.layout.cols.length - 1 && !this.compact ? () => this.base.updateView(this.table.id, this.view.id, { frozen: c + 1 }, { label: '冻结字段' }) : null,
       frozen: this.layout.frozen,
       index: c,
       view: this.view,
-    }), { label: `${col.field.name} options` });
+    }), { label: `${col.field.name} 选项` });
   }
 
   headerAnchor(c) {
@@ -2045,7 +2045,7 @@ export class GridView {
       const t = toText(col.field, this.base.compute.value(this.table, rec, col.field), ctx);
       w = Math.max(w, Math.min(600, P.measure(t.split('\n')[0]) + 24));
     }
-    this.base.updateView(this.table.id, this.view.id, { widths: { ...(this.view.widths || {}), [col.field.id]: Math.round(w) } }, { label: 'Resize field' });
+    this.base.updateView(this.table.id, this.view.id, { widths: { ...(this.view.widths || {}), [col.field.id]: Math.round(w) } }, { label: '调整字段列宽' });
   }
 
   /* ---------------------------------------------------------------- groups */

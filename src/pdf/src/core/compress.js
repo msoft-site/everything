@@ -23,9 +23,9 @@ import { IMAGE_ORIENTATION_KEY } from './image-orientation.js';
 import { pageUserUnit, repairForm } from './structure.js';
 
 export const COMPRESSION_LEVELS = {
-  smallest: { dpi: 100, quality: 0.6, label: 'Smallest file', hint: 'Pictures at 100 dpi' },
-  balanced: { dpi: 150, quality: 0.75, label: 'Balanced', hint: 'Pictures at 150 dpi' },
-  quality: { dpi: 220, quality: 0.85, label: 'Higher quality', hint: 'Pictures at 220 dpi' },
+  smallest: { dpi: 100, quality: 0.6, label: '最小文件', hint: '图片 100 dpi' },
+  balanced: { dpi: 150, quality: 0.75, label: '推荐平衡', hint: '图片 150 dpi' },
+  quality: { dpi: 220, quality: 0.85, label: '较高画质', hint: '图片 220 dpi' },
 };
 /** Pictures smaller than this are not worth re-encoding. */
 const MIN_PIXELS = 128 * 128;
