@@ -114,7 +114,7 @@ async function loadFromCanvas(e: Editor, x: number, y: number) {
       bb += img.data[i + 2] * w;
       a += w;
     }
-    if (!a) return e.message('There is no paint under the brush to load.');
+    if (!a) return e.message('画笔下方没有可载入的颜色。');
     b.loadColor([rr / a, g / a, bb / a]);
   } else b.loadImage(img.data, img.width, img.height);
   manualLoad = true;
@@ -139,17 +139,17 @@ function options(e: Editor) {
   const field = (id: string, label: string, value: number, title: string) =>
     `<label title="${title}">${label} <input id="${id}" type="number" min="0" max="100" value="${Math.round(value)}" aria-label="${title} (%)">%</label>`;
   const toggle = (id: string, icon: string, on: boolean, title: string) => `<button class="icon-button toggle" id="${id}" aria-pressed="${on}" title="${title}" aria-label="${title}">${svg(icon, 16)}</button>`;
-  return `<button class="brush-preview" data-brush-popover="${ID}" title="Brush settings" aria-label="Brush preset and size"><span class="brush-dot" style="--size:${Math.min(22, 4 + Math.sqrt(s.size) * 1.6)}px;--hard:${s.hardness}"></span><span>${Math.round(s.size)}</span></button>
-<label>Size <input id="brush-size" type="number" min="1" max="5000" value="${Math.round(s.size)}" aria-label="Brush size (px)"> px</label>
-<label>Hardness <input id="brush-hardness" type="number" min="0" max="100" value="${Math.round(s.hardness * 100)}" aria-label="Brush hardness (%)">%</label>
-<button class="mixer-swatch" id="mixer-load-menu" title="Brush load: click for Load, Clean and options" aria-label="Brush load" aria-haspopup="menu">${loaded ? `<span style="background:${rgbHex(loaded[0], loaded[1], loaded[2])}"></span>` : '<span class="empty"></span>'}${svg('chevron-down', 12)}</button>
-${toggle('mixer-load-after', 'brush-load', loadAfter(e), 'Load the brush after each stroke')}${toggle('mixer-clean-after', 'brush-clean', cleanAfter(e), 'Clean the brush after each stroke')}
-<label>Mix <select id="mixer-preset" aria-label="Wet, load and mix combination">${mixerPresets.map((p) => `<option value="${p.id}" ${p.id === preset ? 'selected' : ''}>${escapeXML(p.label)}</option>`).join('')}</select></label>
-${field('mixer-wet', 'Wet', pct(e, 'mixerWet', 50), 'Paint picked up from the canvas')}${field('mixer-load', 'Load', pct(e, 'mixerLoad', 50), 'Paint loaded in the reservoir')}${field('mixer-mix', 'Mix', pct(e, 'mixerMix', 50), 'Canvas paint in the mix')}
-<label>Flow <input id="brush-flow" type="number" min="1" max="100" value="${Math.round(s.flow * 100)}" aria-label="Brush flow (%)">%</label><button class="icon-button toggle" id="airbrush" aria-pressed="${s.airbrush}" title="Airbrush build-up" aria-label="Airbrush">${svg('airbrush', 16)}</button>
-<label>Smoothing <input id="brush-smoothing" type="number" min="0" max="100" value="${Math.round(s.smoothing * 100)}" aria-label="Smoothing (%)">%</label>
-<label class="transform-setting"><input type="checkbox" id="mixer-all" ${sampleAll(e) ? 'checked' : ''}>Sample All Layers</label>
-<button class="icon-button toggle" id="pressure-size" aria-pressed="${!!s.dynamics.pressureSize}" title="Pressure controls size" aria-label="Pressure controls size">${svg('pressure-size', 16)}</button>`;
+  return `<button class="brush-preview" data-brush-popover="${ID}" title="画笔设置" aria-label="画笔预设与大小"><span class="brush-dot" style="--size:${Math.min(22, 4 + Math.sqrt(s.size) * 1.6)}px;--hard:${s.hardness}"></span><span>${Math.round(s.size)}</span></button>
+<label>大小 <input id="brush-size" type="number" min="1" max="5000" value="${Math.round(s.size)}" aria-label="画笔大小 (像素)"> 像素</label>
+<label>硬度 <input id="brush-hardness" type="number" min="0" max="100" value="${Math.round(s.hardness * 100)}" aria-label="画笔硬度 (%)">%</label>
+<button class="mixer-swatch" id="mixer-load-menu" title="画笔载入：单击以载入、清理及查看选项" aria-label="画笔载入" aria-haspopup="menu">${loaded ? `<span style="background:${rgbHex(loaded[0], loaded[1], loaded[2])}"></span>` : '<span class="empty"></span>'}${svg('chevron-down', 12)}</button>
+${toggle('mixer-load-after', 'brush-load', loadAfter(e), '每次描边后载入画笔')}${toggle('mixer-clean-after', 'brush-clean', cleanAfter(e), '每次描边后清理画笔')}
+<label>混合 <select id="mixer-preset" aria-label="潮湿、载入和混合组合">${mixerPresets.map((p) => `<option value="${p.id}" ${p.id === preset ? 'selected' : ''}>${escapeXML(p.label)}</option>`).join('')}</select></label>
+${field('mixer-wet', '潮湿', pct(e, 'mixerWet', 50), '从画布拾取的颜色')}${field('mixer-load', '载入', pct(e, 'mixerLoad', 50), '储色槽中载入的颜色')}${field('mixer-mix', '混合', pct(e, 'mixerMix', 50), '混合物中画布颜色的比例')}
+<label>流量 <input id="brush-flow" type="number" min="1" max="100" value="${Math.round(s.flow * 100)}" aria-label="画笔流量 (%)">%</label><button class="icon-button toggle" id="airbrush" aria-pressed="${s.airbrush}" title="喷枪效果" aria-label="喷枪">${svg('airbrush', 16)}</button>
+<label>平滑 <input id="brush-smoothing" type="number" min="0" max="100" value="${Math.round(s.smoothing * 100)}" aria-label="平滑 (%)">%</label>
+<label class="transform-setting"><input type="checkbox" id="mixer-all" ${sampleAll(e) ? 'checked' : ''}>对所有图层取样</label>
+<button class="icon-button toggle" id="pressure-size" aria-pressed="${!!s.dynamics.pressureSize}" title="压力控制大小" aria-label="压力控制大小">${svg('pressure-size', 16)}</button>`;
 }
 function bind(e: Editor, el: HTMLElement) {
   bindBrushOptions(e, el, ID);
@@ -186,7 +186,7 @@ function bind(e: Editor, el: HTMLElement) {
 }
 
 export function mixerBrushTool(): Tool {
-  const base = strokeTool(ID, 'Mixer Brush Tool', 'mixer-brush', 'brush', 'B', 'Mixer Brush', {}, mixerTarget);
+  const base = strokeTool(ID, '混合器画笔工具', 'mixer-brush', 'brush', 'B', '混合器画笔', {}, mixerTarget);
   return {
     ...base,
     options,
@@ -235,9 +235,9 @@ export function installMixerCommands() {
   registerCommand(
     {
       id: 'mixer.load',
-      label: 'Load Brush',
+      label: '载入画笔',
       recordable: false,
-      description: 'Fill the Mixer Brush with the foreground color.',
+      description: '使用前景色填充混合器画笔。',
       run: (e) => {
         mixer(e).loadColor(hexRgb(e.color));
         manualLoad = true;
@@ -246,9 +246,9 @@ export function installMixerCommands() {
     },
     {
       id: 'mixer.clean',
-      label: 'Clean Brush',
+      label: '清理画笔',
       recordable: false,
-      description: 'Empty the Mixer Brush reservoir and tip.',
+      description: '清空混合器画笔储色槽和笔尖。',
       run: (e) => {
         mixer(e).clean();
         manualLoad = true;
@@ -257,7 +257,7 @@ export function installMixerCommands() {
     },
     {
       id: 'mixer.solid-only',
-      label: 'Load Solid Colors Only',
+      label: '仅载入纯色',
       recordable: false,
       checked: (e) => e.settings.mixerSolidOnly === true,
       run: (e) => {

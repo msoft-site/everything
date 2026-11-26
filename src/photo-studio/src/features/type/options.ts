@@ -30,10 +30,10 @@ export function familyInfo(family?: string): FontFamilyInfo | undefined {
   if (!family) return;
   return familyList().find((f) => f.family.toLowerCase() === family.toLowerCase());
 }
-export const WEIGHT_NAMES: Record<number, string> = { 100: 'Thin', 200: 'Extra Light', 300: 'Light', 400: 'Regular', 500: 'Medium', 600: 'Semibold', 700: 'Bold', 800: 'Extra Bold', 900: 'Black' };
+export const WEIGHT_NAMES: Record<number, string> = { 100: '极细', 200: '特细', 300: '细体', 400: '常规', 500: '中等', 600: '半粗', 700: '粗体', 800: '特粗', 900: '黑体' };
 export function styleName(weight: number, italic: boolean) {
   const w = WEIGHT_NAMES[Math.round(weight / 100) * 100] ?? String(weight);
-  return italic ? (w === 'Regular' ? 'Italic' : `${w} Italic`) : w;
+  return italic ? (w === '常规' ? '斜体' : `${w} 斜体`) : w;
 }
 // Weight/italic combinations offered for a family (synthetic styles cover the rest).
 export function familyStyles(family?: string): { weight: number; italic: boolean }[] {
@@ -145,14 +145,14 @@ export function familyPatch(family: string, cur: Partial<CharStyle>): Partial<Ch
 // ------------------------------------------------------------ options bar
 
 const SIZES = [6, 8, 9, 10, 11, 12, 14, 18, 24, 30, 36, 48, 60, 72];
-const AA: [AntiAlias, string][] = [['none', 'None'], ['sharp', 'Sharp'], ['crisp', 'Crisp'], ['strong', 'Strong'], ['smooth', 'Smooth']];
+const AA: [AntiAlias, string][] = [['none', '无'], ['sharp', '犀利'], ['crisp', '明晰'], ['strong', '浑厚'], ['smooth', '平滑']];
 const fmt = (v: number | undefined) => (v === undefined ? '' : String(Math.round(v * 100) / 100));
 
 function pathOptionsButton(data?: TextLayerData): string {
-  return data?.path ? `<button type="button" class="icon-button" data-command="type.path-options" title="${data.path.kind === 'area' ? 'Area type options' : 'Path type options'}" aria-label="${data.path.kind === 'area' ? 'Area type options' : 'Path type options'}">${svg('spline', 16)}</button>` : `<button type="button" class="icon-button" data-command="type.warp" title="Create warped text" aria-label="Create warped text">${svg('waves', 16)}</button>`;
+  return data?.path ? `<button type="button" class="icon-button" data-command="type.path-options" title="${data.path.kind === 'area' ? '区域文字选项' : '路径文字选项'}" aria-label="${data.path.kind === 'area' ? '区域文字选项' : '路径文字选项'}">${svg('spline', 16)}</button>` : `<button type="button" class="icon-button" data-command="type.warp" title="创建文字变形" aria-label="创建文字变形">${svg('waves', 16)}</button>`;
 }
 function editingButtons(): string {
-  return `<span class="type-edit-actions"><span class="divider"></span><button type="button" data-command="type.cancel" class="icon-button" title="Cancel editing (discard changes)" aria-label="Cancel editing">${svg('ban', 16)}</button><button type="button" data-command="type.commit" class="icon-button transform-apply" title="Commit text (Escape or ${navigator.platform.includes('Mac') ? '⌘' : 'Ctrl+'}Enter)" aria-label="Commit text">${svg('check', 16)}</button></span>`;
+  return `<span class="type-edit-actions"><span class="divider"></span><button type="button" data-command="type.cancel" class="icon-button" title="取消编辑（放弃更改）" aria-label="取消编辑">${svg('ban', 16)}</button><button type="button" data-command="type.commit" class="icon-button transform-apply" title="提交文本 (Escape 或 ${navigator.platform.includes('Mac') ? '⌘' : 'Ctrl+'}Enter)" aria-label="提交文本">${svg('check', 16)}</button></span>`;
 }
 
 function layerAntiAlias(e: Editor): AntiAlias | undefined {
@@ -172,15 +172,15 @@ export function typeOptions(e: Editor): string {
   const editing = !!session;
   const unit = typeUnit(e);
   const color = ch.color ? rgbHexString(ch.color) : '#000000';
-  return `<button type="button" class="icon-button" data-command="type.toggle-orientation" title="Toggle text orientation" aria-label="Toggle text orientation">${svg('type-vertical', 16)}</button>
-<button type="button" id="type-family" class="type-font-button" title="Font family" aria-label="Font family" aria-haspopup="dialog" style="font-family:${escapeXML(fontCss(ch.family ?? 'Inter'))}"><span>${escapeXML(ch.family ?? '')}</span>${svg('chevron-down', 12)}</button>
-<select id="type-style" aria-label="Font style" title="Font style">${styleValue ? '' : '<option value="" selected></option>'}${styles.map((s) => `<option value="${s.weight}|${s.italic ? 1 : 0}" ${styleValue === `${s.weight}|${s.italic ? 1 : 0}` ? 'selected' : ''}>${styleName(s.weight, s.italic)}</option>`).join('')}</select>
-<label title="Font size">${svg('baseline', 14)}<input id="type-size" type="number" min="0.01" max="${Math.round(1296 * unit.k)}" step="0.5" list="type-size-list" value="${fmt(ch.size === undefined ? undefined : ch.size * unit.k)}" aria-label="Font size in ${unit.name}"> ${unit.suffix}</label><datalist id="type-size-list">${SIZES.map((s) => `<option value="${s}"></option>`).join('')}</datalist>
-<label title="Anti-aliasing method">aa<select id="type-aa" aria-label="Anti-aliasing method">${aa ? '' : '<option value="" selected></option>'}${AA.map(([v, l]) => `<option value="${v}" ${aa === v ? 'selected' : ''}>${l}</option>`).join('')}</select></label>
-<span class="segmented" role="group" aria-label="Alignment">${(['left', 'center', 'right'] as const).map((a) => `<button type="button" class="type-align" data-align="${a}" aria-pressed="${align === a}" title="Align ${a}" aria-label="Align ${a}">${svg(`align-${a}`, 15)}</button>`).join('')}</span>
-<input id="type-color" type="color" value="${color}" class="type-color ${ch.color ? '' : 'mixed'}" title="Text color" aria-label="Text color">
+  return `<button type="button" class="icon-button" data-command="type.toggle-orientation" title="切换文字方向" aria-label="切换文字方向">${svg('type-vertical', 16)}</button>
+<button type="button" id="type-family" class="type-font-button" title="字体系列" aria-label="字体系列" aria-haspopup="dialog" style="font-family:${escapeXML(fontCss(ch.family ?? 'Inter'))}"><span>${escapeXML(ch.family ?? '')}</span>${svg('chevron-down', 12)}</button>
+<select id="type-style" aria-label="字形样式" title="字形样式">${styleValue ? '' : '<option value="" selected></option>'}${styles.map((s) => `<option value="${s.weight}|${s.italic ? 1 : 0}" ${styleValue === `${s.weight}|${s.italic ? 1 : 0}` ? 'selected' : ''}>${styleName(s.weight, s.italic)}</option>`).join('')}</select>
+<label title="字号">${svg('baseline', 14)}<input id="type-size" type="number" min="0.01" max="${Math.round(1296 * unit.k)}" step="0.5" list="type-size-list" value="${fmt(ch.size === undefined ? undefined : ch.size * unit.k)}" aria-label="字号 (${unit.name})"> ${unit.suffix}</label><datalist id="type-size-list">${SIZES.map((s) => `<option value="${s}"></option>`).join('')}</datalist>
+<label title="消除锯齿方法">aa<select id="type-aa" aria-label="消除锯齿方法">${aa ? '' : '<option value="" selected></option>'}${AA.map(([v, l]) => `<option value="${v}" ${aa === v ? 'selected' : ''}>${l}</option>`).join('')}</select></label>
+<span class="segmented" role="group" aria-label="对齐方式">${([['left', '左对齐'], ['center', '居中对齐'], ['right', '右对齐']] as const).map(([a, l]) => `<button type="button" class="type-align" data-align="${a}" aria-pressed="${align === a}" title="${l}" aria-label="${l}">${svg(`align-${a}`, 15)}</button>`).join('')}</span>
+<input id="type-color" type="color" value="${color}" class="type-color ${ch.color ? '' : 'mixed'}" title="文本颜色" aria-label="文本颜色">
 ${pathOptionsButton(c.data)}
-<button type="button" class="icon-button" data-command="type.toggle-panels" title="Toggle the Character and Paragraph panels" aria-label="Toggle the Character and Paragraph panels">${svg('case-upper', 16)}</button>
+<button type="button" class="icon-button" data-command="type.toggle-panels" title="切换字符与段落面板" aria-label="切换字符与段落面板">${svg('case-upper', 16)}</button>
 ${editing ? editingButtons() : ''}`;
 }
 

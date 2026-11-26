@@ -29,7 +29,7 @@ import './type-panels.css';
 type Kind = 'character' | 'paragraph';
 export const textStylesOf = (doc: PhotoDocument): TextStyles => doc.textStyles ?? { character: [], paragraph: [] };
 const listOf = (doc: PhotoDocument, kind: Kind) => (kind === 'character' ? textStylesOf(doc).character : textStylesOf(doc).paragraph) as (CharacterStyleDef | ParagraphStyleDef)[];
-const label = (kind: Kind) => (kind === 'character' ? 'Character Style' : 'Paragraph Style');
+const label = (kind: Kind) => (kind === 'character' ? '字符样式' : '段落样式');
 
 /** What the panels act on: the selection while editing, else whole selected text layers. */
 function target(e: Editor): { content: TextContent; a: number; b: number } | undefined {
@@ -66,7 +66,7 @@ async function applyStyle(e: Editor, kind: Kind, id: string | null) {
     if (s) {
       const [a, b] = ordered(s);
       updateData(e, (d) => ({ ...d, content: applyParagraphStyleDef(d.content, a, b, def) }), 'paragraph');
-    } else if (e.selectedLayers.some((l) => l.kind === 'text')) await editLayers(e, 'Apply Paragraph Style', (d) => ({ ...d, content: applyParagraphStyleDef(d.content, 0, textLength(d.content), def) }));
+    } else if (e.selectedLayers.some((l) => l.kind === 'text')) await editLayers(e, '应用段落样式', (d) => ({ ...d, content: applyParagraphStyleDef(d.content, 0, textLength(d.content), def) }));
     else {
       const d = typeDefaults(e);
       d.paragraph = { ...d.paragraph, ...(def?.paragraph ?? {}), paragraphStyle: def?.id ?? '' };
@@ -92,7 +92,7 @@ export async function applyExternalTextStyle(e: Editor, kind: Kind, def: Charact
   const id = existing?.id ?? crypto.randomUUID();
   const next = { ...structuredClone(def), id };
   if (JSON.stringify(existing) !== JSON.stringify(next))
-    e.command(`Add ${label(kind)}`, (d) => {
+    e.command(`添加${label(kind)}`, (d) => {
       const ts = (d.textStyles ??= { character: [], paragraph: [] });
       const list = (kind === 'character' ? ts.character : ts.paragraph) as (CharacterStyleDef | ParagraphStyleDef)[];
       const i = list.findIndex((x) => x.id === id);
@@ -111,14 +111,14 @@ function layersUsing(doc: PhotoDocument, kind: Kind, id: string, ppi: number): L
 export function installTextStyles(e: Editor) {
   const panel = (kind: Kind): Panel => ({
     id: `${kind}-styles`,
-    title: kind === 'character' ? 'Character Styles' : 'Paragraph Styles',
+    title: kind === 'character' ? '字符样式' : '段落样式',
     icon: kind === 'character' ? 'text-style-char' : 'text-style-para',
     location: 'strip',
     hidden: true,
     mount: (e, el) => {
       el.classList.add('text-styles-panel');
-      el.innerHTML = `<div class="ts-list" role="listbox" aria-label="${label(kind)}s"></div>
-<div class="ts-footer"><span class="ts-note"></span><button type="button" class="icon-button" data-ts="clear" title="Clear Override" aria-label="Clear override">${svg('eraser', 15)}</button><button type="button" class="icon-button" data-ts="redefine" title="Redefine style from the selection" aria-label="Redefine style">${svg('refresh-cw', 15)}</button><button type="button" class="icon-button" data-ts="new" title="New ${label(kind)} from the selection" aria-label="New ${label(kind).toLowerCase()}">${svg('plus', 15)}</button><button type="button" class="icon-button" data-ts="delete" title="Delete ${label(kind)}" aria-label="Delete ${label(kind).toLowerCase()}">${svg('trash-2', 15)}</button></div>`;
+      el.innerHTML = `<div class="ts-list" role="listbox" aria-label="${label(kind)}"></div>
+<div class="ts-footer"><span class="ts-note"></span><button type="button" class="icon-button" data-ts="clear" title="清除覆盖" aria-label="清除覆盖">${svg('eraser', 15)}</button><button type="button" class="icon-button" data-ts="redefine" title="根据所选内容重新定义样式" aria-label="重新定义样式">${svg('refresh-cw', 15)}</button><button type="button" class="icon-button" data-ts="new" title="根据所选内容新建${label(kind)}" aria-label="新建${label(kind)}">${svg('plus', 15)}</button><button type="button" class="icon-button" data-ts="delete" title="删除${label(kind)}" aria-label="删除${label(kind)}">${svg('trash-2', 15)}</button></div>`;
       el.addEventListener('click', (ev) => {
         const t = ev.target as HTMLElement;
         const row = t.closest<HTMLElement>('[data-style-id]');
@@ -161,7 +161,7 @@ export function installTextStyles(e: Editor) {
     registerCommand(
       {
         id: `text-style.new-${kind}`,
-        label: `New ${L}…`,
+        label: `新建${L}…`,
         recordable: false,
         enabled: (e) => e.hasDocument,
         run: async (e, arg) => {
@@ -169,10 +169,10 @@ export function installTextStyles(e: Editor) {
           const list = listOf(e.doc, kind);
           let n = list.length + 1;
           while (list.some((d) => d.name === `${L} ${n}`)) n++;
-          const v = await formDialog(`New ${L}`, [{ name: 'name', label: 'Style Name', value: `${L} ${n}` }], 'OK', 'The style records the attributes of the selected text.');
+          const v = await formDialog(`新建${L}`, [{ name: 'name', label: '样式名称', value: `${L} ${n}` }], '确定', '该样式将记录选中文本的属性。');
           if (!v?.name.trim()) return;
           const def = { id: crypto.randomUUID(), name: v.name.trim(), ...attrs } as unknown as CharacterStyleDef & ParagraphStyleDef;
-          e.command(`New ${L}`, (d) => {
+          e.command(`新建${L}`, (d) => {
             const ts = (d.textStyles ??= { character: [], paragraph: [] });
             (kind === 'character' ? ts.character : ts.paragraph).push(structuredClone(def));
           });
@@ -181,10 +181,10 @@ export function installTextStyles(e: Editor) {
       },
       {
         id: `text-style.redefine-${kind}`,
-        label: `Redefine ${L}`,
+        label: `重新定义${L}`,
         recordable: false,
         enabled: (e) => !!currentState(e, kind).id,
-        description: 'Update the style from the selected text; linked text everywhere follows.',
+        description: '根据选中文本更新样式；所有关联文本将同步更新。',
         run: async (e, arg) => {
           const id = currentState(e, kind).id;
           const old = listOf(e.doc, kind).find((d) => d.id === id);
@@ -195,7 +195,7 @@ export function installTextStyles(e: Editor) {
           const ids = layersUsing(e.doc, kind, id, ppi).map((l) => l.id);
           const before = kind === 'character' ? (old as CharacterStyleDef).style : old;
           const after = kind === 'character' ? next.style : next;
-          await editLayers(e, `Redefine ${L}`, (d) => ({ ...d, content: restyleContent(d.content, kind, before as never, after as never, id) }), ids.length ? ids : ['\0none'], (d) => {
+          await editLayers(e, `重新定义${L}`, (d) => ({ ...d, content: restyleContent(d.content, kind, before as never, after as never, id) }), ids.length ? ids : ['\0none'], (d) => {
             const list = kind === 'character' ? d.textStyles!.character : d.textStyles!.paragraph;
             const i = list.findIndex((x) => x.id === id);
             if (i >= 0) list[i] = structuredClone(next);
@@ -205,23 +205,23 @@ export function installTextStyles(e: Editor) {
       },
       {
         id: `text-style.clear-${kind}`,
-        label: 'Clear Override',
+        label: '清除覆盖',
         recordable: false,
         enabled: (e) => currentState(e, kind).overridden,
         run: (e) => clearOverride(e, kind),
       },
       {
         id: `text-style.rename-${kind}`,
-        label: `Rename ${L}…`,
+        label: `重命名${L}…`,
         recordable: false,
         enabled: (e) => !!currentState(e, kind).id,
         run: async (e, arg) => {
           const id = typeof arg === 'string' ? arg : currentState(e, kind).id;
           const def = listOf(e.doc, kind).find((d) => d.id === id);
           if (!def) return;
-          const v = await formDialog(`Rename ${L}`, [{ name: 'name', label: 'Style Name', value: def.name }], 'OK');
+          const v = await formDialog(`重命名${L}`, [{ name: 'name', label: '样式名称', value: def.name }], '确定');
           if (!v?.name.trim() || v.name.trim() === def.name) return;
-          e.command(`Rename ${L}`, (d) => {
+          e.command(`重命名${L}`, (d) => {
             const x = listOf(d, kind).find((s) => s.id === id);
             if (x) x.name = v.name.trim();
           });
@@ -230,7 +230,7 @@ export function installTextStyles(e: Editor) {
       },
       {
         id: `text-style.delete-${kind}`,
-        label: `Delete ${L}`,
+        label: `删除${L}`,
         recordable: false,
         enabled: (e) => !!currentState(e, kind).id,
         run: async (e) => {
@@ -239,7 +239,7 @@ export function installTextStyles(e: Editor) {
           const ppi = ppiOf(e);
           const ids = layersUsing(e.doc, kind, id, ppi).map((l) => l.id);
           // Linked text keeps its attributes and loses the link.
-          await editLayers(e, `Delete ${L}`, (d) => ({ ...d, content: unlinkStyle(d.content, kind, id) }), ids.length ? ids : ['\0none'], (d) => {
+          await editLayers(e, `删除${L}`, (d) => ({ ...d, content: unlinkStyle(d.content, kind, id) }), ids.length ? ids : ['\0none'], (d) => {
             const ts = d.textStyles!;
             if (kind === 'character') ts.character = ts.character.filter((x) => x.id !== id);
             else ts.paragraph = ts.paragraph.filter((x) => x.id !== id);
@@ -262,7 +262,7 @@ async function clearOverride(e: Editor, kind: Kind) {
     const [a, b] = ordered(s);
     updateData(e, (d) => ({ ...d, content: clearOverrides(d.content, a, b, styles, kind) }), 'style');
     focusInput(e);
-  } else if (e.selectedLayers.some((l) => l.kind === 'text')) await editLayers(e, 'Clear Override', (d) => ({ ...d, content: clearOverrides(d.content, 0, textLength(d.content), styles, kind) }));
+  } else if (e.selectedLayers.some((l) => l.kind === 'text')) await editLayers(e, '清除覆盖', (d) => ({ ...d, content: clearOverrides(d.content, 0, textLength(d.content), styles, kind) }));
   e.dock.update();
 }
 
@@ -276,10 +276,10 @@ function render(e: Editor, el: HTMLElement, kind: Kind) {
   };
   const row = (id: string, name: string, css = '') => {
     const on = !st.mixed && (st.id ?? '') === id;
-    return `<div class="ts-row" role="option" tabindex="0" data-style-id="${escapeXML(id)}" aria-selected="${on}"><span class="ts-name" style="${css}">${escapeXML(name)}</span>${on && st.overridden ? '<span class="ts-override" title="The selection overrides this style">+</span>' : ''}</div>`;
+    return `<div class="ts-row" role="option" tabindex="0" data-style-id="${escapeXML(id)}" aria-selected="${on}"><span class="ts-name" style="${css}">${escapeXML(name)}</span>${on && st.overridden ? '<span class="ts-override" title="所选内容覆盖了此样式">+</span>' : ''}</div>`;
   };
-  el.querySelector('.ts-list')!.innerHTML = row('', `[No ${kind === 'character' ? 'Character' : 'Paragraph'} Style]`) + list.map((d) => row(d.id, d.name, preview(d))).join('');
-  el.querySelector('.ts-note')!.textContent = st.mixed ? 'Mixed styles' : session ? 'Selection' : e.layer?.kind === 'text' ? 'Selected layer' : 'New text';
+  el.querySelector('.ts-list')!.innerHTML = row('', `[无${kind === 'character' ? '字符' : '段落'}样式]`) + list.map((d) => row(d.id, d.name, preview(d))).join('');
+  el.querySelector('.ts-note')!.textContent = st.mixed ? '混合样式' : session ? '所选内容' : e.layer?.kind === 'text' ? '选定图层' : '新文字';
   const enable = (k: string, on: boolean) => ((el.querySelector(`[data-ts="${k}"]`) as HTMLButtonElement).disabled = !on);
   enable('clear', st.overridden);
   enable('redefine', !!st.id);
@@ -293,29 +293,29 @@ function installDefaultTypeStyles() {
   registerCommand(
     {
       id: 'type.save-default-styles',
-      label: 'Save Default Type Styles',
+      label: '保存默认文字样式',
       recordable: false,
       enabled: (e) => e.hasDocument && (textStylesOf(e.doc).character.length + textStylesOf(e.doc).paragraph.length > 0),
-      description: 'Keep this document’s character and paragraph styles as the defaults.',
+      description: '将本文档的字符和段落样式保留为默认值。',
       run: (e) => {
         try {
           localStorage.setItem(defaultsKey, JSON.stringify(textStylesOf(e.doc)));
-          e.message('Saved the character and paragraph styles as default type styles.');
+          e.message('已将字符和段落样式保存为默认文字样式。');
         } catch {
-          e.message('Could not save the default type styles in this browser.');
+          e.message('无法在此浏览器中保存默认文字样式。');
         }
       },
     },
     {
       id: 'type.load-default-styles',
-      label: 'Load Default Type Styles',
+      label: '载入默认文字样式',
       recordable: false,
       enabled: (e) => e.hasDocument && !!savedDefaults(),
-      description: 'Add the saved default styles to this document (styles with the same name are replaced).',
+      description: '将已保存的默认样式添加到本文档（同名样式将被替换）。',
       run: (e) => {
         const saved = savedDefaults();
         if (!saved) return;
-        e.command('Load Default Type Styles', (d) => {
+        e.command('载入默认文字样式', (d) => {
           const ts = (d.textStyles ??= { character: [], paragraph: [] });
           const merge = <T extends { id: string; name: string }>(into: T[], add: T[]) => {
             for (const s of add) {

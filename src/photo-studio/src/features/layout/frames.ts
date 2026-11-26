@@ -284,15 +284,15 @@ export function installFrames(_e: Editor) {
   recordsSettings('layer.frame-from-layers');
   registerTool({
     id: 'frame',
-    label: 'Frame Tool',
+    label: '图框工具',
     key: 'K',
     icon: 'frame-tool',
     group: 'frame',
     cursor: () => 'crosshair',
     options: (e) =>
-      `<span class="segmented" role="group" aria-label="Frame shape"><button class="icon-button toggle" data-frame-shape="rect" aria-pressed="${shapeOf(e) === 'rect'}" title="Rectangular frame" aria-label="Rectangular frame">${svg('frame-tool', 16)}</button><button class="icon-button toggle" data-frame-shape="ellipse" aria-pressed="${shapeOf(e) === 'ellipse'}" title="Elliptical frame" aria-label="Elliptical frame">${svg('frame-ellipse', 16)}</button></span>
-<label>Placed images <select id="frame-fit"><option value="fill" ${fitOf(e) === 'fill' ? 'selected' : ''}>Fill the frame</option><option value="fit" ${fitOf(e) === 'fit' ? 'selected' : ''}>Fit inside the frame</option></select></label>
-<span class="hint">Drag to draw a frame (Shift: square or circle, Alt: from center). Drop an image on a frame to place it.</span>`,
+      `<span class="segmented" role="group" aria-label="图框形状"><button class="icon-button toggle" data-frame-shape="rect" aria-pressed="${shapeOf(e) === 'rect'}" title="矩形图框" aria-label="矩形图框">${svg('frame-tool', 16)}</button><button class="icon-button toggle" data-frame-shape="ellipse" aria-pressed="${shapeOf(e) === 'ellipse'}" title="椭圆图框" aria-label="椭圆图框">${svg('frame-ellipse', 16)}</button></span>
+<label>置入图像 <select id="frame-fit"><option value="fill" ${fitOf(e) === 'fill' ? 'selected' : ''}>填充图框</option><option value="fit" ${fitOf(e) === 'fit' ? 'selected' : ''}>适合图框</option></select></label>
+<span class="hint">拖动以绘制图框（Shift: 正方形或圆形，Alt: 从中心）。将图像拖放到图框中以置入。</span>`,
     bindOptions: ({ e, el }) => {
       el.querySelectorAll<HTMLElement>('[data-frame-shape]').forEach((b) =>
         b.addEventListener('click', () => {
@@ -326,11 +326,11 @@ export function installFrames(_e: Editor) {
     deactivate: () => (drag = undefined),
   });
   registerCommand(
-    { id: 'layer.frame-from-layers', label: 'Frame from Layers…', run: (e, arg) => frameFromLayers(e, arg), enabled: canFrame, description: 'Mask the selected layers with a new frame' },
-    { id: 'layer.convert-to-frame', label: 'Convert to Frame', run: (e) => convertToFrame(e), enabled: canConvert, description: 'Turn a rectangle or ellipse shape into an empty frame, or frame a layer' },
+    { id: 'layer.frame-from-layers', label: '来自图层的图框…', run: (e, arg) => frameFromLayers(e, arg), enabled: canFrame, description: '使用新图框对所选图层创建蒙版' },
+    { id: 'layer.convert-to-frame', label: '转换为图框', run: (e) => convertToFrame(e), enabled: canConvert, description: '将矩形或椭圆形状转换为填充空白的图框，或为图层创建图框' },
     {
       id: 'frame.place',
-      label: 'Place Image in Frame…',
+      label: '在图框中置入图像…',
       run: (e) => {
         const f = currentFrame(e);
         if (f) pickImage(e, f.id);
@@ -340,10 +340,10 @@ export function installFrames(_e: Editor) {
     },
     {
       id: 'frame.clear',
-      label: 'Clear Frame Content',
+      label: '清除图框内容',
       run: (e) => {
         const f = currentFrame(e);
-        if (f) editFrame(e, f.id, 'Clear Frame', (x) => (x.children = []));
+        if (f) editFrame(e, f.id, '清除图框', (x) => (x.children = []));
       },
       enabled: (e) => !!currentFrame(e)?.children.length,
     },
@@ -357,17 +357,17 @@ export function installFrames(_e: Editor) {
       const f = l.frame;
       const locked = !!layerLock(e.doc.layers, l.id, 'all');
       const r = f.rect;
-      el.innerHTML = `<div class="property-body frame-properties"><span class="eyebrow">FRAME</span>
-<input class="layer-name-input" data-frame="name" aria-label="Frame name" value="${escapeXML(l.name)}" ${locked ? 'disabled' : ''}>
+      el.innerHTML = `<div class="property-body frame-properties"><span class="eyebrow">图框</span>
+<input class="layer-name-input" data-frame="name" aria-label="图框名称" value="${escapeXML(l.name)}" ${locked ? 'disabled' : ''}>
 <fieldset ${locked ? 'disabled' : ''}>
-<h3>Frame</h3>
-<label class="number-field"><span>Shape</span><select data-frame="shape" aria-label="Frame shape"><option value="rect" ${f.shape === 'rect' ? 'selected' : ''}>Rectangle</option><option value="ellipse" ${f.shape === 'ellipse' ? 'selected' : ''}>Ellipse</option></select></label>
-<div class="transform-grid" style="margin-top:6px">${numField('x', 'X', r.x)}${numField('y', 'Y', r.y)}${numField('width', 'W', r.width, 1)}${numField('height', 'H', r.height, 1)}</div>
-<h3>Content</h3>
-<label class="number-field"><span>Scaling</span><select data-frame="fit" aria-label="Content scaling"><option value="fill" ${f.fit === 'fill' ? 'selected' : ''}>Fill the frame</option><option value="fit" ${f.fit === 'fit' ? 'selected' : ''}>Fit inside the frame</option></select></label>
-<p class="muted">${l.children.length ? `${escapeXML(l.children.map((c) => c.name).join(', '))}` : 'Empty — place an image or drop one on the frame.'}</p>
-<button class="wide" data-frame-action="place">${svg('image-plus', 13)} ${l.children.length ? 'Replace image…' : 'Place image…'}</button>
-${l.children.length ? `<button class="wide" data-frame-action="refit">${svg('scan', 13)} Refit content</button><button class="wide" data-frame-action="clear">${svg('trash-2', 13)} Clear content</button>` : ''}
+<h3>图框</h3>
+<label class="number-field"><span>形状</span><select data-frame="shape" aria-label="图框形状"><option value="rect" ${f.shape === 'rect' ? 'selected' : ''}>矩形</option><option value="ellipse" ${f.shape === 'ellipse' ? 'selected' : ''}>椭圆</option></select></label>
+<div class="transform-grid" style="margin-top:6px">${numField('x', 'X', r.x)}${numField('y', 'Y', r.y)}${numField('width', '宽', r.width, 1)}${numField('height', '高', r.height, 1)}</div>
+<h3>内容</h3>
+<label class="number-field"><span>缩放</span><select data-frame="fit" aria-label="内容缩放"><option value="fill" ${f.fit === 'fill' ? 'selected' : ''}>填充图框</option><option value="fit" ${fitOf(e) === 'fit' ? 'selected' : ''}>适合图框</option></select></label>
+<p class="muted">${l.children.length ? `${escapeXML(l.children.map((c) => c.name).join(', '))}` : '空白 — 置入图像或将图像拖放到图框上。'}</p>
+<button class="wide" data-frame-action="place">${svg('image-plus', 13)} ${l.children.length ? '替换图像…' : '置入图像…'}</button>
+${l.children.length ? `<button class="wide" data-frame-action="refit">${svg('scan', 13)} 重新贴合内容</button><button class="wide" data-frame-action="clear">${svg('trash-2', 13)} 清除内容</button>` : ''}
 </fieldset></div>`;
       const id = l.id;
       el.addEventListener('change', (ev) => {

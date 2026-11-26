@@ -462,11 +462,11 @@ export function sampleFrames(anim: FrameAnimation, fps: number, plays = 1): numb
 // Loop counts in container formats: GIF stores extra repeats (and omits the
 // extension to play once); APNG and WebP store the play count, 0 = forever.
 export const gifLoop = (plays: number) => (plays === 0 ? 0 : plays === 1 ? -1 : Math.min(65535, plays - 1));
-export const loopLabel = (plays: number) => (plays === 0 ? 'Forever' : plays === 1 ? 'Once' : `${plays} times`);
+export const loopLabel = (plays: number) => (plays === 0 ? '永远' : plays === 1 ? '一次' : `${plays} 次`);
 export function delayLabel(ms: number) {
-  if (ms === 0) return 'No delay';
+  if (ms === 0) return '无延迟';
   const s = ms / 1000;
-  return `${Number.isInteger(s * 10) ? s.toFixed(1) : String(Math.round(s * 1000) / 1000)} s`;
+  return `${Number.isInteger(s * 10) ? s.toFixed(1) : String(Math.round(s * 1000) / 1000)} 秒`;
 }
 
 // ----- Project files -----

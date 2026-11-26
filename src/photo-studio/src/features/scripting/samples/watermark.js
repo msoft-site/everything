@@ -1,17 +1,17 @@
-// @name Add Watermark
-// @description Adds a text layer with a line such as a copyright notice in a corner of the image.
+// @name 添加水印
+// @description 在图像角标处添加包含版权声明等文字的文本图层。
 const doc = await studio.documents.active();
-if (!doc) return studio.ui.alert('Open a document first.');
+if (!doc) return studio.ui.alert('请先打开一个文档。');
 
 const year = new Date().getFullYear();
-const v = await studio.ui.form('Add Watermark', [
-  { name: 'text', label: 'Text', value: `© ${year}` },
-  { name: 'corner', label: 'Corner', type: 'select', value: 'bottom-right', options: [['bottom-right', 'Bottom right'], ['bottom-left', 'Bottom left'], ['top-right', 'Top right'], ['top-left', 'Top left'], ['center', 'Center']] },
-  { name: 'size', label: 'Size (% of the shorter side)', type: 'range', min: 1, max: 20, step: 1, value: 4 },
-  { name: 'color', label: 'Color', type: 'color', value: '#ffffff' },
-  { name: 'opacity', label: 'Opacity (%)', type: 'number', min: 1, max: 100, value: 70 },
-  { name: 'shadow', label: 'Soft shadow', type: 'checkbox', value: true },
-], { submit: 'Add' });
+const v = await studio.ui.form('添加水印', [
+  { name: 'text', label: '文本', value: `© ${year}` },
+  { name: 'corner', label: '位置', type: 'select', value: 'bottom-right', options: [['bottom-right', '右下角'], ['bottom-left', '左下角'], ['top-right', '右上角'], ['top-left', '左上角'], ['center', '居中']] },
+  { name: 'size', label: '字号 (短边百分比 %)', type: 'range', min: 1, max: 20, step: 1, value: 4 },
+  { name: 'color', label: '颜色', type: 'color', value: '#ffffff' },
+  { name: 'opacity', label: '不透明度 (%)', type: 'number', min: 1, max: 100, value: 70 },
+  { name: 'shadow', label: '柔和阴影', type: 'checkbox', value: true },
+], { submit: '添加' });
 if (!v || !v.text.trim()) return;
 
 const size = Math.max(6, Math.round((Math.min(doc.width, doc.height) * v.size) / 100));

@@ -45,12 +45,31 @@ export function onScriptsChanged(fn: () => void) {
 }
 const changed = () => listeners.forEach((fn) => fn());
 
+const SAMPLE_CHINESE: Record<string, { name: string; description: string }> = {
+  watermark: { name: '添加水印', description: '在图像角标处添加包含版权声明等文字的文本图层。' },
+  border: { name: '添加边框', description: '在新图层上围绕画布或选区绘制实心边框。' },
+  'rename-layers': { name: '按模式重命名图层', description: '使用带编号的模式重命名所选图层（或所有图层），或查找并替换图层名称中的文本。' },
+  'color-swatches': { name: '随机色板', description: '生成一组和谐的颜色样本色块条，并在图层组中附带各色块的十六进制颜色代码。' },
+  'export-layer-sizes': { name: '按多种尺寸导出图层', description: '按您列出的各个缩放比例将每个图层分别导出为图像，并统一打包为 ZIP 文件。' },
+  'documents-grid': { name: '从打开的文档生成网格', description: '在新文档中以网格排列展示所有打开文档的缩略图，并可在下方附带文档名称。' },
+};
+
 /** Read the records once; later calls wait for the same load. */
 export function loadScripts(): Promise<void> {
   loaded ??= (async () => {
     try {
       const list = await db().all<ScriptRecord>('scripts');
       scripts = list.filter(validRecord).sort((a, b) => a.created - b.created);
+      for (const s of scripts) {
+        if (s.sample && SAMPLE_CHINESE[s.sample]) {
+          const zh = SAMPLE_CHINESE[s.sample];
+          if (s.name !== zh.name || s.description !== zh.description) {
+            s.name = zh.name;
+            s.description = zh.description;
+            void db().put('scripts', s.id, s).catch(() => undefined);
+          }
+        }
+      }
       const ev = await db().get<EventSettings>('settings', 'events');
       if (ev && Array.isArray(ev.rules)) events = { enabled: ev.enabled !== false, rules: ev.rules.filter(validRule) };
     } catch {

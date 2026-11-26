@@ -22,7 +22,7 @@ import { centerPoint, panToCenter } from '../../app/view-transform';
 const historyMarkup = new WeakMap<HTMLElement, string>();
 const historyPanel: Panel = {
   id: 'history',
-  title: 'History',
+  title: '历史记录',
   icon: 'history',
   location: 'strip',
   mount: (e, el) => {
@@ -63,15 +63,15 @@ const historyPanel: Panel = {
       // Once older steps are dropped, the first row is the result of the
       // latest dropped step rather than the opened document.
       e.history.baseLabel
-        ? `<button class="history-row ${done.length === 0 ? 'current' : ''}" data-history="0" ${current(done.length === 0)} title="Earlier steps are no longer kept">${svg('history', 14)}<span>${escapeXML(e.history.baseLabel)}</span></button>`
+        ? `<button class="history-row ${done.length === 0 ? 'current' : ''}" data-history="0" ${current(done.length === 0)} title="更早的历史步骤已不再保留">${svg('history', 14)}<span>${escapeXML(e.history.baseLabel)}</span></button>`
         : `<button class="history-row ${done.length === 0 ? 'current' : ''}" data-history="0" ${current(done.length === 0)}>${svg('image', 14)}<span>${escapeXML(e.doc.name)}</span></button>`,
       ...done.map((l, i) => `<button class="history-row ${i === done.length - 1 ? 'current' : ''}" data-history="${i + 1}" ${current(i === done.length - 1)}>${svg('history', 14)}<span>${escapeXML(l)}</span></button>`),
-      ...undone.map((l, i) => `<button class="history-row undone" data-history="${done.length + i + 1}">${svg('history', 14)}<span>${escapeXML(l)}</span><span class="sr-only">(undone)</span></button>`),
+      ...undone.map((l, i) => `<button class="history-row undone" data-history="${done.length + i + 1}">${svg('history', 14)}<span>${escapeXML(l)}</span><span class="sr-only">(已撤销)</span></button>`),
     ];
     const snaps = sessionSnapshots(e);
     const source = historySourceId(e) ?? '';
-    const snapRows = snaps.map((sn) => `<div class="history-snapshot"><button class="history-source" data-history-source="${sn.id}" aria-pressed="${source === sn.id}" title="Set the source for the History Brush" aria-label="Use ${escapeXML(sn.name)} as History Brush source">${svg('history', 13)}</button><button class="history-row" data-snapshot="${sn.id}">${svg('camera', 14)}<span>${escapeXML(sn.name)}</span></button></div>`).join('');
-    const html = `${snapRows ? `<div class="history-snapshots">${snapRows}</div>` : ''}<div class="history-entries">${rows.join('')}</div><div class="history-controls"><button data-command="history.snapshot" aria-label="Create new snapshot" title="Create new snapshot" ${e.hasDocument ? '' : 'disabled'}>${svg('camera', 15)}</button><button data-command="edit.undo" aria-label="Undo" title="Undo" ${e.history.canUndo || e.session.hasPendingEdits ? '' : 'disabled'}>${svg('undo-2', 15)}</button><button data-command="edit.redo" aria-label="Redo" title="Redo" ${e.history.canRedo ? '' : 'disabled'}>${svg('redo-2', 15)}</button></div>`;
+    const snapRows = snaps.map((sn) => `<div class="history-snapshot"><button class="history-source" data-history-source="${sn.id}" aria-pressed="${source === sn.id}" title="设置历史记录画笔的源" aria-label="使用 ${escapeXML(sn.name)} 作为历史记录画笔源">${svg('history', 13)}</button><button class="history-row" data-snapshot="${sn.id}">${svg('camera', 14)}<span>${escapeXML(sn.name)}</span></button></div>`).join('');
+    const html = `${snapRows ? `<div class="history-snapshots">${snapRows}</div>` : ''}<div class="history-entries">${rows.join('')}</div><div class="history-controls"><button data-command="history.snapshot" aria-label="新建快照" title="新建快照" ${e.hasDocument ? '' : 'disabled'}>${svg('camera', 15)}</button><button data-command="edit.undo" aria-label="撤销" title="撤销" ${e.history.canUndo || e.session.hasPendingEdits ? '' : 'disabled'}>${svg('undo-2', 15)}</button><button data-command="edit.redo" aria-label="重做" title="重做" ${e.history.canRedo ? '' : 'disabled'}>${svg('redo-2', 15)}</button></div>`;
     // Unchanged (an update that is not a history step): keep the list as it
     // is, scrolled where the user left it.
     if (historyMarkup.get(el) === html) return;
@@ -85,12 +85,12 @@ const historyPanel: Panel = {
 
 const colorPanel: Panel = {
   id: 'color',
-  title: 'Color',
+  title: '颜色',
   icon: 'palette',
   location: 'dock-top',
   shortcut: 'F6',
   mount: (e, el) => {
-    el.innerHTML = `<div class="color-body"><div class="color-chip-pair"><button class="chip fg-big" data-command="color.pick-foreground" aria-label="Foreground color"></button><button class="chip bg-big" data-command="color.pick-background" aria-label="Background color"></button></div><div class="color-picker-row"><div id="color-plane" tabindex="0" role="slider" aria-label="Color saturation and brightness" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="color-marker"></span></div><input id="color-hue" type="range" min="0" max="359" value="0" aria-label="Color hue" orient="vertical"></div><div class="color-value-row"><span id="color-preview"></span><label for="color-value">Hex</label><input id="color-value" value="#000000" maxlength="7" spellcheck="false" aria-label="Hex color"><span class="rgb-readout"></span></div></div>`;
+    el.innerHTML = `<div class="color-body"><div class="color-chip-pair"><button class="chip fg-big" data-command="color.pick-foreground" aria-label="前景色"></button><button class="chip bg-big" data-command="color.pick-background" aria-label="背景色"></button></div><div class="color-picker-row"><div id="color-plane" tabindex="0" role="slider" aria-label="颜色饱和度与明度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="color-marker"></span></div><input id="color-hue" type="range" min="0" max="359" value="0" aria-label="颜色色相" orient="vertical"></div><div class="color-value-row"><span id="color-preview"></span><label for="color-value">十六进制</label><input id="color-value" value="#000000" maxlength="7" spellcheck="false" aria-label="十六进制颜色"><span class="rgb-readout"></span></div></div>`;
     e.colorControls = new ColorControls(el, (color) => e.setForeground(color));
     e.colorControls.sync(e.color);
   },
@@ -146,7 +146,7 @@ export function replaceSwatches(e: Editor, colors: string[]) {
 const swatchMarkup = new WeakMap<HTMLElement, string>();
 const swatchesPanel: Panel = {
   id: 'swatches',
-  title: 'Swatches',
+  title: '色板',
   icon: 'swatch-book',
   location: 'dock-top',
   mount: (e, el) => {
@@ -186,7 +186,7 @@ const swatchesPanel: Panel = {
     });
   },
   update: (e, el) => {
-    const html = `<div class="swatch-grid" role="group" aria-label="Swatches">${swatches.map((c, i) => `<button data-swatch="${c}" data-index="${i}" style="--swatch:${c}" title="${c} — click: foreground, ${isMac ? '⌘' : 'Ctrl'}-click: background, Alt-click or Delete: remove" aria-label="Swatch ${c}" aria-keyshortcuts="Delete"></button>`).join('')}<button data-add-swatch title="Add foreground color" aria-label="Add swatch from foreground color">${svg('plus', 13)}</button></div>`;
+    const html = `<div class="swatch-grid" role="group" aria-label="色板">${swatches.map((c, i) => `<button data-swatch="${c}" data-index="${i}" style="--swatch:${c}" title="${c} — 单击：前景色，${isMac ? '⌘' : 'Ctrl'}+单击：背景色，Alt+单击或 Delete：删除" aria-label="色板 ${c}" aria-keyshortcuts="Delete"></button>`).join('')}<button data-add-swatch title="添加前景色" aria-label="从前景色添加色板">${svg('plus', 13)}</button></div>`;
     // Updates run after every edit; rebuilding unchanged buttons would cost
     // time and take the keyboard focus off the swatch just chosen.
     if (swatchMarkup.get(el) === html) return;
@@ -217,11 +217,11 @@ function later(e: Editor, f: () => void) {
 }
 const navigatorPanel: Panel = {
   id: 'navigator',
-  title: 'Navigator',
+  title: '导航器',
   icon: 'compass',
   location: 'strip',
   mount: (e, el) => {
-    el.innerHTML = `<div class="navigator-view"><canvas width="220" height="160"></canvas><div class="navigator-box"></div></div><div class="navigator-zoom"><button data-command="view.zoom-out" class="icon-button" aria-label="Zoom out">${svg('minus', 13)}</button><input type="range" min="0" max="100" step="0.1" aria-label="Zoom"><button data-command="view.zoom-in" class="icon-button" aria-label="Zoom in">${svg('plus', 13)}</button><output></output></div>`;
+    el.innerHTML = `<div class="navigator-view"><canvas width="220" height="160"></canvas><div class="navigator-box"></div></div><div class="navigator-zoom"><button data-command="view.zoom-out" class="icon-button" aria-label="缩小">${svg('minus', 13)}</button><input type="range" min="0" max="100" step="0.1" aria-label="缩放比例"><button data-command="view.zoom-in" class="icon-button" aria-label="放大">${svg('plus', 13)}</button><output></output></div>`;
     const view = el.querySelector<HTMLElement>('.navigator-view')!;
     const pan = (ev: PointerEvent) => {
       const c = el.querySelector('canvas')!.getBoundingClientRect();
@@ -296,7 +296,7 @@ export function installPanels(e: Editor) {
     ...propertiesSectionCommands,
     {
       id: 'swatches.reset',
-      label: 'Reset Swatches',
+      label: '复位色板',
       run: (e) => {
         swatches = [...defaultSwatches];
         saveSwatches();
@@ -306,7 +306,7 @@ export function installPanels(e: Editor) {
     },
     {
       id: 'layer.add-mask',
-      label: 'Add Layer Mask',
+      label: '添加图层蒙版',
       hidden: true,
       enabled: (e) => !!e.layer,
       run: async (e) => {
@@ -322,12 +322,12 @@ export function installPanels(e: Editor) {
     },
     {
       id: 'select.load-transparency',
-      label: 'Load Layer Transparency',
+      label: '载入图层透明度',
       hidden: true,
       run: (e, arg) => {
         const l = findLayer(e.doc.layers, String(arg ?? e.selected));
         if (!l?.pixels) {
-          e.message('Only pixel layers can load their transparency as a selection.');
+          e.message('只有像素图层才能将其透明度载入为选区。');
           return;
         }
         const area = canvasRect(e.doc);
@@ -335,12 +335,12 @@ export function installPanels(e: Editor) {
         const m = new Uint8Array(area.width * area.height);
         for (let i = 0; i < m.length; i++) m[i] = img.data[i * 4 + 3];
         const p = e.pointerInfo;
-        commitSelectionMask(e, { width: area.width, height: area.height, data: m }, p ? selectionOp(e, p) : 'replace', 'Load Selection');
+        commitSelectionMask(e, { width: area.width, height: area.height, data: m }, p ? selectionOp(e, p) : 'replace', '载入选区');
       },
     },
     {
       id: 'color.pick-layer-color',
-      label: 'Change Fill Color',
+      label: '更改填充颜色',
       hidden: true,
       run: (e) => {
         const l = e.layer;
@@ -351,8 +351,8 @@ export function installPanels(e: Editor) {
         const recolor = (layers: Layer[], color: string): Layer[] =>
           layers.map((x) => (x.id === id ? { ...x, color } : x.children.length ? { ...x, children: recolor(x.children, color) } : x));
         const preview = layerLock(e.doc.layers, id, 'all') ? undefined : (c: string) => e.preview({ ...e.doc, layers: recolor(e.doc.layers, c) });
-        void import('../color/picker').then(({ pickColor }) => pickColor(e, l.color, 'Fill Color', preview)).then((c) => {
-          if (c) e.editLayer('Change Fill Color', (x) => (x.color = c));
+        void import('../color/picker').then(({ pickColor }) => pickColor(e, l.color, '填充颜色', preview)).then((c) => {
+          if (c) e.editLayer('更改填充颜色', (x) => (x.color = c));
           else e.preview(e.displayDoc);
         });
       },

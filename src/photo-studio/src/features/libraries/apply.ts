@@ -70,35 +70,35 @@ async function captureItem(e: Editor, src: AddSource): Promise<Captured | undefi
     }
     case 'gradient': {
       const g: Gradient = structuredClone(effectsState.gradient);
-      return add('gradient', g.name || 'Gradient', { gradient: g });
+      return add('gradient', g.name || '渐变', { gradient: g });
     }
     case 'pattern': {
       const p = currentPattern(e);
-      if (!p) return void e.message('There is no current pattern.');
+      if (!p) return void e.message('当前没有选中的图案。');
       return add('pattern', p.name, { width: p.tile.width, height: p.tile.height }, { content: png(p.tile), thumb: thumbnail(p.tile, 96) });
     }
     case 'layer-style': {
       const l = e.layer;
-      if (!l?.style) return void e.message('The selected layer has no layer style.');
-      return add('layer-style', `${l.name} Style`, { style: structuredClone(l.style) });
+      if (!l?.style) return void e.message('选定图层没有图层样式。');
+      return add('layer-style', `${l.name} 样式`, { style: structuredClone(l.style) });
     }
     case 'character-style':
     case 'paragraph-style': {
-      if (e.layer?.kind !== 'text') return void e.message('Select a text layer.');
+      if (e.layer?.kind !== 'text') return void e.message('请选择文本图层。');
       const kind = src === 'character-style' ? 'character' : 'paragraph';
       const attrs = captureAttributes(e, kind);
-      const name = `${e.layer.name.slice(0, 40)} ${kind === 'character' ? 'Character' : 'Paragraph'}`;
+      const name = `${e.layer.name.slice(0, 40)} ${kind === 'character' ? '字符样式' : '段落样式'}`;
       return add(src, name, { def: { id: '', name, ...attrs } });
     }
     case 'brush': {
-      const tool = paintingTools.has(e.tool) ? (e.activeTool?.label?.replace(/ Tool$/, '') ?? 'Brush') : 'Brush';
-      const preset = currentBrushPreset(e, `${tool} ${Math.round(Number(currentBrushPreset(e, '').tip.size ?? 30))} px`);
+      const tool = paintingTools.has(e.tool) ? (e.activeTool?.label?.replace(/ 工具$/, '') ?? '画笔') : '画笔';
+      const preset = currentBrushPreset(e, `${tool} ${Math.round(Number(currentBrushPreset(e, '').tip.size ?? 30))} 像素`);
       return add('brush', preset.name, { preset });
     }
     case 'layers': {
       const roots = e.selectedLayers;
       const list = roots.length ? containerOf(e.doc.layers, roots[0].id) : undefined;
-      if (!roots.length || roots.some((l) => containerOf(e.doc.layers, l.id) !== list)) return void e.message('Select layers of one group to add them as a graphic.');
+      if (!roots.length || roots.some((l) => containerOf(e.doc.layers, l.id) !== list)) return void e.message('请选择同一图层组内的图层以将其作为图形添加。');
       const built = await nestedFromLayers(e, roots);
       if (!built) return;
       // The layers stay editable: the graphic is a layered project, placed as an embedded object.
@@ -109,7 +109,7 @@ async function captureItem(e: Editor, src: AddSource): Promise<Captured | undefi
     case 'selection': {
       const grid = selectionGrid(e.doc, e.assets.tiles);
       const rect = grid ? selectionBounds(e.doc, grid) : null;
-      if (!grid || !rect) return void e.message('Make a selection first.');
+      if (!grid || !rect) return void e.message('请先建立选区。');
       const all = await compositeRGBA(e);
       const mask = readMask(e.assets.tiles, grid, rect);
       const img: RGBA8 = { width: rect.width, height: rect.height, data: new Uint8ClampedArray(rect.width * rect.height * 4) };
@@ -261,13 +261,13 @@ export async function updateLibraryLinks(e: Editor): Promise<number> {
     updates.push({ ...got.c, id: c.id, name: c.name, link: { ...c.link!, size: got.blob.size, modified: Date.parse(item.modified) || Date.now(), hash: await sha256Hex(got.blob) } });
   }
   if (updates.length) {
-    e.command('Update Library Graphics', (d) => updates.forEach((n) => setContents(d, n)));
+    e.command('更新资源库图形', (d) => updates.forEach((n) => setContents(d, n)));
     for (const n of updates) statuses.set(n.id, 'current');
-    e.message(`Updated ${updates.length} linked library graphic${updates.length === 1 ? '' : 's'}.`);
+    e.message(`已更新 ${updates.length} 个链接的资源库图形。`);
   }
   return updates.length;
 }
 
 /** Item description for tooltips. */
 export const describeItem = (item: LibraryItem) =>
-  `${item.name} — ${TYPE_SINGULAR[item.type]}${item.type === 'graphic' ? ` (${item.data.width} × ${item.data.height} px)` : item.type === 'color' ? ` ${item.data.hex}` : ''}`;
+  `${item.name} — ${TYPE_SINGULAR[item.type]}${item.type === 'graphic' ? ` (${item.data.width} × ${item.data.height} 像素)` : item.type === 'color' ? ` ${item.data.hex}` : ''}`;

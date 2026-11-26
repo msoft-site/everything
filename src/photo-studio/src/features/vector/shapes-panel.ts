@@ -27,9 +27,19 @@ function add(e: Editor, id: string, x: number, y: number) {
   void import('./shape-tools').then((m) => m.addCustomShapeLayer(e, id, r));
 }
 
+const GROUP_NAMES: Record<string, string> = {
+  'Arrows': '箭头',
+  'Symbols': '符号',
+  'Nature': '自然',
+  'Objects': '物体',
+  'Banners and Badges': '横幅与徽章',
+  'Ornaments': '装饰图案',
+  'Defined Shapes': '自定形状',
+};
+
 const shapesPanel: Panel = {
   id: 'shapes',
-  title: 'Shapes',
+  title: '形状',
   icon: 'shapes',
   location: 'strip',
   hidden: true,
@@ -86,11 +96,12 @@ function render(el: HTMLElement) {
     .filter(([, list]) => list.length)
     .map(([g, list]) => {
       const open = !collapsed.has(g);
-      return `<section class="sh-group"><button type="button" class="sh-head" data-group-toggle="${escapeXML(g)}" aria-expanded="${open}"><span class="sh-caret">${open ? '▾' : '▸'}</span>${escapeXML(g)}<span class="sh-count">${list.length}</span></button>${
-        open ? `<div class="sh-grid" role="listbox" aria-label="${escapeXML(g)}">${list.map((s) => `<button type="button" role="option" draggable="true" data-shape="${escapeXML(s.id)}" aria-selected="${s.id === shapeOpts.custom}" title="${escapeXML(s.name)} — drag onto the canvas" aria-label="${escapeXML(s.name)}"><svg viewBox="-4 -4 108 108" aria-hidden="true"><path d="${escapeXML(s.d)}" fill="currentColor" fill-rule="evenodd"/></svg></button>`).join('')}</div>` : ''
+      const label = GROUP_NAMES[g] ?? g;
+      return `<section class="sh-group"><button type="button" class="sh-head" data-group-toggle="${escapeXML(g)}" aria-expanded="${open}"><span class="sh-caret">${open ? '▾' : '▸'}</span>${escapeXML(label)}<span class="sh-count">${list.length}</span></button>${
+        open ? `<div class="sh-grid" role="listbox" aria-label="${escapeXML(label)}">${list.map((s) => `<button type="button" role="option" draggable="true" data-shape="${escapeXML(s.id)}" aria-selected="${s.id === shapeOpts.custom}" title="${escapeXML(s.name)} — 拖动到画布上" aria-label="${escapeXML(s.name)}"><svg viewBox="-4 -4 108 108" aria-hidden="true"><path d="${escapeXML(s.d)}" fill="currentColor" fill-rule="evenodd"/></svg></button>`).join('')}</div>` : ''
       }</section>`;
     })
-    .join('')}<p class="hint">Drag a shape onto the canvas, or double-click to add it in the middle. Edit → Define Custom Shape adds your own.</p>`;
+    .join('')}<p class="hint">拖动形状到画布上，或双击以在中心添加。通过 编辑 → 定义自定形状 可添加你自己的形状。</p>`;
 }
 
 export function installShapesPanel(e: Editor) {

@@ -442,14 +442,14 @@ export function installTypeTools(e: Editor) {
     overlay,
   });
   registerTool(
-    make('type', 'Horizontal Type Tool', 'type', false, false),
-    make('type-vertical', 'Vertical Type Tool', 'type-vertical', true, false),
-    make('type-mask', 'Horizontal Type Mask Tool', 'type-mask', false, true),
-    make('type-mask-vertical', 'Vertical Type Mask Tool', 'type-mask-vertical', true, true),
+    make('type', '横排文字工具', 'type', false, false),
+    make('type-vertical', '直排文字工具', 'type-vertical', true, false),
+    make('type-mask', '横排文字蒙版工具', 'type-mask', false, true),
+    make('type-mask-vertical', '直排文字蒙版工具', 'type-mask-vertical', true, true),
   );
   registerCommand(
-    { id: 'type.commit', label: 'Commit Text', hidden: true, recordable: false, run: (e) => commit(e) },
-    { id: 'type.cancel', label: 'Cancel Text Editing', hidden: true, recordable: false, run: (e) => cancel(e) },
+    { id: 'type.commit', label: '提交文本', hidden: true, recordable: false, run: (e) => commit(e) },
+    { id: 'type.cancel', label: '取消文本编辑', hidden: true, recordable: false, run: (e) => cancel(e) },
   );
   void e;
 }

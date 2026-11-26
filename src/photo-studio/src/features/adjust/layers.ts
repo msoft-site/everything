@@ -28,7 +28,7 @@ export function addAdjustmentLayer(e: Editor, kind: AdjustmentKind, adjustment: 
   // Inside a clipping group (above its base or one of its clipped layers) the
   // new layer joins the group.
   if (findLayer(doc.layers, anchor)?.clipped) l.clipped = true;
-  e.command(`New ${ADJUSTMENT_LABELS[kind]} Layer`, (d) => {
+  e.command(`新建${ADJUSTMENT_LABELS[kind]}图层`, (d) => {
     const insert = (layers: Layer[]): boolean => {
       const i = layers.findIndex((x) => x.id === anchor);
       if (i >= 0) {
@@ -55,7 +55,7 @@ export function registerAdjustmentLayerCommands(e: Editor) {
     registerCommand({
       id: `layer.adj-${kind}`,
       label: ADJUSTMENT_LABELS[kind],
-      description: `Add a non-destructive ${ADJUSTMENT_LABELS[kind]} adjustment layer`,
+      description: `添加非破坏性${ADJUSTMENT_LABELS[kind]}调整图层`,
       enabled: (ed) => ed.hasDocument,
       run: () => void addAdjustmentLayer(e, kind),
     });
@@ -63,22 +63,22 @@ export function registerAdjustmentLayerCommands(e: Editor) {
 
 export const adjustmentsPanel: Panel = {
   id: 'adjustments',
-  title: 'Adjustments',
+  title: '调整',
   icon: 'adj-levels',
   location: 'dock-middle',
   mount: (_e, el) => {
     el.classList.add('adj-panel');
-    el.innerHTML = `<p class="adj-panel-hint">Add an adjustment</p><div class="adj-grid" role="toolbar" aria-label="Add an adjustment layer">${ADJUSTMENT_KINDS.map(
-      (k) => `<button type="button" class="adj-grid-button" data-command="layer.adj-${k}" title="${escapeXML(ADJUSTMENT_LABELS[k])}" aria-label="Add ${escapeXML(ADJUSTMENT_LABELS[k])} adjustment layer" data-label="${escapeXML(ADJUSTMENT_LABELS[k])}">${svg(kindIcon[k], 20)}</button>`,
+    el.innerHTML = `<p class="adj-panel-hint">添加调整图层</p><div class="adj-grid" role="toolbar" aria-label="添加调整图层">${ADJUSTMENT_KINDS.map(
+      (k) => `<button type="button" class="adj-grid-button" data-command="layer.adj-${k}" title="${escapeXML(ADJUSTMENT_LABELS[k])}" aria-label="添加 ${escapeXML(ADJUSTMENT_LABELS[k])} 调整图层" data-label="${escapeXML(ADJUSTMENT_LABELS[k])}">${svg(kindIcon[k], 20)}</button>`,
     ).join('')}</div>`;
     const hint = el.querySelector('.adj-panel-hint')!;
     const show = (ev: Event) => {
       const b = (ev.target as HTMLElement).closest<HTMLElement>('[data-label]');
-      hint.textContent = b ? b.dataset.label! : 'Add an adjustment';
+      hint.textContent = b ? b.dataset.label! : '添加调整图层';
     };
     el.addEventListener('pointerover', show);
     el.addEventListener('focusin', show);
-    el.addEventListener('pointerleave', () => (hint.textContent = 'Add an adjustment'));
+    el.addEventListener('pointerleave', () => (hint.textContent = '添加调整图层'));
   },
   update: (ed, el) => {
     for (const b of el.querySelectorAll<HTMLButtonElement>('.adj-grid-button')) b.disabled = !ed.hasDocument;

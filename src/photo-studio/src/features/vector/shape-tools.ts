@@ -21,7 +21,7 @@ import { spaceHeld } from './keys';
 import { shapeOpts, type ShapeKind, type ShapeMode } from './shape-options';
 export { shapeOpts, type ShapeKind, type ShapeMode } from './shape-options';
 
-const names: Record<ShapeKind, string> = { rect: 'Rectangle', ellipse: 'Ellipse', triangle: 'Triangle', polygon: 'Polygon', line: 'Line', custom: 'Shape' };
+const names: Record<ShapeKind, string> = { rect: '矩形', ellipse: '椭圆', triangle: '三角形', polygon: '多边形', line: '直线', custom: '形状' };
 
 type Drag = { kind: ShapeKind; start: Pt; end: Pt; last: Pt; shift: boolean; alt: boolean; moved: boolean; spaceLast?: Pt };
 let drag: Drag | undefined;
@@ -194,31 +194,33 @@ const num = (id: string, label: string, value: number, attrs = '', unit = '') =>
  * layer), shared by the shape tools and the Pen tools in Shape mode. */
 export function shapePaintControls(e: Editor) {
   const o = shapeOpts;
-  return `<span class="vec-paint-row">Fill ${swatchButton('vec-fill', 'Shape fill', o.fill, e.color)} Stroke ${swatchButton('vec-stroke', 'Shape stroke', o.stroke, e.color, true)}${num('vec-stroke-width', '', o.stroke.width, 'min="0" max="1000" step="0.5" aria-label="Stroke width (px)" title="Stroke width"', 'px')}<select id="vec-stroke-dash" aria-label="Stroke style" title="Stroke style">${(['solid', 'dashed', 'dotted'] as const).map((s) => `<option value="${s}" ${o.stroke.dash === s ? 'selected' : ''}>${s[0].toUpperCase() + s.slice(1)}</option>`).join('')}</select><select id="vec-stroke-align" aria-label="Stroke alignment" title="Stroke alignment">${(['inside', 'center', 'outside'] as const).map((s) => `<option value="${s}" ${o.stroke.align === s ? 'selected' : ''}>${s[0].toUpperCase() + s.slice(1)}</option>`).join('')}</select></span>`;
+  const dashLabels: Record<string, string> = { solid: '实线', dashed: '虚线', dotted: '点线' };
+  const alignLabels: Record<string, string> = { inside: '内部', center: '居中', outside: '外部' };
+  return `<span class="vec-paint-row">填充 ${swatchButton('vec-fill', '形状填充', o.fill, e.color)} 描边 ${swatchButton('vec-stroke', '形状描边', o.stroke, e.color, true)}${num('vec-stroke-width', '', o.stroke.width, 'min="0" max="1000" step="0.5" aria-label="描边粗细 (像素)" title="描边粗细"', '像素')}<select id="vec-stroke-dash" aria-label="描边样式" title="描边样式">${(['solid', 'dashed', 'dotted'] as const).map((s) => `<option value="${s}" ${o.stroke.dash === s ? 'selected' : ''}>${dashLabels[s]}</option>`).join('')}</select><select id="vec-stroke-align" aria-label="描边对齐" title="描边对齐">${(['inside', 'center', 'outside'] as const).map((s) => `<option value="${s}" ${o.stroke.align === s ? 'selected' : ''}>${alignLabels[s]}</option>`).join('')}</select></span>`;
 }
 function shapeOptions(e: Editor, kind: ShapeKind) {
   const o = shapeOpts;
   const l = singleSelected(e);
   const b = l?.kind === 'vector' ? shapeBounds(l) : null;
-  const modeSel = `<label>Mode <select id="vec-mode" aria-label="Tool mode">${(['shape', 'path', 'pixels'] as const).map((m) => `<option value="${m}" ${o.mode === m ? 'selected' : ''}>${m === 'shape' ? 'Shape' : m === 'path' ? 'Path' : 'Pixels'}</option>`).join('')}</select></label>`;
+  const modeSel = `<label>模式 <select id="vec-mode" aria-label="工具模式">${(['shape', 'path', 'pixels'] as const).map((m) => `<option value="${m}" ${o.mode === m ? 'selected' : ''}>${m === 'shape' ? '形状' : m === 'path' ? '路径' : '像素'}</option>`).join('')}</select></label>`;
   const paint = o.mode === 'shape' ? shapePaintControls(e) : '';
-  const wh = o.mode === 'shape' ? `${num('vec-w', 'W', b?.width ?? 0, `min="0" max="16384" ${b ? '' : 'disabled'} aria-label="Width of selected shape"`)}${num('vec-h', 'H', b?.height ?? 0, `min="0" max="16384" ${b ? '' : 'disabled'} aria-label="Height of selected shape"`)}` : '';
-  const ops = o.mode === 'pixels' ? '' : `<label>Path <select id="vec-op" aria-label="Path operation">${([['new', o.mode === 'shape' ? 'New Layer' : 'New Path Area'], ['combine', 'Combine Shapes'], ['subtract', 'Subtract Front Shape'], ['intersect', 'Intersect Shape Areas'], ['exclude', 'Exclude Overlapping']] as const).map(([v, label]) => `<option value="${v}" ${o.op === v ? 'selected' : ''}>${label}</option>`).join('')}</select></label>`;
+  const wh = o.mode === 'shape' ? `${num('vec-w', '宽', b?.width ?? 0, `min="0" max="16384" ${b ? '' : 'disabled'} aria-label="所选形状的宽度"`)}${num('vec-h', '高', b?.height ?? 0, `min="0" max="16384" ${b ? '' : 'disabled'} aria-label="所选形状的高度"`)}` : '';
+  const ops = o.mode === 'pixels' ? '' : `<label>路径操作 <select id="vec-op" aria-label="路径操作">${([['new', o.mode === 'shape' ? '新建图层' : '新建路径区域'], ['combine', '合并形状'], ['subtract', '减去顶层形状'], ['intersect', '与形状区域相交'], ['exclude', '排除重叠形状']] as const).map(([v, label]) => `<option value="${v}" ${o.op === v ? 'selected' : ''}>${label}</option>`).join('')}</select></label>`;
   let extra = '';
   if (kind === 'rect')
     extra = o.perCorner
-      ? `<span class="vec-radii">${['TL', 'TR', 'BR', 'BL'].map((c, i) => num(`vec-r${i}`, c, o.radii[i], `min="0" max="8192" aria-label="${c} corner radius"`)).join('')}</span><button class="icon-button toggle" id="vec-per-corner" aria-pressed="true" title="Link corner radii">${svg('link-2', 15)}</button>`
-      : `${num('vec-radius', 'Radius', o.radius, 'min="0" max="8192"', 'px')}<button class="icon-button toggle" id="vec-per-corner" aria-pressed="false" title="Set each corner radius separately">${svg('link-2', 15)}</button>`;
-  if (kind === 'triangle') extra = num('vec-tri-radius', 'Radius', o.triRadius, 'min="0" max="8192"', 'px');
+      ? `<span class="vec-radii">${['左上', '右上', '右下', '左下'].map((c, i) => num(`vec-r${i}`, c, o.radii[i], `min="0" max="8192" aria-label="${c} 圆角半径"`)).join('')}</span><button class="icon-button toggle" id="vec-per-corner" aria-pressed="true" title="链接圆角半径">${svg('link-2', 15)}</button>`
+      : `${num('vec-radius', '圆角半径', o.radius, 'min="0" max="8192"', '像素')}<button class="icon-button toggle" id="vec-per-corner" aria-pressed="false" title="分别设置每个圆角半径">${svg('link-2', 15)}</button>`;
+  if (kind === 'triangle') extra = num('vec-tri-radius', '圆角半径', o.triRadius, 'min="0" max="8192"', '像素');
   if (kind === 'polygon')
-    extra = `${num('vec-sides', 'Sides', o.sides, 'min="3" max="100" step="1"')}${num('vec-star', 'Star', o.star, 'min="0" max="99" title="Indent sides by (%)"', '%')}${num('vec-poly-radius', 'Radius', o.polyRadius, 'min="0" max="8192"', 'px')}<label class="transform-setting"><input id="vec-smooth-indents" type="checkbox" ${o.smoothIndents ? 'checked' : ''}>Smooth indents</label>`;
+    extra = `${num('vec-sides', '边数', o.sides, 'min="3" max="100" step="1"')}${num('vec-star', '星形', o.star, 'min="0" max="99" title="缩进比例 (%)"', '%')}${num('vec-poly-radius', '圆角半径', o.polyRadius, 'min="0" max="8192"', '像素')}<label class="transform-setting"><input id="vec-smooth-indents" type="checkbox" ${o.smoothIndents ? 'checked' : ''}>平滑缩进</label>`;
   if (kind === 'line')
-    extra = `${num('vec-weight', 'Weight', o.weight, 'min="0.1" max="1000" step="0.5"', 'px')}<label class="transform-setting"><input id="vec-arrow-start" type="checkbox" ${o.arrowStart ? 'checked' : ''}>Start</label><label class="transform-setting"><input id="vec-arrow-end" type="checkbox" ${o.arrowEnd ? 'checked' : ''}>End arrow</label>${o.arrowStart || o.arrowEnd ? `${num('vec-arrow-width', 'Width', o.arrowWidth * 100, 'min="100" max="5000" step="10" title="Arrowhead width (% of weight)"', '%')}${num('vec-arrow-length', 'Length', o.arrowLength * 100, 'min="10" max="5000" step="10" title="Arrowhead length (% of weight)"', '%')}${num('vec-concavity', 'Concavity', o.concavity, 'min="-50" max="50"', '%')}` : ''}`;
+    extra = `${num('vec-weight', '粗细', o.weight, 'min="0.1" max="1000" step="0.5"', '像素')}<label class="transform-setting"><input id="vec-arrow-start" type="checkbox" ${o.arrowStart ? 'checked' : ''}>起点</label><label class="transform-setting"><input id="vec-arrow-end" type="checkbox" ${o.arrowEnd ? 'checked' : ''}>终点箭头</label>${o.arrowStart || o.arrowEnd ? `${num('vec-arrow-width', '宽度', o.arrowWidth * 100, 'min="100" max="5000" step="10" title="箭头宽度 (粗细的百分比)"', '%')}${num('vec-arrow-length', '长度', o.arrowLength * 100, 'min="10" max="5000" step="10" title="箭头长度 (粗细的百分比)"', '%')}${num('vec-concavity', '凹度', o.concavity, 'min="-50" max="50"', '%')}` : ''}`;
   if (kind === 'custom') {
     const s = allShapes().find((c) => c.id === o.custom) ?? allShapes()[0];
-    extra = `<button id="vec-custom" class="vec-custom-button" aria-haspopup="dialog" title="Choose a custom shape"><svg viewBox="-4 -4 108 108" width="20" height="20" aria-hidden="true"><path d="${s.d}" fill="currentColor" fill-rule="evenodd"/></svg><span>${escapeXML(s.name)}</span></button>`;
+    extra = `<button id="vec-custom" class="vec-custom-button" aria-haspopup="dialog" title="选择自定形状"><svg viewBox="-4 -4 108 108" width="20" height="20" aria-hidden="true"><path d="${s.d}" fill="currentColor" fill-rule="evenodd"/></svg><span>${escapeXML(s.name)}</span></button>`;
   }
-  return `${modeSel}${paint}${wh}${ops}${extra}<label class="transform-setting" title="Snap shape edges to the pixel grid"><input id="vec-align-edges" type="checkbox" ${o.alignEdges ? 'checked' : ''}>Align Edges</label>`;
+  return `${modeSel}${paint}${wh}${ops}${extra}<label class="transform-setting" title="将形状边缘对齐到像素网格"><input id="vec-align-edges" type="checkbox" ${o.alignEdges ? 'checked' : ''}>对齐边缘</label>`;
 }
 /** Change listener for a number field; a cleared field is not zero: it goes
  * back to the value in use (`restore` redraws the options). */
@@ -235,7 +237,7 @@ export function bindShapePaint(e: Editor, el: HTMLElement, rerender = () => e.op
   const applyStrokeToLayer = () => {
     const l = singleSelected(e);
     if (l?.kind !== 'vector') return;
-    e.editLayer('Change Shape Stroke', (x) => applyStroke(x.vector!, o.stroke));
+    e.editLayer('更改形状描边', (x) => applyStroke(x.vector!, o.stroke));
   };
   numberField(el, 'vec-stroke-width', rerender, (v) => {
     o.stroke.width = Math.max(0, v);
@@ -261,8 +263,8 @@ export function bindShapePaint(e: Editor, el: HTMLElement, rerender = () => e.op
         if (span) span.setAttribute('style', (stroke ? 'background:' + (o.stroke.type === 'none' ? 'repeating-conic-gradient(#bbb 0 25%, #fff 0 50%) 0 0/8px 8px' : o.stroke.color) : swatchFill()) as string);
         const l = singleSelected(e);
         if (l?.kind !== 'vector') return;
-        if (stroke) e.editLayer('Change Shape Stroke', (x) => applyStroke(x.vector!, o.stroke));
-        else e.editLayer('Change Shape Fill', (x) => {
+        if (stroke) e.editLayer('更改形状描边', (x) => applyStroke(x.vector!, o.stroke));
+        else e.editLayer('更改形状填充', (x) => {
           applyFill(e, x.vector!, o.fill, vectorBounds(shapeDocMask(x)));
           if (o.fill.type === 'color') x.color = o.fill.color || e.color;
         });
@@ -290,7 +292,7 @@ function bindShapeOptions(e: Editor, el: HTMLElement) {
   const resize = (key: 'width' | 'height') => (v: number) => {
     const l = singleSelected(e);
     if (l?.kind !== 'vector') return;
-    e.editLayer('Resize Shape', (x) => reshape(x, { [key]: Math.max(0, v) }));
+    e.editLayer('调整形状大小', (x) => reshape(x, { [key]: Math.max(0, v) }));
   };
   field('vec-w', resize('width'));
   field('vec-h', resize('height'));
@@ -326,7 +328,7 @@ export function openShapePicker(e: Editor, anchor: HTMLElement) {
   const pop = document.createElement('div');
   pop.className = 'vec-shape-picker popover';
   pop.setAttribute('role', 'listbox');
-  pop.setAttribute('aria-label', 'Custom shapes');
+  pop.setAttribute('aria-label', '自定形状');
   pop.innerHTML = allShapes()
     .map((s) => `<button role="option" aria-selected="${s.id === shapeOpts.custom}" data-shape="${escapeXML(s.id)}" title="${escapeXML(s.name)}" aria-label="${escapeXML(s.name)}"><svg viewBox="-4 -4 108 108" aria-hidden="true"><path d="${escapeXML(s.d)}" fill="currentColor" fill-rule="evenodd"/></svg></button>`)
     .join('');
@@ -362,12 +364,12 @@ export function openShapePicker(e: Editor, anchor: HTMLElement) {
 async function createDialog(e: Editor, kind: ShapeKind, at: Pt) {
   const o = shapeOpts;
   const fields: Parameters<typeof formDialog>[1] = kind === 'line'
-    ? [{ name: 'length', label: 'Length (px)', value: 200, type: 'number', min: 1, max: 16384 }, { name: 'angle', label: 'Angle (°)', value: 0, type: 'number', min: -360, max: 360 }, { name: 'weight', label: 'Weight (px)', value: o.weight, type: 'number', min: 0.1, max: 1000 }]
-    : [{ name: 'width', label: 'Width (px)', value: 200, type: 'number', min: 1, max: 16384 }, { name: 'height', label: 'Height (px)', value: 200, type: 'number', min: 1, max: 16384 }];
-  if (kind === 'rect') fields.push({ name: 'radius', label: 'Corner radius (px)', value: o.perCorner ? o.radii[0] : o.radius, type: 'number', min: 0, max: 8192 });
-  if (kind === 'polygon') fields.push({ name: 'sides', label: 'Sides', value: o.sides, type: 'number', min: 3, max: 100, step: 1 }, { name: 'star', label: 'Star inset (%)', value: o.star, type: 'number', min: 0, max: 99 });
-  fields.push({ name: 'center', label: 'From center', value: 'no', type: 'checkbox' });
-  const v = await formDialog(`Create ${names[kind]}`, fields, 'OK');
+    ? [{ name: 'length', label: '长度 (像素)', value: 200, type: 'number', min: 1, max: 16384 }, { name: 'angle', label: '角度 (°)', value: 0, type: 'number', min: -360, max: 360 }, { name: 'weight', label: '粗细 (像素)', value: o.weight, type: 'number', min: 0.1, max: 1000 }]
+    : [{ name: 'width', label: '宽度 (像素)', value: 200, type: 'number', min: 1, max: 16384 }, { name: 'height', label: '高度 (像素)', value: 200, type: 'number', min: 1, max: 16384 }];
+  if (kind === 'rect') fields.push({ name: 'radius', label: '圆角半径 (像素)', value: o.perCorner ? o.radii[0] : o.radius, type: 'number', min: 0, max: 8192 });
+  if (kind === 'polygon') fields.push({ name: 'sides', label: '边数', value: o.sides, type: 'number', min: 3, max: 100, step: 1 }, { name: 'star', label: '星形缩进 (%)', value: o.star, type: 'number', min: 0, max: 99 });
+  fields.push({ name: 'center', label: '从中心', value: 'no', type: 'checkbox' });
+  const v = await formDialog(`创建${names[kind]}`, fields, '确定');
   if (!v) return;
   const center = v.center === 'yes';
   if (kind === 'rect') {

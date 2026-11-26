@@ -53,12 +53,12 @@ function hit(e: Editor, x: number, y: number) {
   return best;
 }
 export function deleteSampler(e: Editor, index: number) {
-  editAnnotations(e, 'Delete Color Sampler', (a) => {
+  editAnnotations(e, '删除颜色取样器', (a) => {
     a.samplers = (a.samplers ?? []).filter((_, i) => i !== index);
   });
 }
 export function clearSamplers(e: Editor) {
-  editAnnotations(e, 'Delete All Color Samplers', (a) => {
+  editAnnotations(e, '删除所有颜色取样器', (a) => {
     a.samplers = [];
   });
 }
@@ -82,14 +82,14 @@ export function installSamplers(_e: Editor) {
   });
   registerTool({
     id: 'color-sampler',
-    label: 'Color Sampler Tool',
+    label: '颜色取样器工具',
     key: 'I',
     icon: 'color-sampler',
     group: 'eyedropper',
     cursor: () => 'crosshair',
     options: (e) => {
       const n = annotationsOf(e.doc).samplers?.length ?? 0;
-      return `<label>Sample Size <select id="sampler-size">${SAMPLE_SIZES.map((s) => `<option value="${s}" ${sampleSize(e) === s ? 'selected' : ''}>${s === 1 ? 'Point Sample' : `${s} by ${s} Average`}</option>`).join('')}</select></label><span class="divider"></span><span class="muted" id="sampler-count">${n} of ${MAX_SAMPLERS} samplers</span><button data-command="samplers.clear" ${n ? '' : 'disabled'}>Clear All</button><button data-command="window.panel.info" title="Show the readouts in the Info panel">Show Info</button>`;
+      return `<label>取样大小 <select id="sampler-size">${SAMPLE_SIZES.map((s) => `<option value="${s}" ${sampleSize(e) === s ? 'selected' : ''}>${s === 1 ? '取样点' : `${s}×${s} 平均`}</option>`).join('')}</select></label><span class="divider"></span><span class="muted" id="sampler-count">${n} / ${MAX_SAMPLERS} 个取样器</span><button data-command="samplers.clear" ${n ? '' : 'disabled'}>清除全部</button><button data-command="window.panel.info" title="在“信息”面板中显示读数">显示信息</button>`;
     },
     bindOptions: ({ e, el }) => {
       el.querySelector<HTMLSelectElement>('#sampler-size')?.addEventListener('change', (ev) => {
@@ -111,7 +111,7 @@ export function installSamplers(_e: Editor) {
       if (p.alt) return;
       const count = annotationsOf(e.doc).samplers?.length ?? 0;
       if (count >= MAX_SAMPLERS) {
-        e.message(`Up to ${MAX_SAMPLERS} color samplers fit in a document; drag one to move it or Alt-click to delete it.`);
+        e.message(`文档中最多可放置 ${MAX_SAMPLERS} 个颜色取样器；拖动取样器可移动，按住 Alt 单击可删除。`);
         return;
       }
       if (p.x < 0 || p.y < 0 || p.x >= e.doc.width || p.y >= e.doc.height) return;
@@ -134,10 +134,10 @@ export function installSamplers(_e: Editor) {
       const off = d.x < 0 || d.y < 0 || d.x >= e.doc.width || d.y >= e.doc.height;
       if (d.added) {
         if (off) e.update();
-        else editAnnotations(e, 'Color Sampler', (a) => (a.samplers = [...(a.samplers ?? []), { x: d.x, y: d.y }]));
+        else editAnnotations(e, '颜色取样器', (a) => (a.samplers = [...(a.samplers ?? []), { x: d.x, y: d.y }]));
       } else if (off) deleteSampler(e, d.index);
       else if (d.moved)
-        editAnnotations(e, 'Move Color Sampler', (a) => {
+        editAnnotations(e, '移动颜色取样器', (a) => {
           a.samplers = (a.samplers ?? []).map((s, i) => (i === d.index ? { x: d.x, y: d.y } : s));
         });
       else e.update();

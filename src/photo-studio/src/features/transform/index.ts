@@ -25,19 +25,19 @@ const canvasSize = lazy(() => import('./canvas-size'));
 const crop = lazy(() => import('./crop'));
 
 const modeCommands: [string, Mode, string][] = [
-  ['edit.transform-scale', 'scale', 'Scale'],
-  ['edit.transform-rotate', 'rotate', 'Rotate'],
-  ['edit.transform-skew', 'skew', 'Skew'],
-  ['edit.transform-distort', 'distort', 'Distort'],
-  ['edit.transform-perspective', 'perspective', 'Perspective'],
-  ['edit.transform-warp', 'warp', 'Warp'],
+  ['edit.transform-scale', 'scale', '缩放'],
+  ['edit.transform-rotate', 'rotate', '旋转'],
+  ['edit.transform-skew', 'skew', '斜切'],
+  ['edit.transform-distort', 'distort', '扭曲'],
+  ['edit.transform-perspective', 'perspective', '透视'],
+  ['edit.transform-warp', 'warp', '变形'],
 ];
 const affineModes = new Set<Mode>(['free', 'scale', 'rotate']);
 const splitCommands: [string, SplitAction, string][] = [
-  ['edit.split-warp-horizontal', 'v', 'Split Warp Horizontally'],
-  ['edit.split-warp-vertical', 'u', 'Split Warp Vertically'],
-  ['edit.split-warp-crosswise', 'both', 'Split Warp Crosswise'],
-  ['edit.remove-warp-split', 'remove', 'Remove Warp Split'],
+  ['edit.split-warp-horizontal', 'v', '水平拆分变形'],
+  ['edit.split-warp-vertical', 'u', '垂直拆分变形'],
+  ['edit.split-warp-crosswise', 'both', '交叉拆分变形'],
+  ['edit.remove-warp-split', 'remove', '消除变形拆分'],
 ];
 export const transformMenu: MenuItem[] = [
   'edit.free-transform',
@@ -91,8 +91,8 @@ async function enterMode(e: Editor, mode: Mode) {
     const l = e.selectedIds.size === 1 ? e.layer : undefined;
     e.message(
       l && (l.kind === 'text' || l.kind === 'vector')
-        ? 'Type and shape layers support Scale and Rotate only. Rasterize the layer (Layer > Rasterize) to skew, distort, apply perspective or warp it.'
-        : 'Skew, Distort, Perspective and Warp work on a single pixel or image layer.',
+        ? '文字和形状图层仅支持缩放与旋转。请先栅格化图层（图层 > 栅格化）以进行斜切、扭曲、透视或变形。'
+        : '斜切、扭曲、透视和变形仅适用于单个像素或图像图层。',
     );
     return;
   }
@@ -110,7 +110,7 @@ async function enterMode(e: Editor, mode: Mode) {
 export function installTransform(e: Editor) {
   registerTool({
     id: SESSION_TOOL,
-    label: 'Transform',
+    label: '变换',
     icon: 'transform-box',
     // Not a toolbar slot: sessions select this tool while they run.
     group: 'transform-session',
@@ -156,7 +156,7 @@ export function installTransform(e: Editor) {
   registerCommand(
     {
       id: 'edit.free-transform',
-      label: 'Free Transform',
+      label: '自由变换',
       shortcut: 'Mod+T',
       enabled: hasTarget,
       recordable: false,
@@ -200,16 +200,16 @@ export function installTransform(e: Editor) {
     })),
     {
       id: 'edit.convert-warp-anchor',
-      label: 'Convert Warp Anchor Point',
-      description: 'Switch the selected warp anchor between smooth and corner (Alt-click an anchor)',
+      label: '转换变形锚点',
+      description: '在平滑与角点之间切换所选变形锚点（按住 Alt 单击锚点）',
       enabled: () => !!currentSession()?.canConvertAnchor,
       recordable: false,
       run: () => void currentSession()?.convertAnchor(),
     },
     {
       id: 'edit.transform-guides',
-      label: 'Show Transform Guides',
-      description: 'Divide transform frames into thirds while transforming',
+      label: '显示变换参考线',
+      description: '变换时将变换框三等分显示',
       checked: (e) => e.settings.transformGuides !== false,
       recordable: false,
       run: (e) => {
@@ -217,15 +217,15 @@ export function installTransform(e: Editor) {
         e.overlay();
       },
     },
-    { id: 'edit.rotate-180', label: 'Rotate 180°', enabled: hasTarget, ...lazyRun(layerOps, (m, e) => m.turnLayers(e, 'rotate-180')) },
-    { id: 'edit.rotate-cw', label: 'Rotate 90° Clockwise', enabled: hasTarget, ...lazyRun(layerOps, (m, e) => m.turnLayers(e, 'rotate-cw')) },
-    { id: 'edit.rotate-ccw', label: 'Rotate 90° Counter Clockwise', enabled: hasTarget, ...lazyRun(layerOps, (m, e) => m.turnLayers(e, 'rotate-ccw')) },
-    { id: 'edit.flip-horizontal', label: 'Flip Horizontal', enabled: hasTarget, ...lazyRun(layerOps, (m, e) => m.turnLayers(e, 'flip-horizontal')) },
-    { id: 'edit.flip-vertical', label: 'Flip Vertical', enabled: hasTarget, ...lazyRun(layerOps, (m, e) => m.turnLayers(e, 'flip-vertical')) },
-    { id: 'edit.transform-again', label: 'Again', shortcut: 'Mod+Shift+T', enabled: (e) => !!e.layer, ...lazyRun(layerOps, (m, e) => m.transformAgain(e)) },
+    { id: 'edit.rotate-180', label: '旋转 180°', enabled: hasTarget, ...lazyRun(layerOps, (m, e) => m.turnLayers(e, 'rotate-180')) },
+    { id: 'edit.rotate-cw', label: '顺时针旋转 90°', enabled: hasTarget, ...lazyRun(layerOps, (m, e) => m.turnLayers(e, 'rotate-cw')) },
+    { id: 'edit.rotate-ccw', label: '逆时针旋转 90°', enabled: hasTarget, ...lazyRun(layerOps, (m, e) => m.turnLayers(e, 'rotate-ccw')) },
+    { id: 'edit.flip-horizontal', label: '水平翻转', enabled: hasTarget, ...lazyRun(layerOps, (m, e) => m.turnLayers(e, 'flip-horizontal')) },
+    { id: 'edit.flip-vertical', label: '垂直翻转', enabled: hasTarget, ...lazyRun(layerOps, (m, e) => m.turnLayers(e, 'flip-vertical')) },
+    { id: 'edit.transform-again', label: '再次变换', shortcut: 'Mod+Shift+T', enabled: (e) => !!e.layer, ...lazyRun(layerOps, (m, e) => m.transformAgain(e)) },
     {
       id: 'select.transform-selection',
-      label: 'Transform Selection',
+      label: '变换选区',
       enabled: (e) => !!e.doc.selection || currentSession()?.target.kind === 'selection',
       recordable: false,
       run: async (e) => {
@@ -236,25 +236,25 @@ export function installTransform(e: Editor) {
       },
     },
     { id: 'image.rotate-180', label: '180°', enabled: (e) => e.hasDocument, ...lazyRun(layerOps, (m, e) => m.rotateCanvas(e, 180)) },
-    { id: 'image.rotate-cw', label: '90° Clockwise', enabled: (e) => e.hasDocument, ...lazyRun(layerOps, (m, e) => m.rotateCanvas(e, 90)) },
-    { id: 'image.rotate-ccw', label: '90° Counter Clockwise', enabled: (e) => e.hasDocument, ...lazyRun(layerOps, (m, e) => m.rotateCanvas(e, -90)) },
-    { id: 'image.rotate-arbitrary', label: 'Arbitrary…', enabled: (e) => e.hasDocument, ...lazyRun(layerOps, (m, e, arg) => m.arbitraryRotation(e, arg)) },
-    { id: 'image.flip-horizontal', label: 'Flip Canvas Horizontal', enabled: (e) => e.hasDocument, ...lazyRun(layerOps, (m, e) => m.flipCanvas(e, true)) },
-    { id: 'image.flip-vertical', label: 'Flip Canvas Vertical', enabled: (e) => e.hasDocument, ...lazyRun(layerOps, (m, e) => m.flipCanvas(e, false)) },
-    { id: 'image.image-size', label: 'Image Size…', shortcut: 'Mod+Alt+I', enabled: (e) => e.hasDocument, ...lazyRun(imageSize, (m, e, arg) => m.imageSizeDialog(e, arg)) },
-    { id: 'image.canvas-size', label: 'Canvas Size…', shortcut: 'Mod+Alt+C', enabled: (e) => e.hasDocument, ...lazyRun(canvasSize, (m, e, arg) => m.canvasSizeDialog(e, arg)) },
+    { id: 'image.rotate-cw', label: '顺时针 90°', enabled: (e) => e.hasDocument, ...lazyRun(layerOps, (m, e) => m.rotateCanvas(e, 90)) },
+    { id: 'image.rotate-ccw', label: '逆时针 90°', enabled: (e) => e.hasDocument, ...lazyRun(layerOps, (m, e) => m.rotateCanvas(e, -90)) },
+    { id: 'image.rotate-arbitrary', label: '自定…', enabled: (e) => e.hasDocument, ...lazyRun(layerOps, (m, e, arg) => m.arbitraryRotation(e, arg)) },
+    { id: 'image.flip-horizontal', label: '水平翻转画布', enabled: (e) => e.hasDocument, ...lazyRun(layerOps, (m, e) => m.flipCanvas(e, true)) },
+    { id: 'image.flip-vertical', label: '垂直翻转画布', enabled: (e) => e.hasDocument, ...lazyRun(layerOps, (m, e) => m.flipCanvas(e, false)) },
+    { id: 'image.image-size', label: '图像大小…', shortcut: 'Mod+Alt+I', enabled: (e) => e.hasDocument, ...lazyRun(imageSize, (m, e, arg) => m.imageSizeDialog(e, arg)) },
+    { id: 'image.canvas-size', label: '画布大小…', shortcut: 'Mod+Alt+C', enabled: (e) => e.hasDocument, ...lazyRun(canvasSize, (m, e, arg) => m.canvasSizeDialog(e, arg)) },
   );
   // The crop tools load when first chosen.
   registerTool(
-    lazyTool({ id: 'crop', label: 'Crop Tool', key: 'C', icon: 'crop', group: 'crop' }, lazy(async () => (await crop()).cropTool)),
-    lazyTool({ id: 'perspective-crop', label: 'Perspective Crop Tool', key: 'C', icon: 'crop-perspective', group: 'crop' }, lazy(async () => (await crop()).perspectiveCropTool)),
+    lazyTool({ id: 'crop', label: '裁剪工具', key: 'C', icon: 'crop', group: 'crop' }, lazy(async () => (await crop()).cropTool)),
+    lazyTool({ id: 'perspective-crop', label: '透视裁剪工具', key: 'C', icon: 'crop-perspective', group: 'crop' }, lazy(async () => (await crop()).perspectiveCropTool)),
   );
   for (const [id, label] of [
-    ['crop.commit', 'Commit Crop'],
-    ['crop.cancel', 'Cancel Crop'],
-    ['crop.reset', 'Reset Crop'],
-    ['perspective-crop.commit', 'Commit Perspective Crop'],
-    ['perspective-crop.cancel', 'Cancel Perspective Crop'],
+    ['crop.commit', '提交裁剪'],
+    ['crop.cancel', '取消裁剪'],
+    ['crop.reset', '复位裁剪'],
+    ['perspective-crop.commit', '提交透视裁剪'],
+    ['perspective-crop.cancel', '取消透视裁剪'],
   ])
     registerCommand({ id, label, hidden: true, recordable: false, ...lazyRun(crop, (m, e, arg) => m.cropCommands.find((c) => c.id === id)!.run(e, arg)) });
   prefetchOnIdle(sessions);

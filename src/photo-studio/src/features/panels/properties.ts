@@ -24,11 +24,11 @@ export const propertiesEditors = new Map<string, PropertiesEditor>();
 export const propertySections: ((e: Editor, l: Layer) => string)[] = [];
 
 let lastHtml = '';
-const EMPTY = `<div class="empty-layers">${svg('sliders-horizontal', 22)}<p>Properties of the open image appear here</p></div>`;
+const EMPTY = `<div class="empty-layers">${svg('sliders-horizontal', 22)}<p>打开图像的属性将显示在此处</p></div>`;
 const sectionsCommand = (open: boolean) => ({
   id: open ? 'properties.expand-sections' : 'properties.collapse-sections',
-  label: open ? 'Expand All Sections' : 'Collapse All Sections',
-  description: open ? 'Show every section of the Properties panel' : 'Show only the section headings of the Properties panel',
+  label: open ? '展开所有部分' : '折叠所有部分',
+  description: open ? '显示属性面板的每个部分' : '仅显示属性面板的部分标题',
   enabled: (e: Editor) => !!e.root.querySelector('#properties [data-section-toggle]'),
   run: (e: Editor) => {
     const el = e.root.querySelector<HTMLElement>('#properties');
@@ -39,7 +39,7 @@ const sectionsCommand = (open: boolean) => ({
 export const propertiesSectionCommands = [sectionsCommand(true), sectionsCommand(false)];
 export const propertiesPanel: Panel = {
   id: 'properties',
-  title: 'Properties',
+  title: '属性',
   icon: 'sliders-horizontal',
   location: 'dock-middle',
   menu: () => ['properties.expand-sections', 'properties.collapse-sections'],
@@ -140,10 +140,10 @@ export const propertiesPanel: Panel = {
 function change(e: Editor, t: HTMLInputElement) {
   const k = t.dataset.property;
   if (t.dataset.filter)
-    e.editLayer('Adjust ' + t.dataset.filter, (l) => (l.filters[t.dataset.filter as keyof Layer['filters']] = Number(t.value)));
+    e.editLayer('调整 ' + t.dataset.filter, (l) => (l.filters[t.dataset.filter as keyof Layer['filters']] = Number(t.value)));
   if (k === 'locked') {
     if (layerLock(e.doc.layers, e.selected, 'all', false)) return;
-    e.command('Lock layer', (d) => {
+    e.command('锁定图层', (d) => {
       const l = findLayer(d.layers, e.selected);
       if (l) setFullLock(l, t.checked);
     });
@@ -153,7 +153,7 @@ function change(e: Editor, t: HTMLInputElement) {
     if (layerLock(e.doc.layers, e.selected, 'all', false)) return;
     const key = t.dataset.lock as keyof NonNullable<Layer['protection']>;
     if (!['transparency', 'composite', 'position', 'artboards'].includes(key)) return;
-    e.command('Change layer protection', (d) => {
+    e.command('更改图层保护', (d) => {
       const l = findLayer(d.layers, e.selected);
       if (l) setPartialLock(l, key, t.checked);
     });
@@ -161,14 +161,14 @@ function change(e: Editor, t: HTMLInputElement) {
   }
   const dashes = k === 'strokeDashes' ? parseStrokeDashInput(t.value) : undefined;
   if (k === 'strokeDashes') {
-    t.setCustomValidity(dashes ? '' : 'Enter positive dash lengths and nonnegative gaps, separated by commas.');
+    t.setCustomValidity(dashes ? '' : '请输入以逗号分隔的正数虚线长度和非负间隙。');
     if (!dashes) {
       t.reportValidity();
       return;
     }
     const shape = findLayer(e.doc.layers, e.selected)?.vector;
     if (shape && dashes.length && !supportedStrokePaths(shape.mask, { enabled: true, alignment: shape.stroke?.alignment ?? 'inside', lineDashSet: dashes })) {
-      t.setCustomValidity('Dashes are available on a single combined path.');
+      t.setCustomValidity('虚线仅适用于单个组合路径。');
       t.reportValidity();
       return;
     }
@@ -177,11 +177,11 @@ function change(e: Editor, t: HTMLInputElement) {
     try {
       const fill = gradientProperty(e.layer, e.doc, k, t.value, t.checked);
       t.setCustomValidity('');
-      e.editLayer('Change gradient', (l) => {
+      e.editLayer('更改渐变', (l) => {
         l.vector!.fill = fill;
       });
     } catch {
-      t.setCustomValidity('Enter a valid gradient value.');
+      t.setCustomValidity('请输入有效的渐变值。');
       t.reportValidity();
     }
     return;

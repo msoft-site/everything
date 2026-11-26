@@ -16,19 +16,19 @@ export type MixerSettings = {
   flow: number; // how fast paint leaves the brush
 };
 export const mixerPresets: { id: string; label: string; settings: Omit<MixerSettings, 'flow'> | null }[] = [
-  { id: 'custom', label: 'Custom', settings: null },
-  { id: 'dry', label: 'Dry', settings: { wet: 0, load: 0.5, mix: 0 } },
-  { id: 'dry-light', label: 'Dry, Light Load', settings: { wet: 0, load: 0.15, mix: 0 } },
-  { id: 'dry-heavy', label: 'Dry, Heavy Load', settings: { wet: 0, load: 0.9, mix: 0 } },
-  { id: 'moist', label: 'Moist', settings: { wet: 0.1, load: 0.5, mix: 0.5 } },
-  { id: 'moist-light', label: 'Moist, Light Load', settings: { wet: 0.1, load: 0.15, mix: 0.5 } },
-  { id: 'moist-heavy', label: 'Moist, Heavy Load', settings: { wet: 0.1, load: 0.9, mix: 0.5 } },
-  { id: 'wet', label: 'Wet', settings: { wet: 0.5, load: 0.5, mix: 0.5 } },
-  { id: 'wet-light', label: 'Wet, Light Load', settings: { wet: 0.5, load: 0.15, mix: 0.5 } },
-  { id: 'wet-heavy', label: 'Wet, Heavy Load', settings: { wet: 0.5, load: 0.9, mix: 0.5 } },
-  { id: 'very-wet', label: 'Very Wet', settings: { wet: 1, load: 0.5, mix: 1 } },
-  { id: 'very-wet-light', label: 'Very Wet, Light Load', settings: { wet: 1, load: 0.15, mix: 1 } },
-  { id: 'very-wet-heavy', label: 'Very Wet, Heavy Load', settings: { wet: 1, load: 0.9, mix: 1 } },
+  { id: 'custom', label: '自定', settings: null },
+  { id: 'dry', label: '干', settings: { wet: 0, load: 0.5, mix: 0 } },
+  { id: 'dry-light', label: '干，轻涂', settings: { wet: 0, load: 0.15, mix: 0 } },
+  { id: 'dry-heavy', label: '干，重涂', settings: { wet: 0, load: 0.9, mix: 0 } },
+  { id: 'moist', label: '湿润', settings: { wet: 0.1, load: 0.5, mix: 0.5 } },
+  { id: 'moist-light', label: '湿润，轻涂', settings: { wet: 0.1, load: 0.15, mix: 0.5 } },
+  { id: 'moist-heavy', label: '湿润，重涂', settings: { wet: 0.1, load: 0.9, mix: 0.5 } },
+  { id: 'wet', label: '潮湿', settings: { wet: 0.5, load: 0.5, mix: 0.5 } },
+  { id: 'wet-light', label: '潮湿，轻涂', settings: { wet: 0.5, load: 0.15, mix: 0.5 } },
+  { id: 'wet-heavy', label: '潮湿，重涂', settings: { wet: 0.5, load: 0.9, mix: 0.5 } },
+  { id: 'very-wet', label: '非常潮湿', settings: { wet: 1, load: 0.5, mix: 1 } },
+  { id: 'very-wet-light', label: '非常潮湿，轻涂', settings: { wet: 1, load: 0.15, mix: 1 } },
+  { id: 'very-wet-heavy', label: '非常潮湿，重涂', settings: { wet: 1, load: 0.9, mix: 1 } },
 ];
 
 const toK = new Float32Array(256);

@@ -112,37 +112,37 @@ export function targetPath(e: Editor, doc: PhotoDocument = e.doc): PathTarget | 
     const p = doc.paths?.find((x) => x.id === active.slice(5));
     if (p) return { kind: 'saved', id: p.id, name: p.name, mask: p.mask };
   }
-  if (active === 'work' && doc.workPath) return { kind: 'work', id: 'work', name: 'Work Path', mask: doc.workPath };
+  if (active === 'work' && doc.workPath) return { kind: 'work', id: 'work', name: '工作路径', mask: doc.workPath };
   const l = singleSelected(e, doc);
   if (active?.startsWith('vmask:') && l?.id === active.slice(6) && l.vectorMask)
-    return { kind: 'vmask', id: l.id, name: `${l.name} Vector Mask`, mask: l.vectorMask.mask };
+    return { kind: 'vmask', id: l.id, name: `${l.name} 矢量蒙版`, mask: l.vectorMask.mask };
   if (active?.startsWith('none:') && active.slice(5) === (l?.id ?? e.selected)) return;
-  if (l?.kind === 'vector' && l.vector) return { kind: 'shape', id: l.id, name: `${l.name} Shape Path`, mask: shapeDocMask(l) };
-  if (typePathOf(l)) return { kind: 'text', id: l!.id, name: `${l!.name} Type Path`, mask: textDocMask(l!) };
-  if (l?.vectorMask) return { kind: 'vmask', id: l.id, name: `${l.name} Vector Mask`, mask: l.vectorMask.mask };
+  if (l?.kind === 'vector' && l.vector) return { kind: 'shape', id: l.id, name: `${l.name} 形状路径`, mask: shapeDocMask(l) };
+  if (typePathOf(l)) return { kind: 'text', id: l!.id, name: `${l!.name} 文字路径`, mask: textDocMask(l!) };
+  if (l?.vectorMask) return { kind: 'vmask', id: l.id, name: `${l.name} 矢量蒙版`, mask: l.vectorMask.mask };
   return;
 }
 /** Every path listed in the Paths panel, in panel order. */
 export function listedPaths(e: Editor, doc: PhotoDocument = e.doc): PathTarget[] {
   const out: PathTarget[] = [];
   const l = singleSelected(e, doc);
-  if (l?.kind === 'vector' && l.vector) out.push({ kind: 'shape', id: l.id, name: `${l.name} Shape Path`, mask: shapeDocMask(l) });
-  if (typePathOf(l)) out.push({ kind: 'text', id: l!.id, name: `${l!.name} Type Path`, mask: textDocMask(l!) });
-  if (l?.vectorMask) out.push({ kind: 'vmask', id: l.id, name: `${l.name} Vector Mask`, mask: l.vectorMask.mask });
-  if (doc.workPath) out.push({ kind: 'work', id: 'work', name: 'Work Path', mask: doc.workPath });
+  if (l?.kind === 'vector' && l.vector) out.push({ kind: 'shape', id: l.id, name: `${l.name} 形状路径`, mask: shapeDocMask(l) });
+  if (typePathOf(l)) out.push({ kind: 'text', id: l!.id, name: `${l!.name} 文字路径`, mask: textDocMask(l!) });
+  if (l?.vectorMask) out.push({ kind: 'vmask', id: l.id, name: `${l.name} 矢量蒙版`, mask: l.vectorMask.mask });
+  if (doc.workPath) out.push({ kind: 'work', id: 'work', name: '工作路径', mask: doc.workPath });
   for (const p of doc.paths ?? []) out.push({ kind: 'saved', id: p.id, name: p.name, mask: p.mask });
   return out;
 }
 /** Resolve a target by its key regardless of the current panel selection. */
 export function targetByKey(e: Editor, key: string, doc: PhotoDocument = e.doc): PathTarget | undefined {
-  if (key === 'work') return doc.workPath ? { kind: 'work', id: 'work', name: 'Work Path', mask: doc.workPath } : undefined;
+  if (key === 'work') return doc.workPath ? { kind: 'work', id: 'work', name: '工作路径', mask: doc.workPath } : undefined;
   if (key.startsWith('path:')) {
     const p = doc.paths?.find((x) => x.id === key.slice(5));
     return p && { kind: 'saved', id: p.id, name: p.name, mask: p.mask };
   }
   const l = findLayer(doc.layers, key.slice(key.indexOf(':') + 1));
   if (!l) return;
-  if (key.startsWith('layer:') && l.vector) return { kind: 'shape', id: l.id, name: `${l.name} Shape Path`, mask: shapeDocMask(l) };
+  if (key.startsWith('layer:') && l.vector) return { kind: 'shape', id: l.id, name: `${l.name} 形状路径`, mask: shapeDocMask(l) };
   if (key.startsWith('text:') && typePathOf(l)) return { kind: 'text', id: l.id, name: `${l.name} Type Path`, mask: textDocMask(l) };
   if (key.startsWith('vmask:') && l.vectorMask) return { kind: 'vmask', id: l.id, name: `${l.name} Vector Mask`, mask: l.vectorMask.mask };
   return;
@@ -277,17 +277,17 @@ export function previewTarget(e: Editor, t: PathTarget, mask: VectorMask, doc: P
 }
 export function targetLocked(e: Editor, t: PathTarget) {
   if ((t.kind === 'shape' || t.kind === 'vmask' || t.kind === 'text') && layerLock(e.doc.layers, t.id, 'all')) {
-    e.message('Unlock this layer to edit its path.');
+    e.message('请先解锁此图层以编辑其路径。');
     return true;
   }
   return false;
 }
-/** "Path N" for a new saved path, not already used by one. */
+/** "路径 N" for a new saved path, not already used by one. */
 export function nextPathName(doc: PhotoDocument) {
   const names = new Set((doc.paths ?? []).map((p) => p.name));
   let n = (doc.paths?.length ?? 0) + 1;
-  while (names.has(`Path ${n}`)) n++;
-  return `Path ${n}`;
+  while (names.has(`路径 ${n}`)) n++;
+  return `路径 ${n}`;
 }
 export function nextName(doc: PhotoDocument, base: string) {
   const names = new Set([...allLayers(doc.layers).map((l) => l.name), ...(doc.paths ?? []).map((p) => p.name)]);
@@ -312,5 +312,5 @@ export function shapeLayer(doc: PhotoDocument, name: string, mask: VectorMask, f
 export function drawingTarget(e: Editor): PathTarget {
   const t = targetPath(e);
   if (t && t.kind !== 'shape' && t.kind !== 'text') return t;
-  return { kind: 'work', id: 'work', name: 'Work Path', mask: { paths: [] } };
+  return { kind: 'work', id: 'work', name: '工作路径', mask: { paths: [] } };
 }

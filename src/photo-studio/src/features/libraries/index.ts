@@ -64,25 +64,25 @@ export function installLibraries(e: Editor) {
     lazyPanel(
       {
         id: 'libraries',
-        title: 'Libraries',
+        title: '资源库',
         icon: 'libraries',
         location: 'strip',
         hidden: true,
-        menu: () => [{ label: 'Add to Library', id: 'libraries.add', items: ADD_SOURCES.map(([src]) => `libraries.add-${src}`) }, '-', 'libraries.new', 'libraries.rename', 'libraries.duplicate', 'libraries.delete', '-', 'libraries.import', 'libraries.export', '-', 'libraries.sync', '-', 'libraries.view-grid', 'libraries.view-list', 'libraries.group'],
+        menu: () => [{ label: '添加到资源库', id: 'libraries.add', items: ADD_SOURCES.map(([src]) => `libraries.add-${src}`) }, '-', 'libraries.new', 'libraries.rename', 'libraries.duplicate', 'libraries.delete', '-', 'libraries.import', 'libraries.export', '-', 'libraries.sync', '-', 'libraries.view-grid', 'libraries.view-list', 'libraries.group'],
       },
       panel,
     ),
   );
   const cmd = (c: Omit<Command, 'recordable'>) => registerCommand({ recordable: false, ...c });
   // Directly in the Window menu (not under Panels).
-  cmd({ id: 'window.panel.libraries', label: 'Libraries', checked: (e) => e.dock.isVisible('libraries'), run: (e) => e.dock.show('libraries', true) });
+  cmd({ id: 'window.panel.libraries', label: '资源库', checked: (e) => e.dock.isVisible('libraries'), run: (e) => e.dock.show('libraries', true) });
   cmd({
     id: 'libraries.new',
-    label: 'New Library…',
-    description: 'Create a library for colors, styles, brushes and graphics you reuse',
+    label: '新建资源库…',
+    description: '创建用于存放常用颜色、样式、画笔和图形的资源库',
     run: async (e) => {
       const l = await loaded();
-      const v = await formDialog('New Library', [{ name: 'name', label: 'Name', value: `Library ${l.index.libraries.length + 1}` }], 'Create');
+      const v = await formDialog('新建资源库', [{ name: 'name', label: '名称', value: `资源库 ${l.index.libraries.length + 1}` }], '创建');
       if (!v?.name.trim()) return;
       const created = await l.createLibrary(v.name.trim());
       libState.libraryId = created.id;
@@ -93,19 +93,19 @@ export function installLibraries(e: Editor) {
   });
   cmd({
     id: 'libraries.rename',
-    label: 'Rename Library…',
+    label: '重命名资源库…',
     enabled: () => !!shownLibrary(),
     run: async (e) => {
       const l = shownLibrary();
       if (!l) return;
-      const v = await formDialog('Rename Library', [{ name: 'name', label: 'Name', value: l.name }], 'Rename');
+      const v = await formDialog('重命名资源库', [{ name: 'name', label: '名称', value: l.name }], '重命名');
       if (v?.name.trim() && v.name.trim() !== l.name) await lib()!.renameLibrary(l.id, v.name);
       refreshPanel(e);
     },
   });
   cmd({
     id: 'libraries.duplicate',
-    label: 'Duplicate Library',
+    label: '复制资源库',
     enabled: () => !!shownLibrary(),
     run: async (e) => {
       const copy = await lib()!.duplicateLibrary(libState.libraryId);
@@ -116,12 +116,12 @@ export function installLibraries(e: Editor) {
   });
   cmd({
     id: 'libraries.delete',
-    label: 'Delete Library…',
+    label: '删除资源库…',
     enabled: () => !!shownLibrary(),
     run: async (e) => {
       const l = shownLibrary();
       if (!l) return;
-      const ok = await askChoice('Delete Library', `Delete “${l.name}” and its ${l.items.length} item${l.items.length === 1 ? '' : 's'}${lib()!.status.state === 'local' ? '' : ' everywhere it syncs'}? Placed graphics stay in their documents.`, [['delete', 'Delete']]);
+      const ok = await askChoice('删除资源库', `确定删除“${l.name}”及其 ${l.items.length} 个项目吗？已置入的图形仍会保留在文档中。`, [['delete', '删除']]);
       if (ok !== 'delete') return;
       await lib()!.deleteLibrary(l.id);
       libState.libraryId = '';
@@ -131,8 +131,8 @@ export function installLibraries(e: Editor) {
   });
   cmd({
     id: 'libraries.export',
-    label: 'Export Library…',
-    description: 'Save the library and its content as one file to share or back up',
+    label: '导出资源库…',
+    description: '将资源库及其内容保存为单个文件以供共享或备份',
     enabled: () => !!shownLibrary(),
     run: async (e) => {
       const l = shownLibrary();
@@ -141,13 +141,13 @@ export function installLibraries(e: Editor) {
       const { download } = await import('../../persistence/puter');
       const text = await exportLibraryFile(l, (h) => lib()!.readAsset(h));
       download(new Blob([text], { type: 'application/json' }), `${l.name.replace(/[\\/:*?"<>|]+/g, '_') || 'Library'}${LIBRARY_FILE_EXTENSION}`);
-      e.message(`Exported ${l.name}.`);
+      e.message(`已导出 ${l.name}。`);
     },
   });
   cmd({
     id: 'libraries.import',
-    label: 'Import Library…',
-    description: 'Add a library from a library file',
+    label: '导入资源库…',
+    description: '从资源库文件添加资源库',
     run: async (e) => {
       const { LIBRARY_FILE_EXTENSION, importLibraryFile, uniqueName } = await import('./model');
       const file = await new Promise<File | null>((resolve) => {
@@ -159,7 +159,7 @@ export function installLibraries(e: Editor) {
         input.click();
       });
       if (!file) return;
-      if (file.size > 256 * 1024 * 1024) throw new Error('The library file is larger than 256 MB.');
+      if (file.size > 256 * 1024 * 1024) throw new Error('资源库文件大小超过 256 MB。');
       const { sha256Hex } = await import('../../model/provenance');
       const got = await importLibraryFile(await file.text(), sha256Hex);
       const l = await loaded();
@@ -171,16 +171,15 @@ export function installLibraries(e: Editor) {
       saveViewState();
       showPanel(e);
       refreshPanel(e);
-      e.message(`Imported ${got.library.name} (${got.library.items.length} item${got.library.items.length === 1 ? '' : 's'})${got.skipped ? `; ${got.skipped} damaged item${got.skipped === 1 ? ' was' : 's were'} left out` : ''}.`);
+      e.message(`已导入 ${got.library.name}（包含 ${got.library.items.length} 个项目）${got.skipped ? `；已跳过 ${got.skipped} 个受损项目` : ''}。`);
     },
   });
   cmd({
     id: 'libraries.sync',
-    label: 'Sync Libraries Now',
-    description: 'Send library changes to Puter and take in changes made elsewhere',
+    label: '立即同步资源库',
+    description: '同步资源库更改',
     run: async (e) => {
       const l = await loaded();
-      // Puter may take a while (or never answer); the editor stays usable.
       void l.sync().then(() => e.message(l.status.message));
     },
   });
@@ -195,11 +194,11 @@ export function installLibraries(e: Editor) {
         refreshPanel(e);
       },
     });
-  view('libraries.view-grid', 'View as Grid', 'grid');
-  view('libraries.view-list', 'View as List', 'list');
+  view('libraries.view-grid', '网格视图', 'grid');
+  view('libraries.view-list', '列表视图', 'list');
   cmd({
     id: 'libraries.group',
-    label: 'Group by Type',
+    label: '按类型分组',
     checked: () => libState.grouped,
     run: (e) => {
       libState.grouped = !libState.grouped;
@@ -211,8 +210,8 @@ export function installLibraries(e: Editor) {
   for (const [src, label, type] of ADD_SOURCES)
     cmd({
       id: `libraries.add-${src}`,
-      label: `Add ${label}`,
-      description: `Add the ${label.toLowerCase()} to the library shown in the Libraries panel`,
+      label: `添加${label}`,
+      description: `将${label}添加到“资源库”面板中显示的资源库`,
       enabled: (e) => canAdd(e, src),
       run: async (e) => {
         const id = await targetLibrary(e);
@@ -222,7 +221,7 @@ export function installLibraries(e: Editor) {
         libState.itemType = type;
         showPanel(e);
         refreshPanel(e);
-        e.message(`Added ${TYPE_SINGULAR[type].toLowerCase()} “${item.name}” to ${lib()?.library(id)?.name ?? 'the library'}.`);
+        e.message(`已将${TYPE_SINGULAR[type]}“${item.name}”添加到 ${lib()?.library(id)?.name ?? '资源库'}。`);
       },
     });
   // Item commands act on the item last clicked in the panel.
@@ -239,29 +238,29 @@ export function installLibraries(e: Editor) {
         keepItemFocus(at);
       },
     });
-  itemCmd('libraries.item-apply', 'Apply', async (e) => (await apply()).applyItem(e, currentItem()!), (t) => t !== 'graphic', 'Use the item: set the color, apply the style, make the brush or pattern current');
-  itemCmd('libraries.item-place', 'Place', async (e) => (await apply()).placeGraphic(e, currentItem()!), (t) => t === 'graphic', 'Place the graphic as an embedded object');
-  itemCmd('libraries.item-place-linked', 'Place Linked', async (e) => (await apply()).placeGraphic(e, currentItem()!, { linked: true }), (t) => t === 'graphic', 'Place the graphic so it updates when the library item changes');
-  itemCmd('libraries.item-redefine', 'Redefine from Current', async (e) => {
+  itemCmd('libraries.item-apply', '应用', async (e) => (await apply()).applyItem(e, currentItem()!), (t) => t !== 'graphic', '使用该项：设置颜色、应用样式、将画笔或图案设为当前');
+  itemCmd('libraries.item-place', '置入', async (e) => (await apply()).placeGraphic(e, currentItem()!), (t) => t === 'graphic', '将图形作为嵌入对象置入');
+  itemCmd('libraries.item-place-linked', '置入链接', async (e) => (await apply()).placeGraphic(e, currentItem()!, { linked: true }), (t) => t === 'graphic', '置入图形，以便在资源库项目更新时同步更新');
+  itemCmd('libraries.item-redefine', '根据当前内容重新定义', async (e) => {
     const item = currentItem()!;
     const m = await apply();
     if (!(await m.redefineItem(e, item))) return;
     // Linked placements in this document follow as part of this command.
     const n = e.hasDocument ? await m.updateLibraryLinks(e) : 0;
-    if (!n) e.message(`Updated ${item.name}.`);
-  }, () => true, 'Replace the item with the current color, style, brush, selected layers or selection');
-  itemCmd('libraries.item-rename', 'Rename…', async () => {
+    if (!n) e.message(`已更新 ${item.name}。`);
+  }, () => true, '用当前颜色、样式、画笔、选定图层或选区替换该项');
+  itemCmd('libraries.item-rename', '重命名…', async () => {
     const item = currentItem()!;
-    const v = await formDialog(`Rename ${TYPE_SINGULAR[item.type]}`, [{ name: 'name', label: 'Name', value: item.name }], 'Rename');
+    const v = await formDialog(`重命名${TYPE_SINGULAR[item.type]}`, [{ name: 'name', label: '名称', value: item.name }], '确定');
     if (v?.name.trim() && v.name.trim() !== item.name) await lib()!.renameItem(item.id, v.name);
   });
-  itemCmd('libraries.item-duplicate', 'Duplicate', async () => {
+  itemCmd('libraries.item-duplicate', '复制', async () => {
     const copy = await lib()!.duplicateItem(libState.itemId);
     if (copy) libState.itemId = copy.id;
   });
-  itemCmd('libraries.item-delete', 'Delete…', async () => {
+  itemCmd('libraries.item-delete', '删除…', async () => {
     const item = currentItem()!;
-    const ok = await askChoice(`Delete ${TYPE_SINGULAR[item.type]}`, `Delete “${item.name}” from the library? Linked placements keep their current content.`, [['delete', 'Delete']]);
+    const ok = await askChoice(`删除${TYPE_SINGULAR[item.type]}`, `确定从资源库中删除“${item.name}”吗？已链接的置入对象将保留当前内容。`, [['delete', '删除']]);
     if (ok === 'delete') await lib()!.deleteItem(item.id);
   });
 

@@ -31,7 +31,7 @@ export function installType(e: Editor) {
   installTypeOptions(e);
   installTypePanels(e);
   installTypeCommands(e);
-  registerPanel(lazyPanel({ id: 'glyphs', title: 'Glyphs', icon: 'glyphs', location: 'strip', hidden: true }, lazy(async () => (await glyphs()).glyphsPanel)));
+  registerPanel(lazyPanel({ id: 'glyphs', title: '字形', icon: 'glyphs', location: 'strip', hidden: true }, lazy(async () => (await glyphs()).glyphsPanel)));
   onSessionChange(() => glyphs.loaded?.followSession(e));
   installTextStyles(e);
   installLanguageCommands(e);
@@ -40,27 +40,27 @@ export function installType(e: Editor) {
   registerCommand(
     {
       id: 'edit.find-replace-text',
-      label: 'Find and Replace Text…',
+      label: '查找和替换文本…',
       recordable: false,
       enabled: hasText,
-      description: 'Find text in text layers and change it.',
+      description: '在文本图层中查找并更改文本。',
       // The dialogs stay open beside the canvas; the command returns at once.
       ...lazyRun(findSpell, (m, e) => void m.findReplace(e)),
     },
     {
       id: 'edit.check-spelling',
-      label: 'Check Spelling…',
+      label: '拼写检查…',
       recordable: false,
       enabled: hasText,
-      description: 'Check the spelling of text layers against an English dictionary.',
+      description: '根据英文词典检查文本图层的拼写。',
       ...lazyRun(findSpell, (m, e) => void m.checkSpelling(e)),
     },
     {
       id: 'type.match-font',
-      label: 'Match Font…',
+      label: '匹配字体…',
       recordable: false,
       enabled: (e) => e.hasDocument,
-      description: 'Find fonts that look like text in the image and apply one to the selected text layer.',
+      description: '查找与图像中文字相似的字体，并应用到选定的文本图层。',
       ...lazyRun(matchFont, (m, e) => void m.matchFontDialog(e)),
     },
   );

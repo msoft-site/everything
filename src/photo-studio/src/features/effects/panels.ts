@@ -11,7 +11,7 @@ import { allStyles, deleteUserStyle, showStyleThumbnail } from './style-thumbs';
 // Gradient tool, fill layers and the Pattern Stamp.
 export const stylesPanel: Panel = {
   id: 'styles',
-  title: 'Styles',
+  title: '样式',
   icon: 'sparkles',
   location: 'strip',
   mount: (e, el) => {
@@ -34,7 +34,7 @@ export const stylesPanel: Panel = {
       return;
     }
     el.dataset.key = key;
-    el.innerHTML = `<div class="style-grid" role="list" aria-label="Layer styles">${allStyles().map((s) => `<button role="listitem" data-style="${escapeXML(s.id)}" title="${escapeXML(s.name)}${s.id.startsWith('user-') ? ' — Alt-click to delete' : ''}" aria-label="Apply style ${escapeXML(s.name)}" ${e.layer ? '' : 'disabled'}><img alt="" width="48" height="48"><span>${escapeXML(s.name)}</span></button>`).join('')}</div><p class="muted panel-hint">Click a style to apply it to the selected layers. Save your own from the Layer Style dialog.</p>`;
+    el.innerHTML = `<div class="style-grid" role="list" aria-label="图层样式">${allStyles().map((s) => `<button role="listitem" data-style="${escapeXML(s.id)}" title="${escapeXML(s.name)}${s.id.startsWith('user-') ? ' — Alt-单击以删除' : ''}" aria-label="应用样式 ${escapeXML(s.name)}" ${e.layer ? '' : 'disabled'}><img alt="" width="48" height="48"><span>${escapeXML(s.name)}</span></button>`).join('')}</div><p class="muted panel-hint">单击样式可将其应用到选定图层。您也可以在“图层样式”对话框中存储自己的样式。</p>`;
     const styles = allStyles();
     el.querySelectorAll<HTMLImageElement>('[data-style] img').forEach((img, i) => showStyleThumbnail(img, styles[i].style, 48));
   },
@@ -43,7 +43,7 @@ export const stylesPanel: Panel = {
 
 export const gradientsPanel: Panel = {
   id: 'gradients',
-  title: 'Gradients',
+  title: '渐变',
   icon: 'gradient-swatches',
   location: 'dock-top',
   mount: (e, el) => {
@@ -53,7 +53,7 @@ export const gradientsPanel: Panel = {
       if (b) {
         const [fi, gi] = b.dataset.gradient!.split(':').map(Number);
         const folders = allGradientFolders();
-        if (ev.altKey && folders[fi].name === 'Saved') {
+        if (ev.altKey && folders[fi].name === '已存储') {
           saveUserGradients(loadUserGradients().filter((_, i) => i !== gi));
           gradientsPanel.update!(e, el);
           return;
@@ -78,13 +78,13 @@ export const gradientsPanel: Panel = {
   update: (e, el) => {
     const ctx = colors(e);
     const current = JSON.stringify(effectsState.gradient);
-    el.innerHTML = `<div class="gradient-panel">${allGradientFolders().map((f, fi) => `<details open><summary>${svg('folder', 13)}${escapeXML(f.name)}</summary><div class="picker-grid">${f.gradients.map((g, gi) => `<button data-gradient="${fi}:${gi}" aria-pressed="${JSON.stringify(g) === current}" title="${escapeXML(g.name ?? 'Gradient')}${f.name === 'Saved' ? ' — Alt-click to delete' : ''}" aria-label="${escapeXML(g.name ?? 'Gradient')}" style="background:${gradientToCss(g, ctx)}, var(--fx-checker)"></button>`).join('')}</div></details>`).join('')}<button class="panel-wide-button" data-edit-gradient>${svg('sliders-horizontal', 13)}Edit current gradient…</button></div>`;
+    el.innerHTML = `<div class="gradient-panel">${allGradientFolders().map((f, fi) => `<details open><summary>${svg('folder', 13)}${escapeXML(f.name)}</summary><div class="picker-grid">${f.gradients.map((g, gi) => `<button data-gradient="${fi}:${gi}" aria-pressed="${JSON.stringify(g) === current}" title="${escapeXML(g.name ?? '渐变')}${f.name === '已存储' ? ' — Alt-单击以删除' : ''}" aria-label="${escapeXML(g.name ?? '渐变')}" style="background:${gradientToCss(g, ctx)}, var(--fx-checker)"></button>`).join('')}</div></details>`).join('')}<button class="panel-wide-button" data-edit-gradient>${svg('sliders-horizontal', 13)}编辑当前渐变…</button></div>`;
   },
 };
 
 export const patternsPanel: Panel = {
   id: 'patterns',
-  title: 'Patterns',
+  title: '图案',
   icon: 'grid-2x2',
   location: 'dock-top',
   mount: (e, el) => {
@@ -105,7 +105,7 @@ export const patternsPanel: Panel = {
   },
   update: (e, el) => {
     const list = availablePatterns(e);
-    el.innerHTML = `<div class="pattern-panel"><div class="picker-grid">${list.map((p) => `<button data-pattern="${escapeXML(p.id)}" aria-pressed="${p.id === effectsState.patternId}" title="${escapeXML(p.name)}${p.id.startsWith('user-') ? ' — Alt-click to delete' : ''}" aria-label="${escapeXML(p.name)}"><img src="${patternThumb(p, 40)}" alt=""></button>`).join('')}</div><div class="panel-row"><button data-command="edit.define-pattern">${svg('plus', 13)}Define from selection</button><button data-command="layer.fill-pattern">Pattern fill layer</button></div></div>`;
+    el.innerHTML = `<div class="pattern-panel"><div class="picker-grid">${list.map((p) => `<button data-pattern="${escapeXML(p.id)}" aria-pressed="${p.id === effectsState.patternId}" title="${escapeXML(p.name)}${p.id.startsWith('user-') ? ' — Alt-单击以删除' : ''}" aria-label="${escapeXML(p.name)}"><img src="${patternThumb(p, 40)}" alt=""></button>`).join('')}</div><div class="panel-row"><button data-command="edit.define-pattern">${svg('plus', 13)}从选区定义图案</button><button data-command="layer.fill-pattern">图案填充图层</button></div></div>`;
   },
   menu: () => ['edit.define-pattern', 'layer.fill-pattern'],
 };

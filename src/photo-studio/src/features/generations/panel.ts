@@ -51,7 +51,7 @@ async function decode(blob: Blob): Promise<RGBA8> {
 }
 async function imageOf(x: GenerationEntry) {
   const blob = await generationStore().image(x.id);
-  if (!blob) throw new Error('This result is no longer stored in this browser.');
+  if (!blob) throw new Error('此结果已不在本浏览器中存储。');
   return blob;
 }
 const shortPrompt = (x: GenerationEntry) => {
@@ -94,7 +94,7 @@ export async function placeGeneration(e: Editor, x: GenerationEntry) {
   const l = newPixelLayer(`${GENERATION_LABELS[x.kind]}: ${shortPrompt(x)}`, doc, gridFromImage(e.assets.tiles, img, at.x, at.y));
   l.generated = { kind: layerKind(x), prompt: x.prompt, model: x.model, style: typeof x.settings.style === 'string' && x.settings.style !== 'none' ? x.settings.style : undefined };
   const anchor = e.selected;
-  e.command('Place Generated Image', (d) => {
+  e.command('放置生成图像', (d) => {
     const insert = (layers: typeof d.layers): boolean => {
       const i = layers.findIndex((y) => y.id === anchor);
       if (i >= 0) return (insertLayerAt(layers, i + 1, l), true);
@@ -104,7 +104,7 @@ export async function placeGeneration(e: Editor, x: GenerationEntry) {
   });
   e.selectLayers([l.id]);
   e.update();
-  e.message('Placed the generated image as a new layer.');
+  e.message('已将生成图像作为新图层放置。');
 }
 async function fit(img: RGBA8, w: number, h: number): Promise<RGBA8> {
   const src = new OffscreenCanvas(img.width, img.height);
@@ -119,15 +119,15 @@ async function fit(img: RGBA8, w: number, h: number): Promise<RGBA8> {
 /** Open a stored result as a new document. */
 export async function openGeneration(e: Editor, x: GenerationEntry) {
   const { openFile } = await import('../files/open');
-  const name = shortPrompt(x).replace(/…$/, '').replace(/[\\/:*?"<>|]+/g, ' ').trim() || 'Generated';
+  const name = shortPrompt(x).replace(/…$/, '').replace(/[\\/:*?"<>|]+/g, ' ').trim() || '已生成图像';
   await openFile(e, await imageOf(x), `${name}.png`);
 }
 async function copyPrompt(e: Editor, x: GenerationEntry) {
   try {
     await navigator.clipboard.writeText(x.prompt);
-    e.message('Prompt copied.');
+    e.message('提示词已复制。');
   } catch {
-    e.message('The clipboard is not available here.');
+    e.message('当前环境剪贴板不可用。');
   }
 }
 // The dialog each kind came from and the command that opens it.
@@ -140,9 +140,9 @@ export async function reuseSettings(e: Editor, x: GenerationEntry) {
   const dialog = dialogOf(x);
   const id = dialogCommand[dialog];
   const c = id && findCommand(id);
-  if (!c) return e.message('These settings cannot be reused.');
+  if (!c) return e.message('无法重复使用此设置。');
   if (c.enabled && !c.enabled(e))
-    return e.message(dialog === 'fill' ? 'Select the area to fill first, then reuse these settings.' : `Open a document first to use ${c.label.replace(/…$/, '')}.`);
+    return e.message(dialog === 'fill' ? '请先选择需要填充的区域，然后再重复使用这些设置。' : `请先打开一个文档以使用 ${c.label.replace(/…$/, '')}。`);
   const { variation: _v, dialog: _d, ...rest } = x.settings;
   void _v;
   void _d;
@@ -155,29 +155,29 @@ async function remove(e: Editor, x: GenerationEntry) {
 }
 export async function clearGenerations(e: Editor) {
   const n = (await load()).length;
-  if (!n) return e.message('Generation History is empty.');
-  if (!(await warnOnce(e, 'clear-generations', 'Clear Generation History', `Delete all ${n} stored AI result${n === 1 ? '' : 's'} from this browser? This cannot be undone. Layers already placed in documents are not affected.`, 'Delete All'))) return;
+  if (!n) return e.message('生成历史记录为空。');
+  if (!(await warnOnce(e, 'clear-generations', '清空生成历史记录', `确定要从本浏览器中删除全部 ${n} 条已存储的 AI 结果吗？此操作无法撤销。已放置在文档中的图层不受影响。`, '全部删除'))) return;
   await generationStore().clear();
   generationsChanged();
   e.dock?.update();
-  e.message('Generation History cleared.');
+  e.message('已清空生成历史记录。');
 }
 
 const sizeText = (n: number) => (n < 1048576 ? `${Math.max(1, Math.round(n / 1024))} KB` : `${(n / 1048576).toFixed(1)} MB`);
 function rowHTML(x: GenerationEntry) {
   const url = urls.get(x.id);
   const name = escapeXML(shortPrompt(x));
-  const meta = [GENERATION_LABELS[x.kind], typeof x.settings.variation === 'number' ? `variation ${x.settings.variation}` : '', x.model, relativeTime(x.time), `${x.width} × ${x.height}`, x.docName].filter(Boolean).map((t) => escapeXML(String(t))).join(' · ');
+  const meta = [GENERATION_LABELS[x.kind], typeof x.settings.variation === 'number' ? `变体 ${x.settings.variation}` : '', x.model, relativeTime(x.time), `${x.width} × ${x.height}`, x.docName].filter(Boolean).map((t) => escapeXML(String(t))).join(' · ');
   const b = (act: string, icon: string, label: string) => `<button type="button" class="icon-button" data-gen-act="${act}" title="${label}" aria-label="${label}: ${name}">${svg(icon, 14)}</button>`;
   return `<div class="gen-row" role="listitem" data-gen="${x.id}">
-<button type="button" class="gen-thumb" data-gen-act="place" title="Place as a new layer" aria-label="Place as a new layer: ${name}">${url ? `<img src="${url}" alt="">` : svg('image', 18)}</button>
+<button type="button" class="gen-thumb" data-gen-act="place" title="作为新图层放置" aria-label="作为新图层放置: ${name}">${url ? `<img src="${url}" alt="">` : svg('image', 18)}</button>
 <div class="gen-meta"><q title="${escapeXML(x.prompt)}">${escapeXML(x.prompt || GENERATION_LABELS[x.kind])}</q><small title="${escapeXML(new Date(x.time).toLocaleString())} · ${sizeText(x.size)}">${meta}</small>
-<div class="gen-actions">${b('place', 'image-plus', 'Place as a new layer')}${b('open', 'file-plus', 'Open as a new document')}${b('copy', 'copy', 'Copy prompt')}${canReuse(x) ? b('reuse', 'repeat', 'Reuse settings') : ''}${b('delete', 'trash-2', 'Delete')}</div></div></div>`;
+<div class="gen-actions">${b('place', 'image-plus', '作为新图层放置')}${b('open', 'file-plus', '作为新文档打开')}${b('copy', 'copy', '复制提示词')}${canReuse(x) ? b('reuse', 'repeat', '重用设置') : ''}${b('delete', 'trash-2', '删除')}</div></div></div>`;
 }
 
 export function mountGenerations(e: Editor, el: HTMLElement) {
   el.classList.add('generations-panel');
-  el.innerHTML = `<div class="gen-head"><input type="search" class="gen-search" placeholder="Search prompts" aria-label="Search prompts" spellcheck="false"><select class="gen-kind" aria-label="Show results of"><option value="all">All kinds</option>${GENERATION_KINDS.map((k) => `<option value="${k}">${GENERATION_LABELS[k]}</option>`).join('')}</select></div><div class="gen-body"></div>`;
+  el.innerHTML = `<div class="gen-head"><input type="search" class="gen-search" placeholder="搜索提示词" aria-label="搜索提示词" spellcheck="false"><select class="gen-kind" aria-label="显示类型"><option value="all">所有类型</option>${GENERATION_KINDS.map((k) => `<option value="${k}">${GENERATION_LABELS[k]}</option>`).join('')}</select></div><div class="gen-body"></div>`;
   const search = el.querySelector<HTMLInputElement>('.gen-search')!;
   const kind = el.querySelector<HTMLSelectElement>('.gen-kind')!;
   search.value = view.query;
@@ -200,7 +200,7 @@ export function mountGenerations(e: Editor, el: HTMLElement) {
     const retry = t.closest<HTMLButtonElement>('[data-gen-retry]');
     if (retry) {
       retry.disabled = true;
-      retry.textContent = 'Loading…';
+      retry.textContent = '加载中…';
       el.querySelector<HTMLInputElement>('.gen-search')?.focus({ preventScroll: true });
       draw(e, el, true);
       return;
@@ -228,13 +228,13 @@ function draw(e: Editor, el: HTMLElement, force: boolean) {
     if (body.dataset.key !== key) return;
     const shown = filterGenerations(list, view);
     body.innerHTML = !list.length
-      ? '<p class="gen-empty">No AI results yet. Images made with Generate Image, Edit with Prompt, AI Fill, AI Expand, the AI layer of Upscale, AI Recompose, Remove Reflections, Rotate Object, Portrait &amp; Restore and the Assistant are kept here, in this browser.</p>'
+      ? '<p class="gen-empty">暂无 AI 生成结果。通过“生成图像”、“提示词编辑”、“AI 填充”、“AI 扩图”、“超分辨率放大中的 AI 图层”、“AI 重构构图”、“消除反光”、“旋转物体”、“人像与老照片修复”以及“智能助手”生成的图像均会保存在此浏览器本地。</p>'
       : shown.length
-        ? `<p class="gen-count muted">${shown.length === list.length ? `${list.length} result${list.length === 1 ? '' : 's'}` : `${shown.length} of ${list.length}`}</p><div class="gen-list" role="list">${shown.map(rowHTML).join('')}</div>`
-        : '<p class="gen-empty">No results match.</p>';
+        ? `<p class="gen-count muted">${shown.length === list.length ? `${list.length} 个结果` : `${shown.length} / ${list.length} 个结果`}</p><div class="gen-list" role="list">${shown.map(rowHTML).join('')}</div>`
+        : '<p class="gen-empty">未找到匹配的结果。</p>';
     void e;
   }, () => {
     if (body.dataset.key !== key) return;
-    body.innerHTML = '<p class="gen-empty" role="alert">Could not load Generation History from this browser. Try again.</p><button type="button" class="secondary" data-gen-retry>Retry</button>';
+    body.innerHTML = '<p class="gen-empty" role="alert">无法从本浏览器加载生成历史记录。请重试。</p><button type="button" class="secondary" data-gen-retry>重试</button>';
   });
 }

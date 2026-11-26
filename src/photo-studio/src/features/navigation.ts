@@ -7,27 +7,27 @@ export function installNavigation(_e: Editor) {
   registerTool(
     {
       id: 'hand',
-      label: 'Hand Tool',
+      label: '抓手工具',
       key: 'H',
       icon: 'hand',
       group: 'hand',
       needsDocument: false,
       cursor: () => 'grab',
       options: (e) =>
-        `<label class="transform-setting" title="Scroll every open window together (Shift-drag does it once)"><input type="checkbox" id="scroll-all" ${e.settings.scrollAllWindows ? 'checked' : ''}>Scroll All Windows</label><button data-command="view.actual-pixels">100%</button><button data-command="view.fit">Fit Screen</button><button data-command="view.fill">Fill Screen</button><span class="hint">Drag to scroll · Space+drag works with any tool</span>`,
+        `<label class="transform-setting" title="同时滚动所有打开的窗口 (按住 Shift 拖动生效一次)"><input type="checkbox" id="scroll-all" ${e.settings.scrollAllWindows ? 'checked' : ''}>滚动所有窗口</label><button data-command="view.actual-pixels">100%</button><button data-command="view.fit">适合屏幕</button><button data-command="view.fill">满屏</button><span class="hint">拖动以滚动 · 空格键+拖动可在任意工具下生效</span>`,
       bindOptions: ({ e, el }) => {
         el.querySelector<HTMLInputElement>('#scroll-all')?.addEventListener('change', (ev) => (e.settings.scrollAllWindows = (ev.target as HTMLInputElement).checked));
       },
     },
     {
       id: 'rotate-view',
-      label: 'Rotate View Tool',
+      label: '旋转视图工具',
       key: 'R',
       icon: 'rotate-view',
       group: 'hand',
       cursor: () => 'grab',
       options: (e) =>
-        `<label class="transform-setting rotate-angle">Rotation Angle <input type="number" id="view-angle" min="-180" max="180" step="1" value="${Math.round(e.rotation * 10) / 10}" aria-label="View rotation angle (degrees)">°</label><button data-command="view.reset-rotation" ${e.rotation ? '' : 'disabled'}>Reset View</button><label class="transform-setting"><input type="checkbox" id="rotate-all" ${e.preferences.rotateAllWindows ? 'checked' : ''}>Rotate All Windows</label><span class="hint">Drag to turn the canvas · Shift snaps to 15° · Esc resets</span>`,
+        `<label class="transform-setting rotate-angle">旋转角度 <input type="number" id="view-angle" min="-180" max="180" step="1" value="${Math.round(e.rotation * 10) / 10}" aria-label="视图旋转角度 (度)">°</label><button data-command="view.reset-rotation" ${e.rotation ? '' : 'disabled'}>复位视图</button><label class="transform-setting"><input type="checkbox" id="rotate-all" ${e.preferences.rotateAllWindows ? 'checked' : ''}>旋转所有窗口</label><span class="hint">拖动旋转画布 · Shift 约束为 15° · Esc 复位</span>`,
       bindOptions: ({ e, el }) => {
         const angle = el.querySelector<HTMLInputElement>('#view-angle')!;
         angle.addEventListener('change', () => {
@@ -75,14 +75,14 @@ export function installNavigation(_e: Editor) {
     },
     {
       id: 'zoom',
-      label: 'Zoom Tool',
+      label: '缩放工具',
       key: 'Z',
       icon: 'zoom-in',
       group: 'zoom',
       needsDocument: false,
       cursor: (e) => ((e.settings.zoomOut as boolean) ? 'zoom-out' : 'zoom-in'),
       options: (e) =>
-        `<div class="segmented" role="group" aria-label="Zoom direction"><button data-zoom-dir="in" aria-pressed="${!e.settings.zoomOut}" title="Zoom in">+</button><button data-zoom-dir="out" aria-pressed="${!!e.settings.zoomOut}" title="Zoom out (Alt)">−</button></div><label class="transform-setting" title="Resize floating windows to fit the image after zooming"><input type="checkbox" id="zoom-resize" ${e.preferences.zoomResizesWindows ? 'checked' : ''}>Resize Windows to Fit</label><label class="transform-setting" title="Zoom every open window by the same amount"><input type="checkbox" id="zoom-all" ${e.settings.zoomAllWindows ? 'checked' : ''}>Zoom All Windows</label><label class="transform-setting"><input type="checkbox" id="scrubby-zoom" ${e.settings.scrubbyZoom !== false ? 'checked' : ''}>Scrubby Zoom</label><button data-command="view.actual-pixels">100%</button><button data-command="view.fit">Fit Screen</button><button data-command="view.fill">Fill Screen</button>`,
+        `<div class="segmented" role="group" aria-label="缩放方向"><button data-zoom-dir="in" aria-pressed="${!e.settings.zoomOut}" title="放大">+</button><button data-zoom-dir="out" aria-pressed="${!!e.settings.zoomOut}" title="缩小 (Alt)">−</button></div><label class="transform-setting" title="缩放后调整浮动窗口大小以适合图像"><input type="checkbox" id="zoom-resize" ${e.preferences.zoomResizesWindows ? 'checked' : ''}>调整窗口大小以适合</label><label class="transform-setting" title="以相同比例缩放每个打开的窗口"><input type="checkbox" id="zoom-all" ${e.settings.zoomAllWindows ? 'checked' : ''}>缩放所有窗口</label><label class="transform-setting"><input type="checkbox" id="scrubby-zoom" ${e.settings.scrubbyZoom !== false ? 'checked' : ''}>细微缩放</label><button data-command="view.actual-pixels">100%</button><button data-command="view.fit">适合屏幕</button><button data-command="view.fill">满屏</button>`,
       bindOptions: ({ e, el }) => {
         el.querySelectorAll<HTMLButtonElement>('[data-zoom-dir]').forEach((b) =>
           b.addEventListener('click', () => {

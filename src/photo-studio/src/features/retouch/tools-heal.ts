@@ -58,7 +58,7 @@ import { bindSampleOptions, sampleOptions } from '../clone-source/options';
 import { ants, bindCheck, bindSize, checkbox, sizeField, sizeKeys } from './ui';
 import { bindNumberField } from '../paint-tools/fields';
 
-const hardnessField = (id: string) => `<label>Hardness <input id="retouch-hardness" type="number" min="0" max="100" value="${Math.round(brushFor(id).hardness * 100)}" aria-label="Brush hardness (%)">%</label>`;
+const hardnessField = (id: string) => `<label>硬度 <input id="retouch-hardness" type="number" min="0" max="100" value="${Math.round(brushFor(id).hardness * 100)}" aria-label="画笔硬度 (%)">%</label>`;
 const bindHardness = (el: HTMLElement, id: string) =>
   bindNumberField(el, '#retouch-hardness', () => brushFor(id).hardness * 100, (v) => (brushFor(id).hardness = Math.max(0, Math.min(1, v / 100))));
 const select = (id: string, label: string, value: string, options: [string, string][]) =>
@@ -167,21 +167,21 @@ async function spotHeal(e: Editor, s: Collected) {
   const mode = healMode(e, 'spotMode');
   const kept = mode === 'normal' ? undefined : { img: cloneRGBA8(img), mask: { ...mask, data: new Uint8Array(mask.data) } };
   const result = await heavy<RGBA8>(e, 'Healing', 'spot-heal', { img, mask, mode: (e.settings.spotType as SpotHealMode) ?? 'context', seed: s.points.length }, buffersOf(img, mask));
-  if (result) writeResult(e, target, R, before, kept ? applyHealMode(mode, kept.img, result, kept.mask) : result, 'Spot Healing Brush', { sampleAll, weight });
+  if (result) writeResult(e, target, R, before, kept ? applyHealMode(mode, kept.img, result, kept.mask) : result, '污点修复画笔', { sampleAll, weight });
 }
 const spotHealingTool = collectingTool(
   {
     id: SPOT,
-    label: 'Spot Healing Brush Tool',
+    label: '污点修复画笔工具',
     key: 'J',
     icon: 'heal-spot',
     group: 'heal',
     options: (e) =>
-      `${sizeField(SPOT)}${hardnessField(SPOT)}${select('spot-type', 'Type', (e.settings.spotType as string) ?? 'context', [
-        ['context', 'Context Aware'],
-        ['proximity', 'Proximity Match'],
-        ['texture', 'Create Texture'],
-      ])}${healModeField(e, 'spotMode', false)}${checkbox('spot-all', 'Sample All Layers', !!e.settings.spotSampleAll)}`,
+      `${sizeField(SPOT)}${hardnessField(SPOT)}${select('spot-type', '类型', (e.settings.spotType as string) ?? 'context', [
+        ['context', '内容识别'],
+        ['proximity', '近似匹配'],
+        ['texture', '创建纹理'],
+      ])}${healModeField(e, 'spotMode', false)}${checkbox('spot-all', '对所有图层取样', !!e.settings.spotSampleAll)}`,
     bindOptions: ({ e, el }) => {
       bindSize(el, SPOT);
       bindHardness(el, SPOT);
@@ -192,7 +192,7 @@ const spotHealingTool = collectingTool(
     keyDown: (e, ev) => sizeKeys(e, SPOT, ev),
     overlay: () => (spot.s ? strokeSvg(spot.s.points, brushFor(SPOT).size) : ''),
   },
-  'The Spot Healing Brush',
+  '污点修复画笔',
   spotHeal,
   spot,
 );
@@ -232,7 +232,7 @@ async function removeStrokes(e: Editor, strokes: { points: Pt[]; size: number }[
   const img = sampleAll ? await sourceRect(e, R, true) : cloneRGBA8(before);
   const weight = binarize(hole);
   const result = await heavy<RGBA8>(e, 'Removing', 'context-fill', { img, hole, opts: { seed: 7 } }, buffersOf(img, hole));
-  if (result) writeResult(e, target, R, before, result, 'Remove Tool', { sampleAll, weight });
+  if (result) writeResult(e, target, R, before, result, '移除工具', { sampleAll, weight });
 }
 async function applyPendingRemove(e: Editor) {
   const pending = pendingRemove(e);
@@ -242,13 +242,13 @@ async function applyPendingRemove(e: Editor) {
 const removeTool = collectingTool(
   {
     id: REMOVE,
-    label: 'Remove Tool',
+    label: '移除工具',
     key: 'J',
     icon: 'remove-tool',
     group: 'heal',
     options: (e) =>
-      `${sizeField(REMOVE)}${checkbox('remove-all', 'Sample All Layers', !!e.settings.removeSampleAll)}${checkbox('remove-each', 'Remove after each stroke', e.settings.removeEach !== false)}${
-        pendingRemove(e) ? `<button id="remove-apply" class="primary" title="Remove the painted areas (Enter)">Apply</button><button id="remove-cancel" title="Discard the painted strokes (Escape)">Cancel</button>` : ''
+      `${sizeField(REMOVE)}${checkbox('remove-all', '对所有图层取样', !!e.settings.removeSampleAll)}${checkbox('remove-each', '每次描边后移除', e.settings.removeEach !== false)}${
+        pendingRemove(e) ? `<button id="remove-apply" class="primary" title="移除绘制的区域 (Enter)">应用</button><button id="remove-cancel" title="放弃绘制的描边 (Escape)">取消</button>` : ''
       }`,
     bindOptions: ({ e, el }) => {
       bindSize(el, REMOVE);
@@ -297,7 +297,7 @@ const healMode = (e: Editor, key: string): HealMode => (isHealMode(e.settings[ke
 /** The Mode menu of the healing brushes (Replace needs a sampled source). */
 function healModeField(e: Editor, key: string, replace: boolean) {
   const list = HEAL_MODES.filter(([m]) => replace || m !== 'replace');
-  return `<label title="How the healed pixels combine with the image: Replace keeps the source's grain and texture">Mode <select id="heal-mode">${list.map(([m, l]) => `<option value="${m}" ${healMode(e, key) === m ? 'selected' : ''}>${l}</option>`).join('')}</select></label>`;
+  return `<label title="修复后的像素与图像的混合方式：替换将保留源的纹理">模式 <select id="heal-mode">${list.map(([m, l]) => `<option value="${m}" ${healMode(e, key) === m ? 'selected' : ''}>${l}</option>`).join('')}</select></label>`;
 }
 type HealStroke = { session?: StrokeSession; target?: PixelsTarget; points: Pt[]; anchor: [number, number]; src: CloneSource; mode: SampleMode; done: boolean };
 let healStroke: HealStroke | undefined;
@@ -329,7 +329,7 @@ async function finishHealing(e: Editor) {
       const kept = mode === 'replace' ? cloneRGBA8(src) : undefined;
       const backdrop = mode === 'normal' ? undefined : cloneRGBA8(dst);
       const result = await heavy<RGBA8>(e, 'Healing', 'heal', { dst, src, mask: { ...mask, data: new Uint8Array(mask.data) }, offset: { x: 0, y: 0 } }, buffersOf(dst, src));
-      if (result) writeResult(e, target, D, before, backdrop ? applyHealMode(mode, backdrop, result, mask, kept) : result, 'Healing Brush', { sampleAll, weight });
+      if (result) writeResult(e, target, D, before, backdrop ? applyHealMode(mode, backdrop, result, mask, kept) : result, '修复画笔', { sampleAll, weight });
       else e.preview(e.doc);
     });
   } finally {
@@ -339,13 +339,13 @@ async function finishHealing(e: Editor) {
 }
 const healingBrushTool: Tool = {
   id: HEAL,
-  label: 'Healing Brush Tool',
+  label: '修复画笔工具',
   key: 'J',
   icon: 'bandage',
   group: 'heal',
   cursor: () => 'none',
   options: (e) =>
-    `${sizeField(HEAL)}${hardnessField(HEAL)}${healModeField(e, 'healMode', true)}${checkbox('heal-aligned', 'Aligned', e.settings.healAligned !== false)}${sampleOptions('heal-sample', sampleMode(e, 'heal'))}<button class="icon-button toggle" id="heal-ignore-adj" aria-pressed="${ignoreAdjustments(e)}" title="Ignore adjustment layers when sampling" aria-label="Ignore adjustment layers when sampling">${svg('layers-2', 16)}</button><button class="icon-button" id="heal-panel" title="Clone Source panel" aria-label="Open the Clone Source panel">${svg('copy-plus', 16)}</button>`,
+    `${sizeField(HEAL)}${hardnessField(HEAL)}${healModeField(e, 'healMode', true)}${checkbox('heal-aligned', '对齐', e.settings.healAligned !== false)}${sampleOptions('heal-sample', sampleMode(e, 'heal'))}<button class="icon-button toggle" id="heal-ignore-adj" aria-pressed="${ignoreAdjustments(e)}" title="取样时忽略调整图层" aria-label="取样时忽略调整图层">${svg('layers-2', 16)}</button><button class="icon-button" id="heal-panel" title="仿制源面板" aria-label="打开仿制源面板">${svg('copy-plus', 16)}</button>`,
   bindOptions: ({ e, el }) => {
     bindSize(el, HEAL);
     bindHardness(el, HEAL);
@@ -379,20 +379,20 @@ const healingBrushTool: Tool = {
   pointerDown: async (e, p) => {
     if (p.alt) {
       await setSource(e, p.x, p.y, 'heal');
-      e.message('Healing source set.');
+      e.message('已设置修复源。');
       e.overlay();
       return;
     }
     const source = activeSource();
     if (!source) {
-      e.message('Alt-click (Option-click) to define a source point to heal from.');
+      e.message('按住 Alt 单击以定义修复的源点。');
       return;
     }
     const anchor = strokeAnchor(source, [p.x, p.y], e.settings.healAligned !== false);
     cloneSourceChanged();
     const st: HealStroke = { points: [[p.x, p.y]], anchor, src: source, mode: sampleMode(e, 'heal'), done: false };
     healStroke = st;
-    const target = await retouchTarget(e, 'The Healing Brush');
+    const target = await retouchTarget(e, '修复画笔');
     if (healStroke !== st) return;
     if (!target) {
       healStroke = undefined;
@@ -545,7 +545,7 @@ async function applyPatch(e: Editor, sel: Mask8, rect: IRect, dx: number, dy: nu
     const mask = cropMask(sel, D);
     const weight = binarize(mask);
     const result = await heavy<RGBA8>(e, 'Patching', 'heal', { dst, src, mask, offset: { x: 0, y: 0 } }, buffersOf(dst, src, mask));
-    if (result) writeResult(e, target, D, before, result, 'Patch', { sampleAll, weight, limit: false });
+    if (result) writeResult(e, target, D, before, result, '修补', { sampleAll, weight, limit: false });
     return;
   }
   // Destination: the selected content is copied to where it was dragged.
@@ -564,11 +564,11 @@ async function applyPatch(e: Editor, sel: Mask8, rect: IRect, dx: number, dy: nu
       if (X >= 0 && Y >= 0 && X < D.width && Y < D.height && mask.data[v * mask.width + u]) placed.data[Y * D.width + X] = 255;
     }
   const result = await heavy<RGBA8>(e, 'Patching', 'heal', { dst, src, mask, offset }, buffersOf(dst, src, mask));
-  if (result) writeResult(e, target, D, before, result, 'Patch', { sampleAll, weight: placed, limit: false, selection: maskGrid(e.assets.tiles, shiftMask(sel, dx, dy)) });
+  if (result) writeResult(e, target, D, before, result, '修补', { sampleAll, weight: placed, limit: false, selection: maskGrid(e.assets.tiles, shiftMask(sel, dx, dy)) });
 }
 
 async function applyContextMove(e: Editor, sel: Mask8, rect: IRect, dx: number, dy: number) {
-  const target = await retouchTarget(e, 'Context Move');
+  const target = await retouchTarget(e, '内容感知移动');
   if (!target) return;
   const W = e.doc.width,
     H = e.doc.height;
@@ -612,28 +612,28 @@ async function applyContextMove(e: Editor, sel: Mask8, rect: IRect, dx: number, 
     const sh = shiftMask(hole, dx, dy);
     for (let i = 0; i < weight.data.length; i++) if (sh.data[i]) weight.data[i] = 255;
   }
-  writeResult(e, target, R, before, out, 'Context Move', { sampleAll, weight, limit: false, selection: maskGrid(e.assets.tiles, shiftMask(sel, dx, dy)) });
+  writeResult(e, target, R, before, out, '内容感知移动', { sampleAll, weight, limit: false, selection: maskGrid(e.assets.tiles, shiftMask(sel, dx, dy)) });
 }
 
 const structureColor = (e: Editor, prefix: string) =>
-  `${numberField(`${prefix}-structure`, 'Structure', Number(e.settings[`${prefix}Structure`] ?? 4), 1, 7)}${numberField(`${prefix}-color`, 'Color', Number(e.settings[`${prefix}Color`] ?? 3), 0, 10)}`;
+  `${numberField(`${prefix}-structure`, '结构', Number(e.settings[`${prefix}Structure`] ?? 4), 1, 7)}${numberField(`${prefix}-color`, '颜色', Number(e.settings[`${prefix}Color`] ?? 3), 0, 10)}`;
 const patchTool = regionTool(
   {
     id: 'patch',
-    label: 'Patch Tool',
+    label: '修补工具',
     key: 'J',
     icon: 'patch',
     group: 'heal',
     options: (e) => {
       const content = e.settings.patchMode === 'content';
-      return `${select('patch-mode', 'Patch', content ? 'content' : 'normal', [
-        ['normal', 'Normal'],
-        ['content', 'Context Aware'],
+      return `${select('patch-mode', '修补', content ? 'content' : 'normal', [
+        ['normal', '正常'],
+        ['content', '内容感知'],
       ])}${
         content
           ? structureColor(e, 'patch')
-          : `<div class="segmented" role="group" aria-label="Patch direction"><button data-patch-dir="source" aria-pressed="${e.settings.patchDirection !== 'destination'}" title="Fill the selection from where you drag it">Source</button><button data-patch-dir="destination" aria-pressed="${e.settings.patchDirection === 'destination'}" title="Copy the selection to where you drag it">Destination</button></div>`
-      }${checkbox('patch-all', 'Sample All Layers', !!e.settings.patchSampleAll)}`;
+          : `<div class="segmented" role="group" aria-label="修补方向"><button data-patch-dir="source" aria-pressed="${e.settings.patchDirection !== 'destination'}" title="从拖动到的目标区域填补选区">源</button><button data-patch-dir="destination" aria-pressed="${e.settings.patchDirection === 'destination'}" title="将选区复制到拖动到的目标位置">目标</button></div>`
+      }${checkbox('patch-all', '对所有图层取样', !!e.settings.patchSampleAll)}`;
     },
     bindOptions: ({ e, el }) => {
       bindSelect(e, el, 'patch-mode', 'patchMode', () => e.options());
@@ -648,21 +648,21 @@ const patchTool = regionTool(
       bindCheck(e, el, 'patch-all', 'patchSampleAll');
     },
   },
-  'Patch',
+  '修补',
   applyPatch,
 );
 const contextMoveTool = regionTool(
   {
     id: 'context-move',
-    label: 'Context Move Tool',
+    label: '内容感知移动工具',
     key: 'J',
     icon: 'context-move',
     group: 'heal',
     options: (e) =>
-      `${select('cm-mode', 'Mode', (e.settings.contextMoveMode as string) ?? 'move', [
-        ['move', 'Move'],
-        ['extend', 'Extend'],
-      ])}${structureColor(e, 'contextMove')}${checkbox('cm-all', 'Sample All Layers', !!e.settings['context-moveSampleAll'])}`,
+      `${select('cm-mode', '模式', (e.settings.contextMoveMode as string) ?? 'move', [
+        ['move', '移动'],
+        ['extend', '扩展'],
+      ])}${structureColor(e, 'contextMove')}${checkbox('cm-all', '对所有图层取样', !!e.settings['context-moveSampleAll'])}`,
     bindOptions: ({ e, el }) => {
       bindSelect(e, el, 'cm-mode', 'contextMoveMode');
       bindNumber(e, el, 'contextMove-structure', 'contextMoveStructure', 1, 7, 4);
@@ -670,7 +670,7 @@ const contextMoveTool = regionTool(
       bindCheck(e, el, 'cm-all', 'context-moveSampleAll');
     },
   },
-  'Context Move',
+  '内容感知移动',
   applyContextMove,
   true,
 );
@@ -679,12 +679,12 @@ const contextMoveTool = regionTool(
 let redDrag: { start: Pt; last: Pt } | undefined;
 const redEyeTool: Tool = {
   id: 'red-eye',
-  label: 'Red Eye Tool',
+  label: '红眼工具',
   key: 'J',
   icon: 'red-eye',
   group: 'heal',
   cursor: () => 'crosshair',
-  options: (e) => `${numberField('red-pupil', 'Pupil Size', Number(e.settings.redPupil ?? 50), 1, 100, '%')}${numberField('red-darken', 'Darken Amount', Number(e.settings.redDarken ?? 50), 1, 100, '%')}`,
+  options: (e) => `${numberField('red-pupil', '瞳孔大小', Number(e.settings.redPupil ?? 50), 1, 100, '%')}${numberField('red-darken', '变暗量', Number(e.settings.redDarken ?? 50), 1, 100, '%')}`,
   bindOptions: ({ e, el }) => {
     bindNumber(e, el, 'red-pupil', 'redPupil', 1, 100, 50);
     bindNumber(e, el, 'red-darken', 'redDarken', 1, 100, 50);
@@ -703,7 +703,7 @@ const redEyeTool: Tool = {
     e.overlay();
     if (!d) return;
     await e.run(async () => {
-      const target = await retouchTarget(e, 'The Red Eye tool');
+      const target = await retouchTarget(e, '红眼工具');
       if (!target) return;
       const W = e.doc.width,
         H = e.doc.height;
@@ -719,11 +719,11 @@ const redEyeTool: Tool = {
       const before = await sourceRect(e, R, false, target);
       const local = { ...search, x: search.x - R.x, y: search.y - R.y };
       if (!detectRedEye(before, local)) {
-        e.message('No red eye found there. Click the center of a red pupil, or drag around it.');
+        e.message('未找到红眼。请单击红色瞳孔中心，或围绕其拖动。');
         return;
       }
       const after = redEye(before, local, Number(e.settings.redPupil ?? 50), Number(e.settings.redDarken ?? 50));
-      writeResult(e, target, R, before, after, 'Red Eye');
+      writeResult(e, target, R, before, after, '红眼');
     });
   },
   overlay: (e) => {

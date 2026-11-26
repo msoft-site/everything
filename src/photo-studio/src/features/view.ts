@@ -32,14 +32,14 @@ function invertedGrid(e: Editor, grid: TileGrid) {
 async function quickMaskOptionsDialog(e: Editor) {
   const o = quickMaskOptions();
   const v = await formDialog(
-    'Quick Mask Options',
+    '快速蒙版选项',
     [
-      { name: 'indicates', label: 'Color Indicates', type: 'select', value: o.indicates, options: [['masked', 'Masked Areas'], ['selected', 'Selected Areas']] },
-      { name: 'color', label: 'Color', type: 'color', value: o.color },
-      { name: 'opacity', label: 'Opacity (%)', type: 'number', value: Math.round(o.opacity * 100), min: 0, max: 100 },
+      { name: 'indicates', label: '色彩指示', type: 'select', value: o.indicates, options: [['masked', '蒙版区域'], ['selected', '所选区域']] },
+      { name: 'color', label: '颜色', type: 'color', value: o.color },
+      { name: 'opacity', label: '不透明度 (%)', type: 'number', value: Math.round(o.opacity * 100), min: 0, max: 100 },
     ],
-    'OK',
-    'The color film shows over the image while you edit the selection in Quick Mask mode.',
+    '确定',
+    '在快速蒙版模式下编辑选区时，彩色遮罩将显示在图像上方。',
   );
   if (!v) return;
   const next = sanitizeQuickMaskOptions({ indicates: v.indicates, color: v.color, opacity: Number(v.opacity) / 100 });
@@ -114,7 +114,7 @@ function activeSavedChannel(e: Editor) {
 
 const channelsPanel: Panel = {
   id: 'channels',
-  title: 'Channels',
+  title: '通道',
   icon: 'channel',
   location: 'dock-bottom',
   mount: (e, el) => {
@@ -147,17 +147,17 @@ const channelsPanel: Panel = {
     const spots = doc.mode === 'multichannel' ? (doc.channels ?? []).filter((c) => c.spot) : [];
     // Each row is chosen with its name button (Tab to it, Enter or Space).
     const name = (id: string, label: string) =>
-      `<button type="button" class="channel-name" aria-pressed="${active === id}" title="Select channel; double-click for Channel Options">${escapeXML(label)}</button>`;
-    const thumb = (c: (typeof spots)[number]) => `<button class="channel-thumb" aria-label="Load ${escapeXML(c.name)} as selection" title="Click to load as selection"><img src="${gridThumbnail(e.assets.tiles, c.grid, doc.width, doc.height, 34, true)}" alt=""></button>`;
+      `<button type="button" class="channel-name" aria-pressed="${active === id}" title="选择通道；双击打开通道选项">${escapeXML(label)}</button>`;
+    const thumb = (c: (typeof spots)[number]) => `<button class="channel-thumb" aria-label="将 ${escapeXML(c.name)} 作为选区载入" title="单击载入为选区"><img src="${gridThumbnail(e.assets.tiles, c.grid, doc.width, doc.height, 34, true)}" alt=""></button>`;
     // Multichannel documents list their ink channels in place of RGB.
     const inkRows = spots
-      .map((c) => `<div class="channel-row ${active === c.id ? 'selected' : ''}" data-channel="${escapeXML(c.id)}"><button type="button" class="eye" data-spot-eye="${escapeXML(c.id)}" aria-pressed="${!c.hidden}" aria-label="${c.hidden ? 'Show' : 'Hide'} ${escapeXML(c.name)}" title="${c.hidden ? 'Show' : 'Hide'} channel">${c.hidden ? '' : svg('eye', 14)}</button>${thumb(c)}<span class="channel-ink" style="background:${c.color ?? '#000000'}" aria-hidden="true"></span>${name(c.id, c.name)}</div>`)
+      .map((c) => `<div class="channel-row ${active === c.id ? 'selected' : ''}" data-channel="${escapeXML(c.id)}"><button type="button" class="eye" data-spot-eye="${escapeXML(c.id)}" aria-pressed="${!c.hidden}" aria-label="${c.hidden ? '显示' : '隐藏'} ${escapeXML(c.name)}" title="${c.hidden ? '显示' : '隐藏'}通道">${c.hidden ? '' : svg('eye', 14)}</button>${thumb(c)}<span class="channel-ink" style="background:${c.color ?? '#000000'}" aria-hidden="true"></span>${name(c.id, c.name)}</div>`)
       .join('');
     const rows = spots.length ? inkRows : [
       ['rgb', 'RGB'],
-      ['red', 'Red'],
-      ['green', 'Green'],
-      ['blue', 'Blue'],
+      ['red', '红'],
+      ['green', '绿'],
+      ['blue', '蓝'],
     ]
       .map(([id, label]) => `<div class="channel-row ${active === id ? 'selected' : ''}" data-channel="${id}"><span class="eye">${svg('eye', 14)}</span><span class="channel-thumb ${id}"></span>${name(id, label)}</div>`)
       .join('');
@@ -165,12 +165,12 @@ const channelsPanel: Panel = {
       .filter((c) => !spots.includes(c))
       .map((c) => `<div class="channel-row ${active === c.id ? 'selected' : ''}" data-channel="${escapeXML(c.id)}"><span class="eye"></span>${thumb(c)}${name(c.id, c.name)}</div>`)
       .join('');
-    const quick = e.settings.quickMask ? `<div class="channel-row selected quick-mask-row"><span class="eye">${svg('eye', 14)}</span><span class="channel-thumb"></span><span class="channel-name"><i>Quick Mask</i></span></div>` : '';
+    const quick = e.settings.quickMask ? `<div class="channel-row selected quick-mask-row"><span class="eye">${svg('eye', 14)}</span><span class="channel-thumb"></span><span class="channel-name"><i>快速蒙版</i></span></div>` : '';
     // Redrawing keeps the keyboard on the control it was on.
     const f = document.activeElement as HTMLElement | null;
     const fRow = f && el.contains(f) ? f.closest<HTMLElement>('[data-channel]')?.dataset.channel : undefined;
     const fKind = f?.matches('[data-spot-eye]') ? '[data-spot-eye]' : f?.matches('.channel-thumb') ? '.channel-thumb' : '.channel-name';
-    el.innerHTML = `<div class="channel-list">${rows}${alpha}${quick}${composite}</div><div class="layer-footer"><button data-command="select.load-active-channel" title="Load channel as selection" aria-label="Load channel as selection">${svg('circle-dashed', 16)}</button><button data-command="select.save" title="Save selection as channel" aria-label="Save selection as channel">${svg('mask-add', 16)}</button><button data-command="channel.new" title="Create new channel" aria-label="New channel">${svg('plus', 16)}</button><button data-command="channel.delete" title="Delete channel" aria-label="Delete channel">${svg('trash-2', 16)}</button></div>`;
+    el.innerHTML = `<div class="channel-list">${rows}${alpha}${quick}${composite}</div><div class="layer-footer"><button data-command="select.load-active-channel" title="将通道作为选区载入" aria-label="将通道作为选区载入">${svg('circle-dashed', 16)}</button><button data-command="select.save" title="将选区存储为通道" aria-label="将选区存储为通道">${svg('mask-add', 16)}</button><button data-command="channel.new" title="创建新通道" aria-label="新建通道">${svg('plus', 16)}</button><button data-command="channel.delete" title="删除通道" aria-label="删除通道">${svg('trash-2', 16)}</button></div>`;
     if (fRow) [...el.querySelectorAll<HTMLElement>('[data-channel]')].find((r) => r.dataset.channel === fRow)?.querySelector<HTMLElement>(fKind)?.focus();
   },
   menu: () => ['channel.new', 'channel.duplicate', 'channel.delete', 'channel.options', '-', 'select.save', 'select.load'],
@@ -186,7 +186,7 @@ function nextAlphaName(doc: { channels?: { name: string }[] }) {
 async function channelOptions(e: Editor, id: string) {
   const ch = e.doc.channels?.find((c) => c.id === id);
   if (!ch) return;
-  const v = await formDialog('Channel Options', [{ name: 'name', label: 'Name', value: ch.name }, ...(ch.spot ? [{ name: 'color', label: 'Ink color', value: ch.color ?? '#000000', type: 'color' }] : [])], 'OK');
+  const v = await formDialog('通道选项', [{ name: 'name', label: '名称', value: ch.name }, ...(ch.spot ? [{ name: 'color', label: '油墨颜色', value: ch.color ?? '#000000', type: 'color' }] : [])], '确定');
   if (!v || !e.doc.channels?.some((c) => c.id === id)) return;
   e.command('Channel Options', (d) => {
     const c = d.channels!.find((c) => c.id === id)!;
@@ -301,10 +301,10 @@ export function installView(e: Editor) {
     e.update();
   };
   registerCommand(
-    { id: 'view.show-grid', label: 'Grid', shortcut: "Mod+'", checked: (e) => e.preferences.showGrid, run: toggle('showGrid'), recordable: false },
+    { id: 'view.show-grid', label: '网格', shortcut: "Mod+'", checked: (e) => e.preferences.showGrid, run: toggle('showGrid'), recordable: false },
     {
       id: 'view.show-guides',
-      label: 'Guides',
+      label: '参考线',
       shortcut: 'Mod+;',
       checked: (e) => e.preferences.showGuides,
       run: (e) => {
@@ -314,10 +314,10 @@ export function installView(e: Editor) {
       },
       recordable: false,
     },
-    { id: 'view.show-pixel-grid', label: 'Pixel Grid', checked: (e) => e.preferences.showPixelGrid !== false, run: toggle('showPixelGrid'), recordable: false },
+    { id: 'view.show-pixel-grid', label: '像素网格', checked: (e) => e.preferences.showPixelGrid !== false, run: toggle('showPixelGrid'), recordable: false },
     {
       id: 'view.show-selection-edges',
-      label: 'Selection Edges',
+      label: '选区边缘',
       checked: (e) => !e.settings.hideSelectionEdges,
       run: (e) => {
         e.settings.hideSelectionEdges = !e.settings.hideSelectionEdges;
@@ -325,11 +325,11 @@ export function installView(e: Editor) {
       },
       recordable: false,
     },
-    { id: 'view.snap', label: 'Snap', shortcut: 'Mod+Shift+;', checked: (e) => e.transform.snapping, run: (e) => { e.transform.snapping = !e.transform.snapping; e.options(); }, recordable: false },
-    { id: 'view.guides-lock', label: 'Lock Guides', shortcut: 'Mod+Alt+;', checked: (e) => !!e.preferences.guidesLocked, run: toggle('guidesLocked'), recordable: false },
+    { id: 'view.snap', label: '对齐', shortcut: 'Mod+Shift+;', checked: (e) => e.transform.snapping, run: (e) => { e.transform.snapping = !e.transform.snapping; e.options(); }, recordable: false },
+    { id: 'view.guides-lock', label: '锁定参考线', shortcut: 'Mod+Alt+;', checked: (e) => !!e.preferences.guidesLocked, run: toggle('guidesLocked'), recordable: false },
     {
       id: 'select.quick-mask',
-      label: 'Edit in Quick Mask Mode',
+      label: '在快速蒙版模式下编辑',
       shortcut: 'Q',
       checked: (e) => !!e.settings.quickMask,
       enabled: (e) => e.hasDocument,
@@ -361,18 +361,18 @@ export function installView(e: Editor) {
     },
     {
       id: 'select.quick-mask-options',
-      label: 'Quick Mask Options…',
+      label: '快速蒙版选项…',
       recordable: false,
-      description: 'Choose whether the quick mask color marks masked or selected areas, and its color and opacity',
+      description: '设置快速蒙版颜色指示蒙版区域还是所选区域，以及其颜色和不透明度',
       run: (e) => quickMaskOptionsDialog(e),
     },
     {
       id: 'select.save',
-      label: 'Save Selection…',
+      label: '存储选区…',
       enabled: (e) => !!e.doc.selection,
       run: async (e) => {
         const name = nextAlphaName(e.doc);
-        const v = await formDialog('Save Selection', [{ name: 'name', label: 'Name', value: name }], 'OK');
+        const v = await formDialog('存储选区', [{ name: 'name', label: '名称', value: name }], '确定');
         if (!v) return;
         const sel = selectionGrid(e.doc, e.assets.tiles)!;
         const grid = sel.fill ? writeRect(e.assets.tiles, emptyGrid(1), 0, 0, readMask(e.assets.tiles, sel, canvasRect(e.doc))) : sel;
@@ -383,19 +383,19 @@ export function installView(e: Editor) {
     },
     {
       id: 'select.load',
-      label: 'Load Selection…',
+      label: '载入选区…',
       enabled: (e) => !!e.doc.channels?.length || hasTransparency(e),
       run: async (e) => {
         const options: [string, string][] = [
           ...(e.doc.channels ?? []).map((c) => [c.id, c.name] as [string, string]),
-          ...(hasTransparency(e) ? [[`layer:${e.layer!.id}`, `${e.layer!.name} Transparency`] as [string, string]] : []),
+          ...(hasTransparency(e) ? [[`layer:${e.layer!.id}`, `${e.layer!.name} 透明度`] as [string, string]] : []),
         ];
         if (!options.length) return;
-        const v = await formDialog('Load Selection', [
-          { name: 'channel', label: 'Channel', value: options[0][0], type: 'select', options },
-          { name: 'invert', label: 'Invert', value: 'no', type: 'checkbox' },
-          { name: 'op', label: 'Operation', value: 'replace', type: 'select', options: [['replace', 'New Selection'], ['add', 'Add to Selection'], ['subtract', 'Subtract from Selection'], ['intersect', 'Intersect with Selection']] },
-        ], 'OK');
+        const v = await formDialog('载入选区', [
+          { name: 'channel', label: '通道', value: options[0][0], type: 'select', options },
+          { name: 'invert', label: '反相', value: 'no', type: 'checkbox' },
+          { name: 'op', label: '操作', value: 'replace', type: 'select', options: [['replace', '新选区'], ['add', '添加到选区'], ['subtract', '从选区中减去'], ['intersect', '与选区交叉']] },
+        ], '确定');
         if (!v) return;
         const area = canvasRect(e.doc);
         let m;
@@ -416,13 +416,13 @@ export function installView(e: Editor) {
     },
     {
       id: 'select.load-active-channel',
-      label: 'Load Channel as Selection',
+      label: '载入通道为选区',
       hidden: true,
       run: (e) => loadChannel(e, activeChannel(e), 'replace'),
     },
     {
       id: 'channel.new',
-      label: 'New Channel',
+      label: '新建通道',
       enabled: (e) => e.hasDocument,
       run: (e) => {
         const name = nextAlphaName(e.doc);
@@ -433,25 +433,25 @@ export function installView(e: Editor) {
     },
     {
       id: 'channel.duplicate',
-      label: 'Duplicate Channel',
+      label: '复制通道',
       enabled: (e) => !!activeSavedChannel(e),
       run: (e) => {
         const ch = activeSavedChannel(e)!;
         e.command('Duplicate Channel', (d) => {
-          d.channels = [...d.channels!, { ...ch, id: crypto.randomUUID(), name: `${ch.name} copy` }];
+          d.channels = [...d.channels!, { ...ch, id: crypto.randomUUID(), name: `${ch.name} 副本` }];
           syncMultichannel(e.assets.tiles, d);
         });
       },
     },
     {
       id: 'channel.options',
-      label: 'Channel Options…',
+      label: '通道选项…',
       enabled: (e) => !!activeSavedChannel(e),
       run: (e) => channelOptions(e, activeChannel(e)),
     },
     {
       id: 'channel.delete',
-      label: 'Delete Channel',
+      label: '删除通道',
       enabled: (e) => !!activeSavedChannel(e),
       run: (e) => {
         const id = activeChannel(e);

@@ -39,25 +39,25 @@ import {
 } from './property-values';
 
 const MODES: [string, string][] = [
-  ['rgb', 'RGB Color'],
-  ['cmyk', 'CMYK Color'],
-  ['lab', 'Lab Color'],
-  ['grayscale', 'Grayscale'],
-  ['indexed', 'Indexed Color…'],
-  ['duotone', 'Duotone…'],
-  ['bitmap', 'Bitmap…'],
-  ['multichannel', 'Multichannel'],
+  ['rgb', 'RGB 颜色'],
+  ['cmyk', 'CMYK 颜色'],
+  ['lab', 'Lab 颜色'],
+  ['grayscale', '灰度'],
+  ['indexed', '索引颜色…'],
+  ['duotone', '双色调…'],
+  ['bitmap', '位图…'],
+  ['multichannel', '多通道'],
 ];
 const ANCHORS: [number, number, string][] = [
-  [0, 0, 'top left'],
-  [0.5, 0, 'top'],
-  [1, 0, 'top right'],
-  [0, 0.5, 'left'],
-  [0.5, 0.5, 'center'],
-  [1, 0.5, 'right'],
-  [0, 1, 'bottom left'],
-  [0.5, 1, 'bottom'],
-  [1, 1, 'bottom right'],
+  [0, 0, '左上'],
+  [0.5, 0, '顶部'],
+  [1, 0, '右上'],
+  [0, 0.5, '左侧'],
+  [0.5, 0.5, '中心'],
+  [1, 0.5, '右侧'],
+  [0, 1, '左下'],
+  [0.5, 1, '底部'],
+  [1, 1, '右下'],
 ];
 
 // Panel state kept for the session: the canvas unit, link and anchor.
@@ -156,34 +156,34 @@ function background(e: Editor): Background {
   return { layer: l, color: uniformColor(e.assets.tiles, l.pixels, e.doc.width, e.doc.height) };
 }
 const FILL_CHOICES = (e: Editor): [string, string, string][] => [
-  ['white', 'White', '#ffffff'],
-  ['black', 'Black', '#000000'],
-  ['background', 'Background Color', e.background],
-  ['foreground', 'Foreground Color', e.color],
+  ['white', '白色', '#ffffff'],
+  ['black', '黑色', '#000000'],
+  ['background', '背景色', e.background],
+  ['foreground', '前景色', e.color],
 ];
 function fillMarkup(e: Editor) {
   if (e.doc.layers.some((l) => l.artboard))
-    return '<p class="pf-note">Each artboard sets its own background.</p>';
+    return '<p class="pf-note">每个画板设置各自的背景。</p>';
   const bg = background(e);
   const choices = FILL_CHOICES(e);
   if (bg.layer && !bg.color)
-    return `<div class="pf-fill">${select('fill', 'Background fill', [['image', 'Background layer']], 'image', { disabled: true, title: 'The Background layer has image content; paint on it or convert it to a layer to change it.' })}</div>`;
+    return `<div class="pf-fill">${select('fill', '背景填充', [['image', '背景图层']], 'image', { disabled: true, title: '背景图层包含图像内容；在其上绘制或将其转换为图层以进行修改。' })}</div>`;
   const current = !bg.layer
     ? 'transparent'
     : (choices.find(([, , hex]) => hex.toLowerCase() === bg.color)?.[0] ?? 'custom');
   const locked = !!bg.layer && backgroundLocked(e, bg.layer);
-  const title = locked ? 'Unlock the Background layer to change its fill.' : undefined;
+  const title = locked ? '解锁背景图层以修改其填充。' : undefined;
   return `<div class="pf-fill">${select(
     'fill',
-    'Background fill',
+    '背景填充',
     [
-      ['transparent', 'Transparent'],
+      ['transparent', '透明'],
       ...choices.map(([v, label]): [string, string] => [v, label]),
-      ['custom', 'Custom Color'],
+      ['custom', '自定义颜色'],
     ],
     current,
     { disabled: locked, title },
-  )}<input type="color" class="pf-swatch" data-pf="fill-color" aria-label="Background fill color" title="${title ?? 'Background fill color'}" value="${bg.color ?? '#ffffff'}"${locked ? ' disabled' : ''}></div>`;
+  )}<input type="color" class="pf-swatch" data-pf="fill-color" aria-label="背景填充颜色" title="${title ?? '背景填充颜色'}" value="${bg.color ?? '#ffffff'}"${locked ? ' disabled' : ''}></div>`;
 }
 /** Paint the Background layer one color, add one, or remove a plain one. */
 // Lock All and Lock Image Pixels keep the Background's fill (and the layer).
@@ -192,16 +192,16 @@ export function setBackgroundFill(e: Editor, hex: string | null) {
   const bg = background(e);
   if (bg.layer && !bg.color) return;
   if (bg.layer && backgroundLocked(e, bg.layer)) {
-    e.message('Unlock the Background layer to change its fill.');
+    e.message('解锁背景图层以修改其填充。');
     return;
   }
   if (!hex) {
-    if (bg.layer) e.command('Transparent Background', (d) => void d.layers.splice(0, 1));
+    if (bg.layer) e.command('透明背景', (d) => void d.layers.splice(0, 1));
     return;
   }
   if (bg.color === hex.toLowerCase()) return;
   const grid = solidGrid(e.assets.tiles, e.doc.width, e.doc.height, hex);
-  e.command(bg.layer ? 'Background Fill' : 'New Background', (d) => {
+  e.command(bg.layer ? '背景填充' : '新建背景', (d) => {
     if (bg.layer) {
       const l = d.layers[0];
       l.pixels = grid;
@@ -371,7 +371,7 @@ fieldHandlers.set('doc', {
     if (key === 'doc.width' || key === 'doc.height') {
       const k = key === 'doc.width' ? 'width' : 'height';
       const px = parseLength(text, ctx(e, k));
-      if (px === undefined) return `Enter a ${k} such as 1200, 4 in or 50%.`;
+      if (px === undefined) return `请输入有效${k === 'width' ? '宽度' : '高度'}，例如 1200、4 in 或 50%。`;
       const size = plannedCanvasSize(doc, k, px, !!state(e).linked);
       if (!size) return void e.update();
       return resizeTo(e, size);
@@ -379,10 +379,10 @@ fieldHandlers.set('doc', {
     if (key === 'doc.resolution') {
       const ppcm = doc.resolution?.horizontalResolutionUnit === 'PPCM';
       const v = parseNumber(text, ['ppi', 'ppcm']);
-      if (v === undefined || v <= 0) return 'Enter a resolution greater than 0.';
+      if (v === undefined || v <= 0) return '请输入大于 0 的分辨率。';
       const ppi = clamp(ppcm ? v * 2.54 : v, 1, 10000);
       if (Math.abs(ppi - docPpi(doc)) < 1e-9) return;
-      e.command('Resolution', (d) =>
+      e.command('分辨率', (d) =>
         setDocumentResolution(d, resolutionInfo(d, ppi, ppcm ? 'PPCM' : 'PPI')),
       );
     }
@@ -395,7 +395,7 @@ fieldHandlers.set('pref', {
     if (!def) return;
     const n = parseNumber(text);
     const v = n === undefined ? undefined : coerceSetting(def, n);
-    if (v === undefined) return 'Enter a number.';
+    if (v === undefined) return '请输入数字。';
     (e.preferences as Record<string, unknown>)[k] = v;
     e.preferencesChanged();
   },
@@ -415,7 +415,7 @@ export async function documentChange(
   } else if (key === 'resolution-unit') {
     const unit = t.value === 'PPCM' ? 'PPCM' : 'PPI';
     if ((doc.resolution?.horizontalResolutionUnit ?? 'PPI') !== unit)
-      e.command('Resolution Unit', (d) =>
+      e.command('分辨率单位', (d) =>
         setDocumentResolution(d, resolutionInfo(d, docPpi(d), unit)),
       );
   } else if (key === 'mode') {

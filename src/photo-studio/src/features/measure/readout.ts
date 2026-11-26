@@ -6,16 +6,16 @@ import { rgbToHsb } from '../../color/hsb';
 
 export type ReadoutModel = 'actual' | 'proof' | 'rgb' | 'hex' | 'hsb' | 'cmyk' | 'lab' | 'gray' | 'ink' | 'opacity';
 export const READOUT_MODELS: [ReadoutModel, string][] = [
-  ['actual', 'Document'],
-  ['proof', 'Proof'],
-  ['rgb', 'RGB'],
-  ['hex', 'Web Hex'],
-  ['hsb', 'HSB'],
-  ['cmyk', 'CMYK'],
-  ['lab', 'Lab'],
-  ['gray', 'Gray'],
-  ['ink', 'Total Ink'],
-  ['opacity', 'Opacity'],
+  ['actual', '实际颜色 (文档)'],
+  ['proof', '校样颜色'],
+  ['rgb', 'RGB 颜色'],
+  ['hex', 'Web 十六进制'],
+  ['hsb', 'HSB 颜色'],
+  ['cmyk', 'CMYK 颜色'],
+  ['lab', 'Lab 颜色'],
+  ['gray', '灰度'],
+  ['ink', '总油墨量'],
+  ['opacity', '不透明度'],
 ];
 export const isModel = (v: unknown): v is ReadoutModel => READOUT_MODELS.some(([id]) => id === v);
 export type Channel = [label: string, value: string];

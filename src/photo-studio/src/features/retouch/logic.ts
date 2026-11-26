@@ -505,14 +505,14 @@ export function prefillHole(img: RGBA8, hole: Mask8): RGBA8 {
 // ----- Healing modes -----
 export type HealMode = 'normal' | 'replace' | 'multiply' | 'screen' | 'darken' | 'lighten' | 'color' | 'luminosity';
 export const HEAL_MODES: [HealMode, string][] = [
-  ['normal', 'Normal'],
-  ['replace', 'Replace'],
-  ['multiply', 'Multiply'],
-  ['screen', 'Screen'],
-  ['darken', 'Darken'],
-  ['lighten', 'Lighten'],
-  ['color', 'Color'],
-  ['luminosity', 'Luminosity'],
+  ['normal', '正常'],
+  ['replace', '替换'],
+  ['multiply', '正片叠底'],
+  ['screen', '滤色'],
+  ['darken', '变暗'],
+  ['lighten', '变亮'],
+  ['color', '颜色'],
+  ['luminosity', '明度'],
 ];
 export const isHealMode = (v: unknown): v is HealMode => HEAL_MODES.some(([m]) => m === v);
 /** Apply a healing tool's Mode to its result. Normal keeps the healed pixels;

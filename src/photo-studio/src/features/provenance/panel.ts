@@ -7,17 +7,17 @@ import './provenance.css';
 
 let filter: TimelineFilter = 'all';
 const FILTERS: [TimelineFilter, string][] = [
-  ['all', 'All'],
-  ['edits', 'Edits'],
-  ['sources', 'Sources'],
+  ['all', '全部'],
+  ['edits', '编辑'],
+  ['sources', '来源'],
   ['ai', 'AI'],
-  ['exports', 'Exports'],
+  ['exports', '导出'],
 ];
 let version = 0;
 
 export function mount(e: Editor, el: HTMLElement) {
   el.classList.add('provenance-panel');
-  el.innerHTML = `<div class="prov-head"></div><div class="prov-filters" role="radiogroup" aria-label="Show">${FILTERS.map(([f, l]) => `<button type="button" role="radio" data-prov-filter="${f}" aria-checked="${f === filter}" tabindex="${f === filter ? 0 : -1}">${l}</button>`).join('')}</div><div class="prov-body" tabindex="0" aria-label="Provenance timeline"></div><div class="prov-foot muted">Attach the record to exports in Export As or Preferences → Export.</div>`;
+  el.innerHTML = `<div class="prov-head"></div><div class="prov-filters" role="radiogroup" aria-label="显示">${FILTERS.map(([f, l]) => `<button type="button" role="radio" data-prov-filter="${f}" aria-checked="${f === filter}" tabindex="${f === filter ? 0 : -1}">${l}</button>`).join('')}</div><div class="prov-body" tabindex="0" aria-label="内容凭证时间轴"></div><div class="prov-foot muted">在“导出为”或“首选项 → 导出”中将凭证记录附加到导出文件中。</div>`;
   const choose = (b: HTMLElement) => {
     filter = b.dataset.provFilter as TimelineFilter;
     el.querySelectorAll<HTMLElement>('[data-prov-filter]').forEach((x) => {
@@ -57,7 +57,7 @@ export function update(e: Editor, el: HTMLElement) {
   const body = el.querySelector<HTMLElement>('.prov-body')!;
   if (!e.hasDocument) {
     head.innerHTML = '';
-    body.innerHTML = '<p class="muted prov-empty">Open or create a document to see how it is made.</p>';
+    body.innerHTML = '<p class="muted prov-empty">打开或创建文档以查看其创建过程与凭证。</p>';
     return;
   }
   const r = recordOf(e.session);

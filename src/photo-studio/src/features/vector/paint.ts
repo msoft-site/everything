@@ -194,24 +194,25 @@ export function openPaintPopover(e: Editor, anchor: HTMLElement, spec: FillSpec 
   const pop = document.createElement('div');
   pop.className = 'vec-paint-pop popover';
   pop.setAttribute('role', 'dialog');
-  pop.setAttribute('aria-label', 'width' in spec ? 'Stroke' : 'Fill');
+  pop.setAttribute('aria-label', 'width' in spec ? '描边' : '填充');
   let current = structuredClone(spec);
   const render = async () => {
     const stroke = 'width' in current;
-    const types = stroke ? [['none', 'No stroke'], ['color', 'Solid color']] : [['none', 'No fill'], ['color', 'Solid color'], ['gradient', 'Gradient'], ['pattern', 'Pattern']];
+    const types = stroke ? [['none', '无描边'], ['color', '纯色']] : [['none', '无填充'], ['color', '纯色'], ['gradient', '渐变'], ['pattern', '图案']];
     let body = '';
     const c = current;
-    if (c.type === 'color') body = `<label>Color <input type="color" data-k="color" value="${(c as { color: string }).color || e.color}"></label><button type="button" data-k="use-fg">Use foreground</button>`;
+    if (c.type === 'color') body = `<label>颜色 <input type="color" data-k="color" value="${(c as { color: string }).color || e.color}"></label><button type="button" data-k="use-fg">使用前景色</button>`;
     if (c.type === 'gradient') {
       const g = c as Extract<FillSpec, { type: 'gradient' }>;
-      body = `<label>From <input type="color" data-k="from" value="${g.from}"></label><label>To <input type="color" data-k="to" value="${g.to}"></label><label>Style <select data-k="style">${['linear', 'radial', 'angle', 'reflected', 'diamond'].map((s) => `<option value="${s}" ${g.style === s ? 'selected' : ''}>${s[0].toUpperCase() + s.slice(1)}</option>`).join('')}</select></label><label>Angle <input type="number" data-k="angle" min="-360" max="360" value="${g.angle}">°</label><label class="check"><input type="checkbox" data-k="reverse" ${g.reverse ? 'checked' : ''}> Reverse</label>`;
+      const gradientStyles: [string, string][] = [['linear', '线性'], ['radial', '径向'], ['angle', '角度'], ['reflected', '对称'], ['diamond', '菱形']];
+      body = `<label>起始 <input type="color" data-k="from" value="${g.from}"></label><label>结束 <input type="color" data-k="to" value="${g.to}"></label><label>样式 <select data-k="style">${gradientStyles.map(([s, l]) => `<option value="${s}" ${g.style === s ? 'selected' : ''}>${l}</option>`).join('')}</select></label><label>角度 <input type="number" data-k="angle" min="-360" max="360" value="${g.angle}">°</label><label class="check"><input type="checkbox" data-k="reverse" ${g.reverse ? 'checked' : ''}> 反向</label>`;
     }
     if (c.type === 'pattern') {
       const list = await documentPatterns(e);
       const p = c as Extract<FillSpec, { type: 'pattern' }>;
       body = list.length
-        ? `<label>Pattern <select data-k="pattern">${list.map((q) => `<option value="${escapeXML(q.id)}" ${q.id === p.id ? 'selected' : ''}>${escapeXML(q.name)}</option>`).join('')}</select></label>`
-        : `<p class="muted">This document has no patterns. Patterns come from opened PSD files.</p>`;
+        ? `<label>图案 <select data-k="pattern">${list.map((q) => `<option value="${escapeXML(q.id)}" ${q.id === p.id ? 'selected' : ''}>${escapeXML(q.name)}</option>`).join('')}</select></label>`
+        : `<p class="muted">本文档没有图案。图案来自打开的 PSD 文件。</p>`;
       if (list.length && !list.some((q) => q.id === p.id)) {
         current = { type: 'pattern', id: list[0].id, name: list[0].name };
         change(current);

@@ -22,12 +22,12 @@ import { formDialog } from '../../ui/dialog';
 // ----- Options (remembered per browser) -----
 export type StatusItem = 'dimensions' | 'profile' | 'size' | 'memory' | 'scale' | 'tool';
 const STATUS_ITEMS: [StatusItem, string][] = [
-  ['dimensions', 'Dimensions and resolution'],
-  ['profile', 'Color profile and mode'],
-  ['size', 'Document size (flattened / layers)'],
-  ['memory', 'Memory used by pixel tiles'],
-  ['scale', 'Measurement scale'],
-  ['tool', 'Current tool hint'],
+  ['dimensions', '尺寸和分辨率'],
+  ['profile', '颜色配置文件和模式'],
+  ['size', '文档大小（拼合 / 图层）'],
+  ['memory', '像素图块占用的内存'],
+  ['scale', '测量比例'],
+  ['tool', '当前工具提示'],
 ];
 type InfoOptions = { first: ReadoutModel; second: ReadoutModel; samplers: ReadoutModel[]; status: StatusItem[] };
 const defaults: InfoOptions = { first: 'actual', second: 'cmyk', samplers: [], status: ['dimensions', 'profile', 'size'] };
@@ -72,13 +72,13 @@ function pointerColors(e: Editor): { before: Color | null; after?: Color | null 
  * selection bounds, or nothing. */
 function sizeReadout(e: Editor): { label: string; w: string; h: string; extra?: [string, string][] } | null {
   const r = e.tool === 'ruler' ? rulerReadout(e) : undefined;
-  if (r) return { label: 'Ruler', w: r.w, h: r.h, extra: [['A', r.angle], ['L', r.metrics.l2 !== undefined ? `${r.l1} / ${r.l2}` : r.l1]] };
+  if (r) return { label: '标尺', w: r.w, h: r.h, extra: [['A', r.angle], ['L', r.metrics.l2 !== undefined ? `${r.l1} / ${r.l2}` : r.l1]] };
   if (e.transform.active && e.transform.document) {
     const f = selectionFrame(selectedRoots(e.transform.document.layers, e.selectedIds));
-    if (f) return { label: 'Transform', w: lengthText(e, f.width, 'x'), h: lengthText(e, f.height, 'y'), extra: [['∠', `${round(f.rotation, 1)}°`]] };
+    if (f) return { label: '变换', w: lengthText(e, f.width, 'x'), h: lengthText(e, f.height, 'y'), extra: [['∠', `${round(f.rotation, 1)}°`]] };
   }
   const b = e.doc.selection;
-  if (b) return { label: 'Selection', w: lengthText(e, b.width, 'x'), h: lengthText(e, b.height, 'y') };
+  if (b) return { label: '选区', w: lengthText(e, b.width, 'x'), h: lengthText(e, b.height, 'y') };
   return null;
 }
 let tileCache: { doc: PhotoDocument; bytes: number } | undefined;
@@ -95,27 +95,27 @@ export function statusLine(e: Editor, item: StatusItem): [string, string] {
   const d = e.doc;
   const ppi = documentPpi(d);
   if (item === 'dimensions')
-    return ['Dimensions', `${d.width} × ${d.height} px (${formatUnit(d.width, 'in', ppi, d.width)} × ${formatUnit(d.height, 'in', ppi, d.height)} in, ${round(ppi, ppi % 1 ? 1 : 0)} ppi)`];
-  if (item === 'profile') return ['Profile', `${profileText(e)} · ${e.colorModeLabel}/${d.bitsPerChannel ?? 8}`];
+    return ['尺寸', `${d.width} × ${d.height} 像素 (${formatUnit(d.width, 'in', ppi, d.width)} × ${formatUnit(d.height, 'in', ppi, d.height)} 英寸，${round(ppi, ppi % 1 ? 1 : 0)} ppi)`];
+  if (item === 'profile') return ['配置文件', `${profileText(e)} · ${e.colorModeLabel}/${d.bitsPerChannel ?? 8}`];
   if (item === 'size') {
     const channels = d.mode === 'cmyk' ? 4 : d.mode === 'grayscale' || d.mode === 'bitmap' || d.mode === 'duotone' ? 1 : 3;
-    return ['Size', `${formatBytes(imageBytes(d.width, d.height, d.bitsPerChannel ?? 8, channels))} flattened / ${formatBytes(layerBytes(e))} in layers`];
+    return ['大小', `${formatBytes(imageBytes(d.width, d.height, d.bitsPerChannel ?? 8, channels))} 拼合 / ${formatBytes(layerBytes(e))} 图层`];
   }
-  if (item === 'memory') return ['Memory', `${formatBytes(e.assets.tiles.bytes)} in ${e.assets.tiles.size.toLocaleString()} tiles (with history)`];
+  if (item === 'memory') return ['内存', `${formatBytes(e.assets.tiles.bytes)}（${e.assets.tiles.size.toLocaleString()} 个图块，含历史记录）`];
   if (item === 'scale') {
     const s = annotationsOf(d).scale;
-    return ['Scale', isDefaultScale(s) ? '1 pixel = 1 pixel' : `${short(s!.pixels, 2)} px = ${short(s!.length, 4)} ${s!.units}`];
+    return ['比例', isDefaultScale(s) ? '1 像素 = 1 像素' : `${short(s!.pixels, 2)} 像素 = ${short(s!.length, 4)} ${s!.units}`];
   }
-  return ['Tool', toolHint(e)];
+  return ['工具', toolHint(e)];
 }
 const statusLines = (e: Editor) => options.status.map((item) => statusLine(e, item));
 function toolHint(e: Editor) {
   const hints: Record<string, string> = {
-    'color-sampler': 'Click to add a sampler, drag to move, Alt-click to delete.',
-    ruler: 'Drag to measure; Alt-drag an end for a second line.',
-    count: 'Click to count; Alt-click a marker to remove it.',
-    note: 'Click to pin a note; drag a note to move it.',
-    eyedropper: 'Click to pick the foreground color; Alt-click for the background.',
+    'color-sampler': '单击以添加取样器，拖动以移动，Alt+单击以删除。',
+    ruler: '拖动以测量；按住 Alt 拖动端点可引出第二条测量线。',
+    count: '单击以计数；按住 Alt 单击标记以移除。',
+    note: '单击以固定注释；拖动注释以移动。',
+    eyedropper: '单击以吸取前景色；按住 Alt 单击吸取背景色。',
   };
   return hints[e.tool] ?? e.activeTool?.label ?? '';
 }
@@ -135,9 +135,9 @@ function build(e: Editor, el: HTMLElement) {
   const size = sizeReadout(e);
   const blank = (m: ReadoutModel) => channels(e, null, m);
   const list = samplers(e);
-  el.innerHTML = `<div class="info-readouts"><section class="info-block"><header>${svg('pipette', 13)}${modelSelect('data-info-model="first"', options.first, 'First readout')}</header>${rows(blank(options.first), 'p1')}</section><section class="info-block"><header>${svg('pipette', 13)}${modelSelect('data-info-model="second"', options.second, 'Second readout')}</header>${rows(blank(options.second), 'p2')}</section></div><div class="info-readouts info-geometry"><section class="info-block"><header>${svg('crosshair', 13)}<select data-info-unit aria-label="Ruler units" class="info-model">${RULER_UNITS.map(([id, l]) => `<option value="${id}" ${id === unit ? 'selected' : ''}>${l}</option>`).join('')}</select></header><dl class="info-values"><dt>X</dt><dd data-v="x"></dd><dt>Y</dt><dd data-v="y"></dd></dl></section><section class="info-block"><header>${svg('scan', 13)}<span>${size ? escapeXML(size.label) : 'Size'}</span></header><dl class="info-values"><dt>W</dt><dd data-v="w"></dd><dt>H</dt><dd data-v="h"></dd>${(size?.extra ?? []).map(([l], i) => `<dt>${escapeXML(l)}</dt><dd data-v="extra-${i}"></dd>`).join('')}</dl></section></div>${
+  el.innerHTML = `<div class="info-readouts"><section class="info-block"><header>${svg('pipette', 13)}${modelSelect('data-info-model="first"', options.first, '第一读数')}</header>${rows(blank(options.first), 'p1')}</section><section class="info-block"><header>${svg('pipette', 13)}${modelSelect('data-info-model="second"', options.second, '第二读数')}</header>${rows(blank(options.second), 'p2')}</section></div><div class="info-readouts info-geometry"><section class="info-block"><header>${svg('crosshair', 13)}<select data-info-unit aria-label="标尺单位" class="info-model">${RULER_UNITS.map(([id, l]) => `<option value="${id}" ${id === unit ? 'selected' : ''}>${l}</option>`).join('')}</select></header><dl class="info-values"><dt>X</dt><dd data-v="x"></dd><dt>Y</dt><dd data-v="y"></dd></dl></section><section class="info-block"><header>${svg('scan', 13)}<span>${size ? escapeXML(size.label) : '大小'}</span></header><dl class="info-values"><dt>W</dt><dd data-v="w"></dd><dt>H</dt><dd data-v="h"></dd>${(size?.extra ?? []).map(([l], i) => `<dt>${escapeXML(l)}</dt><dd data-v="extra-${i}"></dd>`).join('')}</dl></section></div>${
     list.length
-      ? `<div class="info-readouts info-samplers">${list.map((_, i) => `<section class="info-block sampler"><header><b class="sampler-number">#${i + 1}</b>${modelSelect(`data-sampler-model="${i}"`, samplerModel(i), `Sampler ${i + 1} readout`)}<button class="icon-button" data-delete-sampler="${i}" aria-label="Delete sampler ${i + 1}" title="Delete sampler">${svg('x', 12)}</button></header>${rows(blank(samplerModel(i)), `s${i}`)}</section>`).join('')}</div>`
+      ? `<div class="info-readouts info-samplers">${list.map((_, i) => `<section class="info-block sampler"><header><b class="sampler-number">#${i + 1}</b>${modelSelect(`data-sampler-model="${i}"`, samplerModel(i), `取样器 ${i + 1} 读数`)}<button class="icon-button" data-delete-sampler="${i}" aria-label="删除取样器 ${i + 1}" title="删除取样器">${svg('x', 12)}</button></header>${rows(blank(samplerModel(i)), `s${i}`)}</section>`).join('')}</div>`
       : ''
   }<div class="info-status" data-v="status"></div>`;
 }
@@ -179,14 +179,14 @@ function render(e: Editor, el: HTMLElement) {
 async function optionsDialog(e: Editor) {
   const models = READOUT_MODELS.map(([id, l]) => [id, l] as [string, string]);
   const v = await formDialog(
-    'Info Panel Options',
+    '信息面板选项',
     [
-      { name: 'first', label: 'First readout', value: options.first, type: 'select', options: models },
-      { name: 'second', label: 'Second readout', value: options.second, type: 'select', options: models },
-      { name: 'units', label: 'Ruler units', value: rulerUnit(e), type: 'select', options: RULER_UNITS.map(([id, l]) => [id, l]) },
+      { name: 'first', label: '第一读数', value: options.first, type: 'select', options: models },
+      { name: 'second', label: '第二读数', value: options.second, type: 'select', options: models },
+      { name: 'units', label: '标尺单位', value: rulerUnit(e), type: 'select', options: RULER_UNITS.map(([id, l]) => [id, l]) },
       ...STATUS_ITEMS.map(([id, l]) => ({ name: `status-${id}`, label: l, value: options.status.includes(id) ? 'yes' : 'no', type: 'checkbox' })),
     ],
-    'OK',
+    '确定',
   );
   if (!v) return;
   options = { ...options, first: isModel(v.first) ? v.first : options.first, second: isModel(v.second) ? v.second : options.second, status: STATUS_ITEMS.map(([id]) => id).filter((id) => v[`status-${id}`] === 'yes') };
@@ -210,7 +210,7 @@ onEngineReady(refresh);
 
 export const infoPanel: Panel = {
   id: 'info',
-  title: 'Info',
+  title: '信息',
   icon: 'info',
   location: 'strip',
   shortcut: 'F8',
@@ -243,5 +243,5 @@ export const infoPanel: Panel = {
 };
 
 export function installInfo(_e: Editor) {
-  registerCommand({ id: 'info.options', label: 'Info Panel Options…', run: (e) => optionsDialog(e), recordable: false });
+  registerCommand({ id: 'info.options', label: '信息面板选项…', run: (e) => optionsDialog(e), recordable: false });
 }

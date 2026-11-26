@@ -38,14 +38,14 @@ export type BrushSettings = BrushTip & {
   airbrush: boolean;
 };
 export const brushPresets: { name: string; tip: Partial<BrushSettings> }[] = [
-  { name: 'Soft Round', tip: { hardness: 0, spacing: 0.1, roundness: 1, angle: 0 } },
-  { name: 'Hard Round', tip: { hardness: 1, spacing: 0.1, roundness: 1, angle: 0 } },
-  { name: 'Soft Round Pressure Size', tip: { hardness: 0, spacing: 0.1, dynamics: { pressureSize: true } } },
-  { name: 'Hard Round Pressure Opacity', tip: { hardness: 1, spacing: 0.1, dynamics: { pressureOpacity: true } } },
-  { name: 'Flat Angled', tip: { hardness: 0.8, spacing: 0.08, roundness: 0.25, angle: 45 } },
-  { name: 'Spatter', tip: { hardness: 0.6, spacing: 0.5, dynamics: { scatter: 1.5, sizeJitter: 0.6, count: 3 } } },
-  { name: 'Chalk', tip: { hardness: 0.4, spacing: 0.15, roundness: 0.7, dynamics: { angleJitter: 1, sizeJitter: 0.25, flowJitter: 0.5 } } },
-  { name: 'Airbrush Soft', tip: { hardness: 0, spacing: 0.05, flow: 0.1, airbrush: true } },
+  { name: '柔边圆', tip: { hardness: 0, spacing: 0.1, roundness: 1, angle: 0 } },
+  { name: '硬边圆', tip: { hardness: 1, spacing: 0.1, roundness: 1, angle: 0 } },
+  { name: '柔边圆压力大小', tip: { hardness: 0, spacing: 0.1, dynamics: { pressureSize: true } } },
+  { name: '硬边圆压力不透明度', tip: { hardness: 1, spacing: 0.1, dynamics: { pressureOpacity: true } } },
+  { name: '平角', tip: { hardness: 0.8, spacing: 0.08, roundness: 0.25, angle: 45 } },
+  { name: '喷溅', tip: { hardness: 0.6, spacing: 0.5, dynamics: { scatter: 1.5, sizeJitter: 0.6, count: 3 } } },
+  { name: '粉笔', tip: { hardness: 0.4, spacing: 0.15, roundness: 0.7, dynamics: { angleJitter: 1, sizeJitter: 0.25, flowJitter: 0.5 } } },
+  { name: '柔边喷枪', tip: { hardness: 0, spacing: 0.05, flow: 0.1, airbrush: true } },
 ];
 // Each painting tool keeps its own settings, so switching tools leaves the others unchanged.
 const settings = new Map<string, BrushSettings>();
@@ -150,30 +150,31 @@ export function brushOptions(e: Editor, id: string, extra = '') {
   const s = brushFor(id);
   const c = brushControls(e, id);
   const modes = c.modes === false ? [] : (c.modes ?? PAINT_MODES);
-  const label = (m: PaintMode) => blendModes.find((b) => b.id === m)?.label ?? m[0].toUpperCase() + m.slice(1);
+  const label = (m: PaintMode) => m === 'behind' ? '背后' : m === 'clear' ? '清除' : blendModes.find((b) => b.id === m)?.label ?? m;
   // Short lists (Blur, Smudge) keep Darken and Lighten together.
   const groupOf = (m: PaintMode) => {
     const g = m === 'behind' || m === 'clear' ? 0 : (blendModes.find((b) => b.id === m)?.group ?? 0);
     return modes.length < 10 && g === 2 ? 1 : g;
   };
   const modeMenu = modes.length
-    ? `<label>Mode <select id="brush-mode" aria-label="Brush blend mode">${modes.map((m, i) => `${i > 0 && groupOf(m) !== groupOf(modes[i - 1]) ? '<option disabled>──────────</option>' : ''}<option value="${m}" ${s.mode === m ? 'selected' : ''}>${label(m)}</option>`).join('')}</select></label>`
+    ? `<label>模式 <select id="brush-mode" aria-label="画笔混合模式">${modes.map((m, i) => `${i > 0 && groupOf(m) !== groupOf(modes[i - 1]) ? '<option disabled>──────────</option>' : ''}<option value="${m}" ${s.mode === m ? 'selected' : ''}>${label(m)}</option>`).join('')}</select></label>`
     : '';
+  const eraserLabel = (m: 'brush' | 'pencil' | 'block') => m === 'brush' ? '画笔' : m === 'pencil' ? '铅笔' : '块';
   const eraser =
     id === 'eraser'
-      ? `<label>Mode <select id="eraser-mode" aria-label="Eraser mode">${(['brush', 'pencil', 'block'] as const).map((m) => `<option value="${m}" ${eraserMode(e) === m ? 'selected' : ''}>${m[0].toUpperCase() + m.slice(1)}</option>`).join('')}</select></label>`
+      ? `<label>模式 <select id="eraser-mode" aria-label="橡皮擦模式">${(['brush', 'pencil', 'block'] as const).map((m) => `<option value="${m}" ${eraserMode(e) === m ? 'selected' : ''}>${eraserLabel(m)}</option>`).join('')}</select></label>`
       : '';
   const hardness = c.hardness !== false;
-  return `<button class="brush-preview" data-brush-popover="${id}" title="Brush settings" aria-label="Brush preset and size"><span class="brush-dot" style="--size:${Math.min(22, 4 + Math.sqrt(s.size) * 1.6)}px;--hard:${hardness ? s.hardness : 1}"></span><span>${Math.round(s.size)}</span></button>
-<label>Size <input id="brush-size" type="number" min="1" max="5000" value="${Math.round(s.size)}" aria-label="Brush size (px)"> px</label>
-${hardness ? `<label>Hardness <input id="brush-hardness" type="number" min="0" max="100" value="${Math.round(s.hardness * 100)}" aria-label="Brush hardness (%)">%</label>` : ''}
+  return `<button class="brush-preview" data-brush-popover="${id}" title="画笔设置" aria-label="画笔预设与大小"><span class="brush-dot" style="--size:${Math.min(22, 4 + Math.sqrt(s.size) * 1.6)}px;--hard:${hardness ? s.hardness : 1}"></span><span>${Math.round(s.size)}</span></button>
+<label>大小 <input id="brush-size" type="number" min="1" max="5000" value="${Math.round(s.size)}" aria-label="画笔大小 (像素)"> 像素</label>
+${hardness ? `<label>硬度 <input id="brush-hardness" type="number" min="0" max="100" value="${Math.round(s.hardness * 100)}" aria-label="画笔硬度 (%)">%</label>` : ''}
 ${modeMenu}${eraser}
-${c.opacity === false ? '' : `<label>Opacity <input id="brush-opacity" type="number" min="1" max="100" value="${Math.round(s.opacity * 100)}" aria-label="Brush opacity (%)">%</label>
-<button class="icon-button toggle" id="pressure-opacity" aria-pressed="${!!s.dynamics.pressureOpacity}" title="Pressure controls opacity" aria-label="Pressure controls opacity">${svg('pressure-opacity', 16)}</button>`}
-${c.flow === false ? '' : `<label>Flow <input id="brush-flow" type="number" min="1" max="100" value="${Math.round(s.flow * 100)}" aria-label="Brush flow (%)">%</label>`}${c.airbrush === false ? '' : `<button class="icon-button toggle" id="airbrush" aria-pressed="${s.airbrush}" title="Airbrush build-up" aria-label="Airbrush">${svg('airbrush', 16)}</button>`}
-<label>Smoothing <input id="brush-smoothing" type="number" min="0" max="100" value="${Math.round(s.smoothing * 100)}" aria-label="Smoothing (%)">%</label>
-${c.angle === false ? '' : `<label title="Angle of the brush tip">Angle <input id="brush-angle" type="number" min="-180" max="180" value="${Math.round(s.angle)}" aria-label="Brush angle (degrees)">°</label>`}
-<button class="icon-button toggle" id="pressure-size" aria-pressed="${!!s.dynamics.pressureSize}" title="Pressure controls size" aria-label="Pressure controls size">${svg('pressure-size', 16)}</button>${id === 'pencil' ? `<label class="transform-setting" title="Strokes that start on the foreground color paint the background color"><input type="checkbox" id="pencil-auto-erase" ${e.settings.pencilAutoErase ? 'checked' : ''}>Auto Erase</label>` : ''}${id === 'eraser' ? `<label class="transform-setting" title="Restore the History Brush source state instead of erasing to transparency (Alt-drag does it for one stroke)"><input type="checkbox" id="erase-to-history" ${e.settings.eraseToHistory ? 'checked' : ''}>Erase to History</label>` : ''}${SYMMETRY_TOOLS.has(id) ? symmetryControls(e) : ''}${extra}`;
+${c.opacity === false ? '' : `<label>不透明度 <input id="brush-opacity" type="number" min="1" max="100" value="${Math.round(s.opacity * 100)}" aria-label="画笔不透明度 (%)">%</label>
+<button class="icon-button toggle" id="pressure-opacity" aria-pressed="${!!s.dynamics.pressureOpacity}" title="压力控制不透明度" aria-label="压力控制不透明度">${svg('pressure-opacity', 16)}</button>`}
+${c.flow === false ? '' : `<label>流量 <input id="brush-flow" type="number" min="1" max="100" value="${Math.round(s.flow * 100)}" aria-label="画笔流量 (%)">%</label>`}${c.airbrush === false ? '' : `<button class="icon-button toggle" id="airbrush" aria-pressed="${s.airbrush}" title="喷枪效果" aria-label="喷枪">${svg('airbrush', 16)}</button>`}
+<label>平滑 <input id="brush-smoothing" type="number" min="0" max="100" value="${Math.round(s.smoothing * 100)}" aria-label="平滑 (%)">%</label>
+${c.angle === false ? '' : `<label title="画笔笔尖的角度">角度 <input id="brush-angle" type="number" min="-180" max="180" value="${Math.round(s.angle)}" aria-label="画笔角度 (度)">°</label>`}
+<button class="icon-button toggle" id="pressure-size" aria-pressed="${!!s.dynamics.pressureSize}" title="压力控制大小" aria-label="压力控制大小">${svg('pressure-size', 16)}</button>${id === 'pencil' ? `<label class="transform-setting" title="从前景色开始的描边将使用背景色绘制"><input type="checkbox" id="pencil-auto-erase" ${e.settings.pencilAutoErase ? 'checked' : ''}>自动抹掉</label>` : ''}${id === 'eraser' ? `<label class="transform-setting" title="恢复历史记录画笔源状态而非抹到透明 (按住 Alt 拖动可在一次描边中生效)"><input type="checkbox" id="erase-to-history" ${e.settings.eraseToHistory ? 'checked' : ''}>抹到历史记录</label>` : ''}${SYMMETRY_TOOLS.has(id) ? symmetryControls(e) : ''}${extra}`;
 }
 
 // ----- Paint symmetry -----
@@ -189,11 +190,11 @@ function symmetryControls(e: Editor) {
   // Reads the kind and segment count, so tool presets and Reset Tool include both.
   const { kind } = paintSymmetry(e);
   const name = SYMMETRY_KINDS.find(([k]) => k === kind)![1];
-  return `<button type="button" class="icon-button toggle" id="symmetry-button" aria-pressed="${kind !== 'off'}" aria-haspopup="dialog" aria-label="Paint symmetry: ${name}" title="Paint symmetry: ${name}\nRepeat strokes mirrored or turned about the center of the canvas">${svg('paint-symmetry', 16)}</button>`;
+  return `<button type="button" class="icon-button toggle" id="symmetry-button" aria-pressed="${kind !== 'off'}" aria-haspopup="dialog" aria-label="绘画对称: ${name}" title="绘画对称: ${name}\n围绕画布中心镜像或旋转重复笔触">${svg('paint-symmetry', 16)}</button>`;
 }
 function symmetryFields(e: Editor) {
   const { kind, segments } = paintSymmetry(e);
-  return `<label>Symmetry <select id="paint-symmetry">${SYMMETRY_KINDS.map(([k, l]) => `<option value="${k}" ${kind === k ? 'selected' : ''}>${l}</option>`).join('')}</select></label><label title="How many times the stroke repeats around the center" ${usesSegments(kind) ? '' : 'hidden'}>Segments <input id="symmetry-segments" type="number" min="2" max="12" step="1" value="${segments}"></label><p class="muted">Strokes repeat about the center of the canvas.</p>`;
+  return `<label>对称 <select id="paint-symmetry">${SYMMETRY_KINDS.map(([k, l]) => `<option value="${k}" ${kind === k ? 'selected' : ''}>${l}</option>`).join('')}</select></label><label title="笔触围绕中心重复的次数" ${usesSegments(kind) ? '' : 'hidden'}>段数 <input id="symmetry-segments" type="number" min="2" max="12" step="1" value="${segments}"></label><p class="muted">笔触围绕画布中心重复。</p>`;
 }
 let closeSymmetry: (() => void) | undefined;
 function openSymmetryPopover(e: Editor, anchor: HTMLElement) {
@@ -201,7 +202,7 @@ function openSymmetryPopover(e: Editor, anchor: HTMLElement) {
   const pop = document.createElement('div');
   pop.className = 'popover symmetry-popover';
   pop.setAttribute('role', 'dialog');
-  pop.setAttribute('aria-label', 'Paint symmetry');
+  pop.setAttribute('aria-label', '绘画对称');
   pop.innerHTML = symmetryFields(e);
   document.body.append(pop);
   const r = anchor.getBoundingClientRect();
@@ -668,7 +669,7 @@ function bucketTool(): Tool {
   const mode = (e: Editor): PaintMode => (fillModes.includes(e.settings.bucketMode as PaintMode) ? (e.settings.bucketMode as PaintMode) : 'normal');
   return {
     id: 'bucket',
-    label: 'Paint Bucket Tool',
+    label: '油漆桶工具',
     key: 'G',
     icon: 'paint-bucket',
     group: 'fill',
@@ -677,8 +678,8 @@ function bucketTool(): Tool {
       const source = e.settings.bucketSource === 'background' || e.settings.bucketSource === 'pattern' ? e.settings.bucketSource : 'foreground';
       const pat = source === 'pattern' ? currentPattern(e) : undefined;
       const m = mode(e);
-      const label = (v: PaintMode) => blendModes.find((b) => b.id === v)?.label ?? v[0].toUpperCase() + v.slice(1);
-      return `<label>Fill <select id="bucket-source">${[['foreground', 'Foreground'], ['background', 'Background'], ['pattern', 'Pattern']].map(([v, l]) => `<option value="${v}" ${source === v ? 'selected' : ''}>${l}</option>`).join('')}</select></label>${source === 'pattern' ? `<button type="button" class="pattern-swatch" data-bucket-pattern title="${escapeXML(pat?.name ?? 'Pattern')} — click to choose" aria-label="Pattern">${pat ? `<img src="${patternThumb(pat, 24)}" alt="">` : ''}</button>` : ''}<label>Mode <select id="bucket-mode" aria-label="Fill blend mode">${fillModes.map((v) => `<option value="${v}" ${m === v ? 'selected' : ''}>${label(v)}</option>`).join('')}</select></label><label>Opacity <input id="bucket-opacity" type="number" min="1" max="100" value="${Math.round(Number(e.settings.bucketOpacity ?? 1) * 100)}">%</label><label>Tolerance <input id="tolerance" type="number" value="${e.tolerance}" min="0" max="255"></label><label class="transform-setting"><input id="bucket-anti-alias" type="checkbox" ${e.settings.antiAlias !== false ? 'checked' : ''}>Anti-alias</label><label class="transform-setting"><input id="wand-contiguous" type="checkbox" ${e.settings.contiguous !== false ? 'checked' : ''}>Contiguous</label><label class="transform-setting"><input id="wand-all" type="checkbox" ${e.settings.sampleAllLayers ? 'checked' : ''}>All Layers</label>`;
+      const label = (v: PaintMode) => v === 'behind' ? '背后' : v === 'clear' ? '清除' : blendModes.find((b) => b.id === v)?.label ?? v;
+      return `<label>填充 <select id="bucket-source">${[['foreground', '前景色'], ['background', '背景色'], ['pattern', '图案']].map(([v, l]) => `<option value="${v}" ${source === v ? 'selected' : ''}>${l}</option>`).join('')}</select></label>${source === 'pattern' ? `<button type="button" class="pattern-swatch" data-bucket-pattern title="${escapeXML(pat?.name ?? '图案')} — 单击以选取" aria-label="图案">${pat ? `<img src="${patternThumb(pat, 24)}" alt="">` : ''}</button>` : ''}<label>模式 <select id="bucket-mode" aria-label="填充混合模式">${fillModes.map((v) => `<option value="${v}" ${m === v ? 'selected' : ''}>${label(v)}</option>`).join('')}</select></label><label>不透明度 <input id="bucket-opacity" type="number" min="1" max="100" value="${Math.round(Number(e.settings.bucketOpacity ?? 1) * 100)}">%</label><label>容差 <input id="tolerance" type="number" value="${e.tolerance}" min="0" max="255"></label><label class="transform-setting"><input id="bucket-anti-alias" type="checkbox" ${e.settings.antiAlias !== false ? 'checked' : ''}>消除锯齿</label><label class="transform-setting"><input id="wand-contiguous" type="checkbox" ${e.settings.contiguous !== false ? 'checked' : ''}>连续</label><label class="transform-setting"><input id="wand-all" type="checkbox" ${e.settings.sampleAllLayers ? 'checked' : ''}>所有图层</label>`;
     },
     bindOptions: ({ e, el }) => {
       el.querySelector<HTMLSelectElement>('#bucket-source')?.addEventListener('change', (ev) => {
@@ -819,7 +820,7 @@ function bucketTool(): Tool {
         d[j + 2] = (mb * k + d[j + 2] * ba * (1 - k)) / oa;
         d[j + 3] = oa * 255;
       }
-      commitTarget(e, target, writeRect(e.assets.tiles, target.grid, 0, 0, img), 'Paint Bucket');
+      commitTarget(e, target, writeRect(e.assets.tiles, target.grid, 0, 0, img), '油漆桶');
     },
   };
 }
@@ -835,14 +836,14 @@ export function installPaint(editor: Editor) {
   });
   registerOverlay('paint-symmetry', symmetryOverlay);
   registerTool(
-    strokeTool('brush', 'Brush Tool', 'paintbrush', 'brush', 'B', 'Brush Tool'),
-    strokeTool('pencil', 'Pencil Tool', 'pencil', 'brush', 'B', 'Pencil'),
-    strokeTool('eraser', 'Eraser Tool', 'eraser', 'eraser', 'E', 'Eraser'),
+    strokeTool('brush', '画笔工具', 'paintbrush', 'brush', 'B', '画笔工具'),
+    strokeTool('pencil', '铅笔工具', 'pencil', 'brush', 'B', '铅笔'),
+    strokeTool('eraser', '橡皮擦工具', 'eraser', 'eraser', 'E', '橡皮擦'),
     bucketTool(),
   );
   registerCommand({
     id: 'brush.reset',
-    label: 'Reset Brush',
+    label: '复位画笔',
     hidden: true,
     run: (e) => {
       settings.delete(e.tool);

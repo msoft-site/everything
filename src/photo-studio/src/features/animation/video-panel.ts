@@ -36,7 +36,7 @@ import { audioClipMenu, audioTrackMenu } from './audio';
 const HEAD = 200;
 const minZoom = 0.02;
 const maxZoom = 48;
-const propNames: Record<KeyProperty, string> = { position: 'Position', opacity: 'Opacity', style: 'Style' };
+const propNames: Record<KeyProperty, string> = { position: '位置', opacity: '不透明度', style: '样式' };
 
 type Drag =
   | { kind: 'scrub' }
@@ -83,8 +83,8 @@ function trackLayers(e: Editor, layers: Layer[], depth = 0, out: { l: Layer; dep
 
 function transitionText(t: Transition, edge: 'in' | 'out', fps: number) {
   const name = transitionKinds.find(([k]) => k === t.kind)![1];
-  const where = t.kind === 'cross-fade' ? 'from the clip before' : edge === 'in' ? 'in' : 'out';
-  return `${name} ${where}, ${(t.duration / fps).toFixed(2)} s${t.kind === 'fade-color' ? ` (${t.color ?? '#000000'})` : ''}`;
+  const where = t.kind === 'cross-fade' ? '与前一个剪辑交叉淡入' : edge === 'in' ? '淡入' : '淡出';
+  return `${name} ${where}, ${(t.duration / fps).toFixed(2)} 秒${t.kind === 'fade-color' ? ` (${t.color ?? '#000000'})` : ''}`;
 }
 
 function clipHtml(e: Editor, tl: VideoTimeline, l: Layer, zoom: number) {
@@ -93,14 +93,14 @@ function clipHtml(e: Editor, tl: VideoTimeline, l: Layer, zoom: number) {
   const left = c.start * zoom,
     width = Math.max(3, c.length * zoom);
   const fade = (t: Transition | undefined, edge: 'in' | 'out') =>
-    t ? `<span class="vt-fade ${edge} ${t.kind}" data-transition="${escapeXML(l.id)}" style="width:${Math.min(width, t.duration * zoom)}px${t.kind === 'fade-color' ? `;--fade-color:${t.color ?? '#000000'}` : ''}" title="${escapeXML(transitionText(t, edge, tl.fps))} (click to change)"></span>` : '';
+    t ? `<span class="vt-fade ${edge} ${t.kind}" data-transition="${escapeXML(l.id)}" style="width:${Math.min(width, t.duration * zoom)}px${t.kind === 'fade-color' ? `;--fade-color:${t.color ?? '#000000'}` : ''}" title="${escapeXML(transitionText(t, edge, tl.fps))} (单击更改)"></span>` : '';
   const marks = (tl.clips[l.id]?.keys ? keyProperties.flatMap((p) => tl.clips[l.id].keys![p]?.map((k) => k.t - c.in + c.start) ?? []) : [])
     .filter((t, i, a) => a.indexOf(t) === i)
     .map((t) => `<span class="vt-mark" style="left:${(t - c.start + 0.5) * zoom}px"></span>`)
     .join('');
   const sel = e.selectedIds.has(l.id);
-  const range = `${timecode(c.start, tl.fps)} to ${timecode(clipEnd(c), tl.fps)}`;
-  return `<div class="vt-clip ${kind}${sel ? ' selected' : ''}${l.visible ? '' : ' hidden-layer'}" data-clip="${escapeXML(l.id)}" style="left:${left}px;width:${width}px" title="${escapeXML(`${l.name}: ${range}`)}"><span class="vt-trim start" data-trim="start" title="Drag to trim the start"></span>${fade(c.fadeIn, 'in')}<span class="vt-clip-label">${kind === 'video' ? svg('film', 11) : ''}${escapeXML(l.name)}</span>${marks}${fade(c.fadeOut, 'out')}<span class="vt-trim end" data-trim="end" title="Drag to trim the end"></span></div>`;
+  const range = `${timecode(c.start, tl.fps)} 至 ${timecode(clipEnd(c), tl.fps)}`;
+  return `<div class="vt-clip ${kind}${sel ? ' selected' : ''}${l.visible ? '' : ' hidden-layer'}" data-clip="${escapeXML(l.id)}" style="left:${left}px;width:${width}px" title="${escapeXML(`${l.name}: ${range}`)}"><span class="vt-trim start" data-trim="start" title="拖动以修剪起点"></span>${fade(c.fadeIn, 'in')}<span class="vt-clip-label">${kind === 'video' ? svg('film', 11) : ''}${escapeXML(l.name)}</span>${marks}${fade(c.fadeOut, 'out')}<span class="vt-trim end" data-trim="end" title="拖动以修剪终点"></span></div>`;
 }
 
 function keyLane(e: Editor, tl: VideoTimeline, l: Layer, prop: KeyProperty, zoom: number) {
@@ -114,16 +114,16 @@ function keyLane(e: Editor, tl: VideoTimeline, l: Layer, prop: KeyProperty, zoom
   const lane = keys
     .map((k) => {
       const t = k.t - c.in + c.start;
-      return `<span class="vt-key${k.hold ? ' hold' : ''}${selected.has(k.t) ? ' selected' : ''}" data-key="${escapeXML(`${l.id}|${prop}|${k.t}`)}" style="left:${(t + 0.5) * zoom}px" title="${escapeXML(`${name} keyframe at ${timecode(t, tl.fps)} (${k.hold ? 'hold' : 'linear'})`)}"></span>`;
+      return `<span class="vt-key${k.hold ? ' hold' : ''}${selected.has(k.t) ? ' selected' : ''}" data-key="${escapeXML(`${l.id}|${prop}|${k.t}`)}" style="left:${(t + 0.5) * zoom}px" title="${escapeXML(`${name} 关键帧位于 ${timecode(t, tl.fps)} (${k.hold ? '定格' : '线性'})`)}"></span>`;
     })
     .join('');
   return `<div class="vt-row vt-prop-row" data-owner="${escapeXML(l.id)}"><div class="vt-head vt-prop-head">
-<button class="icon-button vt-stopwatch" data-command="timeline.animate-${prop}" data-arg="${escapeXML(l.id)}" aria-pressed="${on}" title="${on ? `Stop animating ${name.toLowerCase()} (removes its keyframes)` : `Animate ${name.toLowerCase()}: edits at the playhead add keyframes`}" aria-label="Animate ${name} of ${escapeXML(l.name)}">${svg('stopwatch', 13)}</button>
+<button class="icon-button vt-stopwatch" data-command="timeline.animate-${prop}" data-arg="${escapeXML(l.id)}" aria-pressed="${on}" title="${on ? `停止对${name}制作动画（移除其关键帧）` : `对${name}制作动画：在播放头处编辑将添加关键帧`}" aria-label="对 ${escapeXML(l.name)} 的 ${name} 制作动画">${svg('stopwatch', 13)}</button>
 <span class="vt-prop-name">${name}</span>
 <span class="vt-key-nav">
-<button class="icon-button" data-key-nav="-1" data-arg="${escapeXML(arg)}" title="Previous ${name.toLowerCase()} keyframe" aria-label="Previous ${name} keyframe" ${on ? '' : 'disabled'}>${svg('chevron-left', 12)}</button>
-<button class="icon-button vt-key-toggle${here ? ' on' : ''}" data-command="timeline.toggle-key" data-arg="${escapeXML(arg)}" title="${here ? 'Remove the keyframe at the playhead' : 'Add a keyframe at the playhead'}" aria-label="${here ? 'Remove' : 'Add'} ${name} keyframe" ${on ? '' : 'disabled'}>${svg('keyframe', 12)}</button>
-<button class="icon-button" data-key-nav="1" data-arg="${escapeXML(arg)}" title="Next ${name.toLowerCase()} keyframe" aria-label="Next ${name} keyframe" ${on ? '' : 'disabled'}>${svg('chevron-right', 12)}</button>
+<button class="icon-button" data-key-nav="-1" data-arg="${escapeXML(arg)}" title="上一个 ${name} 关键帧" aria-label="上一个 ${name} 关键帧" ${on ? '' : 'disabled'}>${svg('chevron-left', 12)}</button>
+<button class="icon-button vt-key-toggle${here ? ' on' : ''}" data-command="timeline.toggle-key" data-arg="${escapeXML(arg)}" title="${here ? '移除播放头处的关键帧' : '在播放头处添加关键帧'}" aria-label="${here ? '移除' : '添加'} ${name} 关键帧" ${on ? '' : 'disabled'}>${svg('keyframe', 12)}</button>
+<button class="icon-button" data-key-nav="1" data-arg="${escapeXML(arg)}" title="下一个 ${name} 关键帧" aria-label="下一个 ${name} 关键帧" ${on ? '' : 'disabled'}>${svg('chevron-right', 12)}</button>
 </span></div><div class="vt-lane vt-key-lane">${lane}</div></div>`;
 }
 
@@ -136,43 +136,43 @@ function bodyHtml(e: Editor, tl: VideoTimeline, zoom: number) {
       const open = view.expanded.has(l.id);
       const icon = isVideoLayer(l) ? 'film' : l.kind === 'group' ? 'folder' : l.kind === 'adjustment' ? 'adjustment-layer' : l.kind === 'text' ? 'type' : l.kind === 'vector' ? 'shapes' : 'image';
       const sel = e.selectedIds.has(l.id);
-      const head = `<div class="vt-head" data-select="${escapeXML(l.id)}" style="--depth:${depth}"><button class="icon-button vt-disclosure" data-expand="${escapeXML(l.id)}" aria-expanded="${open}" title="${open ? 'Hide' : 'Show'} keyframes" aria-label="${open ? 'Hide' : 'Show'} keyframes of ${escapeXML(l.name)}">${svg(open ? 'chevron-down' : 'chevron-right', 12)}</button><span class="vt-icon" aria-hidden="true">${svg(icon, 13)}</span><span class="vt-name" title="${escapeXML(l.name)}">${escapeXML(l.name)}</span>${isVideoLayer(l) && l.video.audio ? `<button class="icon-button vt-track-toggle" data-video-mute="${escapeXML(l.id)}" aria-pressed="${!!l.video.muted}" title="${l.video.muted ? 'Unmute' : 'Mute'} the sound of this video layer" aria-label="Mute the sound of ${escapeXML(l.name)}">${svg(l.video.muted ? 'speaker-off' : 'speaker', 13)}</button>` : ''}</div>`;
+      const head = `<div class="vt-head" data-select="${escapeXML(l.id)}" style="--depth:${depth}"><button class="icon-button vt-disclosure" data-expand="${escapeXML(l.id)}" aria-expanded="${open}" title="${open ? '隐藏' : '显示'}关键帧" aria-label="${open ? '隐藏' : '显示'} ${escapeXML(l.name)} 的关键帧">${svg(open ? 'chevron-down' : 'chevron-right', 12)}</button><span class="vt-icon" aria-hidden="true">${svg(icon, 13)}</span><span class="vt-name" title="${escapeXML(l.name)}">${escapeXML(l.name)}</span>${isVideoLayer(l) && l.video.audio ? `<button class="icon-button vt-track-toggle" data-video-mute="${escapeXML(l.id)}" aria-pressed="${!!l.video.muted}" title="${l.video.muted ? '取消静音' : '静音'}此视频图层的声音" aria-label="静音 ${escapeXML(l.name)} 的声音">${svg(l.video.muted ? 'speaker-off' : 'speaker', 13)}</button>` : ''}</div>`;
       const props = open ? keyProperties.filter((p) => canAnimate(l, p)).map((p) => keyLane(e, tl, l, p, zoom)).join('') : '';
       return `<div class="vt-row vt-track${sel ? ' selected' : ''}" data-row="${escapeXML(l.id)}">${head}<div class="vt-lane" data-lane="${escapeXML(l.id)}">${clipHtml(e, tl, l, zoom)}</div></div>${props}`;
     })
     .join('');
-  const empty = rows ? '' : '<p class="vt-empty">Add layers to place them on the timeline.</p>';
+  const empty = rows ? '' : '<p class="vt-empty">添加图层以将其放置在时间轴上。</p>';
   return `<div class="vt-grid" style="width:${HEAD + width + 24}px;--zoom:${zoom}px">
-<div class="vt-ruler-row"><div class="vt-corner"><span class="vt-corner-time" title="Current time (minutes:seconds:frames)"></span><span class="vt-corner-fps">${fpsLabel(tl.fps)}</span></div>
-<div class="vt-ruler" data-ruler title="Click or drag to move the current time" style="width:${width}px"><div class="vt-ticks"></div>
+<div class="vt-ruler-row"><div class="vt-corner"><span class="vt-corner-time" title="当前时间 (分:秒:帧)"></span><span class="vt-corner-fps">${fpsLabel(tl.fps)}</span></div>
+<div class="vt-ruler" data-ruler title="单击或拖动以移动当前时间" style="width:${width}px"><div class="vt-ticks"></div>
 <div class="vt-out" style="left:${we * zoom}px;width:${Math.max(0, (tl.duration - we) * zoom)}px"></div><div class="vt-out" style="left:0;width:${ws * zoom}px"></div>
-<div class="vt-work" style="left:${ws * zoom}px;width:${(we - ws) * zoom}px" title="Work area: ${timecode(ws, tl.fps)} to ${timecode(we, tl.fps)}"><span class="vt-work-handle start" data-work="start" title="Drag to set the start of the work area"></span><span class="vt-work-handle end" data-work="end" title="Drag to set the end of the work area"></span></div>
+<div class="vt-work" style="left:${ws * zoom}px;width:${(we - ws) * zoom}px" title="工作区域: ${timecode(ws, tl.fps)} 至 ${timecode(we, tl.fps)}"><span class="vt-work-handle start" data-work="start" title="拖动设置工作区域起点"></span><span class="vt-work-handle end" data-work="end" title="拖动设置工作区域终点"></span></div>
 <span class="vt-knob" aria-hidden="true"></span></div></div>
-${rows}${empty}${audioRowsHtml(e, tl, zoom)}<div class="vt-end" style="left:${HEAD + width}px" title="End of the timeline"></div><div class="vt-playhead" aria-hidden="true"></div></div>`;
+${rows}${empty}${audioRowsHtml(e, tl, zoom)}<div class="vt-end" style="left:${HEAD + width}px" title="时间轴终点"></div><div class="vt-playhead" aria-hidden="true"></div></div>`;
 }
 
 function controlsHtml(e: Editor, tl: VideoTimeline, zoom: number) {
   const playing = isVideoPlaying(e);
   const loop = videoView(e).loop;
   const rates = frameRates.includes(tl.fps) ? frameRates : [...frameRates, tl.fps].sort((a, b) => a - b);
-  return `${button(e, 'animation.first', 'chevron-first', 'Go to the start of the work area')}${button(e, 'animation.previous', 'step-back', 'Previous frame (Left arrow)')}
-${button(e, 'animation.play', playing ? 'pause' : 'play', playing ? 'Stop (Space)' : 'Play (Space)', `aria-pressed="${playing}"`, 'timeline-play')}
-${button(e, 'animation.next', 'step-forward', 'Next frame (Right arrow)')}${button(e, 'animation.last', 'chevron-last', 'Go to the end of the work area')}
-${button(e, 'timeline.loop', 'repeat', loop ? 'Loop playback (on)' : 'Loop playback (off)', `aria-pressed="${loop}"`)}
+  return `${button(e, 'animation.first', 'chevron-first', '转到工作区域起点')}${button(e, 'animation.previous', 'step-back', '上一帧 (左方向键)')}
+${button(e, 'animation.play', playing ? 'pause' : 'play', playing ? '停止 (空格键)' : '播放 (空格键)', `aria-pressed="${playing}"`, 'timeline-play')}
+${button(e, 'animation.next', 'step-forward', '下一帧 (右方向键)')}${button(e, 'animation.last', 'chevron-last', '转到工作区域终点')}
+${button(e, 'timeline.loop', 'repeat', loop ? '循环播放 (开)' : '循环播放 (关)', `aria-pressed="${loop}"`)}
 <span class="timeline-sep"></span>
-<span class="vt-time" title="Current time / duration (minutes:seconds:frames)" aria-live="off"></span>
-<select class="vt-fps" title="Frame rate of the timeline" aria-label="Frame rate">${rates.map((r) => `<option value="${r}" ${r === tl.fps ? 'selected' : ''}>${escapeXML(fpsLabel(r))}</option>`).join('')}</select>
+<span class="vt-time" title="当前时间 / 持续时间 (分:秒:帧)" aria-live="off"></span>
+<select class="vt-fps" title="时间轴帧率" aria-label="帧率">${rates.map((r) => `<option value="${r}" ${r === tl.fps ? 'selected' : ''}>${escapeXML(fpsLabel(r))}</option>`).join('')}</select>
 <span class="timeline-sep"></span>
-${button(e, 'timeline.split', 'split-clip', 'Split the selected clips at the playhead')}${button(e, 'timeline.transitions', 'transition', 'Transitions of the selected clip…')}
-${button(e, 'layer.video-new-file', 'image-plus', 'New video layer from a file…')}
-${button(e, 'animation.onion', 'onion-skin', 'Onion skins', `aria-pressed="${!!tl.onion?.enabled}"`)}
+${button(e, 'timeline.split', 'split-clip', '在播放头位置拆分所选剪辑')}${button(e, 'timeline.transitions', 'transition', '所选剪辑的过渡效果…')}
+${button(e, 'layer.video-new-file', 'image-plus', '从文件新建视频图层…')}
+${button(e, 'animation.onion', 'onion-skin', '洋葱皮', `aria-pressed="${!!tl.onion?.enabled}"`)}
 <span class="timeline-spacer"></span>
-<button class="icon-button" data-zoom="out" title="Zoom out" aria-label="Zoom out">${svg('zoom-out', 15)}</button>
-<input class="vt-zoom" type="range" min="0" max="1000" step="1" value="${zoomToSlider(zoom)}" title="Timeline zoom" aria-label="Timeline zoom">
-<button class="icon-button" data-zoom="in" title="Zoom in" aria-label="Zoom in">${svg('zoom-in', 15)}</button>
-<button class="icon-button" data-zoom="fit" title="Fit the whole timeline" aria-label="Fit the whole timeline" aria-pressed="${videoView(e).zoom === 0}">${svg('move-horizontal', 15)}</button>
+<button class="icon-button" data-zoom="out" title="缩小" aria-label="缩小">${svg('zoom-out', 15)}</button>
+<input class="vt-zoom" type="range" min="0" max="1000" step="1" value="${zoomToSlider(zoom)}" title="时间轴缩放" aria-label="时间轴缩放">
+<button class="icon-button" data-zoom="in" title="放大" aria-label="放大">${svg('zoom-in', 15)}</button>
+<button class="icon-button" data-zoom="fit" title="适合整个时间轴" aria-label="适合整个时间轴" aria-pressed="${videoView(e).zoom === 0}">${svg('move-horizontal', 15)}</button>
 <span class="timeline-sep"></span>
-${button(e, 'timeline.settings', 'settings', 'Timeline settings (duration and frame rate)…')}${button(e, 'file.render-video', 'clapperboard', 'Render video…')}`;
+${button(e, 'timeline.settings', 'settings', '时间轴设置 (持续时间与帧率)…')}${button(e, 'file.render-video', 'clapperboard', '渲染视频…')}`;
 }
 
 /** Ruler ticks for the visible part of the timeline. */
@@ -285,7 +285,7 @@ function setZoom(e: Editor, zoom: number, anchorClientX?: number) {
 function mount(e: Editor, el: HTMLElement) {
   host = el;
   el.classList.add('vt');
-  el.innerHTML = `<div class="vt-body" tabindex="0" aria-label="Video timeline: tracks, clips, keyframes and audio"></div><div class="vt-audio-props" role="group" aria-label="Audio properties" hidden></div><div class="timeline-controls vt-controls" role="toolbar" aria-label="Timeline controls"></div>`;
+  el.innerHTML = `<div class="vt-body" tabindex="0" aria-label="视频时间轴：轨道、剪辑、关键帧与音频"></div><div class="vt-audio-props" role="group" aria-label="音频属性" hidden></div><div class="timeline-controls vt-controls" role="toolbar" aria-label="时间轴控件"></div>`;
   lastBody = lastControls = lastTicks = lastProps = '';
   const body = el.querySelector<HTMLElement>('.vt-body')!;
   const controls = el.querySelector<HTMLElement>('.vt-controls')!;

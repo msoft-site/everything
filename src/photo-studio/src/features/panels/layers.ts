@@ -123,9 +123,9 @@ function note(e: Editor, l: Layer) {
     const n = f(e, l);
     if (n !== undefined) return escapeXML(n);
   }
-  if (l.artboard) return `artboard · ${l.artboard.rect.width} × ${l.artboard.rect.height}`;
-  if (l.frame) return l.children.length ? 'frame' : 'empty frame';
-  return l.kind === 'group' ? `${allLayers(l.children).length} layers` : l.kind === 'pixel' ? '' : l.kind === 'image' ? (l.assetColorSpace === 'srgb' ? 'embedded' : '') : l.fill ? `${l.fill.type} fill` : l.kind;
+  if (l.artboard) return `画板 · ${l.artboard.rect.width} × ${l.artboard.rect.height}`;
+  if (l.frame) return l.children.length ? '图框' : '空图框';
+  return l.kind === 'group' ? `${allLayers(l.children).length} 个图层` : l.kind === 'pixel' ? '' : l.kind === 'image' ? (l.assetColorSpace === 'srgb' ? '嵌入' : '') : l.fill ? `${l.fill.type === 'gradient' ? '渐变' : l.fill.type === 'pattern' ? '图案' : '纯色'}填充` : l.kind === 'text' ? '文字' : l.kind === 'vector' ? '形状' : l.kind === 'adjustment' ? '调整' : l.kind;
 }
 // One fragment per layer (its row, effect and extra rows), children after
 // their group, so the list patches row by row (ui/patch-list.ts).
@@ -141,13 +141,13 @@ function rows(e: Editor, layers: Layer[], depth: number, out: string[] = []): st
       const maskLinked = l.pixelMask ? !l.pixelMask.positionRelativeToLayer : l.vectorMask ? !l.vectorMask.unlinked : !l.maskUnlinked;
       const linkActive = !!l.linkGroup && [...selected].some((id) => id !== l.id && findLayer(e.doc.layers, id)?.linkGroup === l.linkGroup);
       out.push(`<div class="layer-row ${selected.has(l.id) ? 'selected' : ''} ${l.background ? 'background-layer' : ''} ${l.visible ? '' : 'hidden-layer'} ${l.clipped ? 'clipped' : ''}" data-row="${escapeXML(l.id)}"${isLayerColor(l.colorLabel) ? ` data-color="${l.colorLabel}"` : ''} draggable="true" role="listitem" style="--depth:${depth}">
-<button class="eye" data-visibility="${escapeXML(l.id)}" title="${l.visible ? 'Hide' : 'Show'} layer" aria-label="${l.visible ? 'Hide' : 'Show'} ${escapeXML(l.name)}">${l.visible ? svg('eye', 15) : ''}</button>
-${l.kind === 'group' ? `<button class="group-disclosure" data-collapse="${escapeXML(l.id)}" aria-label="${collapsed ? 'Expand' : 'Collapse'} ${escapeXML(l.name)}" aria-expanded="${!collapsed}">${svg(collapsed ? 'chevron-right' : 'chevron-down', 13)}</button>` : l.clipped ? `<span class="clip-arrow" title="Clipped to the layer below" aria-label="Clipping mask">↳</span>` : '<span class="disclosure-spacer"></span>'}
+<button class="eye" data-visibility="${escapeXML(l.id)}" title="${l.visible ? '隐藏' : '显示'}图层" aria-label="${l.visible ? '隐藏' : '显示'} ${escapeXML(l.name)}">${l.visible ? svg('eye', 15) : ''}</button>
+${l.kind === 'group' ? `<button class="group-disclosure" data-collapse="${escapeXML(l.id)}" aria-label="${collapsed ? '展开' : '折叠'} ${escapeXML(l.name)}" aria-expanded="${!collapsed}">${svg(collapsed ? 'chevron-right' : 'chevron-down', 13)}</button>` : l.clipped ? `<span class="clip-arrow" title="剪切至下方图层" aria-label="剪贴蒙版">↳</span>` : '<span class="disclosure-spacer"></span>'}
 <button class="layer-select" data-layer="${escapeXML(l.id)}" aria-pressed="${selected.has(l.id)}" aria-label="${escapeXML(l.name)}"><span class="layer-thumbnail ${l.kind} ${e.maskTarget === l.id ? '' : selected.has(l.id) && masked ? 'target' : ''}">${thumbnail(e, l)}${layerBadges.map((f) => f(e, l)).join('')}</span></button>
-${masked ? `<button class="mask-link ${maskLinked ? '' : 'unlinked'}" data-mask-link="${escapeXML(l.id)}" aria-pressed="${maskLinked}" aria-label="${maskLinked ? 'Unlink' : 'Link'} mask of ${escapeXML(l.name)}" title="${maskLinked ? 'Mask moves with the layer (click to unlink)' : 'Mask stays in place (click to link)'}">${svg('link', 11)}</button>` : ''}
-${masked ? `<button class="mask-thumbnail ${l.maskDisabled ? 'disabled-mask' : ''} ${e.maskTarget === l.id ? 'target' : ''}" data-mask="${escapeXML(l.id)}" aria-label="Edit mask for ${escapeXML(l.name)}" aria-pressed="${e.maskTarget === l.id}" title="Layer mask (click to edit, Shift-click to disable)">${maskThumb(e, l)}</button>` : ''}
+${masked ? `<button class="mask-link ${maskLinked ? '' : 'unlinked'}" data-mask-link="${escapeXML(l.id)}" aria-pressed="${maskLinked}" aria-label="${maskLinked ? '取消链接' : '链接'} ${escapeXML(l.name)} 的蒙版" title="${maskLinked ? '蒙版随图层移动 (单击取消链接)' : '蒙版保持原位 (单击链接)'}">${svg('link', 11)}</button>` : ''}
+${masked ? `<button class="mask-thumbnail ${l.maskDisabled ? 'disabled-mask' : ''} ${e.maskTarget === l.id ? 'target' : ''}" data-mask="${escapeXML(l.id)}" aria-label="编辑 ${escapeXML(l.name)} 的蒙版" aria-pressed="${e.maskTarget === l.id}" title="图层蒙版 (单击编辑，Shift+单击停用)">${maskThumb(e, l)}</button>` : ''}
 <button class="layer-name" data-layer="${escapeXML(l.id)}" tabindex="-1" aria-hidden="true"><span class="name-text">${escapeXML(l.name)}</span><small>${note(e, l)}</small></button>
-${fxBadge(l)}${l.linkGroup ? `<span class="link-badge ${linkActive ? 'active' : ''}" title="Linked layer" aria-label="Linked layer">${svg('link', 13)}</span>` : ''}${locked ? `<span class="lock-badge" title="${l.locked ? 'Layer locked' : 'Layer partially locked'}" aria-label="${l.locked ? 'Layer locked' : 'Layer partially locked'}">${svg('lock', 13)}</span>` : ''}
+${fxBadge(l)}${l.linkGroup ? `<span class="link-badge ${linkActive ? 'active' : ''}" title="链接的图层" aria-label="链接的图层">${svg('link', 13)}</span>` : ''}${locked ? `<span class="lock-badge" title="${l.locked ? '图层已锁定' : '图层部分锁定'}" aria-label="${l.locked ? '图层已锁定' : '图层部分锁定'}">${svg('lock', 13)}</span>` : ''}
 </div>${effectRows(l, depth)}${layerRowExtras.map((f) => f(e, l, depth)).join('')}`);
       if (l.kind === 'group' && !collapsed) rows(e, l.children, depth + 1, out);
     });
@@ -188,26 +188,26 @@ function blendSelect(l?: Layer, disabled = false) {
   const options = (l?.kind === 'group' && !l.artboard && !l.frame ? (['pass through', ...blends] as Layer['blend'][]) : blends)
     .map((b) => `${blendGroupStarts.includes(b) ? '<option disabled>──────────</option>' : ''}<option value="${b}" ${l?.blend === b ? 'selected' : ''}>${blendLabel(b)}</option>`)
     .join('');
-  return `<select id="blend" aria-label="Blend mode" ${!l || disabled ? 'disabled' : ''}>${options}</select>`;
+  return `<select id="blend" aria-label="混合模式" ${!l || disabled ? 'disabled' : ''}>${options}</select>`;
 }
 
 export const layersPanel: Panel = {
   id: 'layers',
-  title: 'Layers',
+  title: '图层',
   icon: 'layers',
   location: 'dock-bottom',
   shortcut: 'F7',
   mount: (e, el) => {
     el.classList.add('layers-panel');
-    el.innerHTML = `<div class="layer-filter"><select class="layer-filter-kind" aria-label="Filter layers by kind"><option value="">Kind</option><option value="pixel">Pixel layers</option><option value="adjustment">Adjustment and fill layers</option><option value="text">Type layers</option><option value="vector">Shape layers</option><option value="embedded">Embedded objects</option></select><input class="layer-filter-text" type="search" placeholder="Name" aria-label="Filter layers by name"><button class="icon-button toggle layer-filter-toggle" aria-pressed="false" title="Turn layer filtering on or off" aria-label="Layer filtering">${svg('search', 13)}</button></div><div class="layer-options"></div><div class="lock-row"></div><div id="layers" role="list" aria-label="Document layers"></div><div class="layer-root-drop" hidden>Drop here to move to the top level</div>
+    el.innerHTML = `<div class="layer-filter"><select class="layer-filter-kind" aria-label="按类型过滤图层"><option value="">类型</option><option value="pixel">像素图层</option><option value="adjustment">调整和填充图层</option><option value="text">文字图层</option><option value="vector">形状图层</option><option value="embedded">嵌入对象</option></select><input class="layer-filter-text" type="search" placeholder="名称" aria-label="按名称过滤图层"><button class="icon-button toggle layer-filter-toggle" aria-pressed="false" title="开启或关闭图层过滤" aria-label="图层过滤">${svg('search', 13)}</button></div><div class="layer-options"></div><div class="lock-row"></div><div id="layers" role="list" aria-label="文档图层"></div><div class="layer-root-drop" hidden>拖放到此处移动到顶层</div>
 <div class="layer-footer">
-<button data-command="layer.link" title="Link or unlink the selected layers" aria-label="Link layers">${svg('link', 16)}</button>
-<button data-command="layer.style-dialog" title="Add a layer style" aria-label="Add a layer style">${svg('fx', 16)}</button>
-<button data-command="layer.add-mask" title="Add layer mask" aria-label="Add layer mask">${svg('mask-add', 16)}</button>
-<button data-layer-adjust title="Create new fill or adjustment layer" aria-label="New fill or adjustment layer">${svg('adjustment-layer', 16)}</button>
-<button data-command="layer.new-group-quick" data-alt-command="layer.new-group" title="Create a new group (Alt-click for options)" aria-label="New group">${svg('folder-plus', 16)}</button>
-<button data-command="layer.new-quick" data-alt-command="layer.new" title="Create a new layer (Alt-click for options)" aria-label="New layer">${svg('plus', 16)}</button>
-<button data-command="layer.delete" title="Delete layer" aria-label="Delete layer">${svg('trash-2', 16)}</button>
+<button data-command="layer.link" title="链接或取消链接所选图层" aria-label="链接图层">${svg('link', 16)}</button>
+<button data-command="layer.style-dialog" title="添加图层样式" aria-label="添加图层样式">${svg('fx', 16)}</button>
+<button data-command="layer.add-mask" title="添加图层蒙版" aria-label="添加图层蒙版">${svg('mask-add', 16)}</button>
+<button data-layer-adjust title="创建新的填充或调整图层" aria-label="新建填充或调整图层">${svg('adjustment-layer', 16)}</button>
+<button data-command="layer.new-group-quick" data-alt-command="layer.new-group" title="创建新组 (Alt+单击显示选项)" aria-label="新建组">${svg('folder-plus', 16)}</button>
+<button data-command="layer.new-quick" data-alt-command="layer.new" title="创建新图层 (Alt+单击显示选项)" aria-label="新建图层">${svg('plus', 16)}</button>
+<button data-command="layer.delete" title="删除图层" aria-label="删除图层">${svg('trash-2', 16)}</button>
 </div><span id="layer-count" class="sr-only"></span>`;
     el.addEventListener('click', (ev) => {
       const target = ev.target as HTMLElement;
@@ -233,11 +233,11 @@ export const layersPanel: Panel = {
           const inside = new Set(allLayers(target.children).map((l) => l.id));
           const shown = (l: Layer) => l.id === vis || !!findLayer(l.children, vis);
           const only = allLayers(e.doc.layers).every((l) => inside.has(l.id) || (shown(l) ? l.visible : !l.visible));
-          e.command('Show/Hide Layers', (d) => {
+          e.command('显示/隐藏图层', (d) => {
             for (const l of allLayers(d.layers)) if (only || !inside.has(l.id)) l.visible = only || shown(l);
           });
         } else
-          e.command('Toggle visibility', (d) => {
+          e.command('切换可见性', (d) => {
             const l = findLayer(d.layers, vis);
             if (l) l.visible = !l.visible;
           });
@@ -262,7 +262,7 @@ export const layersPanel: Panel = {
       if (maskId) {
         if (ev.shiftKey) {
           e.selected = maskId;
-          e.editLayer('Toggle Layer Mask', (l) => (l.maskDisabled = !l.maskDisabled));
+          e.editLayer('切换图层蒙版', (l) => (l.maskDisabled = !l.maskDisabled));
           return;
         }
         e.selectLayer(maskId);
@@ -345,7 +345,7 @@ export const layersPanel: Panel = {
         const input = document.createElement('input');
         input.className = 'layer-rename';
         input.value = l.name;
-        input.setAttribute('aria-label', 'Layer name');
+        input.setAttribute('aria-label', '图层名称');
         text.replaceWith(input);
         input.focus();
         input.select();
@@ -404,24 +404,24 @@ export const layersPanel: Panel = {
         'layer.mask-toggle', 'layer.mask-delete', 'layer.mask-apply', 'layer.clipping-mask', '-',
         'layer.style-copy', 'layer.style-paste', 'layer.style-clear', '-',
         'layer.link', 'layer.select-linked', 'layer.from-background', '-',
-        { label: 'Color', items: colorLabelItems }, '-',
+        { label: '颜色', items: colorLabelItems }, '-',
         'layer.merge-down', 'layer.merge-visible', 'layer.flatten',
       ]);
     });
     el.addEventListener('change', (ev) => {
       const t = ev.target as HTMLInputElement;
-      if (t.id === 'blend') e.editLayer('Change blend mode', (l) => (l.blend = t.value as Layer['blend']));
-      else if (t.id === 'opacity') e.editLayer('Change opacity', (l) => (l.opacity = Math.max(0, Math.min(1, Number(t.value) / 100))));
-      else if (t.id === 'fill-opacity') e.editLayer('Change fill opacity', (l) => (l.fillOpacity = Math.max(0, Math.min(1, Number(t.value) / 100))));
+      if (t.id === 'blend') e.editLayer('更改混合模式', (l) => (l.blend = t.value as Layer['blend']));
+      else if (t.id === 'opacity') e.editLayer('更改不透明度', (l) => (l.opacity = Math.max(0, Math.min(1, Number(t.value) / 100))));
+      else if (t.id === 'fill-opacity') e.editLayer('更改填充不透明度', (l) => (l.fillOpacity = Math.max(0, Math.min(1, Number(t.value) / 100))));
     });
     el.addEventListener('click', (ev) => {
       const lock = (ev.target as HTMLElement).closest<HTMLElement>('[data-lock-button]');
       if (!lock || !e.layer) return;
       const key = lock.dataset.lockButton!;
       if (layerLock(e.doc.layers, e.selected, 'all', false)) return;
-      if (key === 'all') e.command('Lock layer', (d) => setFullLock(findLayer(d.layers, e.selected)!, !e.layer!.locked));
+      if (key === 'all') e.command('锁定图层', (d) => setFullLock(findLayer(d.layers, e.selected)!, !e.layer!.locked));
       else
-        e.command('Change layer protection', (d) => {
+        e.command('更改图层保护', (d) => {
           const l = findLayer(d.layers, e.selected)!;
           const k = key as 'transparency' | 'composite' | 'position';
           setPartialLock(l, k, !ownLock(l, k === 'composite' ? 'pixels' : k));
@@ -459,15 +459,15 @@ export const layersPanel: Panel = {
     const locked = !!l && !!layerLock(e.doc.layers, l.id, 'all', false);
     const options = el.querySelector('.layer-options')!;
     const focus = document.activeElement?.id;
-    patchList(options, [`${blendSelect(l, locked || l?.locked)}<label class="opacity-control">Opacity <input id="opacity" type="number" min="0" max="100" value="${Math.round((l?.opacity ?? 1) * 100)}" ${!l || locked || l.locked ? 'disabled' : ''}>%</label>`]);
+    patchList(options, [`${blendSelect(l, locked || l?.locked)}<label class="opacity-control">不透明度 <input id="opacity" type="number" min="0" max="100" value="${Math.round((l?.opacity ?? 1) * 100)}" ${!l || locked || l.locked ? 'disabled' : ''}>%</label>`]);
     const lockRow = el.querySelector('.lock-row')!;
     const own = (k: 'transparency' | 'pixels' | 'position') => !!l && ownLock(l, k);
-    patchList(lockRow, [`<span class="lock-label-text">Lock:</span>
-<button class="icon-button toggle" data-lock-button="transparency" aria-pressed="${own('transparency')}" title="Lock transparent pixels" aria-label="Lock transparency" ${!l || locked ? 'disabled' : ''}>${svg('grid-2x2', 14)}</button>
-<button class="icon-button toggle" data-lock-button="composite" aria-pressed="${own('pixels')}" title="Lock image pixels" aria-label="Lock image pixels" ${!l || locked ? 'disabled' : ''}>${svg('paintbrush', 14)}</button>
-<button class="icon-button toggle" data-lock-button="position" aria-pressed="${own('position')}" title="Lock position" aria-label="Lock position" ${!l || locked ? 'disabled' : ''}>${svg('move', 14)}</button>
-<button class="icon-button toggle" data-lock-button="all" aria-pressed="${!!l?.locked}" title="Lock all" aria-label="Lock layer" ${!l || locked ? 'disabled' : ''}>${svg('lock', 14)}</button>
-<label class="opacity-control fill-control">Fill <input id="fill-opacity" type="number" min="0" max="100" value="${Math.round((l?.fillOpacity ?? 1) * 100)}" ${!l || locked || l.locked ? 'disabled' : ''}>%</label>`]);
+    patchList(lockRow, [`<span class="lock-label-text">锁定:</span>
+<button class="icon-button toggle" data-lock-button="transparency" aria-pressed="${own('transparency')}" title="锁定透明像素" aria-label="锁定透明度" ${!l || locked ? 'disabled' : ''}>${svg('grid-2x2', 14)}</button>
+<button class="icon-button toggle" data-lock-button="composite" aria-pressed="${own('pixels')}" title="锁定图像像素" aria-label="锁定图像像素" ${!l || locked ? 'disabled' : ''}>${svg('paintbrush', 14)}</button>
+<button class="icon-button toggle" data-lock-button="position" aria-pressed="${own('position')}" title="锁定位置" aria-label="锁定位置" ${!l || locked ? 'disabled' : ''}>${svg('move', 14)}</button>
+<button class="icon-button toggle" data-lock-button="all" aria-pressed="${!!l?.locked}" title="锁定全部" aria-label="锁定图层" ${!l || locked ? 'disabled' : ''}>${svg('lock', 14)}</button>
+<label class="opacity-control fill-control">填充 <input id="fill-opacity" type="number" min="0" max="100" value="${Math.round((l?.fillOpacity ?? 1) * 100)}" ${!l || locked || l.locked ? 'disabled' : ''}>%</label>`]);
     if (focus === 'blend' || focus === 'opacity' || focus === 'fill-opacity') el.querySelector<HTMLElement>(`#${focus}`)?.focus();
     const list = el.querySelector('#layers')!;
     const scroll = list.scrollTop;
@@ -476,7 +476,7 @@ export const layersPanel: Panel = {
     const list_ = [...banners, ...rows(e, e.doc.layers, 0)];
     patching = true;
     try {
-      patchList(list, list_.length ? list_ : [`<div class="empty-layers">${svg('layers-2', 22)}<p>Your layers will appear here</p><button data-command="file.open">Add an image</button></div>`]);
+      patchList(list, list_.length ? list_ : [`<div class="empty-layers">${svg('layers-2', 22)}<p>您的图层将显示在此处</p><button data-command="file.open">添加图像</button></div>`]);
     } finally {
       patching = false;
     }
@@ -486,20 +486,20 @@ export const layersPanel: Panel = {
     el.querySelector('#layer-count')!.textContent = String(allLayers(e.doc.layers).length);
     hydrateSourceThumbnails(el, e.doc, e.assets);
   },
-  menu: () => ['layer.new', 'layer.duplicate-dialog', 'layer.delete', '-', 'layer.new-group', 'layer.group', '-', 'layer.rename', 'layer.style-dialog', { label: 'Color', items: colorLabelItems }, '-', 'layer.clipping-mask', '-', 'layer.merge-down', 'layer.merge-visible', 'layer.flatten', '-', 'layers.panel-options'],
+  menu: () => ['layer.new', 'layer.duplicate-dialog', 'layer.delete', '-', 'layer.new-group', 'layer.group', '-', 'layer.rename', 'layer.style-dialog', { label: '颜色', items: colorLabelItems }, '-', 'layer.clipping-mask', '-', 'layer.merge-down', 'layer.merge-visible', 'layer.flatten', '-', 'layers.panel-options'],
 };
 
 /** Layers → Panel Options: thumbnail size and contents. */
 async function panelOptionsDialog(e: Editor) {
   const o = layersPanelOptions();
   const v = await formDialog(
-    'Layers Panel Options',
+    '图层面板选项',
     [
-      { name: 'thumbnails', label: 'Thumbnail size', value: o.thumbnails, type: 'select', options: [['none', 'None'], ['small', 'Small'], ['medium', 'Medium'], ['large', 'Large']] },
-      { name: 'contents', label: 'Thumbnail contents', value: o.contents, type: 'select', options: [['document', 'Entire document'], ['bounds', 'Layer bounds']] },
+      { name: 'thumbnails', label: '缩略图大小', value: o.thumbnails, type: 'select', options: [['none', '无'], ['small', '小'], ['medium', '中'], ['large', '大']] },
+      { name: 'contents', label: '缩略图内容', value: o.contents, type: 'select', options: [['document', '整个文档'], ['bounds', '图层边界']] },
     ],
-    'OK',
+    '确定',
   );
   if (v) setLayersPanelOptions(e, { thumbnails: v.thumbnails as ThumbnailSize, contents: v.contents as LayersPanelOptions['contents'] });
 }
-export const layersPanelOptionsCommand = { id: 'layers.panel-options', label: 'Panel Options…', description: 'Choose the thumbnail size and what layer thumbnails show.', run: (e: Editor) => panelOptionsDialog(e), recordable: false };
+export const layersPanelOptionsCommand = { id: 'layers.panel-options', label: '面板选项…', description: '选择缩略图大小以及图层缩略图显示的内容。', run: (e: Editor) => panelOptionsDialog(e), recordable: false };

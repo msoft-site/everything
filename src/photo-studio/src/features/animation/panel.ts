@@ -61,8 +61,8 @@ export function timelinePanel(menu: (e?: Editor) => MenuItem[]): Panel {
     if (!anim) {
       const tip = (id: string, text: string) => `title="${escapeXML(commands.get(id)?.description ?? text)}"`;
       const html = e.hasDocument
-        ? `<div class="timeline-empty"><p>Animate this document frame by frame, where each frame keeps its own layer visibility, position, opacity and effects, or over time on a video timeline with clips, keyframes and video layers.</p><div class="timeline-empty-actions"><button class="primary" data-command="animation.create" ${tip('animation.create', '')}>Create Frame Animation</button><button data-command="timeline.create" ${tip('timeline.create', '')}>Create Video Timeline</button>${e.doc.layers.length > 1 ? `<button data-command="animation.frames-from-layers" ${tip('animation.frames-from-layers', '')}>Make Frames From Layers</button>` : ''}<button data-command="layer.video-new-file" ${tip('layer.video-new-file', '')}>New Video Layer…</button><button data-command="file.import-video-frames" ${tip('file.import-video-frames', '')}>Import Video Frames…</button></div></div>`
-        : `<div class="timeline-empty"><p>Open or create a document to animate it, or open a video.</p><div class="timeline-empty-actions"><button data-command="layer.video-new-file" ${tip('layer.video-new-file', '')}>Open Video…</button><button data-command="file.import-video-frames" ${tip('file.import-video-frames', '')}>Import Video Frames…</button></div></div>`;
+        ? `<div class="timeline-empty"><p>逐帧为本文档制作动画（每一帧均可保留独立的图层可见性、位置、不透明度与效果），或在视频时间轴上使用剪辑、关键帧和视频图层制作动画。</p><div class="timeline-empty-actions"><button class="primary" data-command="animation.create" ${tip('animation.create', '')}>创建帧动画</button><button data-command="timeline.create" ${tip('timeline.create', '')}>创建视频时间轴</button>${e.doc.layers.length > 1 ? `<button data-command="animation.frames-from-layers" ${tip('animation.frames-from-layers', '')}>从图层创建帧</button>` : ''}<button data-command="layer.video-new-file" ${tip('layer.video-new-file', '')}>新建视频图层…</button><button data-command="file.import-video-frames" ${tip('file.import-video-frames', '')}>导入视频帧…</button></div></div>`
+        : `<div class="timeline-empty"><p>打开或创建文档以制作动画，或者打开一段视频。</p><div class="timeline-empty-actions"><button data-command="layer.video-new-file" ${tip('layer.video-new-file', '')}>打开视频…</button><button data-command="file.import-video-frames" ${tip('file.import-video-frames', '')}>导入视频帧…</button></div></div>`;
       if (html !== lastStrip) strip.innerHTML = lastStrip = html;
       strip.removeAttribute('role');
       controls.hidden = true;
@@ -85,9 +85,9 @@ export function timelinePanel(menu: (e?: Editor) => MenuItem[]): Panel {
       const img = frameImage(e, doc, i, frameKey(e, doc, i));
       const sel = playing ? i === shown : selected.has(i);
       const ratio = `${doc.width} / ${doc.height}`;
-      return `<div class="frame-cell${i === shown ? ' current' : ''}" role="option" id="frame-${f.id}" aria-selected="${sel}" data-frame="${i}" draggable="true" aria-label="Frame ${i + 1}, ${escapeXML(delayLabel(f.delay))}"><div class="frame-thumb" style="aspect-ratio:${ratio}">${img ? `<img src="${img.url}" alt="" draggable="false">` : '<span class="frame-pending"></span>'}</div><div class="frame-meta"><span class="frame-number">${i + 1}</span><button class="frame-delay" data-delay="${i}" aria-haspopup="menu" title="Frame delay" tabindex="-1">${escapeXML(delayLabel(f.delay))}${svg('chevron-down', 11)}</button></div></div>`;
+      return `<div class="frame-cell${i === shown ? ' current' : ''}" role="option" id="frame-${f.id}" aria-selected="${sel}" data-frame="${i}" draggable="true" aria-label="第 ${i + 1} 帧, ${escapeXML(delayLabel(f.delay))}"><div class="frame-thumb" style="aspect-ratio:${ratio}">${img ? `<img src="${img.url}" alt="" draggable="false">` : '<span class="frame-pending"></span>'}</div><div class="frame-meta"><span class="frame-number">${i + 1}</span><button class="frame-delay" data-delay="${i}" aria-haspopup="menu" title="帧延迟" tabindex="-1">${escapeXML(delayLabel(f.delay))}${svg('chevron-down', 11)}</button></div></div>`;
     });
-    const html = cells.join('') + `<button class="frame-add" data-command="animation.new-frame" title="New frame" aria-label="New frame">${svg('plus', 20)}</button>`;
+    const html = cells.join('') + `<button class="frame-add" data-command="animation.new-frame" title="新建帧" aria-label="新建帧">${svg('plus', 20)}</button>`;
     if (html !== lastStrip) {
       const activeId = `frame-${anim.frames[shown]?.id}`;
       const changedFrame = strip.getAttribute('aria-activedescendant') !== activeId;
@@ -101,17 +101,17 @@ export function timelinePanel(menu: (e?: Editor) => MenuItem[]): Panel {
     // jobs. Request them again now, and keep them on thumbnail-only refreshes.
     if (changedDoc && anim.onion?.enabled) e.overlay();
     const seconds = totalDuration(anim) / 1000;
-    const ctl = `<button class="timeline-loop" data-loop aria-haspopup="menu" title="Looping">${svg('repeat', 14)}<span>${escapeXML(loopLabel(anim.loop))}</span>${svg('chevron-down', 11)}</button>
+    const ctl = `<button class="timeline-loop" data-loop aria-haspopup="menu" title="循环">${svg('repeat', 14)}<span>${escapeXML(loopLabel(anim.loop))}</span>${svg('chevron-down', 11)}</button>
       <span class="timeline-sep"></span>
-      ${button(e, 'animation.first', 'chevron-first', 'First frame')}${button(e, 'animation.previous', 'step-back', 'Previous frame')}
-      ${button(e, 'animation.play', playing ? 'pause' : 'play', playing ? 'Stop' : 'Play', `aria-pressed="${playing}"`, 'timeline-play')}
-      ${button(e, 'animation.next', 'step-forward', 'Next frame')}${button(e, 'animation.last', 'chevron-last', 'Last frame')}
+      ${button(e, 'animation.first', 'chevron-first', '第一帧')}${button(e, 'animation.previous', 'step-back', '上一帧')}
+      ${button(e, 'animation.play', playing ? 'pause' : 'play', playing ? '停止' : '播放', `aria-pressed="${playing}"`, 'timeline-play')}
+      ${button(e, 'animation.next', 'step-forward', '下一帧')}${button(e, 'animation.last', 'chevron-last', '最后一帧')}
       <span class="timeline-sep"></span>
-      ${button(e, 'animation.tween', 'tween', 'Tween…')}${button(e, 'animation.new-frame', 'copy-plus', 'Duplicate selected frames')}${button(e, 'animation.delete-frames', 'trash-2', 'Delete selected frames')}
+      ${button(e, 'animation.tween', 'tween', '过渡…')}${button(e, 'animation.new-frame', 'copy-plus', '复制所选帧')}${button(e, 'animation.delete-frames', 'trash-2', '删除所选帧')}
       <span class="timeline-sep"></span>
-      ${button(e, 'animation.reverse', 'arrow-left-right', 'Reverse frames')}${button(e, 'animation.onion', 'onion-skin', 'Onion skins', `aria-pressed="${!!anim.onion?.enabled}"`)}
+      ${button(e, 'animation.reverse', 'arrow-left-right', '反转帧')}${button(e, 'animation.onion', 'onion-skin', '洋葱皮', `aria-pressed="${!!anim.onion?.enabled}"`)}
       <span class="timeline-spacer"></span>
-      <span class="timeline-status" aria-live="off">Frame ${shown + 1} of ${anim.frames.length}${selected.size > 1 && !playing ? ` · ${selected.size} selected` : ''} · ${seconds.toFixed(seconds < 10 ? 2 : 1)} s</span>`;
+      <span class="timeline-status" aria-live="off">第 ${shown + 1} 帧（共 ${anim.frames.length} 帧）${selected.size > 1 && !playing ? ` · 已选 ${selected.size} 帧` : ''} · ${seconds.toFixed(seconds < 10 ? 2 : 1)} 秒</span>`;
     if (ctl !== lastControls) controls.innerHTML = lastControls = ctl;
   }
 
@@ -122,7 +122,7 @@ export function timelinePanel(menu: (e?: Editor) => MenuItem[]): Panel {
 
   return {
     id: 'timeline',
-    title: 'Timeline',
+    title: '时间轴',
     icon: 'film',
     location: 'bottom',
     menu: (e) => menu(e),
@@ -130,7 +130,7 @@ export function timelinePanel(menu: (e?: Editor) => MenuItem[]): Panel {
       host = el;
       editor = e;
       el.classList.add('timeline');
-      el.innerHTML = `<div class="timeline-frames" tabindex="0" aria-label="Animation frames" aria-multiselectable="true" aria-orientation="horizontal"></div><div class="timeline-controls" role="toolbar" aria-label="Animation controls"></div><div class="video-timeline" hidden></div>`;
+      el.innerHTML = `<div class="timeline-frames" tabindex="0" aria-label="动画帧" aria-multiselectable="true" aria-orientation="horizontal"></div><div class="timeline-controls" role="toolbar" aria-label="动画控件"></div><div class="video-timeline" hidden></div>`;
       const strip = el.querySelector<HTMLElement>('.timeline-frames')!;
       el.addEventListener('click', (ev) => {
         const t = ev.target as HTMLElement;

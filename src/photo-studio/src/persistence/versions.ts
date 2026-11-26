@@ -131,12 +131,12 @@ export function liveInstances(beats: Record<string, number>, now = Date.now(), t
 /** Short relative time for version lists ("just now", "5 min ago", a date). */
 export function relativeTime(time: number, now = Date.now()): string {
   const s = Math.round((now - time) / 1000);
-  if (s < 45) return 'just now';
+  if (s < 45) return '刚刚';
   const m = Math.round(s / 60);
-  if (m < 60) return `${m} min ago`;
+  if (m < 60) return `${m} 分钟前`;
   const h = Math.round(m / 60);
-  if (h < 24) return `${h} hr ago`;
+  if (h < 24) return `${h} 小时前`;
   const d = Math.round(h / 24);
-  if (d < 7) return `${d} day${d === 1 ? '' : 's'} ago`;
-  return new Date(time).toLocaleDateString();
+  if (d < 7) return `${d} 天前`;
+  return new Date(time).toLocaleDateString('zh-CN');
 }

@@ -14,18 +14,18 @@ import type { CanvasPointer } from '../../app/pointer';
 // stroke starts the pattern at its first point.
 function patternTarget(e: Editor, target: PixelTarget, start: CanvasPointer): PaintTarget | undefined {
   if (target.kind !== 'pixels') {
-    e.message('The Pattern Stamp paints on pixel layers. Select a layer instead of its mask.');
+    e.message('图案图章在像素图层上绘制。请选择图层本身而非其蒙版。');
     return undefined;
   }
   const p = currentPattern(e);
-  if (!p) return undefined;
-  const tile = p.tile, tw = tile.width, th = tile.height, d = tile.data;
+  const tile = p?.tile, tw = tile?.width ?? 0, th = tile?.height ?? 0, d = tile?.data;
   // Where the stroke was pressed: the last hover may be elsewhere, or missing on touch.
   const ox = effectsState.patternAligned ? 0 : Math.floor(start.x);
   const oy = effectsState.patternAligned ? 0 : Math.floor(start.y);
   const scale = Math.max(0.01, effectsState.patternScale);
   const px = [0, 0, 0, 0];
   const s = brushFor('pattern-stamp');
+  if (!p || !tile || !d) return undefined;
   return {
     kind: 'color',
     rgb: [0, 0, 0],
@@ -46,10 +46,10 @@ function patternTarget(e: Editor, target: PixelTarget, start: CanvasPointer): Pa
           },
   };
 }
-export const patternStampTool = strokeTool('pattern-stamp', 'Pattern Stamp Tool', 'pattern-stamp', 'stamp', 'S', 'Pattern Stamp', {
+export const patternStampTool = strokeTool('pattern-stamp', '图案图章工具', 'pattern-stamp', 'stamp', 'S', '图案图章', {
   options: (e) => {
     const p = currentPattern(e);
-    return brushOptions(e, 'pattern-stamp', `<button type="button" class="pattern-swatch" data-stamp-pattern title="${escapeXML(p?.name ?? 'Pattern')} — click to choose" aria-label="Pattern">${p ? `<img src="${patternThumb(p, 24)}" alt="">` : ''}</button><label class="transform-setting"><input id="pattern-aligned" type="checkbox" ${effectsState.patternAligned ? 'checked' : ''}>Aligned</label><label>Scale <input id="pattern-scale" type="number" min="1" max="1000" value="${Math.round(effectsState.patternScale * 100)}" aria-label="Pattern scale (%)">%</label>`);
+    return brushOptions(e, 'pattern-stamp', `<button type="button" class="pattern-swatch" data-stamp-pattern title="${escapeXML(p?.name ?? '图案')} — 单击以选取" aria-label="图案">${p ? `<img src="${patternThumb(p, 24)}" alt="">` : ''}</button><label class="transform-setting"><input id="pattern-aligned" type="checkbox" ${effectsState.patternAligned ? 'checked' : ''}>对齐</label><label>缩放 <input id="pattern-scale" type="number" min="1" max="1000" value="${Math.round(effectsState.patternScale * 100)}" aria-label="图案缩放 (%)">%</label>`);
   },
   bindOptions: ({ e, el }) => {
     bindBrushOptions(e, el, 'pattern-stamp');

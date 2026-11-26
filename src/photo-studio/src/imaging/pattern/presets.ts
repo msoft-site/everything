@@ -50,11 +50,11 @@ const wrapDelta = (d: number, n: number) => d - n * Math.round(d / n);
 
 const generators: { id: string; name: string; make: () => RGBA8 }[] = [
   {
-    id: 'checker', name: 'Checker',
+    id: 'checker', name: '棋盘格',
     make: () => tile(32, 32, (x, y) => ((Math.floor(x / 16) + Math.floor(y / 16)) & 1 ? [72, 74, 84, 255] : [232, 230, 222, 255])),
   },
   {
-    id: 'stripes', name: 'Stripes',
+    id: 'stripes', name: '条纹',
     make: () => tile(32, 32, (x) => {
       // Two 16 px bands with a one pixel soft edge on each side.
       const d = Math.abs(((x % 32) + 32) % 32 - 16);
@@ -64,14 +64,14 @@ const generators: { id: string; name: string; make: () => RGBA8 }[] = [
     }),
   },
   {
-    id: 'dots', name: 'Dots',
+    id: 'dots', name: '圆点',
     make: () => tile(24, 24, (x, y) => {
       const r = Math.hypot(wrapDelta(x - 12, 24), wrapDelta(y - 12, 24));
       return [40, 40, 46, clamp(6.5 - r) * 255];
     }),
   },
   {
-    id: 'grid', name: 'Grid',
+    id: 'grid', name: '网格',
     make: () => tile(32, 32, (x, y) => {
       const dx = Math.abs(wrapDelta(x, 32)), dy = Math.abs(wrapDelta(y, 32));
       const a = Math.max(clamp(1 - dx), clamp(1 - dy));
@@ -79,7 +79,7 @@ const generators: { id: string; name: string; make: () => RGBA8 }[] = [
     }),
   },
   {
-    id: 'noise', name: 'Fine Noise',
+    id: 'noise', name: '细微杂色',
     make: () => {
       const rand = mulberry32(2024);
       return tile(128, 128, () => {
@@ -89,7 +89,7 @@ const generators: { id: string; name: string; make: () => RGBA8 }[] = [
     },
   },
   {
-    id: 'wood', name: 'Wood Grain',
+    id: 'wood', name: '木纹',
     make: () => {
       const n = fractal(256, 256, 4, 4, 11), fine = periodicNoise(256, 256, 64, 8, 12);
       return tile(256, 256, (x, y) => {
@@ -103,7 +103,7 @@ const generators: { id: string; name: string; make: () => RGBA8 }[] = [
     },
   },
   {
-    id: 'paper', name: 'Paper',
+    id: 'paper', name: '纸张',
     make: () => {
       const n = fractal(256, 256, 8, 5, 21), fibers = periodicNoise(256, 256, 32, 16, 22);
       return tile(256, 256, (x, y) => {
@@ -114,7 +114,7 @@ const generators: { id: string; name: string; make: () => RGBA8 }[] = [
     },
   },
   {
-    id: 'canvas', name: 'Canvas Weave',
+    id: 'canvas', name: '画布编织',
     make: () => {
       const n = periodicNoise(128, 128, 32, 32, 31);
       return tile(128, 128, (x, y) => {
@@ -128,7 +128,7 @@ const generators: { id: string; name: string; make: () => RGBA8 }[] = [
     },
   },
   {
-    id: 'bricks', name: 'Bricks',
+    id: 'bricks', name: '砖墙',
     make: () => {
       const n = fractal(128, 96, 8, 3, 41);
       const rand = mulberry32(42);
@@ -148,7 +148,7 @@ const generators: { id: string; name: string; make: () => RGBA8 }[] = [
     },
   },
   {
-    id: 'hexagons', name: 'Hexagons',
+    id: 'hexagons', name: '六边形',
     make: () => {
       // Pointy-top hex lattice, two columns by two rows per tile. Pixels are
       // mapped into ideal lattice units so the tile edges land on lattice
@@ -178,7 +178,7 @@ const generators: { id: string; name: string; make: () => RGBA8 }[] = [
     },
   },
   {
-    id: 'hatch', name: 'Diagonal Hatch',
+    id: 'hatch', name: '对角斜线',
     make: () => tile(16, 16, (x, y) => {
       // Lines along x + y = k * 8; perpendicular distance is |delta| / sqrt 2.
       const d = Math.abs(wrapDelta(x + y, 8)) / Math.SQRT2;
@@ -186,7 +186,7 @@ const generators: { id: string; name: string; make: () => RGBA8 }[] = [
     }),
   },
   {
-    id: 'bubbles', name: 'Bubbles',
+    id: 'bubbles', name: '气泡',
     make: () => {
       const rand = mulberry32(77);
       const S = 128;

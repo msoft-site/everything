@@ -30,7 +30,7 @@ export function selectedSlices(e: Editor): Slice[] {
 }
 export function slicesLocked(e: Editor) {
   if (!e.preferences.lockSlices) return false;
-  e.message('Slices are locked. Choose View → Lock Slices to edit them.');
+  e.message('切片已锁定。请选择“视图 → 锁定切片”以对其进行编辑。');
   return true;
 }
 export function showSlices(e: Editor) {
@@ -224,7 +224,7 @@ const handleCursor: Record<string, string> = { nw: 'nwse-resize', se: 'nwse-resi
 export function installSliceTools(_e: Editor) {
   registerTool({
     id: 'slice',
-    label: 'Slice Tool',
+    label: '切片工具',
     key: 'C',
     icon: 'slice',
     group: 'crop',
@@ -237,11 +237,11 @@ export function installSliceTools(_e: Editor) {
     options: (e) => {
       const s = toolSettings;
       const sized = s.style !== 'normal';
-      return `<label>Style <select id="slice-style"><option value="normal" ${s.style === 'normal' ? 'selected' : ''}>Normal</option><option value="ratio" ${s.style === 'ratio' ? 'selected' : ''}>Fixed Ratio</option><option value="size" ${s.style === 'size' ? 'selected' : ''}>Fixed Size</option></select></label>${
+      return `<label>样式 <select id="slice-style"><option value="normal" ${s.style === 'normal' ? 'selected' : ''}>正常</option><option value="ratio" ${s.style === 'ratio' ? 'selected' : ''}>固定比例</option><option value="size" ${s.style === 'size' ? 'selected' : ''}>固定大小</option></select></label>${
         sized
-          ? `<label>W <input id="slice-w" type="number" min="1" max="8192" step="1" value="${s.width}"></label><label>H <input id="slice-h" type="number" min="1" max="8192" step="1" value="${s.height}"></label>`
+          ? `<label>宽 <input id="slice-w" type="number" min="1" max="8192" step="1" value="${s.width}"></label><label>高 <input id="slice-h" type="number" min="1" max="8192" step="1" value="${s.height}"></label>`
           : ''
-      }<span class="divider"></span><button data-command="slices.from-guides" ${e.doc.guides?.length ? '' : 'disabled'} title="Create a slice for each cell between the guides">Slices From Guides</button><button class="toggle" id="slice-hide-auto" aria-pressed="${sliceState.hideAuto}" title="Hide or show automatic slices">${svg(sliceState.hideAuto ? 'eye-off' : 'eye', 14)} Auto Slices</button><span class="hint">${s.style === 'size' ? 'Click to place a slice' : s.style === 'ratio' ? 'Drag to draw a slice with this ratio' : 'Drag to draw a slice; Shift draws a square'}</span>`;
+      }<span class="divider"></span><button data-command="slices.from-guides" ${e.doc.guides?.length ? '' : 'disabled'} title="在参考线之间为每个单元格创建切片">基于参考线的切片</button><button class="toggle" id="slice-hide-auto" aria-pressed="${sliceState.hideAuto}" title="隐藏或显示自动切片">${svg(sliceState.hideAuto ? 'eye-off' : 'eye', 14)} 自动切片</button><span class="hint">${s.style === 'size' ? '单击以放置切片' : s.style === 'ratio' ? '拖动以按此比例绘制切片' : '拖动以绘制切片；按住 Shift 绘制正方形'}</span>`;
     },
     bindOptions: ({ e, el }) => {
       el.querySelector<HTMLSelectElement>('#slice-style')?.addEventListener('change', (ev) => {
@@ -279,7 +279,7 @@ export function installSliceTools(_e: Editor) {
   });
   registerTool({
     id: 'slice-select',
-    label: 'Slice Select Tool',
+    label: '切片选择工具',
     key: 'C',
     icon: 'slice-select',
     group: 'crop',
@@ -292,7 +292,7 @@ export function installSliceTools(_e: Editor) {
     options: (e) => {
       const sel = selectedSlices(e);
       const canPromote = !!sliceState.auto || sel.some((s) => s.layerId);
-      return `<button data-command="slices.promote" ${canPromote ? '' : 'disabled'} title="Turn the selected automatic or layer-based slice into a user slice">Promote</button><button data-command="slices.delete" ${sel.length ? '' : 'disabled'} title="Delete the selected slices (Delete)">${svg('trash-2', 14)} Delete</button><button data-command="slices.options" ${sel.length === 1 ? '' : 'disabled'} title="Name and output format of the selected slice">Slice Options…</button><button data-command="slices.divide" ${sel.length === 1 && !sel[0].layerId ? '' : 'disabled'} title="Split the selected slice into equal parts">Divide…</button><span class="divider"></span><button class="toggle" id="slice-hide-auto" aria-pressed="${sliceState.hideAuto}" title="Hide or show automatic slices">${svg(sliceState.hideAuto ? 'eye-off' : 'eye', 14)} Auto Slices</button><span class="hint">${sel.length ? `${sel.length} slice${sel.length > 1 ? 's' : ''} selected` : sliceState.auto ? 'Automatic slice selected' : 'Click a slice to select it'}</span>`;
+      return `<button data-command="slices.promote" ${canPromote ? '' : 'disabled'} title="将所选自动切片或基于图层的切片转换为用户切片">提升</button><button data-command="slices.delete" ${sel.length ? '' : 'disabled'} title="删除所选切片 (Delete)">${svg('trash-2', 14)} 删除</button><button data-command="slices.options" ${sel.length === 1 ? '' : 'disabled'} title="所选切片的名称和输出格式">切片选项…</button><button data-command="slices.divide" ${sel.length === 1 && !sel[0].layerId ? '' : 'disabled'} title="将所选切片分割为相等部分">划分…</button><span class="divider"></span><button class="toggle" id="slice-hide-auto" aria-pressed="${sliceState.hideAuto}" title="隐藏或显示自动切片">${svg(sliceState.hideAuto ? 'eye-off' : 'eye', 14)} 自动切片</button><span class="hint">${sel.length ? `已选择 ${sel.length} 个切片` : sliceState.auto ? '已选择自动切片' : '单击切片以选中它'}</span>`;
     },
     bindOptions: ({ e, el }) => bindHideAuto(e, el),
     hover: (e, p) => {
@@ -353,7 +353,7 @@ export function installSliceTools(_e: Editor) {
       drag = undefined;
       if (d?.kind === 'move' && d.moved) {
         const rects = new Map([...d.rects].map(([id, r]) => [id, clipRect(r, e.doc.width, e.doc.height)]));
-        e.command(d.ids.length > 1 ? 'Move Slices' : 'Move Slice', (doc) => {
+        e.command(d.ids.length > 1 ? '移动多个切片' : '移动切片', (doc) => {
           doc.slices = (doc.slices ?? []).flatMap((s) => {
             if (!rects.has(s.id)) return [s];
             const r = rects.get(s.id);
@@ -363,7 +363,7 @@ export function installSliceTools(_e: Editor) {
       } else if (d?.kind === 'resize' && d.draft) {
         const r = clipRect(d.draft, e.doc.width, e.doc.height);
         if (r)
-          e.command('Resize Slice', (doc) => {
+          e.command('调整切片大小', (doc) => {
             doc.slices = (doc.slices ?? []).map((s) => (s.id === d.id ? { ...s, rect: r } : s));
           });
       }
@@ -374,7 +374,7 @@ export function installSliceTools(_e: Editor) {
       if (s) {
         sliceState.selected = new Set([s.id]);
         void e.runCommand('slices.options');
-      } else if (autoPieceAt(e, p.x, p.y)) e.message('Promote the automatic slice to set its options.');
+      } else if (autoPieceAt(e, p.x, p.y)) e.message('请先提升自动切片以设置其选项。');
     },
     keyDown: (e, ev) => {
       if ((ev.key === 'Delete' || ev.key === 'Backspace') && !ev.metaKey && !ev.ctrlKey && sliceState.selected.size) {

@@ -28,24 +28,24 @@ let straighten = false;
 const RAD = Math.PI / 180;
 
 export const CROP_PRESETS: [string, string, number | undefined][] = [
-  ['free', 'Ratio', undefined],
-  ['original', 'Original Ratio', -1],
-  ['1:1', '1 : 1 (Square)', 1],
+  ['free', '比例', undefined],
+  ['original', '原始比例', -1],
+  ['1:1', '1 : 1 (正方形)', 1],
   ['4:5', '4 : 5 (8 : 10)', 4 / 5],
   ['5:7', '5 : 7', 5 / 7],
   ['2:3', '2 : 3 (4 : 6)', 2 / 3],
   ['16:9', '16 : 9', 16 / 9],
   ['4:3', '4 : 3', 4 / 3],
   ['3:2', '3 : 2', 3 / 2],
-  ['whr', 'W x H x Resolution', undefined],
+  ['whr', '宽 × 高 × 分辨率', undefined],
 ];
 export const CROP_OVERLAYS: [string, string][] = [
-  ['thirds', 'Rule of Thirds'],
-  ['grid', 'Grid'],
-  ['golden', 'Golden Ratio'],
-  ['diagonal', 'Diagonal'],
-  ['triangle', 'Triangle'],
-  ['none', 'None'],
+  ['thirds', '三等分'],
+  ['grid', '网格'],
+  ['golden', '黄金分割'],
+  ['diagonal', '对角线'],
+  ['triangle', '三角形'],
+  ['none', '无'],
 ];
 type CropSettings = { preset: string; rw: number; rh: number; overlay: string; deleteCropped: boolean; tw: number; th: number; tunit: LengthUnit; res: number; resUnit: 'PPI' | 'PPCM' };
 function settings(e: Editor): CropSettings {
@@ -300,12 +300,12 @@ async function commitPerspective(e: Editor) {
   }
   const { transformCanvasBy } = await import('./layer-ops');
   quad = [];
-  await transformCanvasBy(e, 'Perspective Crop', m, w, h, { trim: true });
+  await transformCanvasBy(e, '透视裁剪', m, w, h, { trim: true });
 }
 
 export const cropTool: Tool = {
   id: 'crop',
-  label: 'Crop Tool',
+  label: '裁剪工具',
   key: 'C',
   icon: 'crop',
   group: 'crop',
@@ -323,18 +323,18 @@ export const cropTool: Tool = {
   options: (e) => {
     const s = settings(e);
     const whr = s.preset === 'whr';
-    let html = `<select id="crop-preset" aria-label="Crop preset">${CROP_PRESETS.map(([id, label]) => `<option value="${id}" ${s.preset === id ? 'selected' : ''}>${label}</option>`).join('')}</select>`;
+    let html = `<select id="crop-preset" aria-label="裁剪预设">${CROP_PRESETS.map(([id, label]) => `<option value="${id}" ${s.preset === id ? 'selected' : ''}>${label}</option>`).join('')}</select>`;
     if (whr)
-      html += `<label>W <input id="crop-tw" type="number" min="0" step="any" value="${s.tw || ''}" placeholder="width"></label><button class="icon-button" data-crop-action="swap" title="Swap width and height" aria-label="Swap width and height">${svg('arrow-left-right', 14)}</button><label>H <input id="crop-th" type="number" min="0" step="any" value="${s.th || ''}" placeholder="height"></label><select id="crop-tunit" aria-label="Size unit">${(['px', 'in', 'cm', 'mm'] as LengthUnit[]).map((u) => `<option value="${u}" ${s.tunit === u ? 'selected' : ''}>${u}</option>`).join('')}</select><label>Resolution <input id="crop-res" type="number" min="1" step="any" value="${s.res}"></label><select id="crop-resunit" aria-label="Resolution unit"><option value="PPI" ${s.resUnit === 'PPI' ? 'selected' : ''}>px/in</option><option value="PPCM" ${s.resUnit === 'PPCM' ? 'selected' : ''}>px/cm</option></select>`;
+      html += `<label>宽 <input id="crop-tw" type="number" min="0" step="any" value="${s.tw || ''}" placeholder="宽度"></label><button class="icon-button" data-crop-action="swap" title="交换宽度和高度" aria-label="交换宽度和高度">${svg('arrow-left-right', 14)}</button><label>高 <input id="crop-th" type="number" min="0" step="any" value="${s.th || ''}" placeholder="高度"></label><select id="crop-tunit" aria-label="尺寸单位">${(['px', 'in', 'cm', 'mm'] as LengthUnit[]).map((u) => `<option value="${u}" ${s.tunit === u ? 'selected' : ''}>${u}</option>`).join('')}</select><label>分辨率 <input id="crop-res" type="number" min="1" step="any" value="${s.res}"></label><select id="crop-resunit" aria-label="分辨率单位"><option value="PPI" ${s.resUnit === 'PPI' ? 'selected' : ''}>像素/英寸</option><option value="PPCM" ${s.resUnit === 'PPCM' ? 'selected' : ''}>像素/厘米</option></select>`;
     else
-      html += `<input id="crop-rw" type="number" min="0" step="any" value="${s.rw || ''}" placeholder="W" aria-label="Ratio width" ${s.preset === 'original' ? 'disabled' : ''}><button class="icon-button" data-crop-action="swap" title="Swap width and height" aria-label="Swap width and height">${svg('arrow-left-right', 14)}</button><input id="crop-rh" type="number" min="0" step="any" value="${s.rh || ''}" placeholder="H" aria-label="Ratio height" ${s.preset === 'original' ? 'disabled' : ''}>`;
-    html += `<button data-crop-action="clear" title="Clear the ratio">Clear</button><span class="divider"></span>`;
+      html += `<input id="crop-rw" type="number" min="0" step="any" value="${s.rw || ''}" placeholder="宽" aria-label="比例宽" ${s.preset === 'original' ? 'disabled' : ''}><button class="icon-button" data-crop-action="swap" title="交换宽度和高度" aria-label="交换宽度和高度">${svg('arrow-left-right', 14)}</button><input id="crop-rh" type="number" min="0" step="any" value="${s.rh || ''}" placeholder="高" aria-label="比例高" ${s.preset === 'original' ? 'disabled' : ''}>`;
+    html += `<button data-crop-action="clear" title="清除比例">清除</button><span class="divider"></span>`;
     // W x H x Resolution needs the room: Straighten shows its icon only there.
-    html += `<button class="toggle" data-crop-action="straighten" aria-pressed="${straighten}" aria-label="Straighten" title="Straighten: draw a line along the horizon or a vertical edge to level the image">${svg('ruler', 14)}${whr ? '' : ' Straighten'}</button>`;
-    html += `<label title="Overlay"><span class="sr-only">Overlay</span><select id="crop-overlay">${CROP_OVERLAYS.map(([id, l]) => `<option value="${id}" ${s.overlay === id ? 'selected' : ''}>${l}</option>`).join('')}</select></label>`;
-    html += `<button type="button" class="icon-button" id="crop-settings" aria-haspopup="dialog" title="Crop settings: how the cropped area is shown" aria-label="Crop settings">${svg('settings', 15)}</button>`;
-    html += `<label class="transform-setting" title="When off, pixels outside the crop stay on their layers"><input id="crop-delete" type="checkbox" ${s.deleteCropped ? 'checked' : ''}>Delete Cropped Pixels</label>`;
-    html += `<span class="hint" id="crop-size"></span><span class="divider"></span><button data-command="crop.reset" class="icon-button" title="Reset the crop box" aria-label="Reset crop">${svg('rotate-ccw', 16)}</button><button data-command="crop.cancel" class="icon-button" title="Cancel crop (Escape)" aria-label="Cancel crop">${svg('ban', 16)}</button><button data-command="crop.commit" class="icon-button transform-apply" title="Commit crop (Enter)" aria-label="Commit crop">${svg('check', 16)}</button>`;
+    html += `<button class="toggle" data-crop-action="straighten" aria-pressed="${straighten}" aria-label="拉直" title="拉直：沿水平线或垂直边缘绘制线条以调平图像">${svg('ruler', 14)}${whr ? '' : ' 拉直'}</button>`;
+    html += `<label title="覆盖"><span class="sr-only">覆盖</span><select id="crop-overlay">${CROP_OVERLAYS.map(([id, l]) => `<option value="${id}" ${s.overlay === id ? 'selected' : ''}>${l}</option>`).join('')}</select></label>`;
+    html += `<button type="button" class="icon-button" id="crop-settings" aria-haspopup="dialog" title="裁剪设置：如何显示裁剪区域" aria-label="裁剪设置">${svg('settings', 15)}</button>`;
+    html += `<label class="transform-setting" title="关闭时，裁剪外部的像素保留在图层上"><input id="crop-delete" type="checkbox" ${s.deleteCropped ? 'checked' : ''}>删除裁剪的像素</label>`;
+    html += `<span class="hint" id="crop-size"></span><span class="divider"></span><button data-command="crop.reset" class="icon-button" title="复位裁剪框" aria-label="复位裁剪">${svg('rotate-ccw', 16)}</button><button data-command="crop.cancel" class="icon-button" title="取消裁剪 (Escape)" aria-label="取消裁剪">${svg('ban', 16)}</button><button data-command="crop.commit" class="icon-button transform-apply" title="提交裁剪 (Enter)" aria-label="提交裁剪">${svg('check', 16)}</button>`;
     return html;
   },
   bindOptions: ({ e, el }) => {
@@ -506,7 +506,7 @@ export const cropTool: Tool = {
 };
 export const perspectiveCropTool: Tool = {
   id: 'perspective-crop',
-  label: 'Perspective Crop Tool',
+  label: '透视裁剪工具',
   key: 'C',
   icon: 'crop-perspective',
   group: 'crop',
@@ -521,7 +521,7 @@ export const perspectiveCropTool: Tool = {
   options: (e) => {
     const s = (e.settings.perspectiveCrop as { w?: number; h?: number; grid?: boolean } | undefined) ?? {};
     const auto = quad.length === 4 ? rectifiedSize(orderQuad(quad)) : undefined;
-    return `<label>W <input id="pc-w" type="number" min="0" step="1" value="${s.w || ''}" placeholder="${auto?.width ?? 'auto'}"> px</label><label>H <input id="pc-h" type="number" min="0" step="1" value="${s.h || ''}" placeholder="${auto?.height ?? 'auto'}"> px</label><button type="button" data-pc-action="front" title="Use the size of the current image" ${e.hasDocument ? '' : 'disabled'}>Front Image</button><button type="button" data-pc-action="clear" title="Clear the size: the crop keeps the shape of the plane" ${s.w || s.h ? '' : 'disabled'}>Clear</button><label class="transform-setting"><input id="pc-grid" type="checkbox" ${s.grid !== false ? 'checked' : ''}>Show Grid</label><span class="hint">${quad.length < 4 ? `Click ${4 - quad.length} more corner${quad.length === 3 ? '' : 's'}, or drag a rectangle.` : 'Drag corners to match the plane, then press Enter.'}</span><span class="divider"></span><button data-command="perspective-crop.cancel" class="icon-button" title="Cancel (Escape)" aria-label="Cancel perspective crop">${svg('ban', 16)}</button><button data-command="perspective-crop.commit" class="icon-button transform-apply" title="Commit (Enter)" aria-label="Commit perspective crop" ${quad.length === 4 && isConvex(orderQuad(quad)) ? '' : 'disabled'}>${svg('check', 16)}</button>`;
+    return `<label>宽 <input id="pc-w" type="number" min="0" step="1" value="${s.w || ''}" placeholder="${auto?.width ?? '自动'}"> 像素</label><label>高 <input id="pc-h" type="number" min="0" step="1" value="${s.h || ''}" placeholder="${auto?.height ?? '自动'}"> 像素</label><button type="button" data-pc-action="front" title="使用当前图像的大小" ${e.hasDocument ? '' : 'disabled'}>前景图像</button><button type="button" data-pc-action="clear" title="清除尺寸：裁剪保留平面的形状" ${s.w || s.h ? '' : 'disabled'}>清除</button><label class="transform-setting"><input id="pc-grid" type="checkbox" ${s.grid !== false ? 'checked' : ''}>显示网格</label><span class="hint">${quad.length < 4 ? `还需单击 ${4 - quad.length} 个角点，或拖动矩形。` : '拖动各个角点以匹配平面，然后按 Enter。'}</span><span class="divider"></span><button data-command="perspective-crop.cancel" class="icon-button" title="取消 (Escape)" aria-label="取消透视裁剪">${svg('ban', 16)}</button><button data-command="perspective-crop.commit" class="icon-button transform-apply" title="提交 (Enter)" aria-label="提交透视裁剪" ${quad.length === 4 && isConvex(orderQuad(quad)) ? '' : 'disabled'}>${svg('check', 16)}</button>`;
   },
   bindOptions: ({ e, el }) => {
     refocusAfterChoice(e, el);
@@ -619,10 +619,10 @@ export const perspectiveCropTool: Tool = {
   },
 };
 export const cropCommands: Command[] = [
-  { id: 'crop.commit', label: 'Commit Crop', hidden: true, recordable: false, run: (e) => commitCrop(e) },
+  { id: 'crop.commit', label: '提交裁剪', hidden: true, recordable: false, run: (e) => commitCrop(e) },
   {
     id: 'crop.cancel',
-    label: 'Cancel Crop',
+    label: '取消裁剪',
     hidden: true,
     recordable: false,
     run: (e) => {
@@ -634,7 +634,7 @@ export const cropCommands: Command[] = [
   },
   {
     id: 'crop.reset',
-    label: 'Reset Crop',
+    label: '复位裁剪',
     hidden: true,
     recordable: false,
     run: (e) => {
@@ -643,10 +643,10 @@ export const cropCommands: Command[] = [
       e.overlay();
     },
   },
-  { id: 'perspective-crop.commit', label: 'Commit Perspective Crop', hidden: true, recordable: false, run: (e) => commitPerspective(e) },
+  { id: 'perspective-crop.commit', label: '提交透视裁剪', hidden: true, recordable: false, run: (e) => commitPerspective(e) },
   {
     id: 'perspective-crop.cancel',
-    label: 'Cancel Perspective Crop',
+    label: '取消透视裁剪',
     hidden: true,
     recordable: false,
     run: (e) => {

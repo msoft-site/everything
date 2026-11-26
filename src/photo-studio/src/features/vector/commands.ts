@@ -31,7 +31,7 @@ const hasPath = (e: Editor) => !!actionPath(e)?.mask.paths.length;
 // Painting a shape layer's own path onto pixels would rasterize the shape first.
 const paintablePath = (e: Editor) => hasPath(e) && actionPath(e)!.kind !== 'shape';
 
-const sources: [string, string][] = [['foreground', 'Foreground Color'], ['background', 'Background Color'], ['black', 'Black'], ['gray', '50% Gray'], ['white', 'White']];
+const sources: [string, string][] = [['foreground', '前景色'], ['background', '背景色'], ['black', '黑色'], ['gray', '50% 灰色'], ['white', '白色']];
 function sourceRgb(e: Editor, source: string): [number, number, number] {
   if (source === 'background') return hexRgb(e.background);
   if (source === 'black') return [0, 0, 0];
@@ -52,14 +52,14 @@ export async function fillPath(e: Editor, source = 'foreground', opacity = 1, fe
   if (!target) return;
   let cov = await maskCoverage(e, areaMask(t.mask));
   if (feather > 0) cov = featherMask(cov, feather);
-  commitTarget(e, target, paintCoverage(e, target, cov, sourceRgb(e, source), opacity), 'Fill Path');
+  commitTarget(e, target, paintCoverage(e, target, cov, sourceRgb(e, source), opacity), '填充路径');
 }
 export async function strokePath(e: Editor, tool: 'brush' | 'pencil' | 'eraser' = 'brush', pressure = false) {
   const t = actionPath(e);
   if (!t?.mask.paths.length) return;
   const target = await pixelTarget(e);
   if (!target) return;
-  commitTarget(e, target, strokeWithBrush(e, target, t.mask, tool, pressure), 'Stroke Path');
+  commitTarget(e, target, strokeWithBrush(e, target, t.mask, tool, pressure), '描边路径');
 }
 export async function pathToSelection(e: Editor, op: 'replace' | 'add' | 'subtract' | 'intersect' = 'replace', feather = 0, antiAlias = true) {
   const t = actionPath(e);
@@ -67,15 +67,15 @@ export async function pathToSelection(e: Editor, op: 'replace' | 'add' | 'subtra
   let cov = await maskCoverage(e, areaMask(t.mask));
   if (!antiAlias) for (let i = 0; i < cov.data.length; i++) cov.data[i] = cov.data[i] >= 128 ? 255 : 0;
   if (feather > 0) cov = featherMask(cov, feather);
-  commitSelectionMask(e, cov, op, 'Make Selection');
+  commitSelectionMask(e, cov, op, '建立选区');
 }
 export function selectionToWorkPath(e: Editor, tolerance = 2) {
   const mask = selectionToPath(e, tolerance);
   if (!mask) {
-    e.message('The selection is empty.');
+    e.message('选区为空。');
     return;
   }
-  e.command('Make Work Path', (d) => {
+  e.command('建立工作路径', (d) => {
     d.workPath = mask;
   });
   setActive(e, 'work');
@@ -127,7 +127,7 @@ export async function combineShapes(e: Editor, op: PathOp = 'combine') {
   const ordered = allLayers(e.doc.layers).filter((l) => ids.has(l.id));
   if (ordered.length < 2) return;
   if (ordered.some((l) => layerLock(e.doc.layers, l.id, 'all'))) {
-    e.message('Unlock the shape layers to combine them.');
+    e.message('请先解锁形状图层以进行合并。');
     return;
   }
   const back = ordered[0];
@@ -157,7 +157,7 @@ export async function combineShapes(e: Editor, op: PathOp = 'combine') {
   );
   if (e.doc !== doc) return;
   const paths = masks.flat();
-  const label = COMBINE_OPS.find(([o]) => o === op)?.[1] ?? 'Combine Shapes';
+  const label = COMBINE_OPS.find(([o]) => o === op)?.[1] ?? '合并形状';
   e.command(label, (d) => {
     const keep = findLayer(d.layers, back.id)!;
     setShapeMask(keep, { paths });
@@ -169,18 +169,18 @@ export async function combineShapes(e: Editor, op: PathOp = 'combine') {
   e.update();
 }
 export const COMBINE_OPS: [PathOp, string, string][] = [
-  ['combine', 'Unite Shapes', 'Merge the selected shape layers into one layer whose area covers them all.'],
-  ['subtract', 'Subtract Front Shape', 'Cut the shapes in front out of the backmost shape layer.'],
-  ['intersect', 'Unite Shapes at Overlap', 'Keep only the area where the selected shape layers overlap.'],
-  ['exclude', 'Subtract Shapes at Overlap', 'Keep the areas covered by an odd number of the selected shapes, removing their overlaps.'],
+  ['combine', '合并形状', '将所选形状图层合并为一个包含所有区域的图层。'],
+  ['subtract', '减去顶层形状', '从底层形状图层中剪切掉顶层的形状。'],
+  ['intersect', '与形状区域相交', '仅保留所选形状图层相互重叠的区域。'],
+  ['exclude', '排除重叠形状', '保留奇数个所选形状覆盖的区域，移除重叠部分。'],
 ];
 async function strokeSelection(e: Editor) {
-  const v = await formDialog('Stroke', [
-    { name: 'width', label: 'Width (px)', value: 2, type: 'number', min: 1, max: 250 },
-    { name: 'color', label: 'Color', value: e.color, type: 'color' },
-    { name: 'location', label: 'Location', value: 'center', type: 'select', options: [['inside', 'Inside'], ['center', 'Center'], ['outside', 'Outside']] },
-    { name: 'opacity', label: 'Opacity (%)', value: 100, type: 'number', min: 1, max: 100 },
-  ], 'OK');
+  const v = await formDialog('描边', [
+    { name: 'width', label: '宽度 (像素)', value: 2, type: 'number', min: 1, max: 250 },
+    { name: 'color', label: '颜色', value: e.color, type: 'color' },
+    { name: 'location', label: '位置', value: 'center', type: 'select', options: [['inside', '内部'], ['center', '居中'], ['outside', '外部']] },
+    { name: 'opacity', label: '不透明度 (%)', value: 100, type: 'number', min: 1, max: 100 },
+  ], '确定');
   if (!v) return;
   const mask = selectionToPath(e, 0.6);
   if (!mask) return;
@@ -204,7 +204,7 @@ async function strokeSelection(e: Editor) {
   const r = await e.engine.vectorStroke(mask, rect, identityVectorMatrix, stroke);
   const cov = { width: rect.width, height: rect.height, data: new Uint8Array(r.strokeCoverage.length) };
   for (let i = 0; i < cov.data.length; i++) cov.data[i] = Math.round(Math.max(0, Math.min(1, r.strokeCoverage[i])) * 255);
-  commitTarget(e, target, paintCoverage(e, target, cov, hexRgb(v.color), Math.max(0.01, Math.min(1, Number(v.opacity) / 100))), 'Stroke');
+  commitTarget(e, target, paintCoverage(e, target, cov, hexRgb(v.color), Math.max(0.01, Math.min(1, Number(v.opacity) / 100))), '描边');
 }
 async function textWorkPath(e: Editor) {
   const l = e.layer;
@@ -229,94 +229,94 @@ async function textWorkPath(e: Editor) {
     transformMask({ paths }, cos * sx, sin * sx, -sin * sy, cos * sy, cx - cos * t.width / 2 + sin * t.height / 2, cy - sin * t.width / 2 - cos * t.height / 2);
   }
   if (!paths.length) {
-    e.message('This text has no outlines.');
+    e.message('此文本没有轮廓。');
     return;
   }
-  e.command('Create Work Path', (d) => {
+  e.command('创建工作路径', (d) => {
     d.workPath = { paths };
   });
   setActive(e, 'work');
   e.update();
-  if (out.missingFonts.length) e.message(`Outlines used the default font for: ${out.missingFonts.join(', ')}.`);
+  if (out.missingFonts.length) e.message(`以下字体的轮廓使用了默认字体：${out.missingFonts.join(', ')}。`);
 }
 
 export function installVectorCommands() {
   const cmd = (c: Command) => registerCommand(c);
-  cmd({ id: 'path.fill', label: 'Fill Path with Foreground Color', enabled: paintablePath, run: (e) => fillPath(e) });
+  cmd({ id: 'path.fill', label: '使用前景色填充路径', enabled: paintablePath, run: (e) => fillPath(e) });
   cmd({
     id: 'path.fill-dialog',
-    label: 'Fill Path…',
+    label: '填充路径…',
     enabled: paintablePath,
     run: async (e) => {
-      const v = await formDialog('Fill Path', [
-        { name: 'source', label: 'Contents', value: 'foreground', type: 'select', options: sources },
-        { name: 'opacity', label: 'Opacity (%)', value: 100, type: 'number', min: 1, max: 100 },
-        { name: 'feather', label: 'Feather Radius (px)', value: 0, type: 'number', min: 0, max: 250 },
-      ], 'OK');
+      const v = await formDialog('填充路径', [
+        { name: 'source', label: '内容', value: 'foreground', type: 'select', options: sources },
+        { name: 'opacity', label: '不透明度 (%)', value: 100, type: 'number', min: 1, max: 100 },
+        { name: 'feather', label: '羽化半径 (像素)', value: 0, type: 'number', min: 0, max: 250 },
+      ], '确定');
       if (v) await fillPath(e, v.source, Number(v.opacity) / 100, Number(v.feather) || 0);
     },
   });
-  cmd({ id: 'path.stroke', label: 'Stroke Path with Brush', enabled: paintablePath, run: (e) => strokePath(e) });
+  cmd({ id: 'path.stroke', label: '使用画笔描边路径', enabled: paintablePath, run: (e) => strokePath(e) });
   cmd({
     id: 'path.stroke-dialog',
-    label: 'Stroke Path…',
+    label: '描边路径…',
     enabled: paintablePath,
     run: async (e) => {
-      const v = await formDialog('Stroke Path', [
-        { name: 'tool', label: 'Tool', value: 'brush', type: 'select', options: [['brush', 'Brush'], ['pencil', 'Pencil'], ['eraser', 'Eraser']] },
-        { name: 'pressure', label: 'Simulate Pressure', value: 'no', type: 'checkbox' },
-      ], 'OK', 'Uses the tool’s current size, hardness and opacity.');
+      const v = await formDialog('描边路径', [
+        { name: 'tool', label: '工具', value: 'brush', type: 'select', options: [['brush', '画笔'], ['pencil', '铅笔'], ['eraser', '橡皮擦']] },
+        { name: 'pressure', label: '模拟压力', value: 'no', type: 'checkbox' },
+      ], '确定', '使用该工具当前的大小、硬度和不透明度。');
       if (v) await strokePath(e, v.tool as 'brush', v.pressure === 'yes');
     },
   });
-  cmd({ id: 'path.make-selection', label: 'Load Path as Selection', enabled: hasPath, shortcut: 'Mod+Enter', run: (e) => pathToSelection(e) });
+  cmd({ id: 'path.make-selection', label: '将路径作为选区载入', enabled: hasPath, shortcut: 'Mod+Enter', run: (e) => pathToSelection(e) });
   cmd({
     id: 'path.make-selection-dialog',
-    label: 'Make Selection…',
+    label: '建立选区…',
     enabled: hasPath,
     run: async (e) => {
-      const v = await formDialog('Make Selection', [
-        { name: 'feather', label: 'Feather Radius (px)', value: 0, type: 'number', min: 0, max: 250 },
-        { name: 'aa', label: 'Anti-aliased', value: 'yes', type: 'checkbox' },
-        { name: 'op', label: 'Operation', value: e.doc.selection ? 'add' : 'replace', type: 'select', options: [['replace', 'New Selection'], ['add', 'Add to Selection'], ['subtract', 'Subtract from Selection'], ['intersect', 'Intersect with Selection']] },
-      ], 'OK');
+      const v = await formDialog('建立选区', [
+        { name: 'feather', label: '羽化半径 (像素)', value: 0, type: 'number', min: 0, max: 250 },
+        { name: 'aa', label: '消除锯齿', value: 'yes', type: 'checkbox' },
+        { name: 'op', label: '操作', value: e.doc.selection ? 'add' : 'replace', type: 'select', options: [['replace', '新选区'], ['add', '添加到选区'], ['subtract', '从选区减去'], ['intersect', '与选区交叉']] },
+      ], '确定');
       if (v) await pathToSelection(e, v.op as 'replace', Number(v.feather) || 0, v.aa === 'yes');
     },
   });
-  cmd({ id: 'path.from-selection', label: 'Make Work Path from Selection', enabled: (e) => !!e.doc.selection, run: (e) => selectionToWorkPath(e, 2) });
+  cmd({ id: 'path.from-selection', label: '从选区生成工作路径', enabled: (e) => !!e.doc.selection, run: (e) => selectionToWorkPath(e, 2) });
   cmd({
     id: 'path.from-selection-dialog',
-    label: 'Make Work Path…',
+    label: '建立工作路径…',
     enabled: (e) => !!e.doc.selection,
     run: async (e) => {
-      const v = await formDialog('Make Work Path', [{ name: 'tolerance', label: 'Tolerance (px)', value: 2, type: 'number', min: 0.5, max: 10, step: 0.5 }], 'OK');
+      const v = await formDialog('建立工作路径', [{ name: 'tolerance', label: '容差 (像素)', value: 2, type: 'number', min: 0.5, max: 10, step: 0.5 }], '确定');
       if (v) selectionToWorkPath(e, Math.max(0.5, Math.min(10, Number(v.tolerance) || 2)));
     },
   });
   cmd({
     id: 'path.new',
-    label: 'New Path',
+    label: '新建路径',
     enabled: (e) => e.hasDocument,
     run: (e) => {
       const name = nextPathName(e.doc);
       const id = crypto.randomUUID();
-      e.command('New Path', (d) => {
+      e.command('新建路径', (d) => {
         d.paths = [...(d.paths ?? []), { id, name, mask: { paths: [] } }];
       });
       setActive(e, `path:${id}`);
       e.update();
     },
   });
-  cmd({ id: 'path.save', label: 'Save Path…', enabled: (e) => actionPath(e)?.kind === 'work', run: (e) => savePathDialog(e, actionPath(e)!) });
+  cmd({ id: 'path.save', label: '存储路径…', enabled: (e) => actionPath(e)?.kind === 'work', run: (e) => savePathDialog(e, actionPath(e)!) });
   cmd({
     id: 'path.duplicate',
-    label: 'Duplicate Path',
+    label: '复制路径',
     enabled: (e) => hasPath(e),
     run: (e) => {
       const t = actionPath(e)!;
       const id = crypto.randomUUID();
-      e.command('Duplicate Path', (d) => {
-        d.paths = [...(d.paths ?? []), { id, name: `${t.kind === 'saved' ? t.name : t.name.replace(/ (Shape Path|Vector Mask|Type Path)$/, '')} copy`, mask: structuredClone(t.mask) }];
+      e.command('复制路径', (d) => {
+        d.paths = [...(d.paths ?? []), { id, name: `${t.kind === 'saved' ? t.name : t.name.replace(/ (Shape Path|Vector Mask|Type Path)$/, '')} 副本`, mask: structuredClone(t.mask) }];
       });
       setActive(e, `path:${id}`);
       e.update();
@@ -324,7 +324,7 @@ export function installVectorCommands() {
   });
   cmd({
     id: 'path.delete',
-    label: 'Delete Path',
+    label: '删除路径',
     enabled: (e) => {
       const t = targetPath(e);
       return !!t && t.kind !== 'shape' && t.kind !== 'text';
@@ -333,7 +333,7 @@ export function installVectorCommands() {
       const t = targetPath(e);
       if (!t || t.kind === 'shape' || t.kind === 'text') return;
       if (t.kind === 'vmask') return deleteVectorMask(e);
-      e.command('Delete Path', (d) => {
+      e.command('删除路径', (d) => {
         if (t.kind === 'work') delete d.workPath;
         else {
           d.paths = d.paths!.filter((p) => p.id !== t.id);
@@ -346,32 +346,32 @@ export function installVectorCommands() {
   });
   cmd({
     id: 'path.make-shape',
-    label: 'Make Shape from Path',
-    description: 'Create a shape layer from the work path or the selected saved path, painted with the shape tool fill and stroke.',
+    label: '从路径创建形状',
+    description: '从工作路径或选中的存储路径创建形状图层，并应用形状工具的填充和描边。',
     enabled: paintablePath,
     run: makeShapeFromPath,
   });
-  cmd({ id: 'path.merge-components', label: 'Merge Shape Components', enabled: (e) => (targetPath(e)?.mask.paths.length ?? 0) > 1, run: mergeComponents });
+  cmd({ id: 'path.merge-components', label: '合并形状组件', enabled: (e) => (targetPath(e)?.mask.paths.length ?? 0) > 1, run: mergeComponents });
 
   // ----- Vector masks -----
-  cmd({ id: 'layer.vmask-reveal-all', label: 'Reveal All', enabled: (e) => canAddVectorMask(e, e.layer), run: (e) => addVectorMask(e, { paths: [], fillStartsWithAllPixels: true }, 'Add Vector Mask') });
-  cmd({ id: 'layer.vmask-hide-all', label: 'Hide All', enabled: (e) => canAddVectorMask(e, e.layer), run: (e) => addVectorMask(e, { paths: [] }, 'Add Vector Mask') });
+  cmd({ id: 'layer.vmask-reveal-all', label: '显示全部', enabled: (e) => canAddVectorMask(e, e.layer), run: (e) => addVectorMask(e, { paths: [], fillStartsWithAllPixels: true }, '添加矢量蒙版') });
+  cmd({ id: 'layer.vmask-hide-all', label: '隐藏全部', enabled: (e) => canAddVectorMask(e, e.layer), run: (e) => addVectorMask(e, { paths: [] }, '添加矢量蒙版') });
   cmd({
     id: 'layer.vmask-current-path',
-    label: 'Current Path',
+    label: '当前路径',
     enabled: (e) => canAddVectorMask(e, e.layer) && !!currentPathForMask(e) && targetPath(e)?.kind !== 'shape',
-    run: (e) => addVectorMask(e, structuredClone(currentPathForMask(e)!), 'Add Vector Mask'),
+    run: (e) => addVectorMask(e, structuredClone(currentPathForMask(e)!), '添加矢量蒙版'),
   });
-  cmd({ id: 'layer.vmask-delete', label: 'Delete', enabled: (e) => !!e.layer?.vectorMask, run: deleteVectorMask });
-  cmd({ id: 'layer.vmask-toggle', label: 'Disable', enabled: (e) => !!e.layer?.vectorMask, checked: (e) => !!e.layer?.vectorMask?.disabled, run: toggleVectorMask });
-  cmd({ id: 'layer.rasterize-vector-mask', label: 'Vector Mask', enabled: (e) => !!e.layer?.vectorMask, run: rasterizeVectorMask });
+  cmd({ id: 'layer.vmask-delete', label: '删除', enabled: (e) => !!e.layer?.vectorMask, run: deleteVectorMask });
+  cmd({ id: 'layer.vmask-toggle', label: '停用', enabled: (e) => !!e.layer?.vectorMask, checked: (e) => !!e.layer?.vectorMask?.disabled, run: toggleVectorMask });
+  cmd({ id: 'layer.rasterize-vector-mask', label: '矢量蒙版', enabled: (e) => !!e.layer?.vectorMask, run: rasterizeVectorMask });
   const combinable = (e: Editor) => e.selectedLayers.filter((l) => l.kind === 'vector').length > 1;
   for (const [op, label, description] of COMBINE_OPS) cmd({ id: `layer.combine-${op}`, label, description, enabled: combinable, run: (e) => combineShapes(e, op) });
 
   // ----- View, Edit and Type -----
   cmd({
     id: 'view.show-target-path',
-    label: 'Target Path',
+    label: '目标路径',
     shortcut: 'Mod+Shift+H',
     checked: (e) => !e.settings.hideTargetPath,
     recordable: false,
@@ -382,19 +382,19 @@ export function installVectorCommands() {
   });
   cmd({
     id: 'edit.define-shape',
-    label: 'Define Custom Shape…',
+    label: '定义自定形状…',
     enabled: hasPath,
     recordable: false,
     run: async (e) => {
       const t = actionPath(e);
       const d = t && shapeFromMask(t.mask);
       if (!d) return;
-      const v = await formDialog('Shape Name', [{ name: 'name', label: 'Name', value: t!.kind === 'saved' ? t!.name : 'Shape' }], 'OK');
+      const v = await formDialog('形状名称', [{ name: 'name', label: '名称', value: t!.kind === 'saved' ? t!.name : '形状' }], '确定');
       if (!v) return;
-      saveUserShape(v.name || 'Shape', d);
-      e.message(`“${v.name || 'Shape'}” is now in the custom shape picker.`);
+      saveUserShape(v.name || '形状', d);
+      e.message(`“${v.name || '形状'}”现已添加到自定形状选择器中。`);
     },
   });
-  cmd({ id: 'edit.stroke', label: 'Stroke…', enabled: (e) => !!e.doc.selection, run: strokeSelection });
-  cmd({ id: 'type.create-work-path', label: 'Create Work Path', enabled: (e) => e.layer?.kind === 'text' && !!e.layer.text, run: textWorkPath });
+  cmd({ id: 'edit.stroke', label: '描边…', enabled: (e) => !!e.doc.selection, run: strokeSelection });
+  cmd({ id: 'type.create-work-path', label: '创建工作路径', enabled: (e) => e.layer?.kind === 'text' && !!e.layer.text, run: textWorkPath });
 }

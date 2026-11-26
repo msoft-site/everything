@@ -102,7 +102,7 @@ async function pathSelectDown(e: Editor, p: CanvasPointer) {
   } else if (!comp.some((i) => st.paths.has(i))) st.paths = new Set(comp);
   st.knots = [];
   const paths = selectedComponentPaths(t.mask, st.paths);
-  drag = { target: t, base: t.mask, mask: t.mask, start: [p.x, p.y], moved: false, kind: 'paths', paths, duplicate: p.alt, label: p.alt ? 'Duplicate Path' : 'Move Path' };
+  drag = { target: t, base: t.mask, mask: t.mask, start: [p.x, p.y], moved: false, kind: 'paths', paths, duplicate: p.alt, label: p.alt ? '复制路径' : '移动路径' };
   e.overlay();
   e.update();
 }
@@ -221,7 +221,7 @@ export function directDown(e: Editor, p: CanvasPointer) {
   }
   const h = hitHandle(m, p.x, p.y, tl, visible);
   if (h) {
-    drag = { target: t, base: m, mask: m, start: [p.x, p.y], moved: false, kind: 'handle', handle: h, breakLink: p.alt, label: 'Drag Handle' };
+    drag = { target: t, base: m, mask: m, start: [p.x, p.y], moved: false, kind: 'handle', handle: h, breakLink: p.alt, label: '拖动手柄' };
     return;
   }
   const a = hitAnchor(m, p.x, p.y, tl);
@@ -229,7 +229,7 @@ export function directDown(e: Editor, p: CanvasPointer) {
     const selected = st.knots.some((r) => r.path === a.path && r.knot === a.knot);
     if (p.shift) selectKnots(e, t, selected ? st.knots.filter((r) => r.path !== a.path || r.knot !== a.knot) : [...st.knots, a]);
     else if (!selected) selectKnots(e, t, [a]);
-    drag = { target: t, base: m, mask: m, start: [p.x, p.y], moved: false, kind: 'knots', knots: [...vstate(e).knots], label: 'Drag Anchor Point' };
+    drag = { target: t, base: m, mask: m, start: [p.x, p.y], moved: false, kind: 'knots', knots: [...vstate(e).knots], label: '拖动锚点' };
     e.overlay();
     return;
   }
@@ -240,10 +240,10 @@ export function directDown(e: Editor, p: CanvasPointer) {
     const ends: KnotRef[] = [{ path: s.path, knot: s.segment }, { path: s.path, knot: (s.segment + 1) % n }];
     if (isLine(c)) {
       selectKnots(e, t, p.shift ? [...st.knots, ...ends] : ends);
-      drag = { target: t, base: m, mask: m, start: [p.x, p.y], moved: false, kind: 'knots', knots: [...vstate(e).knots], label: 'Drag Segment' };
+      drag = { target: t, base: m, mask: m, start: [p.x, p.y], moved: false, kind: 'knots', knots: [...vstate(e).knots], label: '拖动线段' };
     } else {
       if (!p.shift) selectKnots(e, t, []);
-      drag = { target: t, base: m, mask: m, start: [p.x, p.y], moved: false, kind: 'segment', segment: { path: s.path, index: s.segment, t: s.t }, label: 'Drag Curve' };
+      drag = { target: t, base: m, mask: m, start: [p.x, p.y], moved: false, kind: 'segment', segment: { path: s.path, index: s.segment, t: s.t }, label: '拖动曲线' };
     }
     e.overlay();
     return;
@@ -354,7 +354,7 @@ function selectionKeys(e: Editor, ev: KeyboardEvent): boolean {
       if (mask.paths.length && !mask.paths[0].operation) mask.paths[0].operation = 'combine';
     }
     selectKnots(e, t, []);
-    void commitPathEdit(e, t, mask, direct ? 'Delete Anchor Point' : 'Delete Path').then(() => e.update());
+    void commitPathEdit(e, t, mask, direct ? '删除锚点' : '删除路径').then(() => e.update());
     return true;
   }
   if (ev.key.startsWith('Arrow') && !ev.metaKey && !ev.ctrlKey) {
@@ -368,7 +368,7 @@ function selectionKeys(e: Editor, ev: KeyboardEvent): boolean {
         if (k) for (let i = 0; i < 6; i += 2) (k.points[i] += dx), (k.points[i + 1] += dy);
       }
     else translateMask(mask, dx, dy, selectedComponentPaths(mask, st.paths));
-    void commitPathEdit(e, t, mask, direct ? 'Nudge Anchor Point' : 'Nudge Path').then(() => e.update());
+    void commitPathEdit(e, t, mask, direct ? '微移锚点' : '微移路径').then(() => e.update());
     return true;
   }
   return false;
@@ -387,7 +387,7 @@ export async function setComponentOperation(e: Editor, op: PathOp) {
   if (!t || !st.paths.size || targetLocked(e, t)) return;
   const mask = cloneMask(t.mask);
   for (const g of componentGroups(mask)) if (g.some((i) => st.paths.has(i))) mask.paths[g[0]].operation = op;
-  await commitPathEdit(e, t, mask, 'Change Path Operation');
+  await commitPathEdit(e, t, mask, '更改路径操作');
 }
 export async function alignComponents(e: Editor, edge: 'left' | 'hcenter' | 'right' | 'top' | 'vcenter' | 'bottom') {
   const t = targetPath(e);
@@ -407,16 +407,16 @@ export async function alignComponents(e: Editor, edge: 'left' | 'hcenter' | 'rig
     const dy = edge === 'top' ? all.y - b.y : edge === 'bottom' ? all.y + all.height - b.y - b.height : edge === 'vcenter' ? all.y + all.height / 2 - b.y - b.height / 2 : 0;
     translateMask(mask, dx, dy, new Set(g));
   });
-  await commitPathEdit(e, t, mask, 'Align Paths');
+  await commitPathEdit(e, t, mask, '对齐路径');
 }
 function selectOptions(e: Editor) {
   const st = vstate(e);
   const t = targetPath(e);
   const enabled = !!t && st.paths.size > 0 && st.selectionKey === activeKey(t);
   const dis = enabled ? '' : 'disabled';
-  const ops: [PathOp, string, string][] = [['combine', 'Combine Shapes', 'path-op-combine'], ['subtract', 'Subtract Front Shape', 'path-op-subtract'], ['intersect', 'Intersect Shape Areas', 'path-op-intersect'], ['exclude', 'Exclude Overlapping Shapes', 'path-op-exclude']];
-  const aligns: [string, string, string][] = [['left', 'Align left edges', 'align-start-vertical'], ['hcenter', 'Align horizontal centers', 'align-horizontal-justify-center'], ['right', 'Align right edges', 'align-end-vertical'], ['top', 'Align top edges', 'align-start-horizontal'], ['vcenter', 'Align vertical centers', 'align-vertical-justify-center'], ['bottom', 'Align bottom edges', 'align-end-horizontal']];
-  return `<span class="vec-hint muted">${enabled ? `${st.paths.size} path component${st.paths.size > 1 ? 's' : ''} selected` : 'Click a path to select it'}</span><span class="divider"></span>${ops.map(([op, label, icon]) => `<button class="icon-button" data-path-op="${op}" title="${label}" aria-label="${label}" ${dis}>${svg(icon, 16)}</button>`).join('')}<button data-command="path.merge-components" ${dis} title="Merge the selected components into one outline">Merge Components</button><span class="divider"></span>${aligns.map(([a, label, icon]) => `<button class="icon-button" data-path-align="${a}" title="${label}" aria-label="${label}" ${dis}>${svg(icon, 16)}</button>`).join('')}`;
+  const ops: [PathOp, string, string][] = [['combine', '合并形状', 'path-op-combine'], ['subtract', '减去顶层形状', 'path-op-subtract'], ['intersect', '与形状区域相交', 'path-op-intersect'], ['exclude', '排除重叠形状', 'path-op-exclude']];
+  const aligns: [string, string, string][] = [['left', '左对齐', 'align-start-vertical'], ['hcenter', '水平居中对齐', 'align-horizontal-justify-center'], ['right', '右对齐', 'align-end-vertical'], ['top', '顶对齐', 'align-start-horizontal'], ['vcenter', '垂直居中对齐', 'align-vertical-justify-center'], ['bottom', '底对齐', 'align-end-horizontal']];
+  return `<span class="vec-hint muted">${enabled ? `已选择 ${st.paths.size} 个路径组件` : '单击路径以选择它'}</span><span class="divider"></span>${ops.map(([op, label, icon]) => `<button class="icon-button" data-path-op="${op}" title="${label}" aria-label="${label}" ${dis}>${svg(icon, 16)}</button>`).join('')}<button data-command="path.merge-components" ${dis} title="将所选组件合并为单一轮廓">合并组件</button><span class="divider"></span>${aligns.map(([a, label, icon]) => `<button class="icon-button" data-path-align="${a}" title="${label}" aria-label="${label}" ${dis}>${svg(icon, 16)}</button>`).join('')}`;
 }
 function bindSelectOptions(e: Editor, el: HTMLElement) {
   el.querySelectorAll<HTMLButtonElement>('[data-path-op]').forEach((b) => b.addEventListener('click', () => void setComponentOperation(e, b.dataset.pathOp as PathOp).then(() => e.update())));
@@ -424,7 +424,7 @@ function bindSelectOptions(e: Editor, el: HTMLElement) {
 }
 export const pathSelectTool: Tool = {
   id: 'path-select',
-  label: 'Path Selection Tool',
+  label: '路径选择工具',
   key: 'A',
   icon: 'path-select',
   group: 'path-select',
@@ -445,12 +445,12 @@ export const pathSelectTool: Tool = {
 };
 export const directSelectTool: Tool = {
   id: 'direct-select',
-  label: 'Direct Selection Tool',
+  label: '直接选择工具',
   key: 'A',
   icon: 'direct-select',
   group: 'path-select',
   cursor: () => 'default',
-  options: () => `<span class="vec-hint muted">Drag anchors, handles or curves. Shift adds to the selection, Alt breaks a smooth point's handles.</span>`,
+  options: () => `<span class="vec-hint muted">拖动锚点、手柄或曲线。按住 Shift 增加选区，按住 Alt 断开平滑点手柄。</span>`,
   deactivate: () => {
     drag = undefined;
     marquee = undefined;
@@ -463,7 +463,7 @@ export const directSelectTool: Tool = {
     const d = drag;
     if (d && d.kind !== 'marquee' && d.moved && d.target.kind === 'shape') {
       const l = allLayers(e.doc.layers).find((x) => x.id === d.target.id);
-      if (l?.vector?.live) e.message('The live shape is now a regular path.');
+      if (l?.vector?.live) e.message('实时形状现已转变为普通路径。');
     }
     await selectUp(e, p);
   },

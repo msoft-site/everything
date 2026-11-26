@@ -58,7 +58,7 @@ function renderLog(el: HTMLElement, force = false) {
   const lines = scriptLog.slice(-60);
   log.innerHTML = lines.length
     ? lines.map((l) => `<div class="log-${l.level}"><span class="muted">${escapeXML(l.script)}:</span> ${escapeXML(l.text)}</div>`).join('')
-    : '<div class="muted">Script output and errors appear here.</div>';
+    : '<div class="muted">脚本输出与错误信息将在此处显示。</div>';
   log.scrollTop = log.scrollHeight;
 }
 
@@ -73,16 +73,16 @@ export function update(e: Editor, el: HTMLElement) {
   const rows = scripts
     .map(
       (s) => `<div class="script-row ${s.id === scriptSelection.id ? 'selected' : ''} ${s.enabled ? '' : 'off'}" data-script="${s.id}" role="listitem" title="${escapeXML(s.description || s.name)}">
-        <input type="checkbox" data-enable="${s.id}" ${s.enabled ? 'checked' : ''} aria-label="List ${escapeXML(s.name)} in File → Scripts" title="List in File → Scripts (with its shortcut) and offer it to script events">
+        <input type="checkbox" data-enable="${s.id}" ${s.enabled ? 'checked' : ''} aria-label="在“文件 → 脚本”中列出 ${escapeXML(s.name)}" title="在“文件 → 脚本”中列出（附带快捷键）并提供给脚本事件">
         <button type="button" class="script-text" data-script-select="${s.id}" aria-pressed="${s.id === scriptSelection.id}"><span class="script-title">${escapeXML(s.name)}</span>${s.description ? `<small>${escapeXML(s.description)}</small>` : ''}</button>
         ${s.shortcut ? `<kbd>${escapeXML(formatShortcut(s.shortcut))}</kbd>` : ''}
-        <button class="icon-button" data-run aria-label="Run ${escapeXML(s.name)}" title="Run">${svg('play', 13)}</button>
-        <button class="icon-button" data-edit aria-label="Edit ${escapeXML(s.name)}" title="Edit the script">${svg('pen-line', 13)}</button>
+        <button class="icon-button" data-run aria-label="运行 ${escapeXML(s.name)}" title="运行">${svg('play', 13)}</button>
+        <button class="icon-button" data-edit aria-label="编辑 ${escapeXML(s.name)}" title="编辑脚本">${svg('pen-line', 13)}</button>
       </div>`,
     )
     .join('');
-  el.innerHTML = `<div class="scripts-list" role="list" aria-label="Installed scripts">${rows || '<p class="scripts-empty muted">No scripts installed. Create one, or install a .js file.</p>'}</div>
-    <div class="scripts-log"><div class="scripts-log-head"><span>Output</span><button class="icon-button" data-clear-log aria-label="Clear output" title="Clear the output">${svg('trash-2', 12)}</button></div><div class="scripts-log-lines" aria-live="polite"></div></div>
-    <div class="layer-footer"><button data-command="scripts.run-selected" aria-label="Run selected script" title="Run the selected script" ${scriptSelection.id ? '' : 'disabled'}>${svg('play', 14)}</button><button data-command="scripts.new" aria-label="New script" title="Write a new script">${svg('plus', 14)}</button><button data-command="scripts.install" aria-label="Install script from file" title="Install a script from a .js file">${svg('upload', 14)}</button><button data-command="file.script-events" aria-label="Script events" title="Run scripts or actions on events (Script Events Manager)">${svg('zap', 14)}</button><button data-command="scripts.delete" aria-label="Delete script" title="Delete the selected script" ${scriptSelection.id ? '' : 'disabled'}>${svg('trash-2', 14)}</button></div>`;
+  el.innerHTML = `<div class="scripts-list" role="list" aria-label="已安装的脚本">${rows || '<p class="scripts-empty muted">未安装任何脚本。您可以新建脚本，或从 .js 文件导入安装。</p>'}</div>
+    <div class="scripts-log"><div class="scripts-log-head"><span>输出</span><button class="icon-button" data-clear-log aria-label="清空输出" title="清空输出">${svg('trash-2', 12)}</button></div><div class="scripts-log-lines" aria-live="polite"></div></div>
+    <div class="layer-footer"><button data-command="scripts.run-selected" aria-label="运行所选脚本" title="运行所选脚本" ${scriptSelection.id ? '' : 'disabled'}>${svg('play', 14)}</button><button data-command="scripts.new" aria-label="新建脚本" title="编写新脚本">${svg('plus', 14)}</button><button data-command="scripts.install" aria-label="从文件安装脚本" title="从 .js 文件安装脚本">${svg('upload', 14)}</button><button data-command="file.script-events" aria-label="脚本事件" title="事件脚本管理器（在特定事件触发脚本或操作）">${svg('zap', 14)}</button><button data-command="scripts.delete" aria-label="删除脚本" title="删除所选脚本" ${scriptSelection.id ? '' : 'disabled'}>${svg('trash-2', 14)}</button></div>`;
   renderLog(el, true);
 }

@@ -29,10 +29,10 @@ export function installAssistant(e: Editor) {
     lazyPanel(
       {
         id: 'assistant',
-        title: 'Assistant',
+        title: '智能助手',
         icon: 'assistant',
         location: 'strip',
-        menu: () => ['assistant.ask', 'assistant.clear', '-', { label: 'Model', id: 'assistant.models', items: ASSISTANT_MODELS.map((m) => `assistant.model-${m.id}`) }, 'assistant.see-image'],
+        menu: () => ['assistant.ask', 'assistant.clear', '-', { label: '模型', id: 'assistant.models', items: ASSISTANT_MODELS.map((m) => `assistant.model-${m.id}`) }, 'assistant.see-image'],
       },
       lazy(async () => {
         const m = await panel();
@@ -43,25 +43,25 @@ export function installAssistant(e: Editor) {
   registerCommand(
     {
       id: 'assistant.ask',
-      label: 'Describe an Edit…',
+      label: '描述编辑需求…',
       shortcut: 'Mod+Alt+Shift+D',
       recordable: false,
-      description: 'Describe a change in words; the Assistant plans it with real commands for you to review and run (本地智能引擎).',
+      description: '用文字描述修改需求；智能助手将使用原生命令规划步骤供您审阅并运行（本地智能引擎）。',
       run: (ed, arg) => openAssistant(ed, arg && typeof arg === 'object' && typeof (arg as { prompt?: unknown }).prompt === 'string' ? (arg as { prompt: string }).prompt : undefined),
       prefetch: panel.prefetch,
     },
     {
       id: 'assistant.clear',
-      label: 'Clear Conversation',
+      label: '清空会话',
       recordable: false,
-      description: 'Forget the Assistant conversation of this document',
+      description: '清除当前文档的助手会话记录',
       run: async (ed) => (await controller()).clearConversation(ed),
     },
     {
       id: 'assistant.see-image',
-      label: 'Share Image Preview',
+      label: '分享图像预览',
       recordable: false,
-      description: 'Send a small preview of the visible image with each request, so the Assistant can see it',
+      description: '每次请求时发送可见图像的小尺寸预览，以便智能助手查看',
       checked: () => assistantSettings.seeImage,
       run: (ed) => {
         assistantSettings.seeImage = !assistantSettings.seeImage;
@@ -73,18 +73,18 @@ export function installAssistant(e: Editor) {
       id: `assistant.model-${m.id}`,
       label: `${m.label} (${m.note})`,
       recordable: false,
-      description: `Use ${m.label} for the Assistant`,
+      description: `为智能助手使用 ${m.label}`,
       checked: () => assistantSettings.model === m.id,
       run: (ed: Editor) => {
         assistantSettings.model = m.id;
         saveAssistantSettings();
         ed.dock?.update();
-        ed.message(`The Assistant now uses ${m.label}.`);
+        ed.message(`智能助手现在使用 ${m.label}。`);
       },
     })),
   );
   // Listed directly in the Window menu (next to Scripts) rather than in Window → Panels.
-  for (const [id, title] of [['assistant', 'Assistant'], ['generations', 'Generation History']])
+  for (const [id, title] of [['assistant', '智能助手'], ['generations', '生成历史记录']])
     registerCommand({ id: `window.panel.${id}`, label: title, recordable: false, checked: (ed) => !!ed.dock?.isVisible(id), run: (ed) => ed.dock.show(id, true) });
   contributeMenu('edit', ['assistant.ask'], 'edit.edit-with-prompt');
   contributeMenu('window', ['window.panel.assistant', 'window.panel.generations'], 'window.panel.scripts');

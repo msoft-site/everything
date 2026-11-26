@@ -17,7 +17,7 @@ import { shapeDocMask, vstate } from './state';
 // space, fill and stroke paint, and path operations. The generic layer
 // properties (locks, gradient/pattern details, stroke options, adjustments and
 // masks) follow below, without the generic transform box.
-const liveNames: Record<LiveShape['kind'], string> = { rect: 'Rectangle', ellipse: 'Ellipse', triangle: 'Triangle', polygon: 'Polygon', line: 'Line' };
+const liveNames: Record<LiveShape['kind'], string> = { rect: '矩形', ellipse: '椭圆', triangle: '三角形', polygon: '多边形', line: '直线' };
 let mounted: { el: HTMLElement; layer: Layer } | undefined;
 // Layers whose corner radii are shown separately even while equal (after "unlink").
 const unlinked = new Set<string>();
@@ -28,13 +28,13 @@ function liveSection(l: Layer, live: LiveShape | undefined) {
   if (!live) return '';
   if (live.kind === 'rect') {
     const linked = !unlinked.has(l.id) && live.radii.every((r) => r === live.radii[0]);
-    return `<h3>Corner radius <button class="icon-button toggle" data-vec-action="link-radii" aria-pressed="${linked}" title="${linked ? 'Edit each corner separately' : 'Use one radius for all corners'}" aria-label="Link corner radii">${svg('link-2', 14)}</button></h3><div class="transform-grid vec-radii-grid">${linked ? field('radius', 'All corners', live.radii[0], 'min="0"') : ['Top left', 'Top right', 'Bottom right', 'Bottom left'].map((c, i) => field(`r${i}`, c, live.radii[i], 'min="0"')).join('')}</div>`;
+    return `<h3>圆角半径 <button class="icon-button toggle" data-vec-action="link-radii" aria-pressed="${linked}" title="${linked ? '单独编辑每个角' : '所有角使用相同半径'}" aria-label="链接圆角半径">${svg('link-2', 14)}</button></h3><div class="transform-grid vec-radii-grid">${linked ? field('radius', '所有角', live.radii[0], 'min="0"') : ['左上', '右上', '右下', '左下'].map((c, i) => field(`r${i}`, c, live.radii[i], 'min="0"')).join('')}</div>`;
   }
-  if (live.kind === 'triangle') return `<div class="transform-grid">${field('triRadius', 'Corner radius', live.radius, 'min="0"')}</div>`;
+  if (live.kind === 'triangle') return `<div class="transform-grid">${field('triRadius', '圆角半径', live.radius, 'min="0"')}</div>`;
   if (live.kind === 'polygon')
-    return `<div class="transform-grid">${field('sides', 'Sides', live.sides, 'min="3" max="100" step="1"')}${field('star', 'Star inset (%)', live.star * 100, 'min="0" max="99"')}${field('polyRadius', 'Corner radius', live.radius, 'min="0"')}</div><label class="lock-label"><input type="checkbox" data-vec="smoothIndents" ${live.smoothIndents ? 'checked' : ''}> Smooth star indents</label>`;
+    return `<div class="transform-grid">${field('sides', '边数', live.sides, 'min="3" max="100" step="1"')}${field('star', '星形缩进 (%)', live.star * 100, 'min="0" max="99"')}${field('polyRadius', '圆角半径', live.radius, 'min="0"')}</div><label class="lock-label"><input type="checkbox" data-vec="smoothIndents" ${live.smoothIndents ? 'checked' : ''}> 平滑星形缩进</label>`;
   if (live.kind === 'line')
-    return `<div class="transform-grid">${field('weight', 'Weight', live.weight, 'min="0.1"')}${field('arrowWidth', 'Arrow width (%)', live.arrowWidth * 100, 'min="100"')}${field('arrowLength', 'Arrow length (%)', live.arrowLength * 100, 'min="10"')}${field('concavity', 'Concavity (%)', live.concavity * 100, 'min="-50" max="50"')}</div><label class="lock-label"><input type="checkbox" data-vec="arrowStart" ${live.arrowStart ? 'checked' : ''}> Arrowhead at start</label><label class="lock-label"><input type="checkbox" data-vec="arrowEnd" ${live.arrowEnd ? 'checked' : ''}> Arrowhead at end</label>`;
+    return `<div class="transform-grid">${field('weight', '粗细', live.weight, 'min="0.1"')}${field('arrowWidth', '箭头宽度 (%)', live.arrowWidth * 100, 'min="100"')}${field('arrowLength', '箭头长度 (%)', live.arrowLength * 100, 'min="10"')}${field('concavity', '凹度 (%)', live.concavity * 100, 'min="-50" max="50"')}</div><label class="lock-label"><input type="checkbox" data-vec="arrowStart" ${live.arrowStart ? 'checked' : ''}> 起点箭头</label><label class="lock-label"><input type="checkbox" data-vec="arrowEnd" ${live.arrowEnd ? 'checked' : ''}> 终点箭头</label>`;
   void l;
   return '';
 }
@@ -49,10 +49,10 @@ function shapeTransform(e: Editor, l: Layer, b: ReturnType<typeof shapeBounds>, 
   const on = linked(e);
   return section(
     'layer-transform',
-    'Transform',
-    `<div class="pf-transform"><button type="button" class="icon-button toggle pf-link" data-pf-link="layer" aria-pressed="${on}" title="${on ? 'Width and height keep their proportions (click to unlink)' : 'Link width and height to keep proportions'}" aria-label="Link layer width and height" ${disabled ? 'disabled' : ''}>${svg(on ? 'link' : 'unlink', 14)}</button>
-${len('width', 'W', 'Width of the shape')}${len('x', 'X', 'Left edge of the shape')}${len('height', 'H', 'Height of the shape')}${len('y', 'Y', 'Top edge of the shape')}</div>
-<div class="pf-angle">${pfField({ key: 'layer.rotation', label: 'Angle', title: 'Rotation in degrees', value: formatNumber(l.transform.rotation, 2), suffix: '°', disabled, step: 1 })}<div class="pf-flips">${commandButton(e, 'edit.flip-horizontal', 'Flip horizontal', 'flip-horizontal-2', { iconOnly: true })}${commandButton(e, 'edit.flip-vertical', 'Flip vertical', 'flip-vertical-2', { iconOnly: true })}</div></div>`,
+    '变换',
+    `<div class="pf-transform"><button type="button" class="icon-button toggle pf-link" data-pf-link="layer" aria-pressed="${on}" title="${on ? '保持宽高比（单击取消链接）' : '链接宽高以保持比例'}" aria-label="链接图层宽高" ${disabled ? 'disabled' : ''}>${svg(on ? 'link' : 'unlink', 14)}</button>
+${len('width', '宽', '形状宽度')}${len('x', 'X', '形状左边缘')}${len('height', '高', '形状高度')}${len('y', 'Y', '形状顶边缘')}</div>
+<div class="pf-angle">${pfField({ key: 'layer.rotation', label: '角度', title: '旋转角度（度）', value: formatNumber(l.transform.rotation, 2), suffix: '°', disabled, step: 1 })}<div class="pf-flips">${commandButton(e, 'edit.flip-horizontal', '水平翻转', 'flip-horizontal-2', { iconOnly: true })}${commandButton(e, 'edit.flip-vertical', '垂直翻转', 'flip-vertical-2', { iconOnly: true })}</div></div>`,
   );
 }
 fieldHandlers.set('shape', {
@@ -61,11 +61,11 @@ fieldHandlers.set('shape', {
     const l = e.layer;
     if (!l?.vector || e.selectedIds.size !== 1) return;
     const px = parseLength(text, lengthCtx(e, k));
-    if (px === undefined) return 'Enter a value such as 120, 2 in or 50%.';
+    if (px === undefined) return '请输入有效值，例如 120、2 in 或 50%。';
     const b = shapeBounds(l);
-    if (k === 'x' || k === 'y') return void e.editLayer('Move Shape', (x) => reshape(x, { [k]: px }), 'position');
+    if (k === 'x' || k === 'y') return void e.editLayer('移动形状', (x) => reshape(x, { [k]: px }), 'position');
     const size = b ? linkedSize(b.width, b.height, k, Math.max(0, px), linked(e)) : { [k]: Math.max(0, px) };
-    e.editLayer('Resize Shape', (x) => reshape(x, size), 'position');
+    e.editLayer('调整形状大小', (x) => reshape(x, size), 'position');
   },
 });
 function render(e: Editor, el: HTMLElement, l: Layer) {
@@ -77,13 +77,13 @@ function render(e: Editor, el: HTMLElement, l: Layer) {
   const posLocked = !!layerLock(e.doc.layers, l.id, 'position');
   const groups = componentGroups(shapeDocMask(l));
   const st = vstate(e);
-  const ops: [PathOp, string, string][] = [['combine', 'Combine Shapes', 'path-op-combine'], ['subtract', 'Subtract Front Shape', 'path-op-subtract'], ['intersect', 'Intersect Shape Areas', 'path-op-intersect'], ['exclude', 'Exclude Overlapping Shapes', 'path-op-exclude']];
+  const ops: [PathOp, string, string][] = [['combine', '合并形状', 'path-op-combine'], ['subtract', '减去顶层形状', 'path-op-subtract'], ['intersect', '与形状区域相交', 'path-op-intersect'], ['exclude', '排除重叠形状', 'path-op-exclude']];
   const generic = layerProperties(e, display, l, locked, { transform: false, color: false, header: false });
-  el.innerHTML = `<div class="property-body vec-props"><span class="eyebrow">SHAPE LAYER</span><h3>${live ? `Live ${liveNames[live.kind]}` : 'Shape'}${l.vector!.live && !live ? ' <small class="muted">(transformed)</small>' : ''}</h3>
+  el.innerHTML = `<div class="property-body vec-props"><span class="eyebrow">形状图层</span><h3>${live ? `实时${liveNames[live.kind]}` : '形状'}${l.vector!.live && !live ? ' <small class="muted">(已变换)</small>' : ''}</h3>
 <fieldset ${locked || posLocked ? 'disabled' : ''}>${shapeTransform(e, l, b, locked || posLocked)}</fieldset>
 <fieldset ${locked ? 'disabled' : ''}>${liveSection(l, live)}
-${section('shape-appearance', 'Appearance', `<div class="vec-appearance"><span>Fill</span>${swatchButton('vec-prop-fill', 'Fill', fill, e.color)}<span>Stroke</span>${swatchButton('vec-prop-stroke', 'Stroke', stroke, e.color, true)}</div>`)}
-${section('shape-paths', 'Path Operations', `<p class="muted vec-hint">${groups.length} component${groups.length === 1 ? '' : 's'}${st.paths.size && e.tool === 'path-select' ? ', applies to the selected components' : ', applies to the last component'}</p><div class="vec-ops">${ops.map(([op, label, icon]) => `<button class="icon-button" data-vec-op="${op}" title="${label}" aria-label="${label}">${svg(icon, 16)}</button>`).join('')}<button data-command="path.merge-components" title="Merge overlapping components into one outline">Merge</button></div>`)}</fieldset></div>${generic.replace('<div class="property-body">', '<div class="property-body vec-generic">')}`;
+${section('shape-appearance', '外观', `<div class="vec-appearance"><span>填充</span>${swatchButton('vec-prop-fill', '填充', fill, e.color)}<span>描边</span>${swatchButton('vec-prop-stroke', '描边', stroke, e.color, true)}</div>`)}
+${section('shape-paths', '路径操作', `<p class="muted vec-hint">${groups.length} 个组件${st.paths.size && e.tool === 'path-select' ? '，应用于所选组件' : '，应用于最后一个组件'}</p><div class="vec-ops">${ops.map(([op, label, icon]) => `<button class="icon-button" data-vec-op="${op}" title="${label}" aria-label="${label}">${svg(icon, 16)}</button>`).join('')}<button data-command="path.merge-components" title="将重叠组件合并为单一轮廓">合并</button></div>`)}</fieldset></div>${generic.replace('<div class="property-body">', '<div class="property-body vec-generic">')}`;
   bind(e, el, l.id, fill, stroke);
 }
 function bind(e: Editor, el: HTMLElement, id: string, fill: FillSpec, stroke: StrokeSpec) {
@@ -96,7 +96,7 @@ function bind(e: Editor, el: HTMLElement, id: string, fill: FillSpec, stroke: St
       const k = input.dataset.vec!;
       const v = input.type === 'checkbox' ? Number(input.checked) : input.valueAsNumber;
       if (!Number.isFinite(v)) return;
-      edit('Change Live Shape', (l) => {
+      edit('更改实时形状', (l) => {
         const live = docLive(l);
         if (!live) return;
         const next = structuredClone(live) as LiveShape & Record<string, unknown>;
@@ -136,13 +136,13 @@ function bind(e: Editor, el: HTMLElement, id: string, fill: FillSpec, stroke: St
     unlinked.delete(id);
     const r = live.radii[0];
     if (live.radii.every((v) => v === r)) render(e, el, l!);
-    else edit('Change Live Shape', (x) => setLive(x, { ...live, radii: [r, r, r, r] }));
+    else edit('更改实时形状', (x) => setLive(x, { ...live, radii: [r, r, r, r] }));
   });
   el.querySelector<HTMLElement>('#vec-prop-fill')?.addEventListener('click', (ev) => {
     let spec = fill;
     openPaintPopover(e, ev.currentTarget as HTMLElement, spec, (s) => {
       spec = s as FillSpec;
-      edit('Change Shape Fill', (l) => {
+      edit('更改形状填充', (l) => {
         applyFill(e, l.vector!, spec, shapeBounds(l));
         if (spec.type === 'color') l.color = spec.color || e.color;
       });
@@ -152,7 +152,7 @@ function bind(e: Editor, el: HTMLElement, id: string, fill: FillSpec, stroke: St
     let spec = stroke;
     openPaintPopover(e, ev.currentTarget as HTMLElement, spec, (s) => {
       spec = s as StrokeSpec;
-      edit('Change Shape Stroke', (l) => applyStroke(l.vector!, spec));
+      edit('更改形状描边', (l) => applyStroke(l.vector!, spec));
     });
   });
   el.querySelectorAll<HTMLButtonElement>('[data-vec-op]').forEach((b) =>

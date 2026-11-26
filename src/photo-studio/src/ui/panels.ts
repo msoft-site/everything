@@ -5,6 +5,7 @@ import { hasMask, drawMask } from "../model/masks";
 import {
   allLayers,
   blends,
+  blendLabel,
   type Layer,
   type PhotoDocument,
 } from "../model/document";
@@ -62,7 +63,7 @@ export function strokeProperties(l: Layer, doc: PhotoDocument) {
   }`;
 }
 export function layerOptions(l?: Layer, locked = l?.locked ?? false) {
-  return `<label class="blend-control"><span class="sr-only">混合模式</span><select id="blend" ${!l || locked ? "disabled" : ""}>${blends.map((b) => `<option value="${b}" ${l?.blend === b ? "selected" : ""}>${b[0].toUpperCase() + b.slice(1)}</option>`).join("")}</select></label><label class="opacity-control">不透明度 <input id="opacity" type="number" min="0" max="100" value="${Math.round((l?.opacity ?? 1) * 100)}" ${!l || locked ? "disabled" : ""}>%</label>`;
+  return `<label class="blend-control"><span class="sr-only">混合模式</span><select id="blend" ${!l || locked ? "disabled" : ""}>${blends.map((b) => `<option value="${b}" ${l?.blend === b ? "selected" : ""}>${blendLabel(b)}</option>`).join("")}</select></label><label class="opacity-control">不透明度 <input id="opacity" type="number" min="0" max="100" value="${Math.round((l?.opacity ?? 1) * 100)}" ${!l || locked ? "disabled" : ""}>%</label>`;
 }
 export function layerList(
   layers: Layer[],

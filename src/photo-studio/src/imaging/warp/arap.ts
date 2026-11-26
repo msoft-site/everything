@@ -19,9 +19,9 @@ import type { TriMesh } from './pin-mesh';
 /** How much triangles may change size: none, some, or freely (similarity). */
 export type ArapMode = 'rigid' | 'normal' | 'distort';
 export const ARAP_MODES: [ArapMode, string][] = [
-  ['rigid', 'Rigid'],
-  ['normal', 'Normal'],
-  ['distort', 'Distort'],
+  ['rigid', '刚性'],
+  ['normal', '正常'],
+  ['distort', '扭曲'],
 ];
 export type ArapPin = {
   // Triangle and barycentric weights of the pinned point in the rest mesh.

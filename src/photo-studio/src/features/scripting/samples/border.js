@@ -1,15 +1,15 @@
-// @name Add Border
-// @description Draws a solid border around the canvas, or around the selection, on a new layer.
+// @name 添加边框
+// @description 在新图层上围绕画布或选区绘制实心边框。
 const doc = await studio.documents.active();
-if (!doc) return studio.ui.alert('Open a document first.');
+if (!doc) return studio.ui.alert('请先打开一个文档。');
 const selection = await doc.selection();
 
-const v = await studio.ui.form('Add Border', [
-  { name: 'width', label: 'Width (px)', type: 'number', min: 1, max: 1000, step: 1, value: Math.max(2, Math.round(Math.min(doc.width, doc.height) / 50)) },
-  { name: 'color', label: 'Color', type: 'color', value: '#ffffff' },
-  { name: 'where', label: 'Around', type: 'select', value: selection ? 'selection' : 'canvas', options: selection ? [['selection', 'The selection bounds'], ['canvas', 'The canvas']] : [['canvas', 'The canvas']] },
-  { name: 'inside', label: 'Draw inside the edge', type: 'checkbox', value: true },
-], { submit: 'Add' });
+const v = await studio.ui.form('添加边框', [
+  { name: 'width', label: '边框宽度 (像素)', type: 'number', min: 1, max: 1000, step: 1, value: Math.max(2, Math.round(Math.min(doc.width, doc.height) / 50)) },
+  { name: 'color', label: '颜色', type: 'color', value: '#ffffff' },
+  { name: 'where', label: '边框范围', type: 'select', value: selection ? 'selection' : 'canvas', options: selection ? [['selection', '选区边界'], ['canvas', '画布']] : [['canvas', '画布']] },
+  { name: 'inside', label: '在边缘内侧绘制', type: 'checkbox', value: true },
+], { submit: '添加' });
 if (!v) return;
 
 const box = v.where === 'selection' && selection ? selection : { x: 0, y: 0, width: doc.width, height: doc.height };

@@ -84,7 +84,7 @@ class PinWarpSession extends WarpSession<Snap> {
       this.s.expansion = record.expansion;
     }
     if (!this.rebuild()) {
-      this.e.message('The layer has no visible pixels to warp.');
+      this.e.message('图层没有可见像素可变形。');
       this.cancel();
       return;
     }
@@ -338,18 +338,18 @@ class PinWarpSession extends WarpSession<Snap> {
     const angle = one ? (one.angle ?? this.solver?.pinAngle(one) ?? 0) * DEG : 0;
     const opt = (list: [string, string][], v: string) => list.map(([k, l]) => `<option value="${k}" ${k === v ? 'selected' : ''}>${escapeXML(l)}</option>`).join('');
     const busy = !this.ready ? 'disabled' : '';
-    let html = `<span class="transform-label">Pin Warp</span>`;
-    html += `<label>Mode <select id="pw-mode" aria-label="Warp mode" ${busy}>${opt(ARAP_MODES, s.mode)}</select></label>`;
-    html += `<label>Density <select id="pw-density" aria-label="Mesh density" ${busy}>${opt(PIN_DENSITIES, s.density)}</select></label>`;
-    html += `<label title="How far the mesh extends past the layer’s visible pixels">Expansion <input id="pw-expansion" type="number" min="0" max="200" step="1" value="${s.expansion}" aria-label="Mesh expansion" ${busy}>px</label>`;
-    html += `<label class="transform-setting"><input id="pw-mesh" type="checkbox" ${meshShown(this.e) ? 'checked' : ''}>Show Mesh</label>`;
-    html += `<span class="divider"></span><span class="pw-caption">Pin Depth</span>`;
-    html += `<button class="icon-button" data-pw="forward" title="Bring the selected pins’ area forward" aria-label="Bring pin forward" ${sel.length ? '' : 'disabled'}>${svg('pin-forward', 16)}</button>`;
-    html += `<button class="icon-button" data-pw="backward" title="Send the selected pins’ area backward" aria-label="Send pin backward" ${sel.length ? '' : 'disabled'}>${svg('pin-backward', 16)}</button>`;
-    html += `<span class="divider"></span><label title="Rotation around the selected pins">Rotate <select id="pw-rotate" aria-label="Pin rotation" ${sel.length ? '' : 'disabled'}><option value="auto" ${fixed ? '' : 'selected'}>Auto</option><option value="fixed" ${fixed ? 'selected' : ''}>Fixed</option></select></label>`;
-    html += `<label><input id="pw-angle" type="number" step="1" value="${Math.round(angle * 10) / 10}" aria-label="Pin angle" ${one && fixed ? '' : 'disabled'}>°</label>`;
-    html += `<span class="divider"></span><button class="icon-button" data-pw="reset" title="Remove all pins" aria-label="Remove all pins" ${this.pins.length ? '' : 'disabled'}>${svg('pins-clear', 16)}</button>`;
-    html += `<button data-pw="cancel" class="icon-button" title="Cancel Pin Warp (Escape)" aria-label="Cancel Pin Warp">${svg('ban', 16)}</button><button data-pw="commit" class="icon-button transform-apply" title="Commit Pin Warp (Enter)" aria-label="Commit Pin Warp">${svg('check', 16)}</button>`;
+    let html = `<span class="transform-label">操控变形</span>`;
+    html += `<label>模式 <select id="pw-mode" aria-label="变形模式" ${busy}>${opt(ARAP_MODES, s.mode)}</select></label>`;
+    html += `<label>浓度 <select id="pw-density" aria-label="网格浓度" ${busy}>${opt(PIN_DENSITIES, s.density)}</select></label>`;
+    html += `<label title="网格超出图层可见像素的扩展范围">扩展 <input id="pw-expansion" type="number" min="0" max="200" step="1" value="${s.expansion}" aria-label="网格扩展" ${busy}>像素</label>`;
+    html += `<label class="transform-setting"><input id="pw-mesh" type="checkbox" ${meshShown(this.e) ? 'checked' : ''}>显示网格</label>`;
+    html += `<span class="divider"></span><span class="pw-caption">图钉深度</span>`;
+    html += `<button class="icon-button" data-pw="forward" title="将所选图钉区域前移" aria-label="将图钉前移" ${sel.length ? '' : 'disabled'}>${svg('pin-forward', 16)}</button>`;
+    html += `<button class="icon-button" data-pw="backward" title="将所选图钉区域后移" aria-label="将图钉后移" ${sel.length ? '' : 'disabled'}>${svg('pin-backward', 16)}</button>`;
+    html += `<span class="divider"></span><label title="围绕所选图钉旋转">旋转 <select id="pw-rotate" aria-label="图钉旋转" ${sel.length ? '' : 'disabled'}><option value="auto" ${fixed ? '' : 'selected'}>自动</option><option value="fixed" ${fixed ? 'selected' : ''}>固定</option></select></label>`;
+    html += `<label><input id="pw-angle" type="number" step="1" value="${Math.round(angle * 10) / 10}" aria-label="图钉角度" ${one && fixed ? '' : 'disabled'}>°</label>`;
+    html += `<span class="divider"></span><button class="icon-button" data-pw="reset" title="移除所有图钉" aria-label="移除所有图钉" ${this.pins.length ? '' : 'disabled'}>${svg('pins-clear', 16)}</button>`;
+    html += `<button data-pw="cancel" class="icon-button" title="取消操控变形 (Escape)" aria-label="取消操控变形">${svg('ban', 16)}</button><button data-pw="commit" class="icon-button transform-apply" title="提交操控变形 (Enter)" aria-label="提交操控变形">${svg('check', 16)}</button>`;
     return html;
   }
   bindOptions(el: HTMLElement) {
@@ -531,7 +531,7 @@ class PinWarpSession extends WarpSession<Snap> {
         before?.maskGrid && !before.maskUnlinked
           ? carryMask(store, before.maskGrid, rect, (img) => (out.width > 0 && out.height > 0 ? { image: renderTriangles(img, { src: rest, dst, tris, order }, out, 'bilinear'), x: out.x, y: out.y } : undefined))
           : undefined;
-      this.e.command('Pin Warp', (d) => {
+      this.e.command('操控变形', (d) => {
         const l = findLayer(d.layers, id);
         if (!l) return;
         setLayerPixels(l, grid, d);
@@ -543,7 +543,7 @@ class PinWarpSession extends WarpSession<Snap> {
     const assets = this.e.assets;
     if (!changed || !image) {
       // All pins removed: the object is placed by its corners again.
-      this.e.command('Pin Warp', (d) => {
+      this.e.command('操控变形', (d) => {
         const l = findLayer(d.layers, id);
         if (!l) return;
         if (l.embed?.frame) delete l.embed.frame.pins;
@@ -561,7 +561,7 @@ class PinWarpSession extends WarpSession<Snap> {
     };
     // The frame's cached render; its PNG is encoded off the main thread.
     const asset = assets.addPixels(image.width, image.height, image.data, async () => new Blob([(await pngJob(image).promise) as Uint8Array<ArrayBuffer>], { type: 'image/png' }));
-    this.e.command('Pin Warp', (d) => {
+    this.e.command('操控变形', (d) => {
       const l = findLayer(d.layers, id);
       if (!l || l.kind !== 'image') return;
       ensureEmbed(d, l, assets);
@@ -573,7 +573,7 @@ class PinWarpSession extends WarpSession<Snap> {
 
 /** Start Pin Warp on the selected layer. */
 export async function startPinWarp(e: Editor) {
-  const target = await warpTarget(e, 'Pin Warp', true);
+  const target = await warpTarget(e, '操控变形', true);
   if (!target) return;
   const l = target.layer;
   if (target.kind === 'pixel') {
@@ -588,7 +588,7 @@ export async function startPinWarp(e: Editor) {
   const content = contentSource(e.doc, l);
   const frame = effectiveFrame(l);
   const quad = frame?.quad ?? transformQuad(l.transform);
-  if (frame?.mesh) e.message('Pin Warp starts from the object’s corners; committing replaces its warp.');
+  if (frame?.mesh) e.message('操控变形从对象的角点开始；提交将替换其变形。');
   const s = new PinWarpSession(e, l.id, rectToQuad({ x: 0, y: 0, width: content.width, height: content.height }, quad), { quad, pins: l.embed?.frame?.pins });
   s.begin();
   try {

@@ -15,26 +15,26 @@ const num = (key: string, label: string, title: string, unit: string, attrs: str
 
 const clonePanel: Panel = {
   id: 'clone-source',
-  title: 'Clone Source',
+  title: '仿制源',
   icon: 'copy-plus',
   location: 'strip',
   hidden: true,
   mount: (e, el) => {
     el.classList.add('clone-source-panel');
-    el.innerHTML = `<div class="cs-slots" role="radiogroup" aria-label="Clone sources">${Array.from({ length: SOURCE_COUNT }, (_, i) => `<button type="button" role="radio" class="cs-slot" data-slot="${i}" aria-label="Clone source ${i + 1}">${svg('stamp', 16)}<span>${i + 1}</span></button>`).join('')}</div>
+    el.innerHTML = `<div class="cs-slots" role="radiogroup" aria-label="仿制源">${Array.from({ length: SOURCE_COUNT }, (_, i) => `<button type="button" role="radio" class="cs-slot" data-slot="${i}" aria-label="仿制源 ${i + 1}">${svg('stamp', 16)}<span>${i + 1}</span></button>`).join('')}</div>
 <p class="cs-source" aria-live="polite"></p>
 <div class="cs-grid">
-${num('offsetX', 'X', 'Offset X', 'px', 'step="1"')}${num('offsetY', 'Y', 'Offset Y', 'px', 'step="1"')}
-${num('scaleW', 'W', 'Width scale', '%', 'min="1" max="1000" step="1"')}${num('scaleH', 'H', 'Height scale', '%', 'min="1" max="1000" step="1"')}
-${num('rotation', '∠', 'Rotation angle', '°', 'min="-360" max="360" step="0.1"')}
-<div class="cs-buttons"><button type="button" class="icon-button toggle" data-cs-toggle="link" title="Link width and height" aria-label="Link width and height">${svg('link', 15)}</button><button type="button" class="icon-button toggle" data-cs-toggle="flipH" title="Flip horizontal" aria-label="Flip horizontal">${svg('flip-horizontal-2', 15)}</button><button type="button" class="icon-button toggle" data-cs-toggle="flipV" title="Flip vertical" aria-label="Flip vertical">${svg('flip-vertical-2', 15)}</button><button type="button" class="icon-button" data-cs-act="reset" title="Reset transform" aria-label="Reset transform">${svg('rotate-ccw', 15)}</button></div>
+${num('offsetX', 'X', '水平偏移 X', 'px', 'step="1"')}${num('offsetY', 'Y', '垂直偏移 Y', 'px', 'step="1"')}
+${num('scaleW', 'W', '宽度缩放', '%', 'min="1" max="1000" step="1"')}${num('scaleH', 'H', '高度缩放', '%', 'min="1" max="1000" step="1"')}
+${num('rotation', '∠', '旋转角度', '°', 'min="-360" max="360" step="0.1"')}
+<div class="cs-buttons"><button type="button" class="icon-button toggle" data-cs-toggle="link" title="锁定宽度和高度" aria-label="锁定宽度和高度">${svg('link', 15)}</button><button type="button" class="icon-button toggle" data-cs-toggle="flipH" title="水平翻转" aria-label="水平翻转">${svg('flip-horizontal-2', 15)}</button><button type="button" class="icon-button toggle" data-cs-toggle="flipV" title="垂直翻转" aria-label="垂直翻转">${svg('flip-vertical-2', 15)}</button><button type="button" class="icon-button" data-cs-act="reset" title="重置变换" aria-label="重置变换">${svg('rotate-ccw', 15)}</button></div>
 </div>
-<fieldset class="cs-overlay"><legend><label><input type="checkbox" data-ov="show"> Show Overlay</label></legend>
-<label class="cs-field"><span>Opacity</span><input type="number" min="0" max="100" step="1" data-ov="opacity" aria-label="Overlay opacity"><span class="cs-unit">%</span></label>
-<label class="cs-field"><span>Blend</span><select data-ov="blend" aria-label="Overlay blend mode"><option value="normal">Normal</option><option value="darken">Darken</option><option value="lighten">Lighten</option><option value="difference">Difference</option></select></label>
-<div class="cs-checks"><label><input type="checkbox" data-ov="clipped"> Clipped</label><label><input type="checkbox" data-ov="autoHide"> Auto Hide</label><label><input type="checkbox" data-ov="invert"> Invert</label></div>
+<fieldset class="cs-overlay"><legend><label><input type="checkbox" data-ov="show"> 显示叠加</label></legend>
+<label class="cs-field"><span>不透明度</span><input type="number" min="0" max="100" step="1" data-ov="opacity" aria-label="叠加不透明度"><span class="cs-unit">%</span></label>
+<label class="cs-field"><span>混合模式</span><select data-ov="blend" aria-label="叠加混合模式"><option value="normal">正常</option><option value="darken">变暗</option><option value="lighten">变亮</option><option value="difference">差值</option></select></label>
+<div class="cs-checks"><label><input type="checkbox" data-ov="clipped"> 剪贴</label><label><input type="checkbox" data-ov="autoHide"> 自动隐藏</label><label><input type="checkbox" data-ov="invert"> 反相</label></div>
 </fieldset>
-<p class="hint">Alt-click (Option-click) with the Clone Stamp or Healing Brush to set the selected source. Sources can come from any open document.</p>`;
+<p class="hint">按住 Alt 键（Option 键）并使用仿制图章或修复画笔单击以设置选定仿制源。源可以来自任何打开的文档。</p>`;
     el.addEventListener('click', (ev) => {
       const t = ev.target as HTMLElement;
       const slot = t.closest<HTMLElement>('[data-slot]');
@@ -101,11 +101,11 @@ function sync(el: HTMLElement) {
     const s = cloneState.sources[i];
     b.setAttribute('aria-checked', String(i === cloneState.active));
     b.classList.toggle('set', !!s);
-    b.title = s ? `Source ${i + 1}: ${s.docName}${s.layerName ? ` — ${s.layerName}` : ''} (${Math.round(s.point[0])}, ${Math.round(s.point[1])})` : `Source ${i + 1}: not set`;
+    b.title = s ? `源 ${i + 1}: ${s.docName}${s.layerName ? ` — ${s.layerName}` : ''} (${Math.round(s.point[0])}, ${Math.round(s.point[1])})` : `源 ${i + 1}: 未设置`;
   }
   el.querySelector('.cs-source')!.innerHTML = src
-    ? `<span>${escapeXML(src.docName)}${src.layerName ? ` — ${escapeXML(src.layerName)}` : ''}</span><span class="cs-point">${Math.round(src.point[0])}, ${Math.round(src.point[1])}</span><button type="button" class="link-button" data-cs-act="clear">Clear</button>`
-    : '<span class="muted">Source not set</span>';
+    ? `<span>${escapeXML(src.docName)}${src.layerName ? ` — ${escapeXML(src.layerName)}` : ''}</span><span class="cs-point">${Math.round(src.point[0])}, ${Math.round(src.point[1])}</span><button type="button" class="link-button" data-cs-act="clear">清除</button>`
+    : '<span class="muted">未设置源</span>';
   const off = src?.offset;
   for (const k of ['offsetX', 'offsetY'] as const) {
     const input = el.querySelector<HTMLInputElement>(`[data-cs="${k}"]`)!;
@@ -136,7 +136,7 @@ export function installClonePanel(e: Editor) {
   registerCommand(
     {
       id: 'clone-source.reset-all',
-      label: 'Reset All Transforms',
+      label: '重置所有变换',
       recordable: false,
       run: (e) => {
         for (const s of cloneState.sources) if (s) Object.assign(s, identityCloneTransform());
@@ -147,7 +147,7 @@ export function installClonePanel(e: Editor) {
     },
     {
       id: 'clone-source.clear-all',
-      label: 'Clear All Sources',
+      label: '清除所有仿制源',
       recordable: false,
       enabled: () => cloneState.sources.some(Boolean),
       run: (e) => {

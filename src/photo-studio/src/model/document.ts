@@ -270,8 +270,37 @@ export const blends: Blend[] = [
 ];
 // Menu separators fall before these modes.
 export const blendGroupStarts: Blend[] = ["darken", "lighten", "overlay", "difference", "hue"];
-export const blendLabel = (b: Blend) =>
-  b === "linear dodge" ? "Linear Dodge (Add)" : b.replace(/\b\w/g, (c) => c.toUpperCase());
+const BLEND_NAMES: Record<Blend, string> = {
+  normal: '正常',
+  dissolve: '溶解',
+  darken: '变暗',
+  multiply: '正片叠底',
+  'color burn': '颜色加深',
+  'linear burn': '线性加深',
+  'darker color': '深色',
+  lighten: '变亮',
+  screen: '滤色',
+  'color dodge': '颜色减淡',
+  'linear dodge': '线性减淡 (添加)',
+  'lighter color': '浅色',
+  overlay: '叠加',
+  'soft light': '柔光',
+  'hard light': '强光',
+  'vivid light': '亮光',
+  'linear light': '线性光',
+  'pin light': '点光',
+  'hard mix': '实色混合',
+  difference: '差值',
+  exclusion: '排除',
+  subtract: '减去',
+  divide: '划分',
+  hue: '色相',
+  saturation: '饱和度',
+  color: '颜色',
+  luminosity: '明度',
+  'pass through': '穿透',
+};
+export const blendLabel = (b: Blend) => BLEND_NAMES[b] ?? (b === "linear dodge" ? "Linear Dodge (Add)" : b.replace(/\b\w/g, (c) => c.toUpperCase()));
 export const defaultFilters = (): Filters => ({
   brightness: 0,
   contrast: 0,

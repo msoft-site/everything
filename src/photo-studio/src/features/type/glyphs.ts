@@ -13,8 +13,8 @@ import './type-panels.css';
 
 export type GlyphCategory = 'all' | 'letters' | 'accented' | 'numbers' | 'punctuation' | 'symbols' | 'currency' | 'math' | 'arrows' | 'greek' | 'cyrillic';
 export const GLYPH_CATEGORIES: [GlyphCategory, string][] = [
-  ['all', 'Entire Font'], ['letters', 'Basic Latin Letters'], ['accented', 'Accented Latin'], ['numbers', 'Numbers'], ['punctuation', 'Punctuation'],
-  ['symbols', 'Symbols'], ['currency', 'Currency'], ['math', 'Math'], ['arrows', 'Arrows'], ['greek', 'Greek'], ['cyrillic', 'Cyrillic'],
+  ['all', '整个字体'], ['letters', '基础拉丁字母'], ['accented', '带重音拉丁字母'], ['numbers', '数字'], ['punctuation', '标点符号'],
+  ['symbols', '符号'], ['currency', '货币符号'], ['math', '数学符号'], ['arrows', '箭头'], ['greek', '希腊字母'], ['cyrillic', '西里尔字母'],
 ];
 /** Category of a code point for the panel's filter (pure, tested). */
 export function glyphCategory(cp: number): Exclude<GlyphCategory, 'all'> {
@@ -82,7 +82,7 @@ export async function insertGlyph(e: Editor, ch: string, family?: string, face?:
   if (!session) {
     const l = e.layer;
     if (l?.kind !== 'text') {
-      e.message('Click in text with the Type tool, or select a text layer, to insert glyphs.');
+      e.message('使用文字工具在文本中单击，或选择文本图层以插入字形。');
       return false;
     }
     if (!e.tool.startsWith('type')) e.setTool('type');
@@ -123,16 +123,16 @@ const fontCss = (family: string) => `"${family.replace(/"/g, '')}", sans-serif`;
 
 export const glyphsPanel: Panel = {
   id: 'glyphs',
-  title: 'Glyphs',
+  title: '字形',
   icon: 'glyphs',
   location: 'strip',
   hidden: true,
   mount: (e, el) => {
     el.classList.add('glyphs-panel');
-    el.innerHTML = `<div class="gl-font"><select data-gl="family" aria-label="Font family"></select><select data-gl="style" aria-label="Font style"></select></div>
-<div class="gl-head"><select data-gl="category" aria-label="Show">${GLYPH_CATEGORIES.map(([v, l]) => `<option value="${v}">${escapeXML(l)}</option>`).join('')}</select><input type="range" data-gl="size" min="20" max="56" aria-label="Glyph size"></div>
-<div class="gl-label">Recently Used</div><div class="gl-recent" role="listbox" aria-label="Recently used glyphs"></div>
-<div class="gl-grid" role="listbox" aria-label="Glyphs"></div>
+    el.innerHTML = `<div class="gl-font"><select data-gl="family" aria-label="字体系列"></select><select data-gl="style" aria-label="字体样式"></select></div>
+<div class="gl-head"><select data-gl="category" aria-label="显示">${GLYPH_CATEGORIES.map(([v, l]) => `<option value="${v}">${escapeXML(l)}</option>`).join('')}</select><input type="range" data-gl="size" min="20" max="56" aria-label="字形大小"></div>
+<div class="gl-label">最近使用</div><div class="gl-recent" role="listbox" aria-label="最近使用的字形"></div>
+<div class="gl-grid" role="listbox" aria-label="字形列表"></div>
 <div class="gl-info" aria-live="polite"></div>`;
     el.addEventListener('change', (ev) => {
       const t = ev.target as HTMLSelectElement | HTMLInputElement;
@@ -161,8 +161,8 @@ export const glyphsPanel: Panel = {
       const retry = (ev.target as HTMLElement).closest<HTMLButtonElement>('[data-gl-retry]');
       if (!retry) return;
       retry.disabled = true;
-      retry.textContent = 'Retrying…';
-      el.querySelector('.gl-info')!.textContent = 'Loading glyphs…';
+      retry.textContent = '正在重试…';
+      el.querySelector('.gl-info')!.textContent = '正在加载字形…';
       renderedKey = '';
       void render(e, el);
     });
@@ -223,23 +223,23 @@ async function render(e: Editor, el: HTMLElement) {
     cps = await codePointsFor(state.family, state.italic);
   } catch {
     if (renderedKey !== key) return;
-    grid.innerHTML = '<button type="button" class="gl-retry secondary" data-gl-retry>Retry</button>';
-    el.querySelector('.gl-info')!.textContent = 'Could not load glyphs. Try again.';
+    grid.innerHTML = '<button type="button" class="gl-retry secondary" data-gl-retry>重试</button>';
+    el.querySelector('.gl-info')!.textContent = '无法加载字形，请重试。';
     return;
   }
   if (renderedKey !== key) return;
   const shown = state.category === 'all' ? cps : cps.filter((cp) => glyphCategory(cp) === state.category);
   grid.innerHTML = shown.length
     ? shown.map((cp) => `<button type="button" role="option" class="gl-cell" data-cp="${cp}" title="U+${cp.toString(16).toUpperCase().padStart(4, '0')}">${escapeXML(String.fromCodePoint(cp))}</button>`).join('')
-    : `<p class="muted">No glyphs in this category.</p>`;
-  el.querySelector('.gl-info')!.textContent = `${shown.length} glyphs${findBundled(state.family) ? '' : ' (common characters; this font’s file cannot be read)'}`;
+    : `<p class="muted">此类别中无字形。</p>`;
+  el.querySelector('.gl-info')!.textContent = `${shown.length} 个字形${findBundled(state.family) ? '' : '（通用字符；此字体文件无法直接读取）'}`;
 }
 function renderRecent(el: HTMLElement) {
   const list = recentGlyphs();
   const host = el.querySelector<HTMLElement>('.gl-recent')!;
   host.innerHTML = list.length
     ? list.map((r) => `<button type="button" role="option" class="gl-cell" data-cp="${r.cp}" data-family="${escapeXML(r.family)}" style="font-family:${escapeXML(fontCss(r.family))}" title="${escapeXML(r.family)} U+${r.cp.toString(16).toUpperCase().padStart(4, '0')}">${escapeXML(String.fromCodePoint(r.cp))}</button>`).join('')
-    : '<span class="muted">Double-click a glyph to insert it.</span>';
+    : '<span class="muted">双击字形以将其插入。</span>';
 }
 
 export function installGlyphs(e: Editor) {

@@ -54,7 +54,7 @@ export function saveUserGradients(list: Gradient[]) {
 }
 export function allGradientFolders(): { name: string; gradients: Gradient[] }[] {
   const user = loadUserGradients();
-  return [...gradientPresets, ...(user.length ? [{ name: 'Saved', gradients: user }] : [])];
+  return [...gradientPresets, ...(user.length ? [{ name: '已存储', gradients: user }] : [])];
 }
 export const colors = (e: Editor): { foreground: RGB; background: RGB } => ({ foreground: hexRgb(e.color), background: hexRgb(e.background) });
 /** A copy with foreground/background stops replaced by the current colors. */

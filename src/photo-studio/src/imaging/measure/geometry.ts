@@ -89,13 +89,13 @@ export function validScale(s: unknown): s is MeasurementScale {
 // ----- Ruler units (Info panel and rulers) -----
 export type RulerUnit = 'px' | 'in' | 'cm' | 'mm' | 'pt' | 'pica' | 'percent';
 export const RULER_UNITS: [RulerUnit, string, string][] = [
-  ['px', 'Pixels', 'px'],
-  ['in', 'Inches', 'in'],
-  ['cm', 'Centimeters', 'cm'],
-  ['mm', 'Millimeters', 'mm'],
-  ['pt', 'Points', 'pt'],
-  ['pica', 'Picas', 'pc'],
-  ['percent', 'Percent', '%'],
+  ['px', '像素', 'px'],
+  ['in', '英寸', 'in'],
+  ['cm', '厘米', 'cm'],
+  ['mm', '毫米', 'mm'],
+  ['pt', '点', 'pt'],
+  ['pica', '派卡', 'pc'],
+  ['percent', '百分比', '%'],
 ];
 const unitsPerInch: Record<string, number> = { in: 1, cm: 2.54, mm: 25.4, pt: 72, pica: 6 };
 /** Pixels in one unit at `ppi`; percent is relative to `base` pixels. */

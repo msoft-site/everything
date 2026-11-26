@@ -1,11 +1,11 @@
-// @name Random Color Swatches
-// @description Builds a strip of harmonious color swatches with their hex codes as a group of layers.
-const v = await studio.ui.form('Random Color Swatches', [
-  { name: 'count', label: 'Swatches', type: 'number', min: 2, max: 12, step: 1, value: 5 },
-  { name: 'scheme', label: 'Scheme', type: 'select', value: 'analogous', options: [['analogous', 'Neighboring hues'], ['complementary', 'Opposite hues'], ['triad', 'Three-way'], ['shades', 'Shades of one hue'], ['random', 'Anything goes']] },
-  { name: 'labels', label: 'Hex codes under the swatches', type: 'checkbox', value: true },
-  { name: 'seed', label: 'Seed (0 picks a new one)', type: 'number', min: 0, max: 999999, step: 1, value: 0 },
-], { submit: 'Create' });
+// @name 随机色板
+// @description 生成一组和谐的颜色样本色块条，并在图层组中附带各色块的十六进制颜色代码。
+const v = await studio.ui.form('随机色板', [
+  { name: 'count', label: '样本数量', type: 'number', min: 2, max: 12, step: 1, value: 5 },
+  { name: 'scheme', label: '配色方案', type: 'select', value: 'analogous', options: [['analogous', '邻近色'], ['complementary', '互补色'], ['triad', '三等分配色'], ['shades', '同色系明暗'], ['random', '完全随机']] },
+  { name: 'labels', label: '色块下方标注十六进制代码', type: 'checkbox', value: true },
+  { name: 'seed', label: '随机种子 (0 为每次随机)', type: 'number', min: 0, max: 999999, step: 1, value: 0 },
+], { submit: '创建' });
 if (!v) return;
 
 // A small seeded generator, so a seed reproduces its palette.

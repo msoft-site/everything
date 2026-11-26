@@ -11,7 +11,7 @@ export function installGenerations(e: Editor) {
   void e;
   registerPanel(
     lazyPanel(
-      { id: 'generations', title: 'Generation History', icon: 'generation-history', location: 'strip', menu: () => ['generations.clear'] },
+      { id: 'generations', title: '生成历史记录', icon: 'generation-history', location: 'strip', menu: () => ['generations.clear'] },
       lazy(async () => {
         const m = await panel();
         return { mount: m.mountGenerations, update: m.updateGenerations };
@@ -20,9 +20,9 @@ export function installGenerations(e: Editor) {
   );
   registerCommand({
     id: 'generations.clear',
-    label: 'Clear Generation History…',
+    label: '清空生成历史记录…',
     recordable: false,
-    description: 'Delete every AI result kept in this browser (layers already placed stay).',
+    description: '删除本浏览器中保存的全部 AI 生成结果（已放置的图层将保留）。',
     ...lazyRun(panel, (m, ed) => m.clearGenerations(ed)),
   });
 }

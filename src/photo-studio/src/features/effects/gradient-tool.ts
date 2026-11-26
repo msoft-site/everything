@@ -27,7 +27,7 @@ const typeGlyph: Record<GradientType, string> = {
 };
 const defs = '<defs><linearGradient id="fxg-l"><stop offset="0" stop-color="currentColor"/><stop offset="1" stop-color="currentColor" stop-opacity="0"/></linearGradient><linearGradient id="fxg-x"><stop offset="0" stop-color="currentColor" stop-opacity="0"/><stop offset=".5" stop-color="currentColor"/><stop offset="1" stop-color="currentColor" stop-opacity="0"/></linearGradient><radialGradient id="fxg-r"><stop offset="0" stop-color="currentColor"/><stop offset="1" stop-color="currentColor" stop-opacity="0"/></radialGradient></defs>';
 const glyph = (t: GradientType) => `<svg class="icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">${defs}${typeGlyph[t]}</svg>`;
-const typeLabels: Record<GradientType, string> = { linear: 'Linear', radial: 'Radial', angle: 'Angle', reflected: 'Reflected', diamond: 'Diamond' };
+const typeLabels: Record<GradientType, string> = { linear: '线性', radial: '径向', angle: '角度', reflected: '对称', diamond: '菱形' };
 
 type Drag = {
   target: PixelTarget;
@@ -101,21 +101,21 @@ function schedule(e: Editor, d: Drag) {
 }
 export const gradientTool: Tool = {
   id: 'gradient',
-  label: 'Gradient Tool',
+  label: '渐变工具',
   key: 'G',
   icon: 'gradient',
   group: 'fill',
   cursor: () => 'crosshair',
   options: (e) => {
     const o = effectsState.tool;
-    return `<button type="button" class="gradient-swatch tool-gradient" data-gradient-pick style="background:${gradientToCss(effectsState.gradient, colors(e))}, var(--fx-checker)" title="Click to choose or edit the gradient" aria-label="Gradient"></button>
-<span class="gradient-types" role="group" aria-label="Gradient type">${(Object.keys(typeLabels) as GradientType[]).map((t) => `<button type="button" class="icon-button toggle" data-gradient-type="${t}" aria-pressed="${o.type === t}" title="${typeLabels[t]} Gradient" aria-label="${typeLabels[t]} gradient">${glyph(t)}</button>`).join('')}</span>
-<label>Mode <select id="gradient-mode" aria-label="Gradient blend mode">${blendOptions(o.mode)}</select></label>
-<label>Opacity <input id="gradient-opacity" type="number" min="1" max="100" value="${Math.round(o.opacity * 100)}" aria-label="Gradient opacity (%)">%</label>
-<label class="transform-setting"><input id="gradient-reverse" type="checkbox" ${o.reverse ? 'checked' : ''}>Reverse</label>
-<label class="transform-setting"><input id="gradient-dither" type="checkbox" ${o.dither ? 'checked' : ''}>Dither</label>
-<label class="transform-setting"><input id="gradient-transparency" type="checkbox" ${o.transparency ? 'checked' : ''}>Transparency</label>
-<label>Method <select id="gradient-method" aria-label="Interpolation method"><option value="perceptual" ${o.method === 'perceptual' ? 'selected' : ''}>Perceptual</option><option value="linear" ${o.method === 'linear' ? 'selected' : ''}>Linear</option><option value="classic" ${o.method === 'classic' ? 'selected' : ''}>Classic</option></select></label>`;
+    return `<button type="button" class="gradient-swatch tool-gradient" data-gradient-pick style="background:${gradientToCss(effectsState.gradient, colors(e))}, var(--fx-checker)" title="单击以选取或编辑渐变" aria-label="渐变"></button>
+<span class="gradient-types" role="group" aria-label="渐变类型">${(Object.keys(typeLabels) as GradientType[]).map((t) => `<button type="button" class="icon-button toggle" data-gradient-type="${t}" aria-pressed="${o.type === t}" title="${typeLabels[t]}渐变" aria-label="${typeLabels[t]}渐变">${glyph(t)}</button>`).join('')}</span>
+<label>模式 <select id="gradient-mode" aria-label="渐变混合模式">${blendOptions(o.mode)}</select></label>
+<label>不透明度 <input id="gradient-opacity" type="number" min="1" max="100" value="${Math.round(o.opacity * 100)}" aria-label="渐变不透明度 (%)">%</label>
+<label class="transform-setting"><input id="gradient-reverse" type="checkbox" ${o.reverse ? 'checked' : ''}>反向</label>
+<label class="transform-setting"><input id="gradient-dither" type="checkbox" ${o.dither ? 'checked' : ''}>仿色</label>
+<label class="transform-setting"><input id="gradient-transparency" type="checkbox" ${o.transparency ? 'checked' : ''}>透明区域</label>
+<label>方法 <select id="gradient-method" aria-label="插值方法"><option value="perceptual" ${o.method === 'perceptual' ? 'selected' : ''}>感知</option><option value="linear" ${o.method === 'linear' ? 'selected' : ''}>线性</option><option value="classic" ${o.method === 'classic' ? 'selected' : ''}>经典</option></select></label>`;
   },
   bindOptions: ({ e, el }) => {
     const o = effectsState.tool;

@@ -265,20 +265,20 @@ class PerspectiveWarpSession extends WarpSession<Snap> {
   // ----- Options bar -----
   options() {
     const layout = this.mode === 'layout';
-    let html = `<span class="transform-label">Perspective Warp</span>`;
-    html += `<div class="segmented" role="group" aria-label="Perspective Warp mode"><button data-pp-mode="layout" aria-pressed="${layout}" title="Layout: draw and fit planes (L)">Layout</button><button data-pp-mode="warp" aria-pressed="${!layout}" title="Warp: move plane corners (W)" ${this.set.planes.length ? '' : 'disabled'}>Warp</button></div><span class="divider"></span>`;
+    let html = `<span class="transform-label">透视变形</span>`;
+    html += `<div class="segmented" role="group" aria-label="透视变形模式"><button data-pp-mode="layout" aria-pressed="${layout}" title="版面：绘制并调整平面 (L)">版面</button><button data-pp-mode="warp" aria-pressed="${!layout}" title="变形：移动平面角点 (W)" ${this.set.planes.length ? '' : 'disabled'}>变形</button></div><span class="divider"></span>`;
     if (layout) {
-      html += `<span class="hint">${this.set.planes.length ? 'Drag corners to fit surfaces; corners that meet join.' : 'Drag over the image to draw a plane.'}</span>`;
-      html += `<button class="icon-button" data-pp="delete" title="Delete the selected plane (Delete)" aria-label="Delete plane" ${this.selected >= 0 ? '' : 'disabled'}>${svg('trash-2', 16)}</button>`;
+      html += `<span class="hint">${this.set.planes.length ? '拖动角点以贴合表面；重合的角点将连接。' : '在图像上拖动以绘制平面。'}</span>`;
+      html += `<button class="icon-button" data-pp="delete" title="删除所选平面 (Delete)" aria-label="删除平面" ${this.selected >= 0 ? '' : 'disabled'}>${svg('trash-2', 16)}</button>`;
     } else {
-      html += `<span class="pw-caption">Straighten</span>`;
-      html += `<button class="icon-button" data-pp="vertical" title="Make near-vertical edges vertical" aria-label="Straighten vertical edges">${svg('straighten-vertical', 16)}</button>`;
-      html += `<button class="icon-button" data-pp="horizontal" title="Make near-horizontal edges horizontal" aria-label="Straighten horizontal edges">${svg('straighten-horizontal', 16)}</button>`;
-      html += `<button class="icon-button" data-pp="both" title="Straighten vertical and horizontal edges" aria-label="Straighten all edges">${svg('straighten-both', 16)}</button>`;
-      html += `<span class="hint">Shift-click an edge to straighten it.</span>`;
-      html += `<button class="icon-button" data-pp="reset" title="Undo all corner moves" aria-label="Reset warp" ${this.changed ? '' : 'disabled'}>${svg('rotate-ccw', 16)}</button>`;
+      html += `<span class="pw-caption">拉直</span>`;
+      html += `<button class="icon-button" data-pp="vertical" title="使接近垂直的边垂直" aria-label="拉直垂直边">${svg('straighten-vertical', 16)}</button>`;
+      html += `<button class="icon-button" data-pp="horizontal" title="使接近水平的边水平" aria-label="拉直水平边">${svg('straighten-horizontal', 16)}</button>`;
+      html += `<button class="icon-button" data-pp="both" title="同时拉直垂直和水平边" aria-label="拉直所有边">${svg('straighten-both', 16)}</button>`;
+      html += `<span class="hint">按住 Shift 并单击边以将其拉直。</span>`;
+      html += `<button class="icon-button" data-pp="reset" title="还原所有角点移动" aria-label="复位变形" ${this.changed ? '' : 'disabled'}>${svg('rotate-ccw', 16)}</button>`;
     }
-    html += `<span class="divider"></span><button data-pp="cancel" class="icon-button" title="Cancel Perspective Warp (Escape)" aria-label="Cancel Perspective Warp">${svg('ban', 16)}</button><button data-pp="commit" class="icon-button transform-apply" title="Commit Perspective Warp (Enter)" aria-label="Commit Perspective Warp">${svg('check', 16)}</button>`;
+    html += `<span class="divider"></span><button data-pp="cancel" class="icon-button" title="取消透视变形 (Escape)" aria-label="取消透视变形">${svg('ban', 16)}</button><button data-pp="commit" class="icon-button transform-apply" title="提交透视变形 (Enter)" aria-label="提交透视变形">${svg('check', 16)}</button>`;
     return html;
   }
   bindOptions(el: HTMLElement) {
@@ -387,7 +387,7 @@ class PerspectiveWarpSession extends WarpSession<Snap> {
       before?.maskGrid && !before.maskUnlinked
         ? carryMask(store, before.maskGrid, this.bounds, (img) => (out && map ? { image: warpImage(img, out.width, out.height, map, { method: 'bilinear', offsetX: out.x, offsetY: out.y }), x: out.x, y: out.y } : undefined))
         : undefined;
-    this.e.command('Perspective Warp', (d) => {
+    this.e.command('透视变形', (d) => {
       const l = findLayer(d.layers, id);
       if (!l) return;
       setLayerPixels(l, grid, d);
@@ -434,7 +434,7 @@ function planeGrid(q: Point[]) {
 
 /** Start Perspective Warp on the selected layer. */
 export async function startPerspectiveWarp(e: Editor) {
-  const target = await warpTarget(e, 'Perspective Warp', true);
+  const target = await warpTarget(e, '透视变形', true);
   if (!target) return;
   const l = target.layer;
   if (target.kind === 'pixel') {
@@ -448,7 +448,7 @@ export async function startPerspectiveWarp(e: Editor) {
   // corners of its current placement; the warp becomes a frame on commit.
   const content = contentSource(e.doc, l);
   const frame = effectiveFrame(l);
-  if (frame?.mesh || l.embed?.frame?.pins) e.message('Perspective Warp starts from the object’s corners; committing replaces its warp.');
+  if (frame?.mesh || l.embed?.frame?.pins) e.message('透视变形从对象的角点开始；提交将替换其变形。');
   const quad = frame?.quad ?? transformQuad(l.transform);
   const s = new PerspectiveWarpSession(e, l.id, 'image', rectToQuad({ x: 0, y: 0, width: content.width, height: content.height }, quad), content);
   s.begin();

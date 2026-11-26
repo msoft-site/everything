@@ -10,16 +10,16 @@ export type ArtStyle =
 type StyleSpec = { label: string; length: number; curl: number; wander: number };
 // Length in brush diameters; curl in radians per step; wander is random turning.
 export const artStyles: Record<ArtStyle, StyleSpec> = {
-  'tight-short': { label: 'Tight Short', length: 1.5, curl: 0, wander: 0.04 },
-  'tight-medium': { label: 'Tight Medium', length: 3, curl: 0, wander: 0.04 },
-  'tight-long': { label: 'Tight Long', length: 6, curl: 0, wander: 0.04 },
-  'loose-medium': { label: 'Loose Medium', length: 3, curl: 0, wander: 0.35 },
-  'loose-long': { label: 'Loose Long', length: 6, curl: 0, wander: 0.35 },
-  dab: { label: 'Dab', length: 0, curl: 0, wander: 0 },
-  'tight-curl': { label: 'Tight Curl', length: 3, curl: 0.45, wander: 0.05 },
-  'tight-curl-long': { label: 'Tight Curl Long', length: 6, curl: 0.3, wander: 0.05 },
-  'loose-curl': { label: 'Loose Curl', length: 3, curl: 0.35, wander: 0.3 },
-  'loose-curl-long': { label: 'Loose Curl Long', length: 6, curl: 0.25, wander: 0.3 },
+  'tight-short': { label: '紧密-短', length: 1.5, curl: 0, wander: 0.04 },
+  'tight-medium': { label: '紧密-中', length: 3, curl: 0, wander: 0.04 },
+  'tight-long': { label: '紧密-长', length: 6, curl: 0, wander: 0.04 },
+  'loose-medium': { label: '宽松-中', length: 3, curl: 0, wander: 0.35 },
+  'loose-long': { label: '宽松-长', length: 6, curl: 0, wander: 0.35 },
+  dab: { label: '点状', length: 0, curl: 0, wander: 0 },
+  'tight-curl': { label: '紧密卷曲', length: 3, curl: 0.45, wander: 0.05 },
+  'tight-curl-long': { label: '紧密长卷曲', length: 6, curl: 0.3, wander: 0.05 },
+  'loose-curl': { label: '宽松卷曲', length: 3, curl: 0.35, wander: 0.3 },
+  'loose-curl-long': { label: '宽松长卷曲', length: 6, curl: 0.25, wander: 0.3 },
 };
 export type ArtStroke = { color: [number, number, number]; alpha: number; points: [number, number][] };
 export type ArtOptions = {

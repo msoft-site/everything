@@ -25,27 +25,27 @@ import { countGroups } from './count';
 // ----- Data points -----
 export type DataPoint = { id: string; label: string; group: 'General' | 'Selection' | 'Ruler' | 'Count'; numeric?: boolean };
 export const DATA_POINTS: DataPoint[] = [
-  { id: 'label', label: 'Label', group: 'General' },
-  { id: 'date', label: 'Date and Time', group: 'General' },
-  { id: 'document', label: 'Document', group: 'General' },
-  { id: 'source', label: 'Source', group: 'General' },
-  { id: 'scale', label: 'Scale', group: 'General' },
-  { id: 'scaleUnits', label: 'Scale Units', group: 'General' },
-  { id: 'scaleFactor', label: 'Scale Factor', group: 'General', numeric: true },
-  { id: 'count', label: 'Count', group: 'Count', numeric: true },
-  { id: 'area', label: 'Area', group: 'Selection', numeric: true },
-  { id: 'perimeter', label: 'Perimeter', group: 'Selection', numeric: true },
-  { id: 'circularity', label: 'Circularity', group: 'Selection', numeric: true },
-  { id: 'height', label: 'Height', group: 'Selection', numeric: true },
-  { id: 'width', label: 'Width', group: 'Selection', numeric: true },
-  { id: 'intDensity', label: 'Integrated Density', group: 'Selection', numeric: true },
-  { id: 'grayMean', label: 'Gray Mean', group: 'Selection', numeric: true },
-  { id: 'grayMedian', label: 'Gray Median', group: 'Selection', numeric: true },
-  { id: 'grayMin', label: 'Gray Minimum', group: 'Selection', numeric: true },
-  { id: 'grayMax', label: 'Gray Maximum', group: 'Selection', numeric: true },
-  { id: 'grayStd', label: 'Gray Std. Deviation', group: 'Selection', numeric: true },
-  { id: 'length', label: 'Length', group: 'Ruler', numeric: true },
-  { id: 'angle', label: 'Angle', group: 'Ruler', numeric: true },
+  { id: 'label', label: '标签', group: 'General' },
+  { id: 'date', label: '日期和时间', group: 'General' },
+  { id: 'document', label: '文档', group: 'General' },
+  { id: 'source', label: '源', group: 'General' },
+  { id: 'scale', label: '测量比例', group: 'General' },
+  { id: 'scaleUnits', label: '比例单位', group: 'General' },
+  { id: 'scaleFactor', label: '比例因子', group: 'General', numeric: true },
+  { id: 'count', label: '计数', group: 'Count', numeric: true },
+  { id: 'area', label: '面积', group: 'Selection', numeric: true },
+  { id: 'perimeter', label: '周长', group: 'Selection', numeric: true },
+  { id: 'circularity', label: '圆度', group: 'Selection', numeric: true },
+  { id: 'height', label: '高度', group: 'Selection', numeric: true },
+  { id: 'width', label: '宽度', group: 'Selection', numeric: true },
+  { id: 'intDensity', label: '集成密度', group: 'Selection', numeric: true },
+  { id: 'grayMean', label: '灰度平均值', group: 'Selection', numeric: true },
+  { id: 'grayMedian', label: '灰度中间值', group: 'Selection', numeric: true },
+  { id: 'grayMin', label: '灰度最小值', group: 'Selection', numeric: true },
+  { id: 'grayMax', label: '灰度最大值', group: 'Selection', numeric: true },
+  { id: 'grayStd', label: '灰度标准差', group: 'Selection', numeric: true },
+  { id: 'length', label: '长度', group: 'Ruler', numeric: true },
+  { id: 'angle', label: '角度', group: 'Ruler', numeric: true },
 ];
 const defaultPoints = DATA_POINTS.map((d) => d.id).filter((id) => !['date', 'scale', 'scaleFactor', 'grayStd'].includes(id));
 function storedList(key: string): unknown {
@@ -163,7 +163,7 @@ const recordKeys = () => {
   return keys ? ` (${keys})` : '';
 };
 function logHtml() {
-  if (!log.rows.length) return `<p class="muted log-empty">Measure with a selection, the Ruler tool or the Count tool, then choose Image › Analysis › Record Measurements${escapeXML(recordKeys())}.</p>`;
+  if (!log.rows.length) return `<p class="muted log-empty">使用选区、标尺工具或计数工具进行测量，然后选择 图像 › 分析 › 记录测量${escapeXML(recordKeys())}。</p>`;
   const cols = logColumns();
   const arrow = (k: string) => (log.sort?.key === k ? (log.sort.dir > 0 ? ' ▲' : ' ▼') : '');
   const head = `<tr><th scope="col"><button data-log-sort="id">#${arrow('id')}</button></th>${cols.map((c) => `<th scope="col"><button data-log-sort="${c.id}">${escapeXML(c.label)}${arrow(c.id)}</button></th>`).join('')}</tr>`;
@@ -194,7 +194,7 @@ function savePresets(list: Preset[]) {
   store('photo-studio-scale-presets', list);
   registerPresetCommands();
 }
-function setScale(e: Editor, s: MeasurementScale | undefined, label = 'Set Measurement Scale') {
+function setScale(e: Editor, s: MeasurementScale | undefined, label = '设置测量比例') {
   editAnnotations(e, label, (a) => {
     a.scale = s && !isDefaultScale(s) ? s : undefined;
   });
@@ -225,18 +225,18 @@ async function scaleDialog(e: Editor) {
   const ruler = rulerLine(e);
   const rulerLength = ruler ? rulerMetrics(ruler).length : 0;
   let list = presets();
-  const presetOptions = () => `<option value="">Custom</option>${list.map((p, i) => `<option value="${i}">${escapeXML(p.name)}</option>`).join('')}`;
+  const presetOptions = () => `<option value="">自定</option>${list.map((p, i) => `<option value="${i}">${escapeXML(p.name)}</option>`).join('')}`;
   let result: MeasurementScale | undefined;
   const ok = await openDialog(
-    `<form method="dialog" class="scale-dialog"><h2>Measurement Scale</h2><p class="muted">How many image pixels correspond to a known real-world length. Recorded measurements and the Ruler tool (with Use Measurement Scale) report in these units.</p>
-    <label class="dialog-field">Preset <span class="scale-row"><select name="preset">${presetOptions()}</select><button type="button" data-scale-delete disabled>Delete</button></span></label>
-    <label class="dialog-field">Save as preset <span class="scale-row"><input name="presetName" maxlength="64" placeholder="Preset name"><button type="button" data-scale-save>Save</button></span></label>
-    <label class="dialog-field">Pixel length <span class="scale-row"><input name="pixels" type="number" min="0.0001" step="any" required value="${short(current.pixels, 4)}">${ruler ? `<button type="button" data-scale-ruler title="Use the length of the current Ruler tool line">Use Ruler (${short(rulerLength, 1)} px)</button>` : ''}</span></label>
-    <label class="dialog-field">Logical length <input name="length" type="number" min="0.0001" step="any" required value="${short(current.length, 6)}"></label>
-    <label class="dialog-field">Logical units <input name="units" required maxlength="32" value="${escapeXML(current.units)}" list="scale-units"></label>
-    <datalist id="scale-units">${['pixels', 'nm', 'µm', 'mm', 'cm', 'm', 'km', 'in', 'ft', 'yd', 'mi'].map((u) => `<option value="${u}">`).join('')}</datalist>
+    `<form method="dialog" class="scale-dialog"><h2>测量比例</h2><p class="muted">指定图像像素对应已知实际长度的比例。记录的测量结果以及启用了“使用测量比例”的标尺工具将以这些单位显示。</p>
+    <label class="dialog-field">预设 <span class="scale-row"><select name="preset">${presetOptions()}</select><button type="button" data-scale-delete disabled>删除</button></span></label>
+    <label class="dialog-field">存储为预设 <span class="scale-row"><input name="presetName" maxlength="64" placeholder="预设名称"><button type="button" data-scale-save>存储</button></span></label>
+    <label class="dialog-field">像素长度 <span class="scale-row"><input name="pixels" type="number" min="0.0001" step="any" required value="${short(current.pixels, 4)}">${ruler ? `<button type="button" data-scale-ruler title="使用当前标尺工具线的长度">使用标尺 (${short(rulerLength, 1)} 像素)</button>` : ''}</span></label>
+    <label class="dialog-field">逻辑长度 <input name="length" type="number" min="0.0001" step="any" required value="${short(current.length, 6)}"></label>
+    <label class="dialog-field">逻辑单位 <input name="units" required maxlength="32" value="${escapeXML(current.units)}" list="scale-units"></label>
+    <datalist id="scale-units">${['像素', 'nm', 'µm', 'mm', 'cm', 'm', 'km', 'in', 'ft', 'yd', 'mi'].map((u) => `<option value="${u}">`).join('')}</datalist>
     <p class="scale-summary muted"></p>
-    <div class="dialog-actions"><button type="button" data-scale-default>Default</button><span class="dialog-spacer"></span><button type="button" data-dialog-cancel>Cancel</button><button type="submit" class="primary">OK</button></div></form>`,
+    <div class="dialog-actions"><button type="button" data-scale-default>默认</button><span class="dialog-spacer"></span><button type="button" data-dialog-cancel>取消</button><button type="submit" class="primary">确定</button></div></form>`,
     'scale-dialog-host',
     (form) => {
       const input = (n: string) => form.querySelector<HTMLInputElement>(`[name="${n}"]`)!;
@@ -244,7 +244,7 @@ async function scaleDialog(e: Editor) {
       const summary = () => {
         const p = Number(input('pixels').value),
           l = Number(input('length').value);
-        form.querySelector('.scale-summary')!.textContent = p > 0 && l > 0 ? `1 pixel = ${short(l / p, 6)} ${input('units').value || 'units'}; 1 ${input('units').value || 'unit'} = ${short(p / l, 4)} pixels.` : '';
+        form.querySelector('.scale-summary')!.textContent = p > 0 && l > 0 ? `1 像素 = ${short(l / p, 6)} ${input('units').value || '单位'}；1 ${input('units').value || '单位'} = ${short(p / l, 4)} 像素。` : '';
         const i = list.findIndex((x) => x.pixels === p && x.length === l && x.units === input('units').value);
         presetSel.value = i >= 0 ? String(i) : '';
         form.querySelector<HTMLButtonElement>('[data-scale-delete]')!.disabled = i < 0;
@@ -301,11 +301,12 @@ async function scaleDialog(e: Editor) {
 
 async function dataPointsDialog(e: Editor) {
   const groups: DataPoint['group'][] = ['General', 'Selection', 'Ruler', 'Count'];
+  const groupLabels: Record<DataPoint['group'], string> = { General: '常规', Selection: '选区', Ruler: '标尺', Count: '计数' };
   let chosen: string[] | undefined;
   const ok = await openDialog(
-    `<form method="dialog" class="data-points-dialog"><h2>Data Points</h2><p class="muted">Columns recorded in the Measurement Log. Values that do not apply to a measurement stay empty.</p><div class="data-point-groups">${groups
-      .map((g) => `<fieldset><legend>${g}</legend>${DATA_POINTS.filter((d) => d.group === g && d.id !== 'label').map((d) => `<label class="checkbox-field"><input type="checkbox" name="dp" value="${d.id}" ${dataPoints.includes(d.id) ? 'checked' : ''}>${escapeXML(d.label)}</label>`).join('')}</fieldset>`)
-      .join('')}</div><div class="dialog-actions"><button type="button" data-dp-all>Select All</button><button type="button" data-dp-none>Select None</button><span class="dialog-spacer"></span><button type="button" data-dialog-cancel>Cancel</button><button type="submit" class="primary">OK</button></div></form>`,
+    `<form method="dialog" class="data-points-dialog"><h2>数据点</h2><p class="muted">在测量记录中记录的列。不适用于某项测量的值将保持为空。</p><div class="data-point-groups">${groups
+      .map((g) => `<fieldset><legend>${groupLabels[g]}</legend>${DATA_POINTS.filter((d) => d.group === g && d.id !== 'label').map((d) => `<label class="checkbox-field"><input type="checkbox" name="dp" value="${d.id}" ${dataPoints.includes(d.id) ? 'checked' : ''}>${escapeXML(d.label)}</label>`).join('')}</fieldset>`)
+      .join('')}</div><div class="dialog-actions"><button type="button" data-dp-all>全选</button><button type="button" data-dp-none>全部不选</button><span class="dialog-spacer"></span><button type="button" data-dialog-cancel>取消</button><button type="submit" class="primary">确定</button></div></form>`,
     'data-points-host',
     (form) => {
       const boxes = () => [...form.querySelectorAll<HTMLInputElement>('input[name="dp"]')];
@@ -331,15 +332,15 @@ export async function placeScaleMarker(e: Editor) {
   const suggested = niceLength((e.doc.width / 5) * f);
   let v: Record<string, string> | undefined;
   const ok = await openDialog(
-    `<form method="dialog" class="scale-marker-dialog"><h2>Scale Marker</h2><p class="muted">${isDefaultScale(s) ? 'The document uses the default scale (1 pixel = 1 pixel). Set a measurement scale first to show real-world units.' : `Scale: ${escapeXML(scaleText(s))}.`}</p>
-    <label class="dialog-field">Length (${escapeXML(s.units)}) <input name="length" type="number" min="0.0001" step="any" required value="${suggested}"></label>
-    <label class="dialog-field">Bar height (px) <input name="bar" type="number" min="1" max="200" step="1" required value="${Math.max(2, Math.round(e.doc.height / 150))}"></label>
-    <label class="dialog-field">Font size (px) <input name="font" type="number" min="4" max="400" step="1" required value="${Math.max(10, Math.round(e.doc.height / 40))}"></label>
-    <label class="dialog-field checkbox-field"><input type="checkbox" name="caption" checked>Show caption</label>
-    <label class="dialog-field">Caption <select name="captionAt"><option value="above">Above the bar</option><option value="below">Below the bar</option></select></label>
-    <label class="dialog-field">Color <select name="color"><option value="#000000">Black</option><option value="#ffffff">White</option><option value="fg">Foreground color</option></select></label>
-    <label class="dialog-field">Position <select name="corner"><option value="bl">Bottom left</option><option value="br">Bottom right</option><option value="tl">Top left</option><option value="tr">Top right</option></select></label>
-    <div class="dialog-actions"><button type="button" data-dialog-cancel>Cancel</button><button type="submit" class="primary">Place</button></div></form>`,
+    `<form method="dialog" class="scale-marker-dialog"><h2>比例标记</h2><p class="muted">${isDefaultScale(s) ? '文档使用默认比例 (1 像素 = 1 像素)。请先设置测量比例以显示实际单位。' : `比例: ${escapeXML(scaleText(s))}。`}</p>
+    <label class="dialog-field">长度 (${escapeXML(s.units)}) <input name="length" type="number" min="0.0001" step="any" required value="${suggested}"></label>
+    <label class="dialog-field">标记条高度 (像素) <input name="bar" type="number" min="1" max="200" step="1" required value="${Math.max(2, Math.round(e.doc.height / 150))}"></label>
+    <label class="dialog-field">字号 (像素) <input name="font" type="number" min="4" max="400" step="1" required value="${Math.max(10, Math.round(e.doc.height / 40))}"></label>
+    <label class="dialog-field checkbox-field"><input type="checkbox" name="caption" checked>显示说明</label>
+    <label class="dialog-field">说明位置 <select name="captionAt"><option value="above">标记条上方</option><option value="below">标记条下方</option></select></label>
+    <label class="dialog-field">颜色 <select name="color"><option value="#000000">黑色</option><option value="#ffffff">白色</option><option value="fg">前景色</option></select></label>
+    <label class="dialog-field">位置 <select name="corner"><option value="bl">左下角</option><option value="br">右下角</option><option value="tl">左上角</option><option value="tr">右上角</option></select></label>
+    <div class="dialog-actions"><button type="button" data-dialog-cancel>取消</button><button type="submit" class="primary">放置</button></div></form>`,
     'scale-marker-host',
     (form) => {
       form.addEventListener('submit', () => {
@@ -352,7 +353,7 @@ export async function placeScaleMarker(e: Editor) {
   const length = Number(v.length);
   const barPx = length / f;
   if (!(barPx >= 1) || barPx > e.doc.width) {
-    e.message(`A ${short(length, 4)} ${s.units} bar would be ${Math.round(barPx)} pixels; choose a length that fits the image.`);
+    e.message(`${short(length, 4)} ${s.units} 标记条将为 ${Math.round(barPx)} 像素；请选择适合图像的长度。`);
     return;
   }
   const color = v.color === 'fg' ? e.color : v.color;
@@ -388,8 +389,8 @@ export async function createScaleMarker(
   const top = o.corner.startsWith('t') ? margin : doc.height - margin - total;
   const barY = text && o.captionAbove ? top + textBox.height + gap : top;
   const live = { kind: 'rect' as const, x: left, y: barY, width: o.barPx, height: o.barHeight, radii: [0, 0, 0, 0] as [number, number, number, number] };
-  const bar = shapeLayer(doc, 'Scale Bar', { paths: [closedPath(liveKnots(live))] }, vectorHexColor(o.color), undefined, live, o.color);
-  const group = newLayer('group', 'Measurement Scale Marker', doc.width, doc.height);
+  const bar = shapeLayer(doc, '比例标记条', { paths: [closedPath(liveKnots(live))] }, vectorHexColor(o.color), undefined, live, o.color);
+  const group = newLayer('group', '测量比例标记', doc.width, doc.height);
   group.children = [bar];
   if (text) {
     const cx = left + o.barPx / 2;
@@ -404,27 +405,27 @@ export async function createScaleMarker(
     syncLegacyFields(text);
     group.children.push(text);
   }
-  insertAboveSelection(e, group, 'Place Scale Marker');
+  insertAboveSelection(e, group, '放置比例标记');
 }
 
 export function installAnalysis(_e: Editor) {
   registerCommand(
-    { id: 'analysis.scale-default', label: 'Default', menu: 'image.analysis-scale', order: 0, enabled: (e) => e.hasDocument, checked: (e) => isDefaultScale(annotationsOf(e.doc).scale), run: (e) => setScale(e, undefined, 'Default Measurement Scale') },
-    { id: 'analysis.scale-custom', label: 'Custom…', menu: 'image.analysis-scale', order: 1, enabled: (e) => e.hasDocument, run: (e) => scaleDialog(e) },
-    { id: 'analysis.data-points', label: 'Select Data Points…', run: (e) => dataPointsDialog(e), recordable: false },
-    { id: 'analysis.record', label: 'Record Measurements', shortcut: 'Mod+Shift+M', enabled: (e) => e.hasDocument, run: (e) => recordMeasurements(e), recordable: false },
-    { id: 'analysis.ruler-tool', label: 'Ruler Tool', run: (e) => e.setTool('ruler'), recordable: false },
-    { id: 'analysis.count-tool', label: 'Count Tool', run: (e) => e.setTool('count'), recordable: false },
-    { id: 'analysis.scale-marker', label: 'Place Scale Marker…', enabled: (e) => e.hasDocument, run: (e) => placeScaleMarker(e) },
-    { id: 'log.export', label: 'Export Measurements', enabled: () => log.rows.length > 0, run: () => exportCSV(log.selected.size > 0), recordable: false },
-    { id: 'log.delete', label: 'Delete Selected Measurements', enabled: () => log.selected.size > 0, run: (e) => deleteRows(e, new Set(log.selected)), recordable: false },
-    { id: 'log.clear', label: 'Clear Measurement Log', enabled: () => log.rows.length > 0, run: (e) => deleteRows(e, new Set(log.rows.map((r) => r.id))), recordable: false },
-    { id: 'log.select-all', label: 'Select All Measurements', enabled: () => log.rows.length > 0, run: (e) => { log.selected = new Set(log.rows.map((r) => r.id)); e.dock.update(); }, recordable: false },
+    { id: 'analysis.scale-default', label: '默认', menu: 'image.analysis-scale', order: 0, enabled: (e) => e.hasDocument, checked: (e) => isDefaultScale(annotationsOf(e.doc).scale), run: (e) => setScale(e, undefined, '默认测量比例') },
+    { id: 'analysis.scale-custom', label: '自定…', menu: 'image.analysis-scale', order: 1, enabled: (e) => e.hasDocument, run: (e) => scaleDialog(e) },
+    { id: 'analysis.data-points', label: '选择数据点…', run: (e) => dataPointsDialog(e), recordable: false },
+    { id: 'analysis.record', label: '记录测量', shortcut: 'Mod+Shift+M', enabled: (e) => e.hasDocument, run: (e) => recordMeasurements(e), recordable: false },
+    { id: 'analysis.ruler-tool', label: '标尺工具', run: (e) => e.setTool('ruler'), recordable: false },
+    { id: 'analysis.count-tool', label: '计数工具', run: (e) => e.setTool('count'), recordable: false },
+    { id: 'analysis.scale-marker', label: '放置比例标记…', enabled: (e) => e.hasDocument, run: (e) => placeScaleMarker(e) },
+    { id: 'log.export', label: '导出测量结果', enabled: () => log.rows.length > 0, run: () => exportCSV(log.selected.size > 0), recordable: false },
+    { id: 'log.delete', label: '删除选定的测量结果', enabled: () => log.selected.size > 0, run: (e) => deleteRows(e, new Set(log.selected)), recordable: false },
+    { id: 'log.clear', label: '清除测量记录', enabled: () => log.rows.length > 0, run: (e) => deleteRows(e, new Set(log.rows.map((r) => r.id))), recordable: false },
+    { id: 'log.select-all', label: '全选测量结果', enabled: () => log.rows.length > 0, run: (e) => { log.selected = new Set(log.rows.map((r) => r.id)); e.dock.update(); }, recordable: false },
   );
   registerPresetCommands();
   registerPanel({
     id: 'measurement-log',
-    title: 'Measurement Log',
+    title: '测量记录',
     icon: 'list-ordered',
     location: 'strip',
     hidden: true,
@@ -468,7 +469,7 @@ export function installAnalysis(_e: Editor) {
         top = scroll?.scrollTop ?? 0;
       const n = log.rows.length,
         sel = log.selected.size;
-      el.innerHTML = `<div class="log-toolbar"><button data-command="analysis.record" title="Record Measurements${escapeXML(recordKeys())}">${svg('plus', 14)} Record</button><span class="muted">${n} row${n === 1 ? '' : 's'}${sel ? `, ${sel} selected` : ''}</span><span class="panel-tabs-spacer"></span><button class="icon-button" data-command="log.export" ${n ? '' : 'disabled'} title="${sel ? 'Export selected rows as CSV' : 'Export all rows as CSV'}" aria-label="Export CSV">${svg('download', 14)}</button><button class="icon-button" data-command="log.delete" ${sel ? '' : 'disabled'} title="Delete selected rows" aria-label="Delete selected rows">${svg('trash-2', 14)}</button></div>${logHtml()}`;
+      el.innerHTML = `<div class="log-toolbar"><button data-command="analysis.record" title="记录测量${escapeXML(recordKeys())}">${svg('plus', 14)} 记录</button><span class="muted">${n} 行${sel ? `，已选 ${sel} 行` : ''}</span><span class="panel-tabs-spacer"></span><button class="icon-button" data-command="log.export" ${n ? '' : 'disabled'} title="${sel ? '将选定行导出为 CSV' : '将所有行导出为 CSV'}" aria-label="导出 CSV">${svg('download', 14)}</button><button class="icon-button" data-command="log.delete" ${sel ? '' : 'disabled'} title="删除选定行" aria-label="删除选定行">${svg('trash-2', 14)}</button></div>${logHtml()}`;
       el.tabIndex = -1;
       const next = el.querySelector('.log-scroll');
       if (next) {

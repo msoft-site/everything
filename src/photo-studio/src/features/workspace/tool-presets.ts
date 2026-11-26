@@ -262,11 +262,11 @@ function deletePreset(e: Editor, id: string) {
 
 function presetRows(e: Editor, list: ToolPreset[], picker = false) {
   if (!list.length)
-    return `<p class="muted tool-preset-empty">${currentToolOnly || picker ? `No presets for the ${escapeXML(e.activeTool?.label ?? 'current tool')}.` : 'No tool presets yet.'} Set up a tool and save it as a preset.</p>`;
+    return `<p class="muted tool-preset-empty">${currentToolOnly || picker ? `${escapeXML(e.activeTool?.label ?? '当前工具')}没有预设。` : '暂无工具预设。'} 设置工具并将其保存为预设。</p>`;
   return list
     .map((p) => {
       const t = tools.get(p.tool);
-      return `<div class="tool-preset-row ${p.id === selectedPreset ? 'selected' : ''}" role="option" aria-selected="${p.id === selectedPreset}" data-tool-preset="${p.id}" tabindex="0" title="${escapeXML(`${p.name} — ${t?.label ?? p.tool}`)}">${svg(t?.icon ?? 'tool-preset', 15)}<span class="tool-preset-name">${escapeXML(p.name)}</span>${picker ? '' : `<button class="icon-button tool-preset-delete" data-delete-tool-preset="${p.id}" aria-label="Delete ${escapeXML(p.name)}" title="Delete preset">${svg('trash-2', 13)}</button>`}</div>`;
+      return `<div class="tool-preset-row ${p.id === selectedPreset ? 'selected' : ''}" role="option" aria-selected="${p.id === selectedPreset}" data-tool-preset="${p.id}" tabindex="0" title="${escapeXML(`${p.name} — ${t?.label ?? p.tool}`)}">${svg(t?.icon ?? 'tool-preset', 15)}<span class="tool-preset-name">${escapeXML(p.name)}</span>${picker ? '' : `<button class="icon-button tool-preset-delete" data-delete-tool-preset="${p.id}" aria-label="删除 ${escapeXML(p.name)}" title="删除预设">${svg('trash-2', 13)}</button>`}</div>`;
     })
     .join('');
 }
@@ -274,7 +274,7 @@ const visible = (e: Editor, onlyCurrent: boolean) => presets.filter((p) => !only
 
 const panel: Panel = {
   id: 'tool-presets',
-  title: 'Tool Presets',
+  title: '工具预设',
   icon: 'tool-preset',
   location: 'strip',
   mount: (e, el) => {
@@ -311,7 +311,7 @@ const panel: Panel = {
     });
   },
   update: (e, el) => {
-    el.innerHTML = `<div class="tool-presets-panel"><div class="tool-preset-list" role="listbox" aria-label="Tool presets">${presetRows(e, visible(e, currentToolOnly))}</div><div class="layer-footer"><label class="tool-preset-filter"><input type="checkbox" data-current-tool-only ${currentToolOnly ? 'checked' : ''}>Current Tool Only</label><span class="panel-tabs-spacer"></span><button data-command="tool.preset-new" title="New tool preset" aria-label="New tool preset">${svg('plus', 16)}</button><button data-command="tool.preset-delete" title="Delete tool preset" aria-label="Delete tool preset" ${selectedPreset ? '' : 'disabled'}>${svg('trash-2', 16)}</button></div></div>`;
+    el.innerHTML = `<div class="tool-presets-panel"><div class="tool-preset-list" role="listbox" aria-label="工具预设">${presetRows(e, visible(e, currentToolOnly))}</div><div class="layer-footer"><label class="tool-preset-filter"><input type="checkbox" data-current-tool-only ${currentToolOnly ? 'checked' : ''}>仅当前工具</label><span class="panel-tabs-spacer"></span><button data-command="tool.preset-new" title="新建工具预设" aria-label="新建工具预设">${svg('plus', 16)}</button><button data-command="tool.preset-delete" title="删除工具预设" aria-label="删除工具预设" ${selectedPreset ? '' : 'disabled'}>${svg('trash-2', 16)}</button></div></div>`;
   },
   menu: () => ['tool.preset-new', 'tool.preset-rename', 'tool.preset-delete', '-', 'tool.reset', 'tool.reset-all', '-', 'edit.preset-manager'],
 };

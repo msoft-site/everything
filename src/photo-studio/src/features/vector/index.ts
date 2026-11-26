@@ -25,20 +25,20 @@ export function installVector(e: Editor) {
   installKeys();
   // Path tools wait for queued vector-mask commits before reading paths.
   const tools = [
-    fromModule({ id: 'pen', label: 'Pen Tool', key: 'P', icon: 'pen-tool', group: 'pen' }, penTools, (m) => m.penTool),
-    fromModule({ id: 'freeform-pen', label: 'Freeform Pen Tool', key: 'P', icon: 'pen-freeform', group: 'pen' }, penTools, (m) => m.freeformPenTool),
-    fromModule({ id: 'curvature-pen', label: 'Curvature Pen Tool', key: 'P', icon: 'pen-curvature', group: 'pen' }, penTools, (m) => m.curvaturePenTool),
-    fromModule({ id: 'add-anchor', label: 'Add Anchor Point Tool', icon: 'anchor-add', group: 'pen' }, penTools, (m) => m.addAnchorTool),
-    fromModule({ id: 'delete-anchor', label: 'Delete Anchor Point Tool', icon: 'anchor-delete', group: 'pen' }, penTools, (m) => m.deleteAnchorTool),
-    fromModule({ id: 'convert-point', label: 'Convert Point Tool', icon: 'anchor-convert', group: 'pen' }, penTools, (m) => m.convertPointTool),
-    fromModule({ id: 'path-select', label: 'Path Selection Tool', key: 'A', icon: 'path-select', group: 'path-select' }, selectTools, (m) => m.pathSelectTool),
-    fromModule({ id: 'direct-select', label: 'Direct Selection Tool', key: 'A', icon: 'direct-select', group: 'path-select' }, selectTools, (m) => m.directSelectTool),
-    shape('rect-shape', 'Rectangle Tool', 'square', 'rect'),
-    shape('ellipse-shape', 'Ellipse Tool', 'circle', 'ellipse'),
-    shape('triangle-shape', 'Triangle Tool', 'triangle', 'triangle'),
-    shape('polygon-shape', 'Polygon Tool', 'shape-polygon', 'polygon'),
-    shape('line-shape', 'Line Tool', 'shape-line', 'line'),
-    shape('custom-shape', 'Custom Shape Tool', 'shape-custom', 'custom'),
+    fromModule({ id: 'pen', label: '钢笔工具', key: 'P', icon: 'pen-tool', group: 'pen' }, penTools, (m) => m.penTool),
+    fromModule({ id: 'freeform-pen', label: '自由钢笔工具', key: 'P', icon: 'pen-freeform', group: 'pen' }, penTools, (m) => m.freeformPenTool),
+    fromModule({ id: 'curvature-pen', label: '弯度钢笔工具', key: 'P', icon: 'pen-curvature', group: 'pen' }, penTools, (m) => m.curvaturePenTool),
+    fromModule({ id: 'add-anchor', label: '添加锚点工具', icon: 'anchor-add', group: 'pen' }, penTools, (m) => m.addAnchorTool),
+    fromModule({ id: 'delete-anchor', label: '删除锚点工具', icon: 'anchor-delete', group: 'pen' }, penTools, (m) => m.deleteAnchorTool),
+    fromModule({ id: 'convert-point', label: '转换点工具', icon: 'anchor-convert', group: 'pen' }, penTools, (m) => m.convertPointTool),
+    fromModule({ id: 'path-select', label: '路径选择工具', key: 'A', icon: 'path-select', group: 'path-select' }, selectTools, (m) => m.pathSelectTool),
+    fromModule({ id: 'direct-select', label: '直接选择工具', key: 'A', icon: 'direct-select', group: 'path-select' }, selectTools, (m) => m.directSelectTool),
+    shape('rect-shape', '矩形工具', 'square', 'rect'),
+    shape('ellipse-shape', '椭圆工具', 'circle', 'ellipse'),
+    shape('triangle-shape', '三角形工具', 'triangle', 'triangle'),
+    shape('polygon-shape', '多边形工具', 'shape-polygon', 'polygon'),
+    shape('line-shape', '直线工具', 'shape-line', 'line'),
+    shape('custom-shape', '自定形状工具', 'shape-custom', 'custom'),
   ];
   registerTool(...tools.map(guardTool));
   registerPanel(pathsPanel);

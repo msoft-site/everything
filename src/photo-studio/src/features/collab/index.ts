@@ -21,12 +21,12 @@ const owns = (e: Editor) => {
 export function installCollab(e: Editor) {
   registerOverlay('comments', commentsOverlay);
   registerOverlay('collab-presence', (ed) => sharedOf(ed.session)?.overlay(ed) ?? '');
-  registerTool(lazyTool({ id: 'comment', label: 'Comment Tool', key: 'I', icon: 'comment', group: 'eyedropper' }, tool));
+  registerTool(lazyTool({ id: 'comment', label: '评论工具', key: 'I', icon: 'comment', group: 'eyedropper' }, tool));
   registerPanel(
     lazyPanel(
       {
         id: 'comments',
-        title: 'Comments',
+        title: '评论',
         icon: 'comment',
         location: 'strip',
         hidden: true,
@@ -38,32 +38,32 @@ export function installCollab(e: Editor) {
   registerCommand(
     {
       id: 'file.invite-to-edit',
-      label: 'Invite to Edit…',
-      description: 'Share this document so others can edit it with you live',
+      label: '邀请编辑…',
+      description: '共享此文档以与其他协作者实时协作编辑',
       enabled: (ed) => ed.hasDocument && owns(ed) && !sharedOf(ed.session)?.review,
       recordable: false,
       ...lazyRun(share, (m, ed) => m.inviteToEdit(ed)),
     },
     {
       id: 'file.share-for-review',
-      label: 'Share for Review…',
-      description: 'Create a link that opens this document for viewing and comments',
+      label: '共享以供审阅…',
+      description: '创建链接以供他人查看并添加评论',
       enabled: (ed) => ed.hasDocument && owns(ed) && !sharedOf(ed.session)?.review,
       recordable: false,
       ...lazyRun(share, (m, ed) => m.shareForReview(ed)),
     },
     {
       id: 'file.stop-sharing',
-      label: 'Stop Sharing…',
-      description: 'End sharing for everyone; this tab keeps a local copy',
+      label: '停止共享…',
+      description: '终止对所有人的共享；当前标签页将保留本地副本',
       enabled: (ed) => sharedOf(ed.session)?.role === 'owner',
       recordable: false,
       ...lazyRun(share, (m, ed) => m.stopSharing(ed)),
     },
     {
       id: 'comments.new',
-      label: 'New Comment',
-      description: 'Choose the Comment tool: click to pin a comment, drag to comment on a region',
+      label: '新建评论',
+      description: '选择评论工具：单击固定评论，拖动标记区域评论',
       enabled: (ed) => ed.hasDocument && commentsOf(ed).canComment(),
       recordable: false,
       run: (ed) => {
@@ -73,7 +73,7 @@ export function installCollab(e: Editor) {
     },
     {
       id: 'view.show-comments',
-      label: 'Comments',
+      label: '评论',
       checked: () => !view.hidden,
       recordable: false,
       run: (ed) => {

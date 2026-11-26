@@ -92,42 +92,42 @@ function thumb(e: Editor, item: LibraryItem): string {
 function itemHtml(e: Editor, item: LibraryItem) {
   const selected = libState.itemId === item.id;
   const extra = item.type === 'color' && String(item.data.hex).toLowerCase() !== item.name.toLowerCase() ? String(item.data.hex) : item.type === 'graphic' ? `${item.data.width} × ${item.data.height}` : '';
-  return `<button type="button" class="lib-item" role="option" draggable="true" data-item="${escapeXML(item.id)}" aria-selected="${selected}" title="${escapeXML(describeItem(item))} — click to use, right-click for more" aria-label="${escapeXML(describeItem(item))}">${thumb(e, item)}<span class="lib-name">${escapeXML(item.name)}</span>${libState.view === 'list' && extra ? `<span class="lib-extra">${escapeXML(extra)}</span>` : ''}</button>`;
+  return `<button type="button" class="lib-item" role="option" draggable="true" data-item="${escapeXML(item.id)}" aria-selected="${selected}" title="${escapeXML(describeItem(item))} — 单击以使用，右键单击查看更多选项" aria-label="${escapeXML(describeItem(item))}">${thumb(e, item)}<span class="lib-name">${escapeXML(item.name)}</span>${libState.view === 'list' && extra ? `<span class="lib-extra">${escapeXML(extra)}</span>` : ''}</button>`;
 }
 function itemsHtml(e: Editor, items: LibraryItem[]) {
-  const list = (xs: LibraryItem[]) => `<div class="lib-items lib-${libState.view}" role="listbox" aria-label="Library items">${xs.map((i) => itemHtml(e, i)).join('')}</div>`;
+  const list = (xs: LibraryItem[]) => `<div class="lib-items lib-${libState.view}" role="listbox" aria-label="资源库项目">${xs.map((i) => itemHtml(e, i)).join('')}</div>`;
   if (!libState.grouped) return list(items);
   return groupByType(items)
     .map(([t, xs]) => `<div class="lib-group"><div class="lib-group-title">${TYPE_LABELS[t]} <span class="lib-count">${xs.length}</span></div>${list(xs)}</div>`)
     .join('');
 }
 function libraryHtml(e: Editor, lib: Library, items: LibraryItem[], heading: boolean) {
-  const head = heading ? `<div class="lib-section-title" data-library-drop="${escapeXML(lib.id)}" draggable="true" title="Drag to reorder libraries"><button type="button" class="link-button" data-show-library="${escapeXML(lib.id)}">${escapeXML(lib.name)}</button><span class="lib-count">${items.length}</span></div>` : '';
-  const body = items.length ? itemsHtml(e, items) : `<p class="muted lib-empty-note" data-library-drop="${escapeXML(lib.id)}">${libState.search ? 'No matching items.' : 'Empty. Use + to add the foreground color, a layer style, selected layers and more.'}</p>`;
+  const head = heading ? `<div class="lib-section-title" data-library-drop="${escapeXML(lib.id)}" draggable="true" title="拖动以调整资源库顺序"><button type="button" class="link-button" data-show-library="${escapeXML(lib.id)}">${escapeXML(lib.name)}</button><span class="lib-count">${items.length}</span></div>` : '';
+  const body = items.length ? itemsHtml(e, items) : `<p class="muted lib-empty-note" data-library-drop="${escapeXML(lib.id)}">${libState.search ? '没有匹配的项目。' : '空。使用 + 添加前景色、图层样式、选定图层等。'}</p>`;
   return `<section class="lib-section" data-library="${escapeXML(lib.id)}">${head}${body}</section>`;
 }
 
 function bodyHtml(e: Editor) {
   const lib = libraries();
-  if (!lib.loaded) return '<p class="muted lib-empty">Loading libraries…</p>';
+  if (!lib.loaded) return '<p class="muted lib-empty">正在加载资源库…</p>';
   const all = lib.index.libraries;
-  if (!all.length) return `<div class="lib-empty"><p>No libraries yet. Libraries keep colors, styles, brushes and graphics for use in any document${lib.status.state === 'local' ? ' in this browser' : ''}.</p><button type="button" class="primary" data-command="libraries.new">New Library…</button></div>`;
+  if (!all.length) return `<div class="lib-empty"><p>尚无资源库。资源库可保存颜色、样式、画笔和图形，供任何文档使用${lib.status.state === 'local' ? '（保存在本浏览器中）' : ''}。</p><button type="button" class="primary" data-command="libraries.new">新建资源库…</button></div>`;
   const shown = libState.libraryId ? all.filter((l) => l.id === libState.libraryId) : all;
   const parts = shown.map((l) => [l, searchItems(l.items, libState.search)] as const).filter(([, items]) => !libState.search || items.length);
-  if (!parts.length) return '<p class="muted lib-empty">No items match the search.</p>';
+  if (!parts.length) return '<p class="muted lib-empty">没有与搜索匹配的项目。</p>';
   return parts.map(([l, items]) => libraryHtml(e, l, items, !libState.libraryId)).join('');
 }
 
 function headerHtml() {
   const lib = libraries();
-  const options = [`<option value="">All Libraries</option>`, ...lib.index.libraries.map((l) => `<option value="${escapeXML(l.id)}" ${l.id === libState.libraryId ? 'selected' : ''}>${escapeXML(l.name)}</option>`)].join('');
-  return `<div class="lib-toolbar"><select class="lib-select" aria-label="Library shown">${options}</select><button type="button" class="icon-button" data-lib="add" aria-haspopup="menu" title="Add to library" aria-label="Add to library">${svg('plus', 15)}</button><button type="button" class="icon-button" data-lib="view" title="${libState.view === 'grid' ? 'Show as list' : 'Show as grid'}" aria-label="${libState.view === 'grid' ? 'Show as list' : 'Show as grid'}">${svg(libState.view === 'grid' ? 'list' : 'layout-grid', 15)}</button></div><input type="search" class="lib-search" placeholder="Search libraries" aria-label="Search libraries" value="${escapeXML(libState.search)}" spellcheck="false">`;
+  const options = [`<option value="">所有资源库</option>`, ...lib.index.libraries.map((l) => `<option value="${escapeXML(l.id)}" ${l.id === libState.libraryId ? 'selected' : ''}>${escapeXML(l.name)}</option>`)].join('');
+  return `<div class="lib-toolbar"><select class="lib-select" aria-label="显示的资源库">${options}</select><button type="button" class="icon-button" data-lib="add" aria-haspopup="menu" title="添加到资源库" aria-label="添加到资源库">${svg('plus', 15)}</button><button type="button" class="icon-button" data-lib="view" title="${libState.view === 'grid' ? '显示为列表' : '显示为网格'}" aria-label="${libState.view === 'grid' ? '显示为列表' : '显示为网格'}">${svg(libState.view === 'grid' ? 'list' : 'layout-grid', 15)}</button></div><input type="search" class="lib-search" placeholder="搜索资源库" aria-label="搜索资源库" value="${escapeXML(libState.search)}" spellcheck="false">`;
 }
 function statusHtml() {
   const lib = libraries();
   const s = lib.status;
   const count = lib.index.libraries.reduce((n, l) => n + l.items.length, 0);
-  return `<span class="lib-sync lib-sync-${s.state}" role="status" title="${escapeXML(s.message)}">${svg(s.state === 'local' ? 'save' : s.state === 'syncing' ? 'refresh-cw' : s.state === 'synced' ? 'cloud' : 'cloud-off', 13)}<span>${escapeXML(s.message)}</span></span><span class="lib-total">${count} item${count === 1 ? '' : 's'}</span>`;
+  return `<span class="lib-sync lib-sync-${s.state}" role="status" title="${escapeXML(s.message)}">${svg(s.state === 'local' ? 'save' : s.state === 'syncing' ? 'refresh-cw' : s.state === 'synced' ? 'cloud' : 'cloud-off', 13)}<span>${escapeXML(s.message)}</span></span><span class="lib-total">${count} 个项目</span>`;
 }
 
 /** Fill thumbnails that load asynchronously (assets, style renders). */

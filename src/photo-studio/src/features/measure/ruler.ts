@@ -41,7 +41,7 @@ export function rulerReadout(e: Editor, r: RulerLine | undefined = rulerLine(e))
 function readoutHtml(e: Editor) {
   const r = rulerReadout(e, drag?.line ?? rulerLine(e));
   const cell = (label: string, v: string | undefined, title: string) => `<span class="ruler-value" title="${title}"><b>${label}</b><output>${escapeXML(v || '–')}</output></span>`;
-  return `${cell('X', r?.x, 'Start point X')}${cell('Y', r?.y, 'Start point Y')}${cell('W', r?.w, 'Horizontal distance')}${cell('H', r?.h, 'Vertical distance')}${cell('A', r?.angle, r?.metrics.l2 !== undefined ? 'Angle between the lines' : 'Angle from horizontal')}${cell('L1', r?.l1, 'Length of the first line')}${cell('L2', r?.l2, 'Length of the second line')}`;
+  return `${cell('X', r?.x, '起点 X')}${cell('Y', r?.y, '起点 Y')}${cell('W', r?.w, '水平距离')}${cell('H', r?.h, '垂直距离')}${cell('A', r?.angle, r?.metrics.l2 !== undefined ? '两线之间的夹角' : '与水平线的夹角')}${cell('L1', r?.l1, '第一条线的长度')}${cell('L2', r?.l2, '第二条线的长度')}`;
 }
 function refreshReadout(e: Editor) {
   const el = e.root.querySelector('#ruler-readout');
@@ -66,12 +66,12 @@ function nearSegment(a: Point, b: Point, p: Point) {
 export async function straighten(e: Editor, crop: boolean) {
   const r = rulerLine(e);
   if (!r) {
-    e.message('Drag with the Ruler tool along a line that should be level or upright.');
+    e.message('请使用标尺工具沿应为水平或垂直的线条拖动。');
     return;
   }
   const deg = levelingRotation(r.a, r.b);
   if (Math.abs(deg) < 1e-6) {
-    e.message('The measured line is already level.');
+    e.message('测量的线条已处于水平状态。');
     return;
   }
   // Canvas and layer rotation load with the first straighten.
@@ -85,12 +85,12 @@ export async function straighten(e: Editor, crop: boolean) {
     const nw = Math.max(1, Math.floor(fit.width + 1e-6)),
       nh = Math.max(1, Math.floor(fit.height + 1e-6));
     m = compose(translate(nw / 2, nh / 2), rotateM(deg), translate(-W / 2, -H / 2));
-    await transformCanvasBy(e, 'Straighten', m, nw, nh, { trim: true });
+    await transformCanvasBy(e, '拉直', m, nw, nh, { trim: true });
   } else {
     const cx = (r.a.x + r.b.x) / 2,
       cy = (r.a.y + r.b.y) / 2;
     m = about(rotateM(deg), cx, cy);
-    if (!(await rotateLayers(e, 'Straighten Layer', deg, cx, cy))) return;
+    if (!(await rotateLayers(e, '拉直图层', deg, cx, cy))) return;
   }
   // The line now lies level over the straightened content.
   const map = (q: Point) => applyMat3(m, q.x, q.y);
@@ -150,7 +150,7 @@ export function installRuler(e: Editor) {
   });
   registerTool({
     id: 'ruler',
-    label: 'Ruler Tool',
+    label: '标尺工具',
     key: 'I',
     icon: 'ruler',
     group: 'eyedropper',
@@ -158,7 +158,7 @@ export function installRuler(e: Editor) {
     options: (e) => {
       const has = !!rulerLine(e);
       const scale = annotationsOf(e.doc).scale;
-      return `<span id="ruler-readout" class="ruler-readout">${readoutHtml(e)}</span><span class="divider"></span><label title="${scale ? `Report lengths in ${escapeXML(scale.units)}` : 'Set a measurement scale under Image › Analysis first'}"><input type="checkbox" id="ruler-use-scale" ${e.settings.rulerUseScale && scale ? 'checked' : ''} ${scale ? '' : 'disabled'}>Use Measurement Scale</label><button data-ruler-action="straighten" ${has ? '' : 'disabled'} title="Rotate so the measured line becomes level (or upright)">${svg('rotate-cw', 14)} Straighten Layer</button><label title="Rotate the whole image and crop away the empty corners"><input type="checkbox" id="ruler-crop" ${e.settings.rulerCrop !== false ? 'checked' : ''}>Crop</label><button data-ruler-action="clear" ${has ? '' : 'disabled'}>Clear</button>`;
+      return `<span id="ruler-readout" class="ruler-readout">${readoutHtml(e)}</span><span class="divider"></span><label title="${scale ? `以 ${escapeXML(scale.units)} 报告长度` : '请先在“图像 › 分析”下设置测量比例尺'}"><input type="checkbox" id="ruler-use-scale" ${e.settings.rulerUseScale && scale ? 'checked' : ''} ${scale ? '' : 'disabled'}>使用测量比例尺</label><button data-ruler-action="straighten" ${has ? '' : 'disabled'} title="旋转使测量的线条变为水平（或垂直）">${svg('rotate-cw', 14)} 拉直图层</button><label title="旋转整个图像并裁剪掉空白角点"><input type="checkbox" id="ruler-crop" ${e.settings.rulerCrop !== false ? 'checked' : ''}>裁剪</label><button data-ruler-action="clear" ${has ? '' : 'disabled'}>清除</button>`;
     },
     bindOptions: ({ e, el }) => {
       el.querySelector<HTMLInputElement>('#ruler-use-scale')?.addEventListener('change', (ev) => {

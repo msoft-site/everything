@@ -119,11 +119,11 @@ let timer = 0;
 const fmt = (n: number, d = 2) => (Number.isFinite(n) ? n.toFixed(d) : '–');
 const channelLabel: Record<HistChannel, string> = {
   rgb: 'RGB',
-  r: 'Red',
-  g: 'Green',
-  b: 'Blue',
-  luminosity: 'Luminosity',
-  colors: 'Colors',
+  r: '红',
+  g: '绿',
+  b: '蓝',
+  luminosity: '明度',
+  colors: '颜色',
 };
 
 async function measure(e: Editor, source: HistSource): Promise<Histograms> {
@@ -150,13 +150,13 @@ function render(e: Editor, el: HTMLElement) {
   }
   const h = st.hist;
   main.innerHTML = histogramMarkup(h, channel) + rangeMarkup(st);
-  main.setAttribute('aria-label', `${channelLabel[channel]} histogram`);
+  main.setAttribute('aria-label', `${channelLabel[channel]} 直方图`);
   extra.hidden = !all;
   if (all)
     extra.innerHTML = (['r', 'g', 'b'] as const)
       .map(
         (c) =>
-          `<svg class="histogram histogram-small" viewBox="0 0 ${W} 60" preserveAspectRatio="none" role="img" aria-label="${channelLabel[c]} histogram">${histogramMarkup(h, c, 60)}</svg>`,
+          `<svg class="histogram histogram-small" viewBox="0 0 ${W} 60" preserveAspectRatio="none" role="img" aria-label="${channelLabel[c]} 直方图">${histogramMarkup(h, c, 60)}</svg>`,
       )
       .join('');
   // Statistics follow the shown channel (luminosity for the color overlay).
@@ -196,14 +196,14 @@ function render(e: Editor, el: HTMLElement) {
   const c = clipping(bins);
   const warn = $<HTMLElement>('.histogram-clipping');
   const parts: string[] = [];
-  if (c.shadows >= 0.001) parts.push(`Shadows clipped ${fmt(c.shadows * 100, 1)}%`);
-  if (c.highlights >= 0.001) parts.push(`Highlights clipped ${fmt(c.highlights * 100, 1)}%`);
+  if (c.shadows >= 0.001) parts.push(`暗部溢出 ${fmt(c.shadows * 100, 1)}%`);
+  if (c.highlights >= 0.001) parts.push(`亮部溢出 ${fmt(c.highlights * 100, 1)}%`);
   warn.textContent = parts.join(' · ');
   warn.hidden = !parts.length;
   $<HTMLElement>('.histogram-clip-low').classList.toggle('on', c.shadows >= 0.001);
   $<HTMLElement>('.histogram-clip-high').classList.toggle('on', c.highlights >= 0.001);
   const scope = $<HTMLElement>('.histogram-scope');
-  scope.textContent = selectionGrid(e.doc, e.assets.tiles) ? 'Selection only' : '';
+  scope.textContent = selectionGrid(e.doc, e.assets.tiles) ? '仅限选区' : '';
 }
 
 function rangeMarkup(st: PanelState) {
@@ -249,24 +249,24 @@ function schedule(e: Editor, el: HTMLElement, force = false) {
 
 export const histogramPanel: Panel = {
   id: 'histogram',
-  title: 'Histogram',
+  title: '直方图',
   icon: 'chart-column',
   location: 'strip',
   mount: (e, el) => {
     states.set(el, { job: 0 });
     el.innerHTML = `<div class="histogram-bar">
-      <label>Channel <select class="histogram-channel" aria-label="Channel">${(Object.keys(channelLabel) as HistChannel[]).map((c) => `<option value="${c}">${channelLabel[c]}</option>`).join('')}</select></label>
-      <label>Source <select class="histogram-source" aria-label="Source"><option value="image">Entire Image</option><option value="layer">Selected Layer</option></select></label>
-      <button type="button" class="icon-button toggle histogram-all-toggle" aria-pressed="false" title="Show each color channel" aria-label="Show each color channel"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M2 5h12M2 9h12M2 13h12" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M2 4.5 5 2l3 2 3-1.5 3 2" stroke="currentColor" fill="none"/></svg></button>
-      <button type="button" class="icon-button histogram-refresh" title="Measure again" aria-label="Measure again"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M13 8a5 5 0 1 1-1.5-3.6M13 2.5v3h-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></button>
+      <label>通道 <select class="histogram-channel" aria-label="通道">${(Object.keys(channelLabel) as HistChannel[]).map((c) => `<option value="${c}">${channelLabel[c]}</option>`).join('')}</select></label>
+      <label>源 <select class="histogram-source" aria-label="源"><option value="image">整个图像</option><option value="layer">选定图层</option></select></label>
+      <button type="button" class="icon-button toggle histogram-all-toggle" aria-pressed="false" title="显示每个颜色通道" aria-label="显示每个颜色通道"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M2 5h12M2 9h12M2 13h12" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M2 4.5 5 2l3 2 3-1.5 3 2" stroke="currentColor" fill="none"/></svg></button>
+      <button type="button" class="icon-button histogram-refresh" title="重新测量" aria-label="重新测量"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M13 8a5 5 0 1 1-1.5-3.6M13 2.5v3h-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></button>
     </div>
-    <div class="histogram-plot"><svg class="histogram" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="Histogram"></svg><span class="histogram-clip-low" title="Pure black pixels"></span><span class="histogram-clip-high" title="Pure white pixels"></span></div>
+    <div class="histogram-plot"><svg class="histogram" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="直方图"></svg><span class="histogram-clip-low" title="纯黑像素"></span><span class="histogram-clip-high" title="纯白像素"></span></div>
     <div class="histogram-channels" hidden></div>
     <dl class="histogram-stats">
-      <dt>Mean</dt><dd data-hs="mean"></dd><dt>Level</dt><dd data-hs="level"></dd>
-      <dt>Std Dev</dt><dd data-hs="std"></dd><dt>Count</dt><dd data-hs="count"></dd>
-      <dt>Median</dt><dd data-hs="median"></dd><dt>Percentile</dt><dd data-hs="percentile"></dd>
-      <dt>Pixels</dt><dd data-hs="pixels"></dd><dt class="histogram-scope-label"></dt><dd class="histogram-scope muted"></dd>
+      <dt>平均值</dt><dd data-hs="mean"></dd><dt>色阶</dt><dd data-hs="level"></dd>
+      <dt>标准差</dt><dd data-hs="std"></dd><dt>数量</dt><dd data-hs="count"></dd>
+      <dt>中间值</dt><dd data-hs="median"></dd><dt>百分位数</dt><dd data-hs="percentile"></dd>
+      <dt>像素</dt><dd data-hs="pixels"></dd><dt class="histogram-scope-label"></dt><dd class="histogram-scope muted"></dd>
     </dl>
     <p class="histogram-clipping" hidden></p>`;
     const st = states.get(el)!;

@@ -57,39 +57,39 @@ async function tweenDialog(e: Editor, arg?: unknown) {
   const sel = selectedFrames(e);
   const pair = sel.length === 2 && sel[1] === sel[0] + 1;
   const options: [string, string][] = [];
-  if (pair) options.push(['selection', 'Selected frames']);
+  if (pair) options.push(['selection', '所选帧']);
   else {
-    if (anim.current > 0) options.push(['previous', 'Previous frame']);
-    if (anim.current < anim.frames.length - 1) options.push(['next', 'Next frame']);
+    if (anim.current > 0) options.push(['previous', '上一帧']);
+    if (anim.current < anim.frames.length - 1) options.push(['next', '下一帧']);
   }
   if (!options.length) {
-    e.message('Select one frame next to another, or two neighboring frames, to tween.');
+    e.message('请选择相邻的一帧或两帧进行过渡。');
     return;
   }
   const v = await settingsDialog(
     e,
     'animation.tween',
     arg,
-    'Tween',
+    '过渡',
     [
-      { name: 'with', label: 'Tween with', type: 'select', value: options[0][0], options },
-      { name: 'count', label: 'Frames to add', type: 'number', value: 5, min: 1, max: 200, step: 1 },
-      { name: 'layers', label: 'Layers', type: 'select', value: 'all', options: [['all', 'All layers'], ['selected', 'Selected layers']] },
-      { name: 'position', label: 'Position', type: 'checkbox', value: 'yes' },
-      { name: 'opacity', label: 'Opacity', type: 'checkbox', value: 'yes' },
-      { name: 'effects', label: 'Effects', type: 'checkbox', value: 'yes' },
+      { name: 'with', label: '过渡方式', type: 'select', value: options[0][0], options },
+      { name: 'count', label: '要添加的帧数', type: 'number', value: 5, min: 1, max: 200, step: 1 },
+      { name: 'layers', label: '图层', type: 'select', value: 'all', options: [['all', '所有图层'], ['selected', '所选图层']] },
+      { name: 'position', label: '位置', type: 'checkbox', value: 'yes' },
+      { name: 'opacity', label: '不透明度', type: 'checkbox', value: 'yes' },
+      { name: 'effects', label: '效果', type: 'checkbox', value: 'yes' },
     ],
-    'Tween',
-    'New frames interpolate the layers between two frames.',
+    '过渡',
+    '新帧将在两个帧之间对图层进行插值过渡。',
   );
   if (!v) return;
   const count = Math.max(1, Math.min(200, Math.round(Number(v.count) || 1)));
   const from = v.with === 'selection' ? sel[0] : v.with === 'previous' ? anim.current - 1 : anim.current;
   const ids = new Set<string>();
   if (v.layers === 'selected') for (const l of allLayers(e.selectedLayers)) ids.add(l.id);
-  e.command('Tween', (d) => {
+  e.command('过渡', (d) => {
     if (!tweenFrames(d, from, count, { position: v.position === 'yes', opacity: v.opacity === 'yes', effects: v.effects === 'yes', layers: v.layers === 'selected' ? ids : undefined }))
-      throw new Error('Too many frames.');
+      throw new Error('帧数过多。');
   });
   setSelectedFrames(e, Array.from({ length: count + 2 }, (_, k) => from + k));
   e.update();
@@ -97,25 +97,26 @@ async function tweenDialog(e: Editor, arg?: unknown) {
 
 async function onionSettings(e: Editor, arg?: unknown) {
   const o = animationOf(e)!.onion ?? defaultOnion;
+  const blendLabels: Record<string, string> = { multiply: '正片叠底', normal: '正常', darken: '变暗', lighten: '变亮', difference: '差值' };
   const v = await settingsDialog(
     e,
     'animation.onion-settings',
     arg,
-    'Onion Skins',
+    '洋葱皮',
     [
       // Shows the current state; checked before onion skins were ever set up.
-      { name: 'enabled', label: 'Show onion skins', type: 'checkbox', value: animationOf(e)!.onion?.enabled === false ? 'no' : 'yes' },
-      { name: 'before', label: 'Frames before', type: 'number', value: o.before, min: 0, max: 8, step: 1 },
-      { name: 'after', label: 'Frames after', type: 'number', value: o.after, min: 0, max: 8, step: 1 },
-      { name: 'opacity', label: 'Opacity (%)', type: 'number', value: Math.round(o.opacity * 100), min: 5, max: 100, step: 1 },
-      { name: 'blend', label: 'Blend mode', type: 'select', value: o.blend ?? 'multiply', options: onionBlends.map((b) => [b, b[0].toUpperCase() + b.slice(1)]) },
+      { name: 'enabled', label: '显示洋葱皮', type: 'checkbox', value: animationOf(e)!.onion?.enabled === false ? 'no' : 'yes' },
+      { name: 'before', label: '前面的帧数', type: 'number', value: o.before, min: 0, max: 8, step: 1 },
+      { name: 'after', label: '后面的帧数', type: 'number', value: o.after, min: 0, max: 8, step: 1 },
+      { name: 'opacity', label: '不透明度 (%)', type: 'number', value: Math.round(o.opacity * 100), min: 5, max: 100, step: 1 },
+      { name: 'blend', label: '混合模式', type: 'select', value: o.blend ?? 'multiply', options: onionBlends.map((b) => [b, blendLabels[b] || b]) },
     ],
-    'OK',
-    'Neighboring frames are drawn faintly over the canvas while the Timeline is open.',
+    '确定',
+    '打开时间轴时，相邻帧将以半透明方式叠加在画布上。',
   );
   if (!v) return;
   const clamp = (n: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, Math.round(Number.isFinite(n) ? n : lo)));
-  e.command('Onion Skin Settings', (d) => {
+  e.command('洋葱皮设置', (d) => {
     const blend = onionBlends.find((b) => b === v.blend) ?? 'multiply';
     d.animation!.onion = { enabled: v.enabled === 'yes', before: clamp(Number(v.before), 0, 8), after: clamp(Number(v.after), 0, 8), opacity: clamp(Number(v.opacity), 5, 100) / 100, ...(blend === 'multiply' ? {} : { blend }) };
   });
@@ -132,39 +133,39 @@ async function flattenFrames(e: Editor) {
   const release = assets.tiles.hold(() => grids.flatMap((g) => Object.values(g.tiles)));
   try {
     for (let i = 0; i < anim.frames.length; i++) {
-      e.message(`Rendering frame ${i + 1} of ${anim.frames.length}…`);
+      e.message(`正在渲染第 ${i + 1} 帧（共 ${anim.frames.length} 帧）…`);
       const img = await compositeFrame(e, frameDocument(doc, i), assets);
       grids.push(gridFromImage(assets.tiles, { width: img.width, height: img.height, data: img.data }));
     }
   } finally {
     release();
   }
-  const layers = grids.map((grid, i) => newPixelLayer(`Frame ${i + 1}`, doc, grid));
-  e.command('Flatten Frames Into Layers', (d) => {
+  const layers = grids.map((grid, i) => newPixelLayer(`第 ${i + 1} 帧`, doc, grid));
+  e.command('将帧拼合为图层', (d) => {
     d.layers.push(...layers);
     adoptFrameLayers(d, d.layers.slice(-layers.length));
   });
   e.selected = layers[anim.current]?.id ?? e.selected;
   e.update();
-  e.message(`Flattened ${layers.length} frames into layers.`);
+  e.message(`已将 ${layers.length} 帧拼合为图层。`);
 }
 
 async function customDelay(e: Editor, arg?: unknown) {
   const anim = animationOf(e)!;
-  const v = await settingsDialog(e, 'animation.delay-custom', arg, 'Frame Delay', [{ name: 'seconds', label: 'Delay (seconds)', type: 'number', value: anim.frames[anim.current].delay / 1000, min: 0, max: maxDelay / 1000, step: 0.01 }], 'OK');
+  const v = await settingsDialog(e, 'animation.delay-custom', arg, '帧延迟', [{ name: 'seconds', label: '延迟时间（秒）', type: 'number', value: anim.frames[anim.current].delay / 1000, min: 0, max: maxDelay / 1000, step: 0.01 }], '确定');
   if (!v) return;
   const ms = Number(v.seconds) * 1000;
   if (!Number.isFinite(ms)) return;
   const frames = selectedFrames(e);
-  e.command('Frame Delay', (d) => setFrameDelay(d, frames, ms));
+  e.command('帧延迟', (d) => setFrameDelay(d, frames, ms));
 }
 
 async function customLoop(e: Editor, arg?: unknown) {
   const anim = animationOf(e)!;
-  const v = await settingsDialog(e, 'animation.loop-custom', arg, 'Looping', [{ name: 'plays', label: 'Play the animation (times)', type: 'number', value: anim.loop || 1, min: 1, max: 65535, step: 1 }], 'OK');
+  const v = await settingsDialog(e, 'animation.loop-custom', arg, '循环', [{ name: 'plays', label: '播放动画次数', type: 'number', value: anim.loop || 1, min: 1, max: 65535, step: 1 }], '确定');
   if (!v) return;
   const n = Math.max(1, Math.min(65535, Math.round(Number(v.plays) || 1)));
-  e.command('Looping', (d) => (d.animation!.loop = n));
+  e.command('循环', (d) => (d.animation!.loop = n));
 }
 
 function unifyCommand(key: keyof AnimationUnify, label: string): Command {
@@ -192,11 +193,11 @@ export function timelineMenu(e?: Editor): MenuItem[] {
     'animation.new-frame', 'animation.delete-frames', 'animation.delete', '-',
     'animation.select-all', 'animation.play', '-',
     'animation.tween', 'animation.reverse', '-',
-    { label: 'Frame Delay', id: 'animation.delay', items: [] },
-    { label: 'Looping', id: 'animation.loop', items: [] },
+    { label: '帧延迟', id: 'animation.delay', items: [] },
+    { label: '循环', id: 'animation.loop', items: [] },
     '-',
     'animation.frames-from-layers', 'animation.flatten-frames', 'animation.match-layers',
-    { label: 'Edits Apply to All Frames', id: 'animation.unify', items: [] },
+    { label: '编辑应用于所有帧', id: 'animation.unify', items: [] },
     '-', 'animation.onion', 'animation.onion-settings', '-',
     'animation.create', 'timeline.create', 'timeline.convert-to-video', '-',
     'file.export-animation', 'file.render-video', 'file.import-video-frames',
@@ -222,9 +223,9 @@ export function installAnimation(e: Editor) {
   registerCommand(
     {
       id: 'animation.create',
-      label: 'Create Frame Animation',
+      label: '创建帧动画',
       enabled: (e) => docOpen(e) && !hasAnimation(e) && !hasTimeline(e),
-      description: 'Start a frame animation from the document as it is',
+      description: '从当前文档状态开始创建帧动画',
       run: (e) => {
         ensureAnimation(e);
         showTimeline(e);
@@ -232,13 +233,13 @@ export function installAnimation(e: Editor) {
     },
     {
       id: 'animation.new-frame',
-      label: 'New Frame',
+      label: '新建帧',
       enabled: (e) => docOpen(e) && !hasTimeline(e),
-      description: 'Duplicate the selected frames',
+      description: '复制所选帧',
       run: (e) => {
         ensureAnimation(e);
         const frames = selectedFrames(e);
-        e.command('New Frame', (d) => duplicateFrames(d, frames));
+        e.command('新建帧', (d) => duplicateFrames(d, frames));
         const cur = animationOf(e)!.current;
         setSelectedFrames(e, Array.from({ length: frames.length }, (_, k) => cur + k), cur);
         showTimeline(e);
@@ -247,33 +248,33 @@ export function installAnimation(e: Editor) {
     },
     {
       id: 'animation.delete-frames',
-      label: 'Delete Frames',
+      label: '删除帧',
       enabled: many,
       run: (e) => {
         const frames = selectedFrames(e);
         if (frames.length >= frameCount(e)) {
-          e.message('An animation keeps at least one frame; use Delete Animation to remove it.');
+          e.message('动画至少需要保留一帧；如需移除请使用“删除动画”。');
           return;
         }
         stop(e, false);
-        e.command(frames.length > 1 ? 'Delete Frames' : 'Delete Frame', (d) => deleteFrames(d, frames));
+        e.command(frames.length > 1 ? '删除多个帧' : '删除帧', (d) => deleteFrames(d, frames));
         setSelectedFrames(e, [animationOf(e)!.current]);
         e.update();
       },
     },
     {
       id: 'animation.delete',
-      label: 'Delete Animation',
+      label: '删除动画',
       enabled: animated,
-      description: 'Remove the frames; the layers keep the current frame',
+      description: '删除所有帧；图层将保留当前帧的状态',
       run: (e) => {
         stop(e, false);
-        e.command('Delete Animation', (d) => delete d.animation);
+        e.command('删除动画', (d) => delete d.animation);
       },
     },
     {
       id: 'animation.select-all',
-      label: 'Select All Frames',
+      label: '选择全部帧',
       enabled: many,
       recordable: false,
       run: (e) => {
@@ -283,24 +284,24 @@ export function installAnimation(e: Editor) {
     },
     {
       id: 'animation.select-frame',
-      label: 'Select Frame',
+      label: '选择帧',
       hidden: true,
       enabled: animated,
       run: (e, arg) => selectFrame(e, Math.round(Number(arg)) - 1),
     },
-    { id: 'animation.first', label: 'First Frame', enabled: timed, recordable: false, run: step('first', (e) => selectFrame(e, 0)) },
-    { id: 'animation.previous', label: 'Previous Frame', enabled: timed, recordable: false, run: step('previous', (e) => selectFrame(e, Math.max(0, animationOf(e)!.current - 1))) },
+    { id: 'animation.first', label: '第一帧', enabled: timed, recordable: false, run: step('first', (e) => selectFrame(e, 0)) },
+    { id: 'animation.previous', label: '上一帧', enabled: timed, recordable: false, run: step('previous', (e) => selectFrame(e, Math.max(0, animationOf(e)!.current - 1))) },
     {
       id: 'animation.next',
-      label: 'Next Frame',
+      label: '下一帧',
       enabled: timed,
       recordable: false,
       run: step('next', (e) => selectFrame(e, Math.min(frameCount(e) - 1, animationOf(e)!.current + 1))),
     },
-    { id: 'animation.last', label: 'Last Frame', enabled: timed, recordable: false, run: step('last', (e) => selectFrame(e, frameCount(e) - 1)) },
+    { id: 'animation.last', label: '最后一帧', enabled: timed, recordable: false, run: step('last', (e) => selectFrame(e, frameCount(e) - 1)) },
     {
       id: 'animation.play',
-      label: 'Play Animation',
+      label: '播放动画',
       enabled: (e) => many(e) || (hasTimeline(e) && timelineOf(e)!.duration > 1),
       checked: (e) => isPlaying(e) || isVideoPlaying(e),
       recordable: false,
@@ -311,53 +312,53 @@ export function installAnimation(e: Editor) {
     },
     {
       id: 'animation.reverse',
-      label: 'Reverse Frames',
+      label: '反转帧',
       enabled: many,
-      description: 'Reverse the order of the selected frames, or of all frames',
+      description: '反转所选帧或全部帧的顺序',
       run: (e) => {
         const frames = selectedFrames(e);
-        e.command('Reverse Frames', (d) => reverseFrames(d, frames));
+        e.command('反转帧', (d) => reverseFrames(d, frames));
       },
     },
-    { id: 'animation.tween', label: 'Tween…', enabled: many, description: 'Add frames that interpolate position, opacity and effects', run: (e, arg) => tweenDialog(e, arg) },
+    { id: 'animation.tween', label: '过渡…', enabled: many, description: '添加对位置、不透明度和效果进行插值的帧', run: (e, arg) => tweenDialog(e, arg) },
     {
       id: 'animation.frames-from-layers',
-      label: 'Make Frames From Layers',
+      label: '从图层创建帧',
       enabled: (e) => docOpen(e) && e.doc.layers.length > 1 && !hasTimeline(e),
-      description: 'One frame per top-level layer, bottom layer first',
+      description: '每个顶层图层生成一帧，最底层在最前',
       run: (e) => {
         stop(e, false);
-        e.command('Make Frames From Layers', (d) => framesFromLayers(d));
+        e.command('从图层创建帧', (d) => framesFromLayers(d));
         setSelectedFrames(e, [0]);
         showTimeline(e);
         e.update();
       },
     },
-    { id: 'animation.flatten-frames', label: 'Flatten Frames Into Layers', enabled: animated, description: 'A new layer with the composite of each frame', run: (e) => flattenFrames(e) },
+    { id: 'animation.flatten-frames', label: '将帧拼合为图层', enabled: animated, description: '为每帧的合成图像创建一个新图层', run: (e) => flattenFrames(e) },
     {
       id: 'animation.match-layers',
-      label: 'Apply Layer State to All Frames',
+      label: '将图层状态应用于所有帧',
       enabled: (e) => many(e) && e.selectedIds.size > 0,
-      description: "Copy the selected layers' position, visibility, opacity and style in this frame to every frame",
+      description: '将所选图层在当前帧中的位置、可见性、不透明度和样式复制到每一帧',
       run: (e) => {
         const ids = allLayers(e.selectedLayers).map((l) => l.id);
-        e.command('Apply Layer State to All Frames', (d) => matchLayersAcrossFrames(d, ids));
+        e.command('将图层状态应用于所有帧', (d) => matchLayersAcrossFrames(d, ids));
       },
     },
-    unifyCommand('position', 'Position'),
-    unifyCommand('visibility', 'Visibility'),
-    unifyCommand('style', 'Layer Style'),
+    unifyCommand('position', '位置'),
+    unifyCommand('visibility', '可见性'),
+    unifyCommand('style', '图层样式'),
     {
       id: 'animation.onion',
-      label: 'Onion Skins',
+      label: '洋葱皮',
       enabled: timed,
       checked: (e) => !!(animationOf(e)?.onion ?? timelineOf(e)?.onion)?.enabled,
       run: async (e) => {
         if (hasTimeline(e)) return (await videoCommands()).toggleVideoOnion(e);
-        e.command('Onion Skins', (d) => (d.animation!.onion = { ...(d.animation!.onion ?? defaultOnion), enabled: !d.animation!.onion?.enabled }));
+        e.command('洋葱皮', (d) => (d.animation!.onion = { ...(d.animation!.onion ?? defaultOnion), enabled: !d.animation!.onion?.enabled }));
       },
     },
-    { id: 'animation.onion-settings', label: 'Onion Skin Settings…', enabled: timed, run: async (e, arg) => (hasTimeline(e) ? (await videoCommands()).videoOnionSettings(e, arg) : onionSettings(e, arg)) },
+    { id: 'animation.onion-settings', label: '洋葱皮设置…', enabled: timed, run: async (e, arg) => (hasTimeline(e) ? (await videoCommands()).videoOnionSettings(e, arg) : onionSettings(e, arg)) },
     ...delayPresets.map(
       (ms, i): Command => ({
         id: `animation.delay-${ms}`,
@@ -368,11 +369,11 @@ export function installAnimation(e: Editor) {
         checked: (e) => selectedFrames(e).every((f) => animationOf(e)!.frames[f].delay === ms),
         run: (e) => {
           const frames = selectedFrames(e);
-          e.command('Frame Delay', (d) => setFrameDelay(d, frames, ms));
+          e.command('帧延迟', (d) => setFrameDelay(d, frames, ms));
         },
       }),
     ),
-    { id: 'animation.delay-custom', label: 'Other…', menu: 'animation.delay', order: 99, enabled: animated, run: (e, arg) => customDelay(e, arg) },
+    { id: 'animation.delay-custom', label: '其他…', menu: 'animation.delay', order: 99, enabled: animated, run: (e, arg) => customDelay(e, arg) },
     ...([1, 3, 0] as const).map(
       (n, i): Command => ({
         id: `animation.loop-${n === 0 ? 'forever' : n === 1 ? 'once' : n}`,
@@ -381,13 +382,13 @@ export function installAnimation(e: Editor) {
         order: i,
         enabled: animated,
         checked: (e) => animationOf(e)?.loop === n,
-        run: (e) => e.command('Looping', (d) => (d.animation!.loop = n)),
+        run: (e) => e.command('循环', (d) => (d.animation!.loop = n)),
       }),
     ),
-    { id: 'animation.loop-custom', label: 'Other…', menu: 'animation.loop', order: 99, enabled: animated, checked: (e) => ![0, 1, 3].includes(animationOf(e)?.loop ?? 0), run: (e, arg) => customLoop(e, arg) },
-    { id: 'file.export-animation', label: 'Export Animation…', enabled: animated, recordable: false, description: 'Animated GIF, PNG or WebP from the Timeline frames', ...lazyRun(exporting, (m, e) => m.exportAnimation(e)) },
-    { id: 'file.render-video', label: 'Render Video…', enabled: timed, recordable: false, description: 'Render the animation or video timeline to a WebM video or a PNG image sequence', ...lazyRun(exporting, (m, e) => m.renderVideo(e)) },
-    { id: 'file.import-video-frames', label: 'Video Frames to Layers…', recordable: false, description: 'Open frames of a video as layers, optionally as a frame animation', ...lazyRun(videoImport, (m, e, arg) => m.importVideoFrames(e, arg)) },
+    { id: 'animation.loop-custom', label: '其他…', menu: 'animation.loop', order: 99, enabled: animated, checked: (e) => ![0, 1, 3].includes(animationOf(e)?.loop ?? 0), run: (e, arg) => customLoop(e, arg) },
+    { id: 'file.export-animation', label: '导出动画…', enabled: animated, recordable: false, description: '从时间轴帧导出动画 GIF、PNG 或 WebP', ...lazyRun(exporting, (m, e) => m.exportAnimation(e)) },
+    { id: 'file.render-video', label: '渲染视频…', enabled: timed, recordable: false, description: '将动画或视频时间轴渲染为 WebM 视频或 PNG 图像序列', ...lazyRun(exporting, (m, e) => m.renderVideo(e)) },
+    { id: 'file.import-video-frames', label: '将视频帧导入图层…', recordable: false, description: '将视频的各帧作为图层打开，支持生成帧动画', ...lazyRun(videoImport, (m, e, arg) => m.importVideoFrames(e, arg)) },
   );
   // With an animation, Export GIF writes its frames.
   const gif = commands.get('file.export-gif');

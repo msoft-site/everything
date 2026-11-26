@@ -45,27 +45,27 @@ export function revertRasterized(e: Editor, r: Rasterized) {
 export async function warpTarget(e: Editor, feature: string, allowImage: boolean): Promise<WarpTarget | undefined> {
   let l = e.selectedIds.size === 1 ? e.layer : undefined;
   if (!l) {
-    e.message(`Select a single layer to use ${feature}.`);
+    e.message(`选择单个图层以使用${feature}。`);
     return;
   }
   if (l.kind === 'group' || l.kind === 'adjustment') {
-    e.message(`${feature} works on pixel, image, type and shape layers, not on ${l.kind === 'group' ? 'groups' : 'adjustment layers'}.`);
+    e.message(`${feature}适用于像素、图像、文字和形状图层，不适用于${l.kind === 'group' ? '组' : '调整图层'}。`);
     return;
   }
   if (!l.visible) {
-    e.message(`Show the layer before using ${feature}.`);
+    e.message(`使用${feature}前请先显示该图层。`);
     return;
   }
   if (layerLock(e.doc.layers, l.id, 'position') || layerLock(e.doc.layers, l.id, 'pixels')) {
-    e.message(`Unlock the layer before using ${feature}.`);
+    e.message(`使用${feature}前请先解锁该图层。`);
     return;
   }
   if (l.kind === 'image' && allowImage) return { layer: l, kind: 'image' };
   let rasterized: Rasterized | undefined;
   if (l.kind !== 'pixel') {
-    const what = l.kind === 'text' ? 'type layer' : l.kind === 'vector' ? 'shape layer' : l.kind === 'image' ? 'embedded image' : 'layer';
+    const what = l.kind === 'text' ? '文字图层' : l.kind === 'vector' ? '形状图层' : l.kind === 'image' ? '嵌入图像' : '图层';
     const { formDialog } = await import('../../ui/dialog');
-    const ok = await formDialog(`Rasterize “${l.name}”?`, [], 'Rasterize', `${feature} edits pixels. The ${what} will be converted to a pixel layer when the warp is committed; cancelling keeps it as it is.`);
+    const ok = await formDialog(`栅格化“${l.name}”？`, [], '栅格化', `${feature}用于编辑像素。提交变形时${what}将转换为像素图层；取消操作则保持原样。`);
     if (!ok) return;
     const history = e.history;
     const mark = history.mark();
@@ -85,10 +85,10 @@ export async function warpTarget(e: Editor, feature: string, allowImage: boolean
   const b = l.pixels ? gridDocBounds(l.pixels) : null;
   if (!b) {
     if (rasterized) revertRasterized(e, rasterized);
-    e.message('The layer is empty.');
+    e.message('图层为空。');
     return;
   }
-  if (l.liveFilters) e.message('Warping pixels rasterizes this layer’s Live Filters (undo restores them).');
+  if (l.liveFilters) e.message('变形像素会栅格化该图层的实时滤镜（撤销可恢复）。');
   return { layer: l, kind: 'pixel', rect: b, source: readRGBA(e.assets.tiles, l.pixels!, b), rasterized };
 }
 

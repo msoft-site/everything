@@ -36,32 +36,32 @@ export function installAudio() {
     ...lazyRun(m, (x, e, arg) => x.toggleTrack(e, which, arg)),
   });
   registerCommand(
-    { id: 'timeline.audio-add', label: 'Add Audio…', recordable: false, enabled: canAdd, description: 'Add a sound file (WAV, MP3, AAC, Ogg, Opus or FLAC) as a clip at the playhead', ...lazyRun(m, (x, e, arg) => x.addAudio(e, arg)) },
-    { id: 'timeline.audio-track-new', label: 'New Audio Track', enabled: hasTimeline, ...lazyRun(m, (x, e) => x.newTrack(e)) },
-    { id: 'timeline.audio-track-delete', label: 'Delete Audio Track', enabled: (e) => !!timelineOf(e)?.audio?.length, description: 'Remove the selected audio track and its clips', ...lazyRun(m, (x, e, arg) => x.deleteTrack(e, arg)) },
-    { id: 'timeline.audio-track-rename', label: 'Rename Audio Track…', enabled: hasTimeline, ...lazyRun(m, (x, e, arg) => x.renameTrack(e, arg)) },
-    flag('timeline.audio-track-mute', 'Mute Audio Track', 'muted', 'Silence the selected audio track'),
-    flag('timeline.audio-track-solo', 'Solo Audio Track', 'solo', 'Play only solo tracks'),
-    { id: 'timeline.audio-set', label: 'Audio Settings', hidden: true, enabled: hasTimeline, ...lazyRun(m, (x, e, arg) => x.setAudio(e, arg)) },
-    { id: 'timeline.audio-settings', label: 'Audio Clip Settings…', enabled: (e) => audioSelected(e) && selectedAudioClips(e).length === 1, description: 'Gain and fades of the selected audio clip', ...lazyRun(m, (x, e) => x.clipSettings(e)) },
-    { id: 'timeline.audio-delete', label: 'Delete Audio Clips', enabled: audioSelected, ...lazyRun(m, (x, e) => x.deleteClips(e)) },
-    { id: 'timeline.audio-duplicate', label: 'Duplicate Audio Clips', enabled: audioSelected, description: 'Copy the selected audio clips right after themselves', ...lazyRun(m, (x, e) => x.duplicateClips(e)) },
-    { id: 'timeline.audio-unlink', label: 'Unlink Audio', enabled: linkedSelected, description: 'Let the sound of a video layer move on its own', ...lazyRun(m, (x, e) => x.unlinkClips(e)) },
+    { id: 'timeline.audio-add', label: '添加音频…', recordable: false, enabled: canAdd, description: '在播放头位置添加音频文件（WAV、MP3、AAC、Ogg、Opus 或 FLAC）作为剪辑', ...lazyRun(m, (x, e, arg) => x.addAudio(e, arg)) },
+    { id: 'timeline.audio-track-new', label: '新建音频轨道', enabled: hasTimeline, ...lazyRun(m, (x, e) => x.newTrack(e)) },
+    { id: 'timeline.audio-track-delete', label: '删除音频轨道', enabled: (e) => !!timelineOf(e)?.audio?.length, description: '删除所选音频轨道及其剪辑', ...lazyRun(m, (x, e, arg) => x.deleteTrack(e, arg)) },
+    { id: 'timeline.audio-track-rename', label: '重命名音频轨道…', enabled: hasTimeline, ...lazyRun(m, (x, e, arg) => x.renameTrack(e, arg)) },
+    flag('timeline.audio-track-mute', '静音音频轨道', 'muted', '静音所选音频轨道'),
+    flag('timeline.audio-track-solo', '独奏音频轨道', 'solo', '仅播放独奏轨道'),
+    { id: 'timeline.audio-set', label: '音频设置', hidden: true, enabled: hasTimeline, ...lazyRun(m, (x, e, arg) => x.setAudio(e, arg)) },
+    { id: 'timeline.audio-settings', label: '音频剪辑设置…', enabled: (e) => audioSelected(e) && selectedAudioClips(e).length === 1, description: '所选音频剪辑的增益与淡入淡出', ...lazyRun(m, (x, e) => x.clipSettings(e)) },
+    { id: 'timeline.audio-delete', label: '删除音频剪辑', enabled: audioSelected, ...lazyRun(m, (x, e) => x.deleteClips(e)) },
+    { id: 'timeline.audio-duplicate', label: '复制音频剪辑', enabled: audioSelected, description: '紧随其后复制所选音频剪辑', ...lazyRun(m, (x, e) => x.duplicateClips(e)) },
+    { id: 'timeline.audio-unlink', label: '取消链接音频', enabled: linkedSelected, description: '允许视频图层的声音独立移动', ...lazyRun(m, (x, e) => x.unlinkClips(e)) },
     {
       id: 'timeline.audio-scrub',
-      label: 'Audio Scrubbing',
+      label: '音频拖动试听',
       enabled: hasTimeline,
       recordable: false,
       checked: (e) => hasTimeline(e) && videoView(e).scrubAudio,
-      description: 'Play a short snippet of sound while dragging the playhead',
+      description: '拖动播放头时播放简短声音片段',
       run: (e) => {
         videoView(e).scrubAudio = !videoView(e).scrubAudio;
         e.update();
       },
     },
-    { id: 'layer.video-mute', label: 'Mute Video Sound', enabled: (e) => !!videoLayerOf(e)?.video.audio, checked: (e) => !!videoLayerOf(e)?.video.muted, description: 'Silence the sound of the selected video layer', ...lazyRun(m, (x, e, arg) => x.toggleVideoMute(e, arg)) },
+    { id: 'layer.video-mute', label: '静音视频声音', enabled: (e) => !!videoLayerOf(e)?.video.audio, checked: (e) => !!videoLayerOf(e)?.video.muted, description: '静音所选视频图层的声音', ...lazyRun(m, (x, e, arg) => x.toggleVideoMute(e, arg)) },
     // The same for a given video layer (the audio properties bar names the
     // layer of the selected linked clip, whatever layers are selected).
-    { id: 'timeline.audio-video-mute', label: 'Mute Video Sound', hidden: true, enabled: hasTimeline, ...lazyRun(m, (x, e, arg) => x.toggleVideoMute(e, arg)) },
+    { id: 'timeline.audio-video-mute', label: '静音视频声音', hidden: true, enabled: hasTimeline, ...lazyRun(m, (x, e, arg) => x.toggleVideoMute(e, arg)) },
   );
 }

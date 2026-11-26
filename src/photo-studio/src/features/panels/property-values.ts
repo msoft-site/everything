@@ -12,12 +12,12 @@ export const UNIT_SUFFIX: Record<LengthUnit, string> = {
   pt: 'pt',
 };
 export const UNIT_NAMES: [LengthUnit, string][] = [
-  ['px', 'Pixels'],
-  ['in', 'Inches'],
-  ['cm', 'Centimeters'],
-  ['mm', 'Millimeters'],
-  ['pt', 'Points'],
-  ['percent', 'Percent'],
+  ['px', '像素'],
+  ['in', '英寸'],
+  ['cm', '厘米'],
+  ['mm', '毫米'],
+  ['pt', '点'],
+  ['percent', '百分比'],
 ];
 const ALIASES: [RegExp, LengthUnit][] = [
   [/^(px|pixels?)$/i, 'px'],
@@ -171,9 +171,9 @@ export const MAX_SIDE = 8192,
 /** Why a document size cannot be used, or undefined when it can. */
 export function canvasSizeProblem(w: number, h: number): string | undefined {
   if (!Number.isFinite(w) || !Number.isFinite(h) || w < 1 || h < 1)
-    return 'Use a width and height of at least 1 pixel.';
-  if (w > MAX_SIDE || h > MAX_SIDE) return `Use at most ${MAX_SIDE} pixels per side.`;
-  if (w * h > MAX_PIXELS) return 'Use at most 24 megapixels.';
+    return '宽度和高度必须至少为 1 像素。';
+  if (w > MAX_SIDE || h > MAX_SIDE) return `每边最多 ${MAX_SIDE} 像素。`;
+  if (w * h > MAX_PIXELS) return '最多支持 2400 万像素。';
 }
 
 /** Canvas size for a changed width or height of the document (whole pixels),

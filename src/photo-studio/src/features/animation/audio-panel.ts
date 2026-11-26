@@ -37,7 +37,7 @@ function wave(e: Editor, span: ClipSpan, width: number, gain: number) {
   let d = paths.get(key);
   if (d === undefined) {
     const peaks = audioPeaks(e.session, src);
-    if (!peaks) return audioFailed(src) ? '<span class="vt-wave-note">Cannot decode</span>' : '<span class="vt-wave-pending" aria-hidden="true"></span>';
+    if (!peaks) return audioFailed(src) ? '<span class="vt-wave-note">无法解码</span>' : '<span class="vt-wave-pending" aria-hidden="true"></span>';
     d = waveformPath(peakColumns(peaks, span.in, span.length, cols), dbToGain(gain));
     paths.set(key, d);
     if (paths.size > 600) paths.delete(paths.keys().next().value!);
@@ -64,10 +64,10 @@ function clipHtml(e: Editor, tl: VideoTimeline, c: AudioClip, zoom: number, sile
     fo = (c.fadeOut ?? 0) * px;
   const name = clipName(e.doc, c);
   const gain = c.gain ?? 0;
-  const range = `${timecode(span.start * tl.fps, tl.fps)} to ${timecode((span.start + span.length) * tl.fps, tl.fps)}`;
-  const tip = `${name}: ${range}${gain ? `, ${fmtDb(gain)}` : ''}${span.linked ? ' (sound of the video layer; moves with its clip)' : ''}${span.muted ? ' (muted)' : ''}`;
+  const range = `${timecode(span.start * tl.fps, tl.fps)} 至 ${timecode((span.start + span.length) * tl.fps, tl.fps)}`;
+  const tip = `${name}: ${range}${gain ? `, ${fmtDb(gain)}` : ''}${span.linked ? ' (视频图层的声音；随其剪辑移动)' : ''}${span.muted ? ' (已静音)' : ''}`;
   const cls = `vt-clip audio${span.linked ? ' linked' : ''}${selected.has(c.id) ? ' selected' : ''}${silent || span.muted ? ' muted' : ''}`;
-  return `<div class="${cls}" data-audio-clip="${escapeXML(c.id)}" style="left:${left}px;width:${width}px" title="${escapeXML(tip)}"><span class="vt-trim start" data-trim="start" title="Drag to trim the start"></span>${wave(e, span, width, gain)}${envelope(width, fi, fo)}<span class="vt-afade-handle in" data-afade="in" style="left:${handleAt(fi, width)}px" title="Drag to set the fade in"></span><span class="vt-afade-handle out" data-afade="out" style="right:${handleAt(fo, width)}px" title="Drag to set the fade out"></span><span class="vt-clip-label">${span.linked ? svg('link', 11) : svg('audio-wave', 11)}${escapeXML(name)}</span><span class="vt-trim end" data-trim="end" title="Drag to trim the end"></span></div>`;
+  return `<div class="${cls}" data-audio-clip="${escapeXML(c.id)}" style="left:${left}px;width:${width}px" title="${escapeXML(tip)}"><span class="vt-trim start" data-trim="start" title="拖动以修剪起点"></span>${wave(e, span, width, gain)}${envelope(width, fi, fo)}<span class="vt-afade-handle in" data-afade="in" style="left:${handleAt(fi, width)}px" title="拖动设置淡入"></span><span class="vt-afade-handle out" data-afade="out" style="right:${handleAt(fo, width)}px" title="拖动设置淡出"></span><span class="vt-clip-label">${span.linked ? svg('link', 11) : svg('audio-wave', 11)}${escapeXML(name)}</span><span class="vt-trim end" data-trim="end" title="拖动以修剪终点"></span></div>`;
 }
 
 /** The audio header row and track rows. */
@@ -77,12 +77,12 @@ export function audioRowsHtml(e: Editor, tl: VideoTimeline, zoom: number) {
   const view = videoView(e);
   const selected = new Set(selectedAudioClips(e));
   const current = selectedAudioTrack(e)?.id ?? (view.audioTrack || tracks[0].id);
-  const header = `<div class="vt-row vt-audio-header"><div class="vt-head"><span class="vt-icon" aria-hidden="true">${svg('speaker', 13)}</span><span class="vt-name">Audio</span><span class="vt-spacer"></span><button class="icon-button" data-command="timeline.audio-add" title="Add audio…" aria-label="Add audio">${svg('audio-add', 13)}</button><button class="icon-button" data-command="timeline.audio-track-new" title="New audio track" aria-label="New audio track">${svg('plus', 13)}</button></div><div class="vt-lane"></div></div>`;
+  const header = `<div class="vt-row vt-audio-header"><div class="vt-head"><span class="vt-icon" aria-hidden="true">${svg('speaker', 13)}</span><span class="vt-name">音频</span><span class="vt-spacer"></span><button class="icon-button" data-command="timeline.audio-add" title="添加音频…" aria-label="添加音频">${svg('audio-add', 13)}</button><button class="icon-button" data-command="timeline.audio-track-new" title="新建音频轨道" aria-label="新建音频轨道">${svg('plus', 13)}</button></div><div class="vt-lane"></div></div>`;
   const rows = tracks
     .map((t) => {
       const silent = !!t.muted || (solo && !t.solo);
       const sel = t.id === current;
-      const head = `<div class="vt-head" data-audio-track="${escapeXML(t.id)}"><span class="vt-icon" aria-hidden="true">${svg('audio-wave', 13)}</span><span class="vt-name" title="${escapeXML(t.name)} (double-click to rename)">${escapeXML(t.name)}</span>${t.volume ? `<span class="vt-track-volume">${fmtDb(t.volume)}</span>` : ''}<button class="icon-button vt-track-toggle" data-command="timeline.audio-track-mute" data-arg="${escapeXML(t.id)}" aria-pressed="${!!t.muted}" title="${t.muted ? 'Unmute' : 'Mute'} this track" aria-label="Mute ${escapeXML(t.name)}">${svg(t.muted ? 'speaker-off' : 'speaker', 13)}</button><button class="icon-button vt-track-toggle" data-command="timeline.audio-track-solo" data-arg="${escapeXML(t.id)}" aria-pressed="${!!t.solo}" title="${t.solo ? 'Stop playing only this track' : 'Play only solo tracks (solo)'}" aria-label="Solo ${escapeXML(t.name)}">${svg('headphones', 13)}</button></div>`;
+      const head = `<div class="vt-head" data-audio-track="${escapeXML(t.id)}"><span class="vt-icon" aria-hidden="true">${svg('audio-wave', 13)}</span><span class="vt-name" title="${escapeXML(t.name)} (双击重命名)">${escapeXML(t.name)}</span>${t.volume ? `<span class="vt-track-volume">${fmtDb(t.volume)}</span>` : ''}<button class="icon-button vt-track-toggle" data-command="timeline.audio-track-mute" data-arg="${escapeXML(t.id)}" aria-pressed="${!!t.muted}" title="${t.muted ? '取消静音' : '静音'}此轨道" aria-label="静音 ${escapeXML(t.name)}">${svg(t.muted ? 'speaker-off' : 'speaker', 13)}</button><button class="icon-button vt-track-toggle" data-command="timeline.audio-track-solo" data-arg="${escapeXML(t.id)}" aria-pressed="${!!t.solo}" title="${t.solo ? '停止仅播放此轨道' : '仅播放独奏轨道 (独奏)'}" aria-label="独奏 ${escapeXML(t.name)}">${svg('headphones', 13)}</button></div>`;
       const clips = t.clips.map((c) => clipHtml(e, tl, c, zoom, silent, selected)).join('');
       return `<div class="vt-row vt-track vt-audio-track${sel ? ' selected' : ''}" data-audio-row="${escapeXML(t.id)}">${head}<div class="vt-lane vt-audio-lane" data-audio-lane="${escapeXML(t.id)}">${clips}</div></div>`;
     })
@@ -97,7 +97,7 @@ export function audioPropsHtml(e: Editor, tl: VideoTimeline) {
   const track = hit?.track ?? (videoView(e).audioTrack ? selectedAudioTrack(e) : undefined);
   if (!track) return '';
   const vol = track.volume ?? 0;
-  const volume = `<label class="vt-ap-field" title="Volume of the track (dB)">Track volume<input type="range" min="-40" max="12" step="0.5" value="${vol}" data-audio="volume" data-track="${escapeXML(track.id)}" aria-label="Track volume (dB)"><output>${fmtDb(vol)}</output></label>`;
+  const volume = `<label class="vt-ap-field" title="轨道音量 (dB)">轨道音量<input type="range" min="-40" max="12" step="0.5" value="${vol}" data-audio="volume" data-track="${escapeXML(track.id)}" aria-label="轨道音量 (dB)"><output>${fmtDb(vol)}</output></label>`;
   if (!hit) return `<span class="vt-ap-name" title="${escapeXML(track.name)}">${svg('audio-wave', 13)}<span>${escapeXML(track.name)}</span></span>${volume}`;
   const c = hit.clip;
   const span = clipSpan(e.doc, c);
@@ -106,12 +106,12 @@ export function audioPropsHtml(e: Editor, tl: VideoTimeline) {
   const linked = span?.linked;
   const layerMuted = linked && span?.muted;
   return `<span class="vt-ap-name" title="${escapeXML(clipName(e.doc, c))}">${svg(linked ? 'link' : 'audio-wave', 13)}<span>${escapeXML(clipName(e.doc, c))}</span></span>
-<label class="vt-ap-field" title="Gain of the clip (dB)">Gain<input type="range" min="-40" max="12" step="0.5" value="${g}" data-audio="gain" data-clip="${escapeXML(c.id)}" aria-label="Clip gain (dB)"><output>${fmtDb(g)}</output></label>
-<label class="vt-ap-field" title="Length of the fade in (seconds)">Fade in<input type="number" min="0" max="${max}" step="0.05" value="${c.fadeIn ?? 0}" data-audio="fadeIn" data-clip="${escapeXML(c.id)}" aria-label="Fade in (seconds)">s</label>
-<label class="vt-ap-field" title="Length of the fade out (seconds)">Fade out<input type="number" min="0" max="${max}" step="0.05" value="${c.fadeOut ?? 0}" data-audio="fadeOut" data-clip="${escapeXML(c.id)}" aria-label="Fade out (seconds)">s</label>
+<label class="vt-ap-field" title="剪辑增益 (dB)">增益<input type="range" min="-40" max="12" step="0.5" value="${g}" data-audio="gain" data-clip="${escapeXML(c.id)}" aria-label="剪辑增益 (dB)"><output>${fmtDb(g)}</output></label>
+<label class="vt-ap-field" title="淡入时长 (秒)">淡入<input type="number" min="0" max="${max}" step="0.05" value="${c.fadeIn ?? 0}" data-audio="fadeIn" data-clip="${escapeXML(c.id)}" aria-label="淡入 (秒)">秒</label>
+<label class="vt-ap-field" title="淡出时长 (秒)">淡出<input type="number" min="0" max="${max}" step="0.05" value="${c.fadeOut ?? 0}" data-audio="fadeOut" data-clip="${escapeXML(c.id)}" aria-label="淡出 (秒)">秒</label>
 <span class="timeline-sep"></span>${volume}
-${linked ? `<span class="timeline-sep"></span><button class="icon-button" data-command="timeline.audio-video-mute" data-arg="${escapeXML(c.link!)}" aria-pressed="${!!layerMuted}" title="${layerMuted ? 'Unmute' : 'Mute'} the sound of the video layer" aria-label="Mute the sound of the video layer">${svg(layerMuted ? 'speaker-off' : 'speaker', 15)}</button><button class="icon-button" data-command="timeline.audio-unlink" title="Unlink the sound from its video clip" aria-label="Unlink audio">${svg('unlink', 15)}</button>` : ''}
-<span class="vt-ap-length" title="Length of the clip">${span ? secs(span.length) : ''}</span>`;
+${linked ? `<span class="timeline-sep"></span><button class="icon-button" data-command="timeline.audio-video-mute" data-arg="${escapeXML(c.link!)}" aria-pressed="${!!layerMuted}" title="${layerMuted ? '取消静音' : '静音'}视频图层的声音" aria-label="静音视频图层的声音">${svg(layerMuted ? 'speaker-off' : 'speaker', 15)}</button><button class="icon-button" data-command="timeline.audio-unlink" title="取消声音与视频剪辑的链接" aria-label="取消音频链接">${svg('unlink', 15)}</button>` : ''}
+<span class="vt-ap-length" title="剪辑长度">${span ? secs(span.length) : ''}</span>`;
 }
 
 // ----- Gestures -----

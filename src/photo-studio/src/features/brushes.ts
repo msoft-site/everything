@@ -151,7 +151,7 @@ export function applyBrushPreset(e: Editor, p: StoredPreset) {
 
 const brushesPanel: Panel = {
   id: 'brushes',
-  title: 'Brushes',
+  title: '画笔预设',
   icon: 'brush-presets',
   location: 'strip',
   mount: (e, el) => {
@@ -169,7 +169,7 @@ const brushesPanel: Panel = {
   },
   update: (e, el) => {
     const s = activeBrush(e);
-    el.innerHTML = `<label class="panel-row">Size <input id="brushes-size" type="range" min="1" max="1000" value="${s.size}"><output>${Math.round(s.size)} px</output></label><div class="brush-presets">${allPresets()
+    el.innerHTML = `<label class="panel-row">大小 <input id="brushes-size" type="range" min="1" max="1000" value="${s.size}"><output>${Math.round(s.size)} px</output></label><div class="brush-presets">${allPresets()
       .map((p, i) => {
         const key = `${i}:${p.name}`;
         let url = previews.get(key);
@@ -183,7 +183,7 @@ const brushesPanel: Panel = {
 
 const settingsPanel: Panel = {
   id: 'brush-settings',
-  title: 'Brush Settings',
+  title: '画笔工具设置',
   icon: 'brush-settings',
   location: 'strip',
   shortcut: 'F5',
@@ -233,14 +233,14 @@ const settingsPanel: Panel = {
     const range = (k: string, label: string, value: number, min: number, max: number, unit = '%') =>
       `<label class="bs-row"><span>${label}</span><input type="range" data-bs="${k}" min="${min}" max="${max}" value="${value}"><output>${Math.round(value)}${unit}</output></label>`;
     const check = (k: string, label: string, value: boolean | undefined) => `<label class="bs-check"><input type="checkbox" data-bs="${k}" ${value ? 'checked' : ''}> ${label}</label>`;
-    el.innerHTML = `<div class="brush-settings"><p class="muted">Editing: ${escapeXML(paintingTools.has(e.tool) ? (e.activeTool?.label ?? 'Brush') : 'Brush Tool')}</p>
-<h4>Brush Tip Shape ${s.sample ? `<button class="link-button" data-clear-sample>Use round tip</button>` : ''}</h4>
-${s.sample ? '<p class="muted">Sampled tip</p>' : ''}
-${range('size', 'Size', s.size, 1, 1000, ' px')}${range('angle', 'Angle', s.angle, -180, 180, '°')}${range('roundness', 'Roundness', s.roundness * 100, 1, 100)}${s.sample ? '' : range('hardness', 'Hardness', s.hardness * 100, 0, 100)}${range('spacing', 'Spacing', s.spacing * 100, 1, 1000)}
-<h4>Shape Dynamics</h4>${range('sizeJitter', 'Size Jitter', (d.sizeJitter ?? 0) * 100, 0, 100)}${check('pressureSize', 'Pen pressure controls size', d.pressureSize)}${range('minimumDiameter', 'Minimum Diameter', (d.minimumDiameter ?? 0) * 100, 0, 100)}${range('angleJitter', 'Angle Jitter', (d.angleJitter ?? 0) * 100, 0, 100)}${range('roundnessJitter', 'Roundness Jitter', (d.roundnessJitter ?? 0) * 100, 0, 100)}
-<h4>Scattering</h4>${range('scatter', 'Scatter', (d.scatter ?? 0) * 100, 0, 1000)}${range('count', 'Count', d.count ?? 1, 1, 16, '')}
-<h4>Transfer</h4>${range('opacityJitter', 'Opacity Jitter', (d.opacityJitter ?? 0) * 100, 0, 100)}${check('pressureOpacity', 'Pen pressure controls opacity', d.pressureOpacity)}${range('flowJitter', 'Flow Jitter', (d.flowJitter ?? 0) * 100, 0, 100)}${check('pressureFlow', 'Pen pressure controls flow', d.pressureFlow)}
-<h4>Other</h4>${check('airbrush', 'Build-up (airbrush)', s.airbrush)}${range('smoothing', 'Smoothing', s.smoothing * 100, 0, 100)}</div>`;
+    el.innerHTML = `<div class="brush-settings"><p class="muted">正在编辑：${escapeXML(paintingTools.has(e.tool) ? (e.activeTool?.label ?? '画笔') : '画笔工具')}</p>
+<h4>画笔笔尖形状 ${s.sample ? `<button class="link-button" data-clear-sample>使用圆形笔尖</button>` : ''}</h4>
+${s.sample ? '<p class="muted">采样笔尖</p>' : ''}
+${range('size', '大小', s.size, 1, 1000, ' px')}${range('angle', '角度', s.angle, -180, 180, '°')}${range('roundness', '圆度', s.roundness * 100, 1, 100)}${s.sample ? '' : range('hardness', '硬度', s.hardness * 100, 0, 100)}${range('spacing', '间距', s.spacing * 100, 1, 1000)}
+<h4>形状动态</h4>${range('sizeJitter', '大小抖动', (d.sizeJitter ?? 0) * 100, 0, 100)}${check('pressureSize', '钢笔压力控制大小', d.pressureSize)}${range('minimumDiameter', '最小直径', (d.minimumDiameter ?? 0) * 100, 0, 100)}${range('angleJitter', '角度抖动', (d.angleJitter ?? 0) * 100, 0, 100)}${range('roundnessJitter', '圆度抖动', (d.roundnessJitter ?? 0) * 100, 0, 100)}
+<h4>散布</h4>${range('scatter', '散布', (d.scatter ?? 0) * 100, 0, 1000)}${range('count', '数量', d.count ?? 1, 1, 16, '')}
+<h4>传递</h4>${range('opacityJitter', '不透明度抖动', (d.opacityJitter ?? 0) * 100, 0, 100)}${check('pressureOpacity', '钢笔压力控制不透明度', d.pressureOpacity)}${range('flowJitter', '流量抖动', (d.flowJitter ?? 0) * 100, 0, 100)}${check('pressureFlow', '钢笔压力控制流量', d.pressureFlow)}
+<h4>其他</h4>${check('airbrush', '累加喷枪', s.airbrush)}${range('smoothing', '平滑', s.smoothing * 100, 0, 100)}</div>`;
   },
 };
 

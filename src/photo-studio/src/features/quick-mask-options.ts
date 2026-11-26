@@ -67,6 +67,6 @@ export const filmAlpha = (value: number, o: QuickMaskOptions) =>
 /** A short description for tooltips and the status message. */
 export function quickMaskHint(o: QuickMaskOptions) {
   return o.indicates === 'masked'
-    ? 'Quick Mask: paint with black to remove from the selection, white to add. Press Q to exit.'
-    : 'Quick Mask: paint with black to add to the selection, white to remove. Press Q to exit.';
+    ? '快速蒙版：用黑色绘制以从选区中减去，用白色绘制以添加到选区。按 Q 退出。'
+    : '快速蒙版：用黑色绘制以添加到选区，用白色绘制以从选区中减去。按 Q 退出。';
 }

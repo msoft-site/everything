@@ -107,16 +107,16 @@ export function commitSelectionMask(e: Editor, mask: Mask8 | TileGrid | null, op
 export function optionsFor(e: Editor, extra = '', opts: { antiAlias?: boolean; subject?: boolean } = {}) {
   const op = (e.settings.selectionOp as SelectionOp) ?? 'replace';
   const ops: [SelectionOp, string, string][] = [
-    ['replace', 'New selection', 'square'],
-    ['add', 'Add to selection (Shift)', 'plus'],
-    ['subtract', 'Subtract from selection (Alt)', 'minus'],
-    ['intersect', 'Intersect with selection (Shift+Alt)', 'x'],
+    ['replace', '新选区', 'square'],
+    ['add', '添加到选区 (Shift)', 'plus'],
+    ['subtract', '从选区减去 (Alt)', 'minus'],
+    ['intersect', '与选区交叉 (Shift+Alt)', 'x'],
   ];
-  return `<div class="segmented" role="group" aria-label="Selection mode">${ops.map(([id, label, icon]) => `<button data-selection-op="${id}" aria-pressed="${op === id}" title="${label}" aria-label="${label}">${svg(icon, 14)}</button>`).join('')}</div><label>Feather <input id="sel-feather" type="number" min="0" max="1000" value="${Number(e.settings.selectionFeather ?? 0)}"> px</label><label class="transform-setting" ${opts.antiAlias === false ? 'title="Rectangular selections always have hard pixel edges"' : ''}><input id="sel-aa" type="checkbox" ${opts.antiAlias === false ? 'disabled' : e.settings.antiAlias !== false ? 'checked' : ''}>Anti-alias</label>${extra}${opts.subject ? subjectButton(e) : ''}<button data-command="select.mask-refine" ${e.doc.selection ? '' : 'disabled'}>Select and Mask…</button>`;
+  return `<div class="segmented" role="group" aria-label="选区模式">${ops.map(([id, label, icon]) => `<button data-selection-op="${id}" aria-pressed="${op === id}" title="${label}" aria-label="${label}">${svg(icon, 14)}</button>`).join('')}</div><label>羽化 <input id="sel-feather" type="number" min="0" max="1000" value="${Number(e.settings.selectionFeather ?? 0)}"> 像素</label><label class="transform-setting" ${opts.antiAlias === false ? 'title="矩形选区始终具有硬像素边缘"' : ''}><input id="sel-aa" type="checkbox" ${opts.antiAlias === false ? 'disabled' : e.settings.antiAlias !== false ? 'checked' : ''}>消除锯齿</label>${extra}${opts.subject ? subjectButton(e) : ''}<button data-command="select.mask-refine" ${e.doc.selection ? '' : 'disabled'}>选择并遮住…</button>`;
 }
 /** Select Subject from the options bar of the assisted selection tools. */
 export const subjectButton = (e: Editor) =>
-  `<button data-command="select.subject" title="Select the most prominent subject in the image" ${e.hasDocument ? '' : 'disabled'}>Select Subject</button>`;
+  `<button data-command="select.subject" title="选择图像中最突出的主体" ${e.hasDocument ? '' : 'disabled'}>选择主体</button>`;
 export function bindSelectionOptions(e: Editor, el: HTMLElement) {
   el.querySelectorAll<HTMLButtonElement>('[data-selection-op]').forEach((b) =>
     b.addEventListener('click', () => {
@@ -299,14 +299,14 @@ function marqueeOptions(e: Editor, shape: 'rect' | 'ellipse' | 'row' | 'column')
   const fixed = style !== 'normal';
   const unit = style === 'size' ? 'px' : '';
   const dis = fixed ? '' : 'disabled';
-  const styles = `<label>Style <select id="marquee-style" aria-label="Style">${[
-    ['normal', 'Normal'],
-    ['ratio', 'Fixed Ratio'],
-    ['size', 'Fixed Size'],
+  const styles = `<label>样式 <select id="marquee-style" aria-label="样式">${[
+    ['normal', '正常'],
+    ['ratio', '固定比例'],
+    ['size', '固定大小'],
   ]
     .map(([v, l]) => `<option value="${v}" ${style === v ? 'selected' : ''}>${l}</option>`)
     .join('')}</select></label>`;
-  const size = `<label title="Width">W <input id="marquee-w" type="number" min="0" step="any" value="${Number(e.settings.marqueeW ?? 1)}" aria-label="Width" ${dis}><span class="marquee-unit">${unit}</span></label><button type="button" class="icon-button" id="marquee-swap" title="Swap width and height" aria-label="Swap width and height" ${dis}>${svg('arrow-left-right', 14)}</button><label title="Height">H <input id="marquee-h" type="number" min="0" step="any" value="${Number(e.settings.marqueeH ?? 1)}" aria-label="Height" ${dis}><span class="marquee-unit">${unit}</span></label>`;
+  const size = `<label title="宽度">宽 <input id="marquee-w" type="number" min="0" step="any" value="${Number(e.settings.marqueeW ?? 1)}" aria-label="宽度" ${dis}><span class="marquee-unit">${unit}</span></label><button type="button" class="icon-button" id="marquee-swap" title="交换宽度和高度" aria-label="交换宽度和高度" ${dis}>${svg('arrow-left-right', 14)}</button><label title="高度">高 <input id="marquee-h" type="number" min="0" step="any" value="${Number(e.settings.marqueeH ?? 1)}" aria-label="高度" ${dis}><span class="marquee-unit">${unit}</span></label>`;
   return optionsFor(e, styles + size, { antiAlias: aa });
 }
 function marqueeTool(id: string, label: string, icon: string, shape: 'rect' | 'ellipse' | 'row' | 'column', key?: string): Tool {
@@ -404,7 +404,7 @@ function rectMask(e: Editor, r: { x: number; y: number; width: number; height: n
 }
 const lassoTool: Tool = {
   id: 'lasso',
-  label: 'Lasso Tool',
+  label: '套索工具',
   key: 'L',
   icon: 'lasso',
   group: 'lasso',
@@ -485,7 +485,7 @@ export function finishHeldLasso(e: Editor) {
 }
 const polygonTool: Tool = {
   id: 'polygonal-lasso',
-  label: 'Polygonal Lasso Tool',
+  label: '多边形套索工具',
   key: 'L',
   icon: 'lasso-polygon',
   group: 'lasso',
@@ -560,13 +560,13 @@ function closePolygon(e: Editor) {
 }
 const wandTool: Tool = {
   id: 'magic-wand',
-  label: 'Magic Wand Tool',
+  label: '魔棒工具',
   key: 'W',
   icon: 'wand-sparkles',
   group: 'select',
   cursor: () => 'crosshair',
   options: (e) =>
-    optionsFor(e, `<label>Sample Size <select id="wand-sample-size">${SAMPLE_SIZES.map((n) => `<option value="${n}" ${wandSampleSize(e) === n ? 'selected' : ''}>${n === 1 ? 'Point Sample' : `${n} by ${n} Average`}</option>`).join('')}</select></label><label>Tolerance <input id="tolerance" type="number" value="${e.tolerance}" min="0" max="255"></label><label class="transform-setting"><input id="wand-contiguous" type="checkbox" ${e.settings.contiguous !== false ? 'checked' : ''}>Contiguous</label><label class="transform-setting"><input id="wand-all" type="checkbox" ${e.settings.sampleAllLayers ? 'checked' : ''}>Sample All Layers</label>`, { subject: true }),
+    optionsFor(e, `<label>取样大小 <select id="wand-sample-size">${SAMPLE_SIZES.map((n) => `<option value="${n}" ${wandSampleSize(e) === n ? 'selected' : ''}>${n === 1 ? '取样点' : `${n}×${n} 平均`}</option>`).join('')}</select></label><label>容差 <input id="tolerance" type="number" value="${e.tolerance}" min="0" max="255"></label><label class="transform-setting"><input id="wand-contiguous" type="checkbox" ${e.settings.contiguous !== false ? 'checked' : ''}>连续</label><label class="transform-setting"><input id="wand-all" type="checkbox" ${e.settings.sampleAllLayers ? 'checked' : ''}>对所有图层取样</label>`, { subject: true }),
   bindOptions: ({ e, el }) => {
     bindSelectionOptions(e, el);
     bindTolerance(e, el);
@@ -582,10 +582,10 @@ const wandTool: Tool = {
     // The selection belongs to the document clicked, even if another is shown
     // by the time its pixels are read.
     const session = e.session;
-    e.message('Selecting similar pixels…');
+    e.message('正在选择相似像素…');
     const mask = await wandMask(e, x, y);
-    if (e.sessions.includes(session)) finishShape(e, op, mask, 'Magic Wand', session);
-    e.message('Ready');
+    if (e.sessions.includes(session)) finishShape(e, op, mask, '魔棒', session);
+    e.message('就绪');
   },
 };
 /** The image the Magic Wand family samples: the current layer or all layers. */
@@ -705,10 +705,10 @@ async function modifyDialog(e: Editor, id: string, arg: unknown, title: string, 
 }
 export function installSelection(editor: Editor) {
   registerTool(
-    movableOutline(marqueeTool('rect-marquee', 'Rectangular Marquee Tool', 'square-dashed', 'rect', 'M')),
-    movableOutline(marqueeTool('ellipse-marquee', 'Elliptical Marquee Tool', 'marquee-ellipse', 'ellipse', 'M')),
-    marqueeTool('row-marquee', 'Single Row Marquee Tool', 'marquee-row', 'row'),
-    marqueeTool('column-marquee', 'Single Column Marquee Tool', 'marquee-column', 'column'),
+    movableOutline(marqueeTool('rect-marquee', '矩形选框工具', 'square-dashed', 'rect', 'M')),
+    movableOutline(marqueeTool('ellipse-marquee', '椭圆选框工具', 'marquee-ellipse', 'ellipse', 'M')),
+    marqueeTool('row-marquee', '单行选框工具', 'marquee-row', 'row'),
+    marqueeTool('column-marquee', '单列选框工具', 'marquee-column', 'column'),
     movableOutline(lassoTool, () => !!lassoHeld),
     movableOutline(polygonTool, () => !!polygon),
     movableOutline(wandTool),
@@ -724,60 +724,60 @@ export function installSelection(editor: Editor) {
   const has = (e: Editor) => !!e.doc.selection;
   for (const m of ['feather', 'expand', 'contract', 'border', 'smooth']) recordsSettings(`select.modify-${m}`);
   registerCommand(
-    { id: 'select.all', label: 'All', shortcut: 'Mod+A', enabled: (e) => e.hasDocument, run: (e) => commitSelectionMask(e, selectAllGrid(), 'replace', 'Select All') },
-    { id: 'select.deselect', label: 'Deselect', shortcut: 'Mod+D', enabled: has, run: (e) => commitSelectionMask(e, null, 'replace', 'Deselect') },
+    { id: 'select.all', label: '全部', shortcut: 'Mod+A', enabled: (e) => e.hasDocument, run: (e) => commitSelectionMask(e, selectAllGrid(), 'replace', '全选') },
+    { id: 'select.deselect', label: '取消选择', shortcut: 'Mod+D', enabled: has, run: (e) => commitSelectionMask(e, null, 'replace', '取消选择') },
     {
       id: 'select.reselect',
-      label: 'Reselect',
+      label: '重新选择',
       shortcut: 'Mod+Shift+D',
       enabled: (e) => !!e.session.lastSelection,
       run: (e) => {
         const last = e.session.lastSelection;
-        if (last) commitSelectionMask(e, last, 'replace', 'Reselect');
+        if (last) commitSelectionMask(e, last, 'replace', '重新选择');
       },
     },
     {
       id: 'select.inverse',
-      label: 'Inverse',
+      label: '反向',
       shortcut: ['Mod+Shift+I', 'Shift+F7'],
       enabled: (e) => e.hasDocument,
-      run: (e) => commitSelectionMask(e, invertSelection(e.assets.tiles, e.doc, selectionGrid(e.doc, e.assets.tiles)), 'replace', 'Inverse'),
+      run: (e) => commitSelectionMask(e, invertSelection(e.assets.tiles, e.doc, selectionGrid(e.doc, e.assets.tiles)), 'replace', '反向'),
     },
     // Distance-transform morphology keeps expanded and contracted edges round
     // and exact at any radius.
-    { id: 'select.modify-feather', label: 'Feather…', shortcut: 'Shift+F6', enabled: has, run: (e, arg) => modifyDialog(e, 'select.modify-feather', arg, 'Feather Selection', 'Feather Radius (px)', 1000, feather) },
-    { id: 'select.modify-expand', label: 'Expand…', enabled: has, run: (e, arg) => modifyDialog(e, 'select.modify-expand', arg, 'Expand Selection', 'Expand By (px)', 500, (m, v) => expand(m, v)) },
-    { id: 'select.modify-contract', label: 'Contract…', enabled: has, run: (e, arg) => modifyDialog(e, 'select.modify-contract', arg, 'Contract Selection', 'Contract By (px)', 500, (m, v) => contract(m, v)) },
-    { id: 'select.modify-border', label: 'Border…', enabled: has, run: (e, arg) => modifyDialog(e, 'select.modify-border', arg, 'Border Selection', 'Width (px)', 200, border) },
-    { id: 'select.modify-smooth', label: 'Smooth…', enabled: has, run: (e, arg) => modifyDialog(e, 'select.modify-smooth', arg, 'Smooth Selection', 'Sample Radius (px)', 500, smooth) },
+    { id: 'select.modify-feather', label: '羽化…', shortcut: 'Shift+F6', enabled: has, run: (e, arg) => modifyDialog(e, 'select.modify-feather', arg, '羽化选区', '羽化半径 (像素)', 1000, feather) },
+    { id: 'select.modify-expand', label: '扩展…', enabled: has, run: (e, arg) => modifyDialog(e, 'select.modify-expand', arg, '扩展选区', '扩展量 (像素)', 500, (m, v) => expand(m, v)) },
+    { id: 'select.modify-contract', label: '收缩…', enabled: has, run: (e, arg) => modifyDialog(e, 'select.modify-contract', arg, '收缩选区', '收缩量 (像素)', 500, (m, v) => contract(m, v)) },
+    { id: 'select.modify-border', label: '边界…', enabled: has, run: (e, arg) => modifyDialog(e, 'select.modify-border', arg, '边界选区', '宽度 (像素)', 200, border) },
+    { id: 'select.modify-smooth', label: '平滑…', enabled: has, run: (e, arg) => modifyDialog(e, 'select.modify-smooth', arg, '平滑选区', '取样半径 (像素)', 500, smooth) },
     {
       id: 'select.grow',
-      label: 'Grow',
-      description: 'Add adjacent pixels within the Magic Wand tolerance of the selected colors.',
+      label: '扩大选取',
+      description: '在魔棒容差范围内添加与所选颜色相邻的像素。',
       enabled: has,
       run: async (e) => {
         const session = e.session;
         const m = readMask(e.assets.tiles, selectionGrid(e.doc, e.assets.tiles)!, canvasRect(e.doc));
         const grown = grow(await wandRGBA(e), m, e.tolerance);
-        if (e.sessions.includes(session)) commitSelectionMask(e, grown, 'replace', 'Grow', session);
+        if (e.sessions.includes(session)) commitSelectionMask(e, grown, 'replace', '扩大选取', session);
       },
     },
     {
       id: 'select.similar',
-      label: 'Similar',
-      description: 'Add pixels anywhere in the image within the Magic Wand tolerance of the selected colors.',
+      label: '选取相似',
+      description: '在魔棒容差范围内添加图像中任何位置的相似像素。',
       enabled: has,
       run: async (e) => {
         const session = e.session;
         const m = readMask(e.assets.tiles, selectionGrid(e.doc, e.assets.tiles)!, canvasRect(e.doc));
         const found = similar(await wandRGBA(e), m, e.tolerance);
         if (e.sessions.includes(session))
-          commitSelectionMask(e, found, 'replace', 'Similar', session);
+          commitSelectionMask(e, found, 'replace', '选取相似', session);
       },
     },
     {
       id: 'select.all-layers',
-      label: 'All Layers',
+      label: '所有图层',
       shortcut: 'Mod+Alt+A',
       enabled: (e) => e.doc.layers.length > 0,
       run: (e) => {
@@ -787,7 +787,7 @@ export function installSelection(editor: Editor) {
     },
     {
       id: 'select.deselect-layers',
-      label: 'Deselect Layers',
+      label: '取消选择图层',
       enabled: (e) => e.selectedIds.size > 0,
       run: (e) => {
         e.selectLayers([]);

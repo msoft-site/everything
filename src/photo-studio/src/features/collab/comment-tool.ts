@@ -15,13 +15,13 @@ function showPanel(e: Editor) {
 
 export const commentTool: Tool = {
   id: 'comment',
-  label: 'Comment Tool',
+  label: '评论工具',
   key: 'I',
   icon: 'comment',
   group: 'eyedropper',
   cursor: () => 'crosshair',
   options: () =>
-    `<span class="option-hint">Click to pin a comment, drag to comment on a region, drag a pin to move it.</span><span class="divider"></span><button data-command="view.show-comments">${view.hidden ? 'Show' : 'Hide'} Comments</button><button data-command="window.panel.comments">Comments Panel</button>`,
+    `<span class="option-hint">单击固定评论，拖动标记区域评论，拖动图钉移动位置。</span><span class="divider"></span><button data-command="view.show-comments">${view.hidden ? '显示' : '隐藏'}评论</button><button data-command="window.panel.comments">评论面板</button>`,
   pointerDown: (e, p) => {
     const store = commentsOf(e);
     const hit = threadAt(e, p.x, p.y);
@@ -36,7 +36,7 @@ export const commentTool: Tool = {
       return;
     }
     if (!store.canComment()) {
-      e.message('You can view this document but not comment on it.');
+      e.message('您可以查看此文档，但不能添加评论。');
       return;
     }
     if (p.x < 0 || p.y < 0 || p.x > e.doc.width || p.y > e.doc.height) return;

@@ -1,15 +1,15 @@
-// @name Grid from Open Documents
-// @description Lays out a thumbnail of every open document in a grid on a new document, with optional names underneath.
+// @name 从打开的文档生成网格
+// @description 在新文档中以网格排列展示所有打开文档的缩略图，并可在下方附带文档名称。
 const docs = await studio.documents.list();
-if (!docs.length) return studio.ui.alert('Open the documents to collect first.');
+if (!docs.length) return studio.ui.alert('请先打开需要汇总的文档。');
 
-const v = await studio.ui.form('Grid from Open Documents', [
-  { name: 'columns', label: 'Columns', type: 'number', min: 1, max: 12, step: 1, value: Math.min(4, Math.ceil(Math.sqrt(docs.length))) },
-  { name: 'cell', label: 'Cell size (px)', type: 'number', min: 32, max: 2048, step: 1, value: 320 },
-  { name: 'gap', label: 'Gap (px)', type: 'number', min: 0, max: 400, step: 1, value: 24 },
-  { name: 'background', label: 'Background', type: 'color', value: '#f2f2f2' },
-  { name: 'captions', label: 'Names under the images', type: 'checkbox', value: true },
-], { submit: 'Create' });
+const v = await studio.ui.form('从打开的文档生成网格', [
+  { name: 'columns', label: '列数', type: 'number', min: 1, max: 12, step: 1, value: Math.min(4, Math.ceil(Math.sqrt(docs.length))) },
+  { name: 'cell', label: '单元格大小 (像素)', type: 'number', min: 32, max: 2048, step: 1, value: 320 },
+  { name: 'gap', label: '间距 (像素)', type: 'number', min: 0, max: 400, step: 1, value: 24 },
+  { name: 'background', label: '背景颜色', type: 'color', value: '#f2f2f2' },
+  { name: 'captions', label: '图像下方显示文档名称', type: 'checkbox', value: true },
+], { submit: '创建' });
 if (!v) return;
 
 const cols = Math.min(v.columns, docs.length);
@@ -17,7 +17,7 @@ const rows = Math.ceil(docs.length / cols);
 const captionHeight = v.captions ? Math.round(v.cell * 0.12) : 0;
 const width = cols * v.cell + (cols + 1) * v.gap;
 const height = rows * (v.cell + captionHeight) + (rows + 1) * v.gap;
-if (width > 8192 || height > 8192) return studio.ui.alert('That grid would be larger than 8192 pixels. Use fewer columns or smaller cells.');
+if (width > 8192 || height > 8192) return studio.ui.alert('网格尺寸超过 8192 像素上限。请减少列数或缩小单元格大小。');
 
 // Area-average downscale (or nearest-neighbor upscale) of RGBA pixels.
 function resize(src, w, h) {

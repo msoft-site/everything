@@ -10,24 +10,24 @@ import { validGradient, validLayerStyle } from '../../model/layer-style';
 export const ITEM_TYPES = ['color', 'gradient', 'pattern', 'character-style', 'paragraph-style', 'layer-style', 'brush', 'graphic'] as const;
 export type ItemType = (typeof ITEM_TYPES)[number];
 export const TYPE_LABELS: Record<ItemType, string> = {
-  color: 'Colors',
-  gradient: 'Gradients',
-  pattern: 'Patterns',
-  'character-style': 'Character Styles',
-  'paragraph-style': 'Paragraph Styles',
-  'layer-style': 'Layer Styles',
-  brush: 'Brushes',
-  graphic: 'Graphics',
+  color: '颜色',
+  gradient: '渐变',
+  pattern: '图案',
+  'character-style': '字符样式',
+  'paragraph-style': '段落样式',
+  'layer-style': '图层样式',
+  brush: '画笔',
+  graphic: '图形',
 };
 export const TYPE_SINGULAR: Record<ItemType, string> = {
-  color: 'Color',
-  gradient: 'Gradient',
-  pattern: 'Pattern',
-  'character-style': 'Character Style',
-  'paragraph-style': 'Paragraph Style',
-  'layer-style': 'Layer Style',
-  brush: 'Brush',
-  graphic: 'Graphic',
+  color: '颜色',
+  gradient: '渐变',
+  pattern: '图案',
+  'character-style': '字符样式',
+  'paragraph-style': '段落样式',
+  'layer-style': '图层样式',
+  brush: '画笔',
+  graphic: '图形',
 };
 
 export type LibraryItem = {

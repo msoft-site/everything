@@ -15,10 +15,10 @@ import { formatShortcut } from '../../app/shortcuts';
 const sendKeys = () => formatShortcut('Mod+Enter');
 
 const filters: [CommentFilter, string][] = [
-  ['open', 'Open'],
-  ['resolved', 'Resolved'],
-  ['mine', 'Mine'],
-  ['all', 'All'],
+  ['open', '未解决'],
+  ['resolved', '已解决'],
+  ['mine', '我的'],
+  ['all', '全部'],
 ];
 // Message being edited, and unsent replies by thread (kept across redraws).
 let editing = '';
@@ -27,9 +27,9 @@ let draftText = '';
 
 function when(t: number) {
   const s = Math.round((Date.now() - t) / 1000);
-  if (s < 45) return 'just now';
-  if (s < 3600) return `${Math.max(1, Math.round(s / 60))} min ago`;
-  if (s < 86400) return `${Math.round(s / 3600)} h ago`;
+  if (s < 45) return '刚刚';
+  if (s < 3600) return `${Math.max(1, Math.round(s / 60))} 分钟前`;
+  if (s < 86400) return `${Math.round(s / 3600)} 小时前`;
   return new Date(t).toLocaleDateString();
 }
 /** Message text with @mentions marked (escaped). */
@@ -46,31 +46,31 @@ function threadHtml(e: Editor, t: CommentThread, n: number) {
   const me = store.me().id;
   const selected = view.selected === t.id;
   const first = t.messages.find((m) => !m.deleted) ?? t.messages[0];
-  const where = isRegion(t.anchor) ? `Region ${t.anchor.width} × ${t.anchor.height}` : `Point ${t.anchor.x}, ${t.anchor.y}`;
-  const head = `<div class="comment-head" data-open="${t.id}"><button class="comment-number" data-locate="${t.id}" title="Show on canvas (${where})" aria-label="Comment ${n}: show on canvas">${n}</button><span class="comment-author">${escapeXML(t.author.name)}</span><span class="muted comment-time">${when(t.created)}</span>${t.resolved ? `<span class="comment-badge" title="Resolved by ${escapeXML(t.resolved.by.name)}">${svg('check', 12)}Resolved</span>` : ''}<span class="panel-tabs-spacer"></span><button class="icon-button comment-toggle" data-open="${t.id}" aria-expanded="${selected}" aria-label="${selected ? 'Collapse' : 'Open'} comment ${n}" title="${selected ? 'Collapse' : 'Open thread'}">${svg(selected ? 'chevron-down' : 'chevron-right', 14)}</button></div>`;
+  const where = isRegion(t.anchor) ? `区域 ${t.anchor.width} × ${t.anchor.height}` : `坐标点 ${t.anchor.x}, ${t.anchor.y}`;
+  const head = `<div class="comment-head" data-open="${t.id}"><button class="comment-number" data-locate="${t.id}" title="在画布上显示 (${where})" aria-label="评论 ${n}：在画布上显示">${n}</button><span class="comment-author">${escapeXML(t.author.name)}</span><span class="muted comment-time">${when(t.created)}</span>${t.resolved ? `<span class="comment-badge" title="由 ${escapeXML(t.resolved.by.name)} 解决">${svg('check', 12)}已解决</span>` : ''}<span class="panel-tabs-spacer"></span><button class="icon-button comment-toggle" data-open="${t.id}" aria-expanded="${selected}" aria-label="${selected ? '折叠' : '展开'}评论 ${n}" title="${selected ? '折叠' : '展开评论'}">${svg(selected ? 'chevron-down' : 'chevron-right', 14)}</button></div>`;
   if (!selected) {
     const more = t.messages.filter((m) => !m.deleted).length - 1;
-    return `<li class="comment-thread${t.resolved ? ' resolved' : ''}" data-thread="${t.id}">${head}<div class="comment-text" data-open="${t.id}">${first ? (first.deleted ? '<em class="muted">Removed</em>' : richText(first.text)) : ''}</div>${more > 0 ? `<div class="muted comment-replies">${more} repl${more === 1 ? 'y' : 'ies'}</div>` : ''}</li>`;
+    return `<li class="comment-thread${t.resolved ? ' resolved' : ''}" data-thread="${t.id}">${head}<div class="comment-text" data-open="${t.id}">${first ? (first.deleted ? '<em class="muted">已删除</em>' : richText(first.text)) : ''}</div>${more > 0 ? `<div class="muted comment-replies">${more} 条回复</div>` : ''}</li>`;
   }
   const can = store.canComment();
   const owner = sharedOf(e.session)?.role === 'owner' || !store.shared;
   const msgs = t.messages
     .map((m) => {
-      if (m.deleted) return `<div class="comment-message removed muted"><em>Message removed</em></div>`;
+      if (m.deleted) return `<div class="comment-message removed muted"><em>消息已删除</em></div>`;
       const mine = m.author.id === me;
       const actions =
         can && (mine || owner)
-          ? `<span class="comment-actions">${mine ? `<button class="icon-button" data-edit="${m.id}" aria-label="Edit message" title="Edit">${svg('pen-line', 13)}</button>` : ''}<button class="icon-button" data-remove="${m.id}" aria-label="Remove message" title="Remove">${svg('trash-2', 13)}</button></span>`
+          ? `<span class="comment-actions">${mine ? `<button class="icon-button" data-edit="${m.id}" aria-label="编辑消息" title="编辑">${svg('pen-line', 13)}</button>` : ''}<button class="icon-button" data-remove="${m.id}" aria-label="删除消息" title="删除">${svg('trash-2', 13)}</button></span>`
           : '';
       const body =
         editing === m.id
-          ? `<textarea class="comment-input" data-editing="${m.id}" aria-label="Edit message" maxlength="${LIMITS.text}">${escapeXML(m.text)}</textarea><div class="comment-buttons"><button data-cancel-edit>Cancel</button><button class="primary" data-save-edit="${m.id}" title="Save (${sendKeys()})">Save</button></div>`
-          : `<div class="comment-text">${richText(m.text)}${m.edited ? ' <span class="muted">(edited)</span>' : ''}</div>`;
+          ? `<textarea class="comment-input" data-editing="${m.id}" aria-label="编辑消息" maxlength="${LIMITS.text}">${escapeXML(m.text)}</textarea><div class="comment-buttons"><button data-cancel-edit>取消</button><button class="primary" data-save-edit="${m.id}" title="保存 (${sendKeys()})">保存</button></div>`
+          : `<div class="comment-text">${richText(m.text)}${m.edited ? ' <span class="muted">(已编辑)</span>' : ''}</div>`;
       return `<div class="comment-message"><div class="comment-meta"><span class="comment-author">${escapeXML(m.author.name)}</span><span class="muted comment-time">${when(m.created)}</span>${actions}</div>${body}</div>`;
     })
     .join('');
   const reply = can
-    ? `<textarea class="comment-input" data-reply="${t.id}" aria-label="Reply" placeholder="Reply… (@ to mention)" maxlength="${LIMITS.text}">${escapeXML(replies.get(t.id) ?? '')}</textarea><div class="comment-suggest" data-suggest-for="reply"></div><div class="comment-buttons"><button data-resolve="${t.id}">${svg(t.resolved ? 'rotate-ccw' : 'check', 13)}${t.resolved ? 'Reopen' : 'Resolve'}</button>${t.author.id === me || owner ? `<button data-remove-thread="${t.id}" aria-label="Remove comment" title="Remove comment">${svg('trash-2', 13)}</button>` : ''}<span class="panel-tabs-spacer"></span><button class="primary" data-send="${t.id}" title="Reply (${sendKeys()})">Reply</button></div>`
+    ? `<textarea class="comment-input" data-reply="${t.id}" aria-label="回复" placeholder="回复… (输入 @ 提及他人)" maxlength="${LIMITS.text}">${escapeXML(replies.get(t.id) ?? '')}</textarea><div class="comment-suggest" data-suggest-for="reply"></div><div class="comment-buttons"><button data-resolve="${t.id}">${svg(t.resolved ? 'rotate-ccw' : 'check', 13)}${t.resolved ? '重新打开' : '标记为解决'}</button>${t.author.id === me || owner ? `<button data-remove-thread="${t.id}" aria-label="删除评论" title="删除评论">${svg('trash-2', 13)}</button>` : ''}<span class="panel-tabs-spacer"></span><button class="primary" data-send="${t.id}" title="回复 (${sendKeys()})">回复</button></div>`
     : '';
   return `<li class="comment-thread selected${t.resolved ? ' resolved' : ''}" data-thread="${t.id}">${head}${msgs}${reply}</li>`;
 }
@@ -83,16 +83,16 @@ function panelHtml(e: Editor) {
   const tabs = filters.map(([f, label]) => `<button data-filter="${f}" aria-pressed="${view.filter === f}">${label}</button>`).join('');
   const can = store.canComment() && e.hasDocument;
   const draft = view.draft
-    ? `<div class="comment-draft"><div class="muted">New comment on ${view.draft.width ? `a ${view.draft.width} × ${view.draft.height} region` : `the point ${view.draft.x}, ${view.draft.y}`}</div><textarea class="comment-input" id="comment-draft" aria-label="New comment" placeholder="Write a comment… (@ to mention)" maxlength="${LIMITS.text}">${escapeXML(draftText)}</textarea><div class="comment-suggest" data-suggest-for="draft"></div><div class="comment-buttons"><button data-cancel-draft>Cancel</button><span class="panel-tabs-spacer"></span><button class="primary" data-post title="Post the comment (${sendKeys()})">Comment</button></div></div>`
+    ? `<div class="comment-draft"><div class="muted">新评论位于 ${view.draft.width ? `${view.draft.width} × ${view.draft.height} 区域` : `坐标点 ${view.draft.x}, ${view.draft.y}`}</div><textarea class="comment-input" id="comment-draft" aria-label="新评论" placeholder="撰写评论… (输入 @ 提及他人)" maxlength="${LIMITS.text}">${escapeXML(draftText)}</textarea><div class="comment-suggest" data-suggest-for="draft"></div><div class="comment-buttons"><button data-cancel-draft>取消</button><span class="panel-tabs-spacer"></span><button class="primary" data-post title="发表评论 (${sendKeys()})">发表评论</button></div></div>`
     : '';
   const empty = !e.hasDocument
-    ? '<p class="muted">Open a document to review it with comments.</p>'
+    ? '<p class="muted">打开文档即可查看和添加评论。</p>'
     : all.length
-      ? `<p class="muted">No ${view.filter === 'all' ? '' : `${filters.find(([f]) => f === view.filter)![1].toLowerCase()} `}comments.</p>`
-      : `<p class="muted">No comments yet.${can ? ' Choose New Comment, then click the image to pin one or drag to comment on a region.' : ''}</p>`;
+      ? `<p class="muted">没有${view.filter === 'all' ? '' : `${filters.find(([f]) => f === view.filter)![1]} `}评论。</p>`
+      : `<p class="muted">暂无评论。${can ? ' 选择“新建评论”，然后单击图像以放置图钉，或拖动以对区域进行评论。' : ''}</p>`;
   const sh = sharedOf(e.session);
-  const scope = sh ? `<p class="muted comment-scope">${sh.role === 'viewer' ? 'You can read comments on this shared document.' : 'Comments are shared with everyone on this document.'}</p>` : '';
-  return `<div class="comments-head"><div class="comments-filter" role="group" aria-label="Show comments">${tabs}</div><button class="icon-button" data-command="comments.new" title="New comment" aria-label="New comment" ${can ? '' : 'disabled'}>${svg('comment-add', 16)}</button></div>${draft}${list.length ? `<ul class="comments-list">${list.map((t) => threadHtml(e, t, number.get(t.id) ?? 0)).join('')}</ul>` : view.draft ? '' : empty}${scope}`;
+  const scope = sh ? `<p class="muted comment-scope">${sh.role === 'viewer' ? '您可以查看此共享文档中的评论。' : '此文档中的所有协作者都可以看到评论。'}</p>` : '';
+  return `<div class="comments-head"><div class="comments-filter" role="group" aria-label="显示评论">${tabs}</div><button class="icon-button" data-command="comments.new" title="新建评论" aria-label="新建评论" ${can ? '' : 'disabled'}>${svg('comment-add', 16)}</button></div>${draft}${list.length ? `<ul class="comments-list">${list.map((t) => threadHtml(e, t, number.get(t.id) ?? 0)).join('')}</ul>` : view.draft ? '' : empty}${scope}`;
 }
 
 /** Center the view on a thread's pin (and fit a region) and open it. */
@@ -208,7 +208,7 @@ export const commentsPanel: Pick<Panel, 'mount' | 'update' | 'menu'> = {
       if (resolve) return run(() => store.resolve(resolve, !store.threads().find((t) => t.id === resolve)?.resolved));
       const removeThread = get('remove-thread');
       if (removeThread) {
-        void formDialog('Remove comment?', [], 'Remove', 'The comment and its replies are removed for everyone who can see this document.').then(
+        void formDialog('删除评论？', [], '删除', '此评论及其所有回复将对可以看到此文档的所有人移除。').then(
           (ok) =>
             ok &&
             run(() => {

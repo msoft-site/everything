@@ -5,13 +5,13 @@
 export type SymmetryKind =
   'off' | 'vertical' | 'horizontal' | 'dual' | 'diagonal' | 'radial' | 'mandala';
 export const SYMMETRY_KINDS: [SymmetryKind, string][] = [
-  ['off', 'Off'],
-  ['vertical', 'Vertical'],
-  ['horizontal', 'Horizontal'],
-  ['dual', 'Dual Axis'],
-  ['diagonal', 'Diagonal'],
-  ['radial', 'Radial'],
-  ['mandala', 'Mandala'],
+  ['off', '关闭'],
+  ['vertical', '垂直'],
+  ['horizontal', '水平'],
+  ['dual', '双轴'],
+  ['diagonal', '对角线'],
+  ['radial', '径向'],
+  ['mandala', '曼陀罗'],
 ];
 /** x' = a·x + c·y + e, y' = b·x + d·y + f (canvas coordinates, y down). */
 export type Affine = [a: number, b: number, c: number, d: number, e: number, f: number];

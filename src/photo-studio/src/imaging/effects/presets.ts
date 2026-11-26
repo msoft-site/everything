@@ -7,14 +7,14 @@ export type StylePreset = { id: string; name: string; style: LayerStyle };
 
 export const stylePresets: StylePreset[] = [
   {
-    id: 'soft-shadow', name: 'Soft Shadow',
+    id: 'soft-shadow', name: '柔和阴影',
     style: {
       enabled: true, globalAngle: 120,
       dropShadow: [{ enabled: true, blendMode: 'multiply', opacity: 0.4, color: [0, 0, 0], angle: 120, useGlobalLight: true, distance: 8, spread: 0, size: 18, knockout: true }],
     },
   },
   {
-    id: 'lifted-card', name: 'Lifted Card',
+    id: 'lifted-card', name: '悬浮卡片',
     style: {
       enabled: true, globalAngle: 90,
       dropShadow: [
@@ -24,7 +24,7 @@ export const stylePresets: StylePreset[] = [
     },
   },
   {
-    id: 'neon-glow', name: 'Neon Glow',
+    id: 'neon-glow', name: '霓虹辉光',
     style: {
       enabled: true,
       outerGlow: { enabled: true, blendMode: 'screen', opacity: 0.85, fill: { type: 'color', color: [40, 255, 220] }, technique: 'softer', spread: 0.1, size: 26, range: 0.5, jitter: 0 },
@@ -34,7 +34,7 @@ export const stylePresets: StylePreset[] = [
     },
   },
   {
-    id: 'embossed', name: 'Embossed',
+    id: 'embossed', name: '浮雕质感',
     style: {
       enabled: true, globalAngle: 135, globalAltitude: 35,
       bevel: {
@@ -45,11 +45,11 @@ export const stylePresets: StylePreset[] = [
     },
   },
   {
-    id: 'outline', name: 'Outline',
+    id: 'outline', name: '描边轮廓',
     style: { enabled: true, stroke: [{ enabled: true, blendMode: 'normal', opacity: 1, size: 3, position: 'outside', fill: { type: 'color', color: [17, 17, 17] } }] },
   },
   {
-    id: 'glass-button', name: 'Glass Button',
+    id: 'glass-button', name: '玻璃按钮',
     style: {
       enabled: true, globalAngle: 90, globalAltitude: 60,
       dropShadow: [{ enabled: true, blendMode: 'multiply', opacity: 0.35, color: [0, 30, 70], angle: 90, useGlobalLight: true, distance: 4, spread: 0, size: 10, knockout: true }],
@@ -71,7 +71,7 @@ export const stylePresets: StylePreset[] = [
     },
   },
   {
-    id: 'letterpress', name: 'Letterpress',
+    id: 'letterpress', name: '凸版印迹',
     style: {
       enabled: true, globalAngle: 90,
       dropShadow: [{ enabled: true, blendMode: 'screen', opacity: 0.6, color: [255, 255, 255], angle: 90, useGlobalLight: true, distance: 1, spread: 0, size: 1, knockout: true }],
@@ -79,7 +79,7 @@ export const stylePresets: StylePreset[] = [
     },
   },
   {
-    id: 'gold-foil', name: 'Gold Foil',
+    id: 'gold-foil', name: '金箔烫金',
     style: {
       enabled: true, globalAngle: 120, globalAltitude: 40,
       gradientOverlay: [{
@@ -103,7 +103,7 @@ export const stylePresets: StylePreset[] = [
     },
   },
   {
-    id: 'sticker', name: 'Sticker',
+    id: 'sticker', name: '贴纸效果',
     style: {
       enabled: true, globalAngle: 110,
       dropShadow: [{ enabled: true, blendMode: 'multiply', opacity: 0.3, color: [0, 0, 0], angle: 110, useGlobalLight: true, distance: 4, spread: 0, size: 8, knockout: true }],
@@ -111,7 +111,7 @@ export const stylePresets: StylePreset[] = [
     },
   },
   {
-    id: 'chrome', name: 'Chrome',
+    id: 'chrome', name: '镀铬质感',
     style: {
       enabled: true, globalAngle: 100, globalAltitude: 45,
       gradientOverlay: [{
@@ -140,7 +140,7 @@ export const stylePresets: StylePreset[] = [
     },
   },
   {
-    id: 'retro-offset', name: 'Retro Offset',
+    id: 'retro-offset', name: '复古网印',
     style: {
       enabled: true,
       dropShadow: [{ enabled: true, blendMode: 'normal', opacity: 1, color: [255, 90, 120], angle: 135, useGlobalLight: false, distance: 7, spread: 0, size: 0, knockout: true }],
@@ -148,7 +148,7 @@ export const stylePresets: StylePreset[] = [
     },
   },
   {
-    id: 'stamped-paper', name: 'Stamped Paper',
+    id: 'stamped-paper', name: '纸张印章',
     style: {
       enabled: true, globalAngle: 120, globalAltitude: 30,
       patternOverlay: { enabled: true, blendMode: 'multiply', opacity: 0.6, patternId: 'paper', scale: 1, linkWithLayer: true },

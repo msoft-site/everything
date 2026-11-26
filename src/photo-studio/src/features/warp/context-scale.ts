@@ -250,14 +250,14 @@ class ContextScaleSession extends WarpSession<Snap> {
     const f = this.frame;
     const channels = this.base.channels ?? [];
     const pct = (a: number, b: number) => Math.round((a / b) * 1000) / 10;
-    let html = `<span class="transform-label">Context Scale</span>`;
-    html += `<label title="Width">W <input id="cs-w" type="number" min="1" step="1" value="${Math.round(f.width)}" aria-label="Width">px</label><span class="hint" id="cs-wp">${pct(f.width, this.rect.width)}%</span>`;
-    html += `<label title="Height">H <input id="cs-h" type="number" min="1" step="1" value="${Math.round(f.height)}" aria-label="Height">px</label><span class="hint" id="cs-hp">${pct(f.height, this.rect.height)}%</span>`;
-    html += `<span class="divider"></span><label title="How much of the change protects content; the rest is ordinary scaling">Amount <input id="cs-amount-range" type="range" min="0" max="100" step="1" value="${s.amount}" aria-label="Amount"><input id="cs-amount" type="number" min="0" max="100" step="1" value="${s.amount}" aria-label="Amount percent">%</label>`;
-    html += `<span class="divider"></span><label title="Keep the pixels of a saved selection intact">Protect <select id="cs-protect" aria-label="Protect alpha channel"><option value="">None</option>${channels.map((c) => `<option value="${escapeXML(c.id)}" ${c.id === s.protect ? 'selected' : ''}>${escapeXML(c.name)}</option>`).join('')}</select></label>`;
-    html += `<button class="icon-button toggle" data-cs="skin" aria-pressed="${s.skin}" title="Protect skin tones" aria-label="Protect skin tones">${svg('protect-skin', 16)}</button>`;
-    if (!this.smallOrders) html += `<span class="hint" role="status">Analyzing…</span>`;
-    html += `<span class="divider"></span><button data-cs="cancel" class="icon-button" title="Cancel Context Scale (Escape)" aria-label="Cancel Context Scale">${svg('ban', 16)}</button><button data-cs="commit" class="icon-button transform-apply" title="Commit Context Scale (Enter)" aria-label="Commit Context Scale">${svg('check', 16)}</button>`;
+    let html = `<span class="transform-label">内容识别缩放</span>`;
+    html += `<label title="宽度">宽 <input id="cs-w" type="number" min="1" step="1" value="${Math.round(f.width)}" aria-label="宽度">像素</label><span class="hint" id="cs-wp">${pct(f.width, this.rect.width)}%</span>`;
+    html += `<label title="高度">高 <input id="cs-h" type="number" min="1" step="1" value="${Math.round(f.height)}" aria-label="高度">像素</label><span class="hint" id="cs-hp">${pct(f.height, this.rect.height)}%</span>`;
+    html += `<span class="divider"></span><label title="保护内容的调整比例；其余部分为普通缩放">缩放量 <input id="cs-amount-range" type="range" min="0" max="100" step="1" value="${s.amount}" aria-label="缩放量"><input id="cs-amount" type="number" min="0" max="100" step="1" value="${s.amount}" aria-label="缩放量百分比">%</label>`;
+    html += `<span class="divider"></span><label title="保持存储选区的像素完好">保护 <select id="cs-protect" aria-label="保护 Alpha 通道"><option value="">无</option>${channels.map((c) => `<option value="${escapeXML(c.id)}" ${c.id === s.protect ? 'selected' : ''}>${escapeXML(c.name)}</option>`).join('')}</select></label>`;
+    html += `<button class="icon-button toggle" data-cs="skin" aria-pressed="${s.skin}" title="保护肤色" aria-label="保护肤色">${svg('protect-skin', 16)}</button>`;
+    if (!this.smallOrders) html += `<span class="hint" role="status">正在分析…</span>`;
+    html += `<span class="divider"></span><button data-cs="cancel" class="icon-button" title="取消内容识别缩放 (Escape)" aria-label="取消内容识别缩放">${svg('ban', 16)}</button><button data-cs="commit" class="icon-button transform-apply" title="提交内容识别缩放 (Enter)" aria-label="提交内容识别缩放">${svg('check', 16)}</button>`;
     return html;
   }
   bindOptions(el: HTMLElement) {
@@ -382,7 +382,7 @@ class ContextScaleSession extends WarpSession<Snap> {
   async finish() {
     if (this.ended || this.waiting) return;
     if (!this.changed) return this.apply();
-    const hud = (this.waiting = progressHud(this.e, 'Analyzing image…', () => this.cancel()));
+    const hud = (this.waiting = progressHud(this.e, '正在分析图像…', () => this.cancel()));
     try {
       hud.set(this.fullProgress);
       const orders = await this.fullOrders!;
@@ -428,7 +428,7 @@ class ContextScaleSession extends WarpSession<Snap> {
     const id = this.layerId;
     this.end(restoreTool);
     const grid = gridFromImage(this.e.assets.tiles, image, Math.round(f.x), Math.round(f.y));
-    this.e.command('Context Scale', (d) => {
+    this.e.command('内容识别缩放', (d) => {
       const l = findLayer(d.layers, id);
       if (l) setLayerPixels(l, grid, d);
     });
@@ -437,11 +437,11 @@ class ContextScaleSession extends WarpSession<Snap> {
 
 /** Start Context Scale on the selected layer. */
 export async function startContextScale(e: Editor) {
-  const target = await warpTarget(e, 'Context Scale', false);
+  const target = await warpTarget(e, '内容识别缩放', false);
   if (!target || target.kind !== 'pixel') return;
   if (target.rect.width < 3 || target.rect.height < 3) {
     if (target.rasterized) revertRasterized(e, target.rasterized);
-    e.message('The layer is too small to scale by content.');
+    e.message('图层太小，无法按内容缩放。');
     return;
   }
   const s = new ContextScaleSession(e, target.layer.id, target.rect, target.source);

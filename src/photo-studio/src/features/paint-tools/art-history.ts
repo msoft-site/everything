@@ -71,13 +71,13 @@ function feed(e: Editor, d: Drag) {
 function finish(e: Editor, d: Drag) {
   drag = undefined;
   const grid = d.session!.commit();
-  commitTarget(e, d.target!, grid, 'Art History Brush');
+  commitTarget(e, d.target!, grid, '历史记录艺术画笔');
 }
 
 export function artHistoryTool(): Tool {
   return {
     id: ID,
-    label: 'Art History Brush Tool',
+    label: '历史记录艺术画笔工具',
     key: 'Y',
     icon: 'art-history',
     group: 'history-brush',
@@ -86,13 +86,13 @@ export function artHistoryTool(): Tool {
       const s = brushFor(ID);
       const modes: PaintMode[] = ['normal', 'darken', 'lighten', 'multiply', 'screen', 'overlay', 'color', 'luminosity'];
       const label = (m: PaintMode) => blendModes.find((b) => b.id === m)?.label ?? m;
-      return `<button class="brush-preview" data-brush-popover="${ID}" title="Brush settings" aria-label="Brush preset and size"><span class="brush-dot" style="--size:${Math.min(22, 4 + Math.sqrt(s.size) * 1.6)}px;--hard:${s.hardness}"></span><span>${Math.round(s.size)}</span></button>
-<label>Size <input id="brush-size" type="number" min="1" max="500" value="${Math.round(s.size)}" aria-label="Brush size (px)"> px</label>
-<label>Mode <select id="brush-mode" aria-label="Brush blend mode">${modes.map((m) => `<option value="${m}" ${s.mode === m ? 'selected' : ''}>${label(m)}</option>`).join('')}</select></label>
-<label>Opacity <input id="brush-opacity" type="number" min="1" max="100" value="${Math.round(s.opacity * 100)}" aria-label="Brush opacity (%)">%</label>
-<label>Style <select id="art-style" aria-label="Stroke style">${(Object.keys(artStyles) as ArtStyle[]).map((k) => `<option value="${k}" ${style(e) === k ? 'selected' : ''}>${escapeXML(artStyles[k].label)}</option>`).join('')}</select></label>
-<label title="Radius over which strokes are painted">Area <input id="art-area" type="number" min="0" max="500" value="${area(e)}" aria-label="Area (px)"> px</label>
-<label title="Only paint where the image differs from the source state by at least this much">Tolerance <input id="art-tolerance" type="number" min="0" max="100" value="${tolerance(e)}" aria-label="Tolerance (%)">%</label>`;
+      return `<button class="brush-preview" data-brush-popover="${ID}" title="画笔设置" aria-label="画笔预设和大小"><span class="brush-dot" style="--size:${Math.min(22, 4 + Math.sqrt(s.size) * 1.6)}px;--hard:${s.hardness}"></span><span>${Math.round(s.size)}</span></button>
+<label>大小 <input id="brush-size" type="number" min="1" max="500" value="${Math.round(s.size)}" aria-label="画笔大小 (px)"> 像素</label>
+<label>模式 <select id="brush-mode" aria-label="画笔混合模式">${modes.map((m) => `<option value="${m}" ${s.mode === m ? 'selected' : ''}>${label(m)}</option>`).join('')}</select></label>
+<label>不透明度 <input id="brush-opacity" type="number" min="1" max="100" value="${Math.round(s.opacity * 100)}" aria-label="画笔不透明度 (%)">%</label>
+<label>样式 <select id="art-style" aria-label="描边样式">${(Object.keys(artStyles) as ArtStyle[]).map((k) => `<option value="${k}" ${style(e) === k ? 'selected' : ''}>${escapeXML(artStyles[k].label)}</option>`).join('')}</select></label>
+<label title="绘制描边的半径范围">区域 <input id="art-area" type="number" min="0" max="500" value="${area(e)}" aria-label="区域 (px)"> 像素</label>
+<label title="仅在图像与源状态差异至少达到此值时绘制">容差 <input id="art-tolerance" type="number" min="0" max="100" value="${tolerance(e)}" aria-label="容差 (%)">%</label>`;
     },
     bindOptions: ({ e, el }) => {
       bindBrushOptions(e, el, ID);
@@ -131,13 +131,13 @@ export function artHistoryTool(): Tool {
       const target = await pixelTarget(e, { allowMask: false });
       if (drag !== d) return;
       if (!target || target.kind !== 'pixels') {
-        if (target) e.message('The Art History Brush paints on pixel layers.');
+        if (target) e.message('历史记录艺术画笔只能在像素图层上绘制。');
         drag = undefined;
         return;
       }
       const src = findLayer(historySourceDoc(e).layers, target.layer.id)?.pixels;
       if (!src) {
-        e.message('The history state does not contain this layer. Choose another source state in the History panel.');
+        e.message('历史记录状态中不包含此图层。请在“历史记录”面板中选择其他源状态。');
         drag = undefined;
         return;
       }

@@ -5,16 +5,16 @@ import type { ItemType } from './model';
 
 export type AddSource = 'foreground' | 'background' | 'gradient' | 'pattern' | 'layer-style' | 'character-style' | 'paragraph-style' | 'brush' | 'layers' | 'selection';
 export const ADD_SOURCES: [AddSource, string, ItemType][] = [
-  ['foreground', 'Foreground Color', 'color'],
-  ['background', 'Background Color', 'color'],
-  ['gradient', 'Current Gradient', 'gradient'],
-  ['pattern', 'Current Pattern', 'pattern'],
-  ['layer-style', 'Layer Style of Selected Layer', 'layer-style'],
-  ['character-style', 'Character Style of Text', 'character-style'],
-  ['paragraph-style', 'Paragraph Style of Text', 'paragraph-style'],
-  ['brush', 'Current Brush', 'brush'],
-  ['layers', 'Selected Layers as Graphic', 'graphic'],
-  ['selection', 'Selection as Graphic', 'graphic'],
+  ['foreground', '前景色', 'color'],
+  ['background', '背景色', 'color'],
+  ['gradient', '当前渐变', 'gradient'],
+  ['pattern', '当前图案', 'pattern'],
+  ['layer-style', '选定图层的图层样式', 'layer-style'],
+  ['character-style', '文本字符样式', 'character-style'],
+  ['paragraph-style', '文本段落样式', 'paragraph-style'],
+  ['brush', '当前画笔', 'brush'],
+  ['layers', '选定图层为图形', 'graphic'],
+  ['selection', '选区为图形', 'graphic'],
 ];
 export function canAdd(e: Editor, src: AddSource): boolean {
   switch (src) {

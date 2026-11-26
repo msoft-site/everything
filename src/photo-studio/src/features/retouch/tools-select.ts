@@ -71,7 +71,7 @@ function quickUpdate(e: Editor) {
 }
 const quickSelectionTool: Tool = {
   id: QS,
-  label: 'Quick Selection Tool',
+  label: '快速选择工具',
   key: 'W',
   icon: 'quick-select',
   group: 'select',
@@ -79,11 +79,11 @@ const quickSelectionTool: Tool = {
   options: (e) => {
     const mode = (e.settings.quickMode as QuickMode) ?? 'new';
     const modes: [QuickMode, string, string][] = [
-      ['new', 'New selection', 'square'],
-      ['add', 'Add to selection (Shift)', 'plus'],
-      ['subtract', 'Subtract from selection (Alt)', 'minus'],
+      ['new', '新选区', 'square'],
+      ['add', '添加到选区 (Shift)', 'plus'],
+      ['subtract', '从选区减去 (Alt)', 'minus'],
     ];
-    return `<div class="segmented" role="group" aria-label="Quick Selection mode">${modes.map(([id, label, icon]) => `<button data-quick-mode="${id}" aria-pressed="${mode === id}" title="${label}" aria-label="${label}">${svg(icon, 14)}</button>`).join('')}</div>${sizeField(QS)}${checkbox('qs-all', 'Sample All Layers', !!e.settings.quickSampleAll)}${subjectButton(e)}<button data-command="select.mask-refine" ${e.doc.selection ? '' : 'disabled'}>Select and Mask…</button>`;
+    return `<div class="segmented" role="group" aria-label="快速选择模式">${modes.map(([id, label, icon]) => `<button data-quick-mode="${id}" aria-pressed="${mode === id}" title="${label}" aria-label="${label}">${svg(icon, 14)}</button>`).join('')}</div>${sizeField(QS)}${checkbox('qs-all', '对所有图层取样', !!e.settings.quickSampleAll)}${subjectButton(e)}<button data-command="select.mask-refine" ${e.doc.selection ? '' : 'disabled'}>选择并遮住…</button>`;
   },
   bindOptions: ({ e, el }) => {
     el.querySelectorAll<HTMLButtonElement>('[data-quick-mode]').forEach((b) =>
@@ -150,7 +150,7 @@ async function finishQuick(e: Editor, s: QuickStrokeState) {
   }
   if (qstroke === s) qstroke = undefined;
   if (s.mask) {
-    commitSelectionMask(e, s.mask, 'replace', 'Quick Selection');
+    commitSelectionMask(e, s.mask, 'replace', '快速选择');
     // The next stroke adds to the selection, so it can be built up stroke by stroke.
     if ((e.settings.quickMode ?? 'new') === 'new') {
       e.settings.quickMode = 'add';
@@ -163,7 +163,7 @@ async function finishQuick(e: Editor, s: QuickStrokeState) {
 let objectDrag: { start: Pt; points: Pt[]; last: Pt } | undefined;
 const objectSelectionTool: Tool = {
   id: 'object-selection',
-  label: 'Object Selection Tool',
+  label: '对象选择工具',
   key: 'W',
   icon: 'object-select',
   group: 'select',
@@ -171,7 +171,7 @@ const objectSelectionTool: Tool = {
   options: (e) =>
     optionsFor(
       e,
-      `<label class="transform-setting" title="Highlight the object under the pointer; click to select it"><input type="checkbox" id="object-finder" ${finderOn(e) ? 'checked' : ''}>Highlight Objects</label><button type="button" class="icon-button" id="object-refresh" title="Find the objects again" aria-label="Find the objects again" ${finderOn(e) ? '' : 'disabled'}>${svg('refresh-cw', 15)}</button><button type="button" class="icon-button toggle" id="object-show-all" aria-pressed="${!!e.settings.objectShowAll}" title="Show all objects found" aria-label="Show all objects" ${finderOn(e) ? '' : 'disabled'}>${svg('eye', 15)}</button><label>Mode <select id="object-mode"><option value="rect">Rectangle</option><option value="lasso" ${e.settings.objectMode === 'lasso' ? 'selected' : ''}>Lasso</option></select></label>${checkbox('object-all', 'Sample All Layers', e.settings.objectSampleAll !== false)}`,
+      `<label class="transform-setting" title="突出显示指针下方的对象；单击即可选择"><input type="checkbox" id="object-finder" ${finderOn(e) ? 'checked' : ''}>对象寻找器</label><button type="button" class="icon-button" id="object-refresh" title="重新查找对象" aria-label="重新查找对象" ${finderOn(e) ? '' : 'disabled'}>${svg('refresh-cw', 15)}</button><button type="button" class="icon-button toggle" id="object-show-all" aria-pressed="${!!e.settings.objectShowAll}" title="显示找到的所有对象" aria-label="显示所有对象" ${finderOn(e) ? '' : 'disabled'}>${svg('eye', 15)}</button><label>模式 <select id="object-mode"><option value="rect">矩形</option><option value="lasso" ${e.settings.objectMode === 'lasso' ? 'selected' : ''}>套索</option></select></label>${checkbox('object-all', '对所有图层取样', e.settings.objectSampleAll !== false)}`,
       { subject: true },
     ),
   bindOptions: ({ e, el }) => {
@@ -340,7 +340,7 @@ function magneticHover(e: Editor) {
 }
 const magneticLassoTool: Tool = {
   id: 'magnetic-lasso',
-  label: 'Magnetic Lasso Tool',
+  label: '磁性套索工具',
   key: 'L',
   icon: 'lasso-magnetic',
   group: 'lasso',
@@ -349,7 +349,7 @@ const magneticLassoTool: Tool = {
     const s = mset(e);
     return optionsFor(
       e,
-      `<label title="Distance from the pointer within which edges are found">Width <input id="mag-width" type="number" min="1" max="256" value="${s.width}"> px</label><label title="Minimum edge contrast to follow">Contrast <input id="mag-contrast" type="number" min="1" max="100" value="${s.contrast}">%</label><label title="How often anchor points are placed automatically">Frequency <input id="mag-frequency" type="number" min="0" max="100" value="${s.frequency}"></label>`,
+      `<label title="检测边缘的指针距离范围">宽度 <input id="mag-width" type="number" min="1" max="256" value="${s.width}"> 像素</label><label title="边缘的最低对比度">对比度 <input id="mag-contrast" type="number" min="1" max="100" value="${s.contrast}">%</label><label title="自动放置锚点的频率">频率 <input id="mag-frequency" type="number" min="0" max="100" value="${s.frequency}"></label>`,
     );
   },
   bindOptions: ({ e, el }) => {

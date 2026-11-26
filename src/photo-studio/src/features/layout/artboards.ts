@@ -50,10 +50,10 @@ type Drag =
 let drag: Drag | undefined;
 
 export const backgroundOptions: [ArtboardBackground, string][] = [
-  ['white', 'White'],
-  ['black', 'Black'],
-  ['transparent', 'Transparent'],
-  ['custom', 'Custom color'],
+  ['white', '白色'],
+  ['black', '黑色'],
+  ['transparent', '透明'],
+  ['custom', '自定颜色'],
 ];
 
 /** The selected artboard, or the artboard containing the selected layer. */
@@ -245,11 +245,11 @@ function toolOptions(e: Editor) {
     .map((c) => `<optgroup label="${escapeXML(c)}">${artboardPresets.filter((p) => p.category === c).map((p) => `<option value="${p.id}" ${preset?.id === p.id ? 'selected' : ''}>${escapeXML(p.name)} (${p.width} × ${p.height})</option>`).join('')}</optgroup>`)
     .join('');
   const bg = a ? a.artboard.background : defaultBackground(e);
-  return `<label>Size <select id="artboard-preset" aria-label="Artboard size preset"><option value="" ${preset ? '' : 'selected'}>Custom</option>${options}</select></label>
-<label>W <input id="artboard-w" type="number" min="1" max="8192" step="1" value="${size.width}" aria-label="Artboard width"></label><button class="icon-button" id="artboard-swap" title="Swap width and height (orientation)" aria-label="Swap width and height">${svg('arrow-left-right', 14)}</button><label>H <input id="artboard-h" type="number" min="1" max="8192" step="1" value="${size.height}" aria-label="Artboard height"></label>
-<label>Background <select id="artboard-bg">${backgroundOptions.map(([v, l]) => `<option value="${v}" ${bg === v ? 'selected' : ''}>${l}</option>`).join('')}</select></label>
-<span class="divider"></span><button id="artboard-add" title="${a ? 'Add an artboard to the right of the selected one' : 'Add an artboard of this size'}">${svg('plus', 14)} Add Artboard</button>
-<span class="hint">${a ? escapeXML(a.name) : 'Drag on the canvas to draw an artboard'}</span>`;
+  return `<label>大小 <select id="artboard-preset" aria-label="画板大小预设"><option value="" ${preset ? '' : 'selected'}>自定</option>${options}</select></label>
+<label>宽 <input id="artboard-w" type="number" min="1" max="8192" step="1" value="${size.width}" aria-label="画板宽度"></label><button class="icon-button" id="artboard-swap" title="交换宽度和高度（方向）" aria-label="交换宽度和高度">${svg('arrow-left-right', 14)}</button><label>高 <input id="artboard-h" type="number" min="1" max="8192" step="1" value="${size.height}" aria-label="画板高度"></label>
+<label>背景 <select id="artboard-bg">${backgroundOptions.map(([v, l]) => `<option value="${v}" ${bg === v ? 'selected' : ''}>${l}</option>`).join('')}</select></label>
+<span class="divider"></span><button id="artboard-add" title="${a ? '在所选画板右侧添加画板' : '添加此大小的画板'}">${svg('plus', 14)} 添加画板</button>
+<span class="hint">${a ? escapeXML(a.name) : '在画布上拖动以绘制画板'}</span>`;
 }
 function bindToolOptions(e: Editor, el: HTMLElement) {
   const apply = (width: number, height: number, preset?: string) => {
@@ -453,35 +453,35 @@ function startNameDrag(e: Editor, id: string, ev: PointerEvent) {
 async function renameArtboard(e: Editor, id: string) {
   const a = findLayer(e.doc.layers, id);
   if (!a) return;
-  const v = await formDialog('Rename Artboard', [{ name: 'name', label: 'Name', value: a.name }], 'Rename');
+  const v = await formDialog('重命名画板', [{ name: 'name', label: '名称', value: a.name }], '重命名');
   const name = v?.name.trim();
-  if (name) e.command('Rename Artboard', (d) => (findLayer(d.layers, id)!.name = name));
+  if (name) e.command('重命名画板', (d) => (findLayer(d.layers, id)!.name = name));
 }
 
 // ----- Commands -----
 function presetFieldOptions(): [string, string][] {
-  return [['', 'Custom'], ...artboardPresets.map((p): [string, string] => [p.id, `${p.category}: ${p.name} (${p.width} × ${p.height})`])];
+  return [['', '自定'], ...artboardPresets.map((p): [string, string] => [p.id, `${p.category}: ${p.name} (${p.width} × ${p.height})`])];
 }
 async function newArtboardDialog(e: Editor, arg?: unknown) {
   if (e.doc.timeline) throw new Error(artboardConflict);
   const s = defaultSize(e);
   const used = new Set(artboardLayers(e.doc).map((a) => a.name));
   let n = artboardLayers(e.doc).length + 1;
-  while (used.has(`Artboard ${n}`)) n++;
+  while (used.has(`画板 ${n}`)) n++;
   const pending = settingsDialog(
     e,
     'layer.new-artboard',
     arg,
-    'New Artboard',
+    '新建画板',
     [
-      { name: 'name', label: 'Name', value: `Artboard ${n}` },
-      { name: 'preset', label: 'Size preset', value: matchingPreset(s.width, s.height, s.preset)?.id ?? '', type: 'select', options: presetFieldOptions() },
-      { name: 'width', label: 'Width (px)', value: s.width, type: 'number', min: 1, max: 8192, step: 1 },
-      { name: 'height', label: 'Height (px)', value: s.height, type: 'number', min: 1, max: 8192, step: 1 },
-      { name: 'background', label: 'Background', value: defaultBackground(e), type: 'select', options: backgroundOptions },
+      { name: 'name', label: '名称', value: `画板 ${n}` },
+      { name: 'preset', label: '大小预设', value: matchingPreset(s.width, s.height, s.preset)?.id ?? '', type: 'select', options: presetFieldOptions() },
+      { name: 'width', label: '宽度 (px)', value: s.width, type: 'number', min: 1, max: 8192, step: 1 },
+      { name: 'height', label: '高度 (px)', value: s.height, type: 'number', min: 1, max: 8192, step: 1 },
+      { name: 'background', label: '背景', value: defaultBackground(e), type: 'select', options: backgroundOptions },
     ],
-    'Create',
-    'The artboard is placed beside the existing ones.',
+    '创建',
+    '画板将放置在现有画板旁边。',
   );
   // A preset fills in the size; typing a size that matches no preset shows Custom.
   // Recorded settings (action playback) open no dialog.
@@ -499,10 +499,10 @@ async function newArtboardDialog(e: Editor, arg?: unknown) {
   if (!v) return;
   const width = Math.round(Number(v.width)),
     height = Math.round(Number(v.height));
-  if (!(width >= 1 && height >= 1 && width <= 8192 && height <= 8192)) return void e.message('Use sizes from 1 to 8192 pixels.');
+  if (!(width >= 1 && height >= 1 && width <= 8192 && height <= 8192)) return void e.message('大小请设置在 1 到 8192 像素之间。');
   e.settings.artboardSize = { width, height, preset: matchingPreset(width, height, v.preset)?.id };
   let id = '';
-  layoutCommand(e, 'New Artboard', (d) => {
+  layoutCommand(e, '新建画板', (d) => {
     const a = createArtboard(d, newArtboardRect(d, width, height), { background: v.background as ArtboardBackground, preset: matchingPreset(width, height, v.preset)?.id, ...(v.background === 'custom' ? { color: e.color } : {}) }, v.name.trim() || undefined);
     id = a.id;
     d.layers.push(a);
@@ -545,7 +545,7 @@ export function installArtboards(e: Editor) {
   for (const id of ['layer.new-artboard', 'layer.artboard-from-layers']) recordsSettings(id);
   registerTool({
     id: 'artboard',
-    label: 'Artboard Tool',
+    label: '画板工具',
     key: 'V',
     icon: 'artboard',
     group: 'move',
@@ -558,12 +558,12 @@ export function installArtboards(e: Editor) {
     deactivate: () => (drag = undefined),
   });
   registerCommand(
-    { id: 'layer.new-artboard', label: 'Artboard…', run: (e, arg) => newArtboardDialog(e, arg), enabled: (e) => e.hasDocument, description: 'Add an artboard with a preset or custom size' },
-    { id: 'layer.artboard-from-group', label: 'Artboard from Group', run: (e) => fromLayers(e, true), enabled: (e) => e.selectedIds.size === 1 && topLevelSelection(e) && e.layer?.kind === 'group' && !e.layer.frame },
-    { id: 'layer.artboard-from-layers', label: 'Artboard from Layers…', run: (e, arg) => fromLayers(e, false, arg), enabled: topLevelSelection },
+    { id: 'layer.new-artboard', label: '画板…', run: (e, arg) => newArtboardDialog(e, arg), enabled: (e) => e.hasDocument, description: '使用预设或自定大小添加画板' },
+    { id: 'layer.artboard-from-group', label: '来自组的画板', run: (e) => fromLayers(e, true), enabled: (e) => e.selectedIds.size === 1 && topLevelSelection(e) && e.layer?.kind === 'group' && !e.layer.frame },
+    { id: 'layer.artboard-from-layers', label: '来自图层的画板…', run: (e, arg) => fromLayers(e, false, arg), enabled: topLevelSelection },
     {
       id: 'view.fit-artboard',
-      label: 'Fit Artboard on Screen',
+      label: '按屏幕大小缩放画板',
       run: (e) => {
         const a = currentArtboard(e) ?? artboardLayers(e.doc)[0];
         if (a) fitRectOnScreen(e, a.artboard.rect);
@@ -573,7 +573,7 @@ export function installArtboards(e: Editor) {
     },
     {
       id: 'view.show-artboard-names',
-      label: 'Artboard Names',
+      label: '画板名称',
       checked: (e) => e.preferences.showArtboardNames !== false,
       run: (e) => {
         e.preferences.showArtboardNames = e.preferences.showArtboardNames === false;
@@ -584,27 +584,27 @@ export function installArtboards(e: Editor) {
     },
     {
       id: 'file.export-artboards-files',
-      label: 'Artboards to Files…',
+      label: '将画板导出到文件…',
       run: async (e) => {
         const m = await pageExport();
-        await m.exportPagesToFiles(e, { title: 'Export Artboards to Files', noun: 'artboard', pages: artboardPages(e, m), base: e.doc.name });
+        await m.exportPagesToFiles(e, { title: '将画板导出到文件', noun: '画板', pages: artboardPages(e, m), base: e.doc.name });
       },
       prefetch: pageExport.prefetch,
       enabled: (e) => e.hasDocument && hasArtboards(e.doc),
       recordable: false,
-      description: 'Save each visible artboard as an image',
+      description: '将每个可见画板保存为单独图像',
     },
     {
       id: 'file.export-artboards-pdf',
-      label: 'Artboards to PDF…',
+      label: '将画板导出为 PDF…',
       run: async (e) => {
         const m = await pageExport();
-        await m.exportPagesToPdf(e, { title: 'Export Artboards to PDF', noun: 'artboard', pages: artboardPages(e, m), base: e.doc.name });
+        await m.exportPagesToPdf(e, { title: '将画板导出为 PDF', noun: '画板', pages: artboardPages(e, m), base: e.doc.name });
       },
       prefetch: pageExport.prefetch,
       enabled: (e) => e.hasDocument && hasArtboards(e.doc),
       recordable: false,
-      description: 'Save the visible artboards as pages of one PDF',
+      description: '将可见画板保存为单个 PDF 文件的页面',
     },
   );
   contributeMenu('layer.new-menu', ['layer.new-artboard', 'layer.artboard-from-group', 'layer.artboard-from-layers'], 'layer.group-from-layers');

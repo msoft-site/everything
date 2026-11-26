@@ -9,16 +9,16 @@ import { IndexedDbStore, MemoryStore, type LocalStore } from './local-store';
 export type GenerationKind = 'generate' | 'edit' | 'fill' | 'expand' | 'upscale' | 'restore' | 'assistant' | 'recompose' | 'reflection' | 'rotate';
 export const GENERATION_KINDS: GenerationKind[] = ['generate', 'edit', 'fill', 'expand', 'upscale', 'recompose', 'reflection', 'rotate', 'restore', 'assistant'];
 export const GENERATION_LABELS: Record<GenerationKind, string> = {
-  generate: 'Generate Image',
-  edit: 'Edit with Prompt',
-  fill: 'AI Fill',
-  expand: 'AI Expand',
-  upscale: 'AI Upscale',
-  recompose: 'AI Recompose',
-  reflection: 'Remove Reflections',
-  rotate: 'Rotate Object',
-  restore: 'Portrait & Restore',
-  assistant: 'Assistant',
+  generate: '生成图像',
+  edit: '提示词编辑',
+  fill: 'AI 填充',
+  expand: 'AI 扩图',
+  upscale: 'AI 超分辨率放大',
+  recompose: 'AI 重构构图',
+  reflection: '消除反光',
+  rotate: '旋转物体',
+  restore: '人像与修复',
+  assistant: '智能助手',
 };
 
 export type GenerationEntry = {

@@ -21,7 +21,7 @@ export const INVITE_ROLES: Role[] = ['editor', 'commenter', 'viewer'];
 export const canEdit = (role: string | undefined) => role === 'owner' || role === 'editor';
 export const canComment = (role: string | undefined) => canEdit(role) || role === 'commenter';
 export const canManage = (role: string | undefined) => role === 'owner';
-export const roleLabel = (role: string) => ({ owner: 'Owner', editor: 'Can edit', commenter: 'Can comment', viewer: 'Can view' })[role] ?? role;
+export const roleLabel = (role: string) => ({ owner: '所有者', editor: '可编辑', commenter: '可评论', viewer: '仅查看' })[role] ?? role;
 
 export type Jwk = JsonWebKey;
 export type KeyPair = { privateKey: Jwk; publicKey: Jwk };

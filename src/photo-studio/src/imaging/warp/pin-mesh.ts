@@ -13,9 +13,9 @@ export type TriMesh = {
 };
 export type PinDensity = 'fewer' | 'normal' | 'more';
 export const PIN_DENSITIES: [PinDensity, string][] = [
-  ['fewer', 'Fewer Points'],
-  ['normal', 'Normal'],
-  ['more', 'More Points'],
+  ['fewer', '较少点'],
+  ['normal', '正常'],
+  ['more', '较多点'],
 ];
 // Approximate number of cells over the content area for each density.
 const CELLS: Record<PinDensity, number> = { fewer: 160, normal: 520, more: 1500 };

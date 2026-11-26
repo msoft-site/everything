@@ -63,9 +63,9 @@ let cloneStroke: CloneStroke | undefined;
 // Pointer events that arrive while a stroke's source is being prepared.
 let clonePreparing: { moves: CanvasPointer[]; up?: CanvasPointer } | undefined;
 const cloneTool = (): Tool => {
-  const base = strokeTool('clone-stamp', 'Clone Stamp Tool', 'stamp', 'stamp', 'S', 'Clone Stamp', {}, (e, target) => {
+  const base = strokeTool('clone-stamp', '仿制图章工具', 'stamp', 'stamp', 'S', '仿制图章', {}, (e, target) => {
     if (target.kind !== 'pixels') {
-      e.message('Clone Stamp paints on pixel layers.');
+      e.message('仿制图章只能在像素图层上绘制。');
       return;
     }
     const st = cloneStroke;
@@ -82,7 +82,7 @@ const cloneTool = (): Tool => {
   };
   return {
     ...base,
-    options: (e) => brushOptions(e, 'clone-stamp', `<label class="transform-setting"><input type="checkbox" id="clone-aligned" ${e.settings.cloneAligned !== false ? 'checked' : ''}>Aligned</label>${sampleOptions('clone-sample', sampleMode(e, 'clone'))}<button class="icon-button toggle" id="clone-ignore-adj" aria-pressed="${ignoreAdjustments(e)}" title="Ignore adjustment layers when sampling" aria-label="Ignore adjustment layers when sampling">${svg('layers-2', 16)}</button><button class="icon-button" id="clone-panel" title="Clone Source panel" aria-label="Open the Clone Source panel">${svg('copy-plus', 16)}</button>`),
+    options: (e) => brushOptions(e, 'clone-stamp', `<label class="transform-setting"><input type="checkbox" id="clone-aligned" ${e.settings.cloneAligned !== false ? 'checked' : ''}>对齐</label>${sampleOptions('clone-sample', sampleMode(e, 'clone'))}<button class="icon-button toggle" id="clone-ignore-adj" aria-pressed="${ignoreAdjustments(e)}" title="取样时忽略调整图层" aria-label="取样时忽略调整图层">${svg('layers-2', 16)}</button><button class="icon-button" id="clone-panel" title="仿制源面板" aria-label="打开仿制源面板">${svg('copy-plus', 16)}</button>`),
     bindOptions: ({ e, el }) => {
       bindBrushOptions(e, el, 'clone-stamp');
       bindSampleOptions(e, el, 'clone');
@@ -100,13 +100,13 @@ const cloneTool = (): Tool => {
     pointerDown: async (e, p) => {
       if (p.alt) {
         await setSource(e, p.x, p.y, 'clone');
-        e.message('Clone source set.');
+        e.message('已设置仿制源。');
         e.overlay();
         return;
       }
       const src = activeSource();
       if (!src) {
-        e.message('Alt-click (Option-click) to define a source point to clone from.');
+        e.message('按住 Alt 单击以定义仿制的源点。');
         return;
       }
       const mode = sampleMode(e, 'clone');
@@ -437,16 +437,16 @@ function withOptions(tool: Tool, extra: (e: Editor) => string, bind: (e: Editor,
   };
 }
 const sampleAllField = (kind: 'blur' | 'sharpen' | 'smudge') => (e: Editor) =>
-  `<label class="transform-setting" title="Use the image as shown (all visible layers), and paint the result onto this layer: an empty layer keeps the retouching separate"><input type="checkbox" id="focus-sample-all" ${e.settings[`${kind}SampleAll`] ? 'checked' : ''}>Sample All Layers</label>`;
+  `<label class="transform-setting" title="使用所显示的图像（所有可见图层），并将结果绘制到此图层"><input type="checkbox" id="focus-sample-all" ${e.settings[`${kind}SampleAll`] ? 'checked' : ''}>对所有图层取样</label>`;
 const bindSampleAll = (kind: 'blur' | 'sharpen' | 'smudge') => (e: Editor, el: HTMLElement) =>
   el.querySelector<HTMLInputElement>('#focus-sample-all')?.addEventListener('change', (ev) => (e.settings[`${kind}SampleAll`] = (ev.target as HTMLInputElement).checked));
-const strengthField = (key: string) => (e: Editor) => `<label>Strength <input id="tool-strength" type="number" min="1" max="100" value="${Number(e.settings[key] ?? 50)}">%</label>`;
+const strengthField = (key: string) => (e: Editor) => `<label>强度 <input id="tool-strength" type="number" min="1" max="100" value="${Number(e.settings[key] ?? 50)}">%</label>`;
 const bindStrength = (key: string) => (e: Editor, el: HTMLElement) =>
   bindNumberField(el, '#tool-strength', () => Number(e.settings[key] ?? 50), (v) => (e.settings[key] = Math.max(1, Math.min(100, v))));
 const toneFields = (sponge: boolean) => (e: Editor) =>
   sponge
-    ? `<label>Mode <select id="sponge-mode"><option value="desaturate">Desaturate</option><option value="saturate" ${e.settings.spongeMode === 'saturate' ? 'selected' : ''}>Saturate</option></select></label><label>Flow <input id="sponge-flow" type="number" min="1" max="100" value="${Number(e.settings.spongeFlow ?? 50)}">%</label><label class="transform-setting" title="Saturating raises muted colors most and never clips a channel"><input type="checkbox" id="sponge-vibrance" ${e.settings.spongeVibrance !== false ? 'checked' : ''}>Vibrance</label>`
-    : `<label>Range <select id="tone-range">${['shadows', 'midtones', 'highlights'].map((r) => `<option value="${r}" ${(e.settings.toneRange ?? 'midtones') === r ? 'selected' : ''}>${r[0].toUpperCase() + r.slice(1)}</option>`).join('')}</select></label><label>Exposure <input id="tone-exposure" type="number" min="1" max="100" value="${Number(e.settings.toneExposure ?? 50)}">%</label><label class="transform-setting"><input type="checkbox" id="protect-tones" ${e.settings.protectTones !== false ? 'checked' : ''}>Protect Tones</label>`;
+    ? `<label>模式 <select id="sponge-mode"><option value="desaturate">降低饱和度</option><option value="saturate" ${e.settings.spongeMode === 'saturate' ? 'selected' : ''}>增加饱和度</option></select></label><label>流量 <input id="sponge-flow" type="number" min="1" max="100" value="${Number(e.settings.spongeFlow ?? 50)}">%</label><label class="transform-setting" title="增加饱和度时最大程度提升低饱和颜色且不产生通道溢出"><input type="checkbox" id="sponge-vibrance" ${e.settings.spongeVibrance !== false ? 'checked' : ''}>自然饱和度</label>`
+    : `<label>范围 <select id="tone-range">${[['shadows', '阴影'], ['midtones', '中间调'], ['highlights', '高光']].map(([r, l]) => `<option value="${r}" ${(e.settings.toneRange ?? 'midtones') === r ? 'selected' : ''}>${l}</option>`).join('')}</select></label><label>曝光度 <input id="tone-exposure" type="number" min="1" max="100" value="${Number(e.settings.toneExposure ?? 50)}">%</label><label class="transform-setting"><input type="checkbox" id="protect-tones" ${e.settings.protectTones !== false ? 'checked' : ''}>保护色调</label>`;
 const bindTone = (e: Editor, el: HTMLElement) => {
   el.querySelector<HTMLSelectElement>('#tone-range')?.addEventListener('change', (ev) => (e.settings.toneRange = (ev.target as HTMLSelectElement).value));
   el.querySelector<HTMLSelectElement>('#sponge-mode')?.addEventListener('change', (ev) => (e.settings.spongeMode = (ev.target as HTMLSelectElement).value));
@@ -474,7 +474,7 @@ function sampledColor(e: Editor, target: PixelTarget & { kind: 'pixels' }, p: Ca
 }
 function backgroundEraserTarget(e: Editor, target: PixelTarget, p: CanvasPointer): PaintTarget | undefined {
   if (target.kind !== 'pixels') {
-    e.message('The Background Eraser works on pixel layers.');
+    e.message('背景橡皮擦只能在像素图层上使用。');
     return;
   }
   if (layerLock(e.doc.layers, target.layer.id, 'transparency')) {
@@ -548,13 +548,13 @@ function colorReplaceTarget(e: Editor, target: PixelTarget, p: CanvasPointer): P
   };
 }
 const samplingSelect = (id: string, value: string) =>
-  `<label>Sampling <select id="${id}">${[['continuous', 'Continuous'], ['once', 'Once'], ['swatch', 'Background Swatch']].map(([v, l]) => `<option value="${v}" ${value === v ? 'selected' : ''}>${l}</option>`).join('')}</select></label>`;
+  `<label>取样 <select id="${id}">${[['continuous', '连续'], ['once', '一次'], ['swatch', '背景色板']].map(([v, l]) => `<option value="${v}" ${value === v ? 'selected' : ''}>${l}</option>`).join('')}</select></label>`;
 
 export function installRetouchTools(_e: Editor) {
   registerTool(
     cloneTool(),
     withOptions(
-      strokeTool('blur-tool', 'Blur Tool', 'blur-tool', 'focus', '', 'Blur Tool', {}, focusTarget('blur')),
+      strokeTool('blur-tool', '模糊工具', 'blur-tool', 'focus', '', '模糊工具', {}, focusTarget('blur')),
       (e) => `${strengthField('blurStrength')(e)}${sampleAllField('blur')(e)}`,
       (e, el) => {
         bindStrength('blurStrength')(e, el);
@@ -562,8 +562,8 @@ export function installRetouchTools(_e: Editor) {
       },
     ),
     withOptions(
-      strokeTool('sharpen-tool', 'Sharpen Tool', 'sharpen-tool', 'focus', '', 'Sharpen Tool', {}, focusTarget('sharpen')),
-      (e) => `${strengthField('sharpenStrength')(e)}${sampleAllField('sharpen')(e)}<label class="transform-setting" title="Sharpen edges without halos, noise or blocky artifacts"><input type="checkbox" id="sharpen-protect" ${e.settings.sharpenProtectDetail !== false ? 'checked' : ''}>Protect Detail</label>`,
+      strokeTool('sharpen-tool', '锐化工具', 'sharpen-tool', 'focus', '', '锐化工具', {}, focusTarget('sharpen')),
+      (e) => `${strengthField('sharpenStrength')(e)}${sampleAllField('sharpen')(e)}<label class="transform-setting" title="锐化边缘且不产生光晕、杂色或块状伪影"><input type="checkbox" id="sharpen-protect" ${e.settings.sharpenProtectDetail !== false ? 'checked' : ''}>保护细节</label>`,
       (e, el) => {
         bindStrength('sharpenStrength')(e, el);
         bindSampleAll('sharpen')(e, el);
@@ -571,20 +571,20 @@ export function installRetouchTools(_e: Editor) {
       },
     ),
     withOptions(
-      strokeTool('smudge-tool', 'Smudge Tool', 'smudge', 'focus', '', 'Smudge Tool', {}, focusTarget('smudge')),
-      (e) => `${strengthField('smudgeStrength')(e)}${sampleAllField('smudge')(e)}<label class="transform-setting" title="Start each stroke with the foreground color on the tip"><input type="checkbox" id="finger-painting" ${e.settings.fingerPainting ? 'checked' : ''}>Finger Painting</label>`,
+      strokeTool('smudge-tool', '涂抹工具', 'smudge', 'focus', '', '涂抹工具', {}, focusTarget('smudge')),
+      (e) => `${strengthField('smudgeStrength')(e)}${sampleAllField('smudge')(e)}<label class="transform-setting" title="每次描边都从笔尖的前景色开始"><input type="checkbox" id="finger-painting" ${e.settings.fingerPainting ? 'checked' : ''}>手指绘画</label>`,
       (e, el) => {
         bindStrength('smudgeStrength')(e, el);
         bindSampleAll('smudge')(e, el);
         el.querySelector<HTMLInputElement>('#finger-painting')?.addEventListener('change', (ev) => (e.settings.fingerPainting = (ev.target as HTMLInputElement).checked));
       },
     ),
-    withOptions(strokeTool('dodge', 'Dodge Tool', 'dodge', 'tone', 'O', 'Dodge Tool', {}, toneTarget('dodge')), toneFields(false), bindTone),
-    withOptions(strokeTool('burn', 'Burn Tool', 'burn', 'tone', 'O', 'Burn Tool', {}, toneTarget('burn')), toneFields(false), bindTone),
-    withOptions(strokeTool('sponge', 'Sponge Tool', 'sponge', 'tone', 'O', 'Sponge Tool', {}, toneTarget('sponge')), toneFields(true), bindTone),
+    withOptions(strokeTool('dodge', '减淡工具', 'dodge', 'tone', 'O', '减淡工具', {}, toneTarget('dodge')), toneFields(false), bindTone),
+    withOptions(strokeTool('burn', '加深工具', 'burn', 'tone', 'O', '加深工具', {}, toneTarget('burn')), toneFields(false), bindTone),
+    withOptions(strokeTool('sponge', '海绵工具', 'sponge', 'tone', 'O', '海绵工具', {}, toneTarget('sponge')), toneFields(true), bindTone),
     withOptions(
-      strokeTool('background-eraser', 'Background Eraser Tool', 'eraser-background', 'eraser', 'E', 'Background Eraser', {}, backgroundEraserTarget),
-      (e) => `${samplingSelect('bg-sampling', (e.settings.bgSampling as string) ?? 'once')}<label>Tolerance <input id="bg-tolerance" type="number" min="0" max="100" value="${Number(e.settings.bgTolerance ?? 50)}">%</label><label class="transform-setting" title="Never erase pixels close to the foreground color"><input type="checkbox" id="bg-protect-fg" ${e.settings.bgProtectForeground ? 'checked' : ''}>Protect Foreground Color</label>`,
+      strokeTool('background-eraser', '背景橡皮擦工具', 'eraser-background', 'eraser', 'E', '背景橡皮擦', {}, backgroundEraserTarget),
+      (e) => `${samplingSelect('bg-sampling', (e.settings.bgSampling as string) ?? 'once')}<label>容差 <input id="bg-tolerance" type="number" min="0" max="100" value="${Number(e.settings.bgTolerance ?? 50)}">%</label><label class="transform-setting" title="切勿抹除接近前景色的像素"><input type="checkbox" id="bg-protect-fg" ${e.settings.bgProtectForeground ? 'checked' : ''}>保护前景色</label>`,
       (e, el) => {
         el.querySelector<HTMLSelectElement>('#bg-sampling')?.addEventListener('change', (ev) => (e.settings.bgSampling = (ev.target as HTMLSelectElement).value));
         el.querySelector<HTMLInputElement>('#bg-protect-fg')?.addEventListener('change', (ev) => (e.settings.bgProtectForeground = (ev.target as HTMLInputElement).checked));
@@ -592,8 +592,8 @@ export function installRetouchTools(_e: Editor) {
       },
     ),
     withOptions(
-      strokeTool('color-replacement', 'Color Replacement Tool', 'color-replace', 'brush', 'B', 'Color Replacement', {}, colorReplaceTarget),
-      (e) => `${samplingSelect('replace-sampling', (e.settings.replaceSampling as string) ?? 'continuous')}<label>Tolerance <input id="replace-tolerance" type="number" min="0" max="100" value="${Number(e.settings.replaceTolerance ?? 30)}">%</label><label class="transform-setting"><input type="checkbox" id="replace-anti-alias" ${e.settings.replaceAntiAlias !== false ? 'checked' : ''}>Anti-alias</label>`,
+      strokeTool('color-replacement', '颜色替换工具', 'color-replace', 'brush', 'B', '颜色替换', {}, colorReplaceTarget),
+      (e) => `${samplingSelect('replace-sampling', (e.settings.replaceSampling as string) ?? 'continuous')}<label>容差 <input id="replace-tolerance" type="number" min="0" max="100" value="${Number(e.settings.replaceTolerance ?? 30)}">%</label><label class="transform-setting"><input type="checkbox" id="replace-anti-alias" ${e.settings.replaceAntiAlias !== false ? 'checked' : ''}>消除锯齿</label>`,
       (e, el) => {
         bindNumberField(el, '#replace-tolerance', () => Number(e.settings.replaceTolerance ?? 30), (v) => (e.settings.replaceTolerance = Math.max(0, Math.min(100, v))));
         el.querySelector<HTMLSelectElement>('#replace-sampling')?.addEventListener('change', (ev) => (e.settings.replaceSampling = (ev.target as HTMLSelectElement).value));
@@ -602,13 +602,13 @@ export function installRetouchTools(_e: Editor) {
     ),
     {
       id: 'magic-eraser',
-      label: 'Magic Eraser Tool',
+      label: '魔术橡皮擦工具',
       key: 'E',
       icon: 'eraser-magic',
       group: 'eraser',
       cursor: () => 'crosshair',
       options: (e) =>
-        `<label>Tolerance <input id="tolerance" type="number" value="${e.tolerance}" min="0" max="255"></label><label class="transform-setting" title="Soften the edge of the erased area"><input id="magic-eraser-aa" type="checkbox" ${e.settings.magicEraserAntiAlias !== false ? 'checked' : ''}>Anti-alias</label><label class="transform-setting"><input id="wand-contiguous" type="checkbox" ${e.settings.contiguous !== false ? 'checked' : ''}>Contiguous</label><label class="transform-setting"><input id="wand-all" type="checkbox" ${e.settings.sampleAllLayers ? 'checked' : ''}>Sample All Layers</label><label title="How much of the matching pixels is erased">Opacity <input id="magic-eraser-opacity" type="number" min="1" max="100" value="${magicEraserOpacity(e)}">%</label>`,
+        `<label>容差 <input id="tolerance" type="number" value="${e.tolerance}" min="0" max="255"></label><label class="transform-setting" title="柔化擦除区域的边缘"><input id="magic-eraser-aa" type="checkbox" ${e.settings.magicEraserAntiAlias !== false ? 'checked' : ''}>消除锯齿</label><label class="transform-setting"><input id="wand-contiguous" type="checkbox" ${e.settings.contiguous !== false ? 'checked' : ''}>连续</label><label class="transform-setting"><input id="wand-all" type="checkbox" ${e.settings.sampleAllLayers ? 'checked' : ''}>对所有图层取样</label><label title="擦除匹配像素的程度">不透明度 <input id="magic-eraser-opacity" type="number" min="1" max="100" value="${magicEraserOpacity(e)}">%</label>`,
       bindOptions: ({ e, el }) => {
         bindTolerance(e, el);
         el.querySelector<HTMLInputElement>('#magic-eraser-aa')?.addEventListener('change', (ev) => (e.settings.magicEraserAntiAlias = (ev.target as HTMLInputElement).checked));

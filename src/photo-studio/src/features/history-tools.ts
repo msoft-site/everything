@@ -35,7 +35,7 @@ export function historySourceDoc(e: Editor): PhotoDocument {
 }
 function historyTarget(e: Editor, target: PixelTarget): PaintTarget | undefined {
   if (target.kind !== 'pixels') {
-    e.message('The History Brush paints on pixel layers.');
+    e.message('历史记录画笔在像素图层上绘制。');
     return;
   }
   return historyPaintTarget(e, target, brushFor('history-brush').mode);
@@ -45,7 +45,7 @@ function historyTarget(e: Editor, target: PixelTarget): PaintTarget | undefined 
 export function historyPaintTarget(e: Editor, target: PixelTarget & { kind: 'pixels' }, mode: PaintMode): PaintTarget | undefined {
   const src = findLayer(historySourceDoc(e).layers, target.layer.id);
   if (!src?.pixels) {
-    e.message('Could not use the history brush because the history state does not contain a corresponding layer.');
+    e.message('无法使用历史记录画笔，因为历史记录状态中不包含对应的图层。');
     return;
   }
   const grid = src.pixels;
@@ -75,16 +75,16 @@ export function historyPaintTarget(e: Editor, target: PixelTarget & { kind: 'pix
 }
 
 export function installHistoryTools(e: Editor) {
-  registerTool(strokeTool('history-brush', 'History Brush Tool', 'history-brush', 'history-brush', 'Y', 'History Brush', {}, historyTarget));
+  registerTool(strokeTool('history-brush', '历史记录画笔工具', 'history-brush', 'history-brush', 'Y', '历史记录画笔', {}, historyTarget));
   registerCommand(
     {
       id: 'history.snapshot',
-      label: 'New Snapshot…',
+      label: '新建快照…',
       recordable: false,
       enabled: (e) => e.hasDocument,
       run: async (e) => {
         const list = sessionSnapshots(e);
-        const v = await formDialog('New Snapshot', [{ name: 'name', label: 'Name', value: `Snapshot ${list.length + 1}` }], 'OK');
+        const v = await formDialog('新建快照', [{ name: 'name', label: '名称', value: `快照 ${list.length + 1}` }], '确定');
         if (!v) return;
         // Capture the visible edit only after it reaches the document. Waiting
         // concurrently also preserves failures handled by the tool's UI.
@@ -96,7 +96,7 @@ export function installHistoryTools(e: Editor) {
     },
     {
       id: 'history.restore-snapshot',
-      label: 'Revert to Snapshot',
+      label: '恢复为快照',
       hidden: true,
       run: async (e, arg) => {
         const snap = sessionSnapshots(e).find((s) => s.id === arg);
@@ -104,12 +104,12 @@ export function installHistoryTools(e: Editor) {
         // Keep the completed edit in Undo before replacing its document state.
         e.transform.apply();
         await Promise.all([e.modal?.apply(), e.session.waitForEdits()]);
-        e.command(`Revert to ${snap.name}`, (d) => replaceDocument(d, snap.doc));
+        e.command(`恢复为 ${snap.name}`, (d) => replaceDocument(d, snap.doc));
       },
     },
     {
       id: 'history.set-source',
-      label: 'Set History Brush Source',
+      label: '设置历史记录画笔源',
       hidden: true,
       run: (e, arg) => {
         if (arg) sources.set(e.session, String(arg));

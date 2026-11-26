@@ -260,8 +260,8 @@ function penOptions(_e: Editor, extra = '') {
   const shape = o.mode === 'shape';
   // Shape mode sets the new layer's paint here; Path mode turns the drawn
   // path into a selection, a vector mask or a shape layer.
-  const make = `<span class="vec-make" role="group" aria-label="Make from path">Make: <button type="button" data-command="path.make-selection-dialog" title="Make a selection from the path">Selection…</button><button type="button" data-command="layer.vmask-current-path" title="Add a vector mask to the layer from the path">Mask</button><button type="button" data-command="path.make-shape" title="Make a shape layer from the path">Shape</button></span>`;
-  return `<label>Mode <select id="pen-mode" aria-label="Pen mode"><option value="path" ${!shape ? 'selected' : ''}>Path</option><option value="shape" ${shape ? 'selected' : ''}>Shape</option></select></label>${shape ? shapePaintControls(_e) : make}<label>Path <select id="pen-op" aria-label="Path operation">${([['new', shape ? 'New Layer' : 'New Path Area'], ['combine', 'Combine Shapes'], ['subtract', 'Subtract Front Shape'], ['intersect', 'Intersect Shape Areas'], ['exclude', 'Exclude Overlapping']] as const).map(([v, l]) => `<option value="${v}" ${o.op === v ? 'selected' : ''}>${l}</option>`).join('')}</select></label>${extra}`;
+  const make = `<span class="vec-make" role="group" aria-label="从路径生成">生成：<button type="button" data-command="path.make-selection-dialog" title="从路径建立选区">选区…</button><button type="button" data-command="layer.vmask-current-path" title="从路径向图层添加矢量蒙版">蒙版</button><button type="button" data-command="path.make-shape" title="从路径创建形状图层">形状</button></span>`;
+  return `<label>模式 <select id="pen-mode" aria-label="钢笔模式"><option value="path" ${!shape ? 'selected' : ''}>路径</option><option value="shape" ${shape ? 'selected' : ''}>形状</option></select></label>${shape ? shapePaintControls(_e) : make}<label>路径操作 <select id="pen-op" aria-label="路径操作">${([['new', shape ? '新建图层' : '新建路径区域'], ['combine', '合并形状'], ['subtract', '减去顶层形状'], ['intersect', '与形状区域相交'], ['exclude', '排除重叠形状']] as const).map(([v, l]) => `<option value="${v}" ${o.op === v ? 'selected' : ''}>${l}</option>`).join('')}</select></label>${extra}`;
 }
 function bindPenOptions(e: Editor, el: HTMLElement) {
   if (penOpts.mode === 'shape') bindShapePaint(e, el);
@@ -334,12 +334,12 @@ function newLayerOverlay(e: Editor) {
 }
 export const penTool: Tool = {
   id: 'pen',
-  label: 'Pen Tool',
+  label: '钢笔工具',
   key: 'P',
   icon: 'pen-tool',
   group: 'pen',
   cursor: () => 'crosshair',
-  options: (e) => penOptions(e, `<label class="transform-setting"><input id="pen-auto" type="checkbox" ${penOpts.autoAddDelete ? 'checked' : ''}>Auto Add/Delete</label><label class="transform-setting"><input id="pen-rubber" type="checkbox" ${penOpts.rubberBand ? 'checked' : ''}>Rubber Band</label>`),
+  options: (e) => penOptions(e, `<label class="transform-setting"><input id="pen-auto" type="checkbox" ${penOpts.autoAddDelete ? 'checked' : ''}>自动添加/删除</label><label class="transform-setting"><input id="pen-rubber" type="checkbox" ${penOpts.rubberBand ? 'checked' : ''}>橡皮带</label>`),
   bindOptions: ({ e, el }) => bindPenOptions(e, el),
   deactivate: (e) => endDrawing(e),
   pointerDown: (e, p) => penDown(e, p),
@@ -369,12 +369,12 @@ export const penTool: Tool = {
 // ----- Freeform pen -----
 export const freeformPenTool: Tool = {
   id: 'freeform-pen',
-  label: 'Freeform Pen Tool',
+  label: '自由钢笔工具',
   key: 'P',
   icon: 'pen-freeform',
   group: 'pen',
   cursor: () => 'crosshair',
-  options: (e) => penOptions(e, `<label class="vec-num">Curve Fit <input id="pen-fit" type="number" min="0.5" max="10" step="0.5" value="${penOpts.curveFit}"> px</label>`),
+  options: (e) => penOptions(e, `<label class="vec-num">曲线拟合 <input id="pen-fit" type="number" min="0.5" max="10" step="0.5" value="${penOpts.curveFit}"> 像素</label>`),
   bindOptions: ({ e, el }) => bindPenOptions(e, el),
   pointerDown: (_e, p) => {
     freeform = { points: [[p.x, p.y]] };
@@ -398,7 +398,7 @@ export const freeformPenTool: Tool = {
       e.overlay();
       return;
     }
-    const d = startSubpath(e, first, 'Freeform Pen');
+    const d = startSubpath(e, first, '自由钢笔');
     const sp = d.mask.paths[d.ref.path];
     sp.knots = fitted.knots;
     sp.open = !closed;
@@ -429,19 +429,19 @@ function curvatureDown(e: Editor, p: CanvasPointer) {
     if (hit && hit.knot === 0 && sp.knots.length >= 2) {
       sp.open = false;
       autoSmooth(sp);
-      drag = { target: ref, mask, ref: hit, start: pt, moved: false, mode: 'none', label: 'Close Path', endDrawing: true };
+      drag = { target: ref, mask, ref: hit, start: pt, moved: false, mode: 'none', label: '闭合路径', endDrawing: true };
       previewEdit(e, ref, mask);
       return;
     }
     if (hit) {
-      drag = { target: ref, mask, ref: hit, start: pt, moved: false, mode: 'move', label: 'Move Anchor Point' };
+      drag = { target: ref, mask, ref: hit, start: pt, moved: false, mode: 'move', label: '移动锚点' };
       return;
     }
     const k = corner(pt[0], pt[1]);
     k.linked = !p.alt;
     sp.knots.push(k);
     autoSmooth(sp);
-    drag = { target: ref, mask, ref: { path: drawing.path, knot: sp.knots.length - 1 }, start: pt, moved: false, mode: 'move', label: 'Add Anchor Point' };
+    drag = { target: ref, mask, ref: { path: drawing.path, knot: sp.knots.length - 1 }, start: pt, moved: false, mode: 'move', label: '添加锚点' };
     previewEdit(e, ref, mask);
     return;
   }
@@ -456,7 +456,7 @@ function curvatureDown(e: Editor, p: CanvasPointer) {
         e.overlay();
         return;
       }
-      drag = { target: t, mask: cloneMask(t.mask), ref: a, start: pt, moved: false, mode: 'move', label: 'Move Anchor Point' };
+      drag = { target: t, mask: cloneMask(t.mask), ref: a, start: pt, moved: false, mode: 'move', label: '移动锚点' };
       return;
     }
   }
@@ -467,12 +467,12 @@ function curvatureDown(e: Editor, p: CanvasPointer) {
 }
 export const curvaturePenTool: Tool = {
   id: 'curvature-pen',
-  label: 'Curvature Pen Tool',
+  label: '弯度钢笔工具',
   key: 'P',
   icon: 'pen-curvature',
   group: 'pen',
   cursor: () => 'crosshair',
-  options: (e) => penOptions(e, `<span class="muted vec-hint">Click to add smooth points; Alt-click for a corner; double-click a point to toggle it.</span>`),
+  options: (e) => penOptions(e, `<span class="muted vec-hint">单击添加平滑点；按住 Alt 单击创建角点；双击点以切换角点/平滑点。</span>`),
   bindOptions: ({ e, el }) => bindPenOptions(e, el),
   deactivate: (e) => endDrawing(e),
   pointerDown: (e, p) => curvatureDown(e, p),
@@ -515,7 +515,7 @@ export const curvaturePenTool: Tool = {
       k.points[1] = k.points[5] = k.points[3];
     } else k.linked = true;
     autoSmooth(sp);
-    await commitPathEdit(e, t, mask, 'Convert Point');
+    await commitPathEdit(e, t, mask, '转换点');
     e.overlay();
   },
   hover: (e, p) => {
@@ -543,7 +543,7 @@ export const curvaturePenTool: Tool = {
 // ----- Add, delete and convert anchor points -----
 export const addAnchorTool: Tool = {
   id: 'add-anchor',
-  label: 'Add Anchor Point Tool',
+  label: '添加锚点工具',
   icon: 'anchor-add',
   group: 'pen',
   cursor: () => 'crosshair',
@@ -554,7 +554,7 @@ export const addAnchorTool: Tool = {
     if (!s || s.distance > tolerance(e)) return;
     const mask = cloneMask(t.mask);
     const k = insertKnot(mask.paths[s.path], s.segment, s.t);
-    drag = { target: t, mask, ref: { path: s.path, knot: k }, start: s.point, moved: false, mode: 'move', label: 'Add Anchor Point' };
+    drag = { target: t, mask, ref: { path: s.path, knot: k }, start: s.point, moved: false, mode: 'move', label: '添加锚点' };
     previewEdit(e, t, mask);
   },
   pointerMove: dragMove,
@@ -562,7 +562,7 @@ export const addAnchorTool: Tool = {
 };
 export const deleteAnchorTool: Tool = {
   id: 'delete-anchor',
-  label: 'Delete Anchor Point Tool',
+  label: '删除锚点工具',
   icon: 'anchor-delete',
   group: 'pen',
   cursor: () => 'crosshair',
@@ -572,13 +572,13 @@ export const deleteAnchorTool: Tool = {
     const a = hitAnchor(t.mask, p.x, p.y, tolerance(e));
     if (!a) return;
     const mask = deleteKnots(cloneMask(t.mask), [a]);
-    await commitPathEdit(e, t, mask, 'Delete Anchor Point');
+    await commitPathEdit(e, t, mask, '删除锚点');
     e.overlay();
   },
 };
 export const convertPointTool: Tool = {
   id: 'convert-point',
-  label: 'Convert Point Tool',
+  label: '转换点工具',
   icon: 'anchor-convert',
   group: 'pen',
   cursor: () => 'default',
@@ -590,12 +590,12 @@ export const convertPointTool: Tool = {
     const h = hitHandle(t.mask, p.x, p.y, tol, all);
     const mask = cloneMask(t.mask);
     if (h) {
-      drag = { target: t, mask, ref: h, side: h.side, start: [p.x, p.y], moved: false, mode: 'handle', label: 'Convert Point' };
+      drag = { target: t, mask, ref: h, side: h.side, start: [p.x, p.y], moved: false, mode: 'handle', label: '转换点' };
       return;
     }
     const a = hitAnchor(t.mask, p.x, p.y, tol);
     if (!a) return;
-    drag = { target: t, mask, ref: a, start: [p.x, p.y], moved: false, mode: 'convert', label: 'Convert Point' };
+    drag = { target: t, mask, ref: a, start: [p.x, p.y], moved: false, mode: 'convert', label: '转换点' };
   },
   pointerMove: dragMove,
   pointerUp: dragUp,

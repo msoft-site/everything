@@ -14,7 +14,7 @@ import { sampleAverage, SAMPLE_SIZES } from '../imaging/measure/geometry';
 export function installLayerTools(e: Editor) {
   registerTool({
     id: 'move',
-    label: 'Move Tool',
+    label: '移动工具',
     key: 'V',
     icon: 'move',
     group: 'move',
@@ -39,14 +39,14 @@ export function installLayerTools(e: Editor) {
   // The Crop and Perspective Crop tools live in features/transform/crop.ts.
   registerTool({
     id: 'eyedropper',
-    label: 'Eyedropper Tool',
+    label: '吸管工具',
     key: 'I',
     icon: 'pipette',
     group: 'eyedropper',
     cursor: () => 'crosshair',
     options: (e) => {
       const mode = sampleLayers(e);
-      return `<label>Sample Size <select id="sample-size">${SAMPLE_SIZES.map((n) => `<option value="${n}" ${Number(e.settings.sampleSize ?? 1) === n ? 'selected' : ''}>${n === 1 ? 'Point Sample' : `${n} by ${n} Average`}</option>`).join('')}</select></label><label>Sample <select id="sample-layers">${SAMPLE_LAYERS.map(([v, l]) => `<option value="${v}" ${mode === v ? 'selected' : ''}>${l}</option>`).join('')}</select></label><label class="transform-setting" title="Show the picked color and the previous color around the pointer while sampling"><input id="sampling-ring" type="checkbox" ${e.settings.samplingRing !== false ? 'checked' : ''}>Show Sampling Ring</label>`;
+      return `<label>取样大小 <select id="sample-size">${SAMPLE_SIZES.map((n) => `<option value="${n}" ${Number(e.settings.sampleSize ?? 1) === n ? 'selected' : ''}>${n === 1 ? '取样点' : `${n}×${n} 平均`}</option>`).join('')}</select></label><label>样本 <select id="sample-layers">${SAMPLE_LAYERS.map(([v, l]) => `<option value="${v}" ${mode === v ? 'selected' : ''}>${l}</option>`).join('')}</select></label><label class="transform-setting" title="取样时在指针周围显示当前拾取的颜色和前一个颜色"><input id="sampling-ring" type="checkbox" ${e.settings.samplingRing !== false ? 'checked' : ''}>显示取样环</label>`;
     },
     bindOptions: ({ e, el }) => {
       el.querySelector<HTMLSelectElement>('#sample-size')?.addEventListener('change', (ev) => (e.settings.sampleSize = Number((ev.target as HTMLSelectElement).value)));
@@ -73,8 +73,8 @@ export function installLayerTools(e: Editor) {
 }
 /** More arrangement commands than fit the options bar. */
 const moveOverflow = [
-  { label: 'Distribute', items: ['layer.distribute-top', 'layer.distribute-vcenter', 'layer.distribute-bottom', '-', 'layer.distribute-left', 'layer.distribute-hcenter', 'layer.distribute-right'] },
-  { label: 'Distribute Spacing', items: ['layer.distribute-h-space', 'layer.distribute-v-space'] },
+  { label: '分布', items: ['layer.distribute-top', 'layer.distribute-vcenter', 'layer.distribute-bottom', '-', 'layer.distribute-left', 'layer.distribute-hcenter', 'layer.distribute-right'] },
+  { label: '分布间距', items: ['layer.distribute-h-space', 'layer.distribute-v-space'] },
   '-',
   'layer.align-to-canvas',
 ];
@@ -85,18 +85,26 @@ function moveOptions(e: Editor) {
   const button = (id: string, label: string, icon: string, enabled: boolean) => `<button class="icon-button" data-command="${id}" title="${label}" aria-label="${label}" ${enabled ? '' : 'disabled'}>${svg(icon, 16)}</button>`;
   const any = e.selectedIds.size >= 1,
     many = e.selectedIds.size >= 3;
+  const alignLabel: Record<string, string> = {
+    'align-left': '左对齐',
+    'align-hcenter': '水平居中',
+    'align-right': '右对齐',
+    'align-top': '顶对齐',
+    'align-vcenter': '垂直居中',
+    'align-bottom': '底对齐',
+  };
   return (
-    `<label class="transform-setting"><input id="auto-select" type="checkbox" ${e.autoSelect ? 'checked' : ''}>Auto-Select</label>` +
-    `<select id="auto-select-target" aria-label="Auto-select target" title="What a click selects: the layer under the pointer or its outermost group" ${e.autoSelect ? '' : 'disabled'}><option value="layer">Layer</option><option value="group" ${target === 'group' ? 'selected' : ''}>Group</option></select>` +
-    `<label class="transform-setting"><input id="show-transform-controls" type="checkbox" ${e.settings.showTransformControls !== false ? 'checked' : ''}>Show Transform Controls</label>` +
-    `<label class="transform-setting"><input id="transform-snap" type="checkbox" ${e.transform.snapping ? 'checked' : ''}>Snap</label><button data-command="edit.free-transform" ${!e.selectedIds.size ? 'disabled' : ''}>Free Transform</button><span class="divider"></span>` +
+    `<label class="transform-setting"><input id="auto-select" type="checkbox" ${e.autoSelect ? 'checked' : ''}>自动选择</label>` +
+    `<select id="auto-select-target" aria-label="自动选择目标" title="单击时选择的内容：指针下的图层或其最外层组" ${e.autoSelect ? '' : 'disabled'}><option value="layer">图层</option><option value="group" ${target === 'group' ? 'selected' : ''}>组</option></select>` +
+    `<label class="transform-setting"><input id="show-transform-controls" type="checkbox" ${e.settings.showTransformControls !== false ? 'checked' : ''}>显示变换控件</label>` +
+    `<label class="transform-setting"><input id="transform-snap" type="checkbox" ${e.transform.snapping ? 'checked' : ''}>对齐</label><button data-command="edit.free-transform" ${!e.selectedIds.size ? 'disabled' : ''}>自由变换</button><span class="divider"></span>` +
     ['align-left', 'align-hcenter', 'align-right', 'align-top', 'align-vcenter', 'align-bottom']
-      .map((a) => button(`layer.${a}`, a.replace('align-', 'Align ').replace('hcenter', 'horizontal centers').replace('vcenter', 'vertical centers'), alignIcon(a), any))
+      .map((a) => button(`layer.${a}`, alignLabel[a] || a, alignIcon(a), any))
       .join('') +
     `<span class="divider"></span>` +
-    button('layer.distribute-hcenter', 'Distribute horizontal centers', 'distribute-h', many) +
-    button('layer.distribute-vcenter', 'Distribute vertical centers', 'distribute-v', many) +
-    `<button class="icon-button" id="move-more" title="More align and distribute options" aria-label="More align and distribute options" aria-haspopup="menu">${svg('ellipsis', 16)}</button>`
+    button('layer.distribute-hcenter', '按水平中心分布', 'distribute-h', many) +
+    button('layer.distribute-vcenter', '按垂直中心分布', 'distribute-v', many) +
+    `<button class="icon-button" id="move-more" title="更多对齐和分布选项" aria-label="更多对齐和分布选项" aria-haspopup="menu">${svg('ellipsis', 16)}</button>`
   );
 }
 function alignIcon(a: string) {
@@ -113,11 +121,11 @@ function alignIcon(a: string) {
 }
 /** What the Eyedropper samples (Alt-click in painting tools uses it too). */
 export const SAMPLE_LAYERS = [
-  ['current', 'Current Layer'],
-  ['below', 'Current & Below'],
-  ['all', 'All Layers'],
-  ['all-no-adj', 'All Layers No Adjustments'],
-  ['below-no-adj', 'Current & Below No Adjustments'],
+  ['current', '当前图层'],
+  ['below', '当前和下方图层'],
+  ['all', '所有图层'],
+  ['all-no-adj', '所有图层（无调整）'],
+  ['below-no-adj', '当前和下方图层（无调整）'],
 ] as const;
 export type SampleLayers = (typeof SAMPLE_LAYERS)[number][0];
 export function sampleLayers(e: Editor): SampleLayers {

@@ -149,32 +149,32 @@ ${single ? '<p class="pf-note">单图层对齐到选区；若未选择选区则�
 
 const ACTIONS: Record<string, [string, string, string][]> = {
   pixel: [
-    ['layer.remove-background', 'Remove Background', 'eraser-background'],
-    ['select.subject', 'Select Subject', 'scan-face'],
-    ['layer.mask-from-transparency', 'Mask From Transparency', 'mask-add'],
-    ['layer.embed-convert', 'Convert to Embedded Object', 'embedded-object'],
+    ['layer.remove-background', '移除背景', 'eraser-background'],
+    ['select.subject', '选择主体', 'scan-face'],
+    ['layer.mask-from-transparency', '从透明度创建蒙版', 'mask-add'],
+    ['layer.embed-convert', '转换为嵌入对象', 'embedded-object'],
   ],
   image: [
-    ['layer.remove-background', 'Remove Background', 'eraser-background'],
-    ['select.subject', 'Select Subject', 'scan-face'],
-    ['layer.embed-edit', 'Edit Contents', 'pen-line'],
-    ['layer.embed-reset', 'Reset Transform', 'rotate-ccw'],
-    ['layer.embed-to-layers', 'Convert to Layers', 'layers'],
-    ['layer.embed-rasterize', 'Rasterize', 'grid-2x2'],
+    ['layer.remove-background', '移除背景', 'eraser-background'],
+    ['select.subject', '选择主体', 'scan-face'],
+    ['layer.embed-edit', '编辑内容', 'pen-line'],
+    ['layer.embed-reset', '重置变换', 'rotate-ccw'],
+    ['layer.embed-to-layers', '转换为图层', 'layers'],
+    ['layer.embed-rasterize', '栅格化', 'grid-2x2'],
   ],
   vector: [
-    ['layer.rasterize-shape', 'Rasterize', 'grid-2x2'],
-    ['view.guides-from-shape', 'Guides From Shape', 'layout-grid'],
-    ['layer.embed-convert', 'Convert to Embedded Object', 'embedded-object'],
+    ['layer.rasterize-shape', '栅格化', 'grid-2x2'],
+    ['view.guides-from-shape', '根据形状创建参考线', 'layout-grid'],
+    ['layer.embed-convert', '转换为嵌入对象', 'embedded-object'],
   ],
   solid: [
-    ['layer.rasterize-fill', 'Rasterize', 'grid-2x2'],
-    ['layer.embed-convert', 'Convert to Embedded Object', 'embedded-object'],
+    ['layer.rasterize-fill', '栅格化', 'grid-2x2'],
+    ['layer.embed-convert', '转换为嵌入对象', 'embedded-object'],
   ],
   group: [
-    ['layer.ungroup', 'Ungroup', 'ungroup'],
-    ['layer.merge-down', 'Merge Group', 'merge'],
-    ['layer.embed-convert', 'Convert to Embedded Object', 'embedded-object'],
+    ['layer.ungroup', '取消编组', 'ungroup'],
+    ['layer.merge-down', '合并组', 'merge'],
+    ['layer.embed-convert', '转换为嵌入对象', 'embedded-object'],
   ],
 };
 export function quickActionsSection(e: Editor, l: Layer) {
@@ -258,24 +258,24 @@ export const maskActions: [string, string, string][] = [];
 export function maskSection(e: Editor, l: Layer) {
   // Painted masks (maskGrid) are masks too, as in the Layers panel.
   const masked = hasMask(l) || !!l.maskGrid;
-  const maskBody = `${l.pixelMask ? `${number('maskDensity', 'Mask density (%)', (l.pixelMask.userMaskDensity ?? 1) * 100, 0, 100)}<label class="lock-label"><input type="checkbox" data-property="maskLinked" ${l.pixelMask.positionRelativeToLayer ? '' : 'checked'}> Link mask to layer</label>` : masked && !l.vectorMask ? commandToggle(e, 'layer.mask-link', 'Link mask to layer') : ''}${
+  const maskBody = `${l.pixelMask ? `${number('maskDensity', '蒙版浓度 (%)', (l.pixelMask.userMaskDensity ?? 1) * 100, 0, 100)}<label class="lock-label"><input type="checkbox" data-property="maskLinked" ${l.pixelMask.positionRelativeToLayer ? '' : 'checked'}> 将蒙版链接到图层</label>` : masked && !l.vectorMask ? commandToggle(e, 'layer.mask-link', '将蒙版链接到图层') : ''}${
     masked
-      ? `<div class="mask-info">${svg('square-dashed', 13)} ${l.maskDisabled ? 'Mask disabled' : 'Layer mask active'} <button data-action="invert-mask">Invert</button><button data-action="toggle-mask">${l.maskDisabled ? 'Enable' : 'Disable'}</button><button data-action="remove-mask" aria-label="Remove mask">${svg('x', 13)}</button></div><div class="pf-actions pf-mask-actions">${commandButton(e, 'select.mask-refine', 'Select and Mask…', 'feather')}${commandButton(e, 'layer.mask-apply', 'Apply Mask', 'check')}${maskActions
+      ? `<div class="mask-info">${svg('square-dashed', 13)} ${l.maskDisabled ? '蒙版已停用' : '图层蒙版生效中'} <button data-action="invert-mask">反相</button><button data-action="toggle-mask">${l.maskDisabled ? '启用' : '停用'}</button><button data-action="remove-mask" aria-label="删除蒙版">${svg('x', 13)}</button></div><div class="pf-actions pf-mask-actions">${commandButton(e, 'select.mask-refine', '选择并遮住…', 'feather')}${commandButton(e, 'layer.mask-apply', '应用蒙版', 'check')}${maskActions
           .filter(([id]) => commandExists(id))
           .map(([id, label, icon]) => commandButton(e, id, label, icon))
           .join('')}</div>`
-      : '<button data-action="mask" class="wide">Add layer mask</button>'
+      : '<button data-action="mask" class="wide">添加图层蒙版</button>'
   }`;
-  return section('layer-mask', 'Mask', maskBody);
+  return section('layer-mask', '蒙版', maskBody);
 }
 
 /** Markup for several selected layers. */
 export function multipleProperties(e: Editor, count: number) {
-  return `<div class="property-body"><div class="pf-title">${svg('layers', 14)}<span class="eyebrow">MULTIPLE LAYERS</span></div><h3>${count} layers selected</h3>${frameSection(e, false)}${alignSection(e)}${section(
+  return `<div class="property-body"><div class="pf-title">${svg('layers', 14)}<span class="eyebrow">多个图层</span></div><h3>已选 ${count} 个图层</h3>${frameSection(e, false)}${alignSection(e)}${section(
     'multi-actions',
-    'Quick Actions',
-    `<div class="pf-actions">${commandButton(e, 'edit.free-transform', 'Free Transform', 'transform-box')}<button type="button" class="pf-action" data-action="group">${svg('folder-plus', 14)}<span>Group selected layers</span></button>${commandButton(e, 'layer.merge-down', 'Merge Layers', 'merge')}${commandButton(e, 'layer.link', 'Link Layers', 'link')}</div>`,
-  )}<p class="muted">Shift-click selects a range. Cmd/Ctrl-click toggles a layer.</p></div>`;
+    '快速操作',
+    `<div class="pf-actions">${commandButton(e, 'edit.free-transform', '自由变换', 'transform-box')}<button type="button" class="pf-action" data-action="group">${svg('folder-plus', 14)}<span>将所选图层编组</span></button>${commandButton(e, 'layer.merge-down', '合并图层', 'merge')}${commandButton(e, 'layer.link', '链接图层', 'link')}</div>`,
+  )}<p class="muted">Shift+单击选择连续范围。Cmd/Ctrl+单击切换图层选中状态。</p></div>`;
 }
 
 // ----- Transform field commits -----
@@ -289,13 +289,13 @@ function transformed(
   const t = { ...l.transform };
   if (key === 'rotation') {
     const v = parseNumber(text, ['°', 'deg']);
-    if (v === undefined) return 'Enter an angle in degrees, such as 45 or -90.';
+    if (v === undefined) return '请输入角度数值，例如 45 或 -90。';
     t.rotation = normalizeAngle(v);
     return { t };
   }
   const k = key as Axis;
   const px = parseLength(text, lengthCtx(e, k));
-  if (px === undefined) return `Enter a value such as 120, 2 in or 50%.`;
+  if (px === undefined) return `请输入有效数值，例如 120、2 in 或 50%。`;
   if (k === 'x' || k === 'y') t[k] = Math.round(px * 100) / 100;
   else {
     const s = linkedSize(t.width, t.height, k, clamp(px, 1, 8192), linked(e));
@@ -305,11 +305,11 @@ function transformed(
   return { t };
 }
 const LABELS: Record<string, string> = {
-  x: 'Move Layer',
-  y: 'Move Layer',
-  width: 'Resize Layer',
-  height: 'Resize Layer',
-  rotation: 'Rotate Layer',
+  x: '移动图层',
+  y: '移动图层',
+  width: '调整图层大小',
+  height: '调整图层大小',
+  rotation: '旋转图层',
 };
 fieldHandlers.set('layer', {
   commit: (e, key, text) => {
@@ -322,7 +322,7 @@ fieldHandlers.set('layer', {
       (p) => Math.abs(r.t[p] - l.transform[p]) < 1e-9,
     );
     if (same && !e.transform.document) return void e.update();
-    e.editLayer(LABELS[k] ?? 'Transform Layer', (x) => Object.assign(x.transform, r.t), 'position');
+    e.editLayer(LABELS[k] ?? '变换图层', (x) => Object.assign(x.transform, r.t), 'position');
   },
   preview: (e, key, text) => {
     const l = e.layer;
@@ -348,7 +348,7 @@ fieldHandlers.set('frame', {
     const f = e.transform.selectionFrame;
     if (!f) return;
     const px = parseLength(text, lengthCtx(e, k));
-    if (px === undefined) return 'Enter a value such as 120, 2 in or 50%.';
+    if (px === undefined) return '请输入有效数值，例如 120、2 in 或 50%。';
     const next = { x: f.x, y: f.y, width: f.width, height: f.height };
     if (k === 'x' || k === 'y') next[k] = Math.round(px * 100) / 100;
     else {
@@ -361,7 +361,7 @@ fieldHandlers.set('frame', {
     }
     if (['x', 'y', 'width', 'height'].every((p) => Math.abs(next[p as Axis] - f[p as Axis]) < 1e-9))
       return void e.update();
-    e.transform.setFrame(next, k === 'x' || k === 'y' ? 'Move Layers' : 'Resize Layers');
+    e.transform.setFrame(next, k === 'x' || k === 'y' ? '移动图层' : '调整图层大小');
   },
 });
 

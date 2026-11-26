@@ -12,9 +12,9 @@ const perspectiveWarp = lazy(() => import('./perspective-warp'));
 const contextScale = lazy(() => import('./context-scale'));
 
 export function installWarps(e: Editor) {
-  registerSessionTool(PIN_WARP_TOOL, 'Pin Warp', 'pin-warp');
-  registerSessionTool(PERSPECTIVE_WARP_TOOL, 'Perspective Warp', 'perspective-warp');
-  registerSessionTool(CONTEXT_SCALE_TOOL, 'Context Scale', 'context-scale');
+  registerSessionTool(PIN_WARP_TOOL, '操控变形', 'pin-warp');
+  registerSessionTool(PERSPECTIVE_WARP_TOOL, '透视变形', 'perspective-warp');
+  registerSessionTool(CONTEXT_SCALE_TOOL, '内容识别缩放', 'context-scale');
   const enabled = (e: Editor) => e.hasDocument && !!e.layer && e.selectedIds.size === 1;
   const start = (tool: string, run: (e: Editor) => Promise<void>) => async (e: Editor) => {
     // Choosing the running workspace again keeps it.
@@ -26,9 +26,9 @@ export function installWarps(e: Editor) {
   registerCommand(
     {
       id: 'edit.context-scale',
-      label: 'Context Scale',
+      label: '内容识别缩放',
       shortcut: 'Mod+Alt+Shift+C',
-      description: 'Resize a layer while keeping detailed areas, skin tones or a saved selection intact',
+      description: '在保持细节区域、肤色或存储的选区完好的同时调整图层大小',
       enabled,
       recordable: false,
       checked: () => currentWarp()?.tool === CONTEXT_SCALE_TOOL,
@@ -37,8 +37,8 @@ export function installWarps(e: Editor) {
     },
     {
       id: 'edit.pin-warp',
-      label: 'Pin Warp',
-      description: 'Bend a layer with a mesh of pins',
+      label: '操控变形',
+      description: '使用图钉网格弯曲图层',
       enabled,
       recordable: false,
       checked: () => currentWarp()?.tool === PIN_WARP_TOOL,
@@ -47,8 +47,8 @@ export function installWarps(e: Editor) {
     },
     {
       id: 'edit.perspective-warp',
-      label: 'Perspective Warp',
-      description: 'Lay planes over surfaces, then change their perspective',
+      label: '透视变形',
+      description: '在表面上布置平面，然后更改其透视',
       enabled,
       recordable: false,
       checked: () => currentWarp()?.tool === PERSPECTIVE_WARP_TOOL,

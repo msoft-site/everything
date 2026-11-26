@@ -33,61 +33,61 @@ const tool = (meta: ToolMeta, list: typeof selectTools | typeof healTools) =>
 
 export function installRetouch(e: Editor) {
   registerTool(
-    tool({ id: 'object-selection', label: 'Object Selection Tool', key: 'W', icon: 'object-select', group: 'select' }, selectTools),
-    tool({ id: 'quick-selection', label: 'Quick Selection Tool', key: 'W', icon: 'quick-select', group: 'select' }, selectTools),
-    tool({ id: 'magnetic-lasso', label: 'Magnetic Lasso Tool', key: 'L', icon: 'lasso-magnetic', group: 'lasso' }, selectTools),
-    tool({ id: 'spot-healing', label: 'Spot Healing Brush Tool', key: 'J', icon: 'heal-spot', group: 'heal' }, healTools),
-    tool({ id: 'healing-brush', label: 'Healing Brush Tool', key: 'J', icon: 'bandage', group: 'heal' }, healTools),
-    tool({ id: 'patch', label: 'Patch Tool', key: 'J', icon: 'patch', group: 'heal' }, healTools),
-    tool({ id: 'context-move', label: 'Context Move Tool', key: 'J', icon: 'context-move', group: 'heal' }, healTools),
-    tool({ id: 'remove-tool', label: 'Remove Tool', key: 'J', icon: 'remove-tool', group: 'heal' }, healTools),
-    tool({ id: 'red-eye', label: 'Red Eye Tool', key: 'J', icon: 'red-eye', group: 'heal' }, healTools),
+    tool({ id: 'object-selection', label: '对象选择工具', key: 'W', icon: 'object-select', group: 'select' }, selectTools),
+    tool({ id: 'quick-selection', label: '快速选择工具', key: 'W', icon: 'quick-select', group: 'select' }, selectTools),
+    tool({ id: 'magnetic-lasso', label: '磁性套索工具', key: 'L', icon: 'lasso-magnetic', group: 'lasso' }, selectTools),
+    tool({ id: 'spot-healing', label: '污点修复画笔工具', key: 'J', icon: 'heal-spot', group: 'heal' }, healTools),
+    tool({ id: 'healing-brush', label: '修复画笔工具', key: 'J', icon: 'bandage', group: 'heal' }, healTools),
+    tool({ id: 'patch', label: '修补工具', key: 'J', icon: 'patch', group: 'heal' }, healTools),
+    tool({ id: 'context-move', label: '内容感知移动工具', key: 'J', icon: 'context-move', group: 'heal' }, healTools),
+    tool({ id: 'remove-tool', label: '移除工具', key: 'J', icon: 'remove-tool', group: 'heal' }, healTools),
+    tool({ id: 'red-eye', label: '红眼工具', key: 'J', icon: 'red-eye', group: 'heal' }, healTools),
   );
   const doc = (e: Editor) => e.hasDocument;
   const pixel = (e: Editor) => e.layer?.kind === 'pixel';
   const sel = (e: Editor) => !!e.doc.selection;
   registerCommand(
-    { id: 'select.subject', label: 'Subject', description: 'Select the most prominent subject in the image.', enabled: doc, ...lazyRun(commands, (m, e) => m.selectSubject(e)) },
-    { id: 'select.sky', label: 'Sky', description: 'Select the sky along the top of the image.', enabled: doc, ...lazyRun(commands, (m, e) => m.selectSky(e)) },
+    { id: 'select.subject', label: '主体', description: '选择图像中最显著的主体。', enabled: doc, ...lazyRun(commands, (m, e) => m.selectSubject(e)) },
+    { id: 'select.sky', label: '天空', description: '选择图像顶部的天空区域。', enabled: doc, ...lazyRun(commands, (m, e) => m.selectSky(e)) },
     {
       id: 'layer.remove-background',
-      label: 'Remove Background',
-      description: 'Hide the background of the selected layer with a layer mask (non-destructive).',
+      label: '移除背景',
+      description: '使用图层蒙版隐藏所选图层的背景（非破坏性）。',
       enabled: (e) => !!e.layer && e.layer.kind !== 'group' && e.layer.kind !== 'adjustment',
       ...lazyRun(commands, (m, e) => m.removeBackground(e)),
     },
     {
       id: 'layer.mask-refine-edge',
-      label: 'Refine Mask Edge…',
-      description: 'Re-estimate the layer mask near its edge from the layer’s pixels, so hair and soft outlines follow the image.',
+      label: '调整蒙版边缘…',
+      description: '根据图层像素重新估算图层蒙版边缘，使头发与柔和轮廓紧随图像。',
       enabled: (e) => !!e.layer && e.layer.kind !== 'group' && e.layer.kind !== 'adjustment' && (hasMask(e.layer) || !!e.layer.maskGrid),
       ...lazyRun(refineMask, (m, e) => m.refineMaskEdge(e)),
     },
     {
       id: 'layer.mask-enhance-edge',
-      label: 'Enhance Edge',
-      description: 'Refine the layer mask’s edge from the layer’s pixels in one step, so hair and fur follow the image.',
+      label: '优化边缘',
+      description: '一步根据图层像素优化图层蒙版边缘，使毛发细节跟随图像。',
       enabled: (e) => !!e.layer && e.layer.kind !== 'group' && e.layer.kind !== 'adjustment' && (hasMask(e.layer) || !!e.layer.maskGrid),
       ...lazyRun(refineMask, (m, e) => m.enhanceMaskEdge(e)),
     },
-    { id: 'layer.defringe', label: 'Defringe…', enabled: pixel, ...lazyRun(commands, (m, e) => m.runMatting(e, 'defringe')) },
-    { id: 'layer.color-decontaminate', label: 'Color Decontaminate…', enabled: pixel, ...lazyRun(commands, (m, e) => m.runMatting(e, 'decontaminate')) },
-    { id: 'layer.remove-black-matte', label: 'Remove Black Matte', enabled: pixel, ...lazyRun(commands, (m, e) => m.runMatting(e, 'black')) },
-    { id: 'layer.remove-white-matte', label: 'Remove White Matte', enabled: pixel, ...lazyRun(commands, (m, e) => m.runMatting(e, 'white')) },
-    { id: 'select.color-range', label: 'Color Range…', description: 'Select pixels by sampled color or a preset range.', enabled: doc, ...lazyRun(colorRange, (m, e) => m.openColorRange(e)) },
-    { id: 'select.focus-area', label: 'Focus Area…', description: 'Select the in-focus parts of the image.', enabled: doc, ...lazyRun(focusArea, (m, e) => m.openFocusArea(e)) },
+    { id: 'layer.defringe', label: '去边…', enabled: pixel, ...lazyRun(commands, (m, e) => m.runMatting(e, 'defringe')) },
+    { id: 'layer.color-decontaminate', label: '颜色净化…', enabled: pixel, ...lazyRun(commands, (m, e) => m.runMatting(e, 'decontaminate')) },
+    { id: 'layer.remove-black-matte', label: '移去黑色杂边', enabled: pixel, ...lazyRun(commands, (m, e) => m.runMatting(e, 'black')) },
+    { id: 'layer.remove-white-matte', label: '移去白色杂边', enabled: pixel, ...lazyRun(commands, (m, e) => m.runMatting(e, 'white')) },
+    { id: 'select.color-range', label: '色彩范围…', description: '通过取样颜色或预设范围选取像素。', enabled: doc, ...lazyRun(colorRange, (m, e) => m.openColorRange(e)) },
+    { id: 'select.focus-area', label: '焦点区域…', description: '选择图像中对焦清晰的部分。', enabled: doc, ...lazyRun(focusArea, (m, e) => m.openFocusArea(e)) },
     {
       id: 'select.mask-refine',
-      label: 'Select and Mask…',
+      label: '选择并遮住…',
       shortcut: 'Mod+Alt+R',
-      description: 'Refine the selection edge with edge detection, brushes and global refinements.',
+      description: '使用边缘检测、画笔和全局调整来优化选区边缘。',
       enabled: doc,
       ...lazyRun(selectAndMask, (m, e, arg) => m.openSelectAndMask(e, arg === 'mask')),
     },
-    { id: 'edit.context-fill', label: 'Context Fill…', description: 'Fill the selection with texture and structure from elsewhere in the image.', enabled: sel, ...lazyRun(contextFill, (m, e) => m.openContextFill(e)) },
-    { id: 'edit.context-fill-apply', label: 'Context Fill', hidden: true, enabled: sel, ...lazyRun(contextFill, (m, e) => m.quickContextFill(e)) },
-    { id: 'edit.ai-fill', label: 'AI Fill…', description: 'Generate new content in the selection with 本地智能引擎 (needs an account).', enabled: sel, ...lazyRun(ai, (m, e, arg) => m.openAIFill(e, arg)), recordable: false },
-    { id: 'edit.ai-expand', label: 'AI Expand…', description: 'Extend the canvas and generate the new area with 本地智能引擎 (needs an account).', enabled: doc, ...lazyRun(ai, (m, e, arg) => m.openAIExpand(e, arg)), recordable: false },
+    { id: 'edit.context-fill', label: '内容识别填充…', description: '使用图像其他区域的纹理和结构填充选区。', enabled: sel, ...lazyRun(contextFill, (m, e) => m.openContextFill(e)) },
+    { id: 'edit.context-fill-apply', label: '内容识别填充', hidden: true, enabled: sel, ...lazyRun(contextFill, (m, e) => m.quickContextFill(e)) },
+    { id: 'edit.ai-fill', label: 'AI 填充…', description: '使用本地智能引擎在选区中生成新内容。', enabled: sel, ...lazyRun(ai, (m, e, arg) => m.openAIFill(e, arg)), recordable: false },
+    { id: 'edit.ai-expand', label: 'AI 扩展…', description: '扩展画布并使用本地智能引擎生成新区域。', enabled: doc, ...lazyRun(ai, (m, e, arg) => m.openAIExpand(e, arg)), recordable: false },
   );
   // Live previews of the Color Range and Focus Area dialogs.
   registerOverlay('color-range-preview', () => colorRange.loaded?.previewOverlay() ?? '');
@@ -97,7 +97,7 @@ export function installRetouch(e: Editor) {
   contributeMenu('layer', ['layer.remove-background'], 'layer.clipping-mask');
   // Properties: refining the edge of the selected layer's mask, in its Mask section.
   maskActions.push(
-    ['layer.mask-enhance-edge', 'Enhance Edge', 'wand-sparkles'],
-    ['layer.mask-refine-edge', 'Refine Edge…', 'feather'],
+    ['layer.mask-enhance-edge', '优化边缘', 'wand-sparkles'],
+    ['layer.mask-refine-edge', '调整边缘…', 'feather'],
   );
 }

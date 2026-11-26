@@ -57,8 +57,8 @@ function shown(e: Editor) {
 function nextName(e: Editor) {
   const used = new Set(comps(e).map((c) => c.name));
   let n = comps(e).length + 1;
-  while (used.has(`Layer Comp ${n}`)) n++;
-  return `Layer Comp ${n}`;
+  while (used.has(`图层复合 ${n}`)) n++;
+  return `图层复合 ${n}`;
 }
 
 /** New comp / options dialog. Comments are optional, so this uses the free-form modal. */
@@ -69,9 +69,9 @@ async function compDialog(title: string, submit: string, init: { name: string; c
     title,
     submit,
     className: 'comp-dialog',
-    body: `<label class="dialog-field">Name<input name="name" type="text" required maxlength="${maxCompNameLength}" value="${escapeXML(init.name)}"></label>
-      <fieldset class="comp-capture"><legend>Apply to layers</legend>${check('visibility', 'Visibility')}${check('position', 'Position')}${check('appearance', 'Appearance (opacity, blending, style)')}</fieldset>
-      <label class="dialog-field">Comment<textarea name="comment" rows="3" maxlength="4096" placeholder="Optional">${escapeXML(init.comment ?? '')}</textarea></label>`,
+    body: `<label class="dialog-field">名称<input name="name" type="text" required maxlength="${maxCompNameLength}" value="${escapeXML(init.name)}"></label>
+      <fieldset class="comp-capture"><legend>应用于图层</legend>${check('visibility', '可见性')}${check('position', '位置')}${check('appearance', '外观 (不透明度、混合模式、样式)')}</fieldset>
+      <label class="dialog-field">注释<textarea name="comment" rows="3" maxlength="4096" placeholder="可选">${escapeXML(init.comment ?? '')}</textarea></label>`,
     bind: (dialog) => dialog.querySelector<HTMLInputElement>('[name=name]')?.select(),
   });
   if (!result) return null;
@@ -96,10 +96,10 @@ function setComps(e: Editor, label: string, edit: (list: LayerComp[], d: PhotoDo
 
 async function newComp(e: Editor) {
   if (!canAddComp(e)) return;
-  const v = await compDialog('New Layer Comp', 'OK', { name: nextName(e), capture: { visibility: true, position: true, appearance: false } });
+  const v = await compDialog('新建图层复合', '确定', { name: nextName(e), capture: { visibility: true, position: true, appearance: false } });
   if (!v || !canAddComp(e)) return;
   const comp = newLayerComp(e.doc, v.name, v.capture, v.comment || undefined);
-  setComps(e, 'New Layer Comp', (list, d) => {
+  setComps(e, '新建图层复合', (list, d) => {
     d.lastComp = comp.id;
     return [...list, comp];
   });
@@ -112,20 +112,20 @@ function applyComp(e: Editor, comp: LayerComp) {
   // Leaving the document's own state: remember it so it can be restored.
   if (!shown(e)) s.last = captureLayers(e.doc, everything);
   let missing = 0;
-  e.command(`Apply Layer Comp`, (d) => {
+  e.command(`应用图层复合`, (d) => {
     missing = applyLayerComp(d, comp).missing;
     d.lastComp = comp.id;
   });
   s.selected = comp.id;
-  if (missing) e.message(`“${comp.name}” could not restore ${missing} deleted layer${missing === 1 ? '' : 's'}. Update the comp to clear this warning.`);
+  if (missing) e.message(`“${comp.name}”无法恢复 ${missing} 个已删除的图层。更新此图层复合以清除此警告。`);
   e.dock.update();
 }
 
 function restoreLast(e: Editor) {
   const last = state(e).last;
   if (!last) return;
-  const synthetic: LayerComp = { id: '', name: 'Last Document State', capture: everything, layers: last };
-  e.command('Apply Last Document State', (d) => {
+  const synthetic: LayerComp = { id: '', name: '上一个文档状态', capture: everything, layers: last };
+  e.command('应用上一个文档状态', (d) => {
     applyLayerComp(d, synthetic);
     delete d.lastComp;
   });
@@ -144,9 +144,9 @@ function step(e: Editor, by: 1 | -1) {
 async function options(e: Editor, id?: string) {
   const comp = find(e, id) ?? current(e);
   if (!comp) return;
-  const v = await compDialog('Layer Comp Options', 'OK', comp);
+  const v = await compDialog('图层复合选项', '确定', comp);
   if (!v) return;
-  setComps(e, 'Layer Comp Options', (list, d) =>
+  setComps(e, '图层复合选项', (list, d) =>
     list.map((c) => {
       if (c.id !== comp.id) return c;
       const next = recaptureAspects(d, c, v.capture);
@@ -174,7 +174,7 @@ const hasCurrent = (e: Editor) => !!current(e);
 
 const compsPanel: Panel = {
   id: 'layer-comps',
-  title: 'Layer Comps',
+  title: '图层复合',
   icon: 'layer-comps',
   location: 'strip',
   mount: (e, el) => {
@@ -209,24 +209,24 @@ const compsPanel: Panel = {
     const on = shown(e);
     const selected = find(e, s.selected);
     const marker = (active: boolean, id: string, name: string) =>
-      `<button class="comp-apply" data-comp-apply="${escapeXML(id)}" aria-pressed="${active}" title="${active ? 'Shown in the document' : `Apply ${escapeXML(name)}`}" aria-label="Apply ${escapeXML(name)}">${active ? svg('layer-comps', 14) : ''}</button>`;
+      `<button class="comp-apply" data-comp-apply="${escapeXML(id)}" aria-pressed="${active}" title="${active ? '已在文档中显示' : `应用 ${escapeXML(name)}`}" aria-label="应用 ${escapeXML(name)}">${active ? svg('layer-comps', 14) : ''}</button>`;
     const rows = list
       .map((c) => {
         const missing = missingLayers(e.doc, c).length;
-        const aspects = [c.capture.visibility && 'visibility', c.capture.position && 'position', c.capture.appearance && 'appearance'].filter(Boolean).join(', ') || 'nothing';
-        const tip = `${c.name} — restores ${aspects}${c.comment ? `\n${c.comment}` : ''}`;
+        const aspects = [c.capture.visibility && '可见性', c.capture.position && '位置', c.capture.appearance && '外观'].filter(Boolean).join('、') || '无';
+        const tip = `${c.name} — 恢复${aspects}${c.comment ? `\n${c.comment}` : ''}`;
         return `<div class="comp-row ${selected === c ? 'selected' : ''}" data-comp="${escapeXML(c.id)}" role="listitem" title="${escapeXML(tip)}">${marker(on === c, c.id, c.name)}<span class="comp-name">${escapeXML(c.name)}</span>${
           missing
-            ? `<span class="comp-warning" role="img" aria-label="Cannot be fully restored" title="${missing} layer${missing === 1 ? '' : 's'} in this comp no longer exist${missing === 1 ? 's' : ''}. Update the comp to clear this warning.">${svg('info', 14)}</span>`
+            ? `<span class="comp-warning" role="img" aria-label="无法完全恢复" title="${missing} 个图层已不存在。更新此图层复合以清除此警告。">${svg('info', 14)}</span>`
             : ''
         }${c.comment ? `<span class="comp-comment">${escapeXML(c.comment)}</span>` : ''}</div>`;
       })
       .join('');
-    const lastRow = `<div class="comp-row last-state ${!selected ? 'selected' : ''}" data-comp="" role="listitem">${marker(!on, '', 'Last Document State')}<span class="comp-name">Last Document State</span></div>`;
-    const empty = list.length ? '' : `<p class="comps-empty">Save the visibility, position and look of your layers as a comp to switch between layouts.</p>`;
+    const lastRow = `<div class="comp-row last-state ${!selected ? 'selected' : ''}" data-comp="" role="listitem">${marker(!on, '', '上一个文档状态')}<span class="comp-name">上一个文档状态</span></div>`;
+    const empty = list.length ? '' : `<p class="comps-empty">将图层的可见性、位置和外观保存为图层复合，以便在不同版式布局之间快速切换。</p>`;
     const button = (cmd: string, icon: string, label: string, enabled: boolean) =>
       `<button data-command="${cmd}" aria-label="${label}" title="${label}" ${enabled ? '' : 'disabled'}>${svg(icon, 15)}</button>`;
-    el.innerHTML = `<div class="comps-list" role="list">${lastRow}${rows}</div>${empty}<div class="layer-footer">${button('comps.prev', 'chevron-left', 'Apply previous comp', list.length > 0)}${button('comps.next', 'chevron-right', 'Apply next comp', list.length > 0)}<span class="comps-spacer"></span>${button('comps.update', 'refresh-cw', 'Update the selected comp', !!selected)}${button('comps.new', 'plus', 'Create new layer comp', e.hasDocument)}${button('comps.delete', 'trash-2', 'Delete the selected comp', !!selected)}</div>`;
+    el.innerHTML = `<div class="comps-list" role="list">${lastRow}${rows}</div>${empty}<div class="layer-footer">${button('comps.prev', 'chevron-left', '应用上一个复合', list.length > 0)}${button('comps.next', 'chevron-right', '应用下一个复合', list.length > 0)}<span class="comps-spacer"></span>${button('comps.update', 'refresh-cw', '更新选定的复合', !!selected)}${button('comps.new', 'plus', '创建新图层复合', e.hasDocument)}${button('comps.delete', 'trash-2', '删除选定的复合', !!selected)}</div>`;
     el.querySelector('.comps-list')!.scrollTop = scrollTop;
   },
   menu: (): MenuItem[] => ['comps.new', 'comps.duplicate', 'comps.delete', '-', 'comps.update', 'comps.update-all', 'comps.options', '-', 'comps.apply', 'comps.prev', 'comps.next', 'comps.restore-last', '-', 'file.export-comps-files', 'file.export-comps-pdf'],
@@ -236,18 +236,18 @@ export function installLayerComps(e: Editor) {
   void e;
   registerPanel(compsPanel);
   registerCommand(
-    { id: 'comps.new', label: 'New Layer Comp…', run: (e) => newComp(e), enabled: (e) => e.hasDocument, recordable: false },
+    { id: 'comps.new', label: '新建图层复合…', run: (e) => newComp(e), enabled: (e) => e.hasDocument, recordable: false },
     {
       id: 'comps.duplicate',
-      label: 'Duplicate Layer Comp',
+      label: '复制图层复合',
       enabled: hasCurrent,
       run: (e) => {
         const c = current(e);
         if (!c || !canAddComp(e)) return;
         // Reserve room for the suffix without splitting a Unicode surrogate pair.
         const name = c.name.slice(0, maxCompNameLength - 5).replace(/[\uD800-\uDBFF]$/, '');
-        const copy = { ...structuredClone(c), id: crypto.randomUUID(), name: `${name} copy` };
-        setComps(e, 'Duplicate Layer Comp', (list) => {
+        const copy = { ...structuredClone(c), id: crypto.randomUUID(), name: `${name} 副本` };
+        setComps(e, '复制图层复合', (list) => {
           list.splice(list.findIndex((x) => x.id === c.id) + 1, 0, copy);
           return list;
         });
@@ -257,25 +257,25 @@ export function installLayerComps(e: Editor) {
     },
     {
       id: 'comps.delete',
-      label: 'Delete Layer Comp',
+      label: '删除图层复合',
       enabled: hasCurrent,
       run: (e) => {
         const c = current(e);
         if (!c) return;
-        setComps(e, 'Delete Layer Comp', (list) => list.filter((x) => x.id !== c.id));
+        setComps(e, '删除图层复合', (list) => list.filter((x) => x.id !== c.id));
         state(e).selected = undefined;
         e.dock.update();
       },
     },
     {
       id: 'comps.update',
-      label: 'Update Layer Comp',
-      description: 'Capture the current layers into the selected comp',
+      label: '更新图层复合',
+      description: '将当前图层状态捕获到选定的复合中',
       enabled: hasCurrent,
       run: (e) => {
         const c = current(e);
         if (!c) return;
-        setComps(e, 'Update Layer Comp', (list, d) => {
+        setComps(e, '更新图层复合', (list, d) => {
           d.lastComp = c.id;
           return list.map((x) => (x.id === c.id ? updateLayerComp(d, x) : x));
         });
@@ -283,46 +283,46 @@ export function installLayerComps(e: Editor) {
     },
     {
       id: 'comps.update-all',
-      label: 'Update All Layer Comps',
-      description: 'Capture the current layers into every comp, keeping each comp’s options',
+      label: '更新所有图层复合',
+      description: '将当前图层状态捕获到所有复合中，保留每个复合的选项',
       enabled: hasComps,
-      run: (e) => setComps(e, 'Update All Layer Comps', (list, d) => list.map((x) => updateLayerComp(d, x))),
+      run: (e) => setComps(e, '更新所有图层复合', (list, d) => list.map((x) => updateLayerComp(d, x))),
     },
     {
       id: 'comps.apply',
-      label: 'Apply Layer Comp',
+      label: '应用图层复合',
       enabled: hasComps,
       run: (e, arg) => {
         const c = find(e, typeof arg === 'string' ? arg : undefined) ?? current(e) ?? comps(e)[0];
         if (c) applyComp(e, c);
       },
     },
-    { id: 'comps.prev', label: 'Apply Previous Layer Comp', enabled: hasComps, run: (e) => step(e, -1) },
-    { id: 'comps.next', label: 'Apply Next Layer Comp', enabled: hasComps, run: (e) => step(e, 1) },
+    { id: 'comps.prev', label: '应用上一个图层复合', enabled: hasComps, run: (e) => step(e, -1) },
+    { id: 'comps.next', label: '应用下一个图层复合', enabled: hasComps, run: (e) => step(e, 1) },
     {
       id: 'comps.restore-last',
-      label: 'Apply Last Document State',
-      description: 'Return to the layers as they were before a comp was applied',
+      label: '应用上一个文档状态',
+      description: '返回应用复合之前的图层状态',
       enabled: (e) => !!state(e).last && !!shown(e),
       run: (e) => restoreLast(e),
     },
-    { id: 'comps.options', label: 'Layer Comp Options…', enabled: hasCurrent, run: (e, arg) => options(e, typeof arg === 'string' ? arg : undefined), recordable: false },
+    { id: 'comps.options', label: '图层复合选项…', enabled: hasCurrent, run: (e, arg) => options(e, typeof arg === 'string' ? arg : undefined), recordable: false },
     {
       id: 'file.export-comps-files',
-      label: 'Layer Comps to Files…',
-      description: 'Save each layer comp as an image',
+      label: '图层复合导出为文件…',
+      description: '将每个图层复合保存为图像文件',
       enabled: hasComps,
       recordable: false,
-      run: async (e) => (await pageExport()).exportPagesToFiles(e, { title: 'Export Layer Comps to Files', noun: 'layer comp', pages: compPages(e), base: e.doc.name }),
+      run: async (e) => (await pageExport()).exportPagesToFiles(e, { title: '导出图层复合为文件', noun: '图层复合', pages: compPages(e), base: e.doc.name }),
       prefetch: pageExport.prefetch,
     },
     {
       id: 'file.export-comps-pdf',
-      label: 'Layer Comps to PDF…',
-      description: 'Save every layer comp as a page of one PDF',
+      label: '图层复合导出为 PDF…',
+      description: '将所有图层复合保存为单份 PDF 中的各个页面',
       enabled: hasComps,
       recordable: false,
-      run: async (e) => (await pageExport()).exportPagesToPdf(e, { title: 'Export Layer Comps to PDF', noun: 'layer comp', pages: compPages(e), base: e.doc.name }),
+      run: async (e) => (await pageExport()).exportPagesToPdf(e, { title: '导出图层复合为 PDF', noun: '图层复合', pages: compPages(e), base: e.doc.name }),
       prefetch: pageExport.prefetch,
     },
   );
