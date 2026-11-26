@@ -115,23 +115,23 @@ const autumnalEquinox = (y) => dayNum(y, 9, Math.floor(23.2488 + 0.242194 * (y -
 const COUNTRIES = [
   {
     id: 'us',
-    name: 'United States',
+    name: '美国',
     // Federal holidays. A Saturday holiday is observed the Friday before, a
     // Sunday holiday the Monday after (5 U.S.C. 6103).
     observe: 'us',
     rules: [
-      { name: "New Year's Day", month: 1, day: 1, observe: true },
-      { name: 'Martin Luther King Jr. Day', month: 1, nth: 3, dow: 1, from: 1986 },
+      { name: "元旦", month: 1, day: 1, observe: true },
+      { name: '马丁·路德·金纪念日', month: 1, nth: 3, dow: 1, from: 1986 },
       // Legally "Washington's Birthday"; nobody calls it that.
-      { name: "Presidents' Day", month: 2, nth: 3, dow: 1 },
-      { name: 'Memorial Day', month: 5, nth: -1, dow: 1 },
-      { name: 'Juneteenth', month: 6, day: 19, from: 2021, observe: true },
-      { name: 'Independence Day', month: 7, day: 4, observe: true },
-      { name: 'Labor Day', month: 9, nth: 1, dow: 1 },
-      { name: 'Columbus Day', month: 10, nth: 2, dow: 1 },
-      { name: 'Veterans Day', month: 11, day: 11, observe: true },
-      { name: 'Thanksgiving Day', month: 11, nth: 4, dow: 4 },
-      { name: 'Christmas Day', month: 12, day: 25, observe: true },
+      { name: "总统日", month: 2, nth: 3, dow: 1 },
+      { name: '阵亡将士纪念日', month: 5, nth: -1, dow: 1 },
+      { name: '六月节', month: 6, day: 19, from: 2021, observe: true },
+      { name: '独立日', month: 7, day: 4, observe: true },
+      { name: '劳动节', month: 9, nth: 1, dow: 1 },
+      { name: '哥伦布日', month: 10, nth: 2, dow: 1 },
+      { name: '退伍军人节', month: 11, day: 11, observe: true },
+      { name: '感恩节', month: 11, nth: 4, dow: 4 },
+      { name: '圣诞节', month: 12, day: 25, observe: true },
     ],
   },
   {

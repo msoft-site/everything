@@ -14,33 +14,33 @@ export function authView({ onSignedIn, pendingInvite = null }) {
     onclick: async () => {
       if (busy()) return;
       cta.setAttribute('aria-busy', 'true');
-      cta.textContent = 'Loading local workspace…';
+      cta.textContent = '正在加载本地工作区…';
       try {
         await puter.auth.signIn();
       } catch {
         cta.removeAttribute('aria-busy');
-        cta.textContent = 'Sign in';
+        cta.textContent = '登录';
         return;
       }
       onSignedIn();
     },
-  }, 'Sign in');
+  }, '登录');
 
   return el('main.auth-view', {},
-    el('img.auth-logo', { src: './icons/icon-192.png', width: 88, height: 88, alt: 'Teamchat logo' }),
-    el('h1.auth-title', {}, 'Teamchat'),
+    el('img.auth-logo', { src: './icons/icon-192.png', width: 88, height: 88, alt: '团队聊天图标' }),
+    el('h1.auth-title', {}, '团队聊天'),
     el('p.auth-sub', {}, pendingInvite
-      ? 'You have been invited to a workspace. Sign in to join it.'
-      : 'Channels, threads, and direct messages for your team. Fast, focused, and yours.'),
+      ? '您已收到工作区加入邀请。请登录以加入。'
+      : '专为团队打造的频道、话题与私信。快速、专注、数据尽在本地。'),
     el('div.auth-features', {},
-      feature('hash', 'Organize work in public and private channels'),
-      feature('messages', 'Keep side conversations in threads, not in the way'),
-      feature('cloud', 'Runs on Puter: no servers to run, sign in with one account')),
+      feature('hash', '通过公开与私密频道高效组织工作'),
+      feature('messages', '利用话题讨论保持专注，沟通不干扰主线'),
+      feature('cloud', '纯本地私有运行，零服务器依赖，一键即用')),
     cta,
-    el('p.auth-note', {}, 'Free. No ads. Powered by ',
-      el('a', { href: 'https://developer.puter.com', target: '_blank', rel: 'noopener' }, 'Puter')));
+    el('p.auth-note', {}, '免费、无广告、纯本地离线优先支持'));
 
   function feature(ic, text) {
     return el('div.auth-feature', { html: icon(ic, 20, 1.8) }, el('span', {}, text));
   }
 }
+

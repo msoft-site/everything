@@ -246,4 +246,89 @@ const EXTRA_PATTERNS = [
     }
     return null;
   },
+  // Video studio effect and filter patterns
+  (s, t) => {
+    let m = s.match(/^Add (.+) effect$/i);
+    if (m) {
+      const name = t(m[1]) || m[1];
+      return '添加' + name + '特效';
+    }
+    m = s.match(/^Add (.+) filter$/i);
+    if (m) {
+      const name = t(m[1]) || m[1];
+      return '添加' + name + '滤镜';
+    }
+    m = s.match(/^Switch to angle (\d+)$/i);
+    if (m) {
+      return '切换到机位 ' + m[1];
+    }
+    m = s.match(/^Auto saved:\s*$/i);
+    if (m) {
+      return '自动保存：';
+    }
+    m = s.match(/^Events\s*·\s*(.+)$/i);
+    if (m) {
+      return '活动 · ' + m[1];
+    }
+    m = s.match(/^(\d+:\d+)\s+long$/i);
+    if (m) {
+      return '时长 ' + m[1];
+    }
+    m = s.match(/^(\d+:\d+)\s+aspect ratio$/i);
+    if (m) {
+      return m[1] + ' 画幅比例';
+    }
+    m = s.match(/^Add (.+) transition$/i);
+    if (m) {
+      const name = t(m[1]) || m[1];
+      return '添加' + name + '转场';
+    }
+    m = s.match(/^Search (.+)$/i);
+    if (m) {
+      const name = t(m[1]) || m[1];
+      return '搜索' + name;
+    }
+    m = s.match(/^(.+) categories$/i);
+    if (m) {
+      const name = t(m[1]) || m[1];
+      return name + '分类';
+    }
+    m = s.match(/^Add (.+) graphic, animated$/i);
+    if (m) {
+      const name = t(m[1]) || m[1];
+      return '添加' + name + '图形（动态）';
+    }
+    m = s.match(/^Add (.+) graphic$/i);
+    if (m) {
+      const name = t(m[1]) || m[1];
+      return '添加' + name + '图形';
+    }
+    m = s.match(/^Add (.+) to favorites$/i);
+    if (m) {
+      const name = t(m[1]) || m[1];
+      return '将' + name + '添加到收藏';
+    }
+    m = s.match(/^Add (.+) to timeline$/i);
+    if (m) {
+      const name = t(m[1]) || m[1];
+      return '将 ' + name + ' 添加到时间轴';
+    }
+    m = s.match(/^Add (.+) text$/i);
+    if (m) {
+      const name = t(m[1]) || m[1];
+      return '添加 ' + name + ' 文本';
+    }
+    m = s.match(/^Preview (.+)$/i);
+    if (m) {
+      const name = t(m[1]) || m[1];
+      return '试听 ' + name;
+    }
+    m = s.match(/^(.+?)\s*·\s*(\d{2}:\d{2})\s*·\s*(\d+)\s*BPM$/i);
+    if (m) {
+      const mood = t(m[1]) || m[1];
+      return mood + ' · ' + m[2] + ' · ' + m[3] + ' BPM';
+    }
+    return null;
+  },
 ];
+

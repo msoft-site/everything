@@ -43,7 +43,7 @@ function buildMiniMonth(monthDate, ctx, eventDays) {
       class: 'year__month-name',
       type: 'button',
       text: MONTHS_LONG[monthDate.getMonth()],
-      title: `Open ${MONTHS_LONG[monthDate.getMonth()]}`,
+      title: `打开${MONTHS_LONG[monthDate.getMonth()]}`,
       on: { click: () => actions.gotoMonthView(monthDate) },
     }),
   );

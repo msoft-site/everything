@@ -962,5 +962,6 @@
   "1 Artboard 1": "1 个画板 1",
   "1st": "第 1",
   "Alternates for Current Selection": "当前选区的替代字形",
-  "Alternates of the selected glyph": "所选字形的替代字形"
+  "Alternates of the selected glyph": "所选字形的替代字形",
+  "OpenType (Alt+Shift+Ctrl+T)": "OpenType 特性 (Alt+Shift+Ctrl+T)"
 }

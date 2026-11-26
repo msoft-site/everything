@@ -34,18 +34,18 @@ export function layoutMode(matches) {
 }
 
 export const CATEGORIES = [
-  { id: 'edit', label: 'Edit', icon: 'scissors' },
-  { id: 'media', label: 'Media', icon: 'plus' },
-  { id: 'audio', label: 'Audio', icon: 'music' },
-  { id: 'text', label: 'Text', icon: 'text' },
-  { id: 'captions', label: 'Captions', icon: 'captions' },
-  { id: 'avatars', label: 'Avatars', icon: 'avatar' },
-  { id: 'stickers', label: 'Graphics', icon: 'sticker' },
-  { id: 'transitions', label: 'Transitions', icon: 'transition' },
-  { id: 'effects', label: 'Effects', icon: 'effects' },
-  { id: 'filters', label: 'Filters', icon: 'filters' },
-  { id: 'adjust', label: 'Color', icon: 'adjust' },
-  { id: 'ratio', label: 'Ratio', icon: 'ratio' },
+  { id: 'edit', label: '编辑', icon: 'scissors' },
+  { id: 'media', label: '媒体', icon: 'plus' },
+  { id: 'audio', label: '音频', icon: 'music' },
+  { id: 'text', label: '文字', icon: 'text' },
+  { id: 'captions', label: '字幕', icon: 'captions' },
+  { id: 'avatars', label: '数字人', icon: 'avatar' },
+  { id: 'stickers', label: '贴纸图形', icon: 'sticker' },
+  { id: 'transitions', label: '转场', icon: 'transition' },
+  { id: 'effects', label: '特效', icon: 'effects' },
+  { id: 'filters', label: '滤镜', icon: 'filters' },
+  { id: 'adjust', label: '调色', icon: 'adjust' },
+  { id: 'ratio', label: '画幅比例', icon: 'ratio' },
 ];
 
 const isTimed = (c) => c.type === 'video' || c.type === 'audio';

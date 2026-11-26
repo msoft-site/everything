@@ -61,17 +61,15 @@ export function renderAgenda(ctx) {
         el('span', { class: 'icon icon--lg', html: icon('calendar-blank') }),
         el('p', {
           text: hiddenCount
-            ? `${hiddenWhat} in the next 60 days ${
-                hiddenCount === 1 ? 'is' : 'are'
-              } hidden by your category filter.`
-            : 'No upcoming events in the next 60 days.',
+            ? `未来 60 天内的 ${hiddenCount} 个日程被您的分类筛选隐藏。`
+            : '未来 60 天内没有即将到来的日程。',
         }),
         el('button', {
           class: 'btn btn--primary',
           type: 'button',
           html: hiddenCount
-            ? icon('check', { size: 'sm' }) + '<span>Show all categories</span>'
-            : icon('plus', { size: 'sm' }) + '<span>New event</span>',
+            ? icon('check', { size: 'sm' }) + '<span>显示所有分类</span>'
+            : icon('plus', { size: 'sm' }) + '<span>新建日程</span>',
           on: {
             click: () =>
               hiddenCount
@@ -222,7 +220,7 @@ function buildRow(event, dayStart, ctx) {
  * to edit or delete.
  */
 function buildHolidayRow(item, ctx) {
-  const kind = item.dst ? 'Clock change' : 'Public holiday';
+  const kind = item.dst ? '夏令时变更' : '法定节假日';
   const row = el(
     'div',
     {

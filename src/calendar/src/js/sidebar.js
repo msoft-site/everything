@@ -28,7 +28,7 @@ const FILTER_LIST_ID = 'side-categories';
 export function renderSidebar(ctx) {
   const { store, settings, cursor, miniCursor, now, actions } = ctx;
 
-  const root = el('aside', { class: 'sidebar', 'aria-label': 'Calendar navigation' });
+  const root = el('aside', { class: 'sidebar', 'aria-label': '日历导航' });
 
   // Create.
   root.append(
@@ -111,11 +111,11 @@ function buildBookingLinks(ctx) {
   // carry the same word on an "Off" pill.)
   const off = pages.filter((p) => !p.enabled).length;
   const section = buildFoldingSection({
-    title: 'Booking links',
-    noun: 'booking links',
+    title: '预约链接',
+    noun: '预约链接',
     listId: BOOKING_LIST_ID,
     collapsed,
-    note: off ? `${off} off` : null,
+    note: off ? `${off} 个停用` : null,
     focusKey: 'book-collapse',
     onToggle: () => actions.toggleBookingLinks(),
   });
@@ -128,7 +128,7 @@ function buildBookingLinks(ctx) {
         el('button', {
           class: 'book-item__open',
           type: 'button',
-          title: 'Edit booking link',
+          title: '编辑预约链接',
           dataset: { focusKey: `book-${page.id}` },
           on: { click: () => actions.editBookingPage(page) },
         }, [
@@ -137,15 +137,15 @@ function buildBookingLinks(ctx) {
           // opening it, and "· off" tacked onto the 11px meta line was easy to
           // scan straight past. Same state pill the details card uses.
           el('span', { class: 'book-item__meta' }, [
-            `${page.durationMin} min`,
-            page.enabled ? null : el('span', { class: 'book-item__off', text: 'Off' }),
+            `${page.durationMin} 分钟`,
+            page.enabled ? null : el('span', { class: 'book-item__off', text: '停用' }),
           ]),
         ]),
         el('button', {
           class: 'icon-btn book-item__copy',
           type: 'button',
-          'aria-label': url ? `Copy link for ${page.title}` : 'Preparing your link…',
-          title: url ? 'Copy booking link' : 'Preparing your link…',
+          'aria-label': url ? `复制 ${page.title} 的预约链接` : '正在准备链接…',
+          title: url ? '复制预约链接' : '正在准备链接…',
           disabled: !url,
           dataset: { focusKey: `book-copy-${page.id}` },
           // The copy icon, like every other copy-to-clipboard button in the app
@@ -164,8 +164,8 @@ function buildBookingLinks(ctx) {
       class: 'btn btn--ghost book-new',
       type: 'button',
       dataset: { focusKey: 'book-new' },
-      html: icon('plus', { size: 'sm' }) + '<span>New booking link</span>',
-      title: 'Share a link that lets others book time with you',
+      html: icon('plus', { size: 'sm' }) + '<span>新建预约链接</span>',
+      title: '分享链接让其他人预约您的时间',
       on: { click: () => actions.newBookingPage() },
     }),
   );

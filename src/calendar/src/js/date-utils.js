@@ -11,43 +11,43 @@ export const MS_PER_DAY = 86_400_000;
 export const MINUTES_PER_DAY = 1440;
 
 export const WEEKDAYS_LONG = [
-  'Sunday',
-  'Monday',
-  'Tuesday',
-  'Wednesday',
-  'Thursday',
-  'Friday',
-  'Saturday',
+  '星期日',
+  '星期一',
+  '星期二',
+  '星期三',
+  '星期四',
+  '星期五',
+  '星期六',
 ];
-export const WEEKDAYS_SHORT = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-export const WEEKDAYS_NARROW = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+export const WEEKDAYS_SHORT = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+export const WEEKDAYS_NARROW = ['日', '一', '二', '三', '四', '五', '六'];
 export const MONTHS_LONG = [
-  'January',
-  'February',
-  'March',
-  'April',
-  'May',
-  'June',
-  'July',
-  'August',
-  'September',
-  'October',
-  'November',
-  'December',
+  '一月',
+  '二月',
+  '三月',
+  '四月',
+  '五月',
+  '六月',
+  '七月',
+  '八月',
+  '九月',
+  '十月',
+  '十一月',
+  '十二月',
 ];
 export const MONTHS_SHORT = [
-  'Jan',
-  'Feb',
-  'Mar',
-  'Apr',
-  'May',
-  'Jun',
-  'Jul',
-  'Aug',
-  'Sep',
-  'Oct',
-  'Nov',
-  'Dec',
+  '1月',
+  '2月',
+  '3月',
+  '4月',
+  '5月',
+  '6月',
+  '7月',
+  '8月',
+  '9月',
+  '10月',
+  '11月',
+  '12月',
 ];
 
 /** Coerce a Date | number | string into a Date. */
@@ -230,37 +230,37 @@ export function formatTime(date, { hour12 = true } = {}) {
   const h = d.getHours();
   const m = d.getMinutes();
   if (!hour12) return `${pad2(h)}:${pad2(m)}`;
-  const period = h < 12 ? 'AM' : 'PM';
+  const period = h < 12 ? '上午' : '下午';
   const h12 = h % 12 === 0 ? 12 : h % 12;
-  return m === 0 ? `${h12}${NBSP}${period}` : `${h12}:${pad2(m)}${NBSP}${period}`;
+  return m === 0 ? `${period} ${h12}点` : `${period} ${h12}:${pad2(m)}`;
 }
 
 /** Hour-axis label, e.g. 0 -> "12 AM", 13 -> "1 PM". */
 export function formatHourLabel(hour, { hour12 = true } = {}) {
   if (!hour12) return `${pad2(hour)}:00`;
-  const period = hour < 12 ? 'AM' : 'PM';
+  const period = hour < 12 ? '上午' : '下午';
   const h12 = hour % 12 === 0 ? 12 : hour % 12;
-  return `${h12}${NBSP}${period}`;
+  return `${period} ${h12}点`;
 }
 
 export function formatMonthYear(date) {
   const d = toDate(date);
-  return `${MONTHS_LONG[d.getMonth()]} ${d.getFullYear()}`;
+  return `${d.getFullYear()}年${MONTHS_LONG[d.getMonth()]}`;
 }
 
 export function formatMonthYearShort(date) {
   const d = toDate(date);
-  return `${MONTHS_SHORT[d.getMonth()]} ${d.getFullYear()}`;
+  return `${d.getFullYear()}年${MONTHS_SHORT[d.getMonth()]}`;
 }
 
 export function formatDayTitle(date) {
   const d = toDate(date);
-  return `${WEEKDAYS_LONG[d.getDay()]}, ${MONTHS_LONG[d.getMonth()]} ${d.getDate()}`;
+  return `${d.getFullYear()}年${MONTHS_LONG[d.getMonth()]}${d.getDate()}日 ${WEEKDAYS_LONG[d.getDay()]}`;
 }
 
 export function formatFullDate(date) {
   const d = toDate(date);
-  return `${WEEKDAYS_SHORT[d.getDay()]}, ${MONTHS_LONG[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
+  return `${d.getFullYear()}年${MONTHS_LONG[d.getMonth()]}${d.getDate()}日 ${WEEKDAYS_SHORT[d.getDay()]}`;
 }
 
 /** Range title spanning two dates, collapsing a shared month and/or year, e.g.
@@ -273,12 +273,12 @@ export function formatDateRange(start, end) {
   const sY = s.getFullYear();
   const eY = e.getFullYear();
   if (sY !== eY) {
-    return `${sM} ${s.getDate()}, ${sY} – ${eM} ${e.getDate()}, ${eY}`;
+    return `${sY}年${sM}${s.getDate()}日 – ${eY}年${eM}${e.getDate()}日`;
   }
   if (s.getMonth() !== e.getMonth()) {
-    return `${sM} ${s.getDate()} – ${eM} ${e.getDate()}, ${sY}`;
+    return `${sY}年${sM}${s.getDate()}日 – ${eM}${e.getDate()}日`;
   }
-  return `${sM} ${s.getDate()} – ${e.getDate()}, ${sY}`;
+  return `${sY}年${sM}${s.getDate()}日 – ${e.getDate()}日`;
 }
 
 /** Range title for the week view, collapsing shared month/year. */

@@ -53,11 +53,11 @@ export function effectsTab(ctx) {
             else actions.addEffect(e.id);
           },
           drag: { kind: 'effect', id: e.id },
-          addLabel: `Add ${e.label} effect`,
+          addLabel: `添加 ${e.label} 特效`,
         });
         hoverAnimate(t, 'effect', e.id);
         return t;
-      }), { label: 'Effects' }));
+      }), { label: '特效' }));
     },
   });
   const offs = [store.on('select', syncHint), store.on('change', syncHint)];

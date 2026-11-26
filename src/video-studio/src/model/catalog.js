@@ -62,17 +62,17 @@ export const EFFECTS = [
 ];
 
 export const FILTER_CATEGORIES = [
-  { id: 'featured', label: 'Essentials' },
-  { id: 'portrait', label: 'Portrait' },
-  { id: 'landscape', label: 'Landscape' },
-  { id: 'food', label: 'Food' },
-  { id: 'film', label: 'Film' },
-  { id: 'vintage', label: 'Vintage' },
-  { id: 'mono', label: 'Mono' },
-  { id: 'cinematic', label: 'Cinematic' },
-  { id: 'night', label: 'Night' },
-  { id: 'warm', label: 'Warm' },
-  { id: 'cool', label: 'Cool' },
+  { id: 'featured', label: '精选必备' },
+  { id: 'portrait', label: '人像' },
+  { id: 'landscape', label: '风景' },
+  { id: 'food', label: '美食' },
+  { id: 'film', label: '胶片' },
+  { id: 'vintage', label: '复古' },
+  { id: 'mono', label: '黑白' },
+  { id: 'cinematic', label: '电影' },
+  { id: 'night', label: '夜景' },
+  { id: 'warm', label: '暖调' },
+  { id: 'cool', label: '冷调' },
 ];
 
 /**

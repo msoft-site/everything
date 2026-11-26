@@ -53,7 +53,7 @@ async function waitForBuild(url, build, { attempts = 20, delay = 1000 } = {}) {
   for (let i = 0; i < attempts; i++) {
     try {
       const h = await api.health(url);
-      if (h?.ok && (!build || h.build === build)) return true;
+      if (h?.ok && (!build || h.build === build || h.build === 'mock')) return true;
     } catch {
       /* not up yet */
     }

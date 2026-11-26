@@ -48,7 +48,7 @@ export function templateCard(tpl, { onChoose }) {
   const view = mirror(p);
   const slots = slotCount(tpl);
   const shape = tpl.ratio === '9:16' || tpl.ratio === '4:5' || tpl.ratio === '3:4' ? 'tall' : tpl.ratio === '1:1' ? 'square' : 'wide';
-  const facts = [CATEGORY.get(tpl.category), clock(p.duration), slots ? `${slots} slot${slots === 1 ? '' : 's'}` : null].filter(Boolean);
+  const facts = [CATEGORY.get(tpl.category), clock(p.duration), slots ? `${slots} 个插槽` : null].filter(Boolean);
   // The name starts with the visible text in reading order (ratio badge, name, details), then the description.
   const btn = h('button.tpl-card', {
     type: 'button',
@@ -96,9 +96,9 @@ export function templateCard(tpl, { onChoose }) {
 export function templatesView({ onChoose, initialCategory = 'all' }) {
   let cat = initialCategory;
   let q = '';
-  const grid = h('div.tpl-grid', { role: 'list', 'aria-label': 'Templates' });
-  const chips = h('div.home-chips', { role: 'group', 'aria-label': 'Template category' });
-  const cats = [{ id: 'all', label: 'All' }, ...TEMPLATE_CATEGORIES];
+  const grid = h('div.tpl-grid', { role: 'list', 'aria-label': '模板' });
+  const chips = h('div.home-chips', { role: 'group', 'aria-label': '模板分类' });
+  const cats = [{ id: 'all', label: '全部' }, ...TEMPLATE_CATEGORIES];
   const renderChips = () => chips.replaceChildren(...cats.map((c) => h('button.home-chip', {
     type: 'button',
     'aria-pressed': String(c.id === cat),
@@ -112,9 +112,9 @@ export function templatesView({ onChoose, initialCategory = 'all' }) {
     const list = TEMPLATES.filter((t) => (cat === 'all' || t.category === cat) && (!q || `${t.name} ${t.description} ${CATEGORY.get(t.category)}`.toLowerCase().includes(q)));
     grid.replaceChildren(...(list.length
       ? list.map((t) => h('div.tpl-item', { role: 'listitem' }, templateCard(t, { onChoose }), h('p.tpl-desc', t.description)))
-      : [h('div.home-empty', { role: 'listitem' }, icon('search', 28), h('p', 'No templates match your search.'))]));
+      : [h('div.home-empty', { role: 'listitem' }, icon('search', 28), h('p', '没有匹配搜索的模板。'))]));
   };
-  const search = h('input.input.home-search', { type: 'search', placeholder: 'Search templates', 'aria-label': 'Search templates' });
+  const search = h('input.input.home-search', { type: 'search', placeholder: '搜索模板', 'aria-label': '搜索模板' });
   search.addEventListener('input', () => {
     q = search.value.trim().toLowerCase();
     renderGrid();
@@ -123,7 +123,7 @@ export function templatesView({ onChoose, initialCategory = 'all' }) {
   renderGrid();
   return h('section.home-section', { 'aria-labelledby': 'templates-h' },
     h('div.section-head',
-      h('div', h('h1#templates-h.view-title', 'Templates'), h('p.view-sub', 'Ready-made projects with text, motion and sound. Swap in your own photos and clips.')),
+      h('div', h('h1#templates-h.view-title', '模板'), h('p.view-sub', '预置丰富文字、动效与音效的成熟工程，直接替换您自己的照片与视频片段。')),
       h('div.section-tools', h('div.search-wrap', icon('search', 14), search))),
     chips,
     grid,
@@ -131,7 +131,7 @@ export function templatesView({ onChoose, initialCategory = 'all' }) {
 }
 
 /** Preview a template larger and create a project from it. */
-export function openTemplateDialog(tpl, { onUse, actionLabel = 'Use template', busyLabel = 'Creating your project' }) {
+export function openTemplateDialog(tpl, { onUse, actionLabel = '使用模板', busyLabel = '正在创建项目' }) {
   const p = new TemplatePreview(tpl, { width: tpl.ratio === '9:16' ? 300 : tpl.ratio === '16:9' || tpl.ratio === '21:9' ? 640 : 420 });
   p.canvas.classList.add('tpl-dialog-canvas');
   p.ready().then(() => {
@@ -139,17 +139,17 @@ export function openTemplateDialog(tpl, { onUse, actionLabel = 'Use template', b
   }, () => {});
   const slots = slotCount(tpl);
   const use = h('button.btn.primary', { type: 'button' }, icon('plus', 16), actionLabel);
-  const cancel = h('button.btn', { type: 'button' }, 'Cancel');
+  const cancel = h('button.btn', { type: 'button' }, '取消');
   const status = h('p.tpl-status', { role: 'status' });
   const body = h('div.tpl-dialog',
     h('div.tpl-dialog-stage', p.canvas),
     h('div.tpl-dialog-info',
       h('p.dialog-text', tpl.description),
       h('ul.tpl-facts',
-        h('li', icon('ratio', 14), `${tpl.ratio} aspect ratio`),
-        h('li', icon('clock', 14), `${clock(p.duration)} long`),
-        slots ? h('li', icon('image', 14), `${slots} placeholder${slots === 1 ? '' : 's'} to replace with your own media`) : null,
-        h('li', icon('pencil', 14), 'Everything stays editable on the timeline')),
+        h('li', icon('ratio', 14), `${tpl.ratio} 宽高比`),
+        h('li', icon('clock', 14), `${clock(p.duration)} 时长`),
+        slots ? h('li', icon('image', 14), `${slots} 个可替换媒体占位`) : null,
+        h('li', icon('pencil', 14), '时间轴上的所有内容均可自由编辑')),
       status));
   // While the template is being made the dialog stays: closing it (Escape, the X, a click
   // outside) did not stop the work, and the project then opened, or the clips landed, unasked.
@@ -172,7 +172,7 @@ export function openTemplateDialog(tpl, { onUse, actionLabel = 'Use template', b
       console.error(err);
       busy = false;
       status.textContent = '';
-      toast(err?.message || "Couldn't create the project.", { kind: 'error' });
+      toast(err?.message || "无法创建项目。", { kind: 'error' });
       use.disabled = false;
       cancel.disabled = false;
       if (closeBtn) closeBtn.disabled = false;

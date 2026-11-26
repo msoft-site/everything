@@ -163,10 +163,10 @@ export function createSearch({ store, onPick }) {
     input = el('input', {
       class: 'search__input',
       type: 'text',
-      placeholder: 'Search events and tasks…',
+      placeholder: '搜索日程和任务…',
       autocomplete: 'off',
       autocapitalize: 'off',
-      'aria-label': 'Search events and tasks',
+      'aria-label': '搜索日程和任务',
       role: 'combobox',
       'aria-expanded': 'true',
       'aria-controls': 'search-results',
@@ -238,7 +238,7 @@ export function createSearch({ store, onPick }) {
   function renderResults(q, display = q) {
     clear(listEl);
     if (results.length === 0) {
-      const msg = index.length === 0 ? 'Nothing to search yet' : q ? `No events or tasks match “${display}”` : 'No events or tasks';
+      const msg = index.length === 0 ? '暂无可搜索的内容' : q ? `没有与“${display}”匹配的日程或任务` : '暂无日程或任务';
       listEl.append(el('div', { class: 'search__empty' }, [el('p', { text: msg })]));
       activeIndex = -1;
       input.removeAttribute('aria-activedescendant');
@@ -259,9 +259,9 @@ export function createSearch({ store, onPick }) {
     if (isTask) {
       // Mirror the agenda: an all-day task is a plain "To-do"; a timed one
       // shows its due time (a task has an instant, not a range).
-      timeText = rep.allDay ? 'To-do' : formatTime(start, { hour12 });
+      timeText = rep.allDay ? '待办事项' : formatTime(start, { hour12 });
     } else {
-      timeText = rep.allDay ? 'All day' : formatTimeRange(start, end, { hour12 });
+      timeText = rep.allDay ? '全天' : formatTimeRange(start, end, { hour12 });
     }
     let meta = ev.recurrence
       ? `${describeRecurrence(ev.recurrence, ev.start)} · ${timeText}`

@@ -74,8 +74,8 @@ export function renderMonth(ctx) {
         text: String(day.getDate()),
         role: 'button',
         tabindex: '0',
-        title: 'Open day',
-        'aria-label': `Open ${formatFullDate(day)}`,
+        title: '打开当天',
+        'aria-label': `打开 ${formatFullDate(day)}`,
         style: { cursor: 'pointer' },
         on: {
           click: (e) => {
@@ -247,7 +247,7 @@ function buildChip(event, day, ctx, cellData) {
  * does not fall through and create a 9 a.m. event either.
  */
 function buildOverlayChip(item, ctx) {
-  const kind = item.dst ? 'Clock change' : 'Public holiday';
+  const kind = item.dst ? '夏令时变更' : '法定节假日';
   const chip = el('div', {
     class: 'chip chip--holiday',
     tabindex: '0',

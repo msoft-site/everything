@@ -25,17 +25,17 @@ import { avatarsTab } from './avatars.js';
 export { fitTabs };
 
 export const ASSET_TABS = [
-  { id: 'media', label: 'Media', icon: 'film', make: mediaTab },
-  { id: 'audio', label: 'Audio', icon: 'music', make: audioTab },
-  { id: 'text', label: 'Text', icon: 'text', make: textTab },
-  { id: 'captions', label: 'Captions', icon: 'captions', make: captionsTab },
-  { id: 'avatars', label: 'Avatars', icon: 'avatar', make: avatarsTab },
-  { id: 'stickers', label: 'Graphics', icon: 'sticker', make: stickersTab },
-  { id: 'transitions', label: 'Transitions', icon: 'transition', make: transitionsTab },
-  { id: 'effects', label: 'Effects', icon: 'effects', make: effectsTab },
-  { id: 'filters', label: 'Filters', icon: 'filters', make: filtersTab },
-  { id: 'adjust', label: 'Color', icon: 'adjust', make: adjustTab },
-  { id: 'templates', label: 'Templates', icon: 'template', make: templatesTab },
+  { id: 'media', label: '媒体', icon: 'film', make: mediaTab },
+  { id: 'audio', label: '音频', icon: 'music', make: audioTab },
+  { id: 'text', label: '文字', icon: 'text', make: textTab },
+  { id: 'captions', label: '字幕', icon: 'captions', make: captionsTab },
+  { id: 'avatars', label: '数字人', icon: 'avatar', make: avatarsTab },
+  { id: 'stickers', label: '贴纸图形', icon: 'sticker', make: stickersTab },
+  { id: 'transitions', label: '转场', icon: 'transition', make: transitionsTab },
+  { id: 'effects', label: '特效', icon: 'effects', make: effectsTab },
+  { id: 'filters', label: '滤镜', icon: 'filters', make: filtersTab },
+  { id: 'adjust', label: '调色', icon: 'adjust', make: adjustTab },
+  { id: 'templates', label: '模板', icon: 'template', make: templatesTab },
 ];
 
 export function createAssetsPanel(ctx) {

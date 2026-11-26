@@ -93,15 +93,15 @@ export function adjustTab(ctx) {
 
   function renderLayer() {
     const t = tile({
-      label: 'Custom color layer',
+      label: '自定义调色图层',
       preview: setupPreview(ctx, {}, previews),
       onAdd: () => actions.addAdjustment(),
       drag: { kind: 'adjust' },
-      addLabel: 'Add custom color layer',
+      addLabel: '添加自定义调色图层',
     });
     return h('div',
-      h('p.asset-hint', 'A color layer grades every clip below it. Fine-tune it in Details. To grade a single clip, select it and open Color in Details.'),
-      tileGrid([t], { label: 'Color layers' }),
+      h('p.asset-hint', '调色图层会对下方所有剪辑片段进行调色。可在“详情”面板中微调。若要对单个剪辑片段调色，请选中它并在“详情”中打开“颜色”。'),
+      tileGrid([t], { label: '调色图层' }),
     );
   }
 

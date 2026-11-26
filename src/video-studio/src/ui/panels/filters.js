@@ -22,9 +22,9 @@ export function filtersTab(ctx) {
     render(cat, q) {
       const clip = selectedVisual();
       shown = clip?.filter?.id ?? null;
-      hint.textContent = clip ? 'Click a filter to apply it to the selected clip.' : 'Click a filter to add it to the timeline. Select a clip first to apply it to that clip only.';
+      hint.textContent = clip ? '点击滤镜应用到选中的剪辑。' : '点击滤镜将其添加到时间线。先选择一个剪辑片段可仅应用到该片段。';
       const list = FILTERS.filter((f) => (cat === 'all' || f.cat === cat) && matchesLook(f, q, FILTER_CATEGORIES));
-      if (!list.length) return emptyState('search', 'No filters found', 'Try another word.');
+      if (!list.length) return emptyState('search', '未找到滤镜', '请尝试其他关键词。');
       const tiles = list.map((f) => {
         const t = tile({
           label: f.label,
@@ -32,15 +32,15 @@ export function filtersTab(ctx) {
           active: clip?.filter?.id === f.id,
           onAdd: () => actions.addFilter(f.id),
           drag: { kind: 'filter', id: f.id },
-          addLabel: clip ? `Apply ${f.label} filter to clip` : `Add ${f.label} filter`,
+          addLabel: clip ? `应用 ${f.label} 滤镜到剪辑` : `添加 ${f.label} 滤镜`,
         });
         hoverAnimate(t, 'filter', f.id);
         return t;
       });
       if (clip?.filter) {
-        tiles.unshift(tile({ label: 'None', preview: lookPreview('none', 'none'), onAdd: () => actions.addFilter(null), addLabel: 'Remove filter from clip' }));
+        tiles.unshift(tile({ label: '无', preview: lookPreview('none', 'none'), onAdd: () => actions.addFilter(null), addLabel: '从剪辑移除滤镜' }));
       }
-      return h('div', hint, tileGrid(tiles, { label: 'Filters' }));
+      return h('div', hint, tileGrid(tiles, { label: '滤镜' }));
     },
   });
   // An applied, removed or undone filter shows on the tiles; focus stays on the same tile.

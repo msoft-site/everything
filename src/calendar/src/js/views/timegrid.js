@@ -175,7 +175,7 @@ export function renderTimeGrid(days, ctx) {
       'aria-current': isToday(day, now) ? 'date' : null,
       role: 'button',
       tabindex: '0',
-      'aria-label': `Go to ${formatFullDate(day)}`,
+      'aria-label': `前往 ${formatFullDate(day)}`,
       on: {
         click: () => actions.gotoDayView(day),
         keydown: (e) => {
@@ -812,7 +812,7 @@ function buildAllDayChip(event, ctx) {
  * event behind it to move or delete.
  */
 function buildOverlayChip(item, ctx) {
-  const kind = item.dst ? 'Clock change' : 'Public holiday';
+  const kind = item.dst ? '夏令时变更' : '法定节假日';
   const node = el(
     'div',
     {
