@@ -237,47 +237,47 @@ function canvasSection(e: Editor, locked: boolean) {
     });
   const portrait = doc.height > doc.width;
   const body = `<div class="pf-canvas">
-<button type="button" class="icon-button toggle pf-link" data-pf-link="doc" aria-pressed="${linked}" title="${linked ? 'Width and height keep their proportions (click to unlink)' : 'Link width and height to keep proportions'}" aria-label="Link canvas width and height" ${locked ? 'disabled' : ''}>${svg(linked ? 'link' : 'unlink', 14)}</button>
-${size('width', 'W', 'Canvas width')}${select(
+<button type="button" class="icon-button toggle pf-link" data-pf-link="doc" aria-pressed="${linked}" title="${linked ? '保持宽高比 (点击取消链接)' : '链接宽高以保持比例'}" aria-label="链接画布宽度和高度" ${locked ? 'disabled' : ''}>${svg(linked ? 'link' : 'unlink', 14)}</button>
+${size('width', '宽', '画布宽度')}${select(
     'unit',
-    'Canvas units',
+    '画布单位',
     UNIT_NAMES.map(([u, n]) => [u, n]),
     unit,
     { hideLabel: true },
   )}
-${size('height', 'H', 'Canvas height')}<div class="pf-orient" role="group" aria-label="Orientation"><button type="button" class="icon-button" data-pf-orient="portrait" aria-pressed="${portrait}" title="Portrait: make the canvas taller than wide" aria-label="Portrait" ${locked || doc.width === doc.height ? 'disabled' : ''}>${svg('orientation-portrait', 15)}</button><button type="button" class="icon-button" data-pf-orient="landscape" aria-pressed="${doc.width > doc.height}" title="Landscape: make the canvas wider than tall" aria-label="Landscape" ${locked || doc.width === doc.height ? 'disabled' : ''}>${svg('orientation-landscape', 15)}</button></div>
+${size('height', '高', '画布高度')}<div class="pf-orient" role="group" aria-label="方向"><button type="button" class="icon-button" data-pf-orient="portrait" aria-pressed="${portrait}" title="纵向：画布高度大于宽度" aria-label="纵向" ${locked || doc.width === doc.height ? 'disabled' : ''}>${svg('orientation-portrait', 15)}</button><button type="button" class="icon-button" data-pf-orient="landscape" aria-pressed="${doc.width > doc.height}" title="横向：画布宽度大于高度" aria-label="横向" ${locked || doc.width === doc.height ? 'disabled' : ''}>${svg('orientation-landscape', 15)}</button></div>
 </div>
-<div class="pf-anchor-row"><span id="pf-anchor-label">Anchor</span><div class="pf-anchor" role="radiogroup" aria-labelledby="pf-anchor-label">${ANCHORS.map(([x, y, name]) => `<button type="button" role="radio" data-pf-anchor="${x},${y}" aria-checked="${x === ax && y === ay}" tabindex="${x === ax && y === ay ? 0 : -1}" title="Grow or shrink from the ${name}" aria-label="${name}"></button>`).join('')}</div><span class="pf-note">Size changes grow or shrink the canvas from the anchor.</span></div>
-<div class="pf-res">${field({ key: 'doc.resolution', label: 'Resolution', value: formatNumber(ppcm ? ppi / 2.54 : ppi, 2), name: 'Resolution', disabled: locked, title: 'Changes the print size; pixels stay as they are' })}${select(
+<div class="pf-anchor-row"><span id="pf-anchor-label">定位点</span><div class="pf-anchor" role="radiogroup" aria-labelledby="pf-anchor-label">${ANCHORS.map(([x, y, name]) => `<button type="button" role="radio" data-pf-anchor="${x},${y}" aria-checked="${x === ax && y === ay}" tabindex="${x === ax && y === ay ? 0 : -1}" title="从${name}延展或收缩" aria-label="${name}"></button>`).join('')}</div><span class="pf-note">画布尺寸调整时将从定位点向外延展或收缩。</span></div>
+<div class="pf-res">${field({ key: 'doc.resolution', label: '分辨率', value: formatNumber(ppcm ? ppi / 2.54 : ppi, 2), name: '分辨率', disabled: locked, title: '修改打印尺寸；像素数保持不变' })}${select(
     'resolution-unit',
-    'Resolution unit',
+    '分辨率单位',
     [
-      ['PPI', 'Pixels/Inch'],
-      ['PPCM', 'Pixels/Centimeter'],
+      ['PPI', '像素/英寸'],
+      ['PPCM', '像素/厘米'],
     ],
     ppcm ? 'PPCM' : 'PPI',
     { hideLabel: true, disabled: locked },
   )}</div>
 ${select(
   'mode',
-  'Mode',
+  '颜色模式',
   MODES.map(([m, label]) => [m, label, m !== mode && !cmdOn(`image.mode-${m}`)]),
   mode,
   { disabled: locked },
 )}
 ${select(
   'depth',
-  'Bit depth',
+  '位深度',
   [
-    ['8', '8 Bits/Channel', !cmdOn('image.depth-8')],
-    ['16', '16 Bits/Channel', !cmdOn('image.depth-16')],
-    ['32', '32 Bits/Channel', !cmdOn('image.depth-32')],
+    ['8', '8 位/通道', !cmdOn('image.depth-8')],
+    ['16', '16 位/通道', !cmdOn('image.depth-16')],
+    ['32', '32 位/通道', !cmdOn('image.depth-32')],
   ],
   depth,
   { disabled: locked },
 )}
 ${fillMarkup(e)}`;
-  return section('doc-canvas', 'Canvas', body);
+  return section('doc-canvas', '画布', body);
 }
 function prefSelect(e: Editor, key: string, label: string, hideLabel = false) {
   const def = settingFor(key);
@@ -294,12 +294,12 @@ const prefColor = (e: Editor, key: string, label: string) =>
   `<label class="pf-color"><span>${label}</span><input type="color" class="pf-swatch" data-pf="pref.${key}" aria-label="${label}" value="${escapeXML(String((e.preferences as Record<string, unknown>)[key]))}"></label>`;
 function rulersSection(e: Editor) {
   const p = e.preferences;
-  const body = `<div class="pf-checks">${commandToggle(e, 'view.rulers', 'Rulers')}${commandToggle(e, 'view.show-grid', 'Grid')}${commandToggle(e, 'view.snap-grid', 'Snap to grid')}</div>
-${prefSelect(e, 'rulerUnits', 'Units')}
-<div class="pf-pair">${prefColor(e, 'gridColor', 'Grid color')}${prefSelect(e, 'gridStyle', 'Grid style', true)}</div>
-<div class="pf-pair">${field({ key: 'pref.gridEvery', label: 'Every', name: 'Gridline every', value: formatNumber(p.gridEvery, 2), step: 1 })}${prefSelect(e, 'gridUnit', 'Gridline units', true)}</div>
-${field({ key: 'pref.gridSubdivisions', label: 'Subdivisions', value: String(p.gridSubdivisions), step: 1 })}`;
-  return section('doc-rulers', 'Rulers & Grid', body);
+  const body = `<div class="pf-checks">${commandToggle(e, 'view.rulers', '标尺')}${commandToggle(e, 'view.show-grid', '网格')}${commandToggle(e, 'view.snap-grid', '对齐到网格')}</div>
+${prefSelect(e, 'rulerUnits', '单位')}
+<div class="pf-pair">${prefColor(e, 'gridColor', '网格颜色')}${prefSelect(e, 'gridStyle', '网格样式', true)}</div>
+<div class="pf-pair">${field({ key: 'pref.gridEvery', label: '间隔', name: '网格线间隔', value: formatNumber(p.gridEvery, 2), step: 1 })}${prefSelect(e, 'gridUnit', '网格线单位', true)}</div>
+${field({ key: 'pref.gridSubdivisions', label: '细分', value: String(p.gridSubdivisions), step: 1 })}`;
+  return section('doc-rulers', '标尺与网格', body);
 }
 function guidesSection(e: Editor) {
   const doc = e.doc;
@@ -307,11 +307,11 @@ function guidesSection(e: Editor) {
   const canvasCount = doc.guides?.length ?? 0;
   const artboardCount = artboards.reduce((n, l) => n + (l.artboard?.guides?.length ?? 0), 0);
   const count = canvasCount + artboardCount;
-  const body = `<div class="pf-checks">${commandToggle(e, 'view.show-guides', 'Guides')}${commandToggle(e, 'view.guides-lock', 'Lock guides')}${commandToggle(e, 'view.snap-guides', 'Snap to guides')}${artboards.length ? `${commandToggle(e, 'view.show-canvas-guides', 'Canvas guides')}${commandToggle(e, 'view.show-artboard-guides', 'Artboard guides')}` : ''}</div>
-<div class="pf-pair">${prefColor(e, 'guideColor', 'Guide color')}${prefSelect(e, 'guideStyle', 'Guide style', true)}</div>
-<p class="pf-note" aria-live="polite">${count ? `${count} guide${count === 1 ? '' : 's'}${artboardCount ? ` (${artboardCount} on artboards)` : ''}` : 'No guides yet. Drag from a ruler or add one here.'}</p>
-<div class="pf-actions">${commandButton(e, 'view.guides-new', 'New Guide…', 'plus')}${commandButton(e, 'view.guides-layout', 'New Guide Layout…', 'layout-grid')}${commandButton(e, 'view.guides-from-shape', 'Guides From Shape', 'shapes')}${commandButton(e, 'view.guides-clear', 'Clear Guides', 'trash-2')}</div>`;
-  return section('doc-guides', 'Guides', body);
+  const body = `<div class="pf-checks">${commandToggle(e, 'view.show-guides', '参考线')}${commandToggle(e, 'view.guides-lock', '锁定参考线')}${commandToggle(e, 'view.snap-guides', '对齐到参考线')}${artboards.length ? `${commandToggle(e, 'view.show-canvas-guides', '画布参考线')}${commandToggle(e, 'view.show-artboard-guides', '画板参考线')}` : ''}</div>
+<div class="pf-pair">${prefColor(e, 'guideColor', '参考线颜色')}${prefSelect(e, 'guideStyle', '参考线样式', true)}</div>
+<p class="pf-note" aria-live="polite">${count ? `${count} 条参考线${artboardCount ? ` (画板上有 ${artboardCount} 条)` : ''}` : '暂无参考线。从标尺拖出或在此新建。'}</p>
+<div class="pf-actions">${commandButton(e, 'view.guides-new', '新建参考线…', 'plus')}${commandButton(e, 'view.guides-layout', '新建参考线版面…', 'layout-grid')}${commandButton(e, 'view.guides-from-shape', '根据形状创建参考线', 'shapes')}${commandButton(e, 'view.guides-clear', '清除参考线', 'trash-2')}</div>`;
+  return section('doc-guides', '参考线', body);
 }
 /** The layer Remove Background works on from the document view. */
 function backgroundTarget(e: Editor): Layer | undefined {
@@ -321,18 +321,18 @@ function backgroundTarget(e: Editor): Layer | undefined {
 function quickActions(e: Editor) {
   const target = backgroundTarget(e);
   const body = `<div class="pf-actions">
-<button type="button" class="pf-action" data-pf-action="remove-background" title="Remove the background of ${target ? escapeXML(target.name) : 'the image'}" ${target && commandEnabled(e, 'select.subject') ? '' : 'disabled'}>${svg('eraser-background', 14)}<span>Remove Background</span></button>
-${commandButton(e, 'image.trim', 'Trim', 'scissors', { title: 'Trim transparent pixels from the edges' })}
-${commandButton(e, 'image.image-size', 'Image Size…', 'scaling')}
-${commandButton(e, 'image.canvas-size', 'Canvas Size…', 'expand')}
-${commandButton(e, 'image.crop', 'Crop to Selection', 'crop', { title: e.doc.selection ? 'Crop the canvas to the selection' : 'Make a selection to crop to it' })}
-${commandButton(e, 'image.reveal-all', 'Reveal All', 'fullscreen', { title: 'Enlarge the canvas to show every layer' })}
-${commandButton(e, 'image.rotate-ccw', 'Rotate Left', 'rotate-ccw', { title: 'Rotate the canvas 90° counterclockwise' })}
-${commandButton(e, 'image.rotate-cw', 'Rotate Right', 'rotate-cw', { title: 'Rotate the canvas 90° clockwise' })}
-${commandButton(e, 'image.flip-horizontal', 'Flip Horizontal', 'flip-horizontal-2', { title: 'Flip the canvas horizontally' })}
-${commandButton(e, 'image.flip-vertical', 'Flip Vertical', 'flip-vertical-2', { title: 'Flip the canvas vertically' })}
+<button type="button" class="pf-action" data-pf-action="remove-background" title="移除 ${target ? escapeXML(target.name) : '图像'} 的背景" ${target && commandEnabled(e, 'select.subject') ? '' : 'disabled'}>${svg('eraser-background', 14)}<span>移除背景</span></button>
+${commandButton(e, 'image.trim', '裁切', 'scissors', { title: '从边缘裁切透明像素' })}
+${commandButton(e, 'image.image-size', '图像大小…', 'scaling')}
+${commandButton(e, 'image.canvas-size', '画布大小…', 'expand')}
+${commandButton(e, 'image.crop', '裁切到选区', 'crop', { title: e.doc.selection ? '按选区裁切画布' : '建立选区以进行裁切' })}
+${commandButton(e, 'image.reveal-all', '显示全部', 'fullscreen', { title: '放大画布以显示所有图层' })}
+${commandButton(e, 'image.rotate-ccw', '逆时针旋转', 'rotate-ccw', { title: '逆时针旋转画布 90°' })}
+${commandButton(e, 'image.rotate-cw', '顺时针旋转', 'rotate-cw', { title: '顺时针旋转画布 90°' })}
+${commandButton(e, 'image.flip-horizontal', '水平翻转', 'flip-horizontal-2', { title: '水平翻转画布' })}
+${commandButton(e, 'image.flip-vertical', '垂直翻转', 'flip-vertical-2', { title: '垂直翻转画布' })}
 </div>`;
-  return section('doc-actions', 'Quick Actions', body);
+  return section('doc-actions', '快速操作', body);
 }
 
 /** Properties markup for the document; `background` is the selected
@@ -343,11 +343,11 @@ export function documentProperties(e: Editor, backgroundLayer?: Layer): string {
   const layerPart = backgroundLayer
     ? section(
         'doc-background-layer',
-        'Background Layer',
-        `<p class="pf-note">The Background layer is locked in place. Convert it to a layer to move it, mask it or make it transparent.</p><div class="pf-actions">${commandButton(e, 'layer.from-background', 'Convert to Layer', 'layers')}${commandButton(e, 'select.subject', 'Select Subject', 'scan-face')}</div>`,
+        '背景图层',
+        `<p class="pf-note">背景图层已被锁定。将其转换为普通图层以进行移动、蒙版或设置透明。</p><div class="pf-actions">${commandButton(e, 'layer.from-background', '转换为图层', 'layers')}${commandButton(e, 'select.subject', '选择主体', 'scan-face')}</div>`,
       )
     : '';
-  return `<div class="property-body document-properties"><div class="pf-title">${svg('file-image', 14)}<span class="eyebrow">DOCUMENT</span></div><h3 class="pf-docname" title="${escapeXML(doc.name)}">${escapeXML(doc.name)}</h3>
+  return `<div class="property-body document-properties"><div class="pf-title">${svg('file-image', 14)}<span class="eyebrow">文档</span></div><h3 class="pf-docname" title="${escapeXML(doc.name)}">${escapeXML(doc.name)}</h3>
 ${layerPart}${canvasSection(e, busy)}${rulersSection(e)}${guidesSection(e)}${quickActions(e)}</div>`;
 }
 

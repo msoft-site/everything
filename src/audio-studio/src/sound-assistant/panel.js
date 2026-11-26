@@ -352,14 +352,14 @@ export function soundAssistantPanel(app) {
   }
 
   function assignView(t) {
-    const what = t.mode === 'file' ? 'this audio file' : t.clips.length > 1 ? `the ${t.clips.length} selected clips` : 'the selected clip';
-    const heading = t.mixed ? `The selected clips have different audio types. Choose one type for all of them:` : `Choose an audio type for ${what}:`;
+    const what = t.mode === 'file' ? '此音频文件' : t.clips.length > 1 ? `选中的 ${t.clips.length} 个片段` : '选中的片段';
+    const heading = t.mixed ? `选中的片段具有不同的音频类型。为它们统一选择一种类型：` : `为${what}选择音频类型：`;
     // A preset of any type assigns that type with the preset's settings.
     const presetSel = h(
       'select.select',
-      { 'aria-label': 'Start from a preset' },
-      h('option', { value: '', disabled: true, selected: true }, 'Start from a preset...'),
-      TYPE_IDS.map((type) => h('optgroup', { label: TYPES[type].label }, presetsFor(type, userPresets()).map((p) => h('option', { value: `${type}\n${p.name}` }, p.user ? `${p.name} (mine)` : p.name)))),
+      { 'aria-label': '从预设开始' },
+      h('option', { value: '', disabled: true, selected: true }, '从预设开始…'),
+      TYPE_IDS.map((type) => h('optgroup', { label: TYPES[type].label }, presetsFor(type, userPresets()).map((p) => h('option', { value: `${type}\n${p.name}` }, p.user ? `${p.name} (我的)` : p.name)))),
     );
     // The type the audio sounds like, worked out just after the view shows (it reads the audio).
     const suggestRow = h('p.sa-suggest', { 'aria-live': 'polite', hidden: true });
@@ -371,11 +371,11 @@ export function soundAssistantPanel(app) {
         const sure = sug.confidence >= 0.15;
         const btn = el.querySelector(`.sa-type-btn[data-type="${sug.type}"]`);
         btn?.classList.add('suggested');
-        btn?.setAttribute('aria-description', 'Suggested');
+        btn?.setAttribute('aria-description', '建议');
         suggestRow.replaceChildren(
           icon('wand-sparkles', 13),
-          h('span', `${sure ? 'Sounds like' : 'Might be'} ${TYPES[sug.type].label}. `),
-          h('button.link-btn', { type: 'button', onclick: () => assign(sug.type) }, `Use ${TYPES[sug.type].label}`),
+          h('span', `${sure ? '听起来像' : '可能是'} ${TYPES[sug.type].label}。`),
+          h('button.link-btn', { type: 'button', onclick: () => assign(sug.type) }, `使用 ${TYPES[sug.type].label}`),
         );
         suggestRow.hidden = false;
       }, 30);
@@ -388,16 +388,16 @@ export function soundAssistantPanel(app) {
     return h(
       'div.sa-assign',
       h('div.sa-target', icon(t.mode === 'file' ? 'file-audio' : 'mode-multitrack', 14), h('span.sa-target-name', { title: targetName(t) }, targetName(t))),
-      h('div.sa-preset.sa-assign-preset', h('label.sa-label', 'Preset'), presetSel),
+      h('div.sa-preset.sa-assign-preset', h('label.sa-label', '预设'), presetSel),
       h('p.sa-assign-text', heading),
       h(
         'div.sa-types',
-        { role: 'group', 'aria-label': 'Audio type' },
+        { role: 'group', 'aria-label': '音频类型' },
         TYPE_IDS.map((id) => h('button.sa-type-btn', { type: 'button', 'data-type': id, onclick: () => assign(id) }, icon(TYPES[id].icon, 20), h('span', TYPES[id].label))),
       ),
       suggestRow,
-      t.mixed ? h('button.btn.sa-clear-mixed', { type: 'button', onclick: clearType }, 'Clear Audio Types') : null,
-      h('p.sa-hint.faint', t.mode === 'file' ? 'Tasks you turn on can be previewed during playback and applied to the selection or the whole file.' : 'Settings are stored on the clips and play back in real time. Mixdowns and exports include them.'),
+      t.mixed ? h('button.btn.sa-clear-mixed', { type: 'button', onclick: clearType }, '清除音频类型') : null,
+      h('p.sa-hint.faint', t.mode === 'file' ? '开启的任务可在播放时试听，并应用到选区或整个文件。' : '设置保存在片段中并实时播放。混缩和导出均包含这些处理。'),
     );
   }
 
@@ -413,30 +413,30 @@ export function soundAssistantPanel(app) {
       'div.sa-head',
       h('span.sa-type-icon', icon(TYPES[type].icon, 16)),
       h('h3.sa-type-name', TYPES[type].label),
-      h('span.sa-count.faint', sessionMode && t.clips.length > 1 ? `${t.clips.length} clips` : ''),
+      h('span.sa-count.faint', sessionMode && t.clips.length > 1 ? `${t.clips.length} 个片段` : ''),
       h('div.spacer'),
-      h('button.btn.sa-clear', { type: 'button', onclick: clearType, title: 'Remove the audio type and its processing' }, 'Clear Audio Type'),
+      h('button.btn.sa-clear', { type: 'button', onclick: clearType, title: '移除音频类型及其处理效果' }, '清除音频类型'),
     );
 
     // Presets.
-    const presetSel = h('select.select', { 'aria-label': 'Preset' });
-    const delBtn = h('button.icon-btn', { type: 'button', 'aria-label': 'Delete preset', title: 'Delete preset', onclick: deletePreset }, icon('trash-2', 14));
-    const saveBtn = h('button.icon-btn', { type: 'button', 'aria-label': 'Save settings as a preset', title: 'Save as preset', onclick: savePreset }, icon('bookmark-plus', 14));
+    const presetSel = h('select.select', { 'aria-label': '预设' });
+    const delBtn = h('button.icon-btn', { type: 'button', 'aria-label': '删除预设', title: '删除预设', onclick: deletePreset }, icon('trash-2', 14));
+    const saveBtn = h('button.icon-btn', { type: 'button', 'aria-label': '保存设置到预设', title: '另存为预设', onclick: savePreset }, icon('bookmark-plus', 14));
     presetSel.addEventListener('change', () => {
       const p = presetsFor(type, userPresets()).find((x) => x.name === presetSel.value);
       if (!p) return;
-      setAll((cur) => applyPreset(cur, p), `Sound Assistant Preset: ${p.name}`);
-      announce(`Preset ${p.name}`);
+      setAll((cur) => applyPreset(cur, p), `声音助手预设: ${p.name}`);
+      announce(`预设 ${p.name}`);
     });
     const renderPresets = (s) => {
       const list = presetsFor(type, userPresets());
       const cur = s?.preset || '';
-      presetSel.replaceChildren(h('option', { value: '', disabled: true }, '(Custom)'), ...list.map((p) => h('option', { value: p.name }, p.user ? `${p.name} (mine)` : p.name)));
+      presetSel.replaceChildren(h('option', { value: '', disabled: true }, '(自定义)'), ...list.map((p) => h('option', { value: p.name }, p.user ? `${p.name} (我的)` : p.name)));
       presetSel.value = list.some((p) => p.name === cur) ? cur : '';
       delBtn.disabled = !list.find((p) => p.name === cur)?.user;
     };
     refreshers.push(renderPresets);
-    const presetRow = h('div.sa-preset', h('label.sa-label', 'Preset'), presetSel, saveBtn, delBtn);
+    const presetRow = h('div.sa-preset', h('label.sa-label', '预设'), presetSel, saveBtn, delBtn);
 
     // Controls.
     let uid = 0;
@@ -514,21 +514,21 @@ export function soundAssistantPanel(app) {
       loudness: () => {
         const readout = h('div.sa-readout.faint', { 'aria-live': 'polite' });
         const match = () => keepFocus('.sa-loudness .sa-action', autoMatch);
-        const matchBtn = h('button.btn.sa-action', { type: 'button', onclick: match }, 'Auto-Match');
+        const matchBtn = h('button.btn.sa-action', { type: 'button', onclick: match }, '自动匹配');
         refreshers.push((s) => {
           const m = s?.loudness?.measured;
           const g = loudnessGain(s);
-          readout.textContent = Number.isFinite(m) ? `Measured ${m.toFixed(1)} LUFS, gain ${fmtDb(g)}${sessionMode && t.clips.length > 1 ? ' (first clip)' : ''}` : 'Not measured yet. Auto-Match measures the audio and sets the gain.';
+          readout.textContent = Number.isFinite(m) ? `测量值 ${m.toFixed(1)} LUFS，增益 ${fmtDb(g)}${sessionMode && t.clips.length > 1 ? '（首个片段）' : ''}` : '尚未测量。自动匹配会测量音频并设置增益。';
           matchBtn.disabled = busy;
         });
-        return [h('div.sa-field', h('label.sa-label', 'Target'), choice(['loudness', 'target'], 'Loudness target', LOUDNESS_TARGETS, { number: true })), h('div.sa-actions', matchBtn), readout];
+        return [h('div.sa-field', h('label.sa-label', '目标'), choice(['loudness', 'target'], '响度目标', LOUDNESS_TARGETS, { number: true })), h('div.sa-actions', matchBtn), readout];
       },
       repair: () => itemsBody('repair'),
       clarity: () => itemsBody('clarity'),
       creative: () => itemsBody('creative'),
       duration: () => {
         const id = nextId();
-        const input = h('input.input.num.sa-seconds', { type: 'number', id, min: 0.1, max: 36000, step: 0.1, 'aria-label': 'Target duration in seconds' });
+        const input = h('input.input.num.sa-seconds', { type: 'number', id, min: 0.1, max: 36000, step: 0.1, 'aria-label': '目标时长（秒）' });
         input.addEventListener('change', () => {
           const v = Number(input.value);
           if (v > 0) edit(['duration', 'seconds'], Math.round(v * 10) / 10);
@@ -536,9 +536,9 @@ export function soundAssistantPanel(app) {
         input.addEventListener('keydown', (e) => e.stopPropagation());
         const info = h('div.sa-readout.faint');
         const stretch = () => keepFocus('.sa-duration .sa-action', applyDuration);
-        const btn = sessionMode ? h('button.btn.sa-action', { type: 'button', onclick: stretch }, 'Apply Duration') : null;
+        const btn = sessionMode ? h('button.btn.sa-action', { type: 'button', onclick: stretch }, '应用持续时间') : null;
         // Clips can also be remixed: rearranged at the beats rather than stretched.
-        const method = sessionMode ? h('div.sa-field', h('label.sa-label', 'Method'), choice(['duration', 'method'], 'Duration method', [{ value: 'stretch', label: 'Stretch' }, { value: 'remix', label: 'Remix' }])) : null;
+        const method = sessionMode ? h('div.sa-field', h('label.sa-label', '方式'), choice(['duration', 'method'], '持续时间方式', [{ value: 'stretch', label: '时间伸缩' }, { value: 'remix', label: '智能重混' }])) : null;
         refreshers.push((s) => {
           if (document.activeElement !== input) input.value = String(s?.duration?.seconds ?? 30);
           const cur = target(app);
@@ -546,21 +546,21 @@ export function soundAssistantPanel(app) {
             const c = cur.lead;
             const orig = s?.duration?.orig;
             const len = orig ? orig.length : c.length;
-            const how = s?.duration?.method === 'remix' ? 'The music is rearranged at its beats to fit.' : 'The music is stretched without changing its pitch.';
-            info.textContent = `Original ${formatTime(len, cur.doc.sampleRate, 'decimal')}${orig ? `, now ${formatTime(c.length, cur.doc.sampleRate, 'decimal')}` : ''}. ${how}`;
+            const how = s?.duration?.method === 'remix' ? '音乐将在节拍处重新排列以契合时长。' : '音乐将在保持音调不变的情况下进行时间伸缩。';
+            info.textContent = `原始时长 ${formatTime(len, cur.doc.sampleRate, 'decimal')}${orig ? `，当前 ${formatTime(c.length, cur.doc.sampleRate, 'decimal')}` : ''}。${how}`;
           } else if (cur.mode === 'file') {
             const [a, b] = cur.doc.editRange();
-            info.textContent = `${cur.doc.hasSelection ? 'Selection' : 'File'} is ${formatTime(b - a, cur.doc.sampleRate, 'decimal')}. Apply stretches it without changing its pitch.`;
+            info.textContent = `${cur.doc.hasSelection ? '选区' : '文件'}时长为 ${formatTime(b - a, cur.doc.sampleRate, 'decimal')}。应用将在保持音调不变的情况下进行伸缩。`;
           }
           if (btn) btn.disabled = busy;
         });
-        return [h('div.sa-field', h('label.sa-label', { for: id }, 'Target (s)'), input), method, btn ? h('div.sa-actions', btn) : null, info];
+        return [h('div.sa-field', h('label.sa-label', { for: id }, '目标时长 (秒)'), input), method, btn ? h('div.sa-actions', btn) : null, info];
       },
       ducking: () => {
-        if (!sessionMode) return [h('p.sa-readout.faint', 'Ducking lowers this audio under other clips, so it works on clips in a multitrack session.')];
+        if (!sessionMode) return [h('p.sa-readout.faint', '闪避可将此音频在其他片段下降低电平，适用于多轨工程中的片段。')];
         const against = h(
           'div.sa-against',
-          { role: 'group', 'aria-label': 'Duck against' },
+          { role: 'group', 'aria-label': '闪避对象' },
           TYPE_IDS.map((id) => {
             const box = h('input', {
               type: 'checkbox',
@@ -575,20 +575,20 @@ export function soundAssistantPanel(app) {
             return h('label.check', box, TYPES[id].label);
           }),
         );
-        const gen = h('button.btn.sa-action', { type: 'button', onclick: generateKeyframes }, 'Generate Keyframes');
+        const gen = h('button.btn.sa-action', { type: 'button', onclick: generateKeyframes }, '生成关键帧');
         return [
-          h('div.sa-field.sa-field-top', h('span.sa-label', 'Duck against'), against),
-          slider({ path: ['ducking', 'sensitivity'], label: 'Sensitivity', min: 1, max: 10, step: 0.1, format: fmtAmount }),
-          slider({ path: ['ducking', 'reduce'], label: 'Reduce by', min: -40, max: 0, step: 0.5, format: (v) => `${v.toFixed(1)} dB` }),
-          slider({ path: ['ducking', 'fade'], label: 'Fades', min: 0, max: 3000, step: 10, format: (v) => `${Math.round(v)} ms` }),
+          h('div.sa-field.sa-field-top', h('span.sa-label', '闪避对象'), against),
+          slider({ path: ['ducking', 'sensitivity'], label: '灵敏度', min: 1, max: 10, step: 0.1, format: fmtAmount }),
+          slider({ path: ['ducking', 'reduce'], label: '衰减量', min: -40, max: 0, step: 0.5, format: (v) => `${v.toFixed(1)} dB` }),
+          slider({ path: ['ducking', 'fade'], label: '淡化时长', min: 0, max: 3000, step: 10, format: (v) => `${Math.round(v)} ms` }),
           h('div.sa-actions', gen),
-          h('p.sa-readout.faint', 'Keyframes are written to the clip volume envelope and follow the clips of the chosen types.'),
+          h('p.sa-readout.faint', '关键帧将写入片段音量包络线，并跟随所选类型的片段变化。'),
         ];
       },
-      pan: () => [slider({ path: ['pan', 'value'], label: 'Pan', min: -100, max: 100, step: 1, format: (v) => (v === 0 ? 'Center' : v < 0 ? `L ${-v}` : `R ${v}`) })],
+      pan: () => [slider({ path: ['pan', 'value'], label: '声像', min: -100, max: 100, step: 1, format: (v) => (v === 0 ? '居中' : v < 0 ? `左 ${-v}` : `右 ${v}`) })],
       volume: () => {
-        const rows = [slider({ path: ['volume', 'level'], label: 'Level', min: -30, max: 15, step: 0.1, format: fmtDb })];
-        if (sessionMode) rows.push(checkbox(['volume', 'mute'], 'Mute'));
+        const rows = [slider({ path: ['volume', 'level'], label: '电平', min: -30, max: 15, step: 0.1, format: fmtDb })];
+        if (sessionMode) rows.push(checkbox(['volume', 'mute'], '静音'));
         return rows;
       },
     };
@@ -598,9 +598,9 @@ export function soundAssistantPanel(app) {
     // Footer.
     let foot = null;
     if (!sessionMode) {
-      const previewBtn = h('button.btn.sa-preview', { type: 'button', 'aria-pressed': 'false', onclick: () => setPreview(!preview) }, icon('headphones', 14), h('span', 'Preview'));
+      const previewBtn = h('button.btn.sa-preview', { type: 'button', 'aria-pressed': 'false', onclick: () => setPreview(!preview) }, icon('headphones', 14), h('span', '试听'));
       const apply = () => keepFocus('.sa-apply', applyFile);
-      const applyBtn = h('button.btn.primary.sa-apply', { type: 'button', onclick: apply }, 'Apply');
+      const applyBtn = h('button.btn.primary.sa-apply', { type: 'button', onclick: apply }, '应用');
       const note = h('span.sa-foot-note.faint');
       refreshers.push((s) => {
         previewBtn.setAttribute('aria-pressed', String(Boolean(preview)));
@@ -609,7 +609,7 @@ export function soundAssistantPanel(app) {
         const active = chain.length || s?.loudness?.on || s?.volume?.level || s?.duration?.on;
         applyBtn.disabled = busy || !active;
         const cur = target(app);
-        note.textContent = cur.doc?.hasSelection ? 'Selection' : 'Entire file';
+        note.textContent = cur.doc?.hasSelection ? '选区' : '整个文件';
       });
       foot = h('div.sa-foot', previewBtn, h('div.spacer'), note, applyBtn);
     }

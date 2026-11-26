@@ -79,22 +79,22 @@ export function stepLabel(name: string, a: Record<string, unknown>): string {
   const s = (v: unknown) => (typeof v === 'string' || typeof v === 'number' ? String(v) : '');
   switch (name) {
     case 'get_scene':
-      return 'Read the scene';
+      return '读取场景';
     case 'get_object':
-      return `Look at ${s(a.name)}`;
+      return `查看 ${s(a.name)}`;
     case 'get_material':
-      return `Look at material ${s(a.name)}`;
+      return `查看材质 ${s(a.name)}`;
     case 'run_script': {
       const d = s(a.description).trim();
-      const label = d ? d.charAt(0).toUpperCase() + d.slice(1) : 'Run a script';
-      return a.dry_run === true ? `Try out: ${label.charAt(0).toLowerCase()}${label.slice(1)}` : label;
+      const label = d ? d : '运行脚本';
+      return a.dry_run === true ? `尝试运行：${label}` : label;
     }
     case 'api_help':
-      return `Check the API: ${short(s(a.topic), 48)}`;
+      return `查阅 API：${short(s(a.topic), 48)}`;
     case 'capture_view':
-      return `Look at the scene${a.view && a.view !== 'CURRENT' ? ` (${s(a.view).toLowerCase()})` : ''}`;
+      return `查看场景${a.view && a.view !== 'CURRENT' ? ` (${s(a.view).toLowerCase()})` : ''}`;
     case 'set_view':
-      return 'Change the view';
+      return '更改视图';
     default:
       return name;
   }
@@ -114,7 +114,7 @@ interface PendingFile {
 function sentFiles(items: PendingFile[]): HTMLElement {
   return el(
     'ul',
-    { class: 'as-user-files', 'aria-label': 'Files sent with this message' },
+    { class: 'as-user-files', 'aria-label': '随此消息发送的文件' },
     ...items.map((it) => el('li', { class: 'as-user-file', title: it.name }, it.url ? el('img', { class: 'as-user-thumb', src: it.url, alt: it.name }) : el('span', { class: 'as-user-chip' }, ic(it.kind === 'image' ? 'file_image' : 'file_blank'), el('span', {}, it.name)))),
   );
 }
@@ -186,7 +186,7 @@ export class AssistantPanel {
       changes: changesScene,
     });
 
-    const modelSel = el('select', { class: 'as-model', 'aria-label': 'AI model', title: 'AI model' });
+    const modelSel = el('select', { class: 'as-model', 'aria-label': 'AI 模型', title: 'AI 模型' });
     for (const m of ASSISTANT_MODELS) {
       const o = el('option', { value: m.id, title: m.title }, m.label);
       o.selected = m.id === this.model;
@@ -196,14 +196,14 @@ export class AssistantPanel {
       this.model = modelSel.value;
       saveModel(this.model);
     });
-    const newChat = el('button', { class: 'as-icon-btn', type: 'button', 'aria-label': 'New chat', 'data-tip': 'New Chat' }, ic('new_chat'));
+    const newChat = el('button', { class: 'as-icon-btn', type: 'button', 'aria-label': '新建会话', 'data-tip': '新建会话' }, ic('new_chat'));
     newChat.addEventListener('click', () => this.reset());
-    const close = el('button', { class: 'as-icon-btn', type: 'button', 'aria-label': 'Close the assistant', 'data-tip': 'Close' }, ic('x'));
+    const close = el('button', { class: 'as-icon-btn', type: 'button', 'aria-label': '关闭助手', 'data-tip': '关闭' }, ic('x'));
     close.addEventListener('click', () => this.onClose());
 
-    this.log = el('div', { class: 'as-log', role: 'log', 'aria-live': 'polite', 'aria-label': 'Conversation' });
-    this.input = el('textarea', { class: 'as-input', rows: 1, placeholder: 'Describe something to build or change…', 'aria-label': 'Message the assistant' });
-    this.sendBtn = el('button', { class: 'as-send', type: 'button', 'aria-label': 'Send' }, ic('send'));
+    this.log = el('div', { class: 'as-log', role: 'log', 'aria-live': 'polite', 'aria-label': '对话记录' });
+    this.input = el('textarea', { class: 'as-input', rows: 1, placeholder: '描述要创建或修改的内容…', 'aria-label': '给助手发送消息' });
+    this.sendBtn = el('button', { class: 'as-send', type: 'button', 'aria-label': '发送' }, ic('send'));
     this.status = el('div', { class: 'as-status', role: 'status' });
     this.input.addEventListener('input', () => this.grow());
     this.input.addEventListener('keydown', (e) => {
@@ -225,9 +225,9 @@ export class AssistantPanel {
       this.attach(files);
       this.input.focus();
     });
-    const attachBtn = el('button', { class: 'as-icon-btn as-attach', type: 'button', 'aria-label': 'Attach files', 'data-tip': 'Attach images, PDFs or text files' }, ic('attach'));
+    const attachBtn = el('button', { class: 'as-icon-btn as-attach', type: 'button', 'aria-label': '附加文件', 'data-tip': '附加图片、PDF 或文本文件' }, ic('attach'));
     attachBtn.addEventListener('click', () => this.fileInput.click());
-    this.tray = el('ul', { class: 'as-tray', 'aria-label': 'Attached files', hidden: true });
+    this.tray = el('ul', { class: 'as-tray', 'aria-label': '附加的文件', hidden: true });
     this.input.addEventListener('paste', (e) => {
       const files = [...(e.clipboardData?.files ?? [])];
       if (!files.length || copiedText(e.clipboardData!, files)) return;
@@ -238,10 +238,10 @@ export class AssistantPanel {
 
     this.el = el(
       'aside',
-      { class: 'assistant', 'aria-label': 'AI Assistant' },
-      el('div', { class: 'as-bar' }, el('span', { class: 'as-title' }, ic('assistant'), 'Assistant'), modelSel, newChat, close),
+      { class: 'assistant', 'aria-label': 'AI 助手' },
+      el('div', { class: 'as-bar' }, el('span', { class: 'as-title' }, ic('assistant'), 'AI 助手'), modelSel, newChat, close),
       this.log,
-      el('div', { class: 'as-bottom' }, this.status, composer, el('div', { class: 'as-note' }, 'Sends your messages and a description of the scene to 本地智能引擎.')),
+      el('div', { class: 'as-bottom' }, this.status, composer, el('div', { class: 'as-note' }, '将您的消息和场景描述发送至本地智能引擎。')),
     );
     this.bindDrop();
     this.renderEmpty();
@@ -298,8 +298,8 @@ export class AssistantPanel {
   private renderEmpty() {
     const fresh = this.startupScene();
     const ideas = fresh
-      ? ['A low-poly tree with a brown trunk and green canopy', 'A wooden dining table with four chairs', 'A cozy room: floor, two walls, a sofa and a lamp', 'A snowman with a carrot nose and a scarf']
-      : ['Explain how this scene is built', 'Give every object a fitting material', 'Add soft three-point lighting and aim the camera at the model', 'Animate the selected object spinning once over 120 frames'];
+      ? ['棕色树干与绿色树冠的低多边形树木', '带四把椅子的木制餐桌', '温馨的房间：地板、两面墙、沙发和台灯', '带胡萝卜鼻子和围巾的雪人']
+      : ['解释此场景是如何构建的', '为每个物体赋予合适的材质', '添加柔和的三点布光并将摄像机对准模型', '在 120 帧内让选中的物体旋转一圈'];
     const chips = el(
       'div',
       { class: 'as-ideas' },
@@ -318,8 +318,8 @@ export class AssistantPanel {
         'div',
         { class: 'as-empty' },
         el('div', { class: 'as-empty-icon' }, ic('assistant')),
-        el('div', { class: 'as-empty-title' }, fresh ? 'Describe something to build' : 'Change or ask about this scene'),
-        el('p', {}, 'The assistant models objects, adds materials, lights, cameras and animation, and checks its work in the viewport. Everything it changes in one message is a single undo step.'),
+        el('div', { class: 'as-empty-title' }, fresh ? '描述要构建的内容' : '修改或询问此场景'),
+        el('p', {}, '助手可以进行物体建模、添加材质、灯光、摄像机和动画，并在视口中检查工作。在单条消息中所做的所有修改均为单个撤销步骤。'),
         chips,
       ),
     );
@@ -327,7 +327,7 @@ export class AssistantPanel {
 
   private setBusy(on: boolean) {
     this.sendBtn.replaceChildren(ic(on ? 'stop' : 'send'));
-    this.sendBtn.setAttribute('aria-label', on ? 'Stop' : 'Send');
+    this.sendBtn.setAttribute('aria-label', on ? '停止' : '发送');
     this.sendBtn.classList.toggle('stop', on);
     this.el.classList.toggle('busy', on);
     if (!on) this.say('');
@@ -338,18 +338,18 @@ export class AssistantPanel {
     if (this.chat || devChat()) return true;
     // Turned off, nothing is fetched (not even Puter's SDK), and "check your connection" would be wrong.
     if (!prefs.use_online_access) {
-      this.notice('The assistant works online, but online access is turned off (Preferences ▸ System ▸ Network).');
+      this.notice('助手需要在线运行，但在线访问已关闭（首选项 ▸ 系统 ▸ 网络）。');
       return false;
     }
-    this.say('Connecting to Puter…');
+    this.say('正在连接本地智能引擎…');
     const sdk = await loadPuter();
     this.say('');
     if (!sdk?.ai) {
-      this.notice('The assistant runs on 本地智能引擎, which could not be reached. Check your connection and try again.');
+      this.notice('助手运行在本地智能引擎上，当前无法连接。请检查网络连接后重试。');
       return false;
     }
     if (!inPuterDesktop() && !isSignedIn()) {
-      const btn = el('button', { class: 'as-btn primary', type: 'button' }, 'Sign in');
+      const btn = el('button', { class: 'as-btn primary', type: 'button' }, '登录');
       btn.addEventListener('click', () => {
         void signIn()
           .then((ok) => {
@@ -360,7 +360,7 @@ export class AssistantPanel {
           })
           .catch((e) => this.flash((e as Error).message));
       });
-      this.notice('Sign in to use the assistant (it runs on 本地智能引擎).', btn);
+      this.notice('登录以使用助手（运行在本地智能引擎上）。', btn);
       return false;
     }
     return true;
@@ -463,7 +463,7 @@ export class AssistantPanel {
       this.pending.push(item);
       this.tray.append(this.trayItem(item));
     }
-    if (over) this.flash(`Up to ${MAX_ATTACHMENTS} files can go with one message, so ${over === 1 ? '1 was' : `${over} were`} left out.`);
+    if (over) this.flash(`单条消息最多可附加 ${MAX_ATTACHMENTS} 个文件，因此略过了 ${over} 个文件。`);
     this.readNext();
     this.syncTray();
   }
@@ -487,7 +487,7 @@ export class AssistantPanel {
   }
 
   private trayItem(item: PendingFile): HTMLElement {
-    const remove = el('button', { class: 'as-tray-remove', type: 'button', 'aria-label': `Remove ${item.name}`, title: 'Remove' }, ic('x'));
+    const remove = el('button', { class: 'as-tray-remove', type: 'button', 'aria-label': `移除 ${item.name}`, title: '移除' }, ic('x'));
     remove.addEventListener('click', () => {
       this.removePending(item);
       this.input.focus();
@@ -584,7 +584,7 @@ export class AssistantPanel {
     // The reply is redrawn as it streams: screen readers wait for it to finish instead of reading every redraw.
     turn.el.setAttribute('aria-busy', 'true');
     this.setBusy(true);
-    this.say('Thinking…');
+    this.say('思考中…');
     this.scroll(true);
     let res: ExchangeResult;
     try {
@@ -598,20 +598,20 @@ export class AssistantPanel {
           }
           turn.text.src += e.text;
           this.queueText(turn.text);
-          this.say('Writing…');
+          this.say('编写中…');
         } else if (e.type === 'step') {
           if (!turn.steps) {
             if (turn.text) this.renderText(turn.text);
-            turn.steps = el('ol', { class: 'as-steps', 'aria-label': 'Steps' });
+            turn.steps = el('ol', { class: 'as-steps', 'aria-label': '步骤' });
             turn.body.append(turn.steps);
             turn.text = null;
           }
           this.renderStep(turn, turn.steps, e.step);
-          this.say(e.step.status === 'running' ? `${stepLabel(e.step.name, e.step.args)}…` : 'Thinking…');
+          this.say(e.step.status === 'running' ? `${stepLabel(e.step.name, e.step.args)}…` : '思考中…');
         } else if (e.type === 'round') {
-          this.say('Thinking…');
+          this.say('思考中…');
         } else if (e.type === 'retry') {
-          this.say(`The AI service did not answer. Trying again (${e.attempt} of ${MAX_RETRIES})…`);
+          this.say(`AI 服务未响应。正在重试（第 ${e.attempt} 次，共 ${MAX_RETRIES} 次）…`);
         }
       });
     } catch (e) {
@@ -619,14 +619,14 @@ export class AssistantPanel {
     }
     turn.el.removeAttribute('aria-busy');
     // Everything this message changed becomes one undo step, also when New Chat stopped it.
-    const label = `Assistant: ${short(request, 40)}`;
+    const label = `助手: ${short(request, 40)}`;
     const changed = !!mark && !app.undo.isCurrent(mark) && app.undo.squash(mark, label);
     if (this.turn !== turn) return;
     if (turn.text) this.renderText(turn.text);
     const after = app.undo.mark();
-    if (res.stopped) turn.foot.append(el('span', { class: 'as-meta' }, 'Stopped.'));
+    if (res.stopped) turn.foot.append(el('span', { class: 'as-meta' }, '已停止。'));
     if (res.error) {
-      const retry = el('button', { class: 'as-btn', type: 'button' }, 'Try again');
+      const retry = el('button', { class: 'as-btn', type: 'button' }, '重试');
       retry.addEventListener('click', () => {
         if (this.agent.busy) return;
         turn.foot.replaceChildren();
@@ -634,17 +634,17 @@ export class AssistantPanel {
         this.input.focus();
         void this.run(request, (on) => this.agent.retry(on));
       });
-      turn.foot.append(el('div', { class: 'as-error', role: 'alert' }, `The assistant could not answer: ${res.error.message}`), retry);
+      turn.foot.append(el('div', { class: 'as-error', role: 'alert' }, `助手无法回答：${res.error.message}`), retry);
     }
     if (changed) {
-      const undo = el('button', { class: 'as-btn', type: 'button' }, ic('undo'), 'Undo changes');
+      const undo = el('button', { class: 'as-btn', type: 'button' }, ic('undo'), '撤销更改');
       undo.addEventListener('click', () => {
         if (!app.undo.isCurrent(after)) {
-          this.flash('The scene changed since; use Edit › Undo History to step back.');
+          this.flash('场景此后已更改；请使用 编辑 ▸ 撤销历史 进行后退。');
           return;
         }
         app.undoStep();
-        undo.replaceWith(el('span', { class: 'as-meta' }, 'Changes undone.'));
+        undo.replaceWith(el('span', { class: 'as-meta' }, '已撤销更改。'));
         this.input.focus();
       });
       turn.foot.prepend(undo);
@@ -685,7 +685,7 @@ export class AssistantPanel {
       node.title = step.summary;
       if (step.status === 'error') node.append(el('div', { class: 'as-step-detail' }, short(step.summary, 220)));
     }
-    if (step.image) node.append(el('img', { class: 'as-shot', src: step.image, alt: 'What the assistant saw' }));
+    if (step.image) node.append(el('img', { class: 'as-shot', src: step.image, alt: '助手查看的内容' }));
     this.scroll();
   }
 }

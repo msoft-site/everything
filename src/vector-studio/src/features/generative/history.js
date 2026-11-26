@@ -19,11 +19,11 @@ export const MAX_ENTRIES = 40;
 export const MAX_BYTES = 3_000_000;
 
 export const KIND_LABELS = {
-  vectors: 'Vectors',
-  shapeFill: 'Shape Fill',
-  pattern: 'Pattern',
-  recolor: 'Recolor',
-  text: 'Text',
+  vectors: '矢量图',
+  shapeFill: '形状填充',
+  pattern: '图案',
+  recolor: '重新着色',
+  text: '文本',
 };
 
 export class GenerationHistory extends Emitter {

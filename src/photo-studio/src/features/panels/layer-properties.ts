@@ -43,11 +43,11 @@ const KIND_ICON: Record<string, string> = {
   paint: 'paintbrush',
 };
 export function kindTitle(l: Layer) {
-  if (l.kind === 'image') return 'EMBEDDED OBJECT';
-  if (l.kind === 'vector') return 'SHAPE LAYER';
-  if (l.kind === 'text') return 'TYPE LAYER';
-  if (l.kind === 'solid') return l.fill ? `${l.fill.type.toUpperCase()} FILL LAYER` : 'FILL LAYER';
-  return `${l.kind.toUpperCase()} LAYER`;
+  if (l.kind === 'image') return '嵌入对象';
+  if (l.kind === 'vector') return '形状图层';
+  if (l.kind === 'text') return '文字图层';
+  if (l.kind === 'solid') return l.fill ? `${l.fill.type.toUpperCase()} 填充图层` : '填充图层';
+  return `${l.kind.toUpperCase()} 图层`;
 }
 /** The kind icon and title above a layer's properties. */
 export const layerTitle = (l: Layer, title = kindTitle(l)) =>
@@ -80,12 +80,12 @@ export function transformSection(e: Editor, l: Layer, disabled: boolean, t = l.t
     });
   const on = linked(e);
   const body = `<div class="pf-transform">
-<button type="button" class="icon-button toggle pf-link" data-pf-link="layer" aria-pressed="${on}" title="${on ? 'Width and height keep their proportions (click to unlink)' : 'Link width and height to keep proportions'}" aria-label="Link layer width and height" ${disabled ? 'disabled' : ''}>${svg(on ? 'link' : 'unlink', 14)}</button>
-${len('width', 'W', 'Width')}${len('x', 'X', 'Horizontal position of the left edge')}
-${len('height', 'H', 'Height')}${len('y', 'Y', 'Vertical position of the top edge')}
+<button type="button" class="icon-button toggle pf-link" data-pf-link="layer" aria-pressed="${on}" title="${on ? '保持宽高比 (点击取消链接)' : '链接宽高以保持比例'}" aria-label="链接图层宽度和高度" ${disabled ? 'disabled' : ''}>${svg(on ? 'link' : 'unlink', 14)}</button>
+${len('width', '宽', '宽度')}${len('x', 'X', '左边缘水平位置')}
+${len('height', '高', '高度')}${len('y', 'Y', '顶边缘垂直位置')}
 </div>
-<div class="pf-angle">${field({ key: 'layer.rotation', label: 'Angle', title: 'Rotation in degrees', value: formatNumber(t.rotation, 2), suffix: '°', disabled, step: 1 })}<div class="pf-flips">${commandButton(e, 'edit.flip-horizontal', 'Flip horizontal', 'flip-horizontal-2', { iconOnly: true })}${commandButton(e, 'edit.flip-vertical', 'Flip vertical', 'flip-vertical-2', { iconOnly: true })}</div></div>`;
-  return section('layer-transform', 'Transform', body);
+<div class="pf-angle">${field({ key: 'layer.rotation', label: '旋转', title: '旋转角度 (度)', value: formatNumber(t.rotation, 2), suffix: '°', disabled, step: 1 })}<div class="pf-flips">${commandButton(e, 'edit.flip-horizontal', '水平翻转', 'flip-horizontal-2', { iconOnly: true })}${commandButton(e, 'edit.flip-vertical', '垂直翻转', 'flip-vertical-2', { iconOnly: true })}</div></div>`;
+  return section('layer-transform', '变换', body);
 }
 
 /** Position and uniform size of a group or several layers, from their
@@ -106,12 +106,12 @@ export function frameSection(e: Editor, disabled: boolean) {
       step,
     });
   const body = `<div class="pf-transform">
-<button type="button" class="icon-button toggle pf-link" aria-pressed="true" title="Groups and several layers scale proportionally" aria-label="Width and height keep proportions" disabled>${svg('link', 14)}</button>
-${len('width', 'W', 'Width of the combined bounds')}${len('x', 'X', 'Left edge of the combined bounds')}
-${len('height', 'H', 'Height of the combined bounds')}${len('y', 'Y', 'Top edge of the combined bounds')}
+<button type="button" class="icon-button toggle pf-link" aria-pressed="true" title="编组与多个图层等比例缩放" aria-label="宽度与高度保持比例" disabled>${svg('link', 14)}</button>
+${len('width', '宽', '组合边界宽度')}${len('x', 'X', '组合边界左边缘')}
+${len('height', '高', '组合边界高度')}${len('y', 'Y', '组合边界顶边缘')}
 </div>
-<div class="pf-angle"><span class="pf-note">Scales proportionally about the center.</span><div class="pf-flips">${commandButton(e, 'edit.flip-horizontal', 'Flip horizontal', 'flip-horizontal-2', { iconOnly: true })}${commandButton(e, 'edit.flip-vertical', 'Flip vertical', 'flip-vertical-2', { iconOnly: true })}</div></div>`;
-  return section('layer-transform', 'Transform', body);
+<div class="pf-angle"><span class="pf-note">围绕中心等比例缩放。</span><div class="pf-flips">${commandButton(e, 'edit.flip-horizontal', '水平翻转', 'flip-horizontal-2', { iconOnly: true })}${commandButton(e, 'edit.flip-vertical', '垂直翻转', 'flip-vertical-2', { iconOnly: true })}</div></div>`;
+  return section('layer-transform', '变换', body);
 }
 
 /** Show a live transform (a Free Transform drag) in the fields without committing. */
@@ -131,20 +131,20 @@ export function syncTransformFields(e: Editor, t: Layer['transform']) {
 }
 
 const ALIGN: [string, string, string][] = [
-  ['layer.align-left', 'Align left edges', 'align-start-vertical'],
-  ['layer.align-hcenter', 'Align horizontal centers', 'align-horizontal-justify-center'],
-  ['layer.align-right', 'Align right edges', 'align-end-vertical'],
-  ['layer.align-top', 'Align top edges', 'align-start-horizontal'],
-  ['layer.align-vcenter', 'Align vertical centers', 'align-vertical-justify-center'],
-  ['layer.align-bottom', 'Align bottom edges', 'align-end-horizontal'],
+  ['layer.align-left', '左对齐', 'align-start-vertical'],
+  ['layer.align-hcenter', '水平居中', 'align-horizontal-justify-center'],
+  ['layer.align-right', '右对齐', 'align-end-vertical'],
+  ['layer.align-top', '顶对齐', 'align-start-horizontal'],
+  ['layer.align-vcenter', '垂直居中', 'align-vertical-justify-center'],
+  ['layer.align-bottom', '底对齐', 'align-end-horizontal'],
 ];
 export function alignSection(e: Editor) {
   const many = e.selectedIds.size >= 3;
   const single = e.selectedIds.size === 1;
-  const body = `<div class="pf-icons" role="group" aria-label="Align">${ALIGN.map(([id, label, icon]) => commandButton(e, id, label, icon, { iconOnly: true })).join('')}</div>
-<div class="pf-icons" role="group" aria-label="Distribute">${commandButton(e, 'layer.distribute-hcenter', 'Distribute horizontal centers', 'distribute-h', { iconOnly: true })}${commandButton(e, 'layer.distribute-vcenter', 'Distribute vertical centers', 'distribute-v', { iconOnly: true })}${commandButton(e, 'layer.distribute-h-space', 'Distribute horizontal space', 'move-horizontal', { iconOnly: true })}${commandButton(e, 'layer.distribute-v-space', 'Distribute vertical space', 'move-vertical', { iconOnly: true })}</div>
-${single ? '<p class="pf-note">One layer aligns to the selection, or to the canvas when nothing is selected.</p>' : commandToggle(e, 'layer.align-to-canvas', 'Align to canvas')}${!single && !many ? '<p class="pf-note">Select three or more layers to distribute them.</p>' : ''}`;
-  return section('layer-align', 'Align and Distribute', body);
+  const body = `<div class="pf-icons" role="group" aria-label="对齐">${ALIGN.map(([id, label, icon]) => commandButton(e, id, label, icon, { iconOnly: true })).join('')}</div>
+<div class="pf-icons" role="group" aria-label="分布">${commandButton(e, 'layer.distribute-hcenter', '按水平中心分布', 'distribute-h', { iconOnly: true })}${commandButton(e, 'layer.distribute-vcenter', '按垂直中心分布', 'distribute-v', { iconOnly: true })}${commandButton(e, 'layer.distribute-h-space', '水平间距分布', 'move-horizontal', { iconOnly: true })}${commandButton(e, 'layer.distribute-v-space', '垂直间距分布', 'move-vertical', { iconOnly: true })}</div>
+${single ? '<p class="pf-note">单图层对齐到选区；若未选择选区则对齐到画布。</p>' : commandToggle(e, 'layer.align-to-canvas', '对齐到画布')}${!single && !many ? '<p class="pf-note">选择三个或更多图层以进行分布排列。</p>' : ''}`;
+  return section('layer-align', '对齐与分布', body);
 }
 
 const ACTIONS: Record<string, [string, string, string][]> = {
@@ -182,7 +182,7 @@ export function quickActionsSection(e: Editor, l: Layer) {
   if (!list.length) return '';
   return section(
     `layer-actions`,
-    'Quick Actions',
+    '快速操作',
     `<div class="pf-actions">${list.map(([id, label, icon]) => commandButton(e, id, label, icon)).join('')}</div>`,
   );
 }
@@ -228,26 +228,27 @@ export function layerProperties(
   const kindControls = isVectorGradient(l.vector?.fill)
     ? gradientProperties(l, doc)
     : isVectorPattern(l.vector?.fill)
-      ? `<h3>Pattern fill</h3>${number('patternPhaseX', 'Pattern offset X (px)', l.vector!.fill.phase?.x ?? 0)}${number('patternPhaseY', 'Pattern offset Y (px)', l.vector!.fill.phase?.y ?? 0)}<label class="lock-label"><input type="checkbox" data-property="patternLinked" ${l.vector!.fill.align === false ? '' : 'checked'}> Link pattern to layer</label>`
+      ? `<h3>图案填充</h3>${number('patternPhaseX', '图案偏移 X (像素)', l.vector!.fill.phase?.x ?? 0)}${number('patternPhaseY', '图案偏移 Y (像素)', l.vector!.fill.phase?.y ?? 0)}<label class="lock-label"><input type="checkbox" data-property="patternLinked" ${l.vector!.fill.align === false ? '' : 'checked'}> 将图案链接到图层</label>`
       : parts.color !== false && (l.kind === 'solid' || l.kind === 'vector')
-        ? `<label class="color-row">Color <input type="color" data-property="color" value="${l.kind === 'vector' ? vectorDisplayHex(l, doc) : l.color}"></label>`
+        ? `<label class="color-row">颜色 <input type="color" data-property="color" value="${l.kind === 'vector' ? vectorDisplayHex(l, doc) : l.color}"></label>`
         : '';
   const text =
     l.kind === 'text' && parts.textButtons !== false
-      ? `<button data-command="type.edit" class="wide">${svg('type', 13)} Edit text</button><button data-command="type.toggle-panels" class="wide">${svg('case-upper', 13)} Character and Paragraph</button><button data-command="type.warp" class="wide">${svg('waves', 13)} Warp text</button>`
+      ? `<button data-command="type.edit" class="wide">${svg('type', 13)} 编辑文字</button><button data-command="type.toggle-panels" class="wide">${svg('case-upper', 13)} 字符与段落</button><button data-command="type.warp" class="wide">${svg('waves', 13)} 文字变形</button>`
       : '';
+  const adjLabels: Record<string, string> = { brightness: '亮度', contrast: '对比度', saturation: '饱和度', blur: '模糊' };
   const adjustments = section(
     'layer-adjustments',
-    'Adjustments',
+    '调整',
     (['brightness', 'contrast', 'saturation', 'blur'] as const)
       .map(
         (k) =>
-          `<label class="slider-field"><span>${k[0].toUpperCase() + k.slice(1)}<output>${l.filters[k]}</output></span><input data-filter="${k}" aria-label="${k}" type="range" min="${k === 'blur' ? 0 : -100}" max="${k === 'blur' ? 30 : 100}" value="${l.filters[k]}"></label>`,
+          `<label class="slider-field"><span>${adjLabels[k]}<output>${l.filters[k]}</output></span><input data-filter="${k}" aria-label="${adjLabels[k]}" type="range" min="${k === 'blur' ? 0 : -100}" max="${k === 'blur' ? 30 : 100}" value="${l.filters[k]}"></label>`,
       )
       .join(''),
-    `<button data-action="reset-filters" class="pf-head-button" title="Reset adjustments" aria-label="Reset adjustments">${svg('rotate-ccw', 12)}</button>`,
+    `<button data-action="reset-filters" class="pf-head-button" title="重置调整" aria-label="重置调整">${svg('rotate-ccw', 12)}</button>`,
   );
-  return `<div class="property-body">${parts.header === false ? '' : layerTitle(l, parts.title)}<input class="layer-name-input" data-property="name" aria-label="Layer name" value="${escapeXML(l.name)}" ${locked ? 'disabled' : ''}><label class="lock-label"><input type="checkbox" data-property="locked" ${l.locked ? 'checked' : ''} ${ancestorLocked ? 'disabled' : ''}> Lock layer</label><div class="partial-locks">${partial('transparency', 'Lock transparency')}${partial('composite', 'Lock image pixels')}${partial('position', 'Lock position')}</div><fieldset ${locked ? 'disabled' : ''}>
+  return `<div class="property-body">${parts.header === false ? '' : layerTitle(l, parts.title)}<input class="layer-name-input" data-property="name" aria-label="图层名称" value="${escapeXML(l.name)}" ${locked ? 'disabled' : ''}><label class="lock-label"><input type="checkbox" data-property="locked" ${l.locked ? 'checked' : ''} ${ancestorLocked ? 'disabled' : ''}> 锁定图层</label><div class="partial-locks">${partial('transparency', '锁定透明度')}${partial('composite', '锁定图像像素')}${partial('position', '锁定位置')}</div><fieldset ${locked ? 'disabled' : ''}>
 ${transform}${alignSection(e)}${text}${kindControls}${l.vector ? strokeProperties(l, doc) : ''}${parts.insert ?? ''}${ADJUSTMENTS_MARK}${adjustments}${maskSection(e, l)}${quickActionsSection(e, l)}</fieldset></div>`;
 }
 

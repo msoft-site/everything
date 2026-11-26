@@ -183,4 +183,67 @@ const EXTRA_PATTERNS = [
   (s) => { const m = s.match(/^Downloaded (.+)\.$/i); return m ? ('已下载 ' + m[1] + '。') : null; },
   (s) => { const m = s.match(/^(\d+(?:\.\d+)?) x (\d+(?:\.\d+)?) (px|in|mm|pt|cm)$/); if (!m) return null; return m[1] + ' × ' + m[2] + ' ' + ({px:'像素',in:'英寸',mm:'毫米',pt:'点',cm:'厘米'})[m[3]]; },
   (s, t) => { const m = s.match(/^(.+?) (\d+(?:\.\d+)?) x (\d+(?:\.\d+)?) (px|in|mm|pt|cm)$/); if (!m) return null; const b = t(m[1]); return b ? b + '，' + m[2] + ' × ' + m[3] + ' ' + ({px:'像素',in:'英寸',mm:'毫米',pt:'点',cm:'厘米'})[m[4]] : null; },
+  // Shortcuts dialog patterns
+  (s, t) => { const m = s.match(/^Add a shortcut for (.+)$/i); return m ? ('为 ' + (t(m[1]) || m[1]) + ' 添加快捷键') : null; },
+  (s, t) => { const m = s.match(/^Change shortcut (.+?) for (.+)$/i); return m ? ('更改 ' + (t(m[2]) || m[2]) + ' 的快捷键 ' + m[1]) : null; },
+  (s, t) => { const m = s.match(/^Remove (.+?) from (.+)$/i); return m ? ('从 ' + (t(m[2]) || m[2]) + ' 中移除 ' + m[1]) : null; },
+  (s, t) => { const m = s.match(/^Reset (.+?) to its default$/i); return m ? ('重置 ' + (t(m[1]) || m[1]) + ' 为默认快捷键') : null; },
+  (s) => { const m = s.match(/^Auto saved:\s*(.+)$/i); return m ? ('已自动保存：' + m[1]) : null; },
+  (s) => { const m = s.match(/^(\d+)\s*x\s*(\d+),\s*Original,\s*(\d+)\s*fps$/i); return m ? (m[1] + ' × ' + m[2] + '，原始，' + m[3] + ' fps') : null; },
+  // Meetings / calendar date patterns
+  (s) => {
+    const days = { Mon: '周一', Tue: '周二', Wed: '周三', Thu: '周四', Fri: '周五', Sat: '周六', Sun: '周日', Monday: '星期一', Tuesday: '星期二', Wednesday: '星期三', Thursday: '星期四', Friday: '星期五', Saturday: '星期六', Sunday: '星期日' };
+    const months = { Jan: '1月', Feb: '2月', Mar: '3月', Apr: '4月', May: '5月', Jun: '6月', Jul: '7月', Aug: '8月', Sep: '9月', Oct: '10月', Nov: '11月', Dec: '12月', January: '1月', February: '2月', March: '3月', April: '4月', June: '6月', July: '7月', August: '8月', September: '9月', October: '10月', November: '11月', December: '12月' };
+    let m = s.match(/^(?:([0-9]{1,2}:[0-9]{2}\s*(?:AM|PM))\s*•\s*)?(Mon|Tue|Wed|Thu|Fri|Sat|Sun|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday),\s*([A-Za-z]+)\s*(\d+)(?:,\s*(\d{4}))?$/i);
+    if (m) {
+      const time = m[1] ? (m[1] + ' • ') : '';
+      const day = days[m[2]] || m[2];
+      const month = months[m[3]] || m[3];
+      const year = m[5] ? (m[5] + '年 ') : '';
+      return `${time}${year}${month}${m[4]}日 ${day}`;
+    }
+    return null;
+  },
+  // CAD patterns
+  (s) => { const m = s.match(/^Spacing\s+(\d+(?:\.\d+)?)$/i); return m ? ('间距 ' + m[1]) : null; },
+  (s, t) => { const m = s.match(/^Text style:\s*(.+)$/i); return m ? ('文字样式：' + (t(m[1]) || m[1])) : null; },
+  (s, t) => { const m = s.match(/^Dimension style:\s*(.+)$/i); return m ? ('标注样式：' + (t(m[1]) || m[1])) : null; },
+  (s) => { const m = s.match(/^Text height:\s*(\d+(?:\.\d+)?)$/i); return m ? ('文字高度：' + m[1]) : null; },
+  (s) => { const m = s.match(/^Sample:\s*(.+)$/i); return m ? ('示例：' + m[1]) : null; },
+  (s) => { const m = s.match(/^Scale\s+1\s*:\s*([0-9.]+)$/i); return m ? ('比例 1 : ' + m[1]) : null; },
+  (s) => { const m = s.match(/^Command:\s*(.+)$/i); return m ? ('命令：' + m[1]) : null; },
+  // Teamchat patterns
+  (s) => { const m = s.match(/^You:\s*(.+?)\.\s*Status,\s*notifications,\s*and\s*settings$/i); return m ? ('您：' + m[1] + '。状态、通知与设置') : null; },
+  (s) => { const m = s.match(/^Hi\s+(.+?)\.\s*Teamchat keeps your team's conversations in channels, threads, and direct messages\.\s*Where would you like to start\?$/i); return m ? ('你好 ' + m[1] + '。团队聊天通过频道、话题和私信让团队沟通井然有序。你想从哪里开始？') : null; },
+  // Calendar date & recurrence patterns
+  (s) => {
+    const days = { Mon: '周一', Tue: '周二', Wed: '周三', Thu: '周四', Fri: '周五', Sat: '周六', Sun: '周日', Monday: '周一', Tuesday: '周二', Wednesday: '周三', Thursday: '周四', Friday: '周五', Saturday: '周六', Sunday: '周日' };
+    const months = { Jan: '1月', Feb: '2月', Mar: '3月', Apr: '4月', May: '5月', Jun: '6月', Jul: '7月', Aug: '8月', Sep: '9月', Oct: '10月', Nov: '11月', Dec: '12月', January: '1月', February: '2月', March: '3月', April: '4月', June: '6月', July: '7月', August: '8月', September: '9月', October: '10月', November: '11月', December: '12月' };
+    const ords = { first: '第一个', second: '第二个', third: '第三个', fourth: '第四个', last: '最后一个' };
+    let m = s.match(/^(Sun|Mon|Tue|Wed|Thu|Fri|Sat)\s+([A-Za-z]+)\s+(\d{1,2})\s+(\d{4})(?:,\s*(selected))?$/i);
+    if (m) {
+      const d = days[m[1]] || m[1];
+      const mo = months[m[2]] || m[2];
+      const sel = m[5] ? ' (已选)' : '';
+      return `${m[4]}年${mo}${m[3]}日 ${d}${sel}`;
+    }
+    m = s.match(/^(January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+(\d{4})$/i);
+    if (m) {
+      const mo = months[m[1]] || m[1];
+      return `${m[2]}年${mo}`;
+    }
+    m = s.match(/^Weekly on (Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)$/i);
+    if (m) {
+      return '每' + (days[m[1]] || m[1]);
+    }
+    m = s.match(/^Monthly on the (first|second|third|fourth|last)\s+(Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)$/i);
+    if (m) {
+      return '每月' + (ords[m[1].toLowerCase()] || m[1]) + (days[m[2]] || m[2]);
+    }
+    m = s.match(/^Annually on ([A-Za-z]+)\s+(\d{1,2})$/i);
+    if (m) {
+      return '每年' + (months[m[1]] || m[1]) + m[2] + '日';
+    }
+    return null;
+  },
 ];

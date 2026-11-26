@@ -160,21 +160,21 @@ export async function generateTextDialog(app) {
   let controller = null;
   let footer = null;
   const pid = nextId('gen-tp');
-  const prompt = h('textarea.gen-prompt', { id: pid, rows: 3, maxlength: 600, placeholder: 'What should the text say? Like "opening hours for a bakery, Monday to Saturday"' });
-  const kind = selectField('Kind', TEXT_KINDS, 'paragraph');
-  const tone = selectField('Tone', TONES, 'friendly');
-  const go = h('button.btn.primary.gen-go', { type: 'button' }, icon('sparkles', 14), h('span', 'Generate'));
-  const progress = progressBlock({ label: 'Writing', onCancel: () => controller?.abort() });
+  const prompt = h('textarea.gen-prompt', { id: pid, rows: 3, maxlength: 600, placeholder: '文本内容是什么？例如“面包房营业时间，周一至周六”' });
+  const kind = selectField('类型', TEXT_KINDS, 'paragraph');
+  const tone = selectField('语气', TONES, 'friendly');
+  const go = h('button.btn.primary.gen-go', { type: 'button' }, icon('sparkles', 14), h('span', '生成'));
+  const progress = progressBlock({ label: '正在撰写', onCancel: () => controller?.abort() });
   const status = h('p.gen-status', { role: 'status' });
   const rid = nextId('gen-tr');
   const result = h('textarea.gen-result', { id: rid, rows: 6 });
-  const resultRow = h('div.gen-field', { hidden: true }, h('label.gen-label', { for: rid }, 'Result (you can edit it)'), result);
-  const where = h('p.gen-target', targets.length ? (session(app) && targets[0].end - targets[0].start < doc.get(targets[0].id).text.length ? 'Replaces the selected characters.' : 'Replaces the text of the selected type.') : 'Adds a new text frame to the artboard.');
+  const resultRow = h('div.gen-field', { hidden: true }, h('label.gen-label', { for: rid }, '生成结果 (可直接编辑)'), result);
+  const where = h('p.gen-target', targets.length ? (session(app) && targets[0].end - targets[0].start < doc.get(targets[0].id).text.length ? '替换所选文字。' : '替换所选文本框的全部内容。') : '在画板上添加新文本框。');
   const run = async () => {
     if (controller) return;
     const p = cleanPrompt(prompt.value);
     if (!p) {
-      status.textContent = 'Describe the text first.';
+      status.textContent = '请先输入对文本的描述。';
       prompt.focus();
       return;
     }
@@ -192,14 +192,14 @@ export async function generateTextDialog(app) {
     status.textContent = '';
     try {
       const text = plainReply(await askChat(client, generateTextPrompt({ prompt: p, kind: kind.sel.value, tone: tone.sel.value }), { signal: controller.signal }));
-      if (!text) throw new UserError('No text came back. Try again.');
+      if (!text) throw new UserError('未返回任何文本，请重试。');
       result.value = text;
       resultRow.hidden = false;
-      if (footer) footerButton(footer, 'Insert').disabled = false;
+      if (footer) footerButton(footer, '插入').disabled = false;
       app.generativeHistory?.add({ kind: 'text', prompt: p, settings: { action: 'generate', kind: kind.sel.value, tone: tone.sel.value }, items: [{ text, action: 'generate' }] });
-      announce('Text ready');
+      announce('文本已就绪');
     } catch (err) {
-      status.textContent = isAbort(err) ? 'Cancelled.' : aiErrorMessage(err);
+      status.textContent = isAbort(err) ? '已取消。' : aiErrorMessage(err);
     } finally {
       controller = null;
       go.disabled = false;
@@ -207,18 +207,18 @@ export async function generateTextDialog(app) {
     }
   };
   go.addEventListener('click', run);
-  const body = h('div.form.gen-text-dialog', h('div.gen-field', h('label.gen-label', { for: pid }, 'Describe the text'), prompt), h('div.gen-row', kind.el, tone.el), where, go, progress.el, status, resultRow);
+  const body = h('div.form.gen-text-dialog', h('div.gen-field', h('label.gen-label', { for: pid }, '描述文本内容'), prompt), h('div.gen-row', kind.el, tone.el), where, go, progress.el, status, resultRow);
   let out;
   try {
     out = await openDialog({
-      title: 'Generate Text',
+      title: '生成文本',
       body,
       className: 'gen-dialog',
       initialFocus: () => prompt,
       onOpen: ({ footer: f }) => (footer = f),
       buttons: [
-        { label: 'Cancel', value: null },
-        { label: 'Insert', primary: true, disabled: true, value: () => result.value },
+        { label: '取消', value: null },
+        { label: '插入', primary: true, disabled: true, value: () => result.value },
       ],
     });
   } finally {
@@ -253,21 +253,21 @@ export function insertGeneratedText(app, text, kind = 'paragraph', targets = tex
 /** Rewrite the selected text in another tone or length, choosing among alternatives. */
 export async function rewriteDialog(app) {
   const targets = textTargets(app).filter((t) => t.end > t.start);
-  if (!targets.length) throw new UserError('Select type to rewrite.');
+  if (!targets.length) throw new UserError('请先选择要重写的文字。');
   const t = targets[0];
   const original = targetText(app.editor.doc, t);
   let controller = null;
   let footer = null;
   let options = [];
   let chosen = -1;
-  const tone = selectField('Tone', TONES, app.prefs.get('generativeTone') || 'friendly');
-  const length = selectField('Length', LENGTHS, 'same');
+  const tone = selectField('语气', TONES, app.prefs.get('generativeTone') || 'friendly');
+  const length = selectField('长度', LENGTHS, 'same');
   const iid = nextId('gen-ri');
-  const instruction = h('input', { type: 'text', id: iid, maxlength: 200, placeholder: 'Optional, like "mention free delivery"' });
-  const go = h('button.btn.primary.gen-go', { type: 'button' }, icon('sparkles', 14), h('span', 'Rewrite'));
-  const progress = progressBlock({ label: 'Rewriting', onCancel: () => controller?.abort() });
+  const instruction = h('input', { type: 'text', id: iid, maxlength: 200, placeholder: '额外要求 (可选)，如“提及免运费”' });
+  const go = h('button.btn.primary.gen-go', { type: 'button' }, icon('sparkles', 14), h('span', '重写'));
+  const progress = progressBlock({ label: '正在重写', onCancel: () => controller?.abort() });
   const status = h('p.gen-status', { role: 'status' });
-  const list = h('div.gen-options', { role: 'radiogroup', 'aria-label': 'Rewrites' });
+  const list = h('div.gen-options', { role: 'radiogroup', 'aria-label': '重写选项' });
   const render = () => {
     list.replaceChildren(
       ...options.map((o, i) =>
@@ -292,7 +292,7 @@ export async function rewriteDialog(app) {
   const pick = (i) => {
     chosen = i;
     render();
-    if (footer) footerButton(footer, 'Apply').disabled = false;
+    if (footer) footerButton(footer, '应用').disabled = false;
   };
   const run = async () => {
     if (controller) return;
@@ -312,14 +312,14 @@ export async function rewriteDialog(app) {
     try {
       const reply = await askChat(client, rewritePrompt(original, { tone: tone.sel.value, length: length.sel.value, instruction: instruction.value, count: 3 }), { signal: controller.signal });
       options = parseJsonReply(reply, 'array').map((x) => String(x ?? '').trim()).filter(Boolean).slice(0, 5);
-      if (!options.length) throw new UserError('No rewrites came back. Try again.');
+      if (!options.length) throw new UserError('未返回任何重写结果，请重试。');
       chosen = -1;
       render();
       pick(0);
       app.generativeHistory?.add({ kind: 'text', prompt: original.slice(0, 200), settings: { action: 'rewrite', tone: tone.sel.value, length: length.sel.value }, items: options.map((text) => ({ text, action: 'rewrite' })) });
-      status.textContent = `${options.length} rewrites. Choose one and Apply.`;
+      status.textContent = `已生成 ${options.length} 个重写选项。请选择一个并点击应用。`;
     } catch (err) {
-      status.textContent = isAbort(err) ? 'Cancelled.' : aiErrorMessage(err);
+      status.textContent = isAbort(err) ? '已取消。' : aiErrorMessage(err);
     } finally {
       controller = null;
       go.disabled = false;
@@ -330,10 +330,10 @@ export async function rewriteDialog(app) {
   const excerpt = original.length > 400 ? `${original.slice(0, 399)}…` : original;
   const body = h(
     'div.form.gen-text-dialog',
-    h('div.gen-field', h('span.gen-label', 'Original'), h('blockquote.gen-original', excerpt)),
-    targets.length > 1 ? h('p.gen-target', 'Rewrites the first selected text object.') : null,
+    h('div.gen-field', h('span.gen-label', '原文'), h('blockquote.gen-original', excerpt)),
+    targets.length > 1 ? h('p.gen-target', '重写选中的第一个文本对象。') : null,
     h('div.gen-row', tone.el, length.el),
-    h('div.gen-field', h('label.gen-label', { for: iid }, 'Also'), instruction),
+    h('div.gen-field', h('label.gen-label', { for: iid }, '补充要求'), instruction),
     go,
     progress.el,
     status,
@@ -342,21 +342,21 @@ export async function rewriteDialog(app) {
   let out;
   try {
     out = await openDialog({
-      title: 'Rewrite',
+      title: '重写',
       body,
       className: 'gen-dialog',
       onOpen: ({ footer: f }) => (footer = f),
       initialFocus: () => go,
       buttons: [
-        { label: 'Cancel', value: null },
-        { label: 'Apply', primary: true, disabled: true, value: () => options[chosen] ?? null },
+        { label: '取消', value: null },
+        { label: '应用', primary: true, disabled: true, value: () => options[chosen] ?? null },
       ],
     });
   } finally {
     controller?.abort();
   }
-  if (out == null) return false;
-  applyTexts(app, [t], [out], 'Rewrite');
+  if (!out || out == null) return false;
+  applyTexts(app, [t], [out], '重写');
   return true;
 }
 
@@ -377,14 +377,14 @@ async function eachTarget(app, label, targets, fn) {
 /** Proofread the selected type: shows the corrections, then applies them. */
 export async function proofread(app) {
   const targets = textTargets(app).filter((t) => t.end > t.start);
-  if (!targets.length) throw new UserError('Select type to proofread.');
+  if (!targets.length) throw new UserError('请选择要校对的文字。');
   const client = await requireAI(app);
   if (!client) return false;
   const doc = app.editor.doc;
   const originals = targets.map((t) => targetText(doc, t));
   let results;
   try {
-    results = await eachTarget(app, 'Proofreading', targets, async (text, signal) => {
+    results = await eachTarget(app, '正在校对', targets, async (text, signal) => {
       const r = parseJsonReply(await askChat(client, proofreadPrompt(text), { signal }), 'object');
       return { text: typeof r.text === 'string' && r.text.trim() ? r.text : text, changes: Array.isArray(r.changes) ? r.changes : [] };
     });
@@ -396,7 +396,7 @@ export async function proofread(app) {
   const fixed = results.map((r, i) => (originals[i].endsWith('\n') && !r.text.endsWith('\n') ? `${r.text}\n` : r.text));
   const changed = fixed.map((t, i) => t !== originals[i]);
   if (!changed.some(Boolean)) {
-    app.notify('No corrections needed.', { polite: false });
+    app.notify('无需修改。', { polite: false });
     return false;
   }
   const rows = [];
@@ -412,29 +412,29 @@ export async function proofread(app) {
   });
   const n = changed.filter(Boolean).length;
   const ok = await openDialog({
-    title: 'Proofread',
+    title: '校对',
     className: 'gen-dialog',
-    body: h('div.form.gen-text-dialog', h('p.gen-target', n === 1 ? 'Suggested corrections:' : `Suggested corrections in ${n} text objects:`), rows),
+    body: h('div.form.gen-text-dialog', h('p.gen-target', n === 1 ? '建议的修改：' : `在 ${n} 个文本对象中建议的修改：`), rows),
     buttons: [
-      { label: 'Cancel', value: false },
-      { label: 'Apply Corrections', primary: true, value: true },
+      { label: '取消', value: false },
+      { label: '应用修改', primary: true, value: true },
     ],
   });
   if (!ok) return false;
-  applyTexts(app, targets, fixed.map((t, i) => (changed[i] ? t : null)), 'Proofread');
+  applyTexts(app, targets, fixed.map((t, i) => (changed[i] ? t : null)), '校对');
   return true;
 }
 
 /** Translate the selected type into a language (one undo step). */
 export async function translate(app) {
   const targets = textTargets(app).filter((t) => t.end > t.start);
-  if (!targets.length) throw new UserError('Select type to translate.');
+  if (!targets.length) throw new UserError('请选择要翻译的文字。');
   const last = app.prefs.get('generativeLanguage');
   const v = await app.dialogs.form({
-    title: 'Translate',
-    description: targets.length > 1 ? `Translates ${targets.length} text objects. Character styles stay as they are.` : 'Character styles stay as they are.',
-    okLabel: 'Translate',
-    fields: [{ key: 'language', type: 'select', label: 'Into', value: LANGUAGES.includes(last) ? last : 'Spanish', options: LANGUAGES.map((l) => ({ value: l, label: l })) }],
+    title: '翻译',
+    description: targets.length > 1 ? `翻译 ${targets.length} 个文本对象。字符样式将保持不变。` : '字符样式将保持不变。',
+    okLabel: '翻译',
+    fields: [{ key: 'language', type: 'select', label: '目标语言', value: LANGUAGES.includes(last) ? last : '英语', options: LANGUAGES.map((l) => ({ value: l, label: l })) }],
   });
   if (!v) return false;
   app.prefs.set('generativeLanguage', v.language);
@@ -442,7 +442,7 @@ export async function translate(app) {
   if (!client) return false;
   let texts;
   try {
-    texts = await eachTarget(app, `Translating into ${v.language}`, targets, async (text, signal) => {
+    texts = await eachTarget(app, `正在翻译为 ${v.language}`, targets, async (text, signal) => {
       const out = plainReply(await askChat(client, translatePrompt(text, v.language), { signal }));
       return text.endsWith('\n') && !out.endsWith('\n') ? `${out}\n` : out;
     });
@@ -450,8 +450,8 @@ export async function translate(app) {
     throw new UserError(aiErrorMessage(err));
   }
   if (!texts) return false;
-  applyTexts(app, targets, texts.map((t) => t || null), `Translate into ${v.language}`);
-  app.notify(`Translated into ${v.language}.`, { polite: true });
+  applyTexts(app, targets, texts.map((t) => t || null), `翻译为 ${v.language}`);
+  app.notify(`已翻译为 ${v.language}。`, { polite: true });
   return true;
 }
 
@@ -465,12 +465,12 @@ export function fitTargets(app) {
 /** Rewrite area type so it fills its frame without overflowing. */
 export async function fitText(app) {
   const nodes = fitTargets(app);
-  if (!nodes.length) throw new UserError('Select area type to fit its text to the frame.');
+  if (!nodes.length) throw new UserError('请选择区域文本以适应框架。');
   const client = await requireAI(app);
   if (!client) return false;
   let results;
   try {
-    results = await withTraceProgress(app, 'Fitting text', async (onProgress, signal) => {
+    results = await withTraceProgress(app, '正在调整文本适应框架', async (onProgress, signal) => {
       onProgress(0.05);
       const out = [];
       for (let i = 0; i < nodes.length; i++) {
@@ -480,15 +480,15 @@ export async function fitText(app) {
       return out;
     }, { delay: 0 });
   } catch (err) {
-    throw new UserError(isAbort(err) ? 'Cancelled.' : aiErrorMessage(err));
+    throw new UserError(isAbort(err) ? '已取消。' : aiErrorMessage(err));
   }
   if (!results) return false;
   if (results.every((r) => r.unchanged)) {
-    app.notify('The text already fits its frame.');
+    app.notify('文本已完美契合框架。');
     return false;
   }
-  applyTexts(app, nodes.map((n) => ({ id: n.id, start: 0, end: n.text.length })), results.map((r) => (r.unchanged ? null : r.text)), 'Fit Text');
-  if (results.some((r) => !r.fits)) app.notify('The text was shortened but still overflows. Try again or enlarge the frame.');
+  applyTexts(app, nodes.map((n) => ({ id: n.id, start: 0, end: n.text.length })), results.map((r) => (r.unchanged ? null : r.text)), '适应框架');
+  if (results.some((r) => !r.fits)) app.notify('文本已缩短，但仍有溢出。请重试或扩大框架。');
   return true;
 }
 

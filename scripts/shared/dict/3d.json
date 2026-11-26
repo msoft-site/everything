@@ -162,5 +162,7 @@
   "Play": "播放动画",
   "Space plays the animation": "按空格键播放动画",
   "Space opens the tool menu": "按空格键打开工具菜单",
-  "Space searches commands": "按空格键搜索所有命令"
+  "Space searches commands": "按空格键搜索所有命令",
+  "Autosaved": "已自动保存",
+  "Autosave": "自动保存"
 }

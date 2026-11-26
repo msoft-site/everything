@@ -127,18 +127,18 @@ export function createAiPanel(ctx, { chat = null, services = {}, readFile = read
   };
   const keyLabel = () => shortcutLabel(ctx.commands?.keyFor?.('assistant') || 'Mod+K');
 
-  const newChatBtn = h('button.icon-btn.small', { type: 'button', 'aria-label': 'New chat', 'data-tip': 'New chat', onclick: () => newChat() }, icon('newChat', 16));
-  const menuBtn = h('button.icon-btn.small', { type: 'button', 'aria-label': 'Assistant settings', 'data-tip': 'Assistant settings', 'aria-haspopup': 'menu', onclick: (e) => openSettings(e.currentTarget) }, icon('more', 16));
-  const closeBtn = h('button.icon-btn.small.ai-close', { type: 'button', 'aria-label': 'Collapse the assistant', 'data-tip': `Collapse (${keyLabel()})`, onclick: () => close() }, icon('panelRightClose', 16));
-  const head = h('header.ai-head', h('span.ai-head-mark', icon('effects', 15)), h('h2.ai-title', { id: 'ai-panel-title' }, 'AI assistant'), newChatBtn, menuBtn, closeBtn);
+  const newChatBtn = h('button.icon-btn.small', { type: 'button', 'aria-label': '新建对话', 'data-tip': '新建对话', onclick: () => newChat() }, icon('newChat', 16));
+  const menuBtn = h('button.icon-btn.small', { type: 'button', 'aria-label': '助手设置', 'data-tip': '助手设置', 'aria-haspopup': 'menu', onclick: (e) => openSettings(e.currentTarget) }, icon('more', 16));
+  const closeBtn = h('button.icon-btn.small.ai-close', { type: 'button', 'aria-label': '收起助手', 'data-tip': `收起 (${keyLabel()})`, onclick: () => close() }, icon('panelRightClose', 16));
+  const head = h('header.ai-head', h('span.ai-head-mark', icon('effects', 15)), h('h2.ai-title', { id: 'ai-panel-title' }, 'AI 助手'), newChatBtn, menuBtn, closeBtn);
 
   const log = h('div.ai-log', { role: 'log', 'aria-labelledby': 'ai-panel-title', tabindex: '-1' });
   const empty = h('div.ai-empty', { 'aria-live': 'off' });
   const signedOut = h('div.ai-signin', { hidden: true });
   log.append(empty);
 
-  const input = h('textarea.ai-input', { rows: 2, spellcheck: true, placeholder: 'Describe a video to make, or an edit…', 'aria-label': 'Message the assistant', enterKeyHint: 'send' });
-  const sendBtn = h('button.ai-send', { type: 'submit', 'aria-label': 'Send', 'data-tip': 'Send (Enter)' }, icon('arrowUp', 17));
+  const input = h('textarea.ai-input', { rows: 2, spellcheck: true, placeholder: '描述要生成的视频，或剪辑需求…', 'aria-label': '向助手发送消息', enterKeyHint: 'send' });
+  const sendBtn = h('button.ai-send', { type: 'submit', 'aria-label': '发送', 'data-tip': '发送 (Enter)' }, icon('arrowUp', 17));
   const fileInput = h('input.sr-only', {
     type: 'file', multiple: true, accept: ATTACH_ACCEPT, tabindex: '-1', 'aria-hidden': 'true',
     onchange: () => {
@@ -148,10 +148,10 @@ export function createAiPanel(ctx, { chat = null, services = {}, readFile = read
       input.focus();
     },
   });
-  const attachBtn = h('button.ai-attach', { type: 'button', 'aria-label': 'Attach files', 'data-tip': 'Attach pictures, videos or sound', onclick: () => fileInput.click() }, icon('attach', 16));
-  const tray = h('ul.ai-tray', { 'aria-label': 'Attached files', hidden: true });
+  const attachBtn = h('button.ai-attach', { type: 'button', 'aria-label': '添加附件', 'data-tip': '附加图片、视频或音频', onclick: () => fileInput.click() }, icon('attach', 16));
+  const tray = h('ul.ai-tray', { 'aria-label': '已添加附件', hidden: true });
   // What goes with a message: the selection and the playhead, a label, not a control.
-  const contextChip = h('div.ai-context', { title: 'Sent with your message, with the tracks and clips of this timeline.' });
+  const contextChip = h('div.ai-context', { title: '随消息发送，包含当前时间轴的轨道和片段信息。' });
   const inputWrap = h('div.ai-input-wrap', {
     onpointerdown: (e) => {
       if (e.target === inputWrap || (e.target.closest('.ai-input-bar') && !e.target.closest('button'))) {
@@ -166,21 +166,21 @@ export function createAiPanel(ctx, { chat = null, services = {}, readFile = read
       if (agent.busy) stop();
       else submit();
     },
-  }, inputWrap, h('p.ai-disclaimer', 'The assistant can make mistakes. Generated video uses Puter credits.'));
+  }, inputWrap, h('p.ai-disclaimer', 'AI 助手可能会犯错。生成视频将使用算力额度。'));
   const body = h('div.ai-body', log, signedOut, form);
 
-  const resizer = h('div.ai-resize', { role: 'separator', 'aria-orientation': 'vertical', 'aria-label': 'Resize the assistant', tabindex: '0', 'aria-valuemin': MIN_WIDTH });
+  const resizer = h('div.ai-resize', { role: 'separator', 'aria-orientation': 'vertical', 'aria-label': '调整助手宽度', tabindex: '0', 'aria-valuemin': MIN_WIDTH });
   const root = h('aside.ai-panel', { id: 'ai-panel', 'aria-labelledby': 'ai-panel-title', hidden: true }, resizer, head, body, status);
-  const rail = h('button.ai-rail', { type: 'button', 'aria-label': 'Expand the AI assistant', 'data-tip': `AI assistant (${keyLabel()})`, 'aria-controls': 'ai-panel', 'aria-expanded': 'false', onclick: () => open() },
+  const rail = h('button.ai-rail', { type: 'button', 'aria-label': '展开 AI 助手', 'data-tip': `AI 助手 (${keyLabel()})`, 'aria-controls': 'ai-panel', 'aria-expanded': 'false', onclick: () => open() },
     h('span.ai-rail-icon', icon('panelRightOpen', 16)), h('span.ai-rail-mark', icon('effects', 16)));
   root.style.setProperty('--ai-w', `${settings.width}px`);
   sendBtn.disabled = true;
 
   // On phones the chat opens as a sheet; its tools ride above the log there.
   const phoneTools = h('div.ai-phone-tools',
-    h('button.btn.small', { type: 'button', onclick: () => newChat() }, icon('newChat', 14), 'New chat'),
-    h('button.btn.small', { type: 'button', 'aria-haspopup': 'menu', onclick: (e) => openSettings(e.currentTarget) }, icon('settings', 14), 'Settings'));
-  const sheet = createSheet({ title: 'AI assistant', host: ctx.editor?.el || document.body, className: 'ai-sheet', onClose: () => sheetClosed() });
+    h('button.btn.small', { type: 'button', onclick: () => newChat() }, icon('newChat', 14), '新建对话'),
+    h('button.btn.small', { type: 'button', 'aria-haspopup': 'menu', onclick: (e) => openSettings(e.currentTarget) }, icon('settings', 14), '设置'));
+  const sheet = createSheet({ title: 'AI 助手', host: ctx.editor?.el || document.body, className: 'ai-sheet', onClose: () => sheetClosed() });
   const phone = () => ctx.mobile?.mode === 'phone';
 
   // Keys typed in the panel stay here (Delete on a suggestion must not delete clips); shortcuts with a modifier still work.
@@ -211,17 +211,17 @@ export function createAiPanel(ctx, { chat = null, services = {}, readFile = read
 
   function openSettings(anchor) {
     showMenu(anchor, [
-      { heading: 'Changes to the project' },
+      { heading: '项目修改权限' },
       ...APPROVAL_MODES.map((m) => ({ label: m.label, radio: true, checked: settings.approval === m.id, onSelect: () => { settings.approval = m.id; saveAiSettings(settings); } })),
       'separator',
-      { heading: 'Video model' },
-      ...VIDEO_MODELS.map((m) => ({ label: m.label, hint: m.hint, radio: true, checked: settings.videoModel === m.id, onSelect: () => { settings.videoModel = m.id; saveAiSettings(settings); announce(`Video model: ${m.label}`); } })),
+      { heading: '视频生成模型' },
+      ...VIDEO_MODELS.map((m) => ({ label: m.label, hint: m.hint, radio: true, checked: settings.videoModel === m.id, onSelect: () => { settings.videoModel = m.id; saveAiSettings(settings); announce(`视频模型: ${m.label}`); } })),
       'separator',
-      { heading: 'Picture model' },
-      ...IMAGE_MODELS.map((m) => ({ label: m.label, hint: m.hint, radio: true, checked: settings.imageModel === m.id, onSelect: () => { settings.imageModel = m.id; saveAiSettings(settings); announce(`Picture model: ${m.label}`); } })),
+      { heading: '图片生成模型' },
+      ...IMAGE_MODELS.map((m) => ({ label: m.label, hint: m.hint, radio: true, checked: settings.imageModel === m.id, onSelect: () => { settings.imageModel = m.id; saveAiSettings(settings); announce(`图片模型: ${m.label}`); } })),
       'separator',
-      { label: 'New chat', icon: 'newChat', onSelect: () => newChat() },
-    ], { align: 'end', label: 'Assistant settings' });
+      { label: '新建对话', icon: 'newChat', onSelect: () => newChat() },
+    ], { align: 'end', label: '助手设置' });
   }
 
   /* ---------- Width ---------- */
@@ -281,8 +281,8 @@ export function createAiPanel(ctx, { chat = null, services = {}, readFile = read
   function refreshChip() {
     if (!isOpen) return;
     const sel = store.selectedIds.map((id) => T.findClip(store.project, id)?.clip).filter(Boolean);
-    const what = sel.length === 1 ? T.clipLabel(store.project, sel[0]) : sel.length ? `${sel.length} clips` : `Playhead ${secs(store.time)}`;
-    contextChip.replaceChildren(h('span.ai-context-icon', icon(sel.length ? 'select' : 'clock', 12)), h('span.sr-only', 'Sent with your message: '), h('span.ai-context-label', what));
+    const what = sel.length === 1 ? T.clipLabel(store.project, sel[0]) : sel.length ? `${sel.length} 个片段` : `播放头 ${secs(store.time)}`;
+    contextChip.replaceChildren(h('span.ai-context-icon', icon(sel.length ? 'select' : 'clock', 12)), h('span.sr-only', '随消息发送：'), h('span.ai-context-label', what));
   }
 
   let lastSuggestionKey = '';
@@ -294,9 +294,9 @@ export function createAiPanel(ctx, { chat = null, services = {}, readFile = read
     lastSuggestionKey = key;
     empty.replaceChildren(
       h('div.ai-empty-mark', icon('effects', 22)),
-      h('p.ai-empty-title', 'Make videos, or have this one edited'),
-      h('p.ai-empty-text', 'Describe a shot to generate, attach a photo to animate, or ask for an edit. Every change can be undone.'),
-      h('ul.ai-suggestions', { 'aria-label': 'Suggestions' }, list.map((text) => h('li', h('button.ai-suggestion', { type: 'button', onclick: () => submit(text) }, text)))),
+      h('p.ai-empty-title', '生成视频，或让助手协助剪辑'),
+      h('p.ai-empty-text', '描述要生成的镜头、上传图片生成动画，或提出剪辑需求。所有修改均可撤销。'),
+      h('ul.ai-suggestions', { 'aria-label': '推荐示例' }, list.map((text) => h('li', h('button.ai-suggestion', { type: 'button', onclick: () => submit(text) }, text)))),
     );
   }
 
@@ -306,8 +306,8 @@ export function createAiPanel(ctx, { chat = null, services = {}, readFile = read
     log.hidden = !ok;
     form.hidden = !ok;
     if (!ok && !signedOut.childElementCount) {
-      const btn = ctx.account?.onSignIn ? h('button.btn.primary', { type: 'button', onclick: () => ctx.account.onSignIn() }, icon('cloud', 16), 'Sign in') : null;
-      signedOut.append(emptyState('user', 'Sign in to use the AI assistant', 'The assistant makes videos and edits with 本地智能引擎, so it needs an account.', btn));
+      const btn = ctx.account?.onSignIn ? h('button.btn.primary', { type: 'button', onclick: () => ctx.account.onSignIn() }, icon('cloud', 16), '登录') : null;
+      signedOut.append(emptyState('user', '登录以使用 AI 助手', 'AI 助手依托本地智能引擎生成视频和执行剪辑，需要登录账户。', btn));
     }
   }
 
@@ -487,7 +487,7 @@ export function createAiPanel(ctx, { chat = null, services = {}, readFile = read
   }
 
   const STATUS_ICONS = { running: 'refresh', waiting: 'clock', done: 'check', error: 'alert', declined: 'declined', skipped: 'minus' };
-  const STATUS_WORDS = { running: 'running', waiting: 'waiting for your answer', done: 'done', error: 'failed', declined: 'not allowed', skipped: 'not run' };
+  const STATUS_WORDS = { running: '正在执行', waiting: '等待确认', done: '已完成', error: '失败', declined: '已拒绝', skipped: '已跳过' };
   function renderStep(row, step) {
     row.className = `ai-step ai-step-${step.status}${changesProject(step.name) ? ' ai-step-change' : ''}${step.costly ? ' ai-step-costly' : ''}`;
     const ic = h('span.ai-step-icon', icon(STATUS_ICONS[step.status] || 'info', 13));
@@ -499,7 +499,7 @@ export function createAiPanel(ctx, { chat = null, services = {}, readFile = read
     row.replaceChildren(ic, label, h('span.sr-only', `, ${STATUS_WORDS[step.status] || step.status}`));
     if (step.status === 'running' && step.note) row.append(h('div.ai-step-note', step.note));
     if (step.status === 'error' && step.error) row.append(h('div.ai-step-note', step.error));
-    if (step.status === 'declined') row.append(h('div.ai-step-note', 'Not allowed, so not done.'));
+    if (step.status === 'declined') row.append(h('div.ai-step-note', '已拒绝，未执行。'));
     if (step.status === 'waiting') row.append(approvalCard(step));
   }
 
@@ -508,9 +508,9 @@ export function createAiPanel(ctx, { chat = null, services = {}, readFile = read
   let pendingApproval = null;
   let lastCard = null;
   function approvalCard(step) {
-    const allow = h('button.btn.small.primary', { type: 'button', onclick: () => answer(true) }, step.costly ? 'Generate' : 'Allow');
-    const deny = h('button.btn.small', { type: 'button', onclick: () => answer(false) }, 'Don’t allow');
-    const card = h('div.ai-approve', { role: 'group', 'aria-label': 'Allow this step?' },
+    const allow = h('button.btn.small.primary', { type: 'button', onclick: () => answer(true) }, step.costly ? '生成' : '允许');
+    const deny = h('button.btn.small', { type: 'button', onclick: () => answer(false) }, '不允许');
+    const card = h('div.ai-approve', { role: 'group', 'aria-label': '是否允许此步骤？' },
       step.detail ? h('p.ai-approve-detail', step.detail) : null,
       h('div.ai-approve-actions', allow, deny));
     lastCard = card;
@@ -522,7 +522,7 @@ export function createAiPanel(ctx, { chat = null, services = {}, readFile = read
   function askApproval(step) {
     return new Promise((resolve) => {
       pendingApproval = { resolve, card: lastCard };
-      say(`The assistant wants to ${step.label.charAt(0).toLowerCase()}${step.label.slice(1)}. ${step.detail || ''} Allow or don’t allow.`);
+      say(`助手请求执行 ${step.label}。${step.detail || ''} 请选择是否允许。`);
       if (!isOpen) open({ focus: false });
       stick = true;
       scrollDown(true);
@@ -784,19 +784,19 @@ export function createAiPanel(ctx, { chat = null, services = {}, readFile = read
             foot.hidden = !foot.childElementCount;
             retry();
           },
-        }, 'Try again')
-        : !firstMessage ? h('button.btn.small.ai-new-chat', { type: 'button', onclick: () => newChat() }, 'New chat') : null;
+        }, '重试')
+        : !firstMessage ? h('button.btn.small.ai-new-chat', { type: 'button', onclick: () => newChat() }, '新建对话') : null;
       reply.foot.hidden = false;
       reply.foot.replaceChildren(h('div.ai-error', { role: 'alert' }, h('span.ai-error-icon', icon('alert', 13)), h('span.ai-error-text', message), action));
-      say(`The assistant could not answer: ${message}`);
+      say(`助手无法回答：${message}`);
     } else {
-      const cutNote = 'The reply reached its length limit and was cut off. Say "continue" for the rest.';
-      say(outcome.stopped ? 'Stopped.' : outcome.cut ? `The assistant has answered. ${cutNote}` : 'The assistant has answered.');
-      if (outcome.stopped) reply.parts.append(h('p.ai-stopped', 'Stopped.'));
+      const cutNote = '已达到长度限制并截断。输入“继续”以获取剩余内容。';
+      say(outcome.stopped ? '已停止。' : outcome.cut ? `助手已回答。${cutNote}` : '助手已回答。');
+      if (outcome.stopped) reply.parts.append(h('p.ai-stopped', '已停止。'));
       else if (outcome.cut) reply.parts.append(h('p.ai-stopped', cutNote));
     }
     if (!isOpen && !outcome.stopped) {
-      toast(outcome.error ? 'The assistant could not answer' : 'The assistant has answered', { kind: outcome.error ? 'error' : 'info', action: { label: 'Open', onClick: () => open() } });
+      toast(outcome.error ? '助手无法回答' : '助手已回答', { kind: outcome.error ? 'error' : 'info', action: { label: '打开', onClick: () => open() } });
     }
     renderFoot(reply, outcome, asked);
   }
@@ -819,22 +819,22 @@ export function createAiPanel(ctx, { chat = null, services = {}, readFile = read
     const text = reply.fullText;
     if (text && !outcome.error) {
       items.push(h('button.ai-foot-btn', {
-        type: 'button', title: 'Copy the reply', 'aria-label': 'Copy the reply',
+        type: 'button', title: '复制回答', 'aria-label': '复制回答',
         onclick: async () => {
           try {
             await navigator.clipboard.writeText(text);
-            toast('Reply copied', { kind: 'success', duration: 1500 });
+            toast('回答已复制', { kind: 'success', duration: 1500 });
           } catch {
-            toast('Could not copy', { kind: 'info' });
+            toast('复制失败', { kind: 'info' });
           }
         },
       }, icon('copy', 13)));
     }
     const entries = (outcome.steps || []).filter((st) => st.status === 'done' && st.entry).map((st) => st.entry);
     if (entries.length) {
-      const counted = `${entries.length} change${entries.length === 1 ? '' : 's'}`;
-      const summary = h('span.ai-foot-summary', `${counted} made`);
-      const undoBtn = h('button.btn.small.ai-undo', { type: 'button', onclick: () => undoTurn() }, icon('undo', 13), 'Undo');
+      const counted = `${entries.length} 处修改`;
+      const summary = h('span.ai-foot-summary', `${counted}已生效`);
+      const undoBtn = h('button.btn.small.ai-undo', { type: 'button', onclick: () => undoTurn() }, icon('undo', 13), '撤销');
       let undone = false;
       // Only this reply's steps, all still on top of the history: anything else and Undo would take other edits too.
       const intact = () => {
@@ -843,15 +843,15 @@ export function createAiPanel(ctx, { chat = null, services = {}, readFile = read
       };
       const refresh = () => {
         const ok = !undone && intact();
-        summary.textContent = `${counted} ${undone ? 'undone' : 'made'}`;
+        summary.textContent = `${counted} ${undone ? '已撤销' : '已生效'}`;
         summary.classList.toggle('ai-foot-undone', undone);
         undoBtn.hidden = undone;
         undoBtn.disabled = !ok;
-        undoBtn.title = ok ? 'Undo the changes in this reply' : 'Other changes came after this reply. Use Undo in the Edit menu or the history panel.';
+        undoBtn.title = ok ? '撤销此回复中的修改' : '此回复后项目已发生其它变动。请在“编辑”菜单或历史面板中使用撤销。';
       };
       const undoTurn = () => {
         if (!intact()) {
-          toast('The project has changed since. Use Undo in the Edit menu to go back step by step.', { kind: 'info', duration: 4000 });
+          toast('项目在此之后已发生变动。请在“编辑”菜单中逐步撤销。', { kind: 'info', duration: 4000 });
           refresh();
           return;
         }
@@ -864,7 +864,7 @@ export function createAiPanel(ctx, { chat = null, services = {}, readFile = read
         const words = String(asked).replace(/\s+/g, ' ').trim();
         const which = words ? `for "${words.length > 80 ? `${words.slice(0, 79)}…` : words}"` : 'for the message with the attached files';
         agent.note(`(The user then undid the changes you made ${which}.)`);
-        announce('Assistant changes undone');
+        announce('已撤销助手的修改');
         if (had) input.focus({ preventScroll: true });
       };
       undos.add(refresh);

@@ -18,9 +18,9 @@ import { placementTarget, placeArt, swapArt, placementAlive, shapeFill, selected
 import { progressBlock, availabilityNotice, segmented, selectField, nextId } from './ui.js';
 
 export const MODES = [
-  { id: 'vectors', label: 'Vectors', icon: 'gen-vectors', title: 'Generate Vectors' },
-  { id: 'shapeFill', label: 'Shape Fill', icon: 'gen-shape-fill', title: 'Generative Shape Fill' },
-  { id: 'pattern', label: 'Pattern', icon: 'gen-pattern', title: 'Generate Patterns' },
+  { id: 'vectors', label: '矢量图', icon: 'gen-vectors', title: '生成矢量图' },
+  { id: 'shapeFill', label: '形状填充', icon: 'gen-shape-fill', title: '生成形状填充' },
+  { id: 'pattern', label: '图案', icon: 'gen-pattern', title: '生成图案' },
 ];
 
 const VECTOR_TYPES = CONTENT_TYPES.filter((c) => c.id !== 'pattern');
@@ -69,7 +69,7 @@ export async function styleReference(editor, client, { signal } = {}) {
 
 export class GeneratePanel extends Panel {
   static id = 'generate';
-  static title = 'Generate';
+  static title = 'AI 生成';
   static icon = 'sparkles';
 
   constructor(app) {
@@ -97,20 +97,20 @@ export class GeneratePanel extends Panel {
 
   build() {
     const app = this.app;
-    this.modeSeg = segmented('Generate', MODES, this.mode, (v) => this.setMode(v), { className: 'gen-modes' });
+    this.modeSeg = segmented('生成类型', MODES, this.mode, (v) => this.setMode(v), { className: 'gen-modes' });
     this.notice = availabilityNotice(app);
     const pid = nextId('gen-prompt');
-    this.promptBox = h('textarea.gen-prompt', { id: pid, rows: 3, maxlength: 600, placeholder: 'Describe what to generate', oninput: () => (this.prompt = this.promptBox.value) });
+    this.promptBox = h('textarea.gen-prompt', { id: pid, rows: 3, maxlength: 600, placeholder: '描述要生成的内容', oninput: () => (this.prompt = this.promptBox.value) });
     this.promptBox.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) {
         e.preventDefault();
         this.generate();
       }
     });
-    const ideaBtn = h('button.icon-btn.small.gen-idea-btn', { type: 'button', 'aria-label': 'Suggest a prompt', 'data-tip': 'Suggest a prompt', onclick: () => this.suggest() }, icon('gen-idea', 14));
-    this.typeSeg = segmented('Content', VECTOR_TYPES, this.settings.contentType, (v) => this.#save({ contentType: v }));
-    this.styleSel = selectField('Style', STYLES, this.settings.style, (v) => this.#save({ style: v }));
-    this.colorSel = selectField('Colors', COLOR_MODES, this.settings.color, (v) => this.#save({ color: v }));
+    const ideaBtn = h('button.icon-btn.small.gen-idea-btn', { type: 'button', 'aria-label': '推荐提示词', 'data-tip': '推荐提示词', onclick: () => this.suggest() }, icon('gen-idea', 14));
+    this.typeSeg = segmented('内容类型', VECTOR_TYPES, this.settings.contentType, (v) => this.#save({ contentType: v }));
+    this.styleSel = selectField('风格', STYLES, this.settings.style, (v) => this.#save({ style: v }));
+    this.colorSel = selectField('色彩', COLOR_MODES, this.settings.color, (v) => this.#save({ color: v }));
     const did = nextId('gen-detail');
     this.detailOut = h('output.gen-detail-out', { for: did });
     this.detail = h('input.gen-detail', { type: 'range', id: did, min: 1, max: 3, step: 1, value: this.settings.detail });
@@ -120,23 +120,23 @@ export class GeneratePanel extends Panel {
     });
     const rid = nextId('gen-ref');
     this.refBox = h('input', { type: 'checkbox', id: rid, checked: this.settings.reference, onchange: () => this.#save({ reference: this.refBox.checked }) });
-    this.refRow = h('div.gen-check', this.refBox, h('label', { for: rid }, 'Match the style of the selection'));
-    this.countSel = selectField('Variations', [1, 2, 3, 4].map((n) => ({ id: String(n), label: String(n) })), String(this.settings.count), (v) => this.#save({ count: Number(v) }));
+    this.refRow = h('div.gen-check', this.refBox, h('label', { for: rid }, '参考选中对象的风格'));
+    this.countSel = selectField('变体数量', [1, 2, 3, 4].map((n) => ({ id: String(n), label: String(n) })), String(this.settings.count), (v) => this.#save({ count: Number(v) }));
     this.target = h('p.gen-target');
-    this.goBtn = h('button.btn.primary.block.gen-go', { type: 'button', onclick: () => this.generate() }, icon('sparkles', 14), h('span', 'Generate'));
-    this.progress = progressBlock({ label: 'Generating', onCancel: () => this.cancel() });
+    this.goBtn = h('button.btn.primary.block.gen-go', { type: 'button', onclick: () => this.generate() }, icon('sparkles', 14), h('span', '生成'));
+    this.progress = progressBlock({ label: '正在生成', onCancel: () => this.cancel() });
     this.status = h('p.gen-status', { role: 'status' });
-    this.tiles = h('div.gen-tiles', { role: 'group', 'aria-label': 'Variations' });
-    this.placeCopyBtn = h('button.btn.small', { type: 'button', onclick: () => this.placeCopy() }, icon('plus', 14), h('span', 'Place Copy'));
+    this.tiles = h('div.gen-tiles', { role: 'group', 'aria-label': '变体' });
+    this.placeCopyBtn = h('button.btn.small', { type: 'button', onclick: () => this.placeCopy() }, icon('plus', 14), h('span', '放置副本'));
     this.actions = h('div.gen-actions', this.placeCopyBtn);
     this.el.append(
       this.modeSeg.el,
       this.notice.el,
-      h('div.gen-field', h('div.gen-label-row', h('label.gen-label', { for: pid }, 'Prompt'), ideaBtn), this.promptBox),
+      h('div.gen-field', h('div.gen-label-row', h('label.gen-label', { for: pid }, '提示词'), ideaBtn), this.promptBox),
       this.typeSeg.el,
       this.styleSel.el,
       this.colorSel.el,
-      h('div.gen-field', h('label.gen-label', { for: did }, 'Detail'), h('div.gen-detail-row', this.detail, this.detailOut)),
+      h('div.gen-field', h('label.gen-label', { for: did }, '细节程度'), h('div.gen-detail-row', this.detail, this.detailOut)),
       this.refRow,
       this.countSel.el,
       this.target,
@@ -163,8 +163,8 @@ export class GeneratePanel extends Panel {
 
   menu() {
     return [
-      { label: 'Suggest a Prompt', run: () => (this.ensureBuilt(), this.suggest()) },
-      { label: 'Clear Variations', enabled: this.variations.length > 0, run: () => this.clearVariations() },
+      { label: '推荐提示词', run: () => (this.ensureBuilt(), this.suggest()) },
+      { label: '清除变体', enabled: this.variations.length > 0, run: () => this.clearVariations() },
       '-',
       'panel.generationHistory',
     ];
@@ -177,9 +177,9 @@ export class GeneratePanel extends Panel {
     this.modeSeg.set(mode);
     this.typeSeg.el.hidden = mode !== 'vectors';
     this.promptBox.placeholder = {
-      vectors: 'Describe what to generate, like "a fox curled up asleep"',
-      shapeFill: 'Describe what fills the shape, like "autumn leaves"',
-      pattern: 'Describe the pattern, like "tiny strawberries and leaves"',
+      vectors: '描述要生成的内容，如“蜷缩睡着的狐狸”',
+      shapeFill: '描述填充形状的内容，如“秋季落叶”',
+      pattern: '描述图案，如“小草莓和叶子”',
     }[mode];
     this.update();
   }
@@ -224,15 +224,15 @@ export class GeneratePanel extends Panel {
   }
 
   #targetText(ed) {
-    if (!ed) return { text: 'Open a document to generate into it.', ok: false };
+    if (!ed) return { text: '打开文档以在其中生成。', ok: false };
     if (this.mode === 'shapeFill') {
-      return selectedShape(ed) ? { text: 'Fills the selected shape.', ok: true } : { text: 'Select one closed shape to fill.', ok: false };
+      return selectedShape(ed) ? { text: '填充所选形状。', ok: true } : { text: '请选择一个闭合形状进行填充。', ok: false };
     }
     if (this.mode === 'pattern') {
       const n = patternTargets(ed).length;
-      return { text: n ? `Adds a pattern swatch and fills the ${n === 1 ? 'selected object' : `${n} selected objects`}.` : 'Adds a pattern swatch.', ok: true };
+      return { text: n ? `添加图案色板并填充${n === 1 ? '所选对象' : `${n} 个所选对象`}。` : '添加图案色板。', ok: true };
     }
-    return { text: ed.selection.size ? 'Fits the selection.' : `Fits ${ed.artboard()?.name || 'the artboard'}.`, ok: true };
+    return { text: ed.selection.size ? '适应所选内容。' : `适应${ed.artboard()?.name || '画板'}。`, ok: true };
   }
 
   update() {
@@ -246,7 +246,7 @@ export class GeneratePanel extends Panel {
     const hasSel = Boolean(ed?.selection.size) && this.mode !== 'shapeFill';
     this.refBox.disabled = !hasSel;
     this.refRow.classList.toggle('disabled', !hasSel);
-    this.refRow.title = hasSel ? '' : 'Select artwork to use its style';
+    this.refRow.title = hasSel ? '' : '选择图形以参考其风格';
     this.#renderTiles();
   }
 
@@ -272,7 +272,7 @@ export class GeneratePanel extends Panel {
       this.tiles.replaceChildren(
         ...vs.map((v, i) => {
           v.url ||= svgDataUrl(resultSvg(v.result, { background: this.variationMode === 'scene' ? null : '#ffffff' }));
-          const label = this.variationMode === 'pattern' ? `Add variation ${i + 1} to Swatches` : `Use variation ${i + 1}`;
+          const label = this.variationMode === 'pattern' ? `将变体 ${i + 1} 添加到色板` : `使用变体 ${i + 1}`;
           return h('button.gen-tile', { type: 'button', 'aria-label': label, 'data-tip': label, onclick: () => this.choose(i) }, h('img', { src: v.url, alt: '', draggable: false }));
         }),
       );
@@ -288,14 +288,14 @@ export class GeneratePanel extends Panel {
     if (!ed) return;
     const prompt = cleanPrompt(this.promptBox.value);
     if (!prompt && this.mode !== 'pattern') {
-      this.status.textContent = 'Describe what to generate first.';
+      this.status.textContent = '请先输入要生成的描述。';
       this.promptBox.focus();
       return;
     }
     const mode = this.mode;
     const shape = mode === 'shapeFill' ? selectedShape(ed) : null;
     if (mode === 'shapeFill' && !shape) {
-      this.status.textContent = 'Select one closed shape to fill.';
+      this.status.textContent = '请选择一个闭合形状进行填充。';
       return;
     }
     let client;
@@ -326,15 +326,15 @@ export class GeneratePanel extends Panel {
     const controller = (this.controller = new AbortController());
     this.goBtn.disabled = true;
     this.progress.start(0);
-    this.progress.setLabel('Generating');
+    this.progress.setLabel('正在生成');
     this.status.textContent = '';
     let out = null;
     try {
       let reference = null;
       if (settings.reference && mode !== 'shapeFill' && ed.selection.size) {
-        this.progress.setLabel('Reading the selection style');
+        this.progress.setLabel('正在读取所选风格');
         reference = await styleReference(ed, client, { signal: controller.signal });
-        this.progress.setLabel('Generating');
+        this.progress.setLabel('正在生成');
       }
       out = await generateVariations(app, client, { ...settings, reference, ratio }, {
         count: settings.count,
@@ -342,7 +342,7 @@ export class GeneratePanel extends Panel {
         onProgress: (v) => this.progress.set(v),
       });
     } catch (err) {
-      this.status.textContent = isAbort(err) ? 'Cancelled.' : aiErrorMessage(err);
+      this.status.textContent = isAbort(err) ? '已取消。' : aiErrorMessage(err);
       if (!isAbort(err)) announce(this.status.textContent);
     } finally {
       this.controller = null;
@@ -360,7 +360,7 @@ export class GeneratePanel extends Panel {
     delete histSettings.prompt;
     app.generativeHistory?.add({ kind: mode, prompt, settings: histSettings, items: out.variations.map((v) => ({ result: v.result })) });
     const n = out.variations.length;
-    const failed = out.failed ? ` ${out.failed} could not be generated.` : '';
+    const failed = out.failed ? ` ${out.failed} 个无法生成。` : '';
     // Place the first variation where the generation was asked for (unless that document closed).
     if (mode !== 'pattern' && app.editors.includes(ed) && app.editor === ed) {
       try {
@@ -373,8 +373,8 @@ export class GeneratePanel extends Panel {
     }
     if (!this.status.textContent) {
       this.status.textContent = mode === 'pattern'
-        ? `${n} pattern ${n === 1 ? 'variation' : 'variations'}. Choose one to add it to Swatches.${failed}`
-        : `${n} ${n === 1 ? 'variation' : 'variations'}.${n > 1 ? ' Choose another to swap it in.' : ''}${failed}`;
+        ? `已生成 ${n} 个图案变体。点击可添加到色板。${failed}`
+        : `已生成 ${n} 个变体。${n > 1 ? '点击可在画板中替换。' : ''}${failed}`;
     }
     announce(this.status.textContent);
     this.#renderTiles();
@@ -389,7 +389,7 @@ export class GeneratePanel extends Panel {
     try {
       if (this.variationMode === 'pattern') {
         const r = applyGeneratedPattern(ed, v.result, { prompt });
-        this.status.textContent = `Added "${r.name}" to Swatches${r.applied ? ` and filled ${r.applied === 1 ? 'the selected object' : `${r.applied} objects`}` : ''}.`;
+        this.status.textContent = `已添加“${r.name}”到色板${r.applied ? `并填充了 ${r.applied === 1 ? '所选对象' : `${r.applied} 个对象`}` : ''}。`;
       } else if (placementAlive(this.placement) && this.placement.doc === ed.doc) {
         this.placement = swapArt(ed, this.placement, v.result);
       } else {
@@ -402,7 +402,7 @@ export class GeneratePanel extends Panel {
     }
     this.active = i;
     this.#renderTiles();
-    announce(this.variationMode === 'pattern' ? this.status.textContent : `Variation ${i + 1} placed`);
+    announce(this.variationMode === 'pattern' ? this.status.textContent : `已放置变体 ${i + 1}`);
   }
 
   #placeNew(ed, result) {
@@ -410,7 +410,7 @@ export class GeneratePanel extends Panel {
     if (this.variationMode === 'shapeFill') {
       const shape = selectedShape(ed);
       if (!shape) {
-        this.app.notify('Select one closed shape to fill.');
+        this.app.notify('请选择一个闭合形状进行填充。');
         return null;
       }
       return shapeFill(ed, shape.id, result, { prompt });

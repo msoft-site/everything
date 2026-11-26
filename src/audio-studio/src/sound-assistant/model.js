@@ -22,43 +22,43 @@ import { getEffect, defaults } from '../effects/index.js';
 export const TYPE_IDS = ['dialogue', 'music', 'sfx', 'ambience'];
 
 export const TYPES = {
-  dialogue: { label: 'Dialogue', icon: 'sa-dialogue', tasks: ['loudness', 'repair', 'clarity', 'creative', 'volume'] },
-  music: { label: 'Music', icon: 'sa-music', tasks: ['loudness', 'duration', 'ducking', 'volume'] },
-  sfx: { label: 'SFX', icon: 'sa-sfx', tasks: ['loudness', 'creative', 'pan', 'volume'] },
-  ambience: { label: 'Ambience', icon: 'sa-ambience', tasks: ['loudness', 'creative', 'ducking', 'volume'] },
+  dialogue: { label: '对白', icon: 'sa-dialogue', tasks: ['loudness', 'repair', 'clarity', 'creative', 'volume'] },
+  music: { label: '音乐', icon: 'sa-music', tasks: ['loudness', 'duration', 'ducking', 'volume'] },
+  sfx: { label: '音效', icon: 'sa-sfx', tasks: ['loudness', 'creative', 'pan', 'volume'] },
+  ambience: { label: '环境音', icon: 'sa-ambience', tasks: ['loudness', 'creative', 'ducking', 'volume'] },
 };
 
 export const LOUDNESS_TARGETS = [
-  { value: -23, label: 'Broadcast (-23 LUFS)' },
-  { value: -24, label: 'US Broadcast (-24 LKFS)' },
-  { value: -16, label: 'Podcast (-16 LUFS)' },
-  { value: -14, label: 'Streaming (-14 LUFS)' },
-  { value: -18, label: 'Quiet Bed (-18 LUFS)' },
-  { value: -26, label: 'Background (-26 LUFS)' },
+  { value: -23, label: '广播 (-23 LUFS)' },
+  { value: -24, label: '美标广播 (-24 LKFS)' },
+  { value: -16, label: '播客 (-16 LUFS)' },
+  { value: -14, label: '流媒体 (-14 LUFS)' },
+  { value: -18, label: '舒缓背景 (-18 LUFS)' },
+  { value: -26, label: '背景音 (-26 LUFS)' },
 ];
 
 /** EQ shapes for Clarity (original names). Gains scale with the amount; filters do not. */
 export const EQ_PRESETS = [
-  { id: 'podcast', label: 'Podcast Voice', values: { hpOn: true, hpFreq: 80, hpSlope: 3, band2On: true, band2Freq: 250, band2Gain: -3, band2Q: 1.2, band4On: true, band4Freq: 3200, band4Gain: 3, band4Q: 0.9, hsOn: true, hsFreq: 10000, hsGain: 2 } },
-  { id: 'warm', label: 'Warm Narrator', values: { hpOn: true, hpFreq: 60, hpSlope: 3, lsOn: true, lsFreq: 160, lsGain: 3, band4On: true, band4Freq: 4000, band4Gain: 1.5, band4Q: 1, hsOn: true, hsFreq: 9000, hsGain: -2 } },
-  { id: 'present', label: 'Bright and Present', values: { hpOn: true, hpFreq: 100, hpSlope: 3, band3On: true, band3Freq: 2500, band3Gain: 3, band3Q: 0.8, hsOn: true, hsFreq: 8000, hsGain: 4 } },
-  { id: 'demud', label: 'Clear the Mud', values: { hpOn: true, hpFreq: 90, hpSlope: 3, band2On: true, band2Freq: 300, band2Gain: -6, band2Q: 1.4 } },
-  { id: 'telephone', label: 'Telephone', values: { hpOn: true, hpFreq: 400, hpSlope: 4, lpOn: true, lpFreq: 3200, lpSlope: 4, band3On: true, band3Freq: 1500, band3Gain: 4, band3Q: 1.2 } },
-  { id: 'radio', label: 'Old Radio', values: { hpOn: true, hpFreq: 250, hpSlope: 3, lpOn: true, lpFreq: 5000, lpSlope: 3, band3On: true, band3Freq: 1800, band3Gain: 5, band3Q: 0.7 } },
+  { id: 'podcast', label: '播客声音', values: { hpOn: true, hpFreq: 80, hpSlope: 3, band2On: true, band2Freq: 250, band2Gain: -3, band2Q: 1.2, band4On: true, band4Freq: 3200, band4Gain: 3, band4Q: 0.9, hsOn: true, hsFreq: 10000, hsGain: 2 } },
+  { id: 'warm', label: '温暖旁白', values: { hpOn: true, hpFreq: 60, hpSlope: 3, lsOn: true, lsFreq: 160, lsGain: 3, band4On: true, band4Freq: 4000, band4Gain: 1.5, band4Q: 1, hsOn: true, hsFreq: 9000, hsGain: -2 } },
+  { id: 'present', label: '清亮通透', values: { hpOn: true, hpFreq: 100, hpSlope: 3, band3On: true, band3Freq: 2500, band3Gain: 3, band3Q: 0.8, hsOn: true, hsFreq: 8000, hsGain: 4 } },
+  { id: 'demud', label: '消除浑浊', values: { hpOn: true, hpFreq: 90, hpSlope: 3, band2On: true, band2Freq: 300, band2Gain: -6, band2Q: 1.4 } },
+  { id: 'telephone', label: '电话音', values: { hpOn: true, hpFreq: 400, hpSlope: 4, lpOn: true, lpFreq: 3200, lpSlope: 4, band3On: true, band3Freq: 1500, band3Gain: 4, band3Q: 1.2 } },
+  { id: 'radio', label: '老式收音机', values: { hpOn: true, hpFreq: 250, hpSlope: 3, lpOn: true, lpFreq: 5000, lpSlope: 3, band3On: true, band3Freq: 1800, band3Gain: 5, band3Q: 0.7 } },
 ];
 
 /** Reverb spaces for Creative (original names), as Studio Reverb settings. */
 export const REVERB_PRESETS = [
-  { id: 'room', label: 'Small Room', values: { roomSize: 20, decay: 500, early: 65, width: 80, hfCut: 9000, lfCut: 120, damping: 55, diffusion: 70 } },
-  { id: 'studio', label: 'Bright Studio', values: { roomSize: 30, decay: 800, early: 55, width: 100, hfCut: 14000, lfCut: 100, damping: 25, diffusion: 80 } },
-  { id: 'hall', label: 'Concert Hall', values: { roomSize: 80, decay: 2600, early: 40, width: 100, hfCut: 7000, lfCut: 60, damping: 60, diffusion: 90 } },
-  { id: 'church', label: 'Stone Church', values: { roomSize: 100, decay: 5000, early: 30, width: 100, hfCut: 6000, lfCut: 50, damping: 45, diffusion: 100 } },
-  { id: 'outdoor', label: 'Open Air', values: { roomSize: 60, decay: 300, early: 85, width: 100, hfCut: 6000, lfCut: 150, damping: 80, diffusion: 30 } },
+  { id: 'room', label: '小房间', values: { roomSize: 20, decay: 500, early: 65, width: 80, hfCut: 9000, lfCut: 120, damping: 55, diffusion: 70 } },
+  { id: 'studio', label: '明亮录音室', values: { roomSize: 30, decay: 800, early: 55, width: 100, hfCut: 14000, lfCut: 100, damping: 25, diffusion: 80 } },
+  { id: 'hall', label: '音乐厅', values: { roomSize: 80, decay: 2600, early: 40, width: 100, hfCut: 7000, lfCut: 60, damping: 60, diffusion: 90 } },
+  { id: 'church', label: '石造教堂', values: { roomSize: 100, decay: 5000, early: 30, width: 100, hfCut: 6000, lfCut: 50, damping: 45, diffusion: 100 } },
+  { id: 'outdoor', label: '户外空旷', values: { roomSize: 60, decay: 300, early: 85, width: 100, hfCut: 6000, lfCut: 150, damping: 80, diffusion: 30 } },
 ];
 
 export const VOICES = [
-  { value: 'male', label: 'Male Voice' },
-  { value: 'female', label: 'Female Voice' },
+  { value: 'male', label: '男声' },
+  { value: 'female', label: '女声' },
 ];
 
 export const HUM_FREQS = [
@@ -71,40 +71,40 @@ export const HUM_FREQS = [
  * slider (and an optional choice); fields render as plain controls.
  */
 export const TASKS = {
-  loudness: { label: 'Loudness', toggle: true },
+  loudness: { label: '响度', toggle: true },
   repair: {
-    label: 'Repair Sound',
+    label: '修复音频',
     toggle: true,
     items: [
-      { id: 'noise', label: 'Reduce Noise' },
-      { id: 'rumble', label: 'Reduce Rumble' },
-      { id: 'hum', label: 'DeHum', choice: { id: 'freq', label: 'Hum frequency', options: HUM_FREQS } },
-      { id: 'ess', label: 'DeEss' },
-      { id: 'reverb', label: 'Reduce Reverb' },
+      { id: 'noise', label: '降低噪波' },
+      { id: 'rumble', label: '降低隆隆声' },
+      { id: 'hum', label: '消除交流声', choice: { id: 'freq', label: '交流声频率', options: HUM_FREQS } },
+      { id: 'ess', label: '消除齿音' },
+      { id: 'reverb', label: '消除混响' },
     ],
   },
   clarity: {
-    label: 'Clarity',
+    label: '清晰度',
     toggle: true,
     items: [
-      { id: 'dynamics', label: 'Dynamics' },
-      { id: 'eq', label: 'EQ', choice: { id: 'preset', label: 'EQ shape', options: EQ_PRESETS.map((p) => ({ value: p.id, label: p.label })) } },
-      { id: 'enhance', label: 'Enhance Speech', choice: { id: 'voice', label: 'Voice', options: VOICES }, noAmount: true },
+      { id: 'dynamics', label: '动态' },
+      { id: 'eq', label: '均衡 (EQ)', choice: { id: 'preset', label: 'EQ 曲线', options: EQ_PRESETS.map((p) => ({ value: p.id, label: p.label })) } },
+      { id: 'enhance', label: '增强语音', choice: { id: 'voice', label: '人声类型', options: VOICES }, noAmount: true },
     ],
   },
   creative: {
-    label: 'Creative',
+    label: '创意效果',
     toggle: true,
-    items: [{ id: 'reverb', label: 'Reverb', choice: { id: 'preset', label: 'Reverb space', options: REVERB_PRESETS.map((p) => ({ value: p.id, label: p.label })) } }],
+    items: [{ id: 'reverb', label: '混响', choice: { id: 'preset', label: '混响空间', options: REVERB_PRESETS.map((p) => ({ value: p.id, label: p.label })) } }],
   },
-  duration: { label: 'Duration', toggle: true },
-  ducking: { label: 'Ducking', toggle: true },
-  pan: { label: 'Pan', toggle: true },
-  volume: { label: 'Clip Volume', toggle: false },
+  duration: { label: '持续时间', toggle: true },
+  ducking: { label: '闪避 (Ducking)', toggle: true },
+  pan: { label: '声像', toggle: true },
+  volume: { label: '片段音量', toggle: false },
 };
 
 /** Ambience adds a stereo width control to Creative. */
-export const WIDTH_ITEM = { id: 'width', label: 'Stereo Width', min: 0, max: 300, step: 1, unit: '%' };
+export const WIDTH_ITEM = { id: 'width', label: '立体声宽度', min: 0, max: 300, step: 1, unit: '%' };
 
 /** Task items for a type (Creative differs for Ambience). */
 export function taskItems(type, task) {
@@ -170,25 +170,25 @@ const P = (name, type, patch) => ({ name, type, settings: mergeSettings(defaultS
 
 /** Built-in presets per type (original names). */
 export const BUILT_IN_PRESETS = [
-  P('Balanced Dialogue', 'dialogue', { loudness: { on: true, target: -23 }, clarity: { on: true } }),
-  P('Podcast Host', 'dialogue', { loudness: { on: true, target: -16 }, repair: { on: true, items: { noise: { amount: 3 }, rumble: { amount: 5 } } }, clarity: { on: true, items: { dynamics: { amount: 6 }, eq: { on: true, preset: 'podcast', amount: 6 } } } }),
-  P('Noisy Location Interview', 'dialogue', { loudness: { on: true, target: -23 }, repair: { on: true, items: { noise: { amount: 7 }, rumble: { amount: 6 }, ess: { on: true, amount: 3 }, reverb: { on: true, amount: 4 } } }, clarity: { on: true, items: { dynamics: { amount: 5 } } } }),
-  P('Phone Call', 'dialogue', { clarity: { on: true, items: { dynamics: { amount: 7 }, eq: { on: true, preset: 'telephone', amount: 8 } } } }),
-  P('Vintage Radio Announcer', 'dialogue', { clarity: { on: true, items: { dynamics: { amount: 8 }, eq: { on: true, preset: 'radio', amount: 8 } } } }),
-  P('Voice in a Hall', 'dialogue', { creative: { on: true, items: { reverb: { preset: 'hall', amount: 5 } } } }),
-  P('Mains Hum Cleanup (50 Hz)', 'dialogue', { repair: { on: true, items: { noise: { on: false }, rumble: { amount: 3 }, hum: { on: true, freq: 50, amount: 6 } } } }),
-  P('Mains Hum Cleanup (60 Hz)', 'dialogue', { repair: { on: true, items: { noise: { on: false }, rumble: { amount: 3 }, hum: { on: true, freq: 60, amount: 6 } } } }),
-  P('Music Bed Under Voice', 'music', { loudness: { on: true, target: -26 }, ducking: { on: true, reduce: -15, fade: 800 } }),
-  P('Music Feature', 'music', { loudness: { on: true, target: -16 } }),
-  P('Gentle Ducking', 'music', { ducking: { on: true, sensitivity: 4, reduce: -9, fade: 1500 } }),
-  P('Hard Ducking', 'music', { ducking: { on: true, sensitivity: 8, reduce: -24, fade: 300 } }),
-  P('Balanced Effect', 'sfx', { loudness: { on: true, target: -21 } }),
-  P('Distant Effect', 'sfx', { loudness: { on: true, target: -26 }, creative: { on: true, items: { reverb: { preset: 'hall', amount: 6 } } } }),
-  P('Effect From the Left', 'sfx', { pan: { on: true, value: -60 } }),
-  P('Effect From the Right', 'sfx', { pan: { on: true, value: 60 } }),
-  P('Room Tone', 'ambience', { loudness: { on: true, target: -32 } }),
-  P('Wide Outdoor Bed', 'ambience', { loudness: { on: true, target: -28 }, creative: { on: true, items: { reverb: { on: false }, width: { on: true, amount: 180 } } } }),
-  P('Ambience Under Voice', 'ambience', { loudness: { on: true, target: -30 }, ducking: { on: true, reduce: -10, fade: 1200 } }),
+  P('均衡对白', 'dialogue', { loudness: { on: true, target: -23 }, clarity: { on: true } }),
+  P('播客主持人', 'dialogue', { loudness: { on: true, target: -16 }, repair: { on: true, items: { noise: { amount: 3 }, rumble: { amount: 5 } } }, clarity: { on: true, items: { dynamics: { amount: 6 }, eq: { on: true, preset: 'podcast', amount: 6 } } } }),
+  P('嘈杂现场采访', 'dialogue', { loudness: { on: true, target: -23 }, repair: { on: true, items: { noise: { amount: 7 }, rumble: { amount: 6 }, ess: { on: true, amount: 3 }, reverb: { on: true, amount: 4 } } }, clarity: { on: true, items: { dynamics: { amount: 5 } } } }),
+  P('电话通话', 'dialogue', { clarity: { on: true, items: { dynamics: { amount: 7 }, eq: { on: true, preset: 'telephone', amount: 8 } } } }),
+  P('复古电台播音员', 'dialogue', { clarity: { on: true, items: { dynamics: { amount: 8 }, eq: { on: true, preset: 'radio', amount: 8 } } } }),
+  P('大厅中的人声', 'dialogue', { creative: { on: true, items: { reverb: { preset: 'hall', amount: 5 } } } }),
+  P('消除 50 Hz 工频交流声', 'dialogue', { repair: { on: true, items: { noise: { on: false }, rumble: { amount: 3 }, hum: { on: true, freq: 50, amount: 6 } } } }),
+  P('消除 60 Hz 工频交流声', 'dialogue', { repair: { on: true, items: { noise: { on: false }, rumble: { amount: 3 }, hum: { on: true, freq: 60, amount: 6 } } } }),
+  P('人声背景音乐', 'music', { loudness: { on: true, target: -26 }, ducking: { on: true, reduce: -15, fade: 800 } }),
+  P('突出音乐', 'music', { loudness: { on: true, target: -16 } }),
+  P('轻度闪避', 'music', { ducking: { on: true, sensitivity: 4, reduce: -9, fade: 1500 } }),
+  P('深度闪避', 'music', { ducking: { on: true, sensitivity: 8, reduce: -24, fade: 300 } }),
+  P('均衡音效', 'sfx', { loudness: { on: true, target: -21 } }),
+  P('远距离音效', 'sfx', { loudness: { on: true, target: -26 }, creative: { on: true, items: { reverb: { preset: 'hall', amount: 6 } } } }),
+  P('左侧音效', 'sfx', { pan: { on: true, value: -60 } }),
+  P('右侧音效', 'sfx', { pan: { on: true, value: 60 } }),
+  P('房间本底底噪', 'ambience', { loudness: { on: true, target: -32 } }),
+  P('宽广户外环境', 'ambience', { loudness: { on: true, target: -28 }, creative: { on: true, items: { reverb: { on: false }, width: { on: true, amount: 180 } } } }),
+  P('人声背景环境音', 'ambience', { loudness: { on: true, target: -30 }, ducking: { on: true, reduce: -10, fade: 1200 } }),
 ];
 
 /** Built-in and user presets for a type: [{ name, type, settings, user }]. */

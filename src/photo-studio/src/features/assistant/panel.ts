@@ -29,7 +29,7 @@ import { AI_COMMANDS } from './catalog';
 
 // The step whose settings are being edited.
 let editing: { plan: string; step: string } | undefined;
-const EXAMPLES = ['Make the sky more dramatic and crop to 16:9', 'Remove the background and add a soft drop shadow', 'How do I straighten a crooked photo?'];
+const EXAMPLES = ['让天空更加富有层次并裁剪为 16:9', '去除背景并添加柔和投影', '如何校正倾斜的照片？'];
 
 /** Light formatting for model text: paragraphs, "- " lists, **bold** and `code`. */
 export function formatText(text: string): string {
@@ -52,16 +52,16 @@ export function formatText(text: string): string {
 }
 
 const STATUS_ICON: Record<Step['status'], [string, string]> = {
-  pending: ['circle', 'Not run'],
-  running: ['circle-dot', 'Running'],
-  done: ['check', 'Done'],
-  failed: ['x', 'Failed'],
-  skipped: ['minus', 'Skipped'],
+  pending: ['circle', '未运行'],
+  running: ['circle-dot', '运行中'],
+  done: ['check', '已完成'],
+  failed: ['x', '失败'],
+  skipped: ['minus', '已跳过'],
 };
 function badges(s: Step) {
   const out: string[] = [];
-  if (AI_COMMANDS.has(s.action)) out.push('<span class="ast-tag ai" title="Opens prefilled; uses 本地智能引擎 credits when you press Generate">AI credits</span>');
-  else if (s.input === 'dialog') out.push('<span class="ast-tag" title="Opens its dialog during the run so you can choose settings">Asks for settings</span>');
+  if (AI_COMMANDS.has(s.action)) out.push('<span class="ast-tag ai" title="预填提示词打开；点击“生成”时消耗本地智能算力">AI 算力</span>');
+  else if (s.input === 'dialog') out.push('<span class="ast-tag" title="在运行时打开设置对话框供您确认参数">需确认参数</span>');
   return out.join('');
 }
 function paramField(p: Param, value: unknown) {
@@ -84,14 +84,14 @@ function stepHTML(m: PlanMessage, s: Step, i: number) {
   const [icon, statusText] = STATUS_ICON[s.status];
   const ready = m.state === 'ready';
   const detail = stepDetail(s);
-  const link = s.kind === 'command' ? `<button type="button" class="ast-step-name" data-show="${escapeXML(s.action)}" title="Show where this command is">${escapeXML(s.label)}</button>` : `<strong class="ast-step-name">${escapeXML(s.label)}</strong>`;
-  const edit = ready && s.params?.length ? `<button type="button" data-step-act="edit" aria-expanded="${editing?.step === s.key}">${svg('pencil', 13)}Edit</button>` : '';
+  const link = s.kind === 'command' ? `<button type="button" class="ast-step-name" data-show="${escapeXML(s.action)}" title="定位查看此命令">${escapeXML(s.label)}</button>` : `<strong class="ast-step-name">${escapeXML(s.label)}</strong>`;
+  const edit = ready && s.params?.length ? `<button type="button" data-step-act="edit" aria-expanded="${editing?.step === s.key}">${svg('pencil', 13)}编辑</button>` : '';
   const actions = ready
-    ? `<div class="ast-step-actions">${edit}<button type="button" class="icon-button" data-step-act="up" aria-label="Move step ${i + 1} up" title="Move up" ${i === 0 ? 'disabled' : ''}>${svg('arrow-up', 13)}</button><button type="button" class="icon-button" data-step-act="down" aria-label="Move step ${i + 1} down" title="Move down" ${i === m.plan.steps.length - 1 ? 'disabled' : ''}>${svg('arrow-down', 13)}</button><button type="button" class="icon-button" data-step-act="remove" aria-label="Remove step ${i + 1}" title="Remove step">${svg('trash-2', 13)}</button></div>`
+    ? `<div class="ast-step-actions">${edit}<button type="button" class="icon-button" data-step-act="up" aria-label="上移第 ${i + 1} 步" title="上移" ${i === 0 ? 'disabled' : ''}>${svg('arrow-up', 13)}</button><button type="button" class="icon-button" data-step-act="down" aria-label="下移第 ${i + 1} 步" title="下移" ${i === m.plan.steps.length - 1 ? 'disabled' : ''}>${svg('arrow-down', 13)}</button><button type="button" class="icon-button" data-step-act="remove" aria-label="删除第 ${i + 1} 步" title="删除步骤">${svg('trash-2', 13)}</button></div>`
     : '';
   const form =
     ready && editing?.plan === m.id && editing.step === s.key && s.params
-      ? `<form class="ast-edit" aria-label="Settings of step ${i + 1}">${s.params.map((p) => paramField(p, s.args[p.key])).join('')}<div class="ast-edit-bar"><button type="button" data-step-act="cancel-edit">Cancel</button><button type="submit" class="primary">Apply</button></div></form>`
+      ? `<form class="ast-edit" aria-label="第 ${i + 1} 步的设置">${s.params.map((p) => paramField(p, s.args[p.key])).join('')}<div class="ast-edit-bar"><button type="button" data-step-act="cancel-edit">取消</button><button type="submit" class="primary">应用</button></div></form>`
       : '';
   return `<li class="ast-step status-${s.status}${s.problems.length ? ' has-problem' : ''}" data-step="${s.key}">
 <div class="ast-step-head"><span class="ast-step-status" role="img" aria-label="${statusText}" title="${statusText}">${svg(icon, 13)}</span><span class="ast-step-index">${i + 1}.</span>${link}${badges(s)}</div>
@@ -102,28 +102,28 @@ ${actions}${form}</li>`;
 function planHTML(m: PlanMessage) {
   const p = m.plan;
   const problems = p.steps.some((s) => s.problems.length);
-  const state = { ready: '', running: 'Running…', stepping: 'Paused', done: 'Applied', stopped: 'Stopped', failed: 'Failed', discarded: 'Discarded' }[m.state];
+  const state = { ready: '', running: '运行中…', stepping: '已暂停', done: '已应用', stopped: '已停止', failed: '失败', discarded: '已放弃' }[m.state];
   let foot = '';
   if (m.state === 'ready')
-    foot = `<button type="button" class="primary" data-plan-act="run" ${problems || !p.steps.length ? 'disabled' : ''}>${svg('play', 14)}Run All</button><button type="button" data-plan-act="step" ${problems || !p.steps.length ? 'disabled' : ''}>${svg('step-forward', 14)}Step</button><span class="ast-spacer"></span><button type="button" data-plan-act="discard">Discard</button>`;
+    foot = `<button type="button" class="primary" data-plan-act="run" ${problems || !p.steps.length ? 'disabled' : ''}>${svg('play', 14)}全部运行</button><button type="button" data-plan-act="step" ${problems || !p.steps.length ? 'disabled' : ''}>${svg('step-forward', 14)}单步执行</button><span class="ast-spacer"></span><button type="button" data-plan-act="discard">放弃</button>`;
   else if (m.state === 'stepping')
-    foot = `<button type="button" class="primary" data-plan-act="step">${svg('step-forward', 14)}Next Step</button><button type="button" data-plan-act="run">${svg('play', 14)}Run the Rest</button><span class="ast-spacer"></span><button type="button" data-plan-act="stop">${svg('square', 13)}Stop</button>`;
-  else if (m.state === 'running') foot = `<span class="ast-running">${m.outcome === 'stopping' ? 'Stopping after this step…' : 'Running…'}</span><span class="ast-spacer"></span><button type="button" data-plan-act="stop">${svg('square', 13)}Stop</button>`;
+    foot = `<button type="button" class="primary" data-plan-act="step">${svg('step-forward', 14)}下一步</button><button type="button" data-plan-act="run">${svg('play', 14)}运行余下步骤</button><span class="ast-spacer"></span><button type="button" data-plan-act="stop">${svg('square', 13)}停止</button>`;
+  else if (m.state === 'running') foot = `<span class="ast-running">${m.outcome === 'stopping' ? '将在本步完成后停止…' : '运行中…'}</span><span class="ast-spacer"></span><button type="button" data-plan-act="stop">${svg('square', 13)}停止</button>`;
   else if (m.state !== 'discarded' && m.outcome) foot = `<p class="ast-outcome" role="status">${escapeXML(m.outcome)}</p>`;
-  return `<section class="ast-plan state-${m.state}" data-plan="${m.id}" aria-label="Plan: ${escapeXML(p.title)}">
+  return `<section class="ast-plan state-${m.state}" data-plan="${m.id}" aria-label="计划: ${escapeXML(p.title)}">
 <header><span class="ast-plan-title">${svg('list-ordered', 14)}<strong>${escapeXML(p.title)}</strong></span>${state ? `<span class="ast-state">${state}</span>` : ''}</header>
 ${m.text ? `<div class="ast-text">${formatText(m.text)}</div>` : ''}${p.summary ? `<p class="ast-summary">${escapeXML(p.summary)}</p>` : ''}
-${usesAI(p) && m.state === 'ready' ? `<p class="ast-ai-note">${svg('sparkles', 13)}Steps marked “AI credits” open their dialog with the prompt filled in. Nothing is generated or charged until you press Generate there.</p>` : ''}
-${problems && m.state === 'ready' ? `<p class="ast-ai-note">${svg('ban', 13)}Some steps have problems. Edit or remove them to run the plan.</p>` : ''}
+${usesAI(p) && m.state === 'ready' ? `<p class="ast-ai-note">${svg('sparkles', 13)}标记“AI 算力”的步骤会打开预填提示词的对话框。在您点击“生成”前不会产生消耗。</p>` : ''}
+${problems && m.state === 'ready' ? `<p class="ast-ai-note">${svg('ban', 13)}部分步骤存在问题。请编辑或删除它们后再运行计划。</p>` : ''}
 <ol class="ast-steps">${p.steps.map((s, i) => stepHTML(m, s, i)).join('')}</ol>
 ${m.state === 'discarded' ? '' : `<footer class="ast-plan-foot">${foot}</footer>`}</section>`;
 }
 function messageHTML(m: Message) {
-  if (m.role === 'user') return `<div class="ast-msg ast-user"><div class="ast-text">${formatText(m.text)}</div>${m.image ? '<small>with an image preview</small>' : ''}</div>`;
+  if (m.role === 'user') return `<div class="ast-msg ast-user"><div class="ast-text">${formatText(m.text)}</div>${m.image ? '<small>包含图像预览</small>' : ''}</div>`;
   if (m.kind === 'plan') return planHTML(m);
   if (m.kind === 'error') return `<div class="ast-msg ast-error" role="alert">${svg('ban', 14)}<div class="ast-text">${formatText(m.text)}</div></div>`;
   const pointers = m.pointers?.length
-    ? `<ul class="ast-pointers">${m.pointers.map((p) => `<li><span><strong>${escapeXML(p.label)}</strong><small>${escapeXML(p.where)}</small></span><button type="button" data-show="${escapeXML(p.id)}" aria-label="Show me ${escapeXML(p.label)}">${svg('mouse-pointer-click', 13)}Show me</button></li>`).join('')}</ul>`
+    ? `<ul class="ast-pointers">${m.pointers.map((p) => `<li><span><strong>${escapeXML(p.label)}</strong><small>${escapeXML(p.where)}</small></span><button type="button" data-show="${escapeXML(p.id)}" aria-label="查看 ${escapeXML(p.label)}">${svg('mouse-pointer-click', 13)}定位查看</button></li>`).join('')}</ul>`
     : '';
   return `<div class="ast-msg ast-bot"><div class="ast-text">${formatText(m.text)}</div>${pointers}</div>`;
 }
@@ -133,8 +133,8 @@ function renderLog(e: Editor, el: HTMLElement) {
   const c = conversation(e);
   const atBottom = log.scrollHeight - log.scrollTop - log.clientHeight < 40;
   const count = c.messages.length;
-  const intro = `<div class="ast-intro">${svg('assistant', 28)}<p><strong>Describe an edit</strong> and the Assistant plans it with Photo Studio’s own commands. You review the steps, change them if you like, and run them as one undo step. You can also ask how to do something.</p><div class="ast-examples" role="group" aria-label="Examples">${EXAMPLES.map((x) => `<button type="button" data-example="${escapeXML(x)}">${escapeXML(x)}</button>`).join('')}</div></div>`;
-  const pending = c.pending ? `<div class="ast-pending" role="status"><span class="ast-dots" aria-hidden="true"><i></i><i></i><i></i></span><span>${escapeXML(c.pending.status)}</span><button type="button" data-cancel>Stop</button></div>` : '';
+  const intro = `<div class="ast-intro">${svg('assistant', 28)}<p><strong>描述编辑需求</strong>，AI 助手将使用图像工作室的原生命令规划步骤。你可以预览、修改参数、调整顺序，并作为单次撤销步骤一键运行。也可以直接向它询问任何功能的操作指引。</p><div class="ast-examples" role="group" aria-label="示例">${EXAMPLES.map((x) => `<button type="button" data-example="${escapeXML(x)}">${escapeXML(x)}</button>`).join('')}</div></div>`;
+  const pending = c.pending ? `<div class="ast-pending" role="status"><span class="ast-dots" aria-hidden="true"><i></i><i></i><i></i></span><span>${escapeXML(c.pending.status)}</span><button type="button" data-cancel>停止</button></div>` : '';
   const scroll = log.scrollTop;
   log.innerHTML = (count ? c.messages.map(messageHTML).join('') : intro) + pending;
   const last = log.querySelector<HTMLElement>(':scope > :last-child');
@@ -188,10 +188,10 @@ export function focusComposer(el: HTMLElement, text?: string) {
 
 export function mountAssistant(e: Editor, el: HTMLElement) {
   el.classList.add('assistant-panel');
-  el.innerHTML = `<div class="ast-log" role="log" aria-label="Assistant conversation" aria-live="polite" tabindex="-1"></div>
-<form class="ast-compose" aria-label="Ask the Assistant">
-<textarea class="ast-input" rows="2" aria-label="Describe an edit or ask a question" placeholder="Describe an edit, or ask how to do something"></textarea>
-<div class="ast-compose-bar"><label class="ast-see" title="Let the model see a small preview of the visible image"><input type="checkbox"> Share image preview</label><span class="ast-spacer"></span><span class="ast-model muted" title="Change the model in the panel menu"></span><button type="submit" class="primary ast-send" aria-label="Send" title="Send (Enter)">${svg('arrow-up', 15)}</button></div>
+  el.innerHTML = `<div class="ast-log" role="log" aria-label="AI 助手会话" aria-live="polite" tabindex="-1"></div>
+<form class="ast-compose" aria-label="向 AI 助手提问">
+<textarea class="ast-input" rows="2" aria-label="描述编辑需求或提问" placeholder="描述想要进行的图像编辑，或询问操作方法…"></textarea>
+<div class="ast-compose-bar"><label class="ast-see" title="允许模型查看当前图像的缩小预览图"><input type="checkbox"> 发送图像预览</label><span class="ast-spacer"></span><span class="ast-model muted" title="在面板菜单中切换模型"></span><button type="submit" class="primary ast-send" aria-label="发送" title="发送 (Enter)">${svg('arrow-up', 15)}</button></div>
 <p class="ast-sent"></p></form>`;
   const form = el.querySelector<HTMLFormElement>('.ast-compose')!;
   const input = el.querySelector<HTMLTextAreaElement>('.ast-input')!;

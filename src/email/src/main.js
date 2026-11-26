@@ -156,6 +156,13 @@ async function start() {
   const mailPath = `/${username}/${MAIL_DIR}`;
   const objectsPath = `${mailPath}/objects`;
 
+  try {
+    if (puter.fs?.mkdir) {
+      await puter.fs.mkdir(mailPath, { createMissingParents: true }).catch(() => {});
+      await puter.fs.mkdir(objectsPath, { createMissingParents: true }).catch(() => {});
+    }
+  } catch {}
+
   // Being able to stat the folder means read access is already held.
   let readable = true;
   try {

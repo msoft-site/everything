@@ -14,7 +14,7 @@ export function progressBlock({ label, onCancel }) {
   const bar = h('span.gen-progress-bar');
   const text = h('span.gen-progress-label', `${label}...`);
   const pct = h('span.gen-progress-pct');
-  const cancel = h('button.btn.small', { type: 'button', onclick: () => onCancel?.() }, 'Cancel');
+  const cancel = h('button.btn.small', { type: 'button', onclick: () => onCancel?.() }, '取消');
   const el = h('div.gen-progress', { role: 'progressbar', 'aria-label': label, 'aria-valuemin': '0', 'aria-valuemax': '100', hidden: true }, text, h('span.gen-progress-track', { 'aria-hidden': 'true' }, bar), pct, cancel);
   const set = (v) => {
     if (v == null) {
@@ -59,7 +59,7 @@ export function progressBlock({ label, onCancel }) {
  */
 export function availabilityNotice(app) {
   const msg = h('p.gen-notice-text');
-  const signIn = h('button.btn.small.primary', { type: 'button', onclick: () => app.onSignIn?.() }, icon('login', 14), h('span', 'Sign In'));
+  const signIn = h('button.btn.small.primary', { type: 'button', onclick: () => app.onSignIn?.() }, icon('login', 14), h('span', '登录'));
   const el = h('div.gen-notice', { role: 'status', hidden: true }, icon('info', 16), h('div.gen-notice-body', msg, signIn));
   return {
     el,

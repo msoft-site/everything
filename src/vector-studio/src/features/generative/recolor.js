@@ -90,7 +90,7 @@ export async function generativeRecolorDialog(app, { prompt: initialPrompt = '',
   const doc = ed.doc;
   const nodes = selectionColorNodes(ed);
   const colors = collectColors(nodes);
-  if (!colors.length) throw new UserError('Select artwork with colors to recolor.');
+  if (!colors.length) throw new UserError('请选择带有颜色的图形以进行重新着色。');
   const originals = new Map(nodes.map((n) => [n.id, n]));
   let tx = null;
   let palettes = initialPalettes || [];
@@ -103,22 +103,22 @@ export async function generativeRecolorDialog(app, { prompt: initialPrompt = '',
   const mapFor = (i) => paletteRecolorMap(colors, palettes[i].colors);
   const preview = () => {
     if (chosen < 0) return;
-    if (!tx) tx = doc.begin('Recolor from Prompt');
+    if (!tx) tx = doc.begin('根据提示词重新着色');
     restore();
     for (const [id, p] of colorPatches([...originals.values()], recolorFn(mapFor(chosen)))) doc.update(id, p);
   };
 
-  const promptBox = h('textarea.gen-prompt', { rows: 2, maxlength: 600, placeholder: 'Describe a mood, place or theme, like "sunset over a lavender field"', 'aria-label': 'Describe the colors' }, initialPrompt);
-  const ideas = h('div.gen-ideas', { role: 'group', 'aria-label': 'Ideas' }, RECOLOR_IDEAS.slice().sort(() => Math.random() - 0.5).slice(0, 4).map((idea) => h('button.gen-idea', { type: 'button', onclick: () => {
+  const promptBox = h('textarea.gen-prompt', { rows: 2, maxlength: 600, placeholder: '描述某种氛围、地点或主题，如“薰衣草花田上的日落”', 'aria-label': '描述色彩' }, initialPrompt);
+  const ideas = h('div.gen-ideas', { role: 'group', 'aria-label': '创意灵感' }, RECOLOR_IDEAS.slice().sort(() => Math.random() - 0.5).slice(0, 4).map((idea) => h('button.gen-idea', { type: 'button', onclick: () => {
     promptBox.value = idea;
     promptBox.focus();
   } }, idea)));
-  const countSel = h('select.select', { 'aria-label': 'Colors per palette' }, [3, 4, 5, 6, 7, 8].map((n) => h('option', { value: n, selected: n === clamp(colors.length, 3, 6) }, `${n} colors`)));
-  const genBtn = h('button.btn.primary.gen-go', { type: 'button' }, icon('sparkles', 14), h('span', 'Generate'));
-  const progress = progressBlock({ label: 'Generating palettes', onCancel: () => controller?.abort() });
+  const countSel = h('select.select', { 'aria-label': '每种调色板的颜色数' }, [3, 4, 5, 6, 7, 8].map((n) => h('option', { value: n, selected: n === clamp(colors.length, 3, 6) }, `${n} 种颜色`)));
+  const genBtn = h('button.btn.primary.gen-go', { type: 'button' }, icon('sparkles', 14), h('span', '生成'));
+  const progress = progressBlock({ label: '正在生成调色板', onCancel: () => controller?.abort() });
   const status = h('p.gen-status', { role: 'status' });
-  const list = h('div.gen-palettes', { role: 'radiogroup', 'aria-label': 'Palettes' });
-  const current = h('div.gen-current', h('span.gen-current-label', 'Current colors'), paletteChips(colors.slice(0, 16).map((c) => c.color)));
+  const list = h('div.gen-palettes', { role: 'radiogroup', 'aria-label': '调色板' });
+  const current = h('div.gen-current', h('span.gen-current-label', '当前颜色'), paletteChips(colors.slice(0, 16).map((c) => c.color)));
 
   const renderList = () => {
     list.replaceChildren(
@@ -147,14 +147,14 @@ export async function generativeRecolorDialog(app, { prompt: initialPrompt = '',
     chosen = i;
     renderList();
     preview();
-    announce(`${palettes[i].name} previewed`);
+    announce(`${palettes[i].name} 已预览`);
   };
 
   const run = async () => {
     if (controller) return;
     const text = cleanPrompt(promptBox.value);
     if (!text) {
-      status.textContent = 'Describe the colors you want first.';
+      status.textContent = '请先输入您想要的色彩描述。';
       promptBox.focus();
       return;
     }
@@ -175,10 +175,10 @@ export async function generativeRecolorDialog(app, { prompt: initialPrompt = '',
       chosen = -1;
       renderList();
       choose(0);
-      status.textContent = `${palettes.length} palettes. Choose one to preview it on the artwork.`;
+      status.textContent = `已生成 ${palettes.length} 个调色板。点击可直接在画布中预览效果。`;
       app.generativeHistory?.add({ kind: 'recolor', prompt: text, settings: { colors: Number(countSel.value) }, items: palettes.map((p) => ({ name: p.name, colors: p.colors })) });
     } catch (err) {
-      status.textContent = isAbort(err) ? 'Cancelled.' : aiErrorMessage(err);
+      status.textContent = isAbort(err) ? '已取消。' : aiErrorMessage(err);
     } finally {
       controller = null;
       genBtn.disabled = false;
@@ -196,7 +196,7 @@ export async function generativeRecolorDialog(app, { prompt: initialPrompt = '',
   const body = h(
     'div.form.gen-recolor',
     current,
-    h('label.gen-label', 'Prompt'),
+    h('label.gen-label', '提示词'),
     promptBox,
     ideas,
     h('div.gen-row', countSel, genBtn),
@@ -212,14 +212,14 @@ export async function generativeRecolorDialog(app, { prompt: initialPrompt = '',
   let result;
   try {
     result = await openDialog({
-      title: 'Recolor from Prompt',
+      title: '根据提示词重新着色',
       body,
       className: 'gen-dialog',
       initialFocus: () => promptBox,
       buttons: [
-        { label: 'Edit in Recolor', left: true, value: () => (chosen >= 0 ? { edit: true, map: mapFor(chosen) } : null) },
-        { label: 'Cancel', value: null },
-        { label: 'Apply', primary: true, value: () => (chosen >= 0 ? { map: mapFor(chosen) } : null) },
+        { label: '在重新着色工具中编辑', left: true, value: () => (chosen >= 0 ? { edit: true, map: mapFor(chosen) } : null) },
+        { label: '取消', value: null },
+        { label: '应用', primary: true, value: () => (chosen >= 0 ? { map: mapFor(chosen) } : null) },
       ],
     });
   } finally {
@@ -227,10 +227,10 @@ export async function generativeRecolorDialog(app, { prompt: initialPrompt = '',
   }
   if (!result || result.edit) {
     tx?.cancel();
-    if (result?.edit) return recolorDialog(app, { map: result.map, title: 'Recolor' });
+    if (result?.edit) return recolorDialog(app, { map: result.map, title: '重新着色' });
     return false;
   }
-  if (!tx) tx = doc.begin('Recolor from Prompt');
+  if (!tx) tx = doc.begin('根据提示词重新着色');
   restore();
   for (const [id, p] of colorPatches([...originals.values()], recolorFn(result.map))) doc.update(id, p);
   tx.commit();

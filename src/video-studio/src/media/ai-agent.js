@@ -22,9 +22,9 @@ export const AI_MODEL = 'claude-opus-5-5';
 
 /** When the assistant asks before changing the project: before every change, before making video, or never. */
 export const APPROVAL_MODES = [
-  { id: 'always', label: 'Ask before every change' },
-  { id: 'video', label: 'Ask before generating video' },
-  { id: 'never', label: 'Make changes without asking' },
+  { id: 'always', label: '每次修改前均询问' },
+  { id: 'video', label: '生成视频前询问' },
+  { id: 'never', label: '直接进行修改无需询问' },
 ];
 export const DEFAULT_APPROVAL = 'video';
 
@@ -424,18 +424,18 @@ export function suggestions(state) {
   const sel = state.selection.map((id) => clips.find((c) => c.id === id)).filter(Boolean);
   if (!clips.length) {
     return [
-      'Generate a 5 second shot of waves at sunset',
-      'Make a 3-shot intro for a coffee shop',
-      'Generate a picture of a misty forest and animate it',
+      '生成一段 5 秒的日落海浪镜头',
+      '为咖啡店制作一个 3 镜头的片头',
+      '生成一张薄雾森林的图片并将其制成动画',
     ];
   }
   const out = [];
-  if (sel.length === 1 && sel[0].type === 'image') out.push('Animate the selected picture');
-  if (sel.length === 1 && sel[0].type === 'video') out.push('Extend the selected clip by 5 seconds');
+  if (sel.length === 1 && sel[0].type === 'image') out.push('为选中的图片制作动画');
+  if (sel.length === 1 && sel[0].type === 'video') out.push('将选中的片段延长 5 秒');
   const main = p.tracks.find((t) => t.main)?.clips || [];
-  if (main.length > 1) out.push('Generate an AI transition between the first two clips');
-  out.push('Add a title at the start');
-  if (clips.some((c) => c.type === 'video' || c.type === 'audio')) out.push('Add captions');
-  out.push('Generate a closing shot that matches this video');
+  if (main.length > 1) out.push('在前两个片段之间生成 AI 转场');
+  out.push('在片头添加标题');
+  if (clips.some((c) => c.type === 'video' || c.type === 'audio')) out.push('添加字幕');
+  out.push('生成一个与当前视频风格一致的片尾镜头');
   return [...new Set(out)].slice(0, 4);
 }

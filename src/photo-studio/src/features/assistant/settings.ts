@@ -1,10 +1,10 @@
 // Assistant settings kept in this browser: the model and whether the model
 // may see a small preview of the image. Light: menus read it at startup.
 export const ASSISTANT_MODELS: { id: string; label: string; note: string }[] = [
-  { id: 'claude-fable-5-1', label: 'Claude Fable 5.1', note: 'most capable' },
-  { id: 'claude-opus-5-5', label: 'Claude Opus 5.5', note: 'capable, lower cost' },
-  { id: 'claude-sonnet-5-5', label: 'Claude Sonnet 5.5', note: 'faster' },
-  { id: 'claude-haiku-5-5', label: 'Claude Haiku 5.5', note: 'fastest, lowest cost' },
+  { id: 'claude-fable-5-1', label: 'Claude Fable 5.1', note: '能力最强' },
+  { id: 'claude-opus-5-5', label: 'Claude Opus 5.5', note: '能力全面，消耗适中' },
+  { id: 'claude-sonnet-5-5', label: 'Claude Sonnet 5.5', note: '响应更快' },
+  { id: 'claude-haiku-5-5', label: 'Claude Haiku 5.5', note: '极速响应，消耗极低' },
 ];
 export const DEFAULT_ASSISTANT_MODEL = ASSISTANT_MODELS[0].id;
 const KEY = 'photo-studio-assistant';
@@ -27,4 +27,4 @@ export function saveAssistantSettings() {
 export const modelLabel = (id: string) => ASSISTANT_MODELS.find((m) => m.id === id)?.label ?? id;
 /** What a request sends, as the panel and the start screen say it. */
 export const sentNote = (hasDocument: boolean) =>
-  `Sends your request${hasDocument ? `, the document’s size and layer list${assistantSettings.seeImage ? ' and a small preview' : ''}` : ''} to local AI service (account; may use credits).`;
+  `向本地智能服务发送你的需求${hasDocument ? `、文档尺寸与图层列表${assistantSettings.seeImage ? '及低清图像预览' : ''}` : ''}。`;

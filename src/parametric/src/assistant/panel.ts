@@ -32,29 +32,29 @@ const short = (s: string, n: number) => {
 export function stepLabel(name: string, a: Record<string, unknown>): string {
   const s = (v: unknown) => (typeof v === 'string' || typeof v === 'number' ? String(v) : '');
   const featureNames: Record<string, string> = {
-    add_extrude: a.cut ? 'Extruded cut' : 'Extrude', add_revolve: a.cut ? 'Revolved cut' : 'Revolve', add_fillet: 'Fillet', add_chamfer: 'Chamfer',
-    add_shell: 'Shell', add_hole: 'Hole', add_linear_pattern: 'Linear pattern', add_circular_pattern: 'Circular pattern', add_mirror: 'Mirror',
-    add_plane: 'Reference plane', add_loft: a.cut ? 'Lofted cut' : 'Loft', add_sweep: a.cut ? 'Swept cut' : 'Sweep', add_draft: 'Draft',
+    add_extrude: a.cut ? '拉伸切除' : '拉伸', add_revolve: a.cut ? '旋转切除' : '旋转', add_fillet: '圆角', add_chamfer: '倒角',
+    add_shell: '抽壳', add_hole: '孔', add_linear_pattern: '线性阵列', add_circular_pattern: '圆周阵列', add_mirror: '镜像',
+    add_plane: '参考基准面', add_loft: a.cut ? '放样切除' : '放样', add_sweep: a.cut ? '扫掠切除' : '扫掠', add_draft: '拔模',
   };
-  if (featureNames[name]) return `Add ${featureNames[name].toLowerCase()}${a.name ? ` "${s(a.name)}"` : ''}`;
+  if (featureNames[name]) return `添加${featureNames[name]}${a.name ? ` "${s(a.name)}"` : ''}`;
   switch (name) {
-    case 'get_model': return 'Read the part';
-    case 'get_sketch': return a.sketch ? `Read sketch ${s(a.sketch)}` : 'Read a sketch';
-    case 'find_geometry': return `Find ${a.kind === 'edges' ? 'edges' : 'faces'}`;
-    case 'measure': return 'Measure';
-    case 'mass_properties': return 'Mass properties';
-    case 'calculate': return 'Calculate';
-    case 'capture_view': return `Look at the model${a.orientation ? ` (${s(a.orientation)})` : ''}`;
-    case 'create_sketch': return a.plane ? `Sketch on ${s(a.plane)}` : 'Create a sketch';
-    case 'edit_sketch': return a.sketch ? `Edit sketch ${s(a.sketch)}` : 'Edit a sketch';
-    case 'edit_feature': return a.feature ? `Edit ${s(a.feature)}` : 'Edit a feature';
-    case 'delete_features': return a.features ? `Delete ${Array.isArray(a.features) ? a.features.join(', ') : s(a.features)}` : 'Delete features';
-    case 'set_rollback': return 'Move the rollback bar';
-    case 'set_variables': return 'Set variables';
-    case 'set_part': return 'Part properties';
-    case 'set_view': return 'Change the view';
-    case 'drawing': return 'Drawing';
-    case 'run_command': return a.command ? `Run ${s(a.command).replace(/_/g, ' ')}` : 'Run a command';
+    case 'get_model': return '读取零件';
+    case 'get_sketch': return a.sketch ? `读取草图 ${s(a.sketch)}` : '读取草图';
+    case 'find_geometry': return `查找${a.kind === 'edges' ? '边' : '面'}`;
+    case 'measure': return '测量';
+    case 'mass_properties': return '质量属性';
+    case 'calculate': return '计算';
+    case 'capture_view': return `查看模型${a.orientation ? ` (${s(a.orientation)})` : ''}`;
+    case 'create_sketch': return a.plane ? `在 ${s(a.plane)} 上绘制草图` : '创建草图';
+    case 'edit_sketch': return a.sketch ? `编辑草图 ${s(a.sketch)}` : '编辑草图';
+    case 'edit_feature': return a.feature ? `编辑 ${s(a.feature)}` : '编辑特征';
+    case 'delete_features': return a.features ? `删除 ${Array.isArray(a.features) ? a.features.join(', ') : s(a.features)}` : '删除特征';
+    case 'set_rollback': return '移动回退栏';
+    case 'set_variables': return '设置变量';
+    case 'set_part': return '零件属性';
+    case 'set_view': return '更改视图';
+    case 'drawing': return '工程图';
+    case 'run_command': return a.command ? `运行 ${s(a.command).replace(/_/g, ' ')}` : '运行命令';
     default: return name;
   }
 }
@@ -71,7 +71,7 @@ interface PendingFile {
 
 /** The files a sent message carried: thumbnails for images, names for the rest. */
 function sentFiles(items: PendingFile[]): HTMLElement {
-  return h('ul', { class: 'as-user-files', 'aria-label': 'Files sent with this message' }, ...items.map((it) =>
+  return h('ul', { class: 'as-user-files', 'aria-label': '随此消息发送的文件' }, ...items.map((it) =>
     h('li', { class: 'as-user-file', title: it.name },
       it.url ? h('img', { class: 'as-user-thumb', src: it.url, alt: it.name })
         : h('span', { class: 'as-user-chip' }, icon(it.kind === 'pdf' || it.kind === 'text' ? 'file' : 'image', 14), h('span', {}, it.name)))));
@@ -154,15 +154,15 @@ export class AssistantPanel {
       changes: changesDocument,
     });
 
-    this.newChat = h('button', { class: 'icon-btn', type: 'button', 'aria-label': 'New chat', title: 'New chat' }, icon('newChat', 16)) as HTMLButtonElement;
+    this.newChat = h('button', { class: 'icon-btn', type: 'button', 'aria-label': '新建会话', title: '新建会话' }, icon('newChat', 16)) as HTMLButtonElement;
     this.newChat.addEventListener('click', (e) => this.reset(e));
     this.headActions = [this.newChat];
 
-    this.log = h('div', { class: 'as-log', role: 'log', 'aria-live': 'polite', 'aria-label': 'Conversation' });
+    this.log = h('div', { class: 'as-log', role: 'log', 'aria-live': 'polite', 'aria-label': '对话记录' });
     // Follow new content only while the user is at the bottom; scrolling up to read stops it.
     this.log.addEventListener('scroll', () => { const l = this.log; this.stick = l.scrollHeight - l.scrollTop - l.clientHeight < 40; }, { passive: true });
-    this.input = h('textarea', { class: 'as-input', rows: 1, placeholder: 'Describe a part or a change…', 'aria-label': 'Message the assistant' }) as HTMLTextAreaElement;
-    this.sendBtn = h('button', { class: 'as-send', type: 'button', 'aria-label': 'Send' }, icon('send', 16)) as HTMLButtonElement;
+    this.input = h('textarea', { class: 'as-input', rows: 1, placeholder: '描述零件设计或修改需求…', 'aria-label': '给助手发送消息' }) as HTMLTextAreaElement;
+    this.sendBtn = h('button', { class: 'as-send', type: 'button', 'aria-label': '发送' }, icon('send', 16)) as HTMLButtonElement;
     this.status = h('div', { class: 'as-status', role: 'status' });
     this.limit = h('div', { class: 'as-limit', id: nextDomId('as-limit'), 'aria-live': 'polite' });
     this.input.setAttribute('aria-describedby', this.limit.id);
@@ -181,9 +181,9 @@ export class AssistantPanel {
       this.attach(files);
       this.input.focus();
     });
-    const attachBtn = h('button', { class: 'icon-btn as-attach', type: 'button', 'aria-label': 'Attach files', title: 'Attach images, PDFs or text files (DXF, CSV…)' }, icon('attach', 17));
+    const attachBtn = h('button', { class: 'icon-btn as-attach', type: 'button', 'aria-label': '附加文件', title: '附加图片、PDF 或文本文件 (DXF, CSV…)' }, icon('attach', 17));
     attachBtn.addEventListener('click', () => this.fileInput.click());
-    this.tray = h('ul', { class: 'as-tray', 'aria-label': 'Attached files', hidden: true });
+    this.tray = h('ul', { class: 'as-tray', 'aria-label': '附加的文件', hidden: true });
     this.input.addEventListener('paste', (e) => {
       const files = [...(e.clipboardData?.files ?? [])];
       if (!files.length || copiedText(e.clipboardData!, files)) return;
@@ -195,13 +195,13 @@ export class AssistantPanel {
     this.el = h('div', { class: 'assistant' },
       this.log,
       h('div', { class: 'as-bottom' }, this.status, composer, this.limit,
-        h('div', { class: 'as-note' }, 'Sends your messages and a description of the part to 本地智能引擎. Check designs before relying on them.')));
+        h('div', { class: 'as-note' }, '将您的消息和零件描述发送至本地智能引擎。在投入使用前请仔细检查设计。')));
     this.bindDrop();
     this.renderEmpty();
     app.store.on((reason) => {
       if (reason !== 'load') return;
       // Another part was opened: the reply in progress was about the one that was closed.
-      if (this.agent.busy) this.stop('Stopped: another part was opened.');
+      if (this.agent.busy) this.stop('已停止：已打开另一个零件。');
       else if (!this.agent.messages.length) this.renderEmpty();
     });
   }
@@ -236,7 +236,7 @@ export class AssistantPanel {
   private checkLength(): boolean {
     const n = this.input.value.trim().length;
     const over = n > MAX_TEXT_CHARS;
-    const text = over ? `This message has ${n.toLocaleString('en-US')} characters; the assistant takes at most ${MAX_TEXT_CHARS.toLocaleString('en-US')}. Shorten it, or attach long text as a file.` : '';
+    const text = over ? `此消息包含 ${n.toLocaleString('zh-CN')} 个字符；助手最多接受 ${MAX_TEXT_CHARS.toLocaleString('zh-CN')} 个字符。请缩短消息，或将长文本作为文件附加。` : '';
     if (this.limit.textContent !== text) this.limit.textContent = text;
     if (over) this.input.setAttribute('aria-invalid', 'true');
     else this.input.removeAttribute('aria-invalid');
@@ -255,7 +255,7 @@ export class AssistantPanel {
     this.turn = null;
     // A step still running finishes first; its message's run then squashes and clears busy.
     this.setBusy(this.agent.busy);
-    if (this.agent.busy) this.status.textContent = 'Stopping…';
+    if (this.agent.busy) this.status.textContent = '正在停止…';
     this.renderEmpty();
     // A key press on New chat goes on typing; a tap leaves the keyboard down.
     if (e?.detail === 0) this.input.focus();
@@ -265,8 +265,8 @@ export class AssistantPanel {
   private renderEmpty() {
     const hasFeatures = this.app.store.doc.features.length > 0;
     const ideas = hasFeatures
-      ? ['Explain how this part is built', 'Round all the outer edges with 1 mm fillets', 'Make the main sizes parametric with global variables', 'What does it weigh in aluminium?']
-      : ['A 100 × 60 × 8 mm mounting plate with four M5 holes and rounded corners', 'A flanged bushing: 40 mm flange, 20 mm shaft, 10 mm bore', 'An enclosure box 80 × 50 × 30 mm with 2 mm walls, open on top', 'A spur-gear-like disc: 60 mm across with 12 teeth and a 8 mm bore'];
+      ? ['解释此零件是如何构建的', '用 1 mm 圆角对所有外边缘倒圆角', '通过全局变量实现主要尺寸参数化', '如果使用铝合金，重量是多少？']
+      : ['带四个 M5 安装孔和圆角的 100 × 60 × 8 mm 安装底板', '带法兰的衬套：40 mm 法兰，20 mm 轴径，10 mm 内孔', '80 × 50 × 30 mm 外壳盒，2 mm 壁厚，顶部开口', '正齿轮盘：直径 60 mm，12 齿，8 mm 内孔'];
     const chips = h('div', { class: 'as-ideas' }, ...ideas.map((t) => {
       const b = h('button', { class: 'as-idea', type: 'button' }, t);
       b.addEventListener('click', (e) => { this.input.value = t; this.grow(); this.keepFocus(e); void this.submit(); });
@@ -274,8 +274,8 @@ export class AssistantPanel {
     }));
     this.log.replaceChildren(h('div', { class: 'as-empty' },
       h('div', { class: 'as-empty-icon' }, icon('assistant', 22)),
-      h('div', { class: 'as-empty-title' }, hasFeatures ? 'Change or ask about this part' : 'Describe a part to design'),
-      h('p', {}, 'The assistant sketches, adds features, edits dimensions, measures and checks its work in the model. Everything it changes in one message is a single undo step.'),
+      h('div', { class: 'as-empty-title' }, hasFeatures ? '修改或询问此零件' : '描述要设计的零件'),
+      h('p', {}, '助手可以绘制草图、添加特征、编辑尺寸、测量并在模型中检查工作。在单条消息中所做的所有修改均为单个撤销步骤。'),
       chips));
     this.syncNewChat();
   }
@@ -288,7 +288,7 @@ export class AssistantPanel {
   private setBusy(on: boolean) {
     this.syncNewChat();
     this.sendBtn.replaceChildren(icon(on ? 'stop' : 'send', 16));
-    this.sendBtn.setAttribute('aria-label', on ? 'Stop' : 'Send');
+    this.sendBtn.setAttribute('aria-label', on ? '停止' : '发送');
     this.sendBtn.classList.toggle('stop', on);
     this.el.classList.toggle('busy', on);
     if (!on) this.status.textContent = '';
@@ -300,27 +300,27 @@ export class AssistantPanel {
   }
 
   /** Stops the reply; a step already running finishes first (it cannot be interrupted). */
-  private stop(reason = 'Stopped.') {
+  private stop(reason = '已停止。') {
     this.agent.stop();
     this.stopReason = reason;
-    if (this.turn) this.status.textContent = 'Stopping…';
+    if (this.turn) this.status.textContent = '正在停止…';
   }
 
   /** What the footer of a stopped reply says. */
-  private stopReason = 'Stopped.';
+  private stopReason = '已停止。';
 
   /** Whether 本地智能引擎 can be used. Signs in to Puter first when needed. */
   private async ready(): Promise<boolean> {
     if (this.chat || devChat()) return true;
     const sdk = puter() as unknown as { ai?: unknown } | null;
     if (!sdk?.ai) {
-      this.notice('The assistant needs Puter, which is not available right now. Check your connection and reload the page.');
+      this.notice('助手需要本地智能引擎，当前不可用。请检查网络连接并刷新页面。');
       return false;
     }
     if (env() === 'app' || cloudAvailable()) return true;
     // Sending is a click or Enter press, so the sign-in window opens without being blocked.
     this.sending = true;
-    this.status.textContent = 'Signing in to Puter…';
+    this.status.textContent = '正在连接本地智能引擎…';
     try { return await doSignIn(this.app); } finally { this.sending = false; this.status.textContent = ''; }
   }
 
@@ -355,7 +355,7 @@ export class AssistantPanel {
     if (this.pending.length) {
       const waiting = this.pending;
       this.sending = true;
-      this.status.textContent = 'Reading attached files…';
+      this.status.textContent = '正在读取附加文件…';
       let read: (Attachment | null)[];
       try { read = await Promise.all(waiting.map((it) => it.ready)); } finally { this.sending = false; this.status.textContent = ''; }
       if (this.agent.busy) return;
@@ -391,11 +391,11 @@ export class AssistantPanel {
     type Entry = PuterFSItem & { isDirectory?: boolean; fsentry_is_dir?: boolean };
     const entries = items.filter((it): it is Entry => !!it && typeof it === 'object' && typeof (it as Entry).path === 'string' && !!(it as Entry).path);
     const isDir = (it: Entry) => !!(it.is_dir || it.isDir || it.isDirectory || it.fsentry_is_dir);
-    if (entries.some(isDir)) toast({ message: 'Folders cannot be attached. Attach the files inside instead.', timeout: 5000 });
+    if (entries.some(isDir)) toast({ message: '无法附加文件夹。请改为附加其中的文件。', timeout: 5000 });
     const files: File[] = [];
     for (const it of entries) {
       if (isDir(it)) continue;
-      const name = it.name || it.path.replace(/\/+$/, '').split('/').pop() || 'File';
+      const name = it.name || it.path.replace(/\/+$/, '').split('/').pop() || '文件';
       // Size not known yet counts as non-empty: what is read is checked again by attach.
       const problem = attachmentProblem({ name, size: typeof it.size === 'number' ? it.size : 1 });
       if (problem) { toast({ kind: 'warning', message: problem, timeout: 5000 }); continue; }
@@ -403,7 +403,7 @@ export class AssistantPanel {
         const blob = it.read ? await it.read() : await puter()!.fs.read(it.path);
         files.push(new File([blob], name, { type: blob.type }));
       } catch {
-        toast({ kind: 'warning', message: `${name} could not be read`, timeout: 5000 });
+        toast({ kind: 'warning', message: `无法读取 ${name}`, timeout: 5000 });
       }
     }
     if (files.length) this.attach(files);
@@ -417,10 +417,10 @@ export class AssistantPanel {
       const problem = attachmentProblem(file, this.pending.length);
       if (problem) { toast({ kind: 'warning', message: problem, timeout: 5000 }); continue; }
       const kind = attachmentKind(file)!;
-      const item = { file, kind, name: file.name || (kind === 'image' ? 'Pasted image' : 'File') } as PendingFile;
+      const item = { file, kind, name: file.name || (kind === 'image' ? '粘贴的图片' : '文件') } as PendingFile;
       item.ready = new Promise<Attachment>((resolve, reject) => this.readQueue.push({ item, resolve, reject })).catch((e) => {
         if (this.pending.includes(item)) {
-          toast({ kind: 'warning', message: (e as Error)?.message || `${item.name} could not be read`, timeout: 5000 });
+          toast({ kind: 'warning', message: (e as Error)?.message || `无法读取 ${item.name}`, timeout: 5000 });
           this.removePending(item);
         }
         return null;
@@ -428,7 +428,7 @@ export class AssistantPanel {
       this.pending.push(item);
       this.tray.append(this.trayItem(item));
     }
-    if (over) toast({ kind: 'info', message: `Up to ${MAX_ATTACHMENTS} files can go with one message, so ${over === 1 ? '1 was' : `${over} were`} left out.` });
+    if (over) toast({ kind: 'info', message: `单条消息最多可附加 ${MAX_ATTACHMENTS} 个文件，因此略过了 ${over} 个文件。` });
     this.readNext();
     this.syncTray();
   }
@@ -444,7 +444,7 @@ export class AssistantPanel {
   }
 
   private trayItem(item: PendingFile): HTMLElement {
-    const remove = h('button', { class: 'as-tray-remove', type: 'button', 'aria-label': `Remove ${item.name}`, title: 'Remove' }, icon('close', 12));
+    const remove = h('button', { class: 'as-tray-remove', type: 'button', 'aria-label': `移除 ${item.name}`, title: '移除' }, icon('close', 12));
     remove.addEventListener('click', () => { this.removePending(item); this.input.focus(); });
     const preview = h('span', { class: 'as-tray-icon', 'aria-hidden': 'true' }, icon(item.kind === 'image' ? 'image' : 'file', 16));
     const spinner = h('span', { class: 'spinner', 'aria-hidden': 'true' });
@@ -537,27 +537,27 @@ export class AssistantPanel {
           turn.text.src += e.text;
           turn.draft = turn.text.el;
           this.queueText(turn.text);
-          this.setStatus('Writing…');
+          this.setStatus('编写中…');
         } else if (e.type === 'step') {
           turn.draft = null;
           if (!turn.steps) {
             if (turn.text) this.renderText(turn.text);
-            turn.steps = h('ol', { class: 'as-steps', 'aria-label': 'Steps' });
+            turn.steps = h('ol', { class: 'as-steps', 'aria-label': '步骤' });
             turn.body.append(turn.steps);
             turn.text = null;
           }
           this.renderStep(turn, turn.steps, e.step);
-          if (this.status.textContent !== 'Stopping…') this.setStatus(e.step.status === 'running' ? `${stepLabel(e.step.name, e.step.args)}…` : 'Thinking…');
+          if (this.status.textContent !== '正在停止…') this.setStatus(e.step.status === 'running' ? `${stepLabel(e.step.name, e.step.args)}…` : '思考中…');
         } else if (e.type === 'writing') {
-          if (this.status.textContent !== 'Stopping…') this.setStatus(`${stepLabel(e.name, {})}…`);
+          if (this.status.textContent !== '正在停止…') this.setStatus(`${stepLabel(e.name, {})}…`);
         } else if (e.type === 'round') {
           turn.draft = null;
-          this.setStatus('Thinking…');
+          this.setStatus('思考中…');
         } else if (e.type === 'retry') {
-          if (this.status.textContent !== 'Stopping…') this.setStatus(`The AI service did not answer. Trying again (${e.attempt} of ${MAX_RETRIES})…`);
+          if (this.status.textContent !== '正在停止…') this.setStatus(`AI 服务未响应。正在重试（第 ${e.attempt} 次，共 ${MAX_RETRIES} 次）…`);
         } else if (e.type === 'filesRefused') {
           const names = e.names.join(', ');
-          toast({ kind: 'warning', message: `The AI service could not read ${names}, so the assistant answers without ${e.names.length === 1 ? 'it' : 'them'}.`, timeout: 8000 });
+          toast({ kind: 'warning', message: `AI 服务无法读取 ${names}，助手将在未包含${e.names.length === 1 ? '该文件' : '这些文件'}的情况下回答。`, timeout: 8000 });
         }
       });
     } catch (e) {
@@ -579,8 +579,8 @@ export class AssistantPanel {
     const after = store.undoMark;
     if (res.stopped) turn.foot.append(h('span', { class: 'as-meta' }, this.stopReason));
     if (res.error) {
-      const retry = h('button', { class: 'btn small as-retry', type: 'button' }, 'Try again');
-      const error = h('div', { class: 'as-error', role: 'alert' }, `The assistant could not answer: ${res.error.message}`);
+      const retry = h('button', { class: 'btn small as-retry', type: 'button' }, '重试');
+      const error = h('div', { class: 'as-error', role: 'alert' }, `助手无法回答：${res.error.message}`);
       retry.addEventListener('click', (e) => {
         if (this.agent.busy) return;
         this.keepFocus(e);
@@ -595,15 +595,15 @@ export class AssistantPanel {
       turn.foot.append(error, retry);
     }
     if (changed) {
-      const undo = h('button', { class: 'btn small', type: 'button' }, icon('undo', 14), 'Undo changes');
+      const undo = h('button', { class: 'btn small', type: 'button' }, icon('undo', 14), '撤销更改');
       undo.addEventListener('click', (e) => {
         if (store.undoMark !== after || store.undoLabel !== label) {
-          toast({ kind: 'info', message: 'The part changed since; use Edit > Undo to step back.' });
+          toast({ kind: 'info', message: '零件此后已更改；请使用 编辑 > 撤销 进行后退。' });
           return;
         }
         this.keepFocus(e);
         this.app.commands.run('undo');
-        undo.replaceWith(h('span', { class: 'as-meta' }, 'Changes undone.'));
+        undo.replaceWith(h('span', { class: 'as-meta' }, '已撤销更改。'));
       });
       turn.foot.prepend(undo);
     }
@@ -649,7 +649,7 @@ export class AssistantPanel {
       if (step.status === 'error') el.append(h('div', { class: 'as-step-detail' }, short(step.summary, 220)));
     }
     if (step.image) {
-      const img = h('img', { class: 'as-shot', src: step.image, alt: 'What the assistant saw' }) as HTMLImageElement;
+      const img = h('img', { class: 'as-shot', src: step.image, alt: '助手查看的内容' }) as HTMLImageElement;
       img.addEventListener('load', () => this.scroll(), { once: true });
       el.append(img);
     }

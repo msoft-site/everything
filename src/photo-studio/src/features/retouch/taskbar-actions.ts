@@ -65,24 +65,24 @@ const cmd = (id: string, label: string, icon: string, checkedLabel?: string): Qu
   icon,
   checkedLabel,
 });
-const transform = cmd('edit.free-transform', 'Transform', 'transform-box');
-const addMask = cmd('layer.mask-reveal-all', 'Add Mask', 'mask-add');
+const transform = cmd('edit.free-transform', '变换', 'transform-box');
+const addMask = cmd('layer.mask-reveal-all', '添加蒙版', 'mask-add');
 
 /** The buttons for a state, in order. */
 export function quickItems(state: QuickState): QuickItem[] {
   switch (state) {
     case 'quick-mask':
       return [
-        cmd('select.quick-mask', 'Exit Quick Mask', 'quick-mask'),
-        cmd('select.mask-refine', 'Select and Mask', 'sliders-horizontal'),
+        cmd('select.quick-mask', '退出快速蒙版', 'quick-mask'),
+        cmd('select.mask-refine', '选择并遮住', 'sliders-horizontal'),
       ];
     case 'selection':
       return [
-        cmd('edit.ai-fill', 'AI Fill', 'sparkles'),
-        cmd('edit.context-fill-apply', 'Context Fill', 'sparkle'),
+        cmd('edit.ai-fill', 'AI 填充', 'sparkles'),
+        cmd('edit.context-fill-apply', '内容识别填充', 'sparkle'),
         {
           kind: 'menu',
-          label: 'Modify',
+          label: '修改',
           icon: 'sliders-horizontal',
           items: [
             'select.mask-refine',
@@ -99,73 +99,73 @@ export function quickItems(state: QuickState): QuickItem[] {
             'select.transform-selection',
           ],
         },
-        cmd('select.inverse', 'Invert', 'arrow-left-right'),
-        cmd('layer.mask-reveal-selection', 'Mask', 'mask-add'),
-        cmd('layer.via-copy', 'Copy to Layer', 'copy-plus'),
-        cmd('select.deselect', 'Deselect', 'x'),
+        cmd('select.inverse', '反选', 'arrow-left-right'),
+        cmd('layer.mask-reveal-selection', '添加蒙版', 'mask-add'),
+        cmd('layer.via-copy', '通过拷贝建立图层', 'copy-plus'),
+        cmd('select.deselect', '取消选择', 'x'),
       ];
     case 'mask':
       return [
-        cmd('layer.mask-invert', 'Invert Mask', 'contrast'),
-        cmd('layer.mask-refine-edge', 'Refine Edge', 'feather'),
-        cmd('layer.mask-toggle', 'Disable', 'eye-off', 'Enable'),
-        cmd('layer.mask-apply', 'Apply', 'check'),
-        cmd('layer.mask-delete', 'Delete Mask', 'trash-2'),
+        cmd('layer.mask-invert', '反相蒙版', 'contrast'),
+        cmd('layer.mask-refine-edge', '调整边缘', 'feather'),
+        cmd('layer.mask-toggle', '停用', 'eye-off', '启用'),
+        cmd('layer.mask-apply', '应用', 'check'),
+        cmd('layer.mask-delete', '删除蒙版', 'trash-2'),
       ];
     case 'type':
       return [
-        cmd('type.warp', 'Warp Text', 'waves'),
-        cmd('window.panel.character', 'Character', 'text-style-char'),
+        cmd('type.warp', '文字变形', 'waves'),
+        cmd('window.panel.character', '字符', 'text-style-char'),
         transform,
-        cmd('type.convert-to-shape', 'Convert to Shape', 'shapes'),
-        cmd('type.rasterize', 'Rasterize', 'image'),
+        cmd('type.convert-to-shape', '转换为形状', 'shapes'),
+        cmd('type.rasterize', '栅格化', 'image'),
       ];
     case 'shape':
       return [
-        { kind: 'tool', tool: 'direct-select', label: 'Edit Path', icon: 'direct-select' },
+        { kind: 'tool', tool: 'direct-select', label: '编辑路径', icon: 'direct-select' },
         transform,
         addMask,
-        cmd('layer.rasterize-shape', 'Rasterize', 'image'),
+        cmd('layer.rasterize-shape', '栅格化', 'image'),
       ];
     case 'embedded':
       return [
-        cmd('layer.embed-edit', 'Edit Contents', 'embedded-object'),
-        cmd('select.subject', 'Select Subject', 'scan-face'),
+        cmd('layer.embed-edit', '编辑内容', 'embedded-object'),
+        cmd('select.subject', '选择主体', 'scan-face'),
         transform,
-        cmd('layer.rasterize-embedded', 'Rasterize', 'image'),
+        cmd('layer.rasterize-embedded', '栅格化', 'image'),
       ];
     case 'pixel':
       return [
-        cmd('select.subject', 'Select Subject', 'scan-face'),
-        cmd('layer.remove-background', 'Remove Background', 'eraser'),
+        cmd('select.subject', '选择主体', 'scan-face'),
+        cmd('layer.remove-background', '移除背景', 'eraser'),
         addMask,
         transform,
       ];
     case 'adjustment':
       return [
-        cmd('window.panel.properties', 'Properties', 'sliders-horizontal'),
-        cmd('layer.clipping-mask', 'Clip to Layer Below', 'adj-clip'),
+        cmd('window.panel.properties', '属性', 'sliders-horizontal'),
+        cmd('layer.clipping-mask', '创建剪贴蒙版', 'adj-clip'),
       ];
     case 'fill':
       return [
-        cmd('window.panel.properties', 'Properties', 'sliders-horizontal'),
-        cmd('layer.clipping-mask', 'Clip to Layer Below', 'adj-clip'),
-        cmd('layer.rasterize-fill', 'Rasterize', 'image'),
+        cmd('window.panel.properties', '属性', 'sliders-horizontal'),
+        cmd('layer.clipping-mask', '创建剪贴蒙版', 'adj-clip'),
+        cmd('layer.rasterize-fill', '栅格化', 'image'),
       ];
     case 'group':
       return [
-        cmd('layer.ungroup', 'Ungroup', 'ungroup'),
+        cmd('layer.ungroup', '取消编组', 'ungroup'),
         addMask,
         transform,
-        cmd('layer.merge-down', 'Merge Group', 'merge'),
+        cmd('layer.merge-down', '合并图层组', 'merge'),
       ];
     case 'multiple':
       return [
-        cmd('layer.group', 'Group', 'group'),
-        cmd('layer.merge-down', 'Merge', 'merge'),
+        cmd('layer.group', '编组', 'group'),
+        cmd('layer.merge-down', '向下合并', 'merge'),
         {
           kind: 'menu',
-          label: 'Align',
+          label: '对齐',
           icon: 'align-start-vertical',
           items: [
             'layer.align-left',
@@ -180,13 +180,13 @@ export function quickItems(state: QuickState): QuickItem[] {
             'layer.distribute-v-space',
           ],
         },
-        cmd('layer.link', 'Link', 'link'),
+        cmd('layer.link', '链接图层', 'link'),
         transform,
       ];
     case 'empty':
       return [
-        cmd('layer.new-quick', 'New Layer', 'plus'),
-        cmd('select.all', 'Select All', 'square-dashed'),
+        cmd('layer.new-quick', '新建图层', 'plus'),
+        cmd('select.all', '全选', 'square-dashed'),
       ];
     default:
       return [];

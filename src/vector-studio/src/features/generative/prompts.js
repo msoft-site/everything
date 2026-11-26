@@ -7,71 +7,71 @@ export const PROMPT_MAX = 600;
 
 /** What to generate. `phrase` steers the picture toward art that traces well. */
 export const CONTENT_TYPES = [
-  { id: 'subject', label: 'Subject', phrase: 'one isolated subject, centered, on a plain pure white background, no ground shadow, nothing else in the picture' },
-  { id: 'scene', label: 'Scene', phrase: 'a complete scene with a background that fills the whole frame edge to edge' },
-  { id: 'icon', label: 'Icon', phrase: 'a single simple bold icon, centered, on a plain pure white background, very few shapes and colors, no text' },
-  { id: 'pattern', label: 'Pattern', phrase: 'a seamless repeating pattern tile: motifs spread evenly over the whole square, edge to edge, motifs that cross an edge continue on the opposite edge, no border, no frame' },
+  { id: 'subject', label: '主体', phrase: 'one isolated subject, centered, on a plain pure white background, no ground shadow, nothing else in the picture' },
+  { id: 'scene', label: '场景', phrase: 'a complete scene with a background that fills the whole frame edge to edge' },
+  { id: 'icon', label: '图标', phrase: 'a single simple bold icon, centered, on a plain pure white background, very few shapes and colors, no text' },
+  { id: 'pattern', label: '图案', phrase: 'a seamless repeating pattern tile: motifs spread evenly over the whole square, edge to edge, motifs that cross an edge continue on the opposite edge, no border, no frame' },
 ];
 
 /** Visual styles (own wording). */
 export const STYLES = [
-  { id: 'none', label: 'Any style', phrase: '' },
-  { id: 'flat', label: 'Flat', phrase: 'flat vector illustration, solid color shapes, no gradients, no texture' },
-  { id: 'line', label: 'Line art', phrase: 'clean black line art with even stroke weight, no fills, no shading' },
-  { id: 'geometric', label: 'Geometric', phrase: 'built from simple geometric shapes, circles, triangles and rectangles, crisp edges' },
-  { id: 'hand', label: 'Hand drawn', phrase: 'hand drawn look with slightly uneven organic outlines, flat colors' },
-  { id: 'retro', label: 'Retro', phrase: 'retro mid-century poster style, limited muted palette, bold simple shapes' },
-  { id: 'minimal', label: 'Minimal', phrase: 'minimal design, as few shapes as possible, generous negative space' },
-  { id: 'isometric', label: 'Isometric', phrase: 'isometric 3D view with flat shaded faces, crisp edges' },
-  { id: 'sticker', label: 'Sticker', phrase: 'die-cut sticker style with a thick white outline around the subject, bold flat colors' },
-  { id: 'papercut', label: 'Paper cut', phrase: 'layered paper cut-out style, stacked flat layers' },
+  { id: 'none', label: '任意风格', phrase: '' },
+  { id: 'flat', label: '扁平', phrase: 'flat vector illustration, solid color shapes, no gradients, no texture' },
+  { id: 'line', label: '线条艺术', phrase: 'clean black line art with even stroke weight, no fills, no shading' },
+  { id: 'geometric', label: '几何', phrase: 'built from simple geometric shapes, circles, triangles and rectangles, crisp edges' },
+  { id: 'hand', label: '手绘', phrase: 'hand drawn look with slightly uneven organic outlines, flat colors' },
+  { id: 'retro', label: '复古', phrase: 'retro mid-century poster style, limited muted palette, bold simple shapes' },
+  { id: 'minimal', label: '极简', phrase: 'minimal design, as few shapes as possible, generous negative space' },
+  { id: 'isometric', label: '等轴测', phrase: 'isometric 3D view with flat shaded faces, crisp edges' },
+  { id: 'sticker', label: '贴纸', phrase: 'die-cut sticker style with a thick white outline around the subject, bold flat colors' },
+  { id: 'papercut', label: '剪纸', phrase: 'layered paper cut-out style, stacked flat layers' },
 ];
 
 /** Color treatments. `colors` is the most colors the trace keeps (null: by detail). */
 export const COLOR_MODES = [
-  { id: 'full', label: 'Full color', phrase: '', colors: null },
-  { id: 'limited', label: 'Few colors', phrase: 'a limited palette of at most five flat colors', colors: 5 },
-  { id: 'mono', label: 'Black and white', phrase: 'black and white only, no gray', colors: 2 },
-  { id: 'pastel', label: 'Pastel', phrase: 'soft pastel colors', colors: null },
-  { id: 'vivid', label: 'Vivid', phrase: 'bright saturated colors with strong contrast', colors: null },
+  { id: 'full', label: '全彩', phrase: '', colors: null },
+  { id: 'limited', label: '少量色彩', phrase: 'a limited palette of at most five flat colors', colors: 5 },
+  { id: 'mono', label: '黑白', phrase: 'black and white only, no gray', colors: 2 },
+  { id: 'pastel', label: '柔和粉彩', phrase: 'soft pastel colors', colors: null },
+  { id: 'vivid', label: '鲜艳', phrase: 'bright saturated colors with strong contrast', colors: null },
 ];
 
-export const DETAIL_LABELS = ['Low', 'Medium', 'High'];
+export const DETAIL_LABELS = ['低', '中', '高'];
 
 /** Ideas for an empty prompt, per content type (original examples). */
 export const PROMPT_IDEAS = {
-  subject: ['a fox curled up asleep', 'a vintage bicycle with a basket of lemons', 'a cactus in a terracotta pot', 'a lighthouse on a small rock', 'a cup of coffee with steam swirls', 'a paper airplane'],
-  scene: ['a quiet harbor town at sunset', 'a camping tent under a starry sky', 'a city rooftop garden in spring', 'snowy mountains above a pine forest', 'a desert road with a single gas station'],
-  icon: ['a padlock', 'a cloud with an upward arrow', 'a shopping bag', 'a leaf', 'a map pin with a heart', 'a gear'],
-  pattern: ['tiny strawberries and leaves', 'geometric waves in navy and coral', 'scattered stars and moons', 'tropical monstera leaves', 'folk art flowers'],
+  subject: ['蜷缩睡着的狐狸', '装满柠檬篮子的复古自行车', '红陶花盆里的仙人掌', '小岩石上的灯塔', '冒着热气的咖啡杯', '纸飞机'],
+  scene: ['日落时分宁静的港口小镇', '星空下的露营帐篷', '春天的城市屋顶花园', '松林上方的雪山', '只有一家加油站的沙漠公路'],
+  icon: ['挂锁', '带向上箭头的云朵', '购物袋', '树叶', '带心形的地图标注', '齿轮'],
+  pattern: ['小草莓和叶子', '海军蓝与珊瑚色几何波浪', '散落的星星和月亮', '热带龟背竹叶', '民间艺术花卉'],
 };
 
-export const RECOLOR_IDEAS = ['autumn forest at dusk', 'neon arcade', 'sunlit beach and sea glass', 'muted scandinavian interior', 'vintage travel poster', 'deep ocean bioluminescence', 'candy shop', 'earthy desert clay'];
+export const RECOLOR_IDEAS = ['黄昏时分的秋季森林', '霓虹街机游戏厅', '阳光海滩与海玻璃', '柔和北欧室内风格', '复古旅行海报', '深海生物发光', '糖果屋', '朴素沙漠陶土'];
 
 export const TONES = [
-  { id: 'friendly', label: 'Friendly' },
-  { id: 'professional', label: 'Professional' },
-  { id: 'concise', label: 'Concise' },
-  { id: 'playful', label: 'Playful' },
-  { id: 'persuasive', label: 'Persuasive' },
-  { id: 'formal', label: 'Formal' },
+  { id: 'friendly', label: '亲切' },
+  { id: 'professional', label: '专业' },
+  { id: 'concise', label: '简明' },
+  { id: 'playful', label: '生动' },
+  { id: 'persuasive', label: '说服力' },
+  { id: 'formal', label: '正式' },
 ];
 
 export const LENGTHS = [
-  { id: 'same', label: 'About the same length' },
-  { id: 'shorter', label: 'Shorter' },
-  { id: 'longer', label: 'Longer' },
+  { id: 'same', label: '大致相同长度' },
+  { id: 'shorter', label: '更短' },
+  { id: 'longer', label: '更长' },
 ];
 
 export const TEXT_KINDS = [
-  { id: 'headline', label: 'Headline', ask: 'a headline of at most 8 words' },
-  { id: 'tagline', label: 'Tagline', ask: 'a short tagline of at most 12 words' },
-  { id: 'paragraph', label: 'Paragraph', ask: 'one paragraph of 40 to 70 words' },
-  { id: 'list', label: 'List', ask: 'a list of 3 to 6 short items, one per line, without bullets or numbers' },
-  { id: 'cta', label: 'Call to action', ask: 'a short call to action of at most 6 words' },
+  { id: 'headline', label: '主标题', ask: 'a headline of at most 8 words' },
+  { id: 'tagline', label: '副标题/标语', ask: 'a short tagline of at most 12 words' },
+  { id: 'paragraph', label: '段落', ask: 'one paragraph of 40 to 70 words' },
+  { id: 'list', label: '列表', ask: 'a list of 3 to 6 short items, one per line, without bullets or numbers' },
+  { id: 'cta', label: '行动呼吁 (CTA)', ask: 'a short call to action of at most 6 words' },
 ];
 
-export const LANGUAGES = ['Arabic', 'Chinese (Simplified)', 'Chinese (Traditional)', 'Czech', 'Danish', 'Dutch', 'English', 'Finnish', 'French', 'German', 'Greek', 'Hebrew', 'Hindi', 'Hungarian', 'Indonesian', 'Italian', 'Japanese', 'Korean', 'Norwegian', 'Persian', 'Polish', 'Portuguese', 'Romanian', 'Russian', 'Spanish', 'Swedish', 'Thai', 'Turkish', 'Ukrainian', 'Vietnamese'];
+export const LANGUAGES = ['阿拉伯语', '简体中文', '繁体中文', '捷克语', '丹麦语', '荷兰语', '英语', '芬兰语', '法语', '德语', '希腊语', '希伯来语', '印地语', '匈牙利语', '印度尼西亚语', '意大利语', '日语', '韩语', '挪威语', '波斯语', '波兰语', '葡萄牙语', '罗马尼亚语', '俄语', '西班牙语', '瑞典语', '泰语', '土耳其语', '乌克兰语', '越南语'];
 
 const find = (list, id) => list.find((x) => x.id === id) || list[0];
 

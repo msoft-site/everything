@@ -55,7 +55,7 @@ const TICK_MS = 30_000;
  * @param {() => void} [opts.openCalendar] opens the Calendar app itself
  * @returns {() => void} cleanup
  */
-export function mountAgenda(host, { calendar, ctx, userKey = '', now = () => Date.now(), locale, openCalendar }) {
+export function mountAgenda(host, { calendar, ctx, userKey = '', now = () => Date.now(), locale = 'zh-CN', openCalendar }) {
   const firstDay = firstDayOfWeek(locale);
   const ownOrigin = typeof location !== 'undefined' ? location.origin + location.pathname : '';
 

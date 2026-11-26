@@ -41,7 +41,7 @@ export async function ensureSignedIn() {
   }
 }
 const notice = (what: string) =>
-  `<div class="ai-notice" role="note"><strong>Before you generate</strong><p>${escapeXML(what)} is sent to local AI service to create the new pixels. This requires an account (you may be asked to sign in) and can use credits from your Puter balance. Nothing is sent until you press Generate.</p></div>`;
+  `<div class="ai-notice" role="note"><strong>生成须知</strong><p>${escapeXML(what)}将发送至本地智能引擎以生成新图像。在您点击“生成”前不会发送任何内容。</p></div>`;
 
 /** Shared dialog flow: collect inputs, run the generation with cancel, return the result. */
 async function aiDialog<T>(title: string, body: string, generate: (ws: ReturnType<typeof openWorkspace>, signal: AbortSignal) => Promise<T>): Promise<T | undefined> {
@@ -49,7 +49,7 @@ async function aiDialog<T>(title: string, body: string, generate: (ws: ReturnTyp
     title,
     'ai-workspace',
     `<form class="ai-body" novalidate>${body}<p class="ai-status" id="ai-status" role="status" aria-live="polite"></p></form>
-<footer class="rw-footer"><span class="rw-spacer"></span><button id="ai-cancel" type="button">Cancel</button><button id="ai-generate" type="button" class="primary">Generate</button></footer>`,
+<footer class="rw-footer"><span class="rw-spacer"></span><button id="ai-cancel" type="button">取消</button><button id="ai-generate" type="button" class="primary">生成</button></footer>`,
   );
   const status = ws.q('#ai-status');
   const go = ws.q<HTMLButtonElement>('#ai-generate');
@@ -65,17 +65,17 @@ async function aiDialog<T>(title: string, body: string, generate: (ws: ReturnTyp
     ctrl = new AbortController();
     go.disabled = true;
     status.className = 'ai-status busy';
-    status.textContent = 'Connecting to Puter…';
+    status.textContent = '正在连接本地智能引擎…';
     try {
       await ensureSignedIn();
-      status.textContent = 'Generating… this can take a little while.';
+      status.textContent = '正在生成… 请稍候。';
       result = await generate(ws, ctrl.signal);
       ws.close();
     } catch (error) {
       const err = toAIError(error);
       if (err.code === 'cancelled') return;
       status.className = 'ai-status error';
-      status.textContent = err.message + (err.retryable ? ' You can try again.' : '');
+      status.textContent = err.message + (err.retryable ? ' 您可以重试。' : '');
     } finally {
       ctrl = undefined;
       go.disabled = false;
@@ -87,26 +87,26 @@ async function aiDialog<T>(title: string, body: string, generate: (ws: ReturnTyp
   return result;
 }
 const methodField = (value = 'edit') =>
-  field('Method', options('ai-method', value === 'inpaint' ? 'inpaint' : 'edit', [['edit', 'Instruction edit'], ['inpaint', 'Mask inpainting']]), 'Mask inpainting follows the selection exactly but works at lower resolution.');
+  field('方法', options('ai-method', value === 'inpaint' ? 'inpaint' : 'edit', [['edit', '提示词编辑'], ['inpaint', '蒙版局部重绘']]), '蒙版局部重绘精确遵循选区，但分辨率较低。');
 
 export async function openAIFill(e: Editor, arg?: unknown) {
   const pre = prefillOf(arg);
   const sel = selectionMask(e);
   const box = sel && boundingBox(sel);
   if (!sel || !box) {
-    e.message('Select the area to fill first.');
+    e.message('请先选择要填充的区域。');
     return;
   }
   const img = await mergedImage(e);
   const out = await aiDialog(
-    'AI Fill',
-    `${notice('The selected area, with some surrounding image for context,')}
-${field('Prompt', `<textarea id="ai-prompt" rows="3" placeholder="Describe what to put in the selection, e.g. “a wooden bench”" required>${attr(pre.prompt)}</textarea>`)}
+    'AI 填充',
+    `${notice('选定区域及周围部分参考图像')}
+${field('提示词', `<textarea id="ai-prompt" rows="3" placeholder="描述希望在选区中生成的内容，例如“一张木长凳”" required>${attr(pre.prompt)}</textarea>`)}
 ${methodField(pre.method)}
-${field('Edge', options('ai-blend', pre.blend === 'seamless' ? 'seamless' : 'normal', [['normal', 'Soft edge'], ['seamless', 'Seamless blend']]))}`,
+${field('边缘过渡', options('ai-blend', pre.blend === 'seamless' ? 'seamless' : 'normal', [['normal', '柔和边缘'], ['seamless', '无缝融合']]))}`,
     async (ws, signal) => {
       const prompt = ws.q<HTMLTextAreaElement>('#ai-prompt').value.trim();
-      if (!prompt) throw new AIError('bad-request', 'Enter a prompt first.');
+      if (!prompt) throw new AIError('bad-request', '请先输入提示词。');
       const opts: AIImageOptions = { mode: ws.q<HTMLSelectElement>('#ai-method').value as 'edit' | 'inpaint', blend: ws.q<HTMLSelectElement>('#ai-blend').value as 'normal' | 'seamless', signal };
       return { prompt, image: await aiFill(img, sel, prompt, opts), settings: { method: opts.mode, blend: opts.blend } };
     },
@@ -118,11 +118,11 @@ ${field('Edge', options('ai-blend', pre.blend === 'seamless' ? 'seamless' : 'nor
   const cut = cropMask(sel, box), kept = { ...pixels, data: new Uint8ClampedArray(pixels.data) };
   for (let i = 0; i < cut.data.length; i++) kept.data[i * 4 + 3] = Math.round((kept.data[i * 4 + 3] * cut.data[i]) / 255);
   void recordGeneration(e, { kind: pre.via === 'assistant' ? 'assistant' : 'fill', prompt: out.prompt, settings: { ...out.settings, dialog: 'fill' }, placement: { ...box } }, kept);
-  const l = newPixelLayer(`AI Fill: ${out.prompt.slice(0, 40)}`, e.doc, gridFromImage(e.assets.tiles, pixels, box.x, box.y));
+  const l = newPixelLayer(`AI 填充: ${out.prompt.slice(0, 40)}`, e.doc, gridFromImage(e.assets.tiles, pixels, box.x, box.y));
   l.maskGrid = writeRect(e.assets.tiles, emptyGrid(1), box.x, box.y, cropMask(sel, box));
   l.generated = { kind: 'fill', prompt: out.prompt.slice(0, 4000) };
-  insertLayer(e, l, 'AI Fill', true);
-  e.message('AI Fill added as a new masked layer.');
+  insertLayer(e, l, 'AI 填充', true);
+  e.message('已将 AI 填充内容添加为带蒙版的新图层。');
 }
 
 export async function openAIExpand(e: Editor, arg?: unknown) {
@@ -135,18 +135,18 @@ export async function openAIExpand(e: Editor, arg?: unknown) {
     dy = Math.round(H * 0.125);
   const num = (id: string, label: string, v: number) => field(label, `<input id="${id}" type="number" min="0" max="4096" value="${v}">`);
   const out = await aiDialog(
-    'AI Expand',
-    `${notice('The whole visible image (reduced to about one megapixel)')}
-<div class="ai-sides">${num('ai-left', 'Left (px)', side(pre.left, dx))}${num('ai-right', 'Right (px)', side(pre.right, dx))}${num('ai-top', 'Top (px)', side(pre.top, dy))}${num('ai-bottom', 'Bottom (px)', side(pre.bottom, dy))}</div>
-${field('Prompt (optional)', `<textarea id="ai-prompt" rows="2" placeholder="Leave empty to continue the scene naturally">${attr(pre.prompt)}</textarea>`)}
+    'AI 扩展',
+    `${notice('当前可见的完整图像')}
+<div class="ai-sides">${num('ai-left', '左 (像素)', side(pre.left, dx))}${num('ai-right', '右 (像素)', side(pre.right, dx))}${num('ai-top', '上 (像素)', side(pre.top, dy))}${num('ai-bottom', '下 (像素)', side(pre.bottom, dy))}</div>
+${field('提示词 (可选)', `<textarea id="ai-prompt" rows="2" placeholder="留空则自动自然扩展画面内容">${attr(pre.prompt)}</textarea>`)}
 ${methodField(pre.method)}`,
     async (ws, signal) => {
       const v = (id: string) => Math.max(0, Math.round(Number(ws.q<HTMLInputElement>(id).value) || 0));
       const by = { left: v('#ai-left'), top: v('#ai-top'), right: v('#ai-right'), bottom: v('#ai-bottom') };
       const nw = W + by.left + by.right,
         nh = H + by.top + by.bottom;
-      if (nw === W && nh === H) throw new AIError('bad-request', 'Enter how many pixels to add on at least one side.');
-      if (nw > 8192 || nh > 8192 || nw * nh > 24_000_000) throw new AIError('bad-request', 'The expanded image would exceed 8192 pixels or 24 megapixels.');
+      if (nw === W && nh === H) throw new AIError('bad-request', '请至少在一侧输入要扩展的像素数。');
+      if (nw > 8192 || nh > 8192 || nw * nh > 24_000_000) throw new AIError('bad-request', '扩展后的图像尺寸不能超过 8192 像素或 2400 万像素。');
       const prompt = ws.q<HTMLTextAreaElement>('#ai-prompt').value;
       const method = ws.q<HTMLSelectElement>('#ai-method').value as 'edit' | 'inpaint';
       return { by, prompt, method, image: await aiExpand(img, by, prompt, { mode: method, signal }) };
@@ -160,10 +160,10 @@ ${methodField(pre.method)}`,
   // The generated layer covers the new area and fades into the old edge, so the
   // original layers stay untouched underneath.
   const mask = expandMask(nw, nh, by.left, by.top, W, H, Math.max(2, Math.round(Math.min(W, H) * 0.01)));
-  const l = newPixelLayer('AI Expand', { width: nw, height: nh }, gridFromImage(e.assets.tiles, image));
+  const l = newPixelLayer('AI 扩展', { width: nw, height: nh }, gridFromImage(e.assets.tiles, image));
   l.maskGrid = writeRect(e.assets.tiles, emptyGrid(1), 0, 0, mask);
   l.generated = { kind: 'expand', prompt: out.prompt.trim().slice(0, 4000) };
-  e.command('AI Expand', (d) => {
+  e.command('AI 扩展', (d) => {
     enlargeCanvas(d, by.left, by.top, nw, nh);
     applySelection(d, null);
     d.layers.push(l);
@@ -171,7 +171,7 @@ ${methodField(pre.method)}`,
   e.selected = l.id;
   e.fit();
   e.update();
-  e.message('AI Expand added the new area as a masked layer.');
+  e.message('已将 AI 扩展区域添加为带蒙版的新图层。');
 }
 /** Grow the canvas to `w`x`h`, moving existing content right/down by
  * (`left`, `top`). The shared crop helper clamps to the current canvas, so the

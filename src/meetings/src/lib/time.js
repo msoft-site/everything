@@ -1,12 +1,12 @@
 /** Time formatting helpers (pure). */
 
 /** "3:45 PM" style clock. */
-export function formatClock(date = new Date(), locale = undefined) {
+export function formatClock(date = new Date(), locale = 'zh-CN') {
   return date.toLocaleTimeString(locale, { hour: 'numeric', minute: '2-digit' });
 }
 
 /** "Mon, Jul 14" style date. */
-export function formatDay(date = new Date(), locale = undefined) {
+export function formatDay(date = new Date(), locale = 'zh-CN') {
   return date.toLocaleDateString(locale, { weekday: 'short', month: 'short', day: 'numeric' });
 }
 
@@ -25,7 +25,7 @@ export function formatDuration(ms) {
 }
 
 /** Chat timestamp: clock time for today, day + time otherwise. */
-export function formatChatTime(ts, now = Date.now(), locale = undefined) {
+export function formatChatTime(ts, now = Date.now(), locale = 'zh-CN') {
   const d = new Date(ts);
   const n = new Date(now);
   const sameDay =

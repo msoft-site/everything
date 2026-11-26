@@ -69,7 +69,7 @@ export function reuseItem(app, entry, index) {
 
 export class GenerationHistoryPanel extends Panel {
   static id = 'generationHistory';
-  static title = 'Generation History';
+  static title = '生成历史记录';
   static icon = 'gen-history';
 
   get store() {
@@ -77,22 +77,22 @@ export class GenerationHistoryPanel extends Panel {
   }
 
   build() {
-    this.list = h('div.gen-history', { role: 'list', 'aria-label': 'Generations' });
-    this.empty = emptyState('Prompts and results you generate appear here, so you can use them again.');
+    this.list = h('div.gen-history', { role: 'list', 'aria-label': '历史生成记录' });
+    this.empty = emptyState('您生成的提示词和结果将显示在此处，以便再次使用。');
     this.el.append(this.empty, this.list);
     this.store?.on('change', () => this.visible && this.update());
   }
 
   menu() {
     return [
-      { label: 'Open Generate Panel', run: () => openGenerate(this.app, 'vectors') },
+      { label: '打开生成面板', run: () => openGenerate(this.app, 'vectors') },
       '-',
-      { label: 'Clear History...', enabled: Boolean(this.store?.entries.length), run: () => this.clearAll() },
+      { label: '清空历史记录...', enabled: Boolean(this.store?.entries.length), run: () => this.clearAll() },
     ];
   }
 
   async clearAll() {
-    const ok = await this.app.dialogs.confirm({ title: 'Clear Generation History', message: 'Remove every prompt and result from the history? Artwork already in documents stays.', okLabel: 'Clear', danger: true });
+    const ok = await this.app.dialogs.confirm({ title: '清空生成历史记录', message: '是否从历史记录中移除所有提示词和生成结果？已添加到文档中的图形将保持不变。', okLabel: '清空', danger: true });
     if (ok) this.store.clear();
   }
 
@@ -116,12 +116,12 @@ export class GenerationHistoryPanel extends Panel {
     };
     let items;
     if (e.kind === 'recolor') {
-      items = e.items.map((p, i) => h('button.gen-hist-palette', { type: 'button', 'aria-label': `Recolor the selection with ${p.name}`, 'data-tip': p.name, onclick: () => use(i) }, h('span.gen-chips', { 'aria-hidden': 'true' }, p.colors.map((c) => h('span.gen-chip', { style: { background: c } })))));
+      items = e.items.map((p, i) => h('button.gen-hist-palette', { type: 'button', 'aria-label': `使用 ${p.name} 重新着色选中项`, 'data-tip': p.name, onclick: () => use(i) }, h('span.gen-chips', { 'aria-hidden': 'true' }, p.colors.map((c) => h('span.gen-chip', { style: { background: c } })))));
     } else if (e.kind === 'text') {
-      items = e.items.map((t, i) => h('button.gen-hist-text', { type: 'button', 'aria-label': `Insert: ${t.text.slice(0, 60)}`, onclick: () => use(i) }, t.text.length > 140 ? `${t.text.slice(0, 139)}…` : t.text));
+      items = e.items.map((t, i) => h('button.gen-hist-text', { type: 'button', 'aria-label': `插入: ${t.text.slice(0, 60)}`, onclick: () => use(i) }, t.text.length > 140 ? `${t.text.slice(0, 139)}…` : t.text));
     } else {
-      const verb = e.kind === 'pattern' ? 'Add to Swatches' : e.kind === 'shapeFill' ? 'Fill the selected shape with' : 'Place';
-      items = e.items.map((it, i) => h('button.gen-tile.small', { type: 'button', 'aria-label': `${verb} variation ${i + 1}`, 'data-tip': `${verb} variation ${i + 1}`, onclick: () => use(i) }, h('img', { src: thumbUrl(it.result), alt: '', draggable: false })));
+      const verb = e.kind === 'pattern' ? '添加到色板' : e.kind === 'shapeFill' ? '填充选中形状' : '放置';
+      items = e.items.map((it, i) => h('button.gen-tile.small', { type: 'button', 'aria-label': `${verb} 变体 ${i + 1}`, 'data-tip': `${verb} 变体 ${i + 1}`, onclick: () => use(i) }, h('img', { src: thumbUrl(it.result), alt: '', draggable: false })));
     }
     const canReuse = ['vectors', 'shapeFill', 'pattern'].includes(e.kind);
     const head = h(
@@ -129,9 +129,9 @@ export class GenerationHistoryPanel extends Panel {
       icon(KIND_ICONS[e.kind], 14),
       h('span.gen-hist-title', { title: e.prompt }, e.kind === 'text' && e.settings?.action !== 'generate' ? `${label}: ${e.settings?.action || ''}` : promptTitle(e.prompt || label)),
       h('span.gen-hist-time', timeAgo(e.time)),
-      canReuse ? h('button.icon-btn.small', { type: 'button', 'aria-label': 'Use this prompt again', 'data-tip': 'Use this prompt again', onclick: () => openGenerate(app, e.kind, { prompt: e.prompt, settings: e.settings }) }, icon('refresh-cw', 14)) : null,
-      e.kind === 'recolor' ? h('button.icon-btn.small', { type: 'button', 'aria-label': 'Open in Recolor from Prompt', 'data-tip': 'Open in Recolor from Prompt', onclick: () => app.commands.run('generative.recolor', { prompt: e.prompt, palettes: e.items }) }, icon('refresh-cw', 14)) : null,
-      h('button.icon-btn.small', { type: 'button', 'aria-label': 'Delete from history', 'data-tip': 'Delete', onclick: () => this.store.remove(e.id) }, icon('trash', 14)),
+      canReuse ? h('button.icon-btn.small', { type: 'button', 'aria-label': '再次使用此提示词', 'data-tip': '再次使用此提示词', onclick: () => openGenerate(app, e.kind, { prompt: e.prompt, settings: e.settings }) }, icon('refresh-cw', 14)) : null,
+      e.kind === 'recolor' ? h('button.icon-btn.small', { type: 'button', 'aria-label': '在提示词重新着色中打开', 'data-tip': '在提示词重新着色中打开', onclick: () => app.commands.run('generative.recolor', { prompt: e.prompt, palettes: e.items }) }, icon('refresh-cw', 14)) : null,
+      h('button.icon-btn.small', { type: 'button', 'aria-label': '从历史记录中删除', 'data-tip': '删除', onclick: () => this.store.remove(e.id) }, icon('trash', 14)),
     );
     return h('section.gen-hist-entry', { role: 'listitem', 'aria-label': `${label}: ${e.prompt || ''}` }, head, h(`div.gen-hist-items.kind-${e.kind}`, items));
   }
