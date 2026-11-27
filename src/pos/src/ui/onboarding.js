@@ -35,10 +35,10 @@ export function openOnboarding() {
    */
   let installing = false;
   const modal = openModal({
-    title: 'Welcome', content: body, onClose: markDone, canClose: () => !installing,
+    title: '欢迎使用收银系统', content: body, onClose: markDone, canClose: () => !installing,
   });
 
-  const skipBtn = (label = 'Skip for now') => el('button.btn.btn-ghost.btn-block', {
+  const skipBtn = (label = '暂时跳过') => el('button.btn.btn-ghost.btn-block', {
     type: 'button', style: { marginTop: '10px' },
     onclick: () => { markDone(); modal.close(); },
   }, label);
@@ -52,18 +52,18 @@ export function openOnboarding() {
           html: icon('store', 30),
           style: { background: 'var(--accent-wash)', color: 'var(--accent)' },
         }),
-        el('h3', { style: { fontSize: '19px' } }, 'Your register, your cloud'),
-        el('p', {}, 'Ring up sales, print receipts, and watch your numbers. Everything is stored locally.')
+        el('h3', { style: { fontSize: '19px' } }, '高效收银，随时随地掌握经营'),
+        el('p', {}, '销售开单、小票打印、库存盘点与营业数据洞察。所有数据均安全保存在您的本地存储中。')
       ),
       el('button.btn.btn-primary.btn-block', {
         type: 'button', style: { padding: '13px' },
         onclick: renderSetup,
-      }, 'Set up my store'),
+      }, '配置我的店铺信息'),
       el('button.btn.btn-ghost.btn-block', {
         type: 'button', style: { marginTop: '10px', border: '1px dashed var(--hairline-strong)' },
         html: icon('sparkle', 15, 2),
         onclick: useSampleData,
-      }, ' Explore with sample data'),
+      }, ' 体验示例数据'),
       skipBtn()
     ]);
   }

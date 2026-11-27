@@ -39,12 +39,12 @@ export function openOnboarding() {
       store.updateSettings({ onboarded: true }).catch(() => {});
     }
   };
-  const modal = openModal({ title: 'Welcome', content: body, onClose: markDone });
+  const modal = openModal({ title: '欢迎使用客户关系管理 (CRM)', content: body, onClose: markDone });
 
   const skipBtn = () => el('button.btn.btn-ghost.btn-block.mt-sm', {
     type: 'button',
     onclick: () => { markDone(); modal.close(); },
-  }, 'Skip for now');
+  }, '暂时跳过');
 
   /* Step 0 - welcome */
   function renderWelcome() {
@@ -52,19 +52,19 @@ export function openOnboarding() {
     append(body, [
       el('div.empty.onboard-hero', {},
         el('img.onboard-mark', { src: './icon-192.png', width: 58, height: 58, alt: '' }),
-        el('h3', {}, 'Your pipeline, your cloud'),
-        el('p', {}, 'Track leads, companies, deals, and follow-ups, and see a forecast you can trust. Stored in local storage, never sold or shared.')
+        el('h3', {}, '掌控销售管道，数据自主可控'),
+        el('p', {}, '全流程跟踪线索、客户企业、商机和跟进动态，获取真实可靠的业绩预测。数据安全存储在本地，绝不上报外泄。')
       ),
       el('button.btn.btn-primary.btn-block.btn-tall', {
         type: 'button',
         onclick: renderCurrency,
-      }, 'Set up my pipeline'),
+      }, '配置我的销售管道'),
       el('button.btn.btn-ghost.btn-block.btn-dashed.mt-sm', {
         type: 'button',
         html: icon('sparkle', 15, 2),
         onclick: useSampleData,
-      }, ' Explore with sample data'),
-      skipBtn(),
+      }, ' 体验示例数据'),
+      skipBtn()
     ]);
   }
 

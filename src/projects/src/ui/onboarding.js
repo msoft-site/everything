@@ -25,31 +25,29 @@ export function openOnboarding() {
   const body = el('div', {},
     el('div.empty.onboard-hero', {},
       el('div.empty-icon', { html: icon('board', 30) }),
-      el('h3', {}, 'Plan it. Move it. Ship it.'),
-      el('p', {}, 'Kanban boards, timelines, and milestones for small teams. Everything is stored locally, never sold or shared.')
+      el('h3', {}, '规划清晰，协作顺畅，敏捷交付'),
+      el('p', {}, '专为团队打造的看板视图、时间线与里程碑管理。所有项目数据安全存储在本地，绝不上报或外泄。')
     ),
     el('button.btn.btn-primary.btn-block.btn-tall', {
       type: 'button',
       onclick: () => {
         markDone();
         modal.close();
-        // replace, not assign: the project form's own history entry is still
-        // pending (see modal.js dismissOnBack).
         openProjectForm({ onDone: (p) => location.replace(projectHash(p.id)) });
       },
-    }, 'Create my first project'),
+    }, '创建我的第一个项目'),
     el('button.btn.btn-ghost.btn-block.btn-dashed', {
       type: 'button',
       html: icon('sparkle', 15, 2),
       onclick: useSampleData,
-    }, ' Explore with sample data'),
+    }, ' 体验示例数据'),
     el('button.btn.btn-ghost.btn-block', {
       type: 'button',
       onclick: () => { markDone(); modal.close(); },
-    }, 'Skip for now')
+    }, '暂时跳过')
   );
 
-  const modal = openModal({ title: 'Welcome', content: body, onClose: markDone });
+  const modal = openModal({ title: '欢迎使用项目管理', content: body, onClose: markDone });
 
   async function useSampleData(e) {
     // currentTarget is only set while the event dispatches, and target can

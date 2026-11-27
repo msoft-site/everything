@@ -25,30 +25,30 @@ export function openOnboarding() {
   const markDone = () => {
     if (!store.settings.onboarded) store.updateSettings({ onboarded: true }).catch(() => {});
   };
-  const modal = openModal({ title: 'Welcome', content: body, onClose: markDone });
+  const modal = openModal({ title: '欢迎使用发票管理', content: body, onClose: markDone });
 
   const skipBtn = () => el('button.btn.btn-ghost.btn-block', {
     type: 'button', style: { marginTop: '10px' },
     onclick: () => { markDone(); modal.close(); },
-  }, 'Skip for now');
+  }, '暂时跳过');
 
   function renderWelcome() {
     clear(body);
     append(body, [
       el('div.onboard-hero', {},
         el('img.onboard-icon', { src: './icon-192.png', alt: '', 'aria-hidden': 'true' }),
-        el('h3', {}, 'Get paid without the busywork'),
-        el('p', {}, 'Estimates, invoices, recurring billing, receipts, and payment links. Everything lives in your own local storage.')
+        el('h3', {}, '告别繁琐，轻松开票收款'),
+        el('p', {}, '支持报价估算单、发票、周期性账单、收款收据与付款链接。所有数据均安全保存在您的本地存储中。')
       ),
       el('button.btn.btn-primary.btn-block', {
         type: 'button', style: { minHeight: '44px' },
         onclick: renderBusiness,
-      }, 'Set up my business'),
+      }, '配置我的业务信息'),
       el('button.btn.btn-block', {
         type: 'button', style: { marginTop: '10px', minHeight: '44px' },
         html: icon('sparkle', 15, 1.6),
         onclick: useSampleData,
-      }, ' Explore with sample data'),
+      }, ' 体验示例数据'),
       skipBtn(),
     ]);
   }

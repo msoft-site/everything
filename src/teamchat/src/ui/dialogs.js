@@ -1546,19 +1546,17 @@ export function offerPushFromClick(opts) {
 }
 
 export function createWorkspaceDialog({ onCreated } = {}) {
-  const nameInput = el('input.input', { placeholder: 'e.g. Northwind Studio', maxlength: LIMITS.workspaceName, autocomplete: 'organization' });
-  const nameField = field('Workspace name', nameInput, 'The company, team, or project this space is for.');
-  const submit = el('button.btn.btn-primary', { type: 'submit' }, 'Create workspace');
+  const nameInput = el('input.input', { placeholder: '例如：创意协作团队', maxlength: LIMITS.workspaceName, autocomplete: 'organization' });
+  const nameField = field('工作区名称', nameInput, '此工作区适用的公司、团队或项目名称。');
+  const submit = el('button.btn.btn-primary', { type: 'submit' }, '创建工作区');
   const status = el('p.small.muted', { hidden: true, role: 'status', 'aria-live': 'polite' });
   const form = el('form', {
     onsubmit: async (e) => {
       e.preventDefault();
       const name = nameInput.value.trim();
-      if (!name) return nameField.showError('Give your workspace a name');
-      // Pushes are offered from this click, the browser's prompt first; the
-      // workspace is made meanwhile.
+      if (!name) return nameField.showError('请输入工作区名称');
       offerPushFromClick({ owner: true });
-      const done = busy(submit, 'Creating');
+      const done = busy(submit, '正在创建');
       try {
         const { workspace } = await store.createWorkspace(name, (text) => {
           submit.textContent = `${text}\u2026`;
@@ -1566,7 +1564,7 @@ export function createWorkspaceDialog({ onCreated } = {}) {
           status.hidden = false;
         });
         modal.close();
-        toast(`Welcome to ${workspace.name}`);
+        toast(`欢迎使用 ${workspace.name}`);
         onCreated?.(workspace);
         navigate({ ws: workspace.id });
         inviteTeammatesWhenReady(workspace.id);
@@ -1576,19 +1574,17 @@ export function createWorkspaceDialog({ onCreated } = {}) {
         nameField.showError(err.message);
       }
     },
-  }, nameField, status, el('div.modal-actions', {}, el('button.btn.btn-ghost', { type: 'button', onclick: () => modal.close() }, 'Cancel'), submit));
-  const modal = openModal({ title: 'Create a workspace', content: form });
+  }, nameField, status, el('div.modal-actions', {}, el('button.btn.btn-ghost', { type: 'button', onclick: () => modal.close() }, '取消'), submit));
+  const modal = openModal({ title: '创建工作区', content: form });
 }
 
 export function joinWorkspaceDialog({ code: initial = '' } = {}) {
-  const input = el('input.input', { placeholder: 'Invite link, or XXXX-XXXX-XXXX@server', value: initial, autocapitalize: 'off', spellcheck: false, autocomplete: 'off' });
-  const f = field('Invite link or code', input, 'A share link for a channel from another workspace works here too.');
-  const submit = el('button.btn.btn-primary', { type: 'submit' }, 'Join');
+  const input = el('input.input', { placeholder: '邀请链接或邀请码 (如 XXXX-XXXX-XXXX@server)', value: initial, autocapitalize: 'off', spellcheck: false, autocomplete: 'off' });
+  const f = field('邀请链接或代码', input, '其他工作区的频道共享链接也可以在此处输入。');
+  const submit = el('button.btn.btn-primary', { type: 'submit' }, '加入');
   const form = el('form', {
     onsubmit: async (e) => {
       e.preventDefault();
-      // A share link (a channel from another workspace) is accepted for one
-      // of the user's workspaces, which is a different conversation.
       const shareLink = /#\/connect\//.test(input.value);
       const connect = shareLink ? parseConnectInput(input.value) : null;
       if (connect?.code && connect.server) {
@@ -1596,43 +1592,33 @@ export function joinWorkspaceDialog({ code: initial = '' } = {}) {
         acceptConnectDialog(connect);
         return;
       }
-      // A share link that lost its server part on the way (cut short in a
-      // paste): said as what it is, as the app says of such a link followed
-      // directly, rather than read on as an invite and refused as one
-      // ("That does not look like an invite"), which sent the reader looking
-      // for an invite they never had.
-      if (shareLink) return f.showError('That share link is not valid: it is missing the part that names the server. Paste the whole link, or the code with its server (XXXX-XXXX-XXXX@server)');
+      if (shareLink) return f.showError('该共享链接无效：缺少服务器名称部分。请粘贴完整链接或附带服务器的代码。');
       const parsed = parseInviteInput(input.value);
-      if (!parsed || !parsed.code) return f.showError('That does not look like an invite');
+      if (!parsed || !parsed.code) return f.showError('无效的邀请码格式');
       const server = parsed.server || (SHARED_WORKER_URL ? serverKeyOf(SHARED_WORKER_URL) : null);
-      if (!server) return f.showError('Paste the whole invite link, or the code with its server (XXXX-XXXX-XXXX@server)');
+      if (!server) return f.showError('请粘贴完整邀请链接，或附带服务器的代码 (XXXX-XXXX-XXXX@server)');
       offerPushFromClick();
-      const done = busy(submit, 'Joining');
+      const done = busy(submit, '正在加入');
       try {
         const res = await store.join(server, parsed.code);
         modal.close();
-        // An old code for a workspace since moved to another server: the
-        // answer says where it went, and the dialog takes the turn a join
-        // link followed in the address bar takes (see shell.js handleJoin).
-        // Read as a plain join, it said "Joined" and opened the read-only
-        // copy left behind at the old address.
         if (res.movedTo) {
-          toast(`${res.workspace.name} moved to another server; opening it there`, { duration: 6000 });
+          toast(`${res.workspace.name} 已迁移至其他服务器；正在跳转打开`, { duration: 6000 });
           navigate({ ws: res.movedTo });
           return;
         }
-        toast(res.promoted ? `You are now a full member of ${res.workspace.name}` : res.already ? `You are already in ${res.workspace.name}` : res.guest ? `Joined ${res.workspace.name} as a guest` : `Joined ${res.workspace.name}`);
+        toast(res.promoted ? `您现在是 ${res.workspace.name} 的正式成员` : res.already ? `您已在 ${res.workspace.name} 中` : res.guest ? `已作为访客加入 ${res.workspace.name}` : `已加入 ${res.workspace.name}`);
         navigate({ ws: res.workspace.id });
       } catch (err) {
         done();
         f.showError(err.code === 'too_many_attempts' ? err.message
-          : err.code === 'invite_not_found' ? 'That invite is not valid or has expired. Ask for a new link.'
-            : err.code === 'no_backend' || err.code === 'network' ? 'The server behind this invite is not reachable right now.'
+          : err.code === 'invite_not_found' ? '该邀请无效或已过期，请索取新链接。'
+            : err.code === 'no_backend' || err.code === 'network' ? '暂时无法连接到该邀请所属的服务器。'
               : err.message);
       }
     },
-  }, f, el('div.modal-actions', {}, el('button.btn.btn-ghost', { type: 'button', onclick: () => modal.close() }, 'Cancel'), submit));
-  const modal = openModal({ title: 'Join a workspace', content: form });
+  }, f, el('div.modal-actions', {}, el('button.btn.btn-ghost', { type: 'button', onclick: () => modal.close() }, '取消'), submit));
+  const modal = openModal({ title: '加入工作区', content: form });
 }
 
 /**

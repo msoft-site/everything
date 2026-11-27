@@ -68,11 +68,11 @@ export function dashboardView() {
     if (!hasAnything) {
       body.append(emptyState({
         icon: 'dashboard',
-        title: 'Let’s get you selling',
-        message: 'Add the people you’re talking to and the deals in play, and this page becomes your morning briefing: what’s due, what moved, and what the pipeline is worth.',
+        title: '开启您的高效销售之旅',
+        message: '添加正在接洽的联系人以及跟进中的商机，这里将成为您的日常销售看板：今日待办、最新动态以及管道总估值。',
         action: el('div.empty-actions', {},
-          el('button.btn.btn-primary', { onclick: () => openContactForm() }, 'Add a lead'),
-          el('button.btn.btn-ghost', { onclick: openOnboarding }, 'Show me around')
+          el('button.btn.btn-primary', { onclick: () => openContactForm() }, '添加线索'),
+          el('button.btn.btn-ghost', { onclick: openOnboarding }, '功能导览')
         ),
       }));
       return;
