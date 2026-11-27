@@ -6,6 +6,28 @@ const ROOT_DIR = process.cwd();
 const SRC_DIR = path.join(ROOT_DIR, 'src');
 const DIST_DIR = path.join(ROOT_DIR, '.cf-deploy-dist');
 
+// 自动加载根目录 .env 文件配置
+const envPath = path.join(ROOT_DIR, '.env');
+if (fs.existsSync(envPath)) {
+  const envContent = fs.readFileSync(envPath, 'utf8');
+  for (const line of envContent.split('\n')) {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith('#')) continue;
+    const match = trimmed.match(/^([^=]+)=(.*)$/);
+    if (match) {
+      const key = match[1].trim();
+      let val = match[2].trim();
+      if ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'"))) {
+        val = val.slice(1, -1);
+      }
+      if (!process.env[key]) {
+        process.env[key] = val;
+      }
+    }
+  }
+}
+
+
 const BACK_BUTTON_HTML = `
 <!-- Everything Floating Back Button -->
 <a href="/" id="everything-back-home" style="position:fixed;bottom:16px;left:16px;z-index:999999;background:rgba(15,23,42,0.85);backdrop-filter:blur(8px);color:#38bdf8;border:1px solid #334155;border-radius:9999px;padding:6px 14px;font-size:13px;font-family:-apple-system,BlinkMacSystemFont,sans-serif;text-decoration:none;box-shadow:0 4px 12px rgba(0,0,0,0.3);display:flex;align-items:center;gap:6px;transition:all 0.2s;" onmouseover="this.style.background='#1e293b';this.style.transform='scale(1.05)'" onmouseout="this.style.background='rgba(15,23,42,0.85)';this.style.transform='none'">
