@@ -399,5 +399,16 @@
   "Filmic": "Filmic 胶片感",
   "Look": "观感风格",
   "Exposure": "曝光度",
-  "Gamma": "伽马值"
+  "Gamma": "伽马值",
+  "Click to show the Info log": "点击查看信息日志",
+  "Rename Workspace": "重命名工作区",
+  "Duplicate Workspace": "复制工作区",
+  "Delete Workspace": "删除工作区",
+  "Reorder Workspace to Front": "工作区移至最前",
+  "Reorder Workspace to Back": "工作区移至最后",
+  "Delete All Other Workspaces": "删除其他所有工作区",
+  "Scene Statistics": "场景统计信息",
+  "Scene Duration": "场景时长",
+  "System Memory": "系统内存占用",
+  "App Version": "软件版本号"
 }

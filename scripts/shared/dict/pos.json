@@ -398,5 +398,10 @@
   "e.g. to go": "例如去",
   "e.g. wrong size": "例如尺寸错误",
   "e.g. yd": "例如码",
-  "of ${money(totals.total)} total": "总计 ${money(totals.total)}"
+  "of ${money(totals.total)} total": "总计 ${money(totals.total)}",
+  "Main navigation": "主导航菜单",
+  "Product catalog": "商品目录",
+  "0 sales on hold": "0 笔挂单",
+  "Held sales, 0 sales on hold": "暂存挂单，当前 0 笔",
+  "Charge": "结账付款"
 }

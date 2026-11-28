@@ -429,5 +429,8 @@
   "of ${compactMoney(s.value, currency)}": "${compactMoney(s.value, 货币)}",
   "per month · leave empty for no goal": "每月 · 留空，没有目标",
   "· ${compactMoney(contractValue(d), store.settings.currency)} total": "· ${compactMoney(contractValue(d), store.settings.currency)} 总计",
-  "· ${compactMoney(r.value, currency)}": "· ${compactMoney(r.value, 货币)}"
+  "· ${compactMoney(r.value, currency)}": "· ${compactMoney(r.value, 货币)}",
+  "Main navigation": "主导航菜单",
+  "Sales CRM": "客户关系管理 (CRM)",
+  "Good morning, admin": "早上好，管理员"
 }

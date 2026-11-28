@@ -98,16 +98,22 @@ export const DEFAULT_SETTINGS = {
   // `logo` is an image data URI so documents (and share pages) embed it.
   business: { name: '', email: '', phone: '', address: '', taxId: '', logo: '' },
   brandColor: '',       // '' keeps the paper in plain ink
-  currency: 'USD',
+  currency: 'CNY',
   // The currency reports consolidate into. '' follows `currency`; a document
   // billed in anything else carries the rate it was worth on the day.
-  baseCurrency: '',
+  baseCurrency: 'CNY',
   // Named tax rates new documents start with; each prints as its own row.
   // The single pair below stays in step with the list's first entry, for
   // per-client overrides and documents saved before the list existed.
-  taxes: [],
-  taxRate: 0,
-  taxLabel: 'Tax',
+  taxes: [
+    { label: '增值税 (标准 13%)', rate: 13 },
+    { label: '增值税 (建筑/交通 9%)', rate: 9 },
+    { label: '增值税 (现代服务 6%)', rate: 6 },
+    { label: '增值税 (小规模 3%)', rate: 3 },
+    { label: '增值税 (减按 1%)', rate: 1 }
+  ],
+  taxRate: 13,
+  taxLabel: '增值税',
   taxInclusive: false, // new documents start with prices carrying the tax
   paymentTermsDays: 14,
   quoteValidDays: 30,

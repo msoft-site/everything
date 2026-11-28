@@ -332,7 +332,7 @@
   "for consolidated totals": "对于合并总计",
   "hours, days, each…": "小时、天、每个…",
   "of the paper": "纸的",
-  "printed when no tax is charged": "不征税时打印",
+  "printed when no tax is charged": "零税率或免税时打印显示",
   "split the total over dates": "将总数按日期分开",
   "templates live in Settings": "模板位于“设置”中",
   "too large to email — ${fileSize(MAX_ATTACHMENT_BYTES)} max": "太大，无法通过电子邮件发送 - 最大值为 ${fileSize(MAX_ATTACHMENT_BYTES)}",
@@ -341,5 +341,13 @@
   "…and ${moreClashes} more.": "…还有 ${moreClashes} 更多。",
   "…and ${plan.errors.length - shown.length} more.": "…还有 ${plan.errors.length - shown.length} 更多。",
   "…and ${rest} more.": "...还有 ${rest} 更多。",
-  "…and ${result.create.length - rows.length} more.": "...还有 ${result.create.length - rows.length} 更多。"
+  "…and ${result.create.length - rows.length} more.": "...还有 ${result.create.length - rows.length} 更多。",
+  "Main navigation": "主导航菜单",
+  "CNY": "人民币 (¥)",
+  "USD": "美元 ($)",
+  "EUR": "欧元 (€)",
+  "GBP": "英镑 (£)",
+  "documents show the tax portion inside the total": "单据在总额内注明税额部分",
+  "Reverse charge, zero-rated export, an exemption certificate": "反向征税、零税率出口或免税证明说明",
+  "Tax note": "税费备注说明"
 }

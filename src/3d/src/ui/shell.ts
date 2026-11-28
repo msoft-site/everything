@@ -291,7 +291,7 @@ export class Shell {
                 e.preventDefault();
                 openMenu(workspaceMenu(this, w.name), { x: e.clientX, y: e.clientY });
               },
-              ondblclick: () => promptText('Rename Workspace', w.name, (n) => n && this.renameWorkspace(w.name, n)),
+              ondblclick: () => promptText('重命名工作区', w.name, (n) => n && this.renameWorkspace(w.name, n)),
             },
             w.name,
           ),
@@ -301,8 +301,8 @@ export class Shell {
         'button',
         {
           class: 'ws-add',
-          'data-tip': 'Add Workspace',
-          'aria-label': 'Add Workspace',
+          'data-tip': '添加工作区',
+          'aria-label': '添加工作区',
           onpointerdown: (e: PointerEvent) => {
             e.preventDefault();
             openMenu(addWorkspaceMenu(this), e.currentTarget as HTMLElement);
@@ -422,10 +422,10 @@ function statusMenu(sh: Shell): MenuItem[] {
   };
   const hasMemory = !!(performance as Performance & { memory?: unknown }).memory;
   return [
-    { label: 'Scene Statistics', checked: prefs.show_statusbar_stats, action: toggle('show_statusbar_stats') },
-    { label: 'Scene Duration', checked: prefs.show_statusbar_scene_duration, action: toggle('show_statusbar_scene_duration') },
-    ...(hasMemory ? [{ label: 'System Memory', checked: prefs.show_statusbar_memory, action: toggle('show_statusbar_memory') }] : []),
-    { label: 'App Version', checked: prefs.show_statusbar_version, action: toggle('show_statusbar_version') },
+    { label: '场景统计信息', checked: prefs.show_statusbar_stats, action: toggle('show_statusbar_stats') },
+    { label: '场景时长', checked: prefs.show_statusbar_scene_duration, action: toggle('show_statusbar_scene_duration') },
+    ...(hasMemory ? [{ label: '系统内存占用', checked: prefs.show_statusbar_memory, action: toggle('show_statusbar_memory') }] : []),
+    { label: '软件版本号', checked: prefs.show_statusbar_version, action: toggle('show_statusbar_version') },
   ];
 }
 
@@ -438,7 +438,7 @@ function addWorkspaceMenu(sh: Shell): MenuItem[] {
       submenu: () => workspaceTemplates.filter((t) => t.category === c).map((t) => ({ label: t.create().name, action: () => sh.addWorkspace(t.create()) })),
     })),
     { separator: true },
-    { label: 'Duplicate Current', action: () => sh.duplicateWorkspace(sh.active) },
+    { label: '复制当前工作区', action: () => sh.duplicateWorkspace(sh.active) },
   ];
 }
 
@@ -447,19 +447,19 @@ function workspaceMenu(sh: Shell, name: string): MenuItem[] {
   const p = { name };
   const ws = sh.workspaces.find((w) => w.name === name);
   return [
-    { label: 'Duplicate', icon: 'duplicate', op: 'workspace.duplicate', props: p },
-    { label: 'Delete', icon: 'remove', op: 'workspace.delete', props: p },
-    { label: 'Rename…', action: () => promptText('Rename Workspace', name, (n) => n && sh.renameWorkspace(name, n)) },
+    { label: '创建副本', icon: 'duplicate', op: 'workspace.duplicate', props: p },
+    { label: '删除工作区', icon: 'remove', op: 'workspace.delete', props: p },
+    { label: '重命名…', action: () => promptText('重命名工作区', name, (n) => n && sh.renameWorkspace(name, n)) },
     { separator: true },
-    { label: 'Reorder to Front', icon: 'tria_left_bar', op: 'workspace.reorder_to_front', props: p },
-    { label: 'Reorder to Back', icon: 'tria_right_bar', op: 'workspace.reorder_to_back', props: p },
+    { label: '移至最前', icon: 'tria_left_bar', op: 'workspace.reorder_to_front', props: p },
+    { label: '移至最后', icon: 'tria_right_bar', op: 'workspace.reorder_to_back', props: p },
     { separator: true },
-    { label: 'Pin Scene', checked: !!ws?.pinScene, op: 'workspace.scene_pin_toggle', props: p },
+    { label: '固定场景', checked: !!ws?.pinScene, op: 'workspace.scene_pin_toggle', props: p },
     { separator: true },
-    { label: 'Previous Workspace', shortcut: 'Ctrl Page Up', op: 'screen.workspace_cycle', props: { direction: 'PREV' } },
-    { label: 'Next Workspace', shortcut: 'Ctrl Page Down', op: 'screen.workspace_cycle', props: { direction: 'NEXT' } },
+    { label: '上一工作区', shortcut: 'Ctrl Page Up', op: 'screen.workspace_cycle', props: { direction: 'PREV' } },
+    { label: '下一工作区', shortcut: 'Ctrl Page Down', op: 'screen.workspace_cycle', props: { direction: 'NEXT' } },
     { separator: true },
-    { label: 'Delete All Others', op: 'workspace.delete_all_others', props: p },
+    { label: '删除其他所有工作区', op: 'workspace.delete_all_others', props: p },
   ];
 }
 
@@ -471,18 +471,18 @@ export function setShell(s: Shell) {
 
 /** Workspace named by an operator's `name` property (empty: the active one). */
 const wsName = (p: Record<string, unknown>) => String(p.name || shell?.active || '');
-const wsProp = { id: 'name', label: 'Workspace', type: 'string' as const, default: '', hidden: true };
+const wsProp = { id: 'name', label: '工作区', type: 'string' as const, default: '', hidden: true };
 
 registerOperators([
-  { idname: 'workspace.duplicate', label: 'Duplicate Workspace', description: 'Add a copy of the workspace with the same layout', undo: false, props: [wsProp], poll: () => !!shell, exec: (_c, p) => shell.duplicateWorkspace(wsName(p)) },
-  { idname: 'workspace.delete', label: 'Delete Workspace', description: 'Remove the workspace tab', undo: false, props: [wsProp], poll: () => !!shell && shell.workspaces.length > 1, exec: (_c, p) => shell.deleteWorkspace(wsName(p)) },
-  { idname: 'workspace.reorder_to_front', label: 'Reorder Workspace to Front', description: 'Move the workspace tab to the start of the list', undo: false, props: [wsProp], poll: () => !!shell, exec: (_c, p) => shell.moveWorkspace(wsName(p), 'FRONT') },
-  { idname: 'workspace.reorder_to_back', label: 'Reorder Workspace to Back', description: 'Move the workspace tab to the end of the list', undo: false, props: [wsProp], poll: () => !!shell, exec: (_c, p) => shell.moveWorkspace(wsName(p), 'BACK') },
-  { idname: 'workspace.delete_all_others', label: 'Delete All Other Workspaces', description: 'Remove every workspace tab except this one', undo: false, props: [wsProp], poll: () => !!shell && shell.workspaces.length > 1, exec: (_c, p) => shell.deleteOtherWorkspaces(wsName(p)) },
+  { idname: 'workspace.duplicate', label: '复制工作区', description: '复制当前工作区及其布局', undo: false, props: [wsProp], poll: () => !!shell, exec: (_c, p) => shell.duplicateWorkspace(wsName(p)) },
+  { idname: 'workspace.delete', label: '删除工作区', description: '移除该工作区标签', undo: false, props: [wsProp], poll: () => !!shell && shell.workspaces.length > 1, exec: (_c, p) => shell.deleteWorkspace(wsName(p)) },
+  { idname: 'workspace.reorder_to_front', label: '工作区移至最前', description: '将该工作区标签移至列表最前', undo: false, props: [wsProp], poll: () => !!shell, exec: (_c, p) => shell.moveWorkspace(wsName(p), 'FRONT') },
+  { idname: 'workspace.reorder_to_back', label: '工作区移至最后', description: '将该工作区标签移至列表最后', undo: false, props: [wsProp], poll: () => !!shell, exec: (_c, p) => shell.moveWorkspace(wsName(p), 'BACK') },
+  { idname: 'workspace.delete_all_others', label: '删除其他所有工作区', description: '除当前工作区外删除其他全部工作区', undo: false, props: [wsProp], poll: () => !!shell && shell.workspaces.length > 1, exec: (_c, p) => shell.deleteOtherWorkspaces(wsName(p)) },
   {
     idname: 'workspace.scene_pin_toggle',
-    label: 'Pin Scene to Workspace',
-    description: 'Remember the scene used in this workspace and switch back to it whenever the workspace is activated',
+    label: '固定场景到工作区',
+    description: '记住此工作区使用的场景，并在激活该工作区时自动切换回该场景',
     undo: false,
     props: [wsProp],
     poll: () => !!shell,

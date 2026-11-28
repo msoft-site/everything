@@ -178,5 +178,9 @@
   "You are viewing a live, read-only copy. Reload to see the latest changes.": "您正在查看实时的只读副本。重新加载以查看最新更改。",
   "You joined": "你加入了",
   "Your data": "您的数据",
-  "no date": "没有日期"
+  "no date": "没有日期",
+  "Personal": "个人任务",
+  "Work": "工作任务",
+  "Add a task": "添加新任务",
+  "Main": "主导航"
 }

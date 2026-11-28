@@ -279,5 +279,10 @@
   "e.g. Website redesign": "例如Website redesign",
   "in the description": "在描述中",
   "move of “${item.text}”": "“${item.text}”的移动",
-  "“${name}” was saved somewhere else (another tab, or another": "“${name}”被保存在其他地方（另一个选项卡，或另一个"
+  "“${name}” was saved somewhere else (another tab, or another": "“${name}”被保存在其他地方（另一个选项卡，或另一个",
+  "Main navigation": "主导航菜单",
+  "CtrlK": "Ctrl+K 搜索",
+  "Filter projects by name": "按名称筛选项目",
+  "No projects yet": "暂无项目",
+  "Open navigation": "展开导航"
 }

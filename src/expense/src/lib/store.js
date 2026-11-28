@@ -35,7 +35,7 @@ export const REPORTS_PATH = `${DATA_DIR}/reports.json`;
 export const monthPath = (key) => `${DATA_DIR}/exp-${key}.json`;
 
 export const DEFAULT_SETTINGS = {
-  baseCurrency: 'USD',
+  baseCurrency: 'CNY',
   theme: 'system',
   onboarded: false,
   sampleData: false,

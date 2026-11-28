@@ -1,31 +1,33 @@
 import { round2 } from './util.js';
 
 export const CURRENCIES = [
-  { code: 'USD', name: 'US Dollar' },
-  { code: 'EUR', name: 'Euro' },
-  { code: 'GBP', name: 'British Pound' },
-  { code: 'CAD', name: 'Canadian Dollar' },
-  { code: 'AUD', name: 'Australian Dollar' },
-  { code: 'JPY', name: 'Japanese Yen' },
-  { code: 'CHF', name: 'Swiss Franc' },
-  { code: 'SEK', name: 'Swedish Krona' },
-  { code: 'NOK', name: 'Norwegian Krone' },
-  { code: 'DKK', name: 'Danish Krone' },
-  { code: 'INR', name: 'Indian Rupee' },
-  { code: 'BRL', name: 'Brazilian Real' },
-  { code: 'MXN', name: 'Mexican Peso' },
-  { code: 'ZAR', name: 'South African Rand' },
-  { code: 'SGD', name: 'Singapore Dollar' },
-  { code: 'NZD', name: 'New Zealand Dollar' },
-  { code: 'AED', name: 'UAE Dirham' },
-  { code: 'PLN', name: 'Polish Zloty' },
-  { code: 'TRY', name: 'Turkish Lira' },
-  { code: 'KES', name: 'Kenyan Shilling' },
+  { code: 'CNY', name: '人民币 ¥ (CNY)' },
+  { code: 'USD', name: '美元 $ (USD)' },
+  { code: 'EUR', name: '欧元 € (EUR)' },
+  { code: 'GBP', name: '英镑 £ (GBP)' },
+  { code: 'HKD', name: '港元 HK$ (HKD)' },
+  { code: 'JPY', name: '日元 ¥ (JPY)' },
+  { code: 'CAD', name: '加拿大元 (CAD)' },
+  { code: 'AUD', name: '澳大利亚元 (AUD)' },
+  { code: 'CHF', name: '瑞士法郎 (CHF)' },
+  { code: 'SGD', name: '新加坡元 (SGD)' },
+  { code: 'SEK', name: '瑞典克朗 (SEK)' },
+  { code: 'NOK', name: '挪威克朗 (NOK)' },
+  { code: 'DKK', name: '丹麦克朗 (DKK)' },
+  { code: 'INR', name: '印度卢比 (INR)' },
+  { code: 'BRL', name: '巴西雷亚尔 (BRL)' },
+  { code: 'MXN', name: '墨西哥比索 (MXN)' },
+  { code: 'ZAR', name: '南非兰特 (ZAR)' },
+  { code: 'NZD', name: '新西兰元 (NZD)' },
+  { code: 'AED', name: '阿联酋迪拉姆 (AED)' },
+  { code: 'PLN', name: '波兰兹罗提 (PLN)' },
+  { code: 'TRY', name: '土耳其里拉 (TRY)' },
+  { code: 'KES', name: '肯尼亚先令 (KES)' },
 ];
 
 const fmtCache = new Map();
 
-export function fmtMoney(amount, currency = 'USD') {
+export function fmtMoney(amount, currency = 'CNY') {
   let fmt = fmtCache.get(currency);
   if (!fmt) {
     try {
