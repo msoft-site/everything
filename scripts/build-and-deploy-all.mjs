@@ -29,9 +29,9 @@ if (fs.existsSync(envPath)) {
 
 
 const BACK_BUTTON_HTML = `
-<!-- Everything Floating Back Button -->
-<a href="/" id="everything-back-home" style="position:fixed;bottom:16px;left:16px;z-index:999999;background:rgba(15,23,42,0.85);backdrop-filter:blur(8px);color:#38bdf8;border:1px solid #334155;border-radius:9999px;padding:6px 14px;font-size:13px;font-family:-apple-system,BlinkMacSystemFont,sans-serif;text-decoration:none;box-shadow:0 4px 12px rgba(0,0,0,0.3);display:flex;align-items:center;gap:6px;transition:all 0.2s;" onmouseover="this.style.background='#1e293b';this.style.transform='scale(1.05)'" onmouseout="this.style.background='rgba(15,23,42,0.85)';this.style.transform='none'">
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+<!-- Everything Floating Back Button (Top Right) -->
+<a href="/" id="everything-back-home" style="position:fixed;top:10px;right:16px;z-index:999999;background:rgba(15,23,42,0.85);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:#38bdf8;border:1px solid rgba(56,189,248,0.3);border-radius:9999px;padding:4px 12px;font-size:12px;font-weight:500;font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Segoe UI',sans-serif;text-decoration:none;box-shadow:0 4px 12px rgba(0,0,0,0.25);display:inline-flex;align-items:center;gap:5px;transition:all 0.2s;line-height:1.4;" onmouseover="this.style.background='#1e293b';this.style.color='#7dd3fc';this.style.borderColor='#38bdf8';this.style.transform='scale(1.04)'" onmouseout="this.style.background='rgba(15,23,42,0.85)';this.style.color='#38bdf8';this.style.borderColor='rgba(56,189,248,0.3)';this.style.transform='none'">
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
   <span>返回软件中心</span>
 </a>
 `;

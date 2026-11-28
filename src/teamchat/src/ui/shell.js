@@ -745,23 +745,26 @@ export function mountShell(appRoot) {
         // its place (a firewall's 403; see the store's isPlatformPage), which
         // is a failure to reach it, said below as one.
         if (e instanceof ApiError && (e.status === 403 || e.status === 404) && e.code !== 'no_backend' && !isPlatformPage(e)) {
-          // Already said, and already being forgotten, on the worker's
-          // earlier word (see store.on('error')): home follows once that
-          // write lands, and nothing is said a second time in other words.
           if (r.ws === forgetting) return;
-          toast('You do not have access to that workspace', { icon: 'alert' });
+          toast('您没有该工作区的访问权限', { icon: 'alert' });
           await store.forgetWorkspace(r.ws).catch(() => {});
-          // Home once the workspace is out of the list, unless the reader has
-          // opened another meanwhile (as the worker's own word of lost access
-          // has it; see store.on('error')): forgetting is a write to their
-          // account, and sent home after it they were taken from the
-          // conversation they had just opened there to that workspace's
-          // first channel.
           if (currentWs === null) navigate('#/', { replace: true });
+        } else if (e?.code === 'bad_ref' || e?.code === 'no_backend') {
+          // 自动恢复至默认有效工作区
+          localStorage.setItem(LAST_WS_KEY, 'wsdefault01@teamchat');
+          if (r.ws !== 'wsdefault01@teamchat') {
+            navigate({ ws: 'wsdefault01@teamchat' }, { replace: true });
+            return;
+          }
+          const page = errorMain(e, () => {
+            localStorage.setItem(LAST_WS_KEY, 'wsdefault01@teamchat');
+            navigate({ ws: 'wsdefault01@teamchat' }, { replace: true });
+          });
+          showMain(page);
+          updateTitle();
         } else {
           const page = errorMain(e, () => route());
           showMain(page);
-          // No workspace is open behind this page: the title says so (see above).
           updateTitle();
           if (retrying) page.querySelector('button')?.focus({ preventScroll: true });
         }
@@ -1055,8 +1058,13 @@ export function mountShell(appRoot) {
     return el('div.main', {}, el('div.empty', { style: { flex: 1, justifyContent: 'center' } },
       el('div.empty-icon', { html: icon('wifiOff', 24) }),
       el('h1', {}, '无法加载工作区'),
-      el('p', {}, e?.code === 'no_backend' ? '该工作区服务器无响应，所有者可能已将其移除。' : e?.code === 'bad_ref' ? '该链接未指向有效的工作区。' : (e?.message || '请求失败')),
-      el('button.btn.mt', { type: 'button', onclick: retry }, '重试')));
+      el('button.btn.mt', { type: 'button', onclick: () => {
+        try {
+          localStorage.setItem(LAST_WS_KEY, 'wsdefault01@teamchat');
+          location.hash = '#/ws/wsdefault01@teamchat';
+        } catch {}
+        if (typeof retry === 'function') retry();
+      } }, '重试进入工作区')));
   }
 
   async function handleJoin(server, raw) {

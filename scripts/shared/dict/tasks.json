@@ -181,6 +181,14 @@
   "no date": "没有日期",
   "Personal": "个人任务",
   "Work": "工作任务",
-  "Add a task": "添加新任务",
-  "Main": "主导航"
+  "Add a task": "添加任务",
+  "Main": "主导航",
+  "Set a due date to add a reminder.": "设置截止日期以添加提醒。",
+  "Task description": "任务描述",
+  "High priority": "高优先级",
+  "Medium priority": "中优先级",
+  "Low priority": "低优先级",
+  "No priority": "无优先级",
+  "Incomplete": "未完成",
+  "All tasks": "全部任务"
 }

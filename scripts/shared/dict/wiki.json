@@ -127,7 +127,7 @@
   "System": "系统",
   "Templates": "模板",
   "Theme": "主题",
-  "Trash": "垃圾",
+  "Trash": "废纸篓",
   "Try again": "再试一次",
   "Type": "类型",
   "Undo": "撤销",
@@ -173,5 +173,14 @@
   "git branch": "代码分支",
   "heart pulse": "健康",
   "graduation cap": "学术",
-  "paw print": "宠物"
+  "paw print": "宠物",
+  "Ctrl+K": "Ctrl+K 快捷搜索",
+  "Ctrl+Alt+N": "Ctrl+Alt+N 新建页面",
+  "Quick search": "快速搜索",
+  "Add subpage": "添加子页面",
+  "Page title": "页面标题",
+  "Version history": "版本历史",
+  "Empty trash": "清空废纸篓",
+  "Move page": "移动页面",
+  "Export page": "导出页面"
 }

@@ -94,7 +94,7 @@
   "Anywhere": "任何地方",
   "Archive task": "存档任务",
   "Archived tasks keep everything (comments, attachments, dates)": "存档任务保留所有内容（评论、附件、日期）",
-  "Assignee": "受让人",
+  "Assignee": "指派人员",
   "Assignees": "受让人",
   "Attachments": "附件列表",
   "Audit the current onboarding funnel": "审核当前的入职渠道",
@@ -284,5 +284,18 @@
   "CtrlK": "Ctrl+K 搜索",
   "Filter projects by name": "按名称筛选项目",
   "No projects yet": "暂无项目",
-  "Open navigation": "展开导航"
+  "Open navigation": "展开导航",
+  "No projects to search yet.": "暂无项目可供搜索。",
+  "Results": "搜索结果",
+  "Project description": "项目描述",
+  "Gantt chart": "甘特图",
+  "Board view": "看板视图",
+  "List view": "列表视图",
+  "Timeline view": "时间轴视图",
+  "Add milestone": "添加里程碑",
+  "Status": "状态",
+  "Not started": "未开始",
+  "In progress": "进行中",
+  "Under review": "审核中",
+  "Archived": "已归档"
 }
