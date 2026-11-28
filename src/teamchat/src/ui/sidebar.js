@@ -534,11 +534,11 @@ export function renderSidebar(container) {
     el('span.side-label', {}, label),
     n ? el(`span.badge${unread ? '' : '.badge-soft'}`, {}, String(n)) : null);
     views.append(
-      viewRow('threads', 'Threads', 'messages', threadN, true, `${threadN} new repl${threadN === 1 ? 'y' : 'ies'}`),
-      viewRow('activity', 'Activity', 'bell', inboxN, true),
-      viewRow('later', 'Later', 'bookmark', laterN, false, laterDetail),
-      viewRow('drafts', 'Drafts & sent', 'send', draftN, false, `${draftN} unsent`),
-      viewRow('directory', 'Directory', 'contact', 0, false));
+      viewRow('threads', '话题讨论', 'messages', threadN, true, `${threadN} 条新回复`),
+      viewRow('activity', '动态通知', 'bell', inboxN, true),
+      viewRow('later', '稍后处理', 'bookmark', laterN, false, laterDetail),
+      viewRow('drafts', '草稿与已发送', 'send', draftN, false, `${draftN} 条未发送`),
+      viewRow('directory', '团队通讯录', 'contact', 0, false));
     frag.append(views);
 
     const channelRow = (ch) => {
@@ -600,8 +600,8 @@ export function renderSidebar(container) {
       .filter(Boolean);
     // Always there: an empty one invites dragging a row onto it.
     const starList = el('div.side-list', { role: 'list' }, ...starredRows);
-    frag.append(section('Starred', 'starred', starList, [],
-      starredRows.length ? el('span') : el('p.side-hint', {}, 'Drag and drop important stuff here'),
+    frag.append(section('星标关注', 'starred', starList, [],
+      starredRows.length ? el('span') : el('p.side-hint', {}, '拖放重要频道或私信至此处'),
       { canDrop: (id) => !store.isStarred(id), onDrop: (id) => star(id, true) }));
 
     /* Custom sections, in the order they were made; each holds channels and conversations the user put there. */

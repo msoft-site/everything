@@ -55,17 +55,17 @@ function sceneSelector(): Child {
     browseButton(
       'tbid-scene-browse',
       'scene_data',
-      'Scene\nBrowse the scenes of this file and pick the one to show',
+      '场景\n浏览此工程中的场景并选择要显示的场景',
       () => scenesByName(app.doc).map((s) => ({ label: s.name, icon: 'scene_data', active: s === app.doc.scene, action: () => switchScene(s.id!) })),
-      'Scenes',
+      '场景列表',
     ),
     textField('scene-name', doc.scene.name, (v) => {
       renameScene(app.doc, app.doc.scene, v);
-      app.pushUndo('Rename Scene');
+      app.pushUndo('重命名场景');
       app.changed('doc');
     }, { className: 'tbid-name' }),
-    iconButton('tbid-scene-new', 'duplicate', 'New Scene\nAdd a new scene (empty, with copied settings, linked or fully copied)', (e) => openMenu(sceneNewMenu(), e.currentTarget as HTMLElement, { title: 'New Scene' })),
-    iconButton('tbid-scene-delete', 'x', count > 1 ? 'Delete Scene\nRemove the active scene' : 'Delete Scene\nThe file needs at least one scene', () => app.run('scene.delete'), count < 2),
+    iconButton('tbid-scene-new', 'duplicate', '新建场景\n添加新场景（空白、复制设置、关联或完整复制）', (e) => openMenu(sceneNewMenu(), e.currentTarget as HTMLElement, { title: '新建场景' })),
+    iconButton('tbid-scene-delete', 'x', count > 1 ? '删除场景\n移除当前活动场景' : '删除场景\n工程必须包含至少一个场景', () => app.run('scene.delete'), count < 2),
   );
 }
 
@@ -79,19 +79,19 @@ function viewLayerSelector(): Child {
     browseButton(
       'tbid-layer-browse',
       'view_layer',
-      'View Layer\nBrowse the view layers of the scene and pick the active one',
+      '视图层\n浏览场景的视图层并选择活动视图层',
       () => ensureViewLayers(app.doc.scene).map((l, i) => ({ label: l.name, icon: 'view_layer', active: i === app.doc.scene.active_view_layer, action: () => switchViewLayer(i) })),
-      'View Layers',
+      '视图层列表',
     ),
     textField('view-layer-name', act.name, (v) => {
       const n = v.trim().slice(0, 63);
       if (!n) return app.changed('ui');
       act.name = uniqueLayerName(app.doc.scene, n, act);
-      app.pushUndo('Rename View Layer');
+      app.pushUndo('重命名视图层');
       app.changed('doc');
     }, { className: 'tbid-name' }),
-    iconButton('tbid-layer-add', 'duplicate', 'Add View Layer\nAdd a view layer (new, with copied settings, or with every collection disabled)', (e) => openMenu(viewLayerAddMenu(), e.currentTarget as HTMLElement, { title: 'Add View Layer' })),
-    iconButton('tbid-layer-remove', 'x', layers.length > 1 ? 'Remove View Layer\nRemove the active view layer' : 'Remove View Layer\nThe scene needs at least one view layer', () => app.run('scene.view_layer_remove'), layers.length < 2),
+    iconButton('tbid-layer-add', 'duplicate', '添加视图层\n添加视图层（新建、复制设置或禁用所有集合）', (e) => openMenu(viewLayerAddMenu(), e.currentTarget as HTMLElement, { title: '添加视图层' })),
+    iconButton('tbid-layer-remove', 'x', layers.length > 1 ? '移除视图层\n移除当前活动视图层' : '移除视图层\n场景必须包含至少一个视图层', () => app.run('scene.view_layer_remove'), layers.length < 2),
   );
 }
 

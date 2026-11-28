@@ -18,7 +18,7 @@ const server = http.createServer((req, res) => {
 });
 await new Promise((r) => server.listen(0, r));
 const port = server.address().port;
-const CHROME_ARGS = ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage", "--disable-gpu", "--no-zygote"];
+const CHROME_ARGS = ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage", "--disable-gpu", "--headless=new"];
 let browser = await chromium.launch({ headless: true, executablePath: "/usr/bin/google-chrome", args: CHROME_ARGS });
 const found = new Map();
 const errors = [];

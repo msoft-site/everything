@@ -33,23 +33,23 @@ import { RELATION_LABELS } from '../sketch/ops';
 import { CONSTRAINTS, CONSTRAINT_HINTS, runConstraint } from './sketch/constrain';
 
 const SKETCH_TOOLS: Record<string, { label: string; shortcut?: string; desc: string; make: (ed: SketchEditor) => SkTool }> = {
-  line: { label: 'Line', shortcut: 'L', desc: 'Sketch straight lines.', make: (ed) => lineTool(ed) },
-  centerline: { label: 'Centerline', desc: 'Sketch construction lines used as axes and for symmetry.', make: (ed) => lineTool(ed, true) },
-  rectangle: { label: 'Corner Rectangle', shortcut: 'R', desc: 'Sketch a rectangle from two corners.', make: (ed) => rectangleTool(ed) },
-  centerRectangle: { label: 'Center Rectangle', desc: 'Sketch a rectangle from its centre.', make: (ed) => rectangleTool(ed, true) },
-  circle: { label: 'Circle', shortcut: 'C', desc: 'Sketch a circle from its centre and radius.', make: (ed) => circleTool(ed) },
-  perimeterCircle: { label: 'Perimeter Circle', desc: 'Sketch a circle through three points.', make: (ed) => perimeterCircleTool(ed) },
-  centerArc: { label: 'Centerpoint Arc', desc: 'Sketch an arc from its centre, start and end.', make: (ed) => centerArcTool(ed) },
-  tangentArc: { label: 'Tangent Arc', shortcut: 'A', desc: 'Sketch an arc tangent to the end of a line or arc.', make: (ed) => tangentArcTool(ed) },
-  arc3: { label: '3 Point Arc', desc: 'Sketch an arc through its ends and a point on it.', make: (ed) => threePointArcTool(ed) },
-  polygon: { label: 'Polygon', desc: 'Sketch a regular polygon.', make: (ed) => polygonTool(ed) },
-  slot: { label: 'Straight Slot', desc: 'Sketch a slot with rounded ends.', make: (ed) => slotTool(ed) },
-  spline: { label: 'Spline', desc: 'Sketch a smooth curve through points.', make: (ed) => splineTool(ed) },
-  point: { label: 'Point', desc: 'Sketch points, for example to place holes.', make: (ed) => pointTool(ed) },
-  smartDimension: { label: 'Smart Dimension', shortcut: 'D', desc: 'Add a dimension; its type depends on what you select and where you place it.', make: (ed) => dimensionTool(ed) },
-  sketchFillet: { label: 'Sketch Fillet', desc: 'Round the corner between two lines.', make: (ed) => sketchFilletTool(ed) },
-  trim: { label: 'Trim Entities', shortcut: 'T', desc: 'Remove parts of curves up to their intersections.', make: (ed) => trimTool(ed) },
-  extend: { label: 'Extend Entities', desc: 'Extend a line to the next curve.', make: (ed) => extendTool(ed) },
+  line: { label: '直线', shortcut: 'L', desc: '绘制直连线段。', make: (ed) => lineTool(ed) },
+  centerline: { label: '中心线', desc: '绘制用于旋转轴或对称基准的构造线。', make: (ed) => lineTool(ed, true) },
+  rectangle: { label: '边角矩形', shortcut: 'R', desc: '通过对角两点绘制矩形。', make: (ed) => rectangleTool(ed) },
+  centerRectangle: { label: '中心矩形', desc: '从中心点向外绘制矩形。', make: (ed) => rectangleTool(ed, true) },
+  circle: { label: '圆', shortcut: 'C', desc: '通过圆心和半径绘制圆。', make: (ed) => circleTool(ed) },
+  perimeterCircle: { label: '三点圆', desc: '通过圆周上的三点绘制圆。', make: (ed) => perimeterCircleTool(ed) },
+  centerArc: { label: '圆心圆弧', desc: '指定圆心、起点和终点绘制圆弧。', make: (ed) => centerArcTool(ed) },
+  tangentArc: { label: '切线弧', shortcut: 'A', desc: '绘制与已有线段或圆弧端点相切的圆弧。', make: (ed) => tangentArcTool(ed) },
+  arc3: { label: '三点弧', desc: '通过两端点及弧上任意一点绘制圆弧。', make: (ed) => threePointArcTool(ed) },
+  polygon: { label: '多边形', desc: '绘制正多边形。', make: (ed) => polygonTool(ed) },
+  slot: { label: '直槽口', desc: '绘制两端带半圆弧的直槽口。', make: (ed) => slotTool(ed) },
+  spline: { label: '样条曲线', desc: '通过控制点拟合光滑曲线。', make: (ed) => splineTool(ed) },
+  point: { label: '绘制点', desc: '绘制几何点，如定位异型孔中心。', make: (ed) => pointTool(ed) },
+  smartDimension: { label: '智能尺寸', shortcut: 'D', desc: '智能标注尺寸；根据所选项自动匹配长度、角度或直径标注。', make: (ed) => dimensionTool(ed) },
+  sketchFillet: { label: '草图圆角', desc: '在两条交线之间生成过渡圆角。', make: (ed) => sketchFilletTool(ed) },
+  trim: { label: '裁剪实体', shortcut: 'T', desc: '裁剪线段至最近交点。', make: (ed) => trimTool(ed) },
+  extend: { label: '延伸实体', desc: '将线段延伸至下一曲线交点。', make: (ed) => extendTool(ed) },
 };
 
 export function registerCommands(app: App, files: FileOps) {
@@ -128,35 +128,35 @@ export function registerCommands(app: App, files: FileOps) {
 
   c.register(
     // ---- file ----
-    { id: 'new', label: 'New', icon: 'new', shortcut: 'Control+N', description: 'Start a new part.', run: () => files.newPart() },
-    { id: 'open', label: 'Open...', icon: 'open', shortcut: 'Ctrl+O', description: 'Open a saved part.', run: () => files.open() },
-    { id: 'openDevice', label: 'Open from Device...', icon: 'upload', description: 'Open a part file, or a STEP or SolidWorks file, from this device.', run: () => files.openFromDevice() },
-    { id: 'save', label: 'Save', icon: 'save', shortcut: 'Ctrl+S', description: 'Save the part.', run: () => { void files.save(); } },
-    { id: 'saveAs', label: 'Save As...', icon: 'save', shortcut: 'Ctrl+Shift+S', run: () => files.saveAs() },
-    { id: 'downloadPart', label: 'Download Part File', icon: 'download', description: 'Download the part file to this device.', run: () => files.exportAs('part') },
-    { id: 'exportStep', label: 'Export STEP...', icon: 'export', keywords: 'stp export cad', description: 'Export the solid as a STEP file.', enabled: hasBody, run: () => files.exportAs('step') },
-    { id: 'exportStl', label: 'Export STL...', icon: 'export', keywords: '3d print mesh', description: 'Export the solid as an STL mesh for 3D printing.', enabled: hasBody, run: () => files.exportAs('stl') },
-    { id: 'importStep', label: 'Import...', icon: 'import', keywords: 'stp step sldprt solidworks import', description: 'Insert a STEP file or SolidWorks part as a solid body.', run: () => files.importStep() },
-    { id: 'rename', label: 'Rename Part...', icon: 'edit', run: () => files.rename() },
+    { id: 'new', label: '新建零件', icon: 'new', shortcut: 'Control+N', description: '新建一个零件模型。', run: () => files.newPart() },
+    { id: 'open', label: '打开...', icon: 'open', shortcut: 'Ctrl+O', description: '打开已保存的零件工程。', run: () => files.open() },
+    { id: 'openDevice', label: '从当前设备打开...', icon: 'upload', description: '从当前设备打开零件工程、STEP 或 SolidWorks 文件。', run: () => files.openFromDevice() },
+    { id: 'save', label: '保存', icon: 'save', shortcut: 'Ctrl+S', description: '保存当前零件。', run: () => { void files.save(); } },
+    { id: 'saveAs', label: '另存为...', icon: 'save', shortcut: 'Ctrl+Shift+S', run: () => files.saveAs() },
+    { id: 'downloadPart', label: '下载零件文件', icon: 'download', description: '下载零件工程文件至本地设备。', run: () => files.exportAs('part') },
+    { id: 'exportStep', label: '导出 STEP...', icon: 'export', keywords: 'stp export cad', description: '将三维实体导出为标准 STEP 格式。', enabled: hasBody, run: () => files.exportAs('step') },
+    { id: 'exportStl', label: '导出 STL...', icon: 'export', keywords: '3d print mesh', description: '导出为适用于 3D 打印的 STL 三角网格格式。', enabled: hasBody, run: () => files.exportAs('stl') },
+    { id: 'importStep', label: '导入模型...', icon: 'import', keywords: 'stp step sldprt solidworks import', description: '导入 STEP 文件或 SolidWorks 零件作为实体。', run: () => files.importStep() },
+    { id: 'rename', label: '重命名零件...', icon: 'edit', run: () => files.rename() },
     {
-      id: 'assistant', label: 'Assistant', icon: 'assistant', shortcut: 'Ctrl+J', keywords: 'ai chat copilot design help agent claude',
-      description: 'Design and change the part by describing what you want.',
+      id: 'assistant', label: 'AI 建模助理', icon: 'assistant', shortcut: 'Ctrl+J', keywords: 'ai chat copilot design help agent claude',
+      description: '通过自然语言描述构思并编辑零件设计。',
       checked: () => app.taskPaneOpen() === 'assistant', run: () => app.toggleTaskPane('assistant'),
     },
-    { id: 'share', label: 'Share...', icon: 'share', keywords: 'collaborate invite team access', description: 'Let other Local users view or edit this part.', run: () => shareDialog(app, files) },
-    { id: 'properties', label: 'Part Properties...', icon: 'part', keywords: 'units decimals', description: 'Name, units and precision.', run: () => propertiesDialog(app) },
+    { id: 'share', label: '分享...', icon: 'share', keywords: 'collaborate invite team access', description: '分享当前零件给团队成员协同编辑。', run: () => shareDialog(app, files) },
+    { id: 'properties', label: '零件属性...', icon: 'part', keywords: 'units decimals', description: '查看和配置模型名称、单位制及精度。', run: () => propertiesDialog(app) },
     // ---- edit ----
     {
-      id: 'undo', label: 'Undo', icon: 'undo', shortcut: 'Ctrl+Z', enabled: () => app.canUndo,
+      id: 'undo', label: '撤销', icon: 'undo', shortcut: 'Ctrl+Z', enabled: () => app.canUndo,
       run: () => { if (app.panel) void app.closePanel(false); app.store.undo(); },
     },
-    { id: 'redo', label: 'Redo', icon: 'redo', shortcut: 'Ctrl+Y', enabled: () => app.store.canRedo, run: () => redo() },
-    { id: 'redo2', label: 'Redo', hidden: true, shortcut: 'Ctrl+Shift+Z', enabled: () => app.store.canRedo, run: () => redo() },
-    { id: 'rebuild', label: 'Rebuild', icon: 'rebuild', shortcut: 'Ctrl+B', description: 'Rebuild the model.', run: () => app.requestRebuild(true) },
-    { id: 'forceRebuild', label: 'Force Rebuild', icon: 'rebuild', shortcut: 'Control+Q', description: 'Rebuild every feature from scratch.', run: () => { app.forceRebuild(); } },
-    { id: 'repeat', label: 'Repeat Last Command', shortcut: 'Enter', hidden: true, enabled: () => !!c.lastRun && !app.panel, run: () => { if (c.lastRun) c.run(c.lastRun); } },
+    { id: 'redo', label: '重做', icon: 'redo', shortcut: 'Ctrl+Y', enabled: () => app.store.canRedo, run: () => redo() },
+    { id: 'redo2', label: '重做', hidden: true, shortcut: 'Ctrl+Shift+Z', enabled: () => app.store.canRedo, run: () => redo() },
+    { id: 'rebuild', label: '重新生成', icon: 'rebuild', shortcut: 'Ctrl+B', description: '重新生成零件三维模型。', run: () => app.requestRebuild(true) },
+    { id: 'forceRebuild', label: '强制重新生成', icon: 'rebuild', shortcut: 'Control+Q', description: '从初始特征全部重头重新计算。', run: () => { app.forceRebuild(); } },
+    { id: 'repeat', label: '重复上一步命令', shortcut: 'Enter', hidden: true, enabled: () => !!c.lastRun && !app.panel, run: () => { if (c.lastRun) c.run(c.lastRun); } },
     {
-      id: 'delete', label: 'Delete', icon: 'trash', shortcut: 'Delete',
+      id: 'delete', label: '删除', icon: 'trash', shortcut: 'Delete',
       enabled: () => app.selection.items.some((x) => x.kind === 'feature' || x.kind.startsWith('sk')),
       run: () => { if (!app.sketchEditor?.deleteSelection()) void app.deleteFeatures(app.selection.ofKind('feature').map((x) => x.id)); },
     },
@@ -328,7 +328,7 @@ function selectedFeature(app: App): Feature | undefined {
 
 export const RIBBON: RibbonTab[] = [
   {
-    id: 'features', label: 'Features',
+    id: 'features', label: '特征',
     groups: [
       [{ cmd: 'extrude' }, { cmd: 'revolve' }, { stack: [{ cmd: 'sweep' }, { cmd: 'loft' }] }],
       [{ cmd: 'extrudeCut' }, { cmd: 'revolveCut' }, { stack: [{ cmd: 'sweepCut' }, { cmd: 'loftCut' }] }],
@@ -338,7 +338,7 @@ export const RIBBON: RibbonTab[] = [
     ],
   },
   {
-    id: 'sketch', label: 'Sketch',
+    id: 'sketch', label: '草图',
     groups: [
       [{ cmd: 'sketch' }],
       [
@@ -357,14 +357,14 @@ export const RIBBON: RibbonTab[] = [
         { stack: [{ cmd: 'constraint:collinear' }, { cmd: 'constraint:symmetric' }, { cmd: 'constraint:fix' }] },
       ],
     ],
-    labels: ['Sketch', 'Draw', 'Modify', 'Constrain'],
+    labels: ['草图', '绘制', '修改', '几何约束'],
   },
   {
-    id: 'evaluate', label: 'Evaluate',
+    id: 'evaluate', label: '评估计算',
     groups: [[{ cmd: 'measure' }, { cmd: 'massProperties' }, { cmd: 'sectionView' }], [{ cmd: 'equations' }, { cmd: 'material' }]],
   },
   {
-    id: 'drawing', label: 'Drawing',
+    id: 'drawing', label: '工程图',
     groups: [
       [{ cmd: 'drawing:arrange' }, { stack: [{ cmd: 'drawing:add:front' }, { cmd: 'drawing:add:top' }, { cmd: 'drawing:add:right' }] }, { stack: [{ cmd: 'drawing:add:isometric' }, { cmd: 'drawing:add:left' }, { cmd: 'drawing:add:back' }] }],
       [{ cmd: 'drawing:pdf' }, { cmd: 'drawing:svg' }],
@@ -390,50 +390,50 @@ export function buildMenus(app: App): { label: string; items: () => MenuItem[] }
   const sep: MenuItem = { separator: true };
   return [
     {
-      label: 'File', items: () => [
-        m('new'), m('open'), m('openDevice'), { label: 'Recent', icon: 'files', submenu: () => app.recentMenu() }, sep,
+      label: '文件', items: () => [
+        m('new'), m('open'), m('openDevice'), { label: '最近打开', icon: 'files', submenu: () => app.recentMenu() }, sep,
         m('save'), m('saveAs'), m('downloadPart'), sep, m('importStep'), m('exportStep'), m('exportStl'), sep, m('openDrawing'), m('drawing:pdf'), sep, m('share'), m('rename'), m('properties'),
       ],
     },
     {
-      label: 'Edit', items: () => [
-        { ...m('undo'), label: app.canUndo ? `Undo ${app.store.undoLabel}` : 'Undo' },
-        { ...m('redo'), label: app.store.canRedo ? `Redo ${app.store.redoLabel}` : 'Redo' }, sep,
+      label: '编辑', items: () => [
+        { ...m('undo'), label: app.canUndo ? `撤销 ${app.store.undoLabel}` : '撤销' },
+        { ...m('redo'), label: app.store.canRedo ? `重做 ${app.store.redoLabel}` : '重做' }, sep,
         m('rebuild'), m('forceRebuild'), sep, m('editFeature'), m('delete'), m('suppress'), m('unsuppress'), m('rollToEnd'), sep, m('appearance'), m('material'),
       ],
     },
     {
-      label: 'View', items: () => [
-        { label: 'Display', icon: 'shadedEdges', submenu: () => ['shadedEdges', 'shaded', 'hiddenRemoved', 'hiddenVisible', 'wireframe'].map((s) => ({ ...m(`style:${s}`), radio: true })) },
-        { label: 'Orientation', icon: 'viewOrientation', submenu: () => app.viewMenuItems() },
+      label: '视图', items: () => [
+        { label: '显示样式', icon: 'shadedEdges', submenu: () => ['shadedEdges', 'shaded', 'hiddenRemoved', 'hiddenVisible', 'wireframe'].map((s) => ({ ...m(`style:${s}`), radio: true })) },
+        { label: '视图方向', icon: 'viewOrientation', submenu: () => app.viewMenuItems() },
         m('zoomFit'), m('zoomIn'), m('zoomOut'), m('previousView'), m('perspective'), m('sectionView'), sep,
-        { label: 'Hide/Show', icon: 'eye', submenu: () => ['showPlanes', 'showOrigin', 'showSketches', 'showRelations', 'showDimensions'].map((id) => m(id)) },
-        { label: 'Theme', icon: 'system', submenu: () => [m('theme:system', { radio: true }), m('theme:light', { radio: true }), m('theme:dark', { radio: true })] },
+        { label: '隐藏/显示', icon: 'eye', submenu: () => ['showPlanes', 'showOrigin', 'showSketches', 'showRelations', 'showDimensions'].map((id) => m(id)) },
+        { label: '主题', icon: 'system', submenu: () => [m('theme:system', { radio: true }), m('theme:light', { radio: true }), m('theme:dark', { radio: true })] },
         m('toggleTree'),
       ],
     },
     {
-      label: 'Insert', items: () => [
+      label: '插入', items: () => [
         m('sketch'), sep,
-        { label: 'Boss/Base', icon: 'extrude', submenu: () => [m('extrude'), m('revolve'), m('sweep'), m('loft')] },
-        { label: 'Cut', icon: 'extrudeCut', submenu: () => [m('extrudeCut'), m('revolveCut'), m('sweepCut'), m('loftCut')] },
-        { label: 'Features', icon: 'fillet', submenu: () => [m('fillet'), m('chamfer'), m('hole'), m('shell'), m('draft')] },
-        { label: 'Pattern/Mirror', icon: 'linearPattern', submenu: () => [m('linearPattern'), m('circularPattern'), m('mirror')] },
-        { label: 'Reference Geometry', icon: 'plane', submenu: () => [m('plane')] },
+        { label: '凸台/基体', icon: 'extrude', submenu: () => [m('extrude'), m('revolve'), m('sweep'), m('loft')] },
+        { label: '切除', icon: 'extrudeCut', submenu: () => [m('extrudeCut'), m('revolveCut'), m('sweepCut'), m('loftCut')] },
+        { label: '特征', icon: 'fillet', submenu: () => [m('fillet'), m('chamfer'), m('hole'), m('shell'), m('draft')] },
+        { label: '阵列/镜像', icon: 'linearPattern', submenu: () => [m('linearPattern'), m('circularPattern'), m('mirror')] },
+        { label: '参考几何体', icon: 'plane', submenu: () => [m('plane')] },
         sep, m('importStep'),
       ],
     },
     {
-      label: 'Tools', items: () => [
-        { label: 'Sketch Entities', icon: 'line', submenu: () => ['line', 'centerline', 'rectangle', 'centerRectangle', 'circle', 'perimeterCircle', 'centerArc', 'tangentArc', 'arc3', 'polygon', 'slot', 'spline', 'point'].map((t) => m(`tool:${t}`)) },
-        { label: 'Sketch Tools', icon: 'trim', submenu: () => [m('tool:sketchFillet'), m('tool:trim'), m('tool:extend'), m('offset'), m('mirrorEntities'), m('convertEntities'), m('construction')] },
-        { label: 'Dimensions and Constraints', icon: 'smartDimension', submenu: () => [m('tool:smartDimension'), sep, ...CONSTRAINTS.map((t) => m(`constraint:${t}`))] },
-        { label: 'Evaluate', icon: 'measure', submenu: () => [m('measure'), m('massProperties'), m('sectionView')] },
+      label: '工具', items: () => [
+        { label: '草图图元', icon: 'line', submenu: () => ['line', 'centerline', 'rectangle', 'centerRectangle', 'circle', 'perimeterCircle', 'centerArc', 'tangentArc', 'arc3', 'polygon', 'slot', 'spline', 'point'].map((t) => m(`tool:${t}`)) },
+        { label: '草图工具', icon: 'trim', submenu: () => [m('tool:sketchFillet'), m('tool:trim'), m('tool:extend'), m('offset'), m('mirrorEntities'), m('convertEntities'), m('construction')] },
+        { label: '尺寸与几何约束', icon: 'smartDimension', submenu: () => [m('tool:smartDimension'), sep, ...CONSTRAINTS.map((t) => m(`constraint:${t}`))] },
+        { label: '评估计算', icon: 'measure', submenu: () => [m('measure'), m('massProperties'), m('sectionView')] },
         sep, m('equations'), m('material'), m('options'),
       ],
     },
     {
-      label: 'Help', items: () => [m('shortcuts'), { label: 'Getting Started', icon: 'help', run: () => app.showGettingStarted() }, sep, m('github'), m('about')],
+      label: '帮助', items: () => [m('shortcuts'), { label: '入门新手指南', icon: 'help', run: () => app.showGettingStarted() }, sep, m('github'), m('about')],
     },
   ];
 }
@@ -453,12 +453,12 @@ export function contextItems(app: App, target: 'viewport' | 'feature' | 'referen
     if (con && isDimension(con)) {
       const d = con as SkDimension;
       return [
-        { label: 'Modify Value...', icon: 'edit', disabled: !!d.driven, run: () => ed.openModify(id) },
-        { label: d.driven ? 'Make Driving' : 'Make Driven (reference)', icon: 'smartDimension', run: () => ed.setDriven(id, !d.driven) },
-        sep, { label: 'Delete Dimension', icon: 'trash', run: () => ed.edit('Delete dimension', (sk) => { sk.constraints = sk.constraints.filter((k) => k.id !== id); }) },
+        { label: '修改数值...', icon: 'edit', disabled: !!d.driven, run: () => ed.openModify(id) },
+        { label: d.driven ? '设为驱动尺寸' : '设为从动参考尺寸', icon: 'smartDimension', run: () => ed.setDriven(id, !d.driven) },
+        sep, { label: '删除尺寸', icon: 'trash', run: () => ed.edit('Delete dimension', (sk) => { sk.constraints = sk.constraints.filter((k) => k.id !== id); }) },
       ];
     }
-    if (con) return [{ label: 'Delete Constraint', icon: 'trash', run: () => ed.edit('Delete constraint', (sk) => { sk.constraints = sk.constraints.filter((k) => k.id !== id); }) }];
+    if (con) return [{ label: '删除几何约束', icon: 'trash', run: () => ed.edit('Delete constraint', (sk) => { sk.constraints = sk.constraints.filter((k) => k.id !== id); }) }];
   }
   if (ed) {
     const items: MenuItem[] = [];
@@ -466,7 +466,7 @@ export function contextItems(app: App, target: 'viewport' | 'feature' | 'referen
     const fits = ed.selectionRelations();
     if (fits.length) {
       const sel = [...app.selection.items];
-      items.push({ label: 'Add Constraint', icon: 'relation', submenu: () => fits.map((t) => ({ label: RELATION_LABELS[t], icon: `rel:${t}`, run: () => ed.addRelation(t, sel) })) });
+      items.push({ label: '添加几何约束', icon: 'relation', submenu: () => fits.map((t) => ({ label: RELATION_LABELS[t], icon: `rel:${t}`, run: () => ed.addRelation(t, sel) })) });
     }
     if (ids.length) items.push(m('construction'), m('delete'), sep);
     else if (fits.length) items.push(sep);
@@ -480,34 +480,34 @@ export function contextItems(app: App, target: 'viewport' | 'feature' | 'referen
     // The sketches a feature was built from stay editable from the feature itself.
     const used = sketchesOf(app, f);
     return [
-      f.type === 'sketch' ? { label: 'Edit Sketch', icon: 'sketch', run: () => app.editSketch(id) } : { label: 'Edit Feature', icon: 'edit', run: () => app.editFeature(id) },
-      ...used.map((sk): MenuItem => ({ label: used.length === 1 ? 'Edit Sketch' : `Edit ${sk.name}`, icon: 'sketch', run: () => app.editSketch(sk.id) })),
-      { label: 'Rename', icon: 'text', shortcut: 'F2', run: () => app.tree.startRename(id) },
+      f.type === 'sketch' ? { label: '编辑草图', icon: 'sketch', run: () => app.editSketch(id) } : { label: '编辑特征', icon: 'edit', run: () => app.editFeature(id) },
+      ...used.map((sk): MenuItem => ({ label: used.length === 1 ? '编辑草图' : `编辑 ${sk.name}`, icon: 'sketch', run: () => app.editSketch(sk.id) })),
+      { label: '重命名', icon: 'text', shortcut: 'F2', run: () => app.tree.startRename(id) },
       sep,
-      ...(f.type === 'sketch' || f.type === 'plane' ? [{ label: f.hidden ? 'Show' : 'Hide', icon: f.hidden ? 'eye' : 'eyeOff', run: () => app.toggleHidden([id]) } as MenuItem] : []),
-      { label: f.suppressed ? 'Unsuppress' : 'Suppress', icon: f.suppressed ? 'eye' : 'eyeOff', run: () => app.toggleSuppress(ids, !f.suppressed) },
-      { label: 'Roll Back to Here', icon: 'upToLine', run: () => app.setRollback(idx) },
-      { label: 'Roll to End', icon: 'downToLine', disabled: app.store.doc.rollback == null, run: () => app.setRollback(null) },
-      ...(f.type === 'sketch' || f.type === 'plane' ? [{ label: 'Normal To', icon: 'normalTo', run: () => { const fr = f.type === 'sketch' ? app.frameOfSketch(f) : app.frameOfPlane({ kind: 'feature', id }); if (fr) app.viewport.normalTo(fr); } } as MenuItem] : []),
+      ...(f.type === 'sketch' || f.type === 'plane' ? [{ label: f.hidden ? '显示' : '隐藏', icon: f.hidden ? 'eye' : 'eyeOff', run: () => app.toggleHidden([id]) } as MenuItem] : []),
+      { label: f.suppressed ? '取消压缩' : '压缩特征', icon: f.suppressed ? 'eye' : 'eyeOff', run: () => app.toggleSuppress(ids, !f.suppressed) },
+      { label: '回退控制棒至此处', icon: 'upToLine', run: () => app.setRollback(idx) },
+      { label: '回退控制棒至末尾', icon: 'downToLine', disabled: app.store.doc.rollback == null, run: () => app.setRollback(null) },
+      ...(f.type === 'sketch' || f.type === 'plane' ? [{ label: '正视于', icon: 'normalTo', run: () => { const fr = f.type === 'sketch' ? app.frameOfSketch(f) : app.frameOfPlane({ kind: 'feature', id }); if (fr) app.viewport.normalTo(fr); } } as MenuItem] : []),
       sep,
-      { label: 'Delete', icon: 'trash', shortcut: 'Delete', run: () => void app.deleteFeatures(ids) },
+      { label: '删除', icon: 'trash', shortcut: 'Delete', run: () => void app.deleteFeatures(ids) },
     ];
   }
   const sel = app.selection.items[0];
   const items: MenuItem[] = [];
   if (sel) {
     const plane = app.selectedPlaneRef();
-    if (plane) items.push({ ...m('sketch'), label: 'Sketch on This' }, m('normalTo'), m('plane', { label: 'Offset Plane' }), sep);
+    if (plane) items.push({ ...m('sketch'), label: '在此平面绘制草图' }, m('normalTo'), m('plane', { label: '等距偏移基准面' }), sep);
     if (sel.kind === 'face') {
       const owner = app.store.feature(app.faces[sel.index]?.feature ?? '');
-      if (owner) items.push({ label: `Edit ${owner.name}`, icon: 'edit', run: () => app.editFeature(owner.id) });
-      if (owner) for (const sk of sketchesOf(app, owner)) items.push({ label: `Edit ${sk.name}`, icon: 'sketch', run: () => app.editSketch(sk.id) });
+      if (owner) items.push({ label: `编辑 ${owner.name}`, icon: 'edit', run: () => app.editFeature(owner.id) });
+      if (owner) for (const sk of sketchesOf(app, owner)) items.push({ label: `编辑 ${sk.name}`, icon: 'sketch', run: () => app.editSketch(sk.id) });
       items.push(m('fillet'), m('chamfer'), m('shell'), m('measure'), sep);
     }
     if (sel.kind === 'edge') items.push(m('fillet'), m('chamfer'), m('measure'), sep);
   }
-  items.push(m('zoomFit'), { label: 'View Orientation', icon: 'viewOrientation', submenu: () => app.viewMenuItems() }, { label: 'Display Style', icon: 'shadedEdges', submenu: () => app.displayMenuItems() });
-  if (target === 'reference') items.unshift({ label: 'Show/Hide Planes', icon: 'plane', run: () => c.run('showPlanes') }, sep);
+  items.push(m('zoomFit'), { label: '视图方向', icon: 'viewOrientation', submenu: () => app.viewMenuItems() }, { label: '显示样式', icon: 'shadedEdges', submenu: () => app.displayMenuItems() });
+  if (target === 'reference') items.unshift({ label: '显示/隐藏基准面', icon: 'plane', run: () => c.run('showPlanes') }, sep);
   return items;
 }
 

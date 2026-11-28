@@ -45,14 +45,28 @@ export function bootView(text = 'Opening your books') {
 /** First run: name the company and pick basics. Resolves { name, currency, fiscalStartMonth, dateStyle, sample }. */
 export function onboarding({ defaultName = '' } = {}) {
   return new Promise((resolve) => {
-    const o = { name: defaultName, currency: 'USD', fiscalStartMonth: 1, dateStyle: 'mdy', sample: false };
+    const o = { name: defaultName, currency: 'CNY', fiscalStartMonth: 1, dateStyle: 'ymd', sample: false };
     const name = textInput({ value: o.name, autocomplete: 'organization' });
-    const nameErr = el('span.field-error', { role: 'alert', hidden: true }, 'Enter a name for your company.');
+    const nameErr = el('span.field-error', { role: 'alert', hidden: true }, '请输入企业名称。');
     name.addEventListener('input', () => { o.name = name.value; nameErr.hidden = true; name.removeAttribute('aria-invalid'); });
-    const currency = selectInput({ options: ['USD', 'CAD', 'EUR', 'GBP', 'AUD', 'NZD', 'JPY', 'CHF', 'INR', 'SGD', 'ZAR', 'MXN', 'BRL'].map((c) => [c, c]), value: o.currency, onChange: (v) => { o.currency = v; } });
-    const fy = selectInput({ options: Array.from({ length: 12 }, (_, i) => [String(i + 1), monthName(i + 1)]), value: '1', onChange: (v) => { o.fiscalStartMonth = +v; } });
-    const ds = selectInput({ options: [['mdy', 'MM/DD/YYYY'], ['dmy', 'DD/MM/YYYY'], ['ymd', 'YYYY-MM-DD']], value: o.dateStyle, onChange: (v) => { o.dateStyle = v; } });
-    const sample = checkbox({ checked: false, label: 'Start with a sample company to explore', onChange: (v) => { o.sample = v; } });
+    const currency = selectInput({
+      options: [
+        ['CNY', 'CNY (人民币 ¥)'],
+        ['USD', 'USD (美元 $)'],
+        ['EUR', 'EUR (欧元 €)'],
+        ['GBP', 'GBP (英镑 £)'],
+        ['HKD', 'HKD (港币 HK$)'],
+        ['JPY', 'JPY (日元 ¥)'],
+        ['CAD', 'CAD (加拿大元 $)'],
+        ['AUD', 'AUD (澳大利亚元 $)'],
+        ['SGD', 'SGD (新加坡元 $)'],
+      ],
+      value: o.currency,
+      onChange: (v) => { o.currency = v; }
+    });
+    const fy = selectInput({ options: Array.from({ length: 12 }, (_, i) => [String(i + 1), `${i + 1}月`]), value: '1', onChange: (v) => { o.fiscalStartMonth = +v; } });
+    const ds = selectInput({ options: [['ymd', 'YYYY-MM-DD (中国标准)'], ['mdy', 'MM/DD/YYYY'], ['dmy', 'DD/MM/YYYY']], value: o.dateStyle, onChange: (v) => { o.dateStyle = v; } });
+    const sample = checkbox({ checked: false, label: '预置演示样例数据以供快速体验', onChange: (v) => { o.sample = v; } });
     let done = false;
     const finish = () => {
       o.name = o.name.trim();

@@ -29,9 +29,9 @@ export const COLLECTIONS = {
 const PREFIX_TO_COLLECTION = Object.fromEntries(Object.entries(COLLECTIONS).map(([k, v]) => [v, k]));
 
 export const DEFAULT_SETTINGS = {
-  company: { name: '', legalName: '', email: '', phone: '', website: '', taxId: '', address: { line1: '', line2: '', city: '', state: '', zip: '', country: '' } },
-  currency: 'USD',
-  dateStyle: 'mdy',
+  company: { name: '', legalName: '', email: '', phone: '', website: '', taxId: '', address: { line1: '', line2: '', city: '', state: '', zip: '', country: '中国' } },
+  currency: 'CNY',
+  dateStyle: 'ymd',
   fiscalStartMonth: 1,
   closeDate: null,
   defaultTerms: 'net30',
@@ -41,7 +41,7 @@ export const DEFAULT_SETTINGS = {
   showAccountNumbers: true,
   theme: 'system',
   invoiceStart: 1001,
-  invoiceMessage: 'Thank you for your business.',
+  invoiceMessage: '感谢您的支持与合作。',
   favoriteReports: ['pnl', 'bs', 'arAging'],
   onboarded: false,
 };
@@ -184,12 +184,19 @@ export class Store {
   // --------------------------------------------------------- new company
 
   /** Seed the chart of accounts and defaults for a brand-new company. */
-  createCompany({ name, currency = 'USD', fiscalStartMonth = 1, dateStyle = 'mdy' } = {}) {
+  createCompany({ name, currency = 'CNY', fiscalStartMonth = 1, dateStyle = 'ymd' } = {}) {
     this.batch(({ put }) => {
       if (!this.accounts.size) for (const a of defaultAccounts(() => newId())) put('accounts', a);
-      if (!this.taxRates.size) put('taxRates', { name: 'Sales tax', rate: 0, agency: '', active: true });
+      if (!this.taxRates.size) {
+        put('taxRates', { name: '增值税 (13% 标准税率)', rate: 1300, agency: '国家税务总局', active: true });
+        put('taxRates', { name: '增值税 (9% 建筑/交通/不动产)', rate: 900, agency: '国家税务总局', active: true });
+        put('taxRates', { name: '增值税 (6% 现代服务业)', rate: 600, agency: '国家税务总局', active: true });
+        put('taxRates', { name: '增值税 (3% 小规模征收率)', rate: 300, agency: '国家税务总局', active: true });
+        put('taxRates', { name: '增值税 (1% 优惠征收率)', rate: 100, agency: '国家税务总局', active: true });
+        put('taxRates', { name: '免税 / 零税率 (0%)', rate: 0, agency: '国家税务总局', active: true });
+      }
     });
-    this.saveSettings({ company: { name: name || 'My Company' }, currency, fiscalStartMonth, dateStyle, onboarded: true });
+    this.saveSettings({ company: { name: name || '我的企业' }, currency, fiscalStartMonth, dateStyle, onboarded: true });
   }
 
   // ------------------------------------------------------------- accounts

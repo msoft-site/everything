@@ -20,14 +20,14 @@ import { externalDataMenu, previewsMenu } from '../io/fileops';
 import { quickSetupBody, quickSetupPending, splashArt } from './quicksetup';
 
 /** File ▸ New entries (application templates, e.g. 2D Animation); modules append to it. */
-export const fileNewTemplates: { label: string; icon?: string; template: string }[] = [{ label: 'General', icon: 'file_blank', template: '' }];
+export const fileNewTemplates: { label: string; icon?: string; template: string }[] = [{ label: '常规', icon: 'file_blank', template: '' }];
 
 const sizeLabel = (n: number) => (n < 1024 * 1024 ? `${Math.max(1, Math.round(n / 1024))} KB` : `${(n / 1024 / 1024).toFixed(1)} MB`);
 function ago(t: number) {
   const s = (Date.now() - t) / 1000;
-  if (s < 60) return 'just now';
-  if (s < 3600) return `${Math.round(s / 60)} min ago`;
-  if (s < 86400) return `${Math.round(s / 3600)} h ago`;
+  if (s < 60) return '刚刚';
+  if (s < 3600) return `${Math.round(s / 60)} 分钟前`;
+  if (s < 86400) return `${Math.round(s / 3600)} 小时前`;
   return formatDate(t, false);
 }
 
@@ -41,85 +41,85 @@ export function fileNewMenu(): MenuItem[] {
 export function openRecentMenu(): MenuItem[] {
   const list = recentFiles();
   return [
-    ...(list.length ? list.map((e) => ({ label: e.name, icon: 'file_3d', description: `${sizeLabel(e.size)}, ${ago(e.time)}`, op: 'wm.open_mainfile', props: { filepath: e.name } })) : [{ label: 'No recent files', disabled: true }]),
+    ...(list.length ? list.map((e) => ({ label: e.name, icon: 'file_3d', description: `${sizeLabel(e.size)}, ${ago(e.time)}`, op: 'wm.open_mainfile', props: { filepath: e.name } })) : [{ label: '暂无最近打开的文件', disabled: true }]),
     { separator: true },
-    { label: 'Clear Recent Files List…', icon: 'trash', op: 'wm.clear_recent_files' },
+    { label: '清空最近文件列表…', icon: 'trash', op: 'wm.clear_recent_files' },
   ];
 }
 
 /** File ▸ Open's other source: this device inside the Puter desktop (where Open shows Puter's dialog), else Puter. */
 export function openFromMenu(): MenuItem[] {
-  if (opensFromPuter()) return [{ label: 'Open from This Device…', icon: 'file_folder', description: 'Open a file from this device', op: 'wm.open_mainfile', props: { source: 'DEVICE' } }];
-  if (canOpenFromPuter()) return [{ label: 'Open from Local…', icon: 'file_folder', description: 'Open a file from local storage', op: 'wm.open_mainfile', props: { source: 'PUTER' } }];
+  if (opensFromPuter()) return [{ label: '从当前设备打开…', icon: 'file_folder', description: '从当前设备打开工程文件', op: 'wm.open_mainfile', props: { source: 'DEVICE' } }];
+  if (canOpenFromPuter()) return [{ label: '从本地打开…', icon: 'file_folder', description: '从本地存储打开工程文件', op: 'wm.open_mainfile', props: { source: 'PUTER' } }];
   return [];
 }
 
 export function fileMenu(): MenuItem[] {
   return [
-    { label: 'New', icon: 'file_blank', shortcut: 'Ctrl N', submenu: fileNewMenu },
-    { label: 'Open…', icon: 'file_folder', shortcut: 'Ctrl O', op: 'wm.open_mainfile' },
+    { label: '新建', icon: 'file_blank', shortcut: 'Ctrl N', submenu: fileNewMenu },
+    { label: '打开…', icon: 'file_folder', shortcut: 'Ctrl O', op: 'wm.open_mainfile' },
     ...openFromMenu(),
-    { label: 'Open Recent', shortcut: 'Shift Ctrl O', submenu: openRecentMenu },
-    { label: 'Revert', op: 'wm.revert_mainfile' },
+    { label: '打开最近文件', shortcut: 'Shift Ctrl O', submenu: openRecentMenu },
+    { label: '恢复', op: 'wm.revert_mainfile' },
     {
-      label: 'Recover',
+      label: '工程恢复',
       submenu: () => [
-        { label: 'Last Session', op: 'wm.recover_last_session' },
-        { label: 'Auto Save…', op: 'wm.recover_auto_save' },
+        { label: '上一会话', op: 'wm.recover_last_session' },
+        { label: '自动保存版本…', op: 'wm.recover_auto_save' },
       ],
     },
     { separator: true },
-    { label: 'Save', icon: 'file_3d', shortcut: 'Ctrl S', op: 'wm.save_mainfile' },
-    { label: 'Save As…', shortcut: 'Shift Ctrl S', op: 'wm.save_as_mainfile' },
-    { label: 'Save Copy…', op: 'wm.save_as_mainfile', props: { copy: true } },
-    { label: 'Save Incremental', shortcut: 'Ctrl Alt S', op: 'wm.save_mainfile', props: { incremental: true } },
+    { label: '保存', icon: 'file_3d', shortcut: 'Ctrl S', op: 'wm.save_mainfile' },
+    { label: '另存为…', shortcut: 'Shift Ctrl S', op: 'wm.save_as_mainfile' },
+    { label: '保存副本…', op: 'wm.save_as_mainfile', props: { copy: true } },
+    { label: '增量保存', shortcut: 'Ctrl Alt S', op: 'wm.save_mainfile', props: { incremental: true } },
     { separator: true },
-    { label: 'Link…', icon: 'link', op: 'wm.link' },
-    { label: 'Append…', icon: 'append_blend', op: 'wm.append' },
-    { label: 'Data Previews', submenu: previewsMenu },
+    { label: '关联…', icon: 'link', op: 'wm.link' },
+    { label: '追加…', icon: 'append_blend', op: 'wm.append' },
+    { label: '数据预览', submenu: previewsMenu },
     { separator: true },
-    { label: 'Import', icon: 'import', submenu: importMenu },
-    { label: 'Export', icon: 'export', submenu: exportMenu },
-    { label: 'Export All Collections', op: 'wm.collection_export_all' },
+    { label: '导入', icon: 'import', submenu: importMenu },
+    { label: '导出', icon: 'export', submenu: exportMenu },
+    { label: '导出所有集合', op: 'wm.collection_export_all' },
     { separator: true },
-    { label: 'External Data', submenu: externalDataMenu },
-    { label: 'Clean Up', submenu: () => [{ label: 'Purge Unused Data…', op: 'outliner.orphans_purge' }, { label: 'Manage Unused Data…', op: 'outliner.orphans_manage' }] },
+    { label: '外部数据', submenu: externalDataMenu },
+    { label: '清理孤立数据', submenu: () => [{ label: '彻底清除孤立数据…', op: 'outliner.orphans_purge' }, { label: '管理孤立数据…', op: 'outliner.orphans_manage' }] },
     { separator: true },
     {
-      label: 'Defaults',
+      label: '默认设置',
       submenu: () => [
-        { label: 'Save Startup File', op: 'wm.save_homefile' },
-        { label: 'Load Factory Settings', op: 'wm.read_factory_settings' },
+        { label: '保存启动文件', op: 'wm.save_homefile' },
+        { label: '恢复初始出厂设置', op: 'wm.read_factory_settings' },
       ],
     },
     { separator: true },
-    { label: 'Quit', icon: 'panel_close', shortcut: 'Ctrl Q', op: 'wm.quit_blender' },
+    { label: '退出', icon: 'panel_close', shortcut: 'Ctrl Q', op: 'wm.quit_blender' },
   ];
 }
 
 /** F4: a short File menu at the pointer. */
 export function fileContextMenu(): MenuItem[] {
   return [
-    { label: 'New', icon: 'file_blank', submenu: fileNewMenu },
-    { label: 'Open…', icon: 'file_folder', shortcut: 'Ctrl O', op: 'wm.open_mainfile' },
+    { label: '新建', icon: 'file_blank', submenu: fileNewMenu },
+    { label: '打开…', icon: 'file_folder', shortcut: 'Ctrl O', op: 'wm.open_mainfile' },
     ...openFromMenu(),
-    { label: 'Open Recent', submenu: openRecentMenu },
+    { label: '打开最近文件', submenu: openRecentMenu },
     { separator: true },
-    { label: 'Link…', icon: 'link', op: 'wm.link' },
-    { label: 'Append…', icon: 'append_blend', op: 'wm.append' },
+    { label: '关联…', icon: 'link', op: 'wm.link' },
+    { label: '追加…', icon: 'append_blend', op: 'wm.append' },
     { separator: true },
-    { label: 'Save', shortcut: 'Ctrl S', op: 'wm.save_mainfile' },
-    { label: 'Save As…', shortcut: 'Shift Ctrl S', op: 'wm.save_as_mainfile' },
+    { label: '保存', shortcut: 'Ctrl S', op: 'wm.save_mainfile' },
+    { label: '另存为…', shortcut: 'Shift Ctrl S', op: 'wm.save_as_mainfile' },
     { separator: true },
-    { label: 'Import', icon: 'import', submenu: importMenu },
-    { label: 'Export', icon: 'export', submenu: exportMenu },
+    { label: '导入', icon: 'import', submenu: importMenu },
+    { label: '导出', icon: 'export', submenu: exportMenu },
     { separator: true },
-    { label: 'Preferences…', icon: 'preferences', shortcut: 'Ctrl ,', op: 'screen.userpref_show' },
+    { label: '偏好设置…', icon: 'preferences', shortcut: 'Ctrl ,', op: 'screen.userpref_show' },
   ];
 }
 
 function undoHistoryMenu(): MenuItem[] {
-  const items = app.undo.history.map((s, i) => ({ label: s.label || 'Original', active: s.active, action: () => {
+  const items = app.undo.history.map((s, i) => ({ label: s.label || '初始状态', active: s.active, action: () => {
     const d = app.undo.jump(i);
     if (d) app.setDocument(d, false);
   } }));
@@ -128,97 +128,97 @@ function undoHistoryMenu(): MenuItem[] {
 
 export function editMenu(): MenuItem[] {
   return [
-    { label: 'Undo', icon: 'undo', shortcut: 'Ctrl Z', op: 'ed.undo', disabled: !app.undo.canUndo },
-    { label: 'Redo', icon: 'redo', shortcut: 'Shift Ctrl Z', op: 'ed.redo', disabled: !app.undo.canRedo },
-    { label: 'Undo History', shortcut: 'Ctrl Alt Z', submenu: undoHistoryMenu },
+    { label: '撤销', icon: 'undo', shortcut: 'Ctrl Z', op: 'ed.undo', disabled: !app.undo.canUndo },
+    { label: '重做', icon: 'redo', shortcut: 'Shift Ctrl Z', op: 'ed.redo', disabled: !app.undo.canRedo },
+    { label: '撤销历史', shortcut: 'Ctrl Alt Z', submenu: undoHistoryMenu },
     { separator: true },
-    { label: 'Adjust Last Operation…', shortcut: 'F9', op: 'screen.redo_last' },
-    { label: 'Repeat Last', shortcut: 'Shift R', op: 'screen.repeat_last' },
-    { label: 'Repeat History…', op: 'screen.repeat_history' },
+    { label: '微调上一步操作…', shortcut: 'F9', op: 'screen.redo_last' },
+    { label: '重复上一步', shortcut: 'Shift R', op: 'screen.repeat_last' },
+    { label: '重复历史…', op: 'screen.repeat_history' },
     { separator: true },
-    { label: 'Menu Search…', icon: 'search', shortcut: 'F3', op: 'wm.search_menu' },
-    ...(prefs.show_developer_ui ? [{ label: 'Operator Search…', op: 'wm.search_operator' }] : []),
+    { label: '搜索菜单功能…', icon: 'search', shortcut: 'F3', op: 'wm.search_menu' },
+    ...(prefs.show_developer_ui ? [{ label: '搜索操作符…', op: 'wm.search_operator' }] : []),
     { separator: true },
-    { label: 'Rename Active Item…', shortcut: 'F2', op: 'wm.call_panel', props: { name: 'TOPBAR_PT_name' } },
-    { label: 'Batch Rename…', shortcut: 'Ctrl F2', op: 'wm.batch_rename' },
+    { label: '重命名当前项…', shortcut: 'F2', op: 'wm.call_panel', props: { name: 'TOPBAR_PT_name' } },
+    { label: '批量重命名…', shortcut: 'Ctrl F2', op: 'wm.batch_rename' },
     { separator: true },
-    { label: 'Preferences…', icon: 'preferences', shortcut: 'Ctrl ,', op: 'screen.userpref_show' },
+    { label: '偏好设置…', icon: 'preferences', shortcut: 'Ctrl ,', op: 'screen.userpref_show' },
   ];
 }
 
 export function renderMenu(): MenuItem[] {
   return [
-    { label: 'Render Image', icon: 'render', shortcut: 'F12', op: 'render.render' },
-    { label: 'Render Animation', shortcut: 'Ctrl F12', op: 'render.render', props: { animation: true } },
+    { label: '渲染静态图像', icon: 'render', shortcut: 'F12', op: 'render.render' },
+    { label: '渲染动画序列', shortcut: 'Ctrl F12', op: 'render.render', props: { animation: true } },
     { separator: true },
-    { label: 'Render Audio…', op: 'sound.mixdown' },
+    { label: '渲染音频…', op: 'sound.mixdown' },
     { separator: true },
-    { label: 'View Render', shortcut: 'F11', op: 'render.view_show' },
-    { label: 'View Animation', shortcut: 'Ctrl F11', op: 'render.play_rendered_anim' },
+    { label: '查看渲染结果', shortcut: 'F11', op: 'render.view_show' },
+    { label: '播放已渲染动画', shortcut: 'Ctrl F11', op: 'render.play_rendered_anim' },
     { separator: true },
-    { label: 'Lock Interface', checked: !!app.doc.scene.render.use_lock_interface, action: () => ((app.doc.scene.render.use_lock_interface = !app.doc.scene.render.use_lock_interface), app.pushUndo('Lock Interface'), app.changed('doc')) },
+    { label: '锁定界面交互', checked: !!app.doc.scene.render.use_lock_interface, action: () => ((app.doc.scene.render.use_lock_interface = !app.doc.scene.render.use_lock_interface), app.pushUndo('锁定界面交互'), app.changed('doc')) },
   ];
 }
 
 export function windowMenu(sh: Shell): MenuItem[] {
   return [
-    { label: 'New Window', op: 'wm.window_new' },
-    { label: 'New Main Window', op: 'wm.window_new_main' },
+    { label: '新建窗口', op: 'wm.window_new' },
+    { label: '新建主窗口', op: 'wm.window_new_main' },
     { separator: true },
-    { label: 'Toggle Window Fullscreen', icon: 'fullscreen_enter', op: 'wm.window_fullscreen_toggle' },
-    ...(app.doc.scene.render.use_multiview ? [{ label: 'Set Stereo 3D…', op: 'wm.set_stereo_3d' }] : []),
+    { label: '切换全屏', icon: 'fullscreen_enter', op: 'wm.window_fullscreen_toggle' },
+    ...(app.doc.scene.render.use_multiview ? [{ label: '立体 3D 设置…', op: 'wm.set_stereo_3d' }] : []),
     { separator: true },
-    { label: 'Next Workspace', shortcut: 'Ctrl Page Down', op: 'screen.workspace_cycle', props: { direction: 'NEXT' } },
-    { label: 'Previous Workspace', shortcut: 'Ctrl Page Up', op: 'screen.workspace_cycle', props: { direction: 'PREV' } },
+    { label: '下一个工作区', shortcut: 'Ctrl Page Down', op: 'screen.workspace_cycle', props: { direction: 'NEXT' } },
+    { label: '上一个工作区', shortcut: 'Ctrl Page Up', op: 'screen.workspace_cycle', props: { direction: 'PREV' } },
     { separator: true },
-    { label: 'Show Status Bar', checked: sh.showStatusbar, op: 'screen.toggle_statusbar' },
-    { label: 'Status Bar Scene Statistics', checked: prefs.show_statusbar_stats, disabled: !sh.showStatusbar, action: () => ((prefs.show_statusbar_stats = !prefs.show_statusbar_stats), savePrefs(), sh.drawStatus()) },
+    { label: '显示状态栏', checked: sh.showStatusbar, op: 'screen.toggle_statusbar' },
+    { label: '状态栏场景统计信息', checked: prefs.show_statusbar_stats, disabled: !sh.showStatusbar, action: () => ((prefs.show_statusbar_stats = !prefs.show_statusbar_stats), savePrefs(), sh.drawStatus()) },
     { separator: true },
-    { label: 'AI Assistant', icon: 'assistant', checked: assistantOpen(), op: 'wm.assistant_toggle' },
+    { label: 'AI 创作助理', icon: 'assistant', checked: assistantOpen(), op: 'wm.assistant_toggle' },
     { separator: true },
-    { label: 'Save Screenshot', op: 'screen.screenshot' },
-    { label: 'Save Screenshot (Editor)', op: 'screen.screenshot_area' },
+    { label: '截取全屏', op: 'screen.screenshot' },
+    { label: '截取编辑器区域', op: 'screen.screenshot_area' },
   ];
 }
 
 export function helpMenu(): MenuItem[] {
   return [
-    { label: 'Keyboard Shortcuts', op: 'wm.keymap_reference' },
-    ...(prefs.show_developer_ui ? [{ label: 'Operator Cheat Sheet', op: 'wm.operator_cheat_sheet' }] : []),
+    { label: '键盘快捷键大全', op: 'wm.keymap_reference' },
+    ...(prefs.show_developer_ui ? [{ label: '操作符速查表', op: 'wm.operator_cheat_sheet' }] : []),
     { separator: true },
     // feedback goes through Puter's own dialog, so it is offered where the app runs inside Puter
-    ...(window.self !== window.top || (globalThis as { puter?: unknown }).puter ? [{ label: 'Report a Bug', op: 'wm.url_open_preset', props: { type: 'BUG' } }] : []),
-    { label: 'Save System Info', op: 'wm.sysinfo' },
+    ...(window.self !== window.top || (globalThis as { puter?: unknown }).puter ? [{ label: '反馈与报错', op: 'wm.url_open_preset', props: { type: 'BUG' } }] : []),
+    { label: '导出系统环境信息', op: 'wm.sysinfo' },
     { separator: true },
-    { label: 'About', icon: 'info_small', op: 'wm.about' },
+    { label: '关于 3D Studio', icon: 'info_small', op: 'wm.about' },
   ];
 }
 
 const REDRAW_TYPES: [string, string, string][] = [
-  ['DRAW', 'Draw Region', 'Draw the 3D views'],
-  ['DRAW_SWAP', 'Draw Region & Swap', 'Draw the 3D views and wait for the GPU'],
-  ['DRAW_WIN', 'Draw Window', 'Redraw every area of the window'],
-  ['DRAW_WIN_SWAP', 'Draw Window & Swap', 'Redraw every area and wait for the GPU'],
-  ['ANIM_STEP', 'Animation Step', 'Step the frame forward and evaluate the scene'],
-  ['UNDO', 'Undo/Redo', 'Undo and redo the last step'],
+  ['DRAW', '重绘区域', '绘制 3D 视口'],
+  ['DRAW_SWAP', '重绘并交换缓冲区', '绘制 3D 视口并等待 GPU'],
+  ['DRAW_WIN', '重绘窗口', '重绘窗口的每个区域'],
+  ['DRAW_WIN_SWAP', '重绘窗口并交换缓冲区', '重绘所有区域并等待 GPU'],
+  ['ANIM_STEP', '动画单帧步进', '向前推进一帧并计算场景'],
+  ['UNDO', '撤销/重做测试', '撤销并重做上一步'],
 ];
 
 export function appMenu(): MenuItem[] {
   return [
-    { label: 'Splash Screen', op: 'wm.splash' },
-    { label: 'About', icon: 'info_small', op: 'wm.splash_about' },
+    { label: '初始启动画面', op: 'wm.splash' },
+    { label: '关于 3D Studio', icon: 'info_small', op: 'wm.splash_about' },
     { separator: true },
-    { label: 'Install Application Template…', op: 'preferences.app_template_install' },
+    { label: '安装应用模板…', op: 'preferences.app_template_install' },
     { separator: true },
     {
-      label: 'System',
+      label: '系统管理',
       submenu: () => [
-        { label: 'Reload Scripts', op: 'script.reload' },
+        { label: '重新加载脚本', op: 'script.reload' },
         { separator: true },
-        { label: 'Memory Statistics', op: 'wm.memory_statistics' },
-        { label: 'Redraw Timer', submenu: () => REDRAW_TYPES.map(([id, label]) => ({ label, op: 'wm.redraw_timer', props: { type: id } })) },
+        { label: '内存统计信息', op: 'wm.memory_statistics' },
+        { label: '视口重绘性能计时器', submenu: () => REDRAW_TYPES.map(([id, label]) => ({ label, op: 'wm.redraw_timer', props: { type: id } })) },
         { separator: true },
-        { label: 'Clean Up Operator Presets', op: 'wm.operator_presets_cleanup' },
+        { label: '清除操作符预设', op: 'wm.operator_presets_cleanup' },
       ],
     },
   ];
@@ -226,15 +226,15 @@ export function appMenu(): MenuItem[] {
 
 /** Menus that wm.call_menu (and wm.search_single_menu) can open by name; other modules may add theirs. */
 export const NAMED_MENUS: Record<string, [string, () => MenuItem[]]> = {
-  TOPBAR_MT_file_new: ['New File', fileNewMenu],
-  TOPBAR_MT_file_open_recent: ['Open Recent', openRecentMenu],
-  TOPBAR_MT_file_context_menu: ['File', fileContextMenu],
-  TOPBAR_MT_file: ['File', fileMenu],
-  TOPBAR_MT_edit: ['Edit', editMenu],
-  TOPBAR_MT_render: ['Render', renderMenu],
-  TOPBAR_MT_window: ['Window', () => windowMenu(shell)],
-  TOPBAR_MT_help: ['Help', helpMenu],
-  TOPBAR_MT_undo_history: ['Undo History', undoHistoryMenu],
+  TOPBAR_MT_file_new: ['新建文件', fileNewMenu],
+  TOPBAR_MT_file_open_recent: ['打开最近文件', openRecentMenu],
+  TOPBAR_MT_file_context_menu: ['文件', fileContextMenu],
+  TOPBAR_MT_file: ['文件', fileMenu],
+  TOPBAR_MT_edit: ['编辑', editMenu],
+  TOPBAR_MT_render: ['渲染', renderMenu],
+  TOPBAR_MT_window: ['窗口', () => windowMenu(shell)],
+  TOPBAR_MT_help: ['帮助', helpMenu],
+  TOPBAR_MT_undo_history: ['撤销历史', undoHistoryMenu],
 };
 
 // ---------------------------------------------------------------------------
@@ -258,17 +258,17 @@ function splashBody(): Child {
     h(
       'div',
       { class: 'splash-col' },
-      h('div', { class: 'splash-head' }, 'New File'),
+      h('div', { class: 'splash-head' }, '新建工程'),
       fileNewTemplates.map((t) => h('button', { key: t.label, class: 'splash-item', onclick: run('wm.read_homefile', t.template ? { app_template: t.template } : {}) }, icon(t.icon ?? 'file_blank'), h('span', null, t.label))),
       h('div', { class: 'splash-gap' }),
-      h('button', { class: 'splash-item', onclick: run('wm.open_mainfile') }, icon('file_folder'), h('span', null, 'Open…')),
-      h('button', { class: 'splash-item', onclick: run('wm.recover_last_session') }, icon('undo'), h('span', null, 'Recover Last Session')),
-      snapshotsCache.length ? h('button', { class: 'splash-item', onclick: run('wm.recover_auto_save') }, icon('time'), h('span', null, 'Recover Auto Save…')) : null,
+      h('button', { class: 'splash-item', onclick: run('wm.open_mainfile') }, icon('file_folder'), h('span', null, '打开…')),
+      h('button', { class: 'splash-item', onclick: run('wm.recover_last_session') }, icon('undo'), h('span', null, '恢复上一会话')),
+      snapshotsCache.length ? h('button', { class: 'splash-item', onclick: run('wm.recover_auto_save') }, icon('time'), h('span', null, '恢复自动保存版本…')) : null,
     ),
     h(
       'div',
       { class: 'splash-col wide' },
-      h('div', { class: 'splash-head' }, 'Recent Files'),
+      h('div', { class: 'splash-head' }, '最近打开的工程'),
       recent.length
         ? recent.map((e) =>
             h(
@@ -279,7 +279,7 @@ function splashBody(): Child {
               h('span', { class: 'splash-recent-meta' }, ago(e.time)),
             ),
           )
-        : h('div', { class: 'splash-empty' }, 'Files you open or save appear here.'),
+        : h('div', { class: 'splash-empty' }, '您打开或保存的工程文件将在此处列出。'),
     ),
   );
   const foot = h(
@@ -289,11 +289,11 @@ function splashBody(): Child {
       'label',
       { class: 'splash-check' },
       h('input', { type: 'checkbox', checked: prefs.show_splash, onchange: (e: Event) => ((prefs.show_splash = (e.target as HTMLInputElement).checked), savePrefs()) }),
-      'Show at startup',
+      '启动时显示此初始画面',
     ),
     h('span', { class: 'grow' }),
-    h('button', { class: 'btn', onclick: run('wm.splash_about') }, 'About'),
-    h('button', { class: 'btn', onclick: run('wm.keymap_reference') }, 'Keyboard Shortcuts'),
+    h('button', { class: 'btn', onclick: run('wm.splash_about') }, '关于 3D Studio'),
+    h('button', { class: 'btn', onclick: run('wm.keymap_reference') }, '键盘快捷键大全'),
   );
   return h(
     'div',

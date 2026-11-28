@@ -73,7 +73,7 @@ function formatter(currency, locale, plain) {
   return f;
 }
 
-let defaults = { currency: 'USD', locale: undefined };
+let defaults = { currency: 'CNY', locale: 'zh-CN' };
 export function currentCurrency() {
   return defaults.currency;
 }

@@ -59,10 +59,10 @@ function themeCard(id: string, label: string): Child {
 }
 
 const SCALES: [number, string][] = [
-  [0.9, 'Compact'],
-  [1, 'Normal'],
-  [1.15, 'Large'],
-  [1.3, 'Larger'],
+  [0.9, '紧凑 (90%)'],
+  [1, '标准 (100%)'],
+  [1.15, '较大 (115%)'],
+  [1.3, '特大 (130%)'],
 ];
 
 /** Quick Setup page of the splash screen. */
@@ -72,21 +72,21 @@ export function quickSetupBody(done: () => void): Child {
   return h(
     'div',
     { class: 'qs' },
-    h('div', { class: 'splash-head' }, 'Quick Setup'),
-    h('p', { class: 'qs-lead' }, 'Pick a look and a few habits. Everything here can be changed later in Preferences.'),
-    h('div', { class: 'qs-label' }, 'Theme'),
+    h('div', { class: 'splash-head' }, '快速设置'),
+    h('p', { class: 'qs-lead' }, '选择界面外观与操作习惯。稍后可在偏好设置中随时更改。'),
+    h('div', { class: 'qs-label' }, '主题风格'),
     h('div', { class: 'qs-themes' }, BUILTIN_THEMES.map((t) => themeCard(t.id, t.label))),
-    h('div', { class: 'qs-row' }, h('div', { class: 'qs-label' }, 'Interface Size'), enumRow('qs-scale', SCALES.map(([v, l]) => ({ value: String(v), label: l })), String(scale[0]), (v) => (setPref('resolution_scale', Number(v)), app.changed('ui')))),
+    h('div', { class: 'qs-row' }, h('div', { class: 'qs-label' }, '界面缩放比例'), enumRow('qs-scale', SCALES.map(([v, l]) => ({ value: String(v), label: l })), String(scale[0]), (v) => (setPref('resolution_scale', Number(v)), app.changed('ui')))),
     h(
       'div',
       { class: 'qs-row' },
-      h('div', { class: 'qs-label' }, 'Spacebar'),
+      h('div', { class: 'qs-label' }, '空格键功能'),
       enumRow(
         'qs-space',
         [
-          { value: 'PLAY', label: 'Play', description: 'Space plays the animation' },
-          { value: 'TOOL', label: 'Tools', description: 'Space opens the tool menu' },
-          { value: 'SEARCH', label: 'Search', description: 'Space searches commands' },
+          { value: 'PLAY', label: '播放动画', description: '按空格键播放或暂停动画' },
+          { value: 'TOOL', label: '工具栏', description: '按空格键弹出工具快捷菜单' },
+          { value: 'SEARCH', label: '搜索命令', description: '按空格键弹出命令搜索面板' },
         ],
         o.spacebar_action,
         (v) => {
@@ -97,7 +97,7 @@ export function quickSetupBody(done: () => void): Child {
         },
       ),
     ),
-    h('div', { class: 'qs-foot' }, h('span', { class: 'grow' }), h('button', { class: 'btn primary qs-next', onclick: () => (finishQuickSetup(), done()) }, 'Continue')),
+    h('div', { class: 'qs-foot' }, h('span', { class: 'grow' }), h('button', { class: 'btn primary qs-next', onclick: () => (finishQuickSetup(), done()) }, '继续使用')),
   );
 }
 

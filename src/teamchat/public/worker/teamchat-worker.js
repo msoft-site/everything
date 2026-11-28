@@ -1,4 +1,4 @@
-/* teamchat-worker build=7db98ef85c23 at=1795803887288 */
+/* teamchat-worker build=7db98ef85c23 at=1795849822820 */
 (function() {
 	/**
 	* Past this a block takes no write that grows it by more than a few bytes
@@ -555,7 +555,7 @@
 	*/
 	var WORKER_BUILD = "7db98ef85c23";
 	/** When the bundle was built, so two builds can be ordered (0 from source). */
-	var WORKER_BUILT_AT = 1795803887288;
+	var WORKER_BUILT_AT = 1795849822820;
 	/** The puter.js build the platform baked into this deploy (its preamble's first
 	*  line); read on each call because the preamble exists only once deployed.
 	*  Null from source (tests, mock.html). */

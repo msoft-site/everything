@@ -1054,9 +1054,9 @@ export function mountShell(appRoot) {
   function errorMain(e, retry) {
     return el('div.main', {}, el('div.empty', { style: { flex: 1, justifyContent: 'center' } },
       el('div.empty-icon', { html: icon('wifiOff', 24) }),
-      el('h1', {}, 'Could not load the workspace'), // the page's heading (see placeholderMain)
-      el('p', {}, e?.code === 'no_backend' ? 'No Teamchat server answers at this workspace\u2019s address. Its owner may have removed it.' : e?.code === 'bad_ref' ? 'That link does not point at a workspace.' : e.message),
-      el('button.btn.mt', { type: 'button', onclick: retry }, 'Try again')));
+      el('h1', {}, '无法加载工作区'),
+      el('p', {}, e?.code === 'no_backend' ? '该工作区服务器无响应，所有者可能已将其移除。' : e?.code === 'bad_ref' ? '该链接未指向有效的工作区。' : (e?.message || '请求失败')),
+      el('button.btn.mt', { type: 'button', onclick: retry }, '重试')));
   }
 
   async function handleJoin(server, raw) {

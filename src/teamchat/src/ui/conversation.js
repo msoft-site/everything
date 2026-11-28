@@ -75,7 +75,7 @@ export function createConversationView(convId, { onOpenThread, onOpenDetails, fo
       type: 'button', role: 'tab', 'aria-selected': String(tab === key), tabindex: tab === key ? 0 : -1,
       onclick: () => navigate({ ws: store.wsId, conv: convId, files: key === 'files' }),
     }, el('span', { html: icon(ic, 15, 2) }), el('span', {}, label));
-    rerenderTabs(tabs, tabBtn('messages', 'Messages', 'message'), tabBtn('files', 'Files & links', 'files'));
+    rerenderTabs(tabs, tabBtn('messages', '消息列表', 'message'), tabBtn('files', '文件与链接', 'files'));
   }
   // Left and Right step between the two tabs, Home and End go to the first
   // and the last, as on any tab strip. A modified arrow is a shortcut's
@@ -355,32 +355,27 @@ export function createConversationView(convId, { onOpenThread, onOpenDetails, fo
       const sharedNote = ch.shared ? `${/[.!?]$/.test(about) ? '' : '.'} It is hosted by ${ch.shared.host || 'another workspace'} and shared with ${store.ws?.name || 'your workspace'}.` : '';
       return el('div.conv-intro', {},
         el('div.conv-intro-icon', { html: icon(channelIcon(ch), 26, 2) }),
-        el('h2', {}, `This is the very beginning of #${ch.name}`),
+        el('h2', {}, `这是 #${ch.name} 频道的开始`),
         // The description is the channel's own words, in their own direction.
         el('p', { dir: 'auto' }, about + sharedNote),
         el('div.row', {},
-          el('button.btn.btn-sm.btn-outline', { type: 'button', html: icon('info', 15), onclick: onOpenDetails }, ' Details'),
-          // A fresh channel wants people in it (the first hint card);
-          // shared entries and archives manage membership elsewhere. For
-          // someone in the channel: an admin (or the channel's creator) may
-          // curate it from outside, but the worker refuses an add from
-          // anyone not in it ("Join the channel to add people to it").
+          el('button.btn.btn-sm.btn-outline', { type: 'button', html: icon('info', 15), onclick: onOpenDetails }, ' 详细信息'),
           !ch.shared && !ch.archived && store.canCurate(convId) && store.isJoined(convId)
-            && el('button.btn.btn-sm.btn-outline', { type: 'button', html: icon('userPlus', 15), onclick: () => addPeopleToChannelDialog(ch) }, ' Add people'),
-          !ch.description && store.canCurate(convId) && el('button.btn.btn-sm.btn-outline', { type: 'button', html: icon('pencil', 15), onclick: () => editChannelDialog(ch) }, ' Add a description')));
+            && el('button.btn.btn-sm.btn-outline', { type: 'button', html: icon('userPlus', 15), onclick: () => addPeopleToChannelDialog(ch) }, ' 添加成员'),
+          !ch.description && store.canCurate(convId) && el('button.btn.btn-sm.btn-outline', { type: 'button', html: icon('pencil', 15), onclick: () => editChannelDialog(ch) }, ' 添加说明')));
     }
     if (d) {
       const others = d.members.filter((u) => u !== store.uuid).map((u) => store.member(u));
       if (!others.length) {
         return el('div.conv-intro', {}, el('div.conv-intro-icon', { html: icon('messageText', 26, 2) }),
-          el('h2', {}, 'This is your space'), el('p', {}, 'Draft messages, keep notes, or park links here. Nobody else can see this conversation.'));
+          el('h2', {}, '这是您的个人专属空间'), el('p', {}, '在此撰写草稿、记录备忘笔记或暂存链接。其他任何人都无法查看此对话。'));
       }
       return el('div.conv-intro', {},
         el('div.row', { style: { gap: '6px', marginBottom: '12px' } }, ...others.map((m) => avatar(m, { size: 'lg' }))),
         el('h2', {}, others.length === 1 ? others[0].name : others.map((m) => m.name).join(', ')),
         el('p', {}, others.length === 1
-          ? `${others[0].title ? `${others[0].title}. ` : ''}This conversation is just between the two of you.`
-          : `A group conversation with ${others.length} other people.`));
+          ? `${others[0].title ? `${others[0].title}. ` : ''}这是您与对方的一对一私信。`
+          : `包含 ${others.length} 位成员的群组对话。`));
     }
     return null;
   }

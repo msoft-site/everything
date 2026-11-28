@@ -13,7 +13,22 @@ import { loadSample, sampleConflicts } from '../lib/sample.js';
 import { monthName, today, formatDate } from '../lib/dates.js';
 import { formatMoney } from '../lib/money.js';
 
-const CURRENCIES = ['USD', 'CAD', 'EUR', 'GBP', 'AUD', 'NZD', 'JPY', 'CHF', 'SEK', 'NOK', 'DKK', 'INR', 'SGD', 'HKD', 'ZAR', 'MXN', 'BRL'];
+const CURRENCIES = [
+  ['CNY', 'CNY (人民币 ¥)'],
+  ['USD', 'USD (美元 $)'],
+  ['EUR', 'EUR (欧元 €)'],
+  ['GBP', 'GBP (英镑 £)'],
+  ['HKD', 'HKD (港币 HK$)'],
+  ['JPY', 'JPY (日元 ¥)'],
+  ['CAD', 'CAD (加拿大元 $)'],
+  ['AUD', 'AUD (澳大利亚元 $)'],
+  ['SGD', 'SGD (新加坡元 $)'],
+  ['CHF', 'CHF (瑞士法郎)'],
+  ['NZD', 'NZD (新西兰元 $)'],
+  ['INR', 'INR (印度卢比 ₹)'],
+  ['ZAR', 'ZAR (南非兰特 R)'],
+  ['BRL', 'BRL (巴西雷亚尔 R$)'],
+];
 
 function section(title, desc, ...children) {
   return el('section.settings-section', {}, el('div.settings-section-head', {}, el('h2', {}, title), desc ? el('p.field-hint', {}, desc) : null), el('div.settings-section-body', {}, children));
@@ -22,7 +37,7 @@ function section(title, desc, ...children) {
 export function renderSettings(main, route) {
   const st = viewState('settings', { tab: 'company' });
   const s = store.settings;
-  const save = (patch, msg = 'Saved') => { try { store.saveSettings(patch); toast(msg); return true; } catch (e) { toastError(e); return false; } };
+  const save = (patch, msg = '已保存') => { try { store.saveSettings(patch); toast(msg); return true; } catch (e) { toastError(e); return false; } };
   const rerender = () => renderSettings(main, route);
 
   let body;
@@ -33,18 +48,18 @@ export function renderSettings(main, route) {
       return draft;
     });
     const bind = (obj, key, opts = {}) => { const i = textInput({ value: obj[key] || '', type: opts.type || 'text', autocomplete: opts.ac || 'off' }); i.addEventListener('input', () => { obj[key] = i.value; }); return i; };
-    body = el('form.stack', { onsubmit: (e) => { e.preventDefault(); if (save({ company: c }, 'Company details saved')) clearDraft(route, 'company'); document.dispatchEvent(new CustomEvent('company:changed')); } },
-      section('Company name', 'Shown on invoices, reports, and the top bar.',
-        el('div.form-grid', {}, field('Company name', bind(c, 'name', { ac: 'organization' }), { required: true }), field('Legal name', bind(c, 'legalName')), field('Business ID or tax ID', bind(c, 'taxId')))),
-      section('Contact info', null,
-        el('div.form-grid', {}, field('Company email', bind(c, 'email', { type: 'email', ac: 'email' })), field('Company phone', bind(c, 'phone', { type: 'tel', ac: 'tel' })), field('Website', bind(c, 'website', { type: 'url', ac: 'url' })))),
-      section('Address', null,
-        el('div.form-grid', {}, field('Street address', bind(c.address, 'line1', { ac: 'address-line1' }), { className: 'span-2' }), field('City', bind(c.address, 'city')), field('State or region', bind(c.address, 'state')), field('ZIP or postal code', bind(c.address, 'zip')), field('Country', bind(c.address, 'country')))),
-      el('div', {}, el('button.btn.btn-primary', { type: 'submit' }, 'Save company details')));
+    body = el('form.stack', { onsubmit: (e) => { e.preventDefault(); if (save({ company: c }, '企业信息已保存')) clearDraft(route, 'company'); document.dispatchEvent(new CustomEvent('company:changed')); } },
+      section('企业名称', '显示在发票、报表和顶部导航栏。',
+        el('div.form-grid', {}, field('企业名称', bind(c, 'name', { ac: 'organization' }), { required: true }), field('法定全称', bind(c, 'legalName')), field('统一社会信用代码 / 税号', bind(c, 'taxId')))),
+      section('联系方式', null,
+        el('div.form-grid', {}, field('企业邮箱', bind(c, 'email', { type: 'email', ac: 'email' })), field('联系电话', bind(c, 'phone', { type: 'tel', ac: 'tel' })), field('企业官网', bind(c, 'website', { type: 'url', ac: 'url' })))),
+      section('注册地址', null,
+        el('div.form-grid', {}, field('详细地址', bind(c.address, 'line1', { ac: 'address-line1' }), { className: 'span-2' }), field('城市', bind(c.address, 'city')), field('省份/地区', bind(c.address, 'state')), field('邮政编码', bind(c.address, 'zip')), field('国家/地区', bind(c.address, 'country')))),
+      el('div', {}, el('button.btn.btn-primary', { type: 'submit' }, '保存企业信息')));
   } else if (st.tab === 'prefs') {
-    const terms = selectInput({ options: (s.terms || []).map((t) => [t.id, t.name]), value: s.defaultTerms, ariaLabel: 'Default terms', onChange: (v) => save({ defaultTerms: v }) });
-    const currency = selectInput({ options: CURRENCIES.map((c) => [c, c]), value: s.currency, ariaLabel: 'Home currency', onChange: (v) => save({ currency: v }, 'Currency changed') });
-    const dateStyle = selectInput({ options: [['mdy', 'MM/DD/YYYY'], ['dmy', 'DD/MM/YYYY'], ['ymd', 'YYYY-MM-DD']], value: s.dateStyle, ariaLabel: 'Date format', onChange: (v) => save({ dateStyle: v }, 'Date format changed') });
+    const terms = selectInput({ options: (s.terms || []).map((t) => [t.id, t.name]), value: s.defaultTerms, ariaLabel: '默认结算条款', onChange: (v) => save({ defaultTerms: v }) });
+    const currency = selectInput({ options: CURRENCIES, value: s.currency, ariaLabel: '本位币种', onChange: (v) => save({ currency: v }, '币种设置已更新') });
+    const dateStyle = selectInput({ options: [['ymd', 'YYYY-MM-DD (中国标准)'], ['mdy', 'MM/DD/YYYY'], ['dmy', 'DD/MM/YYYY']], value: s.dateStyle, ariaLabel: '日期格式', onChange: (v) => save({ dateStyle: v }, '日期格式已更新') });
     const fy = selectInput({ options: Array.from({ length: 12 }, (_, i) => [String(i + 1), monthName(i + 1)]), value: String(s.fiscalStartMonth), ariaLabel: 'First month of fiscal year', onChange: (v) => save({ fiscalStartMonth: +v }) });
     const method = segmented({ options: [['accrual', 'Accrual'], ['cash', 'Cash']], value: s.accountingMethod, ariaLabel: 'Accounting method for reports', onChange: (v) => save({ accountingMethod: v }) });
     const start = textInput({ value: String(s.invoiceStart || 1001), inputMode: 'numeric' });
