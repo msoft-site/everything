@@ -33,15 +33,15 @@ export function dashboardView({ navigate }) {
     if (!docs.length) {
       root.append(
         el('div.page-head', {}, el('div', {},
-          el('h1.page-title', {}, 'Home'),
-          el('p.page-sub', {}, 'Your billing at a glance'))),
-        emptyState('invoice', 'Nothing to bill yet',
-          'Create your first invoice or estimate. It takes about a minute.',
+          el('h1.page-title', {}, '概览主页'),
+          el('p.page-sub', {}, '一览您的账务与开票概况'))),
+        emptyState('invoice', '暂无开票记录',
+          '创建您的第一张发票或报价单，仅需一分钟即可完成。',
           // Nothing to create from a device showing a saved copy, exactly as
           // the buttons above, the sidebar, and the FAB already know.
           store.readOnly ? null : el('div.empty-actions', {},
-            el('button.btn.btn-primary', { onclick: () => navigate('#/new/invoice') }, 'New invoice'),
-            el('button.btn', { onclick: () => navigate('#/new/quote') }, 'New estimate')))
+            el('button.btn.btn-primary', { onclick: () => navigate('#/new/invoice') }, '新建发票'),
+            el('button.btn', { onclick: () => navigate('#/new/quote') }, '新建报价单')))
       );
       restoreFocus();
       return;

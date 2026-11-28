@@ -165,14 +165,14 @@ export function periodLabel(key) {
   return (PERIODS.find((p) => p[0] === key) || [null, 'Custom'])[1];
 }
 
-const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-const MONTHS_SHORT = MONTHS.map((m) => m.slice(0, 3));
+const MONTHS = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
+const MONTHS_SHORT = MONTHS;
 
 export function monthName(m, short = false) {
-  return (short ? MONTHS_SHORT : MONTHS)[m - 1];
+  return MONTHS[m - 1] || `${m}月`;
 }
 
-let dateStyle = 'mdy';
+let dateStyle = 'ymd';
 export function setDateStyle(style) {
   if (['mdy', 'dmy', 'ymd'].includes(style)) dateStyle = style;
 }
@@ -197,21 +197,20 @@ export function formatDateLong(iso) {
   const y = +iso.slice(0, 4);
   const m = +iso.slice(5, 7);
   const d = +iso.slice(8, 10);
-  return dateStyle === 'dmy' ? `${d} ${monthName(m)} ${y}` : `${monthName(m)} ${d}, ${y}`;
+  if (dateStyle === 'ymd') return `${y}年${m}月${d}日`;
+  return dateStyle === 'dmy' ? `${d} ${monthName(m)} ${y}` : `${y}年${m}月${d}日`;
 }
 
 /** "October 1 to 11, 2026" style range for report headers. */
 export function formatRange(from, to) {
-  if (!from && !to) return 'All dates';
-  if (!from) return `As of ${formatDateLong(to)}`;
-  if (!to) return `Since ${formatDateLong(from)}`;
+  if (!from && !to) return '所有日期';
+  if (!from) return `截至 ${formatDateLong(to)}`;
+  if (!to) return `自 ${formatDateLong(from)} 起`;
   const [fy, fm, fd] = [+from.slice(0, 4), +from.slice(5, 7), +from.slice(8, 10)];
   const [ty, tm, td] = [+to.slice(0, 4), +to.slice(5, 7), +to.slice(8, 10)];
-  if (dateStyle !== 'dmy') {
-    if (fy === ty && fm === tm) return `${monthName(fm)} ${fd} to ${td}, ${ty}`;
-    if (fy === ty) return `${monthName(fm)} ${fd} to ${monthName(tm)} ${td}, ${ty}`;
-  }
-  return `${formatDateLong(from)} to ${formatDateLong(to)}`;
+  if (fy === ty && fm === tm) return `${fy}年${fm}月${fd}日 至 ${td}日`;
+  if (fy === ty) return `${fy}年${fm}月${fd}日 至 ${tm}月${td}日`;
+  return `${formatDateLong(from)} 至 ${formatDateLong(to)}`;
 }
 
 /**

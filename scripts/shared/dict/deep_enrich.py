@@ -20,6 +20,9 @@ def update_dict(name, new_entries):
 
 # 1. 3D Studio
 update_dict('3d', {
+    "Box": "盒体",
+    "Fable": "寓言 (Fable)",
+    "admin": "管理员",
     "Clear the recent files list?": "清空最近打开的文件列表？",
     "Clear Recent Files": "清空最近文件",
     "Overwrite the startup file?": "覆盖初始启动文件？",
@@ -73,8 +76,22 @@ update_dict('3d', {
     "Show the frame, collection and active object in the top-left corner": "在左上角显示当前帧、集合与活动对象"
 })
 
+# 1.1 Parametric
+update_dict('parametric', {
+    "Parametric": "参数化设计",
+    "SolidWorks": "SolidWorks 格式",
+    "STEP": "STEP 格式",
+    "MMGS": "毫米-克-秒 (MMGS)",
+    "CGS": "厘米-克-秒 (CGS)",
+    "MKS": "米-千克-秒 (MKS)",
+    "IPS": "英寸-磅-秒 (IPS)",
+    "mm": "毫米 (mm)"
+})
+
 # 2. Teamchat
 update_dict('teamchat', {
+    "admin": "管理员",
+    "AD": "管理员",
     "Muted rows leave the lists until they mention you": "已静音的会话将在有人提及您时重新显示",
     "Group channels and people your own way": "按您喜欢的方式为频道与成员分组",
     "无法加载工作区": "无法加载工作区",
@@ -94,6 +111,7 @@ update_dict('teamchat', {
 
 # 3. Tasks
 update_dict('tasks', {
+    "Add a task for today, or check Upcoming for what is ahead": "添加今日待办任务，或查看“即将到来”了解未来计划",
     "Set a due date to add a reminder.": "设置截止日期以添加提醒。",
     "What needs doing?": "有什么需要处理的任务？",
     "Add a task": "添加任务",
@@ -156,6 +174,11 @@ update_dict('wiki', {
 
 # 6. CRM
 update_dict('crm', {
+    "admin": "管理员",
+    "CRM": "客户关系管理 (CRM)",
+    "Good morning": "早上好",
+    "Good afternoon": "下午好",
+    "Good evening": "晚上好",
     "Ctrl K": "Ctrl+K 快捷搜索",
     "An opportunity to move through the pipeline": "推进销售管道中的商机",
     "A person you might sell to": "潜在客户联系人",
@@ -178,6 +201,25 @@ update_dict('crm', {
 
 # 7. Accounting
 update_dict('accounting', {
+    "admin": "管理员",
+    "account": "账户",
+    "account.": "账户。",
+    "November": "11月",
+    "December": "12月",
+    "January": "1月",
+    "February": "2月",
+    "March": "3月",
+    "April": "4月",
+    "May": "5月",
+    "June": "6月",
+    "July": "7月",
+    "August": "8月",
+    "September": "9月",
+    "October": "10月",
+    "to": "至",
+    "A standard chart of accounts is created for you": "已为您预置标准会计科目表",
+    "standard chart of accounts is created for you": "已为您预置标准会计科目表",
+    "You can change any of this later in Settings": "您稍后可在“设置”中随时更改这些配置",
     "My Company": "我的企业",
     "Standard reports": "标准财务报表",
     "Home currency": "本位币种",
@@ -212,6 +254,10 @@ update_dict('accounting', {
 
 # 8. Invoicing
 update_dict('invoicing', {
+    "admin": "管理员",
+    "your first invoice or estimate": "您的第一张发票或报价单",
+    "It takes about": "仅需约",
+    "minute": "分钟",
     "Will be numbered EST-0001": "编号将为 EST-0001",
     "Valid until": "有效期至",
     "PO / reference": "采购订单号 / 关联编号",
@@ -265,6 +311,8 @@ update_dict('invoicing', {
 
 # 9. Expense
 update_dict('expense', {
+    "admin": "管理员",
+    "CN": "中国 (CN)",
     "支出分类管理": "支出分类管理",
     "新建分类": "新建分类",
     "编辑分类": "编辑分类",
@@ -284,6 +332,9 @@ update_dict('expense', {
 
 # 10. POS
 update_dict('pos', {
+    "admin": "管理员",
+    "Add your catalog in the Products tab, or ring up a one-off item below": "在“商品管理”标签页中添加商品目录，或在下方直接收银临时商品",
+    "one-off item": "临时商品",
     "Start the day with an opening float to reconcile the drawer tonight": "开工录入备用金，以便今晚交班核对钱箱",
     "Opening float": "开班备用金",
     "Cash drawer": "现金钱箱",
@@ -307,6 +358,8 @@ update_dict('pos', {
 
 # 11. Email
 update_dict('email', {
+    "mail": "邮件",
+    "admin": "管理员",
     "Compose": "写邮件",
     "Inbox": "收件箱",
     "Sent": "已发送",
@@ -328,6 +381,10 @@ update_dict('email', {
 
 # 12. Signatures
 update_dict('signatures', {
+    "admin": "管理员",
+    "Upload a PDF to place signature fields and send it out for signature": "上传 PDF 并放置签名签署区，发送给对方签署",
+    "place signature fields, and send private sign links by email": "放置签名签署区，并通过邮件发送安全私密签署链接",
+    "Everything is stored locally": "所有数据均保存在本地独立环境中",
     "Sign document": "签署文档",
     "Prepare document": "准备签署文档",
     "Upload PDF": "上传 PDF 文档",

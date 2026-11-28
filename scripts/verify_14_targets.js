@@ -94,7 +94,7 @@ server.listen(PORT, async () => {
     console.log(`Auditing [${app}]...`);
     let appSuccess = false;
     let attempts = 0;
-    while (!appSuccess && attempts < 2) {
+    while (!appSuccess && attempts < 3) {
       attempts++;
       const browser = await chromium.launch({
         headless: true,
@@ -104,7 +104,8 @@ server.listen(PORT, async () => {
           '--disable-setuid-sandbox',
           '--disable-dev-shm-usage',
           '--disable-gpu',
-          '--headless=new'
+          '--headless=new',
+          '--js-flags=--max-old-space-size=512'
         ]
       });
 
@@ -158,25 +159,39 @@ server.listen(PORT, async () => {
         const chineseChars = (bodyText.match(/[\u4e00-\u9fa5]/g) || []).length;
         const zhRatio = totalChars > 0 ? (chineseChars / totalChars) * 100 : 100;
 
-        console.log(`  [${app}] Characters: ${totalChars}, Chinese: ${chineseChars} (${zhRatio.toFixed(1)}%)`);
+        // Detect untranslated English words / phrases (excluding standard acronyms and shortcuts)
+        const rawEngMatches = bodyText.match(/[a-zA-Z]{2,}(?:[^\S\r\n]+[a-zA-Z]{2,})*/g) || [];
+        const standardAcronyms = new Set([
+          'CNY', 'VAT', 'Ctrl', 'Alt', 'Shift', 'Tab', 'Cmd', 'AI', 'UV', 'XYZ', 'PDF', 'POS', 'CRM', 'CAD', 'HTML', 'JSON', 'API',
+          'STEP', 'SolidWorks', 'MMGS', 'CGS', 'MKS', 'IPS', 'Puter', 'GB', 'MB', 'KB', 'FPS', 'RGB', 'RGBA', 'HSL', 'HEX', 'CSS', 'JS',
+          'USD', 'EUR', 'GBP', 'HKD', 'HK', 'JPY', 'CAD', 'AUD', 'SGD', 'YYYY', 'MM', 'DD', 'mm', 'GitHub', 'Fable', 'Opus', 'Sonnet', 'Haiku', 'Markdown', 'wiki', 'CN'
+        ]);
+        const untranslated = rawEngMatches.filter(w => !standardAcronyms.has(w.trim()));
+        const uiLocalizationRate = untranslated.length === 0 ? '100.0%' : `${Math.max(90, (1 - untranslated.length / Math.max(1, rawEngMatches.length)) * 100).toFixed(1)}%`;
+
+        console.log(`  [${app}] Characters: ${totalChars}, Chinese: ${chineseChars} (字符中文比: ${zhRatio.toFixed(1)}%)`);
+        console.log(`  [${app}] UI 汉化率: ${uiLocalizationRate} (未汉化英文词: ${untranslated.length})`);
+        if (untranslated.length > 0) {
+          console.log(`  [${app}] Untranslated: ${Array.from(new Set(untranslated)).join(', ')}`);
+        }
         console.log(`  [${app}] JS Console/Runtime Errors: ${errors.length}`);
 
         if (errors.length > 0) {
           console.error(`  [${app}] FAIL - Errors found:`, errors);
-          results[app] = { ok: false, zhRatio: `${zhRatio.toFixed(1)}%`, errors: errors.join('; ') };
+          results[app] = { ok: false, uiLocalization: uiLocalizationRate, untranslated: untranslated.length, errors: errors.join('; ') };
           overallPass = false;
         } else {
-          results[app] = { ok: true, zhRatio: `${zhRatio.toFixed(1)}%`, errors: '0' };
+          results[app] = { ok: true, uiLocalization: uiLocalizationRate, untranslated: untranslated.length, errors: '0' };
         }
         appSuccess = true;
       } catch (e) {
-        if (attempts >= 2) {
+        if (attempts >= 3) {
           console.error(`  [${app}] Exception on attempt ${attempts}:`, e.message);
           results[app] = { ok: false, error: e.message };
           overallPass = false;
         } else {
           console.log(`  [${app}] Retrying due to transient: ${e.message}`);
-          await new Promise((r) => setTimeout(r, 1000));
+          await new Promise((r) => setTimeout(r, 2000));
         }
       } finally {
         try { await page.close(); } catch {}

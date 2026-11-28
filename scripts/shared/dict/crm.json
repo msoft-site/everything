@@ -1,5 +1,5 @@
 {
-  "CRM": "客户关系管理",
+  "CRM": "客户关系管理 (CRM)",
   "Pipeline": "销售管道",
   "Deals": "商机交易",
   "Leads": "线索潜客",
@@ -441,5 +441,9 @@
   "Account": "客户公司",
   "Qualification": "资质评估",
   "Closed Won": "成功成交",
-  "Closed Lost": "流失未成"
+  "Closed Lost": "流失未成",
+  "admin": "管理员",
+  "Good morning": "早上好",
+  "Good afternoon": "下午好",
+  "Good evening": "晚上好"
 }

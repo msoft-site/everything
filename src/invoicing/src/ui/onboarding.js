@@ -63,31 +63,31 @@ export function openOnboarding() {
       await store.importAll(sampleDataset(store));
     } catch (err) {
       console.error(err);
-      toast('Could not load the sample data. Check your connection', { icon: 'wifiOff' });
+      toast('无法加载示例数据，请检查网络连接', { icon: 'wifiOff' });
       btn.disabled = false;
       refocus(btn);
       return;
     }
     modal.close();
-    toast('Sample data loaded. Wipe it anytime from the banner', { icon: 'sparkle' });
+    toast('示例数据已成功加载，您随时可在顶部提示栏中清除', { icon: 'sparkle' });
   }
 
   function renderBusiness() {
     clear(body);
-    const name = el('input.input', { id: 'ob-name', autocomplete: 'organization', placeholder: 'Aurora Studio' });
+    const name = el('input.input', { id: 'ob-name', autocomplete: 'organization', placeholder: '极光创意工作室' });
     const email = el('input.input', { id: 'ob-email', type: 'email', autocomplete: 'email', placeholder: 'you@example.com' });
     let picked = store.settings.currency;
     append(body, [
-      el('h3.onboard-h', {}, 'Who is sending the invoices?'),
-      el('p.onboard-p', {}, 'This appears on every document you create. You can refine it later in Settings.'),
+      el('h3.onboard-h', {}, '发票开具方信息'),
+      el('p.onboard-p', {}, '此信息将显示在您创建的每一份单据上。稍后随时可在“设置”中修改。'),
       el('div.field', {},
-        el('label.field-label', { for: 'ob-name' }, 'Business or personal name'),
+        el('label.field-label', { for: 'ob-name' }, '企业或个人名称'),
         name),
       el('div.field', {},
-        el('label.field-label', { for: 'ob-email' }, 'Email (optional)'),
+        el('label.field-label', { for: 'ob-email' }, '联系邮箱（选填）'),
         email),
       el('div.field', {},
-        el('label.field-label', { for: 'ob-currency' }, 'Default currency'),
+        el('label.field-label', { for: 'ob-currency' }, '默认币种'),
         el('div.select-wrap', {},
           el('select.select', { id: 'ob-currency', onchange: (ev) => { picked = ev.target.value; } },
             CURRENCIES.map((cur) =>
@@ -96,11 +96,8 @@ export function openOnboarding() {
         type: 'button', style: { padding: '13px' },
         onclick: async (ev) => {
           const btn = ev.currentTarget;
-          // Only the email is marked optional, and there is no preview here
-          // to show what a blank name prints ("Your business" on every
-          // document). "Skip for now" is the way to leave it for later.
           if (!name.value.trim()) {
-            toast('Enter the name that goes on your documents', { icon: 'alert' });
+            toast('请输入将显示在单据上的名称', { icon: 'alert' });
             name.focus();
             return;
           }
@@ -113,14 +110,14 @@ export function openOnboarding() {
             });
           } catch {
             btn.disabled = false;
-            toast('Could not save. Check your connection', { icon: 'wifiOff' });
+            toast('保存失败，请检查网络连接', { icon: 'wifiOff' });
             refocus(btn);
             return;
           }
           modal.close();
-          toast('You are set. Create your first invoice or estimate');
+          toast('设置完成！请创建您的第一张发票或报价单');
         },
-      }, 'Start invoicing'),
+      }, '开始使用发票管理'),
       skipBtn(),
     ]);
     // The step that was on screen went out with the button that was pressed,

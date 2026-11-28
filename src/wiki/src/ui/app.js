@@ -582,23 +582,23 @@ export class App {
         { type: 'sep' },
         { label: 'Full width', icon: 'fullWidth', checked: !!page.fullWidth, disabled: !edit, run: () => updatePage(space.tree, pageId, { fullWidth: !page.fullWidth }, this.ws.by) },
         { label: 'Small text', icon: 'smallText', checked: !!page.smallText, disabled: !edit, run: () => updatePage(space.tree, pageId, { smallText: !page.smallText }, this.ws.by) },
-        { label: page.locked ? 'Unlock page' : 'Lock page', icon: page.locked ? 'lockOpen' : 'lock', disabled: !edit, run: () => updatePage(space.tree, pageId, { locked: !page.locked }, this.ws.by) },
+        { label: page.locked ? '解锁页面' : '锁定页面', icon: page.locked ? 'lockOpen' : 'lock', disabled: !edit, run: () => updatePage(space.tree, pageId, { locked: !page.locked }, this.ws.by) },
         { type: 'sep' },
         {
-          label: 'Export',
+          label: '导出',
           icon: 'download',
           submenu: () => [
-            { label: 'Markdown', icon: 'fileText', run: () => this.exportPage(space, pageId, 'md') },
-            { label: 'Web page (HTML)', icon: 'codeXml', run: () => this.exportPage(space, pageId, 'html') },
-            { label: 'Print or save as PDF', icon: 'printer', run: () => window.print() },
+            { label: 'Markdown 文档 (.md)', icon: 'fileText', run: () => this.exportPage(space, pageId, 'md') },
+            { label: '网页文件 (HTML)', icon: 'codeXml', run: () => this.exportPage(space, pageId, 'html') },
+            { label: '打印或另存为 PDF', icon: 'printer', run: () => window.print() },
           ],
         },
       );
-      if (page.kind !== 'database') items.push({ label: 'Page history', icon: 'history', run: () => openHistory(this, space, pageId) });
-      if (edit && page.kind !== 'database') items.push({ label: 'Import Markdown here', icon: 'fileUp', run: () => this.importMarkdown(space, pageId) });
+      if (page.kind !== 'database') items.push({ label: '页面历史记录', icon: 'history', run: () => openHistory(this, space, pageId) });
+      if (edit && page.kind !== 'database') items.push({ label: '在此导入 Markdown 文档', icon: 'fileUp', run: () => this.importMarkdown(space, pageId) });
     }
-    if (edit) items.push({ type: 'sep' }, { label: space.kind === 'shared' && !page.parent && childrenOf(space.tree).length <= 1 ? 'Delete shared space' : 'Move to trash', icon: 'trash', danger: true, hint: fromSidebar ? 'Del' : null, run: () => this.trashPage(space, pageId) });
-    if (space.kind === 'shared' && !page.parent && !space.canManage) items.push({ type: 'sep' }, { label: 'Leave shared space', icon: 'logOut', danger: true, run: () => this.leaveSpace(space) });
+    if (edit) items.push({ type: 'sep' }, { label: space.kind === 'shared' && !page.parent && childrenOf(space.tree).length <= 1 ? '删除共享空间' : '移至废纸篓', icon: 'trash', danger: true, hint: fromSidebar ? 'Del' : null, run: () => this.trashPage(space, pageId) });
+    if (space.kind === 'shared' && !page.parent && !space.canManage) items.push({ type: 'sep' }, { label: '退出共享空间', icon: 'logOut', danger: true, run: () => this.leaveSpace(space) });
     if (!fromSidebar) {
       const editedBy = page.updatedBy ? ` by ${page.updatedBy}` : '';
       items.push({ type: 'sep' }, { type: 'header', label: `Edited ${new Date(page.updated || page.created || Date.now()).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}${editedBy}` });

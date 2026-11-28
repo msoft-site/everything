@@ -262,5 +262,9 @@
   "Upload signature": "上传签名图片",
   "Signature field": "签名签署区",
   "Date field": "日期签署区",
-  "Text field": "文本输入区"
+  "Text field": "文本输入区",
+  "admin": "管理员",
+  "Upload a PDF to place signature fields and send it out for signature": "上传 PDF 并放置签名签署区，发送给对方签署",
+  "place signature fields, and send private sign links by email": "放置签名签署区，并通过邮件发送安全私密签署链接",
+  "Everything is stored locally": "所有数据均保存在本地独立环境中"
 }

@@ -22,12 +22,12 @@ export function openOnboarding() {
       store.updateSettings({ onboarded: true }).catch(() => {});
     }
   };
-  const modal = openModal({ title: 'Welcome', content: body, onClose: markDone });
+  const modal = openModal({ title: '欢迎使用', content: body, onClose: markDone });
 
   const skipBtn = () => el('button.btn.btn-ghost.btn-block', {
     type: 'button', style: { marginTop: '10px' },
     onclick: () => { markDone(); modal.close(); },
-  }, 'Skip for now');
+  }, '暂先跳过');
 
   /* Step 0: welcome */
   function renderWelcome() {
@@ -38,18 +38,18 @@ export function openOnboarding() {
           html: icon('signature', 30),
           style: { background: 'var(--accent-wash)', color: 'var(--accent-strong)' },
         }),
-        el('h3', { style: { fontSize: '19px' } }, 'Get documents signed'),
-        el('p', {}, 'Upload a PDF, place signature fields, and send private sign links by email. Everything is stored locally.')
+        el('h3', { style: { fontSize: '19px' } }, '高效完成文件签署'),
+        el('p', {}, '上传 PDF 文件，放置签名表单域，并通过邮件发送私密签署链接。所有数据均安全保存在本地。')
       ),
       el('button.btn.btn-primary.btn-block', {
         type: 'button', style: { padding: '13px' },
         onclick: renderName,
-      }, 'Set up my account'),
+      }, '设置我的账户'),
       el('button.btn.btn-ghost.btn-block', {
         type: 'button', style: { marginTop: '10px', border: '1px dashed var(--hairline-strong)' },
         html: icon('sparkle', 15, 2),
         onclick: useSampleData,
-      }, ' Explore with sample documents'),
+      }, ' 体验示例文件'),
       skipBtn(),
     ]);
   }
@@ -66,12 +66,12 @@ export function openOnboarding() {
       await store.importDataset(await sampleDataset(store));
     } catch (err) {
       console.error(err);
-      toast('Could not load the sample documents. Check your connection', { icon: 'wifiOff' });
+      toast('无法加载示例文件，请检查您的网络连接', { icon: 'wifiOff' });
       btn.disabled = false;
       return;
     }
     modal.close();
-    toast('Sample documents loaded. Wipe them anytime from the banner', { icon: 'sparkle' });
+    toast('示例文件已加载，您随时可以在顶部提示横幅中清除它们', { icon: 'sparkle' });
   }
 
   /* Step 1: the name signers see */
@@ -81,12 +81,12 @@ export function openOnboarding() {
     const input = el('input.input', {
       id: nameId, type: 'text', autocomplete: 'name', maxLength: 80,
       value: store.settings.fullName || '',
-      placeholder: 'e.g. Alex Rivera',
+      placeholder: '例如：张三',
     });
     append(body, [
-      el('h3.onboard-h', {}, 'What name should signers see?'),
-      el('p.onboard-p', {}, 'It appears in email requests and on the signature certificate. You can change it anytime in Settings.'),
-      el('div.field', {}, el('label', { for: nameId }, 'Your full name'), input),
+      el('h3.onboard-h', {}, '签署方将看到您的姓名'),
+      el('p.onboard-p', {}, '该姓名将显示在签署邮件通知及签名凭证中。您可以随时在“设置”中修改。'),
+      el('div.field', {}, el('label', { for: nameId }, '您的全名'), input),
       el('button.btn.btn-primary.btn-block', {
         type: 'button', style: { padding: '13px' },
         onclick: async (ev) => {
@@ -94,9 +94,9 @@ export function openOnboarding() {
           const fullName = input.value.trim();
           await store.updateSettings({ fullName, onboarded: true }).catch(() => {});
           modal.close();
-          toast('You are all set. Upload a PDF to get started', { icon: 'check' });
+          toast('设置完成！请上传 PDF 文件开始签署', { icon: 'check' });
         },
-      }, 'Start sending'),
+      }, '开始发起签署'),
       skipBtn(),
     ]);
     setTimeout(() => input.focus(), 50);

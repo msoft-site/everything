@@ -19,14 +19,11 @@ function markDone() {
 }
 
 /**
- * One-step welcome shown the first time the real inbox opens. Everything it
- * says stays true afterwards, so closing it loses nothing. `onNotify` turns
- * on new-mail notifications, from the click a browser needs to ask for them;
- * it is the same switch as Settings, so declining here costs nothing either.
+ * 欢迎向导与首次使用引导
  */
 export function openOnboarding({ onNotify = null, notificationsOn = false } = {}) {
   const body = el('div');
-  const modal = openModal({ title: 'Welcome', content: body, onClose: markDone });
+  const modal = openModal({ title: '欢迎使用电子邮件', content: body, onClose: markDone });
 
   const row = (iconName, title, text) => el('div.onboard-row', {},
     el('span.onboard-icon', { html: icon(iconName, 18) }),
@@ -38,7 +35,7 @@ export function openOnboarding({ onNotify = null, notificationsOn = false } = {}
 
   const notifyRow = () => {
     const status = el('span.onboard-text', { role: 'status' },
-      notificationsOn ? 'Notifications are on for this device.' : '');
+      notificationsOn ? '已为此设备开启新邮件通知。' : '');
     const button = el('button.btn.btn-tonal.btn-small.onboard-action', {
       type: 'button',
       onclick: async () => {
@@ -49,32 +46,32 @@ export function openOnboarding({ onNotify = null, notificationsOn = false } = {}
           return;
         }
         button.remove();
-        status.textContent = 'Notifications are on for this device.';
+        status.textContent = '已为此设备开启新邮件通知。';
       },
-    }, 'Turn on notifications');
-    const item = row('bell', 'New mail notifications',
-      'Hear about new mail on this device, even when Puter Mail is closed. You can change this in Settings.');
+    }, '开启新邮件通知');
+    const item = row('bell', '新邮件实时通知',
+      '即使关闭邮件应用，也能在此设备上及时收到新邮件提醒。您可随时在“设置”中修改此项。');
     item.lastChild.append(status);
     if (!notificationsOn) item.lastChild.append(button);
     return item;
   };
 
   body.append(
-    el('p.onboard-lead', {}, 'Your mail lives in local storage. This app reads and sends it for you.'),
-    row('shield', 'Your mail stays yours',
-      'Messages are files in your .mail folder. Puter Mail only writes what you ask it to: your copy of a message you send, and the moves behind archive, delete, and restore. Nothing is deleted unless you empty it from Trash.'),
-    row('mailOpen', 'Safe rendering',
-      'Messages open as plain text. You can show the original formatting per message; it renders in a sandbox where scripts cannot run and remote images stay blocked until you allow them.'),
-    row('star', 'Follows your account',
-      'What you have read and starred is kept in your local account, so it is the same on every device you sign in from.'),
-    row('send', 'Sending',
-      'Compose sends from your @puter.email address, with light formatting, and attachments from this device or your local files. Every message carries a plain-text version, so it reads properly wherever it lands. Your first send asks for write access to your mailbox, which is also where the Sent copy goes.'),
-    row('pencil', 'Drafts are kept',
-      'Close a half-written message and it is saved as a draft on this device. Reopen Compose to carry on where you left off.'),
+    el('p.onboard-lead', {}, '您的所有邮件数据均安全保存在本地独立存储中，应用为您直接收发与管理。'),
+    row('shield', '邮件隐私完全归您所有',
+      '所有邮件均作为独立文件保存在本地存储中。应用仅在您明确指示时执行写入（如保存发件箱副本、归档、删除与恢复）。除非您在废纸篓中彻底清空，否则绝不自动删除任何邮件。'),
+    row('mailOpen', '安全隔离渲染',
+      '邮件默认以纯文本安全模式打开。您也可以选择显示邮件的原始排版，系统将在无脚本运行权限的隔离沙箱中安全渲染，且在您允许前自动拦截远程外部图片。'),
+    row('star', '本地账户独立保存',
+      '您的已读与星标标记保存在本地账户中，状态精准保持一致。'),
+    row('send', '邮件撰写与发送',
+      '支持富文本轻量排版与本地附件上传，每封邮件同时包含纯文本兼容版本，确保在任何客户端上均可完美排版阅读。'),
+    row('pencil', '草稿自动本地暂存',
+      '编辑未完成的邮件在关闭时会自动保存为本地草稿，重新打开写信即可继续编辑。'),
     onNotify && notifyRow(),
     el('button.btn.btn-primary.btn-block', {
       type: 'button', onclick: () => modal.close(),
-    }, 'Open my inbox'),
+    }, '进入收件箱'),
   );
 
   return modal;

@@ -22,10 +22,10 @@ const ATTENTION_MAX = 6;
 
 function greeting() {
   const h = new Date().getHours();
-  if (h < 5) return 'Working late';
-  if (h < 12) return 'Good morning';
-  if (h < 18) return 'Good afternoon';
-  return 'Good evening';
+  if (h < 5) return '夜深了';
+  if (h < 12) return '早上好';
+  if (h < 18) return '下午好';
+  return '晚上好';
 }
 
 /** One drifting lead, with the two actions that revive it. */

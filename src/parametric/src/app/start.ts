@@ -46,19 +46,19 @@ export class StartScreen {
       app.loadDocument(ex.make(), null);
     })));
     const card = h('div', { class: 'start-card', role: 'dialog', 'aria-modal': 'false', 'aria-labelledby': 'start-title' },
-      h('h1', { id: 'start-title' }, h('img', { src: './icon-128.png', alt: '' }), 'Parametric'),
-      h('div', { class: 'sub' }, 'Feature-based 3D part modeling in your browser.'),
+      h('h1', { id: 'start-title' }, h('img', { src: './icon-128.png', alt: '' }), '参数化建模'),
+      h('div', { class: 'sub' }, '在浏览器中进行基于特征的 3D 零件参数化建模。'),
       h('div', { class: 'start-actions' },
-        action('new', 'New part', 'Start from a blank part', async () => {
+        action('new', '新建零件', '从空白零件开始创建', async () => {
           if (!(await this.files.confirmDiscard('start a new part'))) return;
           this.hide();
           app.newDocument('Part1');
         }),
-        action('open', 'Open', cloudAvailable() ? 'Open a part from local storage or this browser' : 'Open a part saved in this browser', () => { this.hide(); void this.files.open(); }),
-        action('upload', 'Open from device', 'Open a part file, or a STEP or SolidWorks file', () => { this.hide(); void this.files.openFromDevice(); }),
+        action('open', '打开', cloudAvailable() ? '从本地存储或此浏览器打开零件' : '打开保存在此浏览器中的零件', () => { this.hide(); void this.files.open(); }),
+        action('upload', '从设备打开', '打开零件文件，或导入 STEP / SolidWorks 模型文件', () => { this.hide(); void this.files.openFromDevice(); }),
       ),
-      h('div', { class: 'row' }, h('label', { class: 'field-label' }, 'Units for new parts'), unitSel),
-      recents.length ? h('div', { class: 'start-section' }, h('h2', {}, 'Recent'), h('div', { class: 'file-list' }, recents.map((r) => {
+      h('div', { class: 'row' }, h('label', { class: 'field-label' }, '新零件的默认单位'), unitSel),
+      recents.length ? h('div', { class: 'start-section' }, h('h2', {}, '最近打开'), h('div', { class: 'file-list' }, recents.map((r) => {
         const b = h('button', { class: 'file-item', type: 'button' }, icon(r.location.type === 'cloud' ? 'cloud' : 'device', 16),
           h('span', { class: 'txt' }, h('span', { class: 'n' }, r.name), h('span', { class: 'meta' }, locationLabel(r.location))));
         // The start screen goes once the part opens; one that cannot be opened leaves it here.
@@ -73,11 +73,11 @@ export class StartScreen {
         });
         return b;
       }))) : null,
-      h('div', { class: 'start-section' }, h('h2', {}, 'Examples'), examples),
+      h('div', { class: 'start-section' }, h('h2', {}, '示例模型'), examples),
       h('div', { class: 'start-foot' },
-        !isSignedIn() && env() !== 'app' && puter() ? h('button', { class: 'btn small', type: 'button', onclick: () => void doSignIn(app) }, icon('signIn', 14), 'Sign in to save to the cloud') : null,
-        h('span', {}, 'You can use Parametric without an account; parts are then saved in this browser.'),
-        h('a', { href: REPO_URL, target: '_blank', rel: 'noopener noreferrer' }, 'Open source on GitHub')),
+        !isSignedIn() && env() !== 'app' && puter() ? h('button', { class: 'btn small', type: 'button', onclick: () => void doSignIn(app) }, icon('signIn', 14), '登录以保存到本地存储') : null,
+        h('span', {}, '您可以无需账户直接使用参数化建模；零件将保存在此浏览器中。'),
+        h('a', { href: REPO_URL, target: '_blank', rel: 'noopener noreferrer' }, '在 GitHub 上查看开源代码')),
     );
     this.el = h('div', { class: 'start' }, card);
     // Work started elsewhere (the assistant, the ribbon) needs the graphics area.

@@ -82,7 +82,7 @@ export class Sidebar {
       'button.ws-button',
       { type: 'button', 'aria-haspopup': 'menu', 'aria-expanded': 'false', onclick: (e) => this.app.openAccountMenu(e.currentTarget) },
       this.app.avatarEl(22),
-      h('span.ws-name', user?.username && !(user.sandbox && user.username === 'you') ? `${user.username}’s wiki` : 'My wiki'),
+      h('span.ws-name', user?.username && !(user.sandbox && user.username === 'you') ? `${user.username} 的知识库` : '我的知识库'),
       icon('chevronDown', 14, { cls: 'ws-caret' }),
     );
     const head = h(

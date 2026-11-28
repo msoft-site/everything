@@ -394,5 +394,9 @@
   "CAD": "加元 (CAD $)",
   "AUD": "澳元 (AUD $)",
   "CHF": "瑞士法郎 (CHF)",
-  "SGD": "新加坡元 (SGD $)"
+  "SGD": "新加坡元 (SGD $)",
+  "admin": "管理员",
+  "your first invoice or estimate": "您的第一张发票或报价单",
+  "It takes about": "仅需约",
+  "minute": "分钟"
 }

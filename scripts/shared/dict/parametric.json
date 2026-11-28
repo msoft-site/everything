@@ -1,6 +1,6 @@
 {
   "Skip to the graphics area": "跳转到图形区",
-  "Parametric": "参数化建模工作室",
+  "Parametric": "参数化设计",
   "Part1": "零件1",
   "Extruded Boss": "拉伸凸台/基体",
   "Revolved Boss": "旋转凸台/基体",
@@ -55,7 +55,7 @@
   "An enclosure box 80 × 50 × 30 mm with 2 mm walls, open on top": "一个 80 × 50 × 30 毫米的外壳盒子，壁厚 2 毫米，顶部敞开",
   "Tree": "设计树",
   "Model": "模型",
-  "MMGS": "MMGS (毫米)",
+  "MMGS": "毫米-克-秒 (MMGS)",
   "Early alpha": "早期预览版",
   "Main menu": "主菜单",
   "Rebuild": "重建模型 (Ctrl+B)",
@@ -489,5 +489,11 @@
   "[x, y] in sketch coordinates, or [x, y, z] in world coordinates (projected onto the sketch plane)": "草图坐标中的 [x, y] 或世界坐标中的 [x, y, z]（投影到草图平面上）",
   "edge ${s}": "边 ${s}",
   "face ${s}": "面对${s}",
-  "point ${this.u.pt(vec3(v, what).map((x) => x * this.u.scale) as Vec3)}": "点 ${this.u.pt(vec3(v, What).map((x) => x * this.u.scale) as Vec3)}"
+  "point ${this.u.pt(vec3(v, what).map((x) => x * this.u.scale) as Vec3)}": "点 ${this.u.pt(vec3(v, What).map((x) => x * this.u.scale) as Vec3)}",
+  "SolidWorks": "SolidWorks 格式",
+  "STEP": "STEP 格式",
+  "CGS": "厘米-克-秒 (CGS)",
+  "MKS": "米-千克-秒 (MKS)",
+  "IPS": "英寸-磅-秒 (IPS)",
+  "mm": "毫米 (mm)"
 }

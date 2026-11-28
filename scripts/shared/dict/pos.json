@@ -411,5 +411,8 @@
   "Digital Pay": "移动支付",
   "Customer": "客户",
   "Item": "商品项目",
-  "Quantity": "数量"
+  "Quantity": "数量",
+  "admin": "管理员",
+  "Add your catalog in the Products tab, or ring up a one-off item below": "在“商品管理”标签页中添加商品目录，或在下方直接收银临时商品",
+  "one-off item": "临时商品"
 }

@@ -453,5 +453,8 @@
   "Make Regular": "规整化",
   "Show a description when the pointer rests on a control": "指针停留在控件上时显示说明",
   "Drag an area corner to split it or join it with a neighbour": "拖动区域角落可拆分或与邻近区域合并",
-  "Show the frame, collection and active object in the top-left corner": "在左上角显示当前帧、集合与活动对象"
+  "Show the frame, collection and active object in the top-left corner": "在左上角显示当前帧、集合与活动对象",
+  "Box": "盒体",
+  "Fable": "寓言 (Fable)",
+  "admin": "管理员"
 }

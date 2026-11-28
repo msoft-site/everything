@@ -96,6 +96,6 @@ export function flangeExample(): PartDocument {
 }
 
 export const EXAMPLES = [
-  { id: 'bracket', name: 'Mounting Bracket', description: 'Extrude, counterbored holes and a fillet', make: bracketExample },
-  { id: 'flange', name: 'Pipe Flange', description: 'Revolve, hole, circular pattern and chamfer', make: flangeExample },
+  { id: 'bracket', name: '安装支架', description: '包含拉伸特征、沉头孔与内圆角', make: bracketExample },
+  { id: 'flange', name: '管道法兰', description: '包含旋转特征、孔特征、环形阵列与倒角', make: flangeExample },
 ];

@@ -3258,8 +3258,8 @@ export function renderApp(root, ctx) {
           el('p.center-note', {}, note))
         : el('div.center', {},
           el('span.center-icon', { html: icon('inbox', 28, 1.4) }),
-          el('p', {}, 'No mail yet.'),
-          el('p.center-note', {}, 'Messages delivered to your Puter mailbox appear here. Check back after your first message arrives.')));
+          el('p', {}, '暂无邮件。'),
+          el('p.center-note', {}, '发送到您邮箱的信件将显示在此处。请在首封邮件送达后查看。')));
       syncSelection();
       return;
     }
